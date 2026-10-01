@@ -1,0 +1,166 @@
+{
+  "schema": 1,
+  "cases": [
+    {
+      "name": "saved_chart_without_event_evidence",
+      "origin": "67dae20f66a20004-20260925T051141883289Z-7e3413.json",
+      "items": [
+        {
+          "item_id": 1,
+          "title": "Packers",
+          "source": "x_trends24",
+          "url": "https://twitter.com/search?q=Packers",
+          "timestamp": "2026-09-25T00:11:41.883289-05:00"
+        },
+        {
+          "item_id": 2,
+          "title": "Falcons",
+          "source": "x_trends24",
+          "url": "https://twitter.com/search?q=Falcons",
+          "timestamp": "2026-09-25T00:11:41.883289-05:00"
+        },
+        {
+          "item_id": 3,
+          "title": "Jordan Love",
+          "source": "x_trends24",
+          "url": "https://twitter.com/search?q=Jordan%20Love",
+          "timestamp": "2026-09-25T00:11:41.883289-05:00"
+        },
+        {
+          "item_id": 4,
+          "title": "Cleveland",
+          "source": "x_trends24",
+          "url": "https://twitter.com/search?q=Cleveland",
+          "timestamp": "2026-09-25T00:11:41.883289-05:00"
+        },
+        {
+          "item_id": 5,
+          "title": "Bijan",
+          "source": "x_trends24",
+          "url": "https://twitter.com/search?q=Bijan",
+          "timestamp": "2026-09-25T00:11:41.883289-05:00"
+        }
+      ],
+      "expected_groups": []
+    },
+    {
+      "name": "saved_chart_with_synthetic_event_evidence",
+      "origin": "Saved chart plus explicitly synthetic game headline; not a claim about a real game.",
+      "items": [
+        {
+          "item_id": 1,
+          "title": "Packers",
+          "source": "x_trends24",
+          "url": "https://twitter.com/search?q=Packers",
+          "timestamp": "2026-09-25T00:11:41.883289-05:00"
+        },
+        {
+          "item_id": 2,
+          "title": "Falcons",
+          "source": "x_trends24",
+          "url": "https://twitter.com/search?q=Falcons",
+          "timestamp": "2026-09-25T00:11:41.883289-05:00"
+        },
+        {
+          "item_id": 3,
+          "title": "Jordan Love",
+          "source": "x_trends24",
+          "url": "https://twitter.com/search?q=Jordan%20Love",
+          "timestamp": "2026-09-25T00:11:41.883289-05:00"
+        },
+        {
+          "item_id": 4,
+          "title": "Cleveland",
+          "source": "x_trends24",
+          "url": "https://twitter.com/search?q=Cleveland",
+          "timestamp": "2026-09-25T00:11:41.883289-05:00"
+        },
+        {
+          "item_id": 5,
+          "title": "Bijan",
+          "source": "x_trends24",
+          "url": "https://twitter.com/search?q=Bijan",
+          "timestamp": "2026-09-25T00:11:41.883289-05:00"
+        },
+        {
+          "item_id": 6,
+          "title": "Packers beat Falcons as Jordan Love outduels Bijan",
+          "source": "google_news",
+          "timestamp": "2026-09-25T00:11:41.883289-05:00",
+          "context": "Packers beat Falcons as Jordan Love outduels Bijan."
+        }
+      ],
+      "expected_groups": [
+        [
+          1,
+          2,
+          3,
+          5,
+          6
+        ]
+      ]
+    },
+    {
+      "name": "same_company_different_events",
+      "origin": "synthetic adversarial fixture",
+      "items": [
+        {
+          "item_id": 1,
+          "title": "Acme launches new database tooling",
+          "source": "hackernews",
+          "timestamp": "2026-09-25T00:11:41.883289-05:00",
+          "context": "Acme launches new database tooling."
+        },
+        {
+          "item_id": 2,
+          "title": "Acme launches database tools today",
+          "source": "google_news",
+          "timestamp": "2026-09-25T00:11:41.883289-05:00",
+          "context": "Acme launches database tools today."
+        },
+        {
+          "item_id": 3,
+          "title": "Acme database outage affects customers",
+          "source": "hackernews",
+          "timestamp": "2026-09-25T00:11:41.883289-05:00",
+          "context": "Acme database outage affects customers."
+        },
+        {
+          "item_id": 4,
+          "title": "Acme database outage disrupts customers",
+          "source": "google_news",
+          "timestamp": "2026-09-25T00:11:41.883289-05:00",
+          "context": "Acme database outage disrupts customers."
+        }
+      ],
+      "expected_groups": [
+        [
+          1,
+          2
+        ],
+        [
+          3,
+          4
+        ]
+      ]
+    },
+    {
+      "name": "valuable_single_source_discovery",
+      "origin": "synthetic adversarial fixture",
+      "items": [
+        {
+          "item_id": 1,
+          "title": "Researchers disclose critical Acme database vulnerability",
+          "source": "arxiv",
+          "timestamp": "2026-09-25T00:11:41.883289-05:00",
+          "context": "Researchers disclose critical Acme database vulnerability."
+        }
+      ],
+      "expected_groups": [
+        [
+          1
+        ]
+      ]
+    }
+  ]
+}
