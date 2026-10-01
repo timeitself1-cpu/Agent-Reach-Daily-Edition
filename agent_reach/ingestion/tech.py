@@ -11,6 +11,7 @@ from bs4 import BeautifulSoup
 from agent_reach.ingestion.base import (
     BaseIngester,
     IngestionError,
+    epoch_to_utc,
     parse_count,
     parse_optional_datetime,
     xml_child_text,
@@ -60,7 +61,7 @@ class HackerNewsIngester(BaseIngester):
                 raw_score=float(h.get("points") or 0),
                 comment_count=int(h.get("num_comments") or 0),
                 url=h.get("url") or f"https://news.ycombinator.com/item?id={oid}",
-                published_at=datetime.fromtimestamp(created, tz=timezone.utc) if created else None,
+                published_at=epoch_to_utc(created),
                 category_hint=CategoryEnum.TECH,
                 metadata={"hn_id": oid, "discussion_url": f"https://news.ycombinator.com/item?id={oid}"},
             )

@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import hashlib
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from enum import Enum
 from typing import Any
 
@@ -138,6 +138,11 @@ class MacroCluster(BaseModel):
     def make_id(headline: str, entities: list[str]) -> str:
         keys = sorted({e.strip().lower() for e in entities if e.strip()}) or [headline.strip().lower()]
         return hashlib.sha1("|".join(keys).encode("utf-8", "ignore")).hexdigest()[:12]
+
+
+#: A stated publication time may run ahead of the retrieval clock by this much (publisher clock skew)
+#: and is then clamped to the retrieval time; anything later is not a trustworthy publication time.
+PUBLISHED_FUTURE_TOLERANCE = timedelta(minutes=15)
 
 
 class FeedStat(BaseModel):

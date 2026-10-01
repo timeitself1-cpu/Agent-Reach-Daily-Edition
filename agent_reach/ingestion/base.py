@@ -6,6 +6,7 @@ import abc
 import asyncio
 import logging
 import random
+import re
 import time
 import xml.etree.ElementTree as ET
 from email.utils import parsedate_to_datetime
@@ -15,7 +16,7 @@ from typing import Any
 import httpx
 
 from agent_reach.config import Settings
-from agent_reach.models import FeedStat, RawTrendItem, SourceName, SourceStat
+from agent_reach.models import PUBLISHED_FUTURE_TOLERANCE, FeedStat, RawTrendItem, SourceName, SourceStat
 
 log = logging.getLogger(__name__)
 
@@ -65,19 +66,71 @@ def parse_datetime(value: str | None) -> datetime:
     return parse_optional_datetime(value) or datetime.now(timezone.utc)
 
 
+#: Earlier than this is a parsing accident or a placeholder date, not a news publication time.
+EARLIEST_PLAUSIBLE_PUBLICATION = datetime(1995, 1, 1, tzinfo=timezone.utc)
+_DATE_ONLY_RX = re.compile(r"^\d{4}-\d{2}-\d{2}$")
+_FOUR_DIGIT_YEAR_RX = re.compile(r"(?<!\d)(\d{4})(?!\d)")
+
+
 def parse_optional_datetime(value: str | None) -> datetime | None:
-    """Parse RFC-822 or ISO-8601 timestamps; None when absent or unparseable (never 'now')."""
-    if not value:
+    """Parse RFC-822 or ISO-8601 timestamps to an aware UTC datetime; None when absent or unusable.
+
+    Never substitutes 'now'. Offsets and zone names (GMT, EDT, +05:30, Z) are normalised to UTC; a
+    zone-less ISO time is read as UTC (RSS/Atom require a zone, so this only affects broken feeds).
+    Rejected: unparseable text, a date without a time (it would invent a time of day), and values
+    whose stated 4-digit year was rewritten by the RFC-822 two-digit-year rule (0001 -> 2001).
+    """
+    if not value or not isinstance(value, str):
         return None
     value = value.strip()
+    if not value or _DATE_ONLY_RX.match(value):
+        return None
     try:
         dt = parsedate_to_datetime(value)
-    except (TypeError, ValueError, IndexError):
+    except (TypeError, ValueError, IndexError, OverflowError):
         try:
             dt = datetime.fromisoformat(value.replace("Z", "+00:00"))
-        except ValueError:
+        except (ValueError, OverflowError):
             return None
-    return dt if dt.tzinfo else dt.replace(tzinfo=timezone.utc)
+    if dt is None:
+        return None
+    years = _FOUR_DIGIT_YEAR_RX.findall(value)
+    if years and dt.year != int(years[0]):
+        return None
+    try:
+        return (dt if dt.tzinfo else dt.replace(tzinfo=timezone.utc)).astimezone(timezone.utc)
+    except (OverflowError, ValueError):
+        return None
+
+
+def epoch_to_utc(value: Any) -> datetime | None:
+    """Unix seconds -> aware UTC datetime; None for missing, zero, non-numeric or out-of-range values."""
+    try:
+        seconds = float(value)
+        if not seconds or seconds != seconds:  # 0 / NaN
+            return None
+        return datetime.fromtimestamp(seconds, tz=timezone.utc)
+    except (TypeError, ValueError, OverflowError, OSError):
+        return None
+
+
+def validate_publication_time(published: datetime, retrieved: datetime) -> tuple[datetime | None, str | None]:
+    """Check a stated publication time against the retrieval time. Returns (usable value, note).
+
+    * naive -> treated as UTC; any offset -> normalised to UTC
+    * before 1995 -> rejected ("implausibly old")
+    * after retrieval by more than PUBLISHED_FUTURE_TOLERANCE -> rejected ("in the future")
+    * after retrieval within the tolerance -> clamped to the retrieval time ("clock skew")
+    A rejected time is never shown as a publication time; the item keeps its retrieval time.
+    """
+    published = (published if published.tzinfo else published.replace(tzinfo=timezone.utc)).astimezone(timezone.utc)
+    if published < EARLIEST_PLAUSIBLE_PUBLICATION:
+        return None, "implausibly old"
+    if published > retrieved + PUBLISHED_FUTURE_TOLERANCE:
+        return None, "in the future"
+    if published > retrieved:
+        return retrieved, "clock skew (clamped to retrieval time)"
+    return published, None
 
 
 def parse_count(text: str | None) -> float | None:
@@ -308,11 +361,15 @@ class BaseIngester(abc.ABC):
                 return None
             kwargs["title"] = title[:1000]
             metadata = dict(kwargs.pop("metadata", None) or {})
-            metadata["retrieved_at"] = datetime.now(timezone.utc).isoformat()
+            retrieved = datetime.now(timezone.utc)
+            metadata["retrieved_at"] = retrieved.isoformat()
             if published_at is not None:
-                published_at = published_at if published_at.tzinfo else published_at.replace(tzinfo=timezone.utc)
-                metadata["published_at"] = published_at.astimezone(timezone.utc).isoformat()
-                kwargs.setdefault("timestamp", published_at)
+                published_at, note = validate_publication_time(published_at, retrieved)
+                if note:
+                    metadata["published_at_note"] = note
+                if published_at is not None:
+                    metadata["published_at"] = published_at.isoformat()
+                    kwargs.setdefault("timestamp", published_at)
             return RawTrendItem(source=self.source, metadata=metadata, **kwargs)
         except Exception as exc:  # noqa: BLE001
             self.log.debug("skipping malformed item: %s", exc)

@@ -40,6 +40,7 @@ from agent_reach.daily.edition import Story, all_categories, friendly_error, hea
 from agent_reach.daily.paths import DataPaths
 from agent_reach.daily.feeds import FeedSpec, default_feeds
 from agent_reach.daily.prefs import DailyPrefs, SOURCE_NOTES, save_prefs
+from agent_reach.daily.strength import strength_of
 from agent_reach.daily.timeutil import format_central, format_short_date
 
 log = logging.getLogger(__name__)
@@ -395,6 +396,8 @@ class DailyWindow:
                         spacing3=self.px(2))
         t.tag_configure("kicker", font=self.f_kicker, foreground=c["accent"], lmargin1=indent, lmargin2=indent,
                         spacing1=self.px(8))
+        t.tag_configure("kicker_plain", font=self.f_kicker, foreground=c["accent"], spacing1=self.px(6))
+        t.tag_configure("change", font=self.f_small, lmargin1=self.px(8), lmargin2=self.px(20))
         t.tag_configure("why", font=self.f_base, lmargin1=indent, lmargin2=indent, spacing1=self.px(2))
         t.tag_configure("sources", font=self.f_small, foreground=c["muted"], lmargin1=indent, lmargin2=indent,
                         spacing1=self.px(8))
@@ -600,8 +603,11 @@ class DailyWindow:
         assert edition is not None
         stories = filter_stories(edition.stories, self.cat_var.get(), self.search_var.get())
         filtered = bool(self.search_var.get().strip()) or self.cat_var.get() not in ("", "All")
+        self._generated_at = edition.generation_completed_utc
         if edition.overview and not filtered:
             t.insert("end", edition.overview + "\n", ("overview",))
+        if not filtered and not edition.demo:
+            self._render_changes(edition)
         if not filtered and stories and all(s.velocity_basis == "cold_start" for s in edition.stories):
             t.insert("end", "Baseline edition: trend labels (new, rising, continuing) appear once there is an earlier "
                             "edition to compare with.\n", ("baseline",))
@@ -619,6 +625,24 @@ class DailyWindow:
         for i, s in enumerate(stories):
             self._render_story(s, now, first=(i == 0 and filtered))
         t.insert("end", "\n", ("sep",))
+
+    def _render_changes(self, edition) -> None:
+        """'What changed since last refresh' from the comparison stored in the edition."""
+        t = self.text
+        t.insert("end", "WHAT CHANGED SINCE LAST REFRESH\n", ("kicker_plain",))
+        ch = edition.changes
+        if ch is None:
+            t.insert("end", "First edition: there is no earlier edition to compare with.\n", ("baseline",))
+            return
+        when = format_central(ch.compared_generated_utc)
+        unchanged = f"; {ch.unchanged} unchanged" if ch.unchanged else ""
+        t.insert("end", f"{ch.summary()}{unchanged} (compared with the edition generated {when}).\n", ("baseline",))
+        names = {"new": "New", "updated": "Updated", "signals_up": "Growing", "signals_down": "Fading"}
+        for c in [*ch.new, *ch.updated, *ch.signals_up, *ch.signals_down]:
+            detail = f" \u2014 {c.detail}" if c.detail and c.kind != "new" else ""
+            t.insert("end", f"\u2022 {names[c.kind]}: {c.headline}{detail}\n", ("change",))
+        if ch.gone:
+            t.insert("end", "\u2022 No longer listed: " + "; ".join(c.headline for c in ch.gone) + "\n", ("change",))
 
     def _link_tag(self, target: str, small: bool = False) -> tuple[str, str]:
         name = f"link{len(self._links)}"
@@ -655,7 +679,9 @@ class DailyWindow:
         for label in s.labels:
             self._chip(label)
         n_sources = len({(e.publisher or e.source_name) for e in s.evidence})
-        t.insert("end", f"{story_age(s, now)}   ·   {n_sources} source{'s' if n_sources != 1 else ''}\n", ("meta",))
+        strength = strength_of(s, self._generated_at)
+        t.insert("end", f"{story_age(s, now)}   ·   {n_sources} source{'s' if n_sources != 1 else ''}"
+                        f"   ·   {strength.label}\n", ("meta",))
         t.insert("end", " ".join(s.sentences) + "\n", ("body",))
         if s.why_it_matters:
             t.insert("end", "WHY IT MATTERS\n", ("kicker",))
@@ -677,6 +703,7 @@ class DailyWindow:
                  ("sources",) + self._link_tag(f"toggle:{s.story_id}", small=True))
         t.insert("end", "\n", ("sources",))
         if expanded:
+            t.insert("end", f"{strength.label}: {'; '.join(strength.reasons)}.\n", ("excerpt",))
             self._render_evidence(s)
 
     def _render_evidence(self, s: Story) -> None:

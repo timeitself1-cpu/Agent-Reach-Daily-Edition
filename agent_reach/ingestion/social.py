@@ -14,6 +14,7 @@ from bs4 import BeautifulSoup
 from agent_reach.ingestion.base import (
     BaseIngester,
     IngestionError,
+    epoch_to_utc,
     parse_count,
     parse_optional_datetime,
     xml_child_text,
@@ -207,9 +208,7 @@ class RedditIngester(BaseIngester):
                 raw_score=float(d.get("score") or 0),
                 comment_count=int(d.get("num_comments") or 0),
                 url=f"https://www.reddit.com{d.get('permalink', '')}",
-                published_at=datetime.fromtimestamp(float(d.get("created_utc") or 0), tz=timezone.utc)
-                if d.get("created_utc")
-                else None,
+                published_at=epoch_to_utc(d.get("created_utc")),
                 category_hint=SUBREDDIT_CATEGORY.get(subreddit.lower(), hint),
                 description=(d.get("selftext") or "")[:500] or None,
                 metadata={

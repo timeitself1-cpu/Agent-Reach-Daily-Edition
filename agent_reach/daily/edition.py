@@ -28,7 +28,9 @@ from pydantic import BaseModel, ConfigDict, Field, model_validator
 
 from agent_reach.daily.prefs import GENERAL_NEWS_SOURCES, TECH_SOURCES, DailyPrefs
 from agent_reach.daily.timeutil import CENTRAL_TZ_NAME, central_date, parse_utc
-from agent_reach.models import CategoryEnum, CleanedTrendItem, MacroCluster, PipelineReport, RawTrendItem
+from agent_reach.daily.changes import EditionChanges
+from agent_reach.daily.strength import EvidenceStrength, assess
+from agent_reach.models import PUBLISHED_FUTURE_TOLERANCE, CategoryEnum, CleanedTrendItem, MacroCluster, PipelineReport, RawTrendItem
 
 EDITION_SCHEMA = "agent_reach.daily_edition"
 EDITION_SCHEMA_VERSION = 1
@@ -72,6 +74,19 @@ class EvidenceLink(BaseModel):
     retrieved_at_utc: datetime | None = None
     feed: str | None = None  # publisher feed URL for news_rss items
 
+    @model_validator(mode="after")
+    def _normalise_times(self) -> "EvidenceLink":
+        """UTC everywhere; a publication time after the retrieval time is not trustworthy."""
+        for name in ("published_at_utc", "retrieved_at_utc"):
+            value = getattr(self, name)
+            if value is not None:
+                value = value if value.tzinfo else value.replace(tzinfo=timezone.utc)
+                object.__setattr__(self, name, value.astimezone(timezone.utc))
+        if (self.published_at_utc is not None and self.retrieved_at_utc is not None
+                and self.published_at_utc > self.retrieved_at_utc + PUBLISHED_FUTURE_TOLERANCE):
+            object.__setattr__(self, "published_at_utc", None)
+        return self
+
 
 class Story(BaseModel):
     rank: int = Field(ge=1)
@@ -94,6 +109,7 @@ class Story(BaseModel):
     member_item_ids: list[int] = Field(min_length=1)
     evidence: list[EvidenceLink] = Field(min_length=1)
     tech_only: bool = False
+    evidence_strength: EvidenceStrength | None = None  # deterministic; None in editions written before it existed
 
 
 class FeedHealth(BaseModel):
@@ -177,6 +193,7 @@ class DailyEdition(BaseModel):
     overview: str
     notes: list[str] = Field(default_factory=list)
     stories: list[Story]
+    changes: EditionChanges | None = None  # vs. the previously persisted edition; None for the first edition
 
     @model_validator(mode="after")
     def _consistency(self) -> "DailyEdition":
@@ -193,6 +210,16 @@ class DailyEdition(BaseModel):
             raise ValueError("story ranks must be 1..n")
         if not self.accounting.balanced:
             raise ValueError("an edition requires a balanced item ledger")
+        # Ordering against generation time: evidence cannot be published (or retrieved) after the
+        # edition was generated. Such times are dropped rather than rejecting the whole edition, so a
+        # cached edition written before this check still loads, without the impossible date.
+        latest = self.generation_completed_utc.astimezone(timezone.utc) + PUBLISHED_FUTURE_TOLERANCE
+        for story in self.stories:
+            for e in story.evidence:
+                if e.published_at_utc is not None and e.published_at_utc > latest:
+                    object.__setattr__(e, "published_at_utc", None)
+                if e.retrieved_at_utc is not None and e.retrieved_at_utc > latest:
+                    object.__setattr__(e, "retrieved_at_utc", None)
         return self
 
 
@@ -248,7 +275,8 @@ def _clip(text: str | None, limit: int) -> str | None:
     return text[:limit].rsplit(" ", 1)[0].rstrip(" ,;:-") + "..."
 
 
-def evidence_links(cluster: MacroCluster, items: dict[int, CleanedTrendItem]) -> list[EvidenceLink]:
+def evidence_links(cluster: MacroCluster, items: dict[int, CleanedTrendItem],
+                   limit: int | None = MAX_EVIDENCE_PER_STORY) -> list[EvidenceLink]:
     members = [items[i] for i in cluster.member_item_ids if i in items]
     members.sort(key=lambda m: m.heuristic_score, reverse=True)
     links: list[EvidenceLink] = []
@@ -276,7 +304,7 @@ def evidence_links(cluster: MacroCluster, items: dict[int, CleanedTrendItem]) ->
                 feed=str(md["feed"]) if md.get("feed") else None,
             ))
     links.sort(key=lambda link: link.url is None)  # linked evidence first, order otherwise preserved
-    return links[:MAX_EVIDENCE_PER_STORY]
+    return links[:limit] if limit else links
 
 
 def newest_published(story: Story) -> datetime | None:
@@ -380,10 +408,12 @@ def select_stories(stories: list[Story], prefs: DailyPrefs, *, now: datetime) ->
     return sel
 
 
-def build_story(rank: int, cluster: MacroCluster, items: dict[int, CleanedTrendItem]) -> Story | None:
+def build_story(rank: int, cluster: MacroCluster, items: dict[int, CleanedTrendItem],
+                reference: datetime | None = None) -> Story | None:
     """None when the cluster has no factual sentence or no evidence to cite."""
     sentences = body_sentences(cluster.summary)
-    evidence = evidence_links(cluster, items)
+    all_evidence = evidence_links(cluster, items, limit=None)
+    evidence = all_evidence[:MAX_EVIDENCE_PER_STORY]
     if not sentences:
         lead = next((e.excerpt for e in evidence if e.excerpt), None)
         if lead:
@@ -411,6 +441,7 @@ def build_story(rank: int, cluster: MacroCluster, items: dict[int, CleanedTrendI
         raw_item_count=cluster.raw_item_count,
         member_item_ids=list(cluster.member_item_ids),
         evidence=evidence,
+        evidence_strength=assess(all_evidence, reference or datetime.now(timezone.utc)),
         tech_only=tech_only(cluster),
     )
 

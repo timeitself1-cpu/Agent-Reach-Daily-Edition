@@ -107,6 +107,37 @@ address, category, on/off. Each feed is one channel inside the `news_rss` source
 5. The edition is published only with >= `min_ok_sources` (2) responding sources and
    >= `min_useful_stories` (3) stories; otherwise the previous edition stays.
 
+### Publication-time validation
+
+`ingestion/base.py` parses RFC-822 and ISO-8601 times and normalises every offset or zone name to
+UTC. Unparseable values, date-only values (no time of day) and RFC-822 year rewrites (`0001` read
+as `2001`) become "unknown", never "now". A stated time later than retrieval by more than 15 minutes
+("in the future") or earlier than 1995 is discarded and noted in `metadata["published_at_note"]`;
+up to 15 minutes ahead is clock skew and is clamped to the retrieval time. Bad Unix epochs (Hacker
+News, Reddit) are unknown instead of failing the source. When an edition loads, any evidence time
+after the edition's generation time is dropped, so a cached edition with an impossible date still
+opens and shows "publication time not stated".
+
+### Evidence strength (`daily/strength.py`)
+
+Rule-based, per story, from the full evidence list and the edition's generation time; no model
+and no percentages. Independent reports = distinct origin publishers (Google News items count as
+their publisher; repeats from one publisher and syndicated copies of the same headline count once).
+Trend/social items (Google Trends, X, Reddit, Wikipedia, TikTok) add channel diversity but never
+corroboration. Points: corroboration (2 reports 2, 3 reports 3, 4+ 4), +1 for two or more channels,
++1 for a stated report within 24 h. Fewer than 2 independent reports is always **limited**;
+otherwise 5+ points is **strong**, else **moderate**. Every level comes with its reasons.
+
+### What changed since last refresh (`daily/changes.py`)
+
+Before publishing, the new edition is compared with the last persisted edition (a same-day
+revision compares with the revision it replaces) and the result is stored in the edition
+(`changes`). Stories are matched by story_id, then a shared article URL, then the entity set, then
+near-identical headline words. Reported: new; materially updated (new independent publishers, a
+substantially rewritten summary or headline, a category change, a new "why it matters"); signals
+up/down (raw signals changed by >= 50% and >= 2, or independent reports by >= 2); and stories no
+longer listed. The first edition has nothing to compare with.
+
 ### Grounding gate for model text
 
 The brief pass sends the model only the story's headline, summary and evidence lines. A returned

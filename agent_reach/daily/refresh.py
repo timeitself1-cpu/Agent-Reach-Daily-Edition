@@ -265,7 +265,7 @@ async def _attempt(paths: DataPaths, prefs: DailyPrefs, store: EditionStore, *, 
         evidence = db.load_evidence(report.run_id)
     finally:
         db.close()
-    built = [build_story(1, c, evidence) for c in report.macro_clusters]
+    built = [build_story(1, c, evidence, reference=started) for c in report.macro_clusters]
     supported = [s for s in built if s is not None]
     selection = select_stories(supported, prefs, now=started)
     selection.dropped_unsupported = len(built) - len(supported)
@@ -294,6 +294,11 @@ async def _attempt(paths: DataPaths, prefs: DailyPrefs, store: EditionStore, *, 
                        report=report, extra={"stories": len(edition.stories), "coverage": edition.coverage.model_dump()})
 
     progress("publish", "Publishing the edition")
+    previous = store.load_latest().edition
+    if previous is not None:
+        from agent_reach.daily.changes import compare_editions
+
+        edition.changes = compare_editions(previous, edition)
     final = store.publish(edition)
     store.purge(prefs.retention_days, central_date(completed))
     msg = f"Published {len(final.stories)} stories for {final.edition_date.isoformat()}"

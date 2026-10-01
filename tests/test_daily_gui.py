@@ -155,3 +155,20 @@ def _walk(widget):
     for child in widget.winfo_children():
         yield child
         yield from _walk(child)
+
+
+def test_window_shows_evidence_strength_and_changes(root, daily_env):
+    from agent_reach.daily.refresh import refresh
+    from tests.daily_fakes import OllamaUp
+
+    refresh(daily_env.paths, trigger="manual", force=True, ollama_probe=lambda p: OllamaUp())
+    w, _ = _window(root, daily_env.paths)
+    body = _text(w)
+    assert "WHAT CHANGED SINCE LAST REFRESH" in body and "First edition" in body
+    assert "Strong evidence" in body or "Moderate evidence" in body
+    daily_env.net.down.add("sports")
+    refresh(daily_env.paths, trigger="manual", force=True, ollama_probe=lambda p: OllamaUp())
+    w.refresh_view(force=True)
+    root.update()
+    body = _text(w)
+    assert "No longer listed: " in body and "Riverton Hawks" in body.split("No longer listed: ")[1]

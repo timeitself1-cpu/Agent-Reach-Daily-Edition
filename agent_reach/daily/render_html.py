@@ -10,6 +10,7 @@ from __future__ import annotations
 from html import escape
 
 from agent_reach.daily.edition import DailyEdition, Story, safe_url
+from agent_reach.daily.strength import strength_of
 from agent_reach.daily.timeutil import edition_heading, format_central, updated_line
 
 CSS = """
@@ -31,7 +32,17 @@ article h2 { font-size:1.2rem; margin:0 0 6px; }
 .chip { display:inline-block; border:1px solid var(--line); border-radius:999px; padding:0 8px; margin-right:6px; font-size:.8rem; }
 .label { font-weight:600; }
 .why { margin-top:6px; }
-ul.evidence { margin:10px 0 0; padding-left:18px; font-size:.9rem; }
+details.evidence { margin:10px 0 0; border-top:1px solid var(--line); padding-top:8px; }
+details.evidence > summary { cursor:pointer; color:var(--muted); font-size:.9rem; padding:2px 0; }
+details.evidence > summary:hover { color:var(--ink); }
+summary:focus-visible { outline:2px solid var(--accent); outline-offset:2px; border-radius:4px; }
+.strength { font-size:.85rem; color:var(--muted); margin:6px 0 0; }
+.changes { background:var(--card); border:1px solid var(--line); border-radius:10px; padding:12px 18px; margin:14px 0; }
+.changes h2 { font-size:1.05rem; margin:0 0 4px; }
+.changes ul { margin:6px 0 0; padding-left:18px; font-size:.92rem; }
+.changes .kind { font-weight:600; }
+@media print { details.evidence > summary { display:none; } }
+ul.evidence { margin:6px 0 0; padding-left:18px; font-size:.9rem; }
 ul.evidence li { margin:4px 0; }
 a { color:var(--accent); }
 .excerpt { color:var(--muted); display:block; }
@@ -52,28 +63,58 @@ def _link(url: str | None, text: str) -> str:
     return f'<a href="{_e(safe)}" rel="noopener noreferrer nofollow" target="_blank">{_e(text)}</a>'
 
 
-def _story(s: Story) -> str:
+def _story(s: Story, edition: DailyEdition) -> str:
     chips = [f'<span class="chip">{_e(s.category.value)}</span>']
     chips += [f'<span class="chip label">{_e(label)}</span>' for label in s.labels]
     body = " ".join(_e(x) for x in s.sentences)
     why = f'<p class="why"><strong>Why it matters:</strong> {_e(s.why_it_matters)}</p>' if s.why_it_matters else ""
     items = []
     for ev in s.evidence:
-        when = ""
         if ev.published_at_utc:
             when = f" &middot; published {_e(format_central(ev.published_at_utc))}"
-        elif ev.retrieved_at_utc:
-            when = f" &middot; publication time not stated; retrieved {_e(format_central(ev.retrieved_at_utc))}"
+        else:
+            when = " &middot; publication time not stated"
+            if ev.retrieved_at_utc:
+                when += f"; retrieved {_e(format_central(ev.retrieved_at_utc))}"
         pub = f" ({_e(ev.publisher)})" if ev.publisher else ""
         excerpt = f'<span class="excerpt">{_e(ev.excerpt)}</span>' if ev.excerpt else ""
         items.append(f"<li>{_e(ev.source_name)}: {_link(ev.url, ev.title)}{pub}{when}{excerpt}</li>")
     platforms = ", ".join(s.platforms)
+    strength = strength_of(s, edition.generation_completed_utc)
     return (
         f'<article id="story-{s.rank}"><h2>{s.rank}. {_e(s.headline)}</h2>'
-        f'<div class="meta">{"".join(chips)} {_e(s.raw_item_count)} signal(s) from {_e(platforms)}</div>'
+        f'<div class="meta">{"".join(chips)} {_e(strength.label)} &middot; {_e(s.raw_item_count)} signal(s) from '
+        f'{_e(platforms)}</div>'
         f"<p>{body}</p>{why}"
-        f'<ul class="evidence">{"".join(items)}</ul></article>'
+        f'<details class="evidence"><summary>Sources and evidence ({len(s.evidence)}) &middot; {_e(strength.label)}'
+        f'</summary><p class="strength">{_e(strength.label)}: {_e("; ".join(strength.reasons))}.</p>'
+        f'<ul class="evidence">{"".join(items)}</ul></details></article>'
     )
+
+
+_KIND_TEXT = {"new": "New", "updated": "Updated", "signals_up": "Growing", "signals_down": "Fading"}
+
+
+def _changes(edition: DailyEdition) -> str:
+    """'What changed since last refresh' (none for demo editions)."""
+    if edition.demo:
+        return ""
+    head = '<section class="changes" aria-labelledby="changes-h"><h2 id="changes-h">What changed since last refresh</h2>'
+    ch = edition.changes
+    if ch is None:
+        return head + "<p>This is the first edition: there is no earlier edition to compare with.</p></section>"
+    items = [f'<li><span class="kind">{_KIND_TEXT[c.kind]}:</span> {_e(c.headline)}'
+             + (f" &mdash; {_e(c.detail)}" if c.detail and c.kind != "new" else "") + "</li>"
+             for group in (ch.new, ch.updated, ch.signals_up, ch.signals_down) for c in group]
+    gone = ""
+    if ch.gone:
+        gone = (f'<details class="evidence"><summary>No longer listed ({len(ch.gone)})</summary><ul>'
+                + "".join(f"<li>{_e(c.headline)}</li>" for c in ch.gone) + "</ul></details>")
+    compared = (f"Compared with the edition of {_e(ch.compared_edition_date)}"
+                + (f" (revision {ch.compared_revision})" if ch.compared_revision > 1 else "")
+                + f", generated {_e(format_central(ch.compared_generated_utc))}.")
+    body = f"<p>{_e(ch.summary())}{'; ' + str(ch.unchanged) + ' unchanged' if ch.unchanged else ''}. {compared}</p>"
+    return head + body + (f"<ul>{''.join(items)}</ul>" if items else "") + gone + "</section>"
 
 
 def render_edition_html(edition: DailyEdition) -> str:
@@ -91,7 +132,7 @@ def render_edition_html(edition: DailyEdition) -> str:
         for h in edition.source_health
     )
     revision = f" &middot; revision {edition.revision}" if edition.revision > 1 else ""
-    stories = "".join(_story(s) for s in edition.stories) or "<p>No stories in this edition.</p>"
+    stories = "".join(_story(s, edition) for s in edition.stories) or "<p>No stories in this edition.</p>"
     return f"""<!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; img-src 'none'">
@@ -101,6 +142,7 @@ def render_edition_html(edition: DailyEdition) -> str:
 <p class="sub">{_e(updated_line(edition.generation_completed_utc))}{revision}</p>
 {"".join(banners)}
 <p class="overview">{_e(edition.overview)}</p>
+{_changes(edition)}
 {stories}
 <h3>Source health</h3>
 <table><tr><th>Source</th><th>Status</th><th>Items</th><th>Notes</th></tr>{rows}</table>
