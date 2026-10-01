@@ -10,14 +10,16 @@ window keeps going if the window is closed. The worker's progress is read from
 from __future__ import annotations
 
 import logging
+import re
 import subprocess
 import sys
 from collections.abc import Callable
 from dataclasses import dataclass, field
 from datetime import date, datetime
 
-from agent_reach.daily.edition import DailyEdition, Story
-from agent_reach.daily.fsutil import read_json
+from agent_reach.daily import VERSION_LABEL
+from agent_reach.daily.edition import DailyEdition, Story, newest_published, safe_url
+from agent_reach.daily.fsutil import atomic_write_json, read_json
 from agent_reach.daily.lock import pid_alive, read_holder_info
 from agent_reach.daily.paths import PROJECT_ROOT, DataPaths
 from agent_reach.daily.prefs import DailyPrefs, load_prefs
@@ -25,7 +27,7 @@ from agent_reach.daily.state import DueInfo, RefreshState, check_due, load_state
 from agent_reach.daily.store import EditionStore
 from agent_reach.daily.timeutil import (
     central_date,
-    edition_heading,
+    format_brief,
     format_central,
     format_clock,
     format_long_date,
@@ -68,11 +70,15 @@ class Snapshot:
     activity: RefreshActivity
     first_run: bool
     heading: str
+    date_line: str
     updated: str
     status: str
+    status_kind: str  # current | stale | refreshing | failed | empty | demo | archive
     last_success: str
     next_refresh: str
-    banners: list[Banner] = field(default_factory=list)
+    banners: list[Banner] = field(default_factory=list)  # main screen: demo, failure, stale, damage
+    details: list[str] = field(default_factory=list)  # secondary: coverage warnings and edition notes
+    coverage_line: str = ""
     corrupt: list[str] = field(default_factory=list)
 
 
@@ -156,88 +162,88 @@ class AppController:
                 self.selected_date = None
 
         first_run = latest is None and state.last_attempt_outcome is None and not activity.running
-        banners: list[Banner] = []
-        for w in (prefs_warn, state_warn):
-            if w:
-                banners.append(Banner("warn", w))
-        if latest_res.corrupt:
-            banners.append(Banner("warn", f"{len(latest_res.corrupt)} cached file(s) are damaged and were skipped; "
-                                          "they will be set aside at the next refresh."))
-        if shown is not None and shown.demo:
-            banners.append(Banner("demo", "DEMO EDITION - sample content to preview the layout. These are NOT real "
-                                          "news stories. Use Refresh now to collect a real edition."))
-        elif shown is not None and not viewing_latest:
-            banners.append(Banner("info", f"You are reading the archived edition for "
-                                          f"{format_long_date(shown.edition_date)}. Choose the newest date to return."))
-
         today = central_date(now)
         failed_since_success = (
             state.last_attempt_outcome in ("failed", "no_update", "interrupted")
             and (state.last_success_utc is None or (state.last_attempt_started_utc or now) > state.last_success_utc)
         )
-        if latest is not None and viewing_latest and shown is not None and not shown.demo:
-            if latest.edition_date < today:
-                banners.append(Banner("warn", f"This is the edition for {format_long_date(latest.edition_date)}. "
-                                              "Today's edition has not been collected yet."))
-        if failed_since_success and not activity.running:
-            kind = "error" if state.last_attempt_outcome == "failed" else "warn"
-            when = format_central(state.last_attempt_finished_utc) if state.last_attempt_finished_utc else "recently"
-            keep = " The last good edition is still shown." if latest is not None else ""
-            banners.append(Banner(kind, f"The refresh at {when} did not produce a new edition. "
-                                        f"{state.last_attempt_message}{keep}"))
-        if shown is not None:
-            for w in shown.coverage.warnings:
-                banners.append(Banner("warn", w))
-            for n in shown.notes:
-                banners.append(Banner("info", n))
 
-        heading = edition_heading(shown.edition_date) if shown else "Agent Reach Daily"
+        banners: list[Banner] = []
         if shown is not None and shown.demo:
-            heading = "DEMO - " + heading
+            banners.append(Banner("demo", "DEMO EDITION - synthetic sample stories to preview the layout. These are NOT "
+                                          "real news. Choose Refresh to collect a real edition."))
+        if failed_since_success and not activity.running:
+            banners.append(Banner("error" if state.last_attempt_outcome == "failed" else "warn",
+                                  failure_text(state, has_edition=latest is not None)))
+        if (latest is not None and viewing_latest and shown is not None and not shown.demo
+                and latest.edition_date < today and not activity.running):
+            banners.append(Banner("warn", f"This is the edition for {format_long_date(latest.edition_date)}. "
+                                          "Today's edition has not been collected yet."))
+        elif shown is not None and not viewing_latest and not shown.demo:
+            banners.append(Banner("info", f"You are reading the archived edition for "
+                                          f"{format_long_date(shown.edition_date)}. Choose the newest date to return."))
+        for w in (prefs_warn, state_warn):
+            if w:
+                banners.append(Banner("warn", w))
+        if latest_res.corrupt:
+            banners.append(Banner("warn", f"{len(latest_res.corrupt)} saved edition file(s) are damaged and were "
+                                          "skipped; they will be set aside at the next refresh."))
+
+        details: list[str] = []
+        coverage_line = ""
+        if shown is not None:
+            details = list(shown.coverage.warnings) + list(shown.notes)
+            coverage_line = coverage_summary(shown)
+
+        heading, date_line = headings(shown, today)
         updated = updated_line(shown.generation_completed_utc) if shown else "No edition collected yet"
         if shown is not None and shown.revision > 1:
             updated += f" (revision {shown.revision})"
 
-        last_success = (f"Last successful refresh: {format_central(state.last_success_utc)}"
-                        if state.last_success_utc else "Last successful refresh: never")
+        last_success = (f"Last successful refresh {format_brief(state.last_success_utc, now)}"
+                        if state.last_success_utc else "No successful refresh yet")
         next_refresh = self._next_refresh_text(due, now, prefs)
         status = self._status_text(state, activity, latest, today, failed_since_success)
+        if not activity.running and shown is not None and shown.demo:
+            status = "Showing the DEMO edition (sample content, not real news)"
+        elif not activity.running and shown is not None and not viewing_latest:
+            status = f"Viewing the archived edition for {format_long_date(shown.edition_date)}"
+        kind = status_kind(shown=shown, viewing_latest=viewing_latest, latest=latest, today=today,
+                           running=activity.running, failed=failed_since_success)
         return Snapshot(prefs=prefs, state=state, due=due, latest=latest, shown=shown, viewing_latest=viewing_latest,
-                        activity=activity, first_run=first_run, heading=heading, updated=updated, status=status,
-                        last_success=last_success, next_refresh=next_refresh, banners=banners,
-                        corrupt=latest_res.corrupt)
+                        activity=activity, first_run=first_run, heading=heading, date_line=date_line, updated=updated,
+                        status=status, status_kind=kind, last_success=last_success, next_refresh=next_refresh,
+                        banners=banners, details=details, coverage_line=coverage_line, corrupt=latest_res.corrupt)
 
     @staticmethod
     def _next_refresh_text(due: DueInfo, now: datetime, prefs: DailyPrefs) -> str:
         if due.reason == "never_refreshed":
-            return "Next refresh: as soon as you start one"
+            return "Next refresh: when you choose Refresh"
         if due.reason == "backoff" and due.next_retry_utc:
-            return (f"Next retry after a failed attempt: {format_central(due.next_retry_utc)} "
-                    f"({humanize_delta(due.next_retry_utc - now)})")
+            return f"Next retry {format_brief(due.next_retry_utc, now)} ({humanize_delta(due.next_retry_utc - now)})"
         if due.due:
-            return "Next refresh: due now (runs when the scheduled task or this window next checks)"
+            return "Next refresh: due now"
         target = due.next_attempt_utc
-        mode = "daily at " + prefs.fixed_time_central + " Central" if prefs.schedule_mode == "fixed_central" \
-            else f"every {prefs.refresh_interval_hours:g} hours"
-        return f"Next refresh due: {format_central(target)} ({humanize_delta(target - now)}; {mode})" if target else ""
+        return f"Next refresh {format_brief(target, now)} ({humanize_delta(target - now)})" if target else ""
 
     @staticmethod
     def _status_text(state: RefreshState, activity: RefreshActivity, latest: DailyEdition | None, today: date,
                      failed_since_success: bool) -> str:
         if activity.running:
-            who = {"scheduled": "scheduled", "gui_launch": "automatic", "manual": "manual"}.get(activity.trigger, "")
-            since = f" since {format_clock(activity.started)}" if activity.started else ""
-            return f"Refreshing ({who} refresh{since}): {activity.message}".replace("( ", "(")
+            who = {"scheduled": "Scheduled refresh", "gui_launch": "Automatic refresh",
+                   "manual": "Refreshing"}.get(activity.trigger, "Refreshing")
+            since = f" (started {format_clock(activity.started)})" if activity.started else ""
+            return f"{who}{since}: {activity.message}"
         if failed_since_success:
-            label = {"failed": "Last attempt failed", "no_update": "Last attempt found nothing to publish",
-                     "interrupted": "Last attempt was interrupted"}[state.last_attempt_outcome or "failed"]
+            label = {"failed": "Last refresh failed", "no_update": "Last refresh found too little news to publish",
+                     "interrupted": "Last refresh was interrupted"}[state.last_attempt_outcome or "failed"]
             return f"{label}; showing the last good edition" if latest else label
-        if state.last_attempt_outcome == "cancelled":
-            return "Last refresh was cancelled"
+        if state.last_attempt_outcome == "cancelled" and latest is None:
+            return "Refresh was cancelled"
         if latest is None:
             return "No edition yet"
         if latest.edition_date < today:
-            return "Showing an earlier edition"
+            return "Out of date: showing an earlier edition"
         return "Up to date"
 
     # ------------------------------------------------------------ actions
@@ -267,6 +273,7 @@ class AppController:
         return self.start_refresh(manual=False)
 
     def cancel_refresh(self) -> bool:
+        """Stop the running worker (blocks for up to ~15 s: call it from a background thread)."""
         act = self.activity()
         if not act.running or not act.pid:
             return False
@@ -318,3 +325,155 @@ def filter_stories(stories: list[Story], category: str | None, query: str) -> li
                 continue
         out.append(s)
     return out
+
+
+# ====================================================================== presentation helpers (no Tk)
+def headings(shown: DailyEdition | None, today: date) -> tuple[str, str]:
+    """(title, date line) for the header: 'Today's Reach' only for today's real edition."""
+    if shown is None:
+        return "Today's Reach", "No edition collected yet"
+    d = shown.edition_date
+    date_line = f"{d:%A}, {format_long_date(d)}"
+    if shown.demo:
+        return "DEMO Edition", date_line + "  -  sample content, not real news"
+    if d == today:
+        return "Today's Reach", date_line
+    return "Daily Edition", date_line
+
+
+def status_kind(*, shown: DailyEdition | None, viewing_latest: bool, latest: DailyEdition | None, today: date,
+                running: bool, failed: bool) -> str:
+    if running:
+        return "refreshing"
+    if shown is not None and shown.demo:
+        return "demo"
+    if shown is not None and not viewing_latest:
+        return "archive"
+    if failed:
+        return "failed"
+    if latest is None:
+        return "empty"
+    return "stale" if latest.edition_date < today else "current"
+
+
+def failure_text(state: RefreshState, *, has_edition: bool) -> str:
+    """One plain sentence about the last unsuccessful refresh (no duplicated 'No new edition')."""
+    when = format_central(state.last_attempt_finished_utc) if state.last_attempt_finished_utc else "recently"
+    reason = (state.last_attempt_message or "").strip()
+    for prefix in ("No new edition:", "No new edition -"):
+        if reason.startswith(prefix):
+            reason = reason[len(prefix):].strip()
+    reason = reason.replace(" The previous edition is kept.", "")
+    head = {"no_update": "The refresh at {when} found too little news to publish.",
+            "interrupted": "The refresh at {when} stopped before finishing."}.get(
+        state.last_attempt_outcome or "", "The refresh at {when} did not finish.").format(when=when)
+    keep = " Your last good edition is still shown." if has_edition else ""
+    return f"{head} {reason}{keep}".replace("  ", " ").strip()
+
+
+def coverage_summary(edition: DailyEdition) -> str:
+    """Compact source-health line, e.g. 'Sources: 5 OK, 1 partial, 1 unavailable'."""
+    counts = {"ok": 0, "partial": 0, "empty": 0, "failed": 0}
+    for h in edition.source_health:
+        counts[h.status] = counts.get(h.status, 0) + 1
+    parts = [f"{counts['ok']} OK"]
+    if counts["partial"] or counts["empty"]:
+        parts.append(f"{counts['partial'] + counts['empty']} partial")
+    if counts["failed"]:
+        parts.append(f"{counts['failed']} unavailable")
+    return "Sources: " + ", ".join(parts)
+
+
+def story_age(story: Story, now: datetime) -> str:
+    """'3h ago' from the newest STATED publication time; never invents an age."""
+    newest = newest_published(story)
+    if newest is None:
+        return "publication time not stated"
+    seconds = (now - newest).total_seconds()
+    if seconds < 0:
+        return "just published"
+    if seconds < 3600:
+        return f"{max(1, int(seconds // 60))}m ago"
+    if seconds < 48 * 3600:
+        return f"{int(seconds // 3600)}h ago"
+    return f"{int(seconds // 86400)} days ago"
+
+
+def story_publishers(story: Story, limit: int = 4) -> tuple[list[tuple[str, str | None]], int]:
+    """Distinct (publisher name, safe url) pairs for the compact source line, plus how many more."""
+    seen: dict[str, str | None] = {}
+    for e in story.evidence:
+        name = e.publisher or e.source_name
+        if name and name.lower() not in {k.lower() for k in seen}:
+            seen[name] = safe_url(e.url)
+    items = list(seen.items())
+    return items[:limit], max(0, len(items) - limit)
+
+
+def details_report(snap: Snapshot, paths: DataPaths) -> list[tuple[str, list[tuple[str, str]]]]:
+    """Secondary information for the Details window: [(section, [(label, value)])]."""
+    st = snap.state
+    t = lambda dt: format_central(dt) if dt else "-"  # noqa: E731
+    sections: list[tuple[str, list[tuple[str, str]]]] = []
+    ed = snap.shown
+    if ed is not None:
+        acct = ed.accounting
+        sections.append(("Edition", [
+            ("Edition date", f"{format_long_date(ed.edition_date)} (America/Chicago)" + (" - DEMO" if ed.demo else "")),
+            ("Revision", str(ed.revision)),
+            ("Refresh started", t(ed.generation_started_utc)),
+            ("Edition generated", t(ed.generation_completed_utc)),
+            ("Stories", str(len(ed.stories))),
+            ("Summaries", "local model" if ed.model.summaries == "local_model" else "extractive (lead sentences)"),
+            ("Models", f"{ed.model.llm_model} / {ed.model.embed_model}"),
+            ("Pipeline", ed.model.pipeline_mode),
+            ("Items", f"{acct.ingested} collected, {acct.passed_filters} passed filters, {acct.clustered} in stories"),
+            ("Coverage balanced", "yes" if ed.coverage.balanced else "no"),
+            ("Run ID", ed.run_id),
+            ("Config fingerprint", ed.config_fingerprint),
+        ]))
+        if snap.details:
+            sections.append(("Notes", [("", d) for d in snap.details]))
+    sections.append(("Refresh history", [
+        ("Last attempt started", t(st.last_attempt_started_utc)),
+        ("Last attempt finished", t(st.last_attempt_finished_utc)),
+        ("Last attempt result", (st.last_attempt_outcome or "-") + (f" ({st.last_attempt_trigger})" if st.last_attempt_trigger else "")),
+        ("Last attempt message", st.last_attempt_message or "-"),
+        ("Last successful refresh", t(st.last_success_utc)),
+        ("Failures in a row", str(st.consecutive_failures)),
+        ("Next automatic retry", t(st.next_retry_utc) if st.consecutive_failures else "-"),
+        ("Schedule", snap.next_refresh or "-"),
+    ]))
+    sections.append(("Local data", [
+        ("Data folder", str(paths.root)),
+        ("Editions", str(paths.editions_dir)),
+        ("Settings", str(paths.settings)),
+        ("Logs", str(paths.logs_dir)),
+        ("Exports", str(paths.exports_dir)),
+        ("History database", str(paths.db)),
+        ("App version", VERSION_LABEL),
+    ]))
+    return sections
+
+
+# ====================================================================== window state
+def load_window_geometry(paths: DataPaths) -> str | None:
+    try:
+        data = read_json(paths.state_dir / "window.json")
+    except (OSError, ValueError):
+        return None
+    geo = data.get("geometry") if isinstance(data, dict) else None
+    return geo if isinstance(geo, str) and _GEOMETRY_RX.match(geo) else None
+
+
+def save_window_geometry(paths: DataPaths, geometry: str) -> None:
+    if not _GEOMETRY_RX.match(geometry or ""):
+        return
+    try:
+        atomic_write_json(paths.state_dir / "window.json", {"geometry": geometry})
+    except OSError:
+        pass
+
+
+_GEOMETRY_RX = re.compile(r"^\d{3,5}x\d{3,5}[+-]-?\d{1,5}[+-]-?\d{1,5}$")
+

@@ -60,13 +60,24 @@ def quote_command(path: str | Path) -> str:
     return f'"{text}"'
 
 
+def quote_argument(value: str | Path) -> str:
+    """One Windows command-line argument in double quotes (paths with spaces).
+
+    Under the Windows argv rules a backslash run directly before the closing quote is halved,
+    so the trailing run (``C:\\data\\``) is doubled to survive intact.
+    """
+    text = str(value)
+    if '"' in text:
+        raise ValueError("path may not contain double quotes")
+    body = text.rstrip("\\")
+    tail = "\\" * (2 * (len(text) - len(body)))
+    return f'"{body}{tail}"'
+
+
 def task_arguments(data_dir: str | Path | None = None) -> str:
     args = "-m agent_reach.daily --refresh-if-due --trigger scheduled"
     if data_dir:
-        text = str(data_dir)
-        if '"' in text:
-            raise ValueError("data directory may not contain double quotes")
-        args += f' --data-dir "{text}"'
+        args += f" --data-dir {quote_argument(data_dir)}"
     return args
 
 
@@ -152,14 +163,18 @@ class TaskStatus:
 
 def _run(args: list[str]) -> subprocess.CompletedProcess:
     flags = CREATE_NO_WINDOW if sys.platform == "win32" else 0
-    return subprocess.run(args, capture_output=True, text=True, creationflags=flags, timeout=60)
+    return subprocess.run(args, capture_output=True, text=True, errors="replace", creationflags=flags, timeout=60)
 
 
 def install_task(python_exe: str | Path, project_dir: str | Path, *, data_dir: str | Path | None = None,
-                 runner=_run) -> tuple[bool, str]:
+                 runner=_run, dry_run: bool = False) -> tuple[bool, str]:
+    """Create or update the task (``schtasks /Create /XML ... /F``). ``dry_run`` only describes it."""
+    xml = build_task_xml(gui_python(python_exe), project_dir, data_dir=data_dir)
+    if dry_run:
+        return True, (f"DRY RUN: would run schtasks.exe /Create /TN {TASK_NAME} /XML <file> /F with this "
+                      f"task definition:\n{xml}")
     if sys.platform != "win32" and runner is _run:
         return False, "Task Scheduler is only available on Windows."
-    xml = build_task_xml(gui_python(python_exe), project_dir, data_dir=data_dir)
     fd, tmp = tempfile.mkstemp(prefix="agent-reach-task-", suffix=".xml")
     try:
         with os.fdopen(fd, "wb") as fh:
@@ -175,7 +190,9 @@ def install_task(python_exe: str | Path, project_dir: str | Path, *, data_dir: s
     return ok, message or ("Scheduled refresh installed." if ok else f"schtasks exited with {proc.returncode}")
 
 
-def uninstall_task(runner=_run) -> tuple[bool, str]:
+def uninstall_task(runner=_run, dry_run: bool = False) -> tuple[bool, str]:
+    if dry_run:
+        return True, f"DRY RUN: would run schtasks.exe /Delete /TN {TASK_NAME} /F (cached news and settings are kept)."
     if sys.platform != "win32" and runner is _run:
         return False, "Task Scheduler is only available on Windows."
     status = task_status(runner=runner)

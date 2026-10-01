@@ -5,7 +5,7 @@
     python -m agent_reach.daily --status              # JSON status, no network
     python -m agent_reach.daily --check               # Ollama + model prerequisites
     python -m agent_reach.daily --export-html out.html [--date 2026-10-01]
-    python -m agent_reach.daily --install-task | --uninstall-task | --task-status
+    python -m agent_reach.daily --install-task | --uninstall-task [--dry-run] | --task-status
     python -m agent_reach.daily --gui                 # open the desktop window
 
 Exit codes: 0 published / ok, 2 usage or setup error, 10 not due, 11 another refresh running,
@@ -22,7 +22,10 @@ import sys
 from datetime import date
 from pathlib import Path
 
+from agent_reach.daily import __version__
 from agent_reach.daily.paths import PROJECT_ROOT, DataPaths
+
+EXIT_USAGE = 2
 
 
 def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
@@ -45,6 +48,9 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     p.add_argument("--date", type=date.fromisoformat, help="edition date for --export-html (default: latest)")
     p.add_argument("--data-dir", type=Path, help="data folder (default %%LOCALAPPDATA%%\\AgentReachDaily)")
     p.add_argument("--yes", action="store_true", help="confirm destructive actions")
+    p.add_argument("--dry-run", action="store_true",
+                   help="with --install-task/--uninstall-task: show what would be done, change nothing")
+    p.add_argument("--version", action="version", version=f"Agent Reach Daily {__version__}")
     p.add_argument("--log-level", default="INFO", choices=["DEBUG", "INFO", "WARNING", "ERROR"])
     return p.parse_args(argv)
 
@@ -121,10 +127,10 @@ def main(argv: list[str] | None = None) -> int:
             print(json.dumps(st.__dict__, indent=2))
             return 0
         if args.uninstall_task:
-            ok, msg = scheduler.uninstall_task()
+            ok, msg = scheduler.uninstall_task(dry_run=args.dry_run)
         else:
             data_dir = args.data_dir.resolve() if args.data_dir else None
-            ok, msg = scheduler.install_task(sys.executable, PROJECT_ROOT, data_dir=data_dir)
+            ok, msg = scheduler.install_task(sys.executable, PROJECT_ROOT, data_dir=data_dir, dry_run=args.dry_run)
         print(msg)
         return 0 if ok else EXIT_USAGE
 
@@ -162,8 +168,6 @@ def main(argv: list[str] | None = None) -> int:
 
     return run_gui(paths)
 
-
-EXIT_USAGE = 2
 
 if __name__ == "__main__":
     sys.exit(main())

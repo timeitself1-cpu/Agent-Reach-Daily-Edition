@@ -40,8 +40,12 @@ SOURCE_NAMES = {
     "google_news": "Google News", "wikipedia": "Wikipedia", "arxiv": "arXiv", "hackernews": "Hacker News",
     "github": "GitHub", "producthunt": "Product Hunt", "news_rss": "News feeds",
 }
-MOMENTUM_LABELS = {"SURGING": "Hot", "RISING": "Rising", "NEW": "New", "STEADY": "Steady",
+MOMENTUM_LABELS = {"SURGING": "Hot", "RISING": "Rising", "NEW": "New", "STEADY": "Continuing",
                    "COOLING": "Cooling", "FADING": "Fading", "UNCERTAIN": "Uncertain trend"}
+#: Platforms whose items come from a named publisher (an article), not a trend list or social post.
+PUBLISHER_PLATFORMS = frozenset({"news_rss", "google_news", "hackernews", "arxiv"})
+#: Held-back stories (over a category or tech cap) may still fill empty slots only when this strong.
+STRONG_RELEVANCE = 7
 META_SENTENCE_RX = re.compile(
     r"^(?:signals were observed on .*|.* (?:is|are) carrying \d+ related signals? about .*|"
     r".* is drawing attention across trend sources\.?)$",
@@ -259,46 +263,105 @@ def evidence_links(cluster: MacroCluster, items: dict[int, CleanedTrendItem]) ->
     return links[:MAX_EVIDENCE_PER_STORY]
 
 
+def newest_published(story: Story) -> datetime | None:
+    """Most recent publication time a source actually stated for this story (None if none did)."""
+    times = [e.published_at_utc for e in story.evidence if e.published_at_utc is not None]
+    return max(times) if times else None
+
+
+def is_stale(story: Story, now: datetime, max_age_hours: float) -> bool:
+    """True when every stated publication time is older than ``max_age_hours``.
+
+    Stories without any stated publication time (trend lists, Wikipedia) are not stale by this
+    rule; they are shown with "publication time not stated" instead of a fake age.
+    """
+    newest = newest_published(story)
+    return newest is not None and (now - newest).total_seconds() > max_age_hours * 3600
+
+
+def is_weak(story: Story) -> bool:
+    """A single uncorroborated trend/social signal with no publisher article and modest relevance."""
+    has_publisher = any(p in PUBLISHER_PLATFORMS for p in story.platforms)
+    return story.raw_item_count <= 1 and not has_publisher and story.relevance_score < STRONG_RELEVANCE
+
+
+def _topic_tokens(story: Story) -> set[str]:
+    from agent_reach.pipeline.cleaner import dedupe_key, significant_tokens
+
+    return significant_tokens(dedupe_key(story.headline))
+
+
+def same_topic(a: Story, b: Story) -> bool:
+    """Deterministic 'this is the same story again' test used to avoid repetitive editions."""
+    if a.entity_id and a.entity_id == b.entity_id:
+        return True
+    urls_a = {e.url for e in a.evidence if e.url}
+    if urls_a & {e.url for e in b.evidence if e.url}:
+        return True
+    ta, tb = _topic_tokens(a), _topic_tokens(b)
+    shared = ta & tb
+    return len(shared) >= 2 and len(shared) / max(1, min(len(ta), len(tb))) >= 0.6
+
+
 @dataclass
 class Selection:
-    clusters: list[MacroCluster]
+    stories: list[Story]
     held_back: int = 0
     filled_from_held_back: int = 0
     dropped_unsupported: int = 0
+    dropped_stale: int = 0
+    dropped_weak: int = 0
+    dropped_duplicate: int = 0
     notes: list[str] = field(default_factory=list)
 
 
-def select_stories(clusters: list[MacroCluster], prefs: DailyPrefs) -> Selection:
-    """Keep the pipeline ranking; cap per category and tech-only share for a general edition.
+def select_stories(stories: list[Story], prefs: DailyPrefs, *, now: datetime) -> Selection:
+    """Choose a balanced edition from stories in pipeline rank order. Quality beats story count.
 
-    Stories held back by a cap are used to fill remaining slots only when nothing else is
-    available, and the edition then reports that it could not be balanced.
+    1. Drop stale stories (every stated publication time older than ``max_story_age_hours``),
+       weak single uncorroborated trend signals, and repeats of a story already chosen.
+    2. Keep the pipeline ranking while capping each category and the tech-only share.
+    3. A story held back by a cap fills an empty slot only when it is strong (relevance >= 7)
+       and not tech-only. Empty slots are otherwise left empty: no filler to reach a quota.
     """
+    sel = Selection(stories=[])
+    candidates: list[Story] = []
+    for s in stories:
+        if is_stale(s, now, prefs.max_story_age_hours):
+            sel.dropped_stale += 1
+        elif is_weak(s):
+            sel.dropped_weak += 1
+        elif any(same_topic(s, c) for c in candidates):
+            sel.dropped_duplicate += 1
+        else:
+            candidates.append(s)
+
     limit = prefs.max_stories
     tech_cap = limit if prefs.max_tech_only_share >= 1 else int(limit * prefs.max_tech_only_share)
-    chosen: list[MacroCluster] = []
-    held: list[MacroCluster] = []
+    chosen: list[Story] = []
+    held: list[Story] = []
     per_cat: Counter[str] = Counter()
     tech = 0
-    for c in clusters:
+    for s in candidates:
         if len(chosen) >= limit:
             break
-        is_tech = tech_only(c)
-        if per_cat[c.category.value] >= prefs.max_per_category or (is_tech and tech >= tech_cap):
-            held.append(c)
+        if per_cat[s.category.value] >= prefs.max_per_category or (s.tech_only and tech >= tech_cap):
+            held.append(s)
             continue
-        chosen.append(c)
-        per_cat[c.category.value] += 1
-        tech += is_tech
-    filled = 0
-    for c in held:
+        chosen.append(s)
+        per_cat[s.category.value] += 1
+        tech += s.tech_only
+    for s in held:
         if len(chosen) >= limit:
             break
-        chosen.append(c)
-        filled += 1
-    order = {id(c): i for i, c in enumerate(clusters)}
-    chosen.sort(key=lambda c: order[id(c)])
-    return Selection(clusters=chosen, held_back=len(held) - filled, filled_from_held_back=filled)
+        if s.relevance_score >= STRONG_RELEVANCE and not s.tech_only:
+            chosen.append(s)
+            sel.filled_from_held_back += 1
+    order = {id(s): i for i, s in enumerate(stories)}
+    chosen.sort(key=lambda s: order[id(s)])
+    sel.stories = chosen
+    sel.held_back = len(held) - sel.filled_from_held_back
+    return sel
 
 
 def build_story(rank: int, cluster: MacroCluster, items: dict[int, CleanedTrendItem]) -> Story | None:
@@ -369,7 +432,7 @@ def build_coverage(health: list[SourceHealth], stories: list[Story], selection: 
         warnings.append("No general-news source responded, so this edition may over-represent social and tech trends.")
     if selection.filled_from_held_back:
         warnings.append(f"Not enough stories in other categories to balance the edition; "
-                        f"{selection.filled_from_held_back} story(ies) beyond the category or tech limits were included.")
+                        f"{selection.filled_from_held_back} strong story(ies) beyond the per-category limit were included.")
     if stories and tech_n / len(stories) > 0.5:
         warnings.append(f"{tech_n} of {len(stories)} stories come only from tech sources.")
     if "lexical" in (report.llm_mode or ""):
@@ -385,18 +448,16 @@ def build_coverage(health: list[SourceHealth], stories: list[Story], selection: 
 def build_overview(stories: list[Story], coverage: Coverage) -> str:
     if not stories:
         return ""
-    lead = "; ".join(s.headline for s in stories[:3])
     cats = ", ".join(f"{k} {v}" for k, v in coverage.category_counts.items())
     text = (f"{len(stories)} {'story' if len(stories) == 1 else 'stories'} from {coverage.sources_ok} of "
-            f"{coverage.sources_attempted} sources. Leading today: {lead}. By category: {cats}.")
+            f"{coverage.sources_attempted} sources: {cats}.")
     if coverage.failed or coverage.partial or not coverage.balanced:
-        text += " Coverage is partial; see the notes below."
+        text += " Coverage is partial today (see Details)."
     return text
 
 
 def assemble_edition(
     report: PipelineReport,
-    stories: list[Story],
     selection: Selection,
     prefs: DailyPrefs,
     *,
@@ -409,6 +470,7 @@ def assemble_edition(
 ) -> DailyEdition:
     if not report.valid or report.accounting is None:
         raise ValueError("only a valid report can become an edition")
+    stories = selection.stories
     for i, s in enumerate(stories, start=1):
         s.rank = i
     health = source_health(report)
@@ -421,6 +483,14 @@ def assemble_edition(
     if selection.dropped_unsupported:
         notes.append(f"{selection.dropped_unsupported} ranked group(s) were omitted because they had no citable "
                      "factual sentence.")
+    if selection.dropped_stale:
+        notes.append(f"{selection.dropped_stale} story(ies) were left out because every source was published more "
+                     f"than {prefs.max_story_age_hours:g} hours before this refresh.")
+    if selection.dropped_duplicate:
+        notes.append(f"{selection.dropped_duplicate} repeat(s) of stories already in this edition were left out.")
+    if selection.dropped_weak:
+        notes.append(f"{selection.dropped_weak} weak signal(s) (a single trend or social post with no article) "
+                     "were left out.")
     summaries = "extractive" if report.llm_mode.startswith("heuristic") else "local_model"
     if summaries == "extractive":
         notes.append("Summaries are extractive (lead sentences from the sources) because the local model was not used.")

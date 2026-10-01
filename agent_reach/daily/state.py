@@ -170,4 +170,8 @@ def recover_interrupted(state: RefreshState, *, now: datetime, prefs: DailyPrefs
     when = f" (started {ensure_utc(started):%Y-%m-%d %H:%M} UTC)" if started else ""
     mark_failure(state, outcome="interrupted", now=now, prefs=prefs,
                  message=f"The previous refresh{when} stopped before finishing (closed, crashed or powered off).")
+    if started is not None:
+        # Back off from when the dead attempt STARTED: a PC that was off overnight retries at once,
+        # while a worker that keeps crashing right after starting is still rate-limited.
+        state.next_retry_utc = min(state.next_retry_utc, ensure_utc(started) + backoff_delay(state.consecutive_failures, prefs))
     return True

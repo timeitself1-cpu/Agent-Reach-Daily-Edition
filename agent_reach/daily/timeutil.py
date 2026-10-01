@@ -85,6 +85,15 @@ def format_central(dt: datetime) -> str:
     return f"{format_long_date(to_central(dt).date())} at {format_clock(dt)}"
 
 
+def format_brief(dt: datetime, now: datetime) -> str:
+    """'today 7:05 AM CDT', 'yesterday 9:10 PM CDT', 'tomorrow 7:05 AM CDT' or 'Oct 3, 7:05 AM CDT'."""
+    day = to_central(dt).date()
+    delta = (day - to_central(now).date()).days
+    names = {0: "today", -1: "yesterday", 1: "tomorrow"}
+    when = names.get(delta) or f"{MONTHS[day.month - 1][:3]} {day.day},"
+    return f"{when} {format_clock(dt)}"
+
+
 def edition_heading(edition_date: date) -> str:
     return f"Trending news for {format_long_date(edition_date)}"
 

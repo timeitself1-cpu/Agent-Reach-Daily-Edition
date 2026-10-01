@@ -265,12 +265,11 @@ async def _attempt(paths: DataPaths, prefs: DailyPrefs, store: EditionStore, *, 
         evidence = db.load_evidence(report.run_id)
     finally:
         db.close()
-    built = [(c, build_story(1, c, evidence)) for c in report.macro_clusters]
-    supported = [(c, s) for c, s in built if s is not None]
-    selection = select_stories([c for c, _ in supported], prefs)
+    built = [build_story(1, c, evidence) for c in report.macro_clusters]
+    supported = [s for s in built if s is not None]
+    selection = select_stories(supported, prefs, now=started)
     selection.dropped_unsupported = len(built) - len(supported)
-    story_by_cluster = {id(c): s for c, s in supported}
-    stories = [story_by_cluster[id(c)] for c in selection.clusters]
+    stories = selection.stories
 
     if chat_ok and prefs.why_it_matters and stories:
         progress("brief", f"Writing 'why it matters' notes for {len(stories)} stories")
@@ -286,7 +285,7 @@ async def _attempt(paths: DataPaths, prefs: DailyPrefs, store: EditionStore, *, 
             log.warning("brief pass skipped: %s", type(exc).__name__)
 
     completed = now_fn()
-    edition = assemble_edition(report, stories, selection, prefs, started=started, completed=completed,
+    edition = assemble_edition(report, selection, prefs, started=started, completed=completed,
                                trigger=trigger, config_fingerprint=config_fingerprint(report.effective_config))
     decision = evaluate_publication(edition, prefs, allow_extractive=allow_extractive)
     if not decision.publishable:

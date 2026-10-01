@@ -81,6 +81,7 @@ class DailyPrefs(BaseModel):
     max_per_category: int = Field(default=5, ge=1, le=50)
     max_tech_only_share: float = Field(default=0.34, ge=0.0, le=1.0)
     min_useful_stories: int = Field(default=3, ge=1, le=50)
+    max_story_age_hours: float = Field(default=48.0, ge=6.0, le=336.0)  # older publication times are not "today"
     min_ok_sources: int = Field(default=2, ge=1, le=20)
 
     @field_validator("enabled_sources")

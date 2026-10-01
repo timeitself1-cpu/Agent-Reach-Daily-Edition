@@ -1,0 +1,196 @@
+"""Daily app: the refresh worker end to end on deterministic fakes (real pipeline, no network, no Ollama).
+
+Every test runs the REAL ingest -> clean -> enrich -> density clustering -> scoring -> edition ->
+publication path against fake publisher feeds and a fake local model (tests/daily_fakes.py).
+"""
+
+from __future__ import annotations
+
+import json
+from datetime import datetime, timedelta, timezone
+
+from agent_reach.daily import refresh as R
+from agent_reach.daily.prefs import DailyPrefs, load_prefs, save_prefs
+from agent_reach.daily.render_html import render_edition_html
+from agent_reach.daily.state import load_state, save_state
+from agent_reach.daily.store import EditionStore
+from tests.daily_fakes import OllamaDown, OllamaUp
+
+
+def _refresh(env, **kw):
+    kw.setdefault("trigger", "manual")
+    kw.setdefault("force", True)
+    kw.setdefault("ollama_probe", lambda p: OllamaUp())
+    return R.refresh(env.paths, **kw)
+
+
+def test_successful_refresh_publishes_a_complete_grounded_edition(daily_env):
+    out = _refresh(daily_env)
+    assert out.code == R.EXIT_PUBLISHED, out.message
+    ed = EditionStore(daily_env.paths).load_latest().edition
+    assert ed is not None and ed == out.edition and not ed.demo
+    heads = [s.headline for s in ed.stories]
+    assert len(heads) >= 8
+    assert {s.category.value for s in ed.stories} >= {"News", "Sports", "Entertainment", "Science & AI", "Tech"}
+    assert "Mayor of Oakdene Resigns After Audit" not in heads  # a week-old story is not today's news
+    assert any("left out because every source was published more than 48 hours" in n for n in ed.notes)
+    assert all(s.labels == [] for s in ed.stories)  # first run = baseline: no trend labels
+    why = {s.headline: s.why_it_matters for s in ed.stories}
+    assert why["Norvale Harbor Ferry Strike Halts Island Service"].startswith("Island residents")
+    assert why["Ransomware Attack Disrupts Halden Hospital Network"].startswith("Patients")
+    for invented in ("Riverton Hawks Win Championship Final in Overtime",  # invented coach + $5 million
+                     "Halcyon Studio Film Northern Lantern Tops Box Office",  # generic filler
+                     "Astronomers Detect Water Vapour on Exoplanet Tessa-9b"):  # speculation
+        assert why[invented] is None
+    assert ed.model.summaries == "local_model" and ed.coverage.sources_ok == 3
+    assert ed.accounting.balanced and ed.config_fingerprint
+
+
+def test_time_semantics_are_kept_apart(daily_env):
+    started = datetime.now(timezone.utc)
+    out = _refresh(daily_env)
+    ed = out.edition
+    st, _ = load_state(daily_env.paths)
+    assert st.last_attempt_outcome == "success" and st.consecutive_failures == 0
+    assert st.last_attempt_started_utc == st.last_success_started_utc == ed.generation_started_utc
+    assert st.last_success_utc == ed.generation_completed_utc >= ed.generation_started_utc >= started
+    evidence = [e for s in ed.stories for e in s.evidence]
+    assert all(e.retrieved_at_utc is not None for e in evidence)
+    stated = [e for e in evidence if e.published_at_utc is not None]
+    assert stated and all(e.published_at_utc < e.retrieved_at_utc for e in stated)
+    lantern = next(e for e in evidence if e.title.startswith("Halcyon Studio drama Northern Lantern"))
+    assert lantern.published_at_utc is None  # the feed gave no pubDate: never shown as newly published
+
+
+def test_exported_html_of_a_real_edition(daily_env):
+    ed = _refresh(daily_env).edition
+    page = render_edition_html(ed)
+    assert ed.stories[0].headline in page and "https://wire-one.test/" in page
+    assert "<script" not in page.lower()
+
+
+def test_not_due_exits_quickly_without_network_or_model(daily_env):
+    assert _refresh(daily_env).code == R.EXIT_PUBLISHED
+    daily_env.net.requests.clear()
+    calls = dict(daily_env.model.calls)
+    out = R.refresh(daily_env.paths, trigger="scheduled", force=False, ollama_probe=lambda p: OllamaUp())
+    assert out.code == R.EXIT_NOT_DUE and "Next refresh is due" in out.message
+    assert daily_env.net.requests == [] and daily_env.model.calls == calls
+
+
+def test_ollama_unavailable_keeps_the_previous_edition_and_backs_off(daily_env):
+    first = _refresh(daily_env).edition
+    daily_env.net.requests.clear()
+    out = _refresh(daily_env, ollama_probe=lambda p: OllamaDown())
+    assert out.code == R.EXIT_PREREQ and "Ollama is not running" in out.message
+    assert daily_env.net.requests == []  # nothing fetched without the model
+    store = EditionStore(daily_env.paths)
+    assert store.load_latest().edition == first
+    st, _ = load_state(daily_env.paths)
+    assert st.last_attempt_outcome == "failed" and st.consecutive_failures == 1
+    assert st.last_success_run_id == first.run_id and st.next_retry_utc is not None
+    diag = sorted(daily_env.paths.diagnostics_dir.glob("*-failed.json"))
+    assert diag and json.loads(diag[-1].read_text())["ollama_error"]
+
+
+def test_extractive_edition_only_when_explicitly_allowed(daily_env):
+    out = _refresh(daily_env, ollama_probe=lambda p: OllamaDown(), allow_extractive=True)
+    assert out.code == R.EXIT_PUBLISHED, out.message
+    ed = out.edition
+    assert ed.model.summaries == "extractive"
+    assert any("extractive" in n for n in ed.notes)
+    assert all(s.why_it_matters is None for s in ed.stories)
+    assert daily_env.model.calls["chat"] == 0 and daily_env.model.calls["embed"] == 0
+
+
+def test_one_source_failing_still_publishes_with_visible_coverage(daily_env):
+    daily_env.net.down.update({"hn.algolia.com", "sports"})  # one whole source + one feed of another
+    out = _refresh(daily_env)
+    assert out.code == R.EXIT_PUBLISHED, out.message
+    health = {h.source: h for h in out.edition.source_health}
+    assert health["hackernews"].status == "failed"
+    assert health["news_rss"].status == "partial" and "feeds failed" in health["news_rss"].error
+    cov = out.edition.coverage
+    assert cov.failed == ["Hacker News"] and "News feeds" in cov.partial
+    assert any("Unavailable this run: Hacker News" in w for w in cov.warnings)
+    assert "Sports" not in {s.category.value for s in out.edition.stories}
+
+
+def test_internet_down_publishes_nothing_and_keeps_the_last_edition(daily_env):
+    first = _refresh(daily_env).edition
+    daily_env.net.offline = True
+    out = _refresh(daily_env)
+    assert out.code == R.EXIT_NO_UPDATE and "No news source responded" in out.message
+    assert "previous edition is kept" in out.message
+    assert EditionStore(daily_env.paths).load_latest().edition == first
+    st, _ = load_state(daily_env.paths)
+    assert st.last_attempt_outcome == "no_update" and st.last_success_run_id == first.run_id
+
+
+def test_too_few_stories_is_refused(daily_env):
+    prefs, _ = load_prefs(daily_env.paths)
+    save_prefs(daily_env.paths, prefs.model_copy(update={"news_rss_feeds": ["Sports|https://feeds.test/sports.xml"],
+                                                         "enabled_sources": ["news_rss", "google_news"]}))
+    daily_env.net.down.add("news.google.com")
+    out = _refresh(daily_env)
+    assert out.code == R.EXIT_NO_UPDATE
+    assert "useful story" in out.message or "source(s) responded" in out.message
+    assert EditionStore(daily_env.paths).load_latest().edition is None
+
+
+def test_model_failing_during_the_brief_pass_does_not_cost_the_edition(daily_env):
+    daily_env.model.brief_raises = True
+    out = _refresh(daily_env)
+    assert out.code == R.EXIT_PUBLISHED
+    assert all(s.why_it_matters is None for s in out.edition.stories)
+    daily_env.model.brief_raises, daily_env.model.brief_garbage = False, True
+    out = _refresh(daily_env)
+    assert out.code == R.EXIT_PUBLISHED and out.edition.revision == 2
+
+
+def test_failure_backoff_blocks_scheduled_retries_then_allows_one(daily_env):
+    t0 = datetime.now(timezone.utc)
+    _refresh(daily_env, ollama_probe=lambda p: OllamaDown(), now_fn=lambda: t0)
+    out = R.refresh(daily_env.paths, trigger="scheduled", force=False, now_fn=lambda: t0 + timedelta(minutes=10),
+                    ollama_probe=lambda p: OllamaUp())
+    assert out.code == R.EXIT_BACKOFF and daily_env.net.requests == []
+    out = R.refresh(daily_env.paths, trigger="scheduled", force=False, now_fn=lambda: t0 + timedelta(minutes=31),
+                    ollama_probe=lambda p: OllamaUp())
+    assert out.code == R.EXIT_PUBLISHED
+    st, _ = load_state(daily_env.paths)
+    assert st.consecutive_failures == 0 and st.last_attempt_trigger == "scheduled"
+
+
+def test_crashed_attempt_is_recorded_as_interrupted(daily_env):
+    st, _ = load_state(daily_env.paths)
+    st.last_attempt_outcome, st.last_attempt_started_utc = "running", datetime.now(timezone.utc) - timedelta(hours=2)
+    save_state(daily_env.paths, st)
+    out = R.refresh(daily_env.paths, trigger="scheduled", force=False, ollama_probe=lambda p: OllamaDown())
+    assert out.code == R.EXIT_PREREQ  # the dead attempt was recovered, then this attempt ran
+    st, _ = load_state(daily_env.paths)
+    assert st.consecutive_failures == 2  # interrupted + this failure
+    assert not daily_env.paths.progress_file.exists() and not daily_env.paths.lock_info.exists()
+
+
+def test_same_day_second_refresh_is_a_revision_and_reuses_history(daily_env):
+    first = _refresh(daily_env).edition
+    second = _refresh(daily_env).edition
+    assert second.edition_date == first.edition_date and second.revision == 2
+    assert second.previous_revisions[0].run_id == first.run_id
+    assert EditionStore(daily_env.paths).list_dates() == [first.edition_date]
+
+
+def test_status_payload_reports_without_network(daily_env):
+    _refresh(daily_env)
+    daily_env.net.requests.clear()
+    payload = R.status_payload(daily_env.paths)
+    assert payload["latest_edition"] and payload["due"] is False and payload["consecutive_failures"] == 0
+    assert daily_env.net.requests == []
+
+
+def test_prefs_changes_take_effect_on_the_next_refresh(daily_env):
+    prefs, _ = load_prefs(daily_env.paths)
+    save_prefs(daily_env.paths, prefs.model_copy(update={"max_stories": 4}))
+    out = _refresh(daily_env)
+    assert out.code == R.EXIT_PUBLISHED and len(out.edition.stories) == 4
+    assert isinstance(load_prefs(daily_env.paths)[0], DailyPrefs)

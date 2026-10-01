@@ -1,0 +1,468 @@
+{
+  "edition_schema": "agent_reach.daily_edition",
+  "edition_schema_version": 1,
+  "demo": true,
+  "edition_date": "2026-10-01",
+  "timezone": "America/Chicago",
+  "revision": 1,
+  "previous_revisions": [],
+  "run_id": "DEMO-0000",
+  "trigger": "manual",
+  "generation_started_utc": "2026-10-01T12:05:00Z",
+  "generation_completed_utc": "2026-10-01T12:23:00Z",
+  "model": {
+    "llm_model": "llama3.1:8b",
+    "embed_model": "nomic-embed-text",
+    "pipeline_mode": "DEMO (synthetic sample)",
+    "summaries": "local_model"
+  },
+  "config_fingerprint": "demo",
+  "pipeline_schema_version": 3,
+  "accounting": {
+    "ingested": 136,
+    "passed_filters": 101,
+    "clustering_candidates": 101,
+    "clustered": 13,
+    "discarded_total": 123,
+    "balanced": true
+  },
+  "source_health": [
+    {
+      "source": "news_rss",
+      "name": "News feeds",
+      "status": "partial",
+      "item_count": 52,
+      "latency_ms": 1800,
+      "error": "partial: 1/6 feeds failed (example.org: HTTP 503)"
+    },
+    {
+      "source": "google_news",
+      "name": "Google News",
+      "status": "ok",
+      "item_count": 34,
+      "latency_ms": 900,
+      "error": null
+    },
+    {
+      "source": "hackernews",
+      "name": "Hacker News",
+      "status": "ok",
+      "item_count": 30,
+      "latency_ms": 700,
+      "error": null
+    },
+    {
+      "source": "google_trends",
+      "name": "Google Trends",
+      "status": "ok",
+      "item_count": 20,
+      "latency_ms": 600,
+      "error": null
+    },
+    {
+      "source": "reddit",
+      "name": "Reddit",
+      "status": "failed",
+      "item_count": 0,
+      "latency_ms": 5000,
+      "error": "HTTP 403 (blocked)"
+    }
+  ],
+  "coverage": {
+    "sources_attempted": 5,
+    "sources_ok": 4,
+    "failed": [
+      "Reddit"
+    ],
+    "partial": [
+      "News feeds"
+    ],
+    "category_counts": {
+      "News": 2,
+      "Sports": 1,
+      "Science & AI": 1,
+      "Tech": 1,
+      "Entertainment": 1
+    },
+    "general_news_available": true,
+    "tech_only_stories": 1,
+    "held_back_for_balance": 0,
+    "balanced": true,
+    "warnings": [
+      "Unavailable this run: Reddit.",
+      "Partial or empty coverage: News feeds."
+    ]
+  },
+  "overview": "DEMO EDITION with synthetic stories about fictional places. 6 stories from 4 of 5 sources. Leading: Norvale Ferry Strike Halts Service to Three Islands; Magnitude 6.8 Earthquake Strikes Near Port Calder; Riverton Hawks Win Championship Final in Overtime.",
+  "notes": [
+    "This is a demo edition for previewing the layout. None of these stories are real news."
+  ],
+  "stories": [
+    {
+      "rank": 1,
+      "story_id": "demo-harbor",
+      "entity_id": "demo-e1",
+      "headline": "Norvale Ferry Strike Halts Service to Three Islands",
+      "category": "News",
+      "sentences": [
+        "Ferry workers in the fictional port of Norvale began a 48-hour strike over pay, halting service to three islands.",
+        "The port authority said talks with the union resume on Friday."
+      ],
+      "why_it_matters": "Island residents lose their only scheduled ferry link while the 48-hour strike lasts.",
+      "labels": [
+        "Rising"
+      ],
+      "momentum": "RISING",
+      "velocity_basis": "historical",
+      "momentum_note": "",
+      "relevance_score": 8,
+      "velocity_score": 68.0,
+      "combined_score": 75.2,
+      "platforms": [
+        "news_rss",
+        "google_news"
+      ],
+      "publisher_hosts": [
+        "example.com",
+        "example.org"
+      ],
+      "raw_item_count": 3,
+      "member_item_ids": [
+        1,
+        2,
+        3
+      ],
+      "evidence": [
+        {
+          "item_id": 1,
+          "source": "news_rss",
+          "source_name": "News feeds",
+          "title": "DEMO: Norvale ferry strike halts island service",
+          "url": "https://example.com/demo/norvale-ferry-strike",
+          "publisher": "Example Wire (demo)",
+          "excerpt": "Ferry workers in Norvale began a 48-hour strike over pay on Tuesday, halting service to three islands.",
+          "context_source": null,
+          "published_at_utc": "2026-10-01T09:05:00Z",
+          "retrieved_at_utc": "2026-10-01T12:06:00Z"
+        },
+        {
+          "item_id": 2,
+          "source": "news_rss",
+          "source_name": "News feeds",
+          "title": "DEMO: Island service halted by Norvale pay dispute",
+          "url": "https://example.org/demo/norvale-strike",
+          "publisher": "Sample Daily (demo)",
+          "excerpt": null,
+          "context_source": null,
+          "published_at_utc": "2026-10-01T08:05:00Z",
+          "retrieved_at_utc": "2026-10-01T12:06:00Z"
+        },
+        {
+          "item_id": 3,
+          "source": "google_news",
+          "source_name": "Google News",
+          "title": "DEMO: Norvale ferry strike - Example Wire",
+          "url": "https://example.com/demo/norvale-gn",
+          "publisher": "Example Wire (demo)",
+          "excerpt": null,
+          "context_source": null,
+          "published_at_utc": "2026-10-01T09:05:00Z",
+          "retrieved_at_utc": "2026-10-01T12:06:00Z"
+        }
+      ],
+      "tech_only": false
+    },
+    {
+      "rank": 2,
+      "story_id": "demo-quake",
+      "entity_id": "demo-e2",
+      "headline": "Magnitude 6.8 Earthquake Strikes Near Port Calder",
+      "category": "News",
+      "sentences": [
+        "A magnitude 6.8 earthquake struck near the fictional city of Port Calder early on Wednesday.",
+        "Officials reported damaged roads and no confirmed deaths."
+      ],
+      "why_it_matters": "Schools in the region stay closed until building inspections finish.",
+      "labels": [
+        "New"
+      ],
+      "momentum": "NEW",
+      "velocity_basis": "historical",
+      "momentum_note": "",
+      "relevance_score": 9,
+      "velocity_score": 80.0,
+      "combined_score": 86.0,
+      "platforms": [
+        "news_rss"
+      ],
+      "publisher_hosts": [
+        "example.com"
+      ],
+      "raw_item_count": 2,
+      "member_item_ids": [
+        4,
+        5
+      ],
+      "evidence": [
+        {
+          "item_id": 4,
+          "source": "news_rss",
+          "source_name": "News feeds",
+          "title": "DEMO: Earthquake strikes near Port Calder",
+          "url": "https://example.com/demo/port-calder-quake",
+          "publisher": "Example Wire (demo)",
+          "excerpt": "Schools in the region will stay closed until inspections finish.",
+          "context_source": null,
+          "published_at_utc": "2026-10-01T10:05:00Z",
+          "retrieved_at_utc": "2026-10-01T12:06:00Z"
+        },
+        {
+          "item_id": 5,
+          "source": "news_rss",
+          "source_name": "News feeds",
+          "title": "DEMO: Port Calder quake damages roads",
+          "url": "https://example.org/demo/calder",
+          "publisher": "Sample Daily (demo)",
+          "excerpt": null,
+          "context_source": null,
+          "published_at_utc": "2026-10-01T11:05:00Z",
+          "retrieved_at_utc": "2026-10-01T12:06:00Z"
+        }
+      ],
+      "tech_only": false
+    },
+    {
+      "rank": 3,
+      "story_id": "demo-final",
+      "entity_id": "demo-e3",
+      "headline": "Riverton Hawks Win Championship Final in Overtime",
+      "category": "Sports",
+      "sentences": [
+        "The fictional Riverton Hawks beat the Glenmore Owls 3-2 in overtime to win the championship final.",
+        "Captain Ana Brill scored the winning goal."
+      ],
+      "why_it_matters": null,
+      "labels": [
+        "Continuing"
+      ],
+      "momentum": "STEADY",
+      "velocity_basis": "historical",
+      "momentum_note": "",
+      "relevance_score": 7,
+      "velocity_score": 52.0,
+      "combined_score": 62.8,
+      "platforms": [
+        "news_rss"
+      ],
+      "publisher_hosts": [
+        "example.net"
+      ],
+      "raw_item_count": 2,
+      "member_item_ids": [
+        6,
+        7
+      ],
+      "evidence": [
+        {
+          "item_id": 6,
+          "source": "news_rss",
+          "source_name": "News feeds",
+          "title": "DEMO: Hawks beat Owls in overtime final",
+          "url": "https://example.net/demo/hawks-owls",
+          "publisher": "Sample Sports (demo)",
+          "excerpt": null,
+          "context_source": null,
+          "published_at_utc": "2026-10-01T04:05:00Z",
+          "retrieved_at_utc": "2026-10-01T12:06:00Z"
+        },
+        {
+          "item_id": 7,
+          "source": "news_rss",
+          "source_name": "News feeds",
+          "title": "DEMO: Owls fall to Hawks in final",
+          "url": "https://example.net/demo/owls-fall",
+          "publisher": "Sample Sports (demo)",
+          "excerpt": null,
+          "context_source": null,
+          "published_at_utc": "2026-10-01T05:05:00Z",
+          "retrieved_at_utc": "2026-10-01T12:06:00Z"
+        }
+      ],
+      "tech_only": false
+    },
+    {
+      "rank": 4,
+      "story_id": "demo-exoplanet",
+      "entity_id": "demo-e4",
+      "headline": "Astronomers Detect Water Vapour on Exoplanet Tessa-9b",
+      "category": "Science & AI",
+      "sentences": [
+        "Astronomers using the fictional Orion space telescope detected water vapour on the exoplanet Tessa-9b.",
+        "The planet orbits a red dwarf 120 light years away."
+      ],
+      "why_it_matters": null,
+      "labels": [],
+      "momentum": "BASELINE",
+      "velocity_basis": "cold_start",
+      "momentum_note": "",
+      "relevance_score": 8,
+      "velocity_score": 50.0,
+      "combined_score": 68.0,
+      "platforms": [
+        "news_rss",
+        "hackernews"
+      ],
+      "publisher_hosts": [
+        "example.org"
+      ],
+      "raw_item_count": 2,
+      "member_item_ids": [
+        8,
+        9
+      ],
+      "evidence": [
+        {
+          "item_id": 8,
+          "source": "news_rss",
+          "source_name": "News feeds",
+          "title": "DEMO: Water vapour detected on Tessa-9b",
+          "url": "https://example.org/demo/tessa-9b",
+          "publisher": "Sample Science (demo)",
+          "excerpt": null,
+          "context_source": null,
+          "published_at_utc": "2026-10-01T02:05:00Z",
+          "retrieved_at_utc": "2026-10-01T12:06:00Z"
+        },
+        {
+          "item_id": 9,
+          "source": "hackernews",
+          "source_name": "Hacker News",
+          "title": "DEMO: Orion telescope finds water on Tessa-9b",
+          "url": "https://example.org/demo/orion",
+          "publisher": null,
+          "excerpt": null,
+          "context_source": null,
+          "published_at_utc": "2026-10-01T01:05:00Z",
+          "retrieved_at_utc": "2026-10-01T12:06:00Z"
+        }
+      ],
+      "tech_only": false
+    },
+    {
+      "rank": 5,
+      "story_id": "demo-ransomware",
+      "entity_id": "demo-e5",
+      "headline": "Ransomware Attack Disrupts Halden Hospital Network",
+      "category": "Tech",
+      "sentences": [
+        "A ransomware attack disrupted computer systems at hospitals in the fictional Halden region.",
+        "Staff switched to paper records while the network was restored."
+      ],
+      "why_it_matters": "Patients in the Halden region face postponed operations while systems are restored.",
+      "labels": [
+        "Uncertain trend"
+      ],
+      "momentum": "UNCERTAIN",
+      "velocity_basis": "coverage_uncertain",
+      "momentum_note": "24h comparable sources: hackernews; coverage changed since the previous edition",
+      "relevance_score": 8,
+      "velocity_score": 50.0,
+      "combined_score": 68.0,
+      "platforms": [
+        "hackernews"
+      ],
+      "publisher_hosts": [
+        "example.com"
+      ],
+      "raw_item_count": 2,
+      "member_item_ids": [
+        10,
+        11
+      ],
+      "evidence": [
+        {
+          "item_id": 10,
+          "source": "hackernews",
+          "source_name": "Hacker News",
+          "title": "DEMO: Ransomware attack disrupts Halden hospitals",
+          "url": "https://example.com/demo/halden",
+          "publisher": null,
+          "excerpt": "Staff switched to paper records and some planned operations were postponed.",
+          "context_source": null,
+          "published_at_utc": "2026-10-01T06:05:00Z",
+          "retrieved_at_utc": "2026-10-01T12:06:00Z"
+        },
+        {
+          "item_id": 11,
+          "source": "hackernews",
+          "source_name": "Hacker News",
+          "title": "DEMO: Halden hospitals return to paper records",
+          "url": "https://example.com/demo/halden-paper",
+          "publisher": null,
+          "excerpt": null,
+          "context_source": null,
+          "published_at_utc": "2026-10-01T07:05:00Z",
+          "retrieved_at_utc": "2026-10-01T12:06:00Z"
+        }
+      ],
+      "tech_only": true
+    },
+    {
+      "rank": 6,
+      "story_id": "demo-film",
+      "entity_id": "demo-e6",
+      "headline": "Northern Lantern Tops the Weekend Box Office",
+      "category": "Entertainment",
+      "sentences": [
+        "Northern Lantern, a fictional drama from Halcyon Studio, opened at number one at the box office."
+      ],
+      "why_it_matters": null,
+      "labels": [],
+      "momentum": "BASELINE",
+      "velocity_basis": "cold_start",
+      "momentum_note": "",
+      "relevance_score": 6,
+      "velocity_score": 50.0,
+      "combined_score": 56.0,
+      "platforms": [
+        "news_rss",
+        "google_trends"
+      ],
+      "publisher_hosts": [
+        "example.net"
+      ],
+      "raw_item_count": 2,
+      "member_item_ids": [
+        12,
+        13
+      ],
+      "evidence": [
+        {
+          "item_id": 12,
+          "source": "news_rss",
+          "source_name": "News feeds",
+          "title": "DEMO: Northern Lantern opens at number one",
+          "url": "https://example.net/demo/lantern",
+          "publisher": "Sample Arts (demo)",
+          "excerpt": null,
+          "context_source": null,
+          "published_at_utc": "2026-09-30T06:05:00Z",
+          "retrieved_at_utc": "2026-10-01T12:06:00Z"
+        },
+        {
+          "item_id": 13,
+          "source": "google_trends",
+          "source_name": "Google Trends",
+          "title": "northern lantern (demo search trend)",
+          "url": null,
+          "publisher": null,
+          "excerpt": null,
+          "context_source": null,
+          "published_at_utc": null,
+          "retrieved_at_utc": "2026-10-01T12:06:00Z"
+        }
+      ],
+      "tech_only": false
+    }
+  ]
+}
