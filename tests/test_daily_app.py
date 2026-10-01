@@ -72,7 +72,7 @@ def test_current_edition_reads_as_todays_reach(daily_paths):
     assert snap.heading == "Today's Reach" and snap.date_line == "Thursday, October 1, 2026"
     assert snap.last_success == "Last successful refresh today 7:20 AM CDT"
     assert snap.next_refresh.startswith("Next refresh tomorrow 7:05 AM CDT")
-    assert snap.banners == [] and snap.coverage_line == "Sources: 1 OK"
+    assert snap.banners == [] and snap.coverage_line == "Sources: 1 healthy"
 
 
 def test_yesterdays_edition_is_clearly_stale(daily_paths):

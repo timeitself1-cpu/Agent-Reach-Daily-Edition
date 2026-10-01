@@ -14,8 +14,9 @@ import logging
 import time
 from typing import Any, Literal
 
-from pydantic import BaseModel, ConfigDict, Field, ValidationError, field_validator
+from pydantic import BaseModel, ConfigDict, Field, ValidationError, field_validator, model_validator
 
+from agent_reach.daily.feeds import FeedSpec, default_feeds, feeds_from_entries
 from agent_reach.daily.fsutil import atomic_write_json, read_json
 from agent_reach.daily.paths import DataPaths
 from agent_reach.daily.timeutil import parse_hhmm
@@ -29,7 +30,7 @@ TECH_SOURCES = frozenset({"hackernews", "github", "producthunt", "arxiv"})
 GENERAL_NEWS_SOURCES = frozenset({"google_news", "news_rss"})
 SOURCE_NOTES = {
     "google_news": "Google News top stories (RSS)",
-    "news_rss": "Publisher RSS feeds: BBC, NPR, The Guardian, ESPN",
+    "news_rss": "Publisher feeds (the list below)",
     "google_trends": "Google Trends daily searches (RSS)",
     "wikipedia": "Wikipedia most-read articles (Wikimedia API)",
     "reddit": "Reddit top posts (often rate-limited or blocked)",
@@ -46,18 +47,12 @@ DAILY_VELOCITY_TOLERANCE = 0.25
 MIN_DB_RETENTION_DAYS = 10
 
 
-def _default_feeds() -> list[str]:
-    from agent_reach.config import Settings
-
-    return list(Settings.model_fields["news_rss_feeds"].default_factory())  # type: ignore[misc]
-
-
 class DailyPrefs(BaseModel):
     model_config = ConfigDict(extra="ignore", validate_assignment=True)
 
     prefs_version: int = 1
     enabled_sources: list[str] = Field(default_factory=lambda: list(DAILY_DEFAULT_SOURCES))
-    news_rss_feeds: list[str] = Field(default_factory=_default_feeds)
+    feeds: list[FeedSpec] = Field(default_factory=default_feeds)  # one entry per publisher feed
     geo: str = "US"
     contact_email: str = ""
 
@@ -82,6 +77,37 @@ class DailyPrefs(BaseModel):
     max_tech_only_share: float = Field(default=0.34, ge=0.0, le=1.0)
     min_useful_stories: int = Field(default=3, ge=1, le=50)
     max_story_age_hours: float = Field(default=48.0, ge=6.0, le=336.0)  # older publication times are not "today"
+    # processing budget: articles grouped and labelled per refresh (more = broader but slower on CPU)
+    max_items_for_llm: int = Field(default=150, ge=40, le=400)
+    items_per_feed: int = Field(default=10, ge=3, le=30)
+
+    appearance: Literal["system", "light", "dark"] = "system"
+
+    @model_validator(mode="before")
+    @classmethod
+    def _migrate_feeds(cls, data: Any) -> Any:
+        """Settings written before per-feed control stored 'Category|URL' strings."""
+        if isinstance(data, dict) and "feeds" not in data and isinstance(data.get("news_rss_feeds"), list):
+            data = dict(data)
+            try:
+                data["feeds"] = feeds_from_entries([str(e) for e in data.pop("news_rss_feeds")])
+            except (ValueError, TypeError):
+                data["feeds"] = default_feeds()
+        return data
+
+    @field_validator("feeds")
+    @classmethod
+    def _unique_feeds(cls, v: list[FeedSpec]) -> list[FeedSpec]:
+        seen: set[str] = set()
+        out = []
+        for f in v:
+            if f.url.lower() not in seen:
+                seen.add(f.url.lower())
+                out.append(f)
+        return out
+
+    def enabled_feeds(self) -> list[FeedSpec]:
+        return [f for f in self.feeds if f.enabled]
     min_ok_sources: int = Field(default=2, ge=1, le=20)
 
     @field_validator("enabled_sources")
@@ -156,7 +182,9 @@ def build_settings(prefs: DailyPrefs, paths: DataPaths, **overrides: Any):
         db_path=paths.db,
         retention_days=max(prefs.retention_days, MIN_DB_RETENTION_DAYS),
         enabled_sources=list(prefs.enabled_sources),
-        news_rss_feeds=list(prefs.news_rss_feeds),
+        news_rss_feeds=[f.entry() for f in prefs.enabled_feeds()],
+        news_rss_items_per_feed=prefs.items_per_feed,
+        max_items_for_llm=prefs.max_items_for_llm,
         geo=prefs.geo,
         ollama_host=prefs.ollama_host,
         ollama_model=prefs.ollama_model,

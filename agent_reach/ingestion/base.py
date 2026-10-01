@@ -15,7 +15,7 @@ from typing import Any
 import httpx
 
 from agent_reach.config import Settings
-from agent_reach.models import RawTrendItem, SourceName, SourceStat
+from agent_reach.models import FeedStat, RawTrendItem, SourceName, SourceStat
 
 log = logging.getLogger(__name__)
 
@@ -126,6 +126,12 @@ class BaseIngester(abc.ABC):
         self._last_request_at = 0.0
         #: Partial-coverage notes (e.g. one feed of several failed). Reported on a successful SourceStat.
         self.warnings: list[str] = []
+        #: Per-feed health for multi-feed sources (news_rss); empty for single-endpoint sources.
+        self.feed_stats: list[FeedStat] = []
+
+    def item_cap(self) -> int:
+        """How many items this source may contribute to one run (multi-feed sources scale it)."""
+        return self.settings.max_items_per_source
 
     async def _pace(self) -> None:
         """Serialise request starts so they are at least ``min_request_interval_s`` apart."""
@@ -252,13 +258,14 @@ class BaseIngester(abc.ABC):
         started = time.perf_counter()
         try:
             items = await self.fetch()
-            items = items[: self.settings.max_items_per_source]
+            items = items[: self.item_cap()]
             stat = SourceStat(
                 source=self.source.value,
                 ok=True,
                 item_count=len(items),
                 latency_ms=int((time.perf_counter() - started) * 1000),
                 error=("partial: " + "; ".join(self.warnings))[:300] if self.warnings else None,
+                feeds=self._final_feed_stats(items),
             )
             self.log.info("fetched %d items in %d ms", len(items), stat.latency_ms)
             return items, stat
@@ -273,9 +280,20 @@ class BaseIngester(abc.ABC):
                 item_count=0,
                 latency_ms=int((time.perf_counter() - started) * 1000),
                 error=msg,
+                feeds=self._final_feed_stats([]),
             )
 
     # ------------------------------------------------------------ helpers
+    def _final_feed_stats(self, kept: list[RawTrendItem]) -> list[FeedStat]:
+        """Per-feed counts of the items actually kept after the source cap."""
+        if not self.feed_stats:
+            return []
+        kept_per_feed: dict[str, int] = {}
+        for it in kept:
+            feed = str(it.metadata.get("feed") or "")
+            kept_per_feed[feed] = kept_per_feed.get(feed, 0) + 1
+        return [fs.model_copy(update={"item_count": kept_per_feed.get(fs.url, 0)}) for fs in self.feed_stats]
+
     def make_item(self, *, published_at: datetime | None = None, **kwargs: Any) -> RawTrendItem | None:
         """Build an item, silently skipping ones that fail validation (e.g. empty title).
 

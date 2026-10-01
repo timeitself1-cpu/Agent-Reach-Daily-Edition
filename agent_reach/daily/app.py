@@ -18,7 +18,7 @@ from dataclasses import dataclass, field
 from datetime import date, datetime
 
 from agent_reach.daily import VERSION_LABEL
-from agent_reach.daily.edition import DailyEdition, Story, newest_published, safe_url
+from agent_reach.daily.edition import DailyEdition, Story, health_summary, newest_published, safe_url
 from agent_reach.daily.fsutil import atomic_write_json, read_json
 from agent_reach.daily.lock import pid_alive, read_holder_info
 from agent_reach.daily.paths import PROJECT_ROOT, DataPaths
@@ -372,16 +372,34 @@ def failure_text(state: RefreshState, *, has_edition: bool) -> str:
 
 
 def coverage_summary(edition: DailyEdition) -> str:
-    """Compact source-health line, e.g. 'Sources: 5 OK, 1 partial, 1 unavailable'."""
-    counts = {"ok": 0, "partial": 0, "empty": 0, "failed": 0}
-    for h in edition.source_health:
-        counts[h.status] = counts.get(h.status, 0) + 1
-    parts = [f"{counts['ok']} OK"]
-    if counts["partial"] or counts["empty"]:
-        parts.append(f"{counts['partial'] + counts['empty']} partial")
-    if counts["failed"]:
-        parts.append(f"{counts['failed']} unavailable")
-    return "Sources: " + ", ".join(parts)
+    """Compact, honest source-health line, e.g. 'Sources: 6 healthy \u00b7 1 partial'."""
+    return "Sources: " + health_summary(edition.source_health)
+
+
+@dataclass
+class PublisherRow:
+    publisher: str
+    channels: list[str]
+    stories: int
+    articles: int
+
+
+def publisher_breakdown(edition: DailyEdition) -> list[PublisherRow]:
+    """Which publishers this edition actually cites (incl. those arriving via Google News)."""
+    rows: dict[str, PublisherRow] = {}
+    for story in edition.stories:
+        seen_in_story: set[str] = set()
+        for e in story.evidence:
+            name = e.publisher or e.source_name
+            key = name.lower()
+            row = rows.setdefault(key, PublisherRow(name, [], 0, 0))
+            row.articles += 1
+            if e.source_name not in row.channels:
+                row.channels.append(e.source_name)
+            if key not in seen_in_story:
+                row.stories += 1
+                seen_in_story.add(key)
+    return sorted(rows.values(), key=lambda r: (-r.stories, -r.articles, r.publisher.lower()))
 
 
 def story_age(story: Story, now: datetime) -> str:
@@ -477,3 +495,26 @@ def save_window_geometry(paths: DataPaths, geometry: str) -> None:
 
 _GEOMETRY_RX = re.compile(r"^\d{3,5}x\d{3,5}[+-]-?\d{1,5}[+-]-?\d{1,5}$")
 
+
+
+# ====================================================================== appearance
+def windows_prefers_dark() -> bool:
+    """Windows 'Choose your app mode: Dark' (HKCU ...\\Personalize\\AppsUseLightTheme == 0)."""
+    if sys.platform != "win32":
+        return False
+    try:
+        import winreg
+
+        with winreg.OpenKey(winreg.HKEY_CURRENT_USER,
+                            r"Software\Microsoft\Windows\CurrentVersion\Themes\Personalize") as key:
+            value, _ = winreg.QueryValueEx(key, "AppsUseLightTheme")
+        return int(value) == 0
+    except (OSError, ValueError):
+        return False
+
+
+def resolve_appearance(preference: str, system_dark: Callable[[], bool] = windows_prefers_dark) -> str:
+    """'light' or 'dark' for a preference of 'system', 'light' or 'dark'."""
+    if preference in ("light", "dark"):
+        return preference
+    return "dark" if system_dark() else "light"

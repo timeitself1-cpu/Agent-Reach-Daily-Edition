@@ -70,6 +70,7 @@ class EvidenceLink(BaseModel):
     context_source: str | None = None
     published_at_utc: datetime | None = Field(default=None, description="only when the source stated a publication time")
     retrieved_at_utc: datetime | None = None
+    feed: str | None = None  # publisher feed URL for news_rss items
 
 
 class Story(BaseModel):
@@ -95,6 +96,18 @@ class Story(BaseModel):
     tech_only: bool = False
 
 
+class FeedHealth(BaseModel):
+    """One publisher feed inside a channel: did it answer, how much it gave, how much was cited."""
+
+    name: str
+    url: str
+    category: str | None = None
+    status: Literal["ok", "empty", "failed"]
+    collected: int = 0
+    used: int = 0
+    error: str | None = None
+
+
 class SourceHealth(BaseModel):
     source: str
     name: str
@@ -102,6 +115,8 @@ class SourceHealth(BaseModel):
     item_count: int = 0
     latency_ms: int = 0
     error: str | None = None
+    used: int = 0  # articles from this channel cited in the edition
+    feeds: list[FeedHealth] = Field(default_factory=list)
 
 
 class Coverage(BaseModel):
@@ -258,6 +273,7 @@ def evidence_links(cluster: MacroCluster, items: dict[int, CleanedTrendItem]) ->
                 context_source=m.context_source if k == 0 else None,
                 published_at_utc=parse_utc(md.get("published_at")),
                 retrieved_at_utc=parse_utc(md.get("retrieved_at")),
+                feed=str(md["feed"]) if md.get("feed") else None,
             ))
     links.sort(key=lambda link: link.url is None)  # linked evidence first, order otherwise preserved
     return links[:MAX_EVIDENCE_PER_STORY]
@@ -399,7 +415,51 @@ def build_story(rank: int, cluster: MacroCluster, items: dict[int, CleanedTrendI
     )
 
 
-def source_health(report: PipelineReport) -> list[SourceHealth]:
+HEALTH_WORDS = {"ok": "healthy", "partial": "partial", "empty": "empty", "failed": "failed"}
+_STATUS_RX = re.compile(r"(?<![\d./])([45]\d\d)(?![\d./])")
+_URL_RX = re.compile(r"https?://\S+")
+
+
+def friendly_error(error: str | None) -> str:
+    """Short plain-language reason for a source or feed problem (the raw text stays in the data)."""
+    if not error:
+        return ""
+    text = _URL_RX.sub("", error.removeprefix("partial: "))
+    m = _STATUS_RX.search(text)
+    code = int(m.group(1)) if m else None
+    if code == 429:
+        return "rate-limited by the site (HTTP 429)"
+    if code in (401, 403):
+        return f"blocked by the site (HTTP {code})"
+    if code in (404, 410):
+        return f"feed address not found (HTTP {code}); it may have moved"
+    if code is not None and code >= 500:
+        return f"the site had a server error (HTTP {code})"
+    low = text.lower()
+    if "invalid xml" in low or "no entries" in low:
+        return "not a readable feed (no articles found)"
+    if "timeout" in low or "timed out" in low:
+        return "the site did not answer in time"
+    if "connecterror" in low or "name or service" in low or "getaddrinfo" in low or "unreachable" in low:
+        return "could not connect (offline, or the site is blocked)"
+    return text.strip(" :")[:160]
+
+
+def health_summary(health: list[SourceHealth]) -> str:
+    """Honest one-line count, e.g. '6 healthy \u00b7 1 partial' (a channel with errors is never 'healthy')."""
+    counts = Counter(h.status for h in health)
+    parts = [f"{counts[k]} {HEALTH_WORDS[k]}" for k in ("ok", "partial", "empty", "failed") if counts[k]]
+    return " \u00b7 ".join(parts) if parts else "no sources"
+
+
+def source_health(report: PipelineReport, stories: list[Story] | None = None) -> list[SourceHealth]:
+    used_by_source: Counter[str] = Counter()
+    used_by_feed: Counter[str] = Counter()
+    for story in stories or []:
+        for e in story.evidence:
+            used_by_source[e.source] += 1
+            if e.feed:
+                used_by_feed[e.feed] += 1
     out = []
     for s in report.source_stats:
         if not s.ok:
@@ -410,8 +470,13 @@ def source_health(report: PipelineReport) -> list[SourceHealth]:
             status = "empty"
         else:
             status = "ok"
+        feeds = [FeedHealth(name=f.name, url=f.url, category=f.category,
+                            status="failed" if not f.ok else ("ok" if f.item_count else "empty"),
+                            collected=f.item_count, used=used_by_feed.get(f.url, 0), error=f.error)
+                 for f in s.feeds]
         out.append(SourceHealth(source=s.source, name=source_name(s.source), status=status,
-                                item_count=s.item_count, latency_ms=s.latency_ms, error=s.error))
+                                item_count=s.item_count, latency_ms=s.latency_ms, error=s.error,
+                                used=used_by_source.get(s.source, 0), feeds=feeds))
     return out
 
 
@@ -428,6 +493,11 @@ def build_coverage(health: list[SourceHealth], stories: list[Story], selection: 
         warnings.append(f"Unavailable this run: {', '.join(failed)}.")
     if partial:
         warnings.append(f"Partial or empty coverage: {', '.join(partial)}.")
+    all_feeds = [f for h in health for f in h.feeds]
+    bad_feeds = [f.name for f in all_feeds if f.status != "ok"]
+    if bad_feeds:
+        shown = ", ".join(bad_feeds[:6]) + (f" and {len(bad_feeds) - 6} more" if len(bad_feeds) > 6 else "")
+        warnings.append(f"{len(bad_feeds)} of {len(all_feeds)} publisher feeds returned nothing: {shown}.")
     if not general:
         warnings.append("No general-news source responded, so this edition may over-represent social and tech trends.")
     if selection.filled_from_held_back:
@@ -473,7 +543,7 @@ def assemble_edition(
     stories = selection.stories
     for i, s in enumerate(stories, start=1):
         s.rank = i
-    health = source_health(report)
+    health = source_health(report, stories)
     coverage = build_coverage(health, stories, selection, report)
     acct = report.accounting
     notes = list(selection.notes)

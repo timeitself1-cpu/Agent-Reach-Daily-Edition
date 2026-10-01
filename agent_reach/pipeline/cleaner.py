@@ -424,15 +424,24 @@ class TrendCleaner:
         return cleaned, dict(stats)
 
     def select_for_llm(self, cleaned: list[CleanedTrendItem]) -> list[CleanedTrendItem]:
-        """Top-scored items, with a per-source floor so no platform is starved."""
+        """Top-scored items within the processing budget, with fair floors.
+
+        Every platform gets ``min_items_per_source_for_llm`` and, inside the publisher-feed
+        source, every feed gets ``min_items_per_feed_for_llm``, so one prolific source or feed
+        cannot crowd out the others. The rest of the budget goes to the highest scores.
+        """
         cap = self.settings.max_items_for_llm
         floor = self.settings.min_items_per_source_for_llm
-        by_source: dict[SourceName, list[CleanedTrendItem]] = defaultdict(list)
+        feed_floor = self.settings.min_items_per_feed_for_llm
+        by_group: dict[tuple[SourceName, str], list[CleanedTrendItem]] = defaultdict(list)
         for it in sorted(cleaned, key=lambda x: x.heuristic_score, reverse=True):
-            by_source[it.source].append(it)
+            feed = str(it.metadata.get("feed") or "") if it.source is SourceName.NEWS_RSS else ""
+            by_group[(it.source, feed)].append(it)
         chosen: dict[int, CleanedTrendItem] = {}
-        for lst in by_source.values():
-            for it in lst[:floor]:
+        for (_source, feed), lst in by_group.items():
+            for it in lst[:(feed_floor if feed else floor)]:
+                if len(chosen) >= cap:
+                    break
                 chosen[it.item_id] = it
         for it in sorted(cleaned, key=lambda x: x.heuristic_score, reverse=True):
             if len(chosen) >= cap:

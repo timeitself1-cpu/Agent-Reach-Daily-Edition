@@ -99,3 +99,59 @@ def test_window_survives_small_sizes(root, daily_paths):
     root.update()
     bar_right = w.search_entry.winfo_rootx() + w.search_entry.winfo_width()
     assert bar_right <= root.winfo_rootx() + root.winfo_width()  # controls are not pushed off-screen
+
+
+def test_dark_mode_and_live_theme_switch(root, daily_paths):
+    from agent_reach.daily.gui import PALETTES
+    from agent_reach.daily.prefs import DailyPrefs, save_prefs
+
+    save_prefs(daily_paths, DailyPrefs(appearance="dark"))
+    EditionStore(daily_paths).publish(make_edition())
+    w, _ = _window(root, daily_paths)
+    assert w.mode == "dark" and w.text["background"] == PALETTES["dark"]["card"]
+    assert w.text.tag_cget("chip:News", "background") == PALETTES["dark"]["categories"]["News"][0]
+    w.apply_theme("light")
+    root.update()
+    assert w.text["background"] == PALETTES["light"]["card"] and w.status_label["bg"] == PALETTES["light"]["bg"]
+
+
+def test_details_show_publisher_feeds_and_settings_manage_them(root, daily_env):
+    from agent_reach.daily.feeds import FeedSpec
+    from agent_reach.daily.gui import DetailsWindow, SettingsDialog
+    from agent_reach.daily.prefs import load_prefs
+    from agent_reach.daily.refresh import refresh
+    from tests.daily_fakes import OllamaUp
+
+    refresh(daily_env.paths, trigger="manual", force=True, ollama_probe=lambda p: OllamaUp())
+    w, _ = _window(root, daily_env.paths)
+    details = DetailsWindow(w)
+    root.update()
+    trees = [c for c in _walk(root) if c.winfo_class() == "Treeview"]
+    channel_tree = trees[0]
+    rss = next(i for i in channel_tree.get_children() if channel_tree.item(i, "text") == "News feeds")
+    children = [channel_tree.item(c, "text") for c in channel_tree.get_children(rss)]
+    assert "Wire One - World" in children and len(children) == 5
+    assert channel_tree.item(rss, "values")[0] == "OK"
+    publishers = [trees[1].item(i, "text") for i in trees[1].get_children()]
+    assert "Wire One - World" in publishers and "Daily Two" in publishers
+    del details
+
+    dialog = SettingsDialog(w, load_prefs(daily_env.paths)[0])
+    root.update()
+    assert len(dialog.feed_tree.get_children()) == 5
+    assert dialog.save_feed(None, FeedSpec(name="Local Paper", url="https://local.test/rss")) is None
+    assert dialog.save_feed(None, FeedSpec(name="Dup", url="https://LOCAL.test/rss")) is not None
+    dialog.feed_tree.selection_set("0")
+    dialog._toggle_feeds()
+    dialog.appearance_var.set("dark")
+    dialog.save()
+    root.update()
+    prefs, _ = load_prefs(daily_env.paths)
+    assert [f.name for f in prefs.feeds][-1] == "Local Paper" and not prefs.feeds[0].enabled
+    assert prefs.appearance == "dark" and w.mode == "dark"
+
+
+def _walk(widget):
+    for child in widget.winfo_children():
+        yield child
+        yield from _walk(child)

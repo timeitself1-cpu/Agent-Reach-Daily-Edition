@@ -53,6 +53,9 @@ Then **double-click "Agent Reach"** on the Desktop. The first time, choose
 | Source health, timings, run details | **Details** (Ctrl+D) |
 | Save today's edition as a web page | **Export** (Ctrl+E) |
 | Preview the layout with sample stories | View > Demo edition (clearly marked DEMO, not real news) |
+| Choose publishers, add a local outlet, test a feed | Settings > **Publisher feeds** (Add feed, Edit, Turn on/off, Test, Restore defaults) |
+| Dark mode | Settings > **Appearance** (Match Windows, Light or Dark) |
+| See which feeds and publishers fed today's edition | **Details** > Sources (per-feed health, collected, used) and Publishers |
 
 Command line (from the project folder):
 
@@ -105,9 +108,13 @@ Everything lives in `%LOCALAPPDATA%\AgentReachDaily` (for example
 
 - All AI work runs locally through Ollama. Nothing is sent to OpenAI, Anthropic, Google or any
   other AI service, and no API key or subscription is needed.
-- The internet is used to read public sources: publisher RSS feeds (BBC, NPR, The Guardian,
-  ESPN by default), Google News and Google Trends RSS, Wikipedia's most-read list, Hacker News,
-  and optionally Reddit, X trends (trends24.in), TikTok, GitHub Trending, Product Hunt and arXiv.
+- The internet is used to read public sources: 26 publisher feeds from 15 organisations by default
+  (BBC, NPR, The Guardian, PBS News, CBS News, Al Jazeera, Le Monde, France 24, DW, CNBC, NASA,
+  ScienceDaily, Ars Technica, The Verge, ESPN) covering world, US, business, science, health,
+  technology, sports and culture; plus Google News and Google Trends RSS, Wikipedia's most-read
+  list, Hacker News, and optionally Reddit, X trends (trends24.in), TikTok, GitHub Trending,
+  Product Hunt and arXiv. Each publisher feed has its own allowance, so adding feeds never squeezes
+  the others, and you can add local outlets in Settings > Publisher feeds.
   Article pages are fetched to give the model context. Model downloads come from Ollama.
 - Exported HTML files are self-contained (no scripts, no remote assets); only the article links
   need the internet.
@@ -119,7 +126,8 @@ Everything lives in `%LOCALAPPDATA%\AgentReachDaily` (for example
 | "Ollama is not running" | Start **Ollama** from the Start menu (the app also tries to start it). Check with `--check`. |
 | "model(s) ... are missing" | `ollama pull llama3.1:8b` and `ollama pull nomic-embed-text`, or re-run setup with `-PullModels`. |
 | "No news source responded" | You are offline or a firewall blocks the feeds. The previous edition is kept; it retries automatically. |
-| A source shows PARTIAL or FAILED (Details) | Normal from time to time (Reddit and X often block automated readers). The edition is built from the rest and says what was missing. |
+| A source shows PARTIAL or FAILED (Details) | Normal from time to time (Reddit and X often rate-limit automated readers). The edition is built from the rest and says what was missing. Expand "News feeds" in Details to see which publisher feed failed and why. |
+| A publisher feed keeps failing | Feed addresses move. Settings > Publisher feeds > select it > **Test**; then Edit the address or turn the feed off. |
 | "found too little news to publish" | Fewer than 3 good stories or fewer than 2 working sources. Wait for the automatic retry or press Refresh later. |
 | Wrong date or time zone | Times are US Central (CST/CDT) on purpose. If times look wrong by hours, re-run setup: it installs `tzdata`, which Windows needs. |
 | Background refresh never happens | Settings > Schedule shows the task status; **Enable / update** re-registers it. Check `logs\scheduler.log`. The task only runs while you are logged on. |
@@ -170,5 +178,5 @@ checks do), never sees the web, and its output is checked before it is shown. De
 
 Tests never touch the network or a real Ollama. `tests/daily_fakes.py` holds synthetic publisher
 feeds (fictional places on `.test` hosts) and a deterministic fake model; `samples/DEMO-edition.json`
-is the clearly labelled demo edition. Version: Agent Reach Daily 1.0 release candidate 1
+is the clearly labelled demo edition. Version: Agent Reach Daily 1.0 release candidate 2
 (`python -m agent_reach.daily --version`).

@@ -71,7 +71,8 @@ class Settings(BaseSettings):
         default_factory=lambda: ["popular", "news", "worldnews", "technology", "science", "sports", "movies"]
     )
     arxiv_categories: list[str] = Field(default_factory=lambda: ["cs.AI", "cs.LG", "cs.CL", "cs.CV"])
-    # "Category|URL" entries for the general-news RSS source (news_rss). Category must be a CategoryEnum value.
+    # "Category|URL" or "Category|URL|Publisher name" entries for the general-news RSS source (news_rss).
+    # Category must be a CategoryEnum value.
     news_rss_feeds: list[str] = Field(
         default_factory=lambda: [
             "News|https://feeds.bbci.co.uk/news/rss.xml",
@@ -83,6 +84,9 @@ class Settings(BaseSettings):
         ]
     )
     news_rss_items_per_feed: int = Field(default=10, ge=1, le=50)
+    # news_rss may contribute items_per_feed x feeds, up to this total (a per-feed allowance, not one
+    # shared 40-item pool), so adding publishers does not starve the existing ones.
+    news_rss_max_total_items: int = Field(default=300, ge=10, le=2000)
     max_items_per_source: int = Field(default=40, ge=5, le=200)
     enabled_sources: list[str] = Field(
         default_factory=lambda: [
@@ -116,6 +120,8 @@ class Settings(BaseSettings):
     min_title_chars: int = 3
     max_items_for_llm: int = Field(default=150, ge=10, le=600)
     min_items_per_source_for_llm: int = Field(default=6, ge=0)
+    # per-publisher-feed floor inside news_rss, so one prolific feed cannot crowd out the others
+    min_items_per_feed_for_llm: int = Field(default=3, ge=0)
 
     # ----------------------------------------------------------- clustering
     min_cluster_items: int = Field(default=2, ge=1)
@@ -150,9 +156,10 @@ class Settings(BaseSettings):
         from agent_reach.models import CategoryEnum
 
         for entry in v:
-            category, sep, url = entry.partition("|")
+            category, sep, rest = entry.partition("|")
+            url = rest.split("|", 1)[0]
             if not sep or category.strip() not in CategoryEnum.values() or not url.strip().startswith(("http://", "https://")):
-                raise ValueError(f"news_rss_feeds entry must be 'Category|http(s)://url' with a valid category: {entry!r}")
+                raise ValueError(f"news_rss_feeds entry must be 'Category|http(s)://url[|Name]' with a valid category: {entry!r}")
         return v
 
     @field_validator("hdbscan_selection")

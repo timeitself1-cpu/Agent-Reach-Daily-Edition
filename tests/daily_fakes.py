@@ -181,7 +181,7 @@ FEED_CATEGORY = {"world": "News", "us": "News", "sports": "Sports", "arts": "Ent
 
 
 def feed_settings_entries() -> list[str]:
-    return [f"{FEED_CATEGORY[k]}|https://feeds.test/{k}.xml" for k in FEED_ITEMS]
+    return [f"{FEED_CATEGORY[k]}|https://feeds.test/{k}.xml|{FEED_TITLES[k]}" for k in FEED_ITEMS]
 
 
 class FakeNet:

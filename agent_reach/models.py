@@ -140,12 +140,24 @@ class MacroCluster(BaseModel):
         return hashlib.sha1("|".join(keys).encode("utf-8", "ignore")).hexdigest()[:12]
 
 
+class FeedStat(BaseModel):
+    """One publisher feed inside a multi-feed source (e.g. news_rss)."""
+
+    name: str
+    url: str
+    category: str | None = None
+    ok: bool
+    item_count: int = 0
+    error: str | None = None
+
+
 class SourceStat(BaseModel):
     source: str
     ok: bool
     item_count: int
     latency_ms: int
     error: str | None = None
+    feeds: list[FeedStat] = Field(default_factory=list)  # per-feed health for multi-feed sources
 
 
 #: Stage that owns each discard reason, used to group the ledger in reports.

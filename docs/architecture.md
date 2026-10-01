@@ -80,6 +80,21 @@ An attempt that dies (crash, power loss) is found by the next lock holder and re
 `interrupted`; its backoff is counted from when it *started*, so a PC that was off overnight
 retries immediately while a crash loop stays rate-limited.
 
+### Publisher feeds and fair limits
+
+Publisher feeds are configured per feed (`daily/feeds.py`, Settings > Publisher feeds): name,
+address, category, on/off. Each feed is one channel inside the `news_rss` source:
+
+- **Intake:** each feed contributes up to `items_per_feed` (10) articles; the source cap is
+  `items_per_feed x feeds`, bounded by `news_rss_max_total_items` (300), and feeds are interleaved
+  by rank, so a cap never drops a whole feed and adding feeds never shrinks the others.
+- **Processing budget:** `max_items_for_llm` (150) articles are grouped and labelled per refresh.
+  Every channel keeps `min_items_per_source_for_llm` (6) and every publisher feed keeps
+  `min_items_per_feed_for_llm` (3) of that budget; the rest goes to the highest scores.
+- **Health:** `SourceStat.feeds` records every feed (OK / EMPTY / FAILED, articles collected); the
+  edition adds how many of each feed's articles were cited ("used"). A channel that answered but hit
+  errors (a failing feed, a Reddit 429 with RSS fallback) is PARTIAL, never "healthy".
+
 ### Selection rules (quality over quota)
 
 1. Stories whose every stated publication time is older than `max_story_age_hours` (48) are dropped.

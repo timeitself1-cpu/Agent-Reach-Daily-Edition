@@ -179,6 +179,8 @@ class RedditIngester(BaseIngester):
                 if any(code in str(exc) for code in ("403", "429", "Blocked")):
                     self._json_blocked = True
                     self.log.info("JSON blocked (%s); remaining subreddits use RSS", str(exc)[:100])
+                    code = "429 rate limit" if "429" in str(exc) else "403 blocked"
+                    self.warnings.append(f"JSON listings refused ({code}); used RSS without engagement counts")
         try:
             return await self._fetch_rss(sub, per_sub), None
         except IngestionError as exc:
