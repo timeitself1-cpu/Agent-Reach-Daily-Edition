@@ -293,3 +293,24 @@ def test_cli_status_export_and_reset(daily_paths, tmp_path):
     assert EditionStore(daily_paths).list_dates()
     assert run("--reset-cache", "--yes").returncode == 0
     assert EditionStore(daily_paths).list_dates() == []
+
+
+def test_refresh_command_crash_is_logged_not_lost(daily_paths, monkeypatch):
+    import logging
+
+    from agent_reach.daily import __main__ as M
+    from agent_reach.daily import refresh as R
+
+    def boom(*a, **k):
+        raise RuntimeError("unexpected disk problem")
+
+    monkeypatch.setattr(R, "refresh", boom)
+    try:
+        assert M.main(["--refresh-now", "--data-dir", str(daily_paths.root)]) == 30
+    finally:
+        for h in list(logging.getLogger().handlers):
+            if h.get_name() and h.get_name().startswith("agent_reach_daily_"):
+                h.close()
+                logging.getLogger().removeHandler(h)
+    log = (daily_paths.logs_dir / "refresh.log").read_text()
+    assert "refresh command crashed" in log and "unexpected disk problem" in log

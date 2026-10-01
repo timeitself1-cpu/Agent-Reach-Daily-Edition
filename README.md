@@ -1,108 +1,174 @@
-# Agent Reach v2.1
+# Agent Reach
 
-Multi-source trend intelligence: async ingestion -> heuristic noise filter -> page-content enrichment -> embedding + HDBSCAN density clustering -> `llama3.1:8b` labelling -> relevance + momentum scoring -> SQLite (WAL) history -> ASCII executive report with a balanced item ledger.
+Agent Reach is a local-first daily intelligence app for Windows. It gathers public news and
+trend signals, filters out noise, groups related reports into stories, measures which stories are
+new or rising, and writes a short daily briefing with a local AI model. You read it as an ordinary
+desktop window: what happened, why it matters, whether it is new or continuing, and where each
+fact came from.
 
-## Setup
+- **Local AI, no subscriptions.** Summaries are written by [Ollama](https://ollama.com) on your
+  own PC (`llama3.1:8b` + `nomic-embed-text`). No paid or cloud AI API is used or needed.
+- **Evidence first.** The model only words what the collected sources say. Every "why it
+  matters" note is checked against the evidence: invented names, numbers or vague filler are
+  dropped rather than shown.
+- **Quality over quantity.** Stale articles, weak one-off trends and repeats of the same story
+  are left out. If there is not enough good material, no edition is published and yesterday's
+  stays on screen.
 
-```bash
-python -m venv .venv && .venv\Scripts\activate        # Windows  (macOS/Linux: source .venv/bin/activate)
-pip install -r requirements.txt
-ollama pull llama3.1:8b                                 # Ollama must be running on localhost:11434
-ollama pull nomic-embed-text                            # embeddings for density clustering (274 MB)
-copy .env.example .env                                  # optional; set AGENT_REACH_CONTACT_EMAIL
-```
+Agent Reach Daily is the desktop product; the original command-line trend report
+(`python -m agent_reach`) is still available for power users.
 
-## Run
+## Quick start (Windows)
 
-```bash
-python -m agent_reach                                   # one run
-python -m agent_reach --loop --interval 30              # every 30 min (builds the velocity history)
-python -m agent_reach --sources hackernews github arxiv --top 10
-python -m agent_reach --no-llm                          # deterministic clustering, no Ollama
-python -m agent_reach --json-out reports/latest.json --log-level DEBUG
-```
+Requirements: Windows 10/11, Python 3.10 or newer (3.12 recommended, with "tcl/tk" ticked in the
+installer), [Ollama](https://ollama.com/download), about 6 GB of disk space for the models.
 
-## Architecture
-
-| Module | Role |
-|---|---|
-| `config.py` | Pydantic Settings; every field overridable via `AGENT_REACH_*` env vars / `.env` |
-| `models.py` | `CategoryEnum`, `RawTrendItem`, `CleanedTrendItem` (+ scraped `context`), `MacroCluster`, `PipelineAccounting` (ledger with invariant checks), `PipelineReport` (schema_version 3) |
-| `ingestion/base.py` | `BaseIngester`: shared `httpx.AsyncClient`, per-call timeout, exponential backoff + jitter, `Retry-After`, extra retryable statuses, per-ingester request pacing; `run()` never raises |
-| `ingestion/social.py` | X (Trends24 scrape), Reddit (JSON with score/comments -> RSS; 5 s timeout, 403/429 retries, 2 s pacing, 30 s budget), TikTok Creative Center (5 s timeout, retries, 2 s pacing) |
-| `ingestion/search.py` | Google Trends RSS, Google News RSS, Wikipedia top pageviews, ArXiv Atom API |
-| `ingestion/tech.py` | Hacker News (Algolia), GitHub Trending scrape, Product Hunt feed |
-| `pipeline/cleaner.py` | ASCII normalisation, hashtag splitting, engagement thresholds, noise regexes, de-dup, heuristic score, output sanitisers |
-| `pipeline/enricher.py` | Stage 2b: fetches each candidate's page (or Wikipedia summary API) and keeps title + meta description + 1-2 lead paragraphs (trafilatura, BeautifulSoup fallback) |
-| `pipeline/density.py` | Stage 3a: `nomic-embed-text` embeddings -> HDBSCAN (leaf selection) -> cosine-to-centroid gate; outliers are noise |
-| `pipeline/clusterer.py` | Stage 3b-e: LLM labelling only (never grouping), `[INSUFFICIENT_DATA]` flag, entity isolation + orphan re-homing, merge, drop rules, guardrails |
-| `pipeline/scorer.py` | Relevance 1-10 (LLM + heuristics), velocity 0-100 vs 1h/6h/24h snapshots |
-| `storage/db.py` | SQLite WAL: `runs` (health/config/validity), `raw_items`, `cleaned_evidence`, `clusters`, `entity_snapshots` |
-| `main.py` | Stage orchestration (1 ingest, 2 clean/select, 2b enrich, 3 cluster, 4 score, 5 persist), accounting ledger, report renderer, loop mode |
-
-## Reliability release
-
-See [the v2.1 contract and replay benchmark](docs/reliability-v2.1.md) for membership guarantees, provenance, source-aware momentum, safe page fetching, schema migration and known limits. Invalid runs retain diagnostics but never produce a completed report or historical baseline.
-
-## Pipeline stages
-
-1. **Ingest.** Ten sources are fetched concurrently. A failing source returns no items; it never fails the run.
-2. **Clean and select.** Engagement thresholds, noise regexes and de-duplication run first. Then the top `MAX_ITEMS_FOR_LLM` items, with a floor per source, become clustering candidates.
-3. **Enrich (2b).** Each candidate gets `context`: page title, meta description and 1-2 lead paragraphs.
-   - Wikipedia uses its summary API.
-   - arXiv and Product Hunt use their feed text.
-   - X and TikTok have no article page, so their items get no context.
-4. **Cluster (3a-3e).**
-   - **3a density:** embed `title + context`, run HDBSCAN (`min_cluster_size=2`, leaf selection), then apply a cosine-to-centroid gate. Outliers are noise and are dropped. They are never forced into a mixed bucket.
-   - **3b label:** the LLM only names groups (headline, category, entities, two sentences, relevance). Groups whose signals can't explain what happened and why get `[INSUFFICIENT_DATA]`.
-   - **3c event coherence:** groups require event evidence and compatible timestamps. Model labels never create membership edges. Ambiguous fragments remain unassigned; deterministic reassignment requires exactly one coherent home.
-   - **3d merge:** combined membership must pass event coherence; entity or cluster ID equality never triggers a merge.
-   - **3e drop:** clusters flagged `[INSUFFICIENT_DATA]`, with filler summaries ("no specific information", "details are scarce"), or with relevance <= 3 are dropped, as are weak singletons.
-5. **Score and persist.** Relevance and velocity are computed, then everything is saved to SQLite.
-
-With no embedding model, grouping falls back to lexical union-find under the same noise rule. With no Ollama, labels are heuristic, and summaries use the scraped lead sentence or are flagged insufficient.
-
-## Item accounting
-
-Every run prints and stores a raw-item ledger (`PipelineReport.accounting`). The invariant is:
-
-    ingested == sum(discarded[reason]) + clustered        (clustered == sum(raw_item_count) over clusters)
-
-- **filtered:** noise-filter reasons, such as `reddit_low_engagement`, `generic_hashtag` or `pet_post`.
-- **budget:** `not_selected_budget` counts items that passed filters but ranked below the clustering cap.
-- **clustering:** `density_noise`, `unsupported_grouping`, `insufficient_data`, `low_relevance` and `weak_singleton`.
-
-A de-duplicated item stands for all its duplicates (`raw_weight`), so de-duplication is never a discard. The ledger validates stage by stage, and an imbalance is logged as an error.
-
-## Noise defences (pre-LLM)
-
-- **Source thresholds:** Reddit score < 20 or comments < 5, HN points < 10, GitHub stars-today < 20, and low-signal subreddits are all dropped. Reddit RSS items are kept only when they rank in the top `REDDIT_RSS_MAX_RANK` of a subreddit's top-of-day listing.
-- **Regex rules:** clickbait prefixes are stripped. Personal anecdotes, meme/photo and pet posts, betting/box-score chatter and generic hashtags are dropped.
-
-## Reddit and TikTok resilience
-
-- **Reddit:** every request uses fixed browser headers, a 5 s timeout and exponential-backoff retries on 403/429/5xx/timeouts, honouring `Retry-After`. Requests are paced at least 2 s apart. After the first definitive JSON 403/429, the remaining subreddits use RSS, and a 30 s budget stops new subreddits from starting.
-- **TikTok:** 5 s timeout, 2 retries on 403/429/5xx, paced 2 s apart. It is often bot-gated and then reports `FAIL` cleanly.
-
-## Velocity
-
-For each entity: `rate = mean(% of kept observations mentioning it per comparable source)`. Only valid runs and compatible configurations enter historical comparisons. Large coverage changes produce neutral `UNCERTAIN` momentum. For each lookback window, the completed run closest to `now - w` (within ±50%) is found, and the rate is recomputed from that run's stored titles. `growth = (now - then) / max(then, one_item_floor)`. `velocity = 50 + 50 * weighted_mean(tanh(2 * growth))`, with weights 0.5, 0.3 and 0.2 for 1h, 6h and 24h. 50 means flat. Momentum labels: NEW, SURGING (75+), RISING (60+), STEADY, COOLING (25+), FADING. Until history exists, the score is a cold-start estimate labelled `BASELINE`. Run in `--loop` mode to fill the 1h, 6h and 24h windows.
-
-## Notes
-
-- Titles are folded to ASCII (as specified), so non-Latin-script trends are discarded. For another region, change `AGENT_REACH_GEO`, `TRENDS24_REGION` and `WIKIPEDIA_PROJECT`.
-- Trends24, GitHub Trending and TikTok are HTML scrapes. When their markup changes, the ingester reports `FAIL` in SOURCE HEALTH and the run continues.
-- TikTok Creative Center often bot-gates unauthenticated requests. Expect intermittent `FAIL` from that source.
-- Unreachable Ollama, a missing model or invalid JSON all fall back to deterministic grouping and heuristic labels. The engine and the grouping method are shown in the report header.
-- `density_member_min_cosine` (0.55) and `hdbscan_selection` (`leaf`) are tuned for `nomic-embed-text`. If you change the embedding model, re-check the `stage 3a density` log line.
-
-## Cloud runner (GitHub Actions)
-
-`run_cloud_handoff.ps1` syncs this folder to `timeitself1-cpu/Agent-Reach`. It excludes secrets, blocks token-looking strings, and keeps remote-only files unless you pass `-Mirror`. It then dispatches `.github/workflows/cloud-runner.yml`, waits until the run is `in_progress`, and streams its logs.
+Open PowerShell and run, from the project folder:
 
 ```powershell
-powershell -ExecutionPolicy Bypass -File .\run_cloud_handoff.ps1                 # full LLM run
-.\run_cloud_handoff.ps1 -NoLLM -ExtraArgs "--top 10"                              # fast deterministic run
+cd "C:\Users\downt\Downloads\Agent Reach\src\Agent-Reach"
+powershell -ExecutionPolicy Bypass -File .\Setup-AgentReachDaily.ps1 -PullModels -RegisterTask
 ```
 
-The workflow installs Ollama on a CPU-only `ubuntu-latest` runner and caches `llama3.1:8b` after the first pull. It also pulls `nomic-embed-text`. It clusters up to 150 candidates, and because grouping is embedding-based, the LLM only labels real clusters. SQLite history is carried between runs in the Actions cache, so velocity works in the cloud as well. The report appears in the run summary and as a downloadable artifact. Optionally, set the repository variable `AGENT_REACH_CONTACT_EMAIL`.
+The setup script creates the project environment (`.venv`), installs the requirements, checks
+Ollama and downloads the two models when `-PullModels` is given, creates your data folder,
+puts an **Agent Reach** shortcut on the Desktop and in the Start menu, and (with `-RegisterTask`)
+registers the background refresh task. It never deletes anything. Add `-DryRun` to see every step
+first. Leave out `-PullModels` if you already ran `ollama pull llama3.1:8b` and
+`ollama pull nomic-embed-text`.
+
+Then **double-click "Agent Reach"** on the Desktop. The first time, choose
+**Collect today's news now**; on a PC without a graphics card the first edition takes roughly
+10-40 minutes. You can keep the window open or close it: the refresh continues in the background.
+
+## Using it every day
+
+| What | How |
+|---|---|
+| Open the app | Desktop / Start-menu shortcut **Agent Reach**, or double-click `AgentReachDaily.pyw` (fallback: `AgentReachDaily.cmd`) |
+| Refresh now | the **Refresh** button, F5 or Ctrl+R |
+| Read the sources of a story | click a publisher name, or **Source details** under the story |
+| Older editions | the **Edition** list (30 days are kept) |
+| Search / filter | **Category** list, **Search** box (Ctrl+F, Esc clears) |
+| Source health, timings, run details | **Details** (Ctrl+D) |
+| Save today's edition as a web page | **Export** (Ctrl+E) |
+| Preview the layout with sample stories | View > Demo edition (clearly marked DEMO, not real news) |
+
+Command line (from the project folder):
+
+```powershell
+.\.venv\Scripts\python.exe -m agent_reach.daily                 # open the window (same as the shortcut)
+.\.venv\Scripts\python.exe -m agent_reach.daily --refresh-now   # collect a new edition now
+.\.venv\Scripts\python.exe -m agent_reach.daily --status        # due / last success / backoff, as JSON
+.\.venv\Scripts\python.exe -m agent_reach.daily --check         # is Ollama running with both models?
+.\.venv\Scripts\python.exe -m agent_reach.daily --export-html today.html
+.\.venv\Scripts\python.exe -m agent_reach.daily --help          # everything else (task, reset, exit codes)
+```
+
+## How refreshing works
+
+- **Daily cadence.** A new edition is due 24 hours after the *start* of the last successful
+  refresh (Settings > Schedule can switch to a fixed US Central time such as 7:00 AM instead).
+- **Background task (optional).** The scheduled task `AgentReachDaily-Refresh` runs hourly and
+  at logon. It exits within a second when nothing is due, so news sites and your PC are not
+  hammered. It runs only while you are logged on, never wakes the PC, and uses no administrator
+  rights. A PC that is off or asleep cannot collect news; the refresh happens at the next chance
+  (one refresh, not a catch-up burst).
+- **When the window opens**, a due refresh starts automatically in the background.
+- **Manual refresh** (button or `--refresh-now`) runs immediately, even if not due.
+- **Only one refresh at a time.** Scheduled, automatic and manual refreshes share one
+  cross-process lock; a crashed refresh can never leave it stuck.
+- **Failures keep your edition.** If Ollama is down, the internet is out, too few sources answer
+  or too few good stories are found, nothing is published, the previous edition stays on
+  screen with a plain-language note, and automatic retries back off (30 min, 1 h, 2 h, ... up to
+  6 h). Ollama is started automatically when it is installed but not running.
+- **Editions are dated** by the US Central (CST/CDT) day on which the refresh started. A second
+  successful refresh on the same day replaces that day's edition as a new revision.
+
+## Your data
+
+Everything lives in `%LOCALAPPDATA%\AgentReachDaily` (for example
+`C:\Users\downt\AppData\Local\AgentReachDaily`), never in the project folder:
+
+| Path | Contents |
+|---|---|
+| `cache\editions\YYYY-MM-DD.json` | the daily editions (kept 30 days; the newest is never deleted) |
+| `cache\latest.json` | pointer to the newest edition |
+| `settings.json` | your settings (Settings dialog) |
+| `state\` | refresh history (last attempt vs. last success, backoff), the refresh lock, window size |
+| `data\agent_reach.db` | SQLite history used to tell new / rising / continuing stories |
+| `logs\` | `gui.log`, `refresh.log`, `scheduler.log` (rotating, about 6 MB each at most) |
+| `diagnostics\` | details of the last 30 failed or unpublished refreshes |
+| `exports\` | default folder for exported HTML editions |
+
+## Privacy and cost
+
+- All AI work runs locally through Ollama. Nothing is sent to OpenAI, Anthropic, Google or any
+  other AI service, and no API key or subscription is needed.
+- The internet is used to read public sources: publisher RSS feeds (BBC, NPR, The Guardian,
+  ESPN by default), Google News and Google Trends RSS, Wikipedia's most-read list, Hacker News,
+  and optionally Reddit, X trends (trends24.in), TikTok, GitHub Trending, Product Hunt and arXiv.
+  Article pages are fetched to give the model context. Model downloads come from Ollama.
+- Exported HTML files are self-contained (no scripts, no remote assets); only the article links
+  need the internet.
+
+## Troubleshooting
+
+| Symptom | What to do |
+|---|---|
+| "Ollama is not running" | Start **Ollama** from the Start menu (the app also tries to start it). Check with `--check`. |
+| "model(s) ... are missing" | `ollama pull llama3.1:8b` and `ollama pull nomic-embed-text`, or re-run setup with `-PullModels`. |
+| "No news source responded" | You are offline or a firewall blocks the feeds. The previous edition is kept; it retries automatically. |
+| A source shows PARTIAL or FAILED (Details) | Normal from time to time (Reddit and X often block automated readers). The edition is built from the rest and says what was missing. |
+| "found too little news to publish" | Fewer than 3 good stories or fewer than 2 working sources. Wait for the automatic retry or press Refresh later. |
+| Wrong date or time zone | Times are US Central (CST/CDT) on purpose. If times look wrong by hours, re-run setup: it installs `tzdata`, which Windows needs. |
+| Background refresh never happens | Settings > Schedule shows the task status; **Enable / update** re-registers it. Check `logs\scheduler.log`. The task only runs while you are logged on. |
+| "saved edition files are damaged" | Nothing to do: damaged files are skipped and moved to `cache\quarantine` at the next refresh; the newest good edition is shown. |
+| The window does not open | Run `.\.venv\Scripts\python.exe -m agent_reach.daily` in PowerShell to see the error, and check `logs\gui.log`. |
+| Start completely fresh | Settings > Storage > **Delete all cached editions**, or `--reset-cache --yes`. |
+
+To remove the scheduled task and shortcuts (your editions and settings are kept):
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\Uninstall-AgentReachDaily.ps1           # add -DryRun to preview
+powershell -ExecutionPolicy Bypass -File .\Uninstall-AgentReachDaily.ps1 -RemoveVenv -DeleteUserData   # everything
+```
+
+## Classic command-line report
+
+The original pipeline still runs on its own and writes an ASCII executive report:
+
+```powershell
+.\.venv\Scripts\python.exe -m agent_reach                # one run with Ollama
+.\.venv\Scripts\python.exe -m agent_reach --no-llm       # deterministic grouping, no Ollama
+.\.venv\Scripts\python.exe -m agent_reach --loop --interval 30
+```
+
+It uses `agent_reach.db` in the current folder (or `AGENT_REACH_DB_PATH`) and `.env` settings,
+independent of the Daily app. `run_agent_reach.ps1` is its one-shot setup + run script.
+
+## How it works
+
+```
+public sources -> ingest -> clean / filter -> enrich (page context) -> embed + group (HDBSCAN)
+  -> label (local model) -> score relevance + momentum -> daily selection (balanced, fresh, no repeats)
+  -> grounded "why it matters" (local model + evidence check) -> edition store -> desktop reader
+```
+
+The model never decides which reports belong together (embeddings and deterministic evidence
+checks do), never sees the web, and its output is checked before it is shown. Details:
+[docs/architecture.md](docs/architecture.md) and [docs/reliability-v2.1.md](docs/reliability-v2.1.md).
+
+## Development
+
+```powershell
+.\.venv\Scripts\python.exe -m pip install -r requirements-dev.txt
+.\.venv\Scripts\python.exe -m pytest -q                      # offline: fake feeds + fake model, no Ollama/network
+.\.venv\Scripts\python.exe -m pyflakes agent_reach tests
+.\.venv\Scripts\python.exe -m tests.replay_benchmark
+```
+
+Tests never touch the network or a real Ollama. `tests/daily_fakes.py` holds synthetic publisher
+feeds (fictional places on `.test` hosts) and a deterministic fake model; `samples/DEMO-edition.json`
+is the clearly labelled demo edition. Version: Agent Reach Daily 1.0 release candidate 1
+(`python -m agent_reach.daily --version`).

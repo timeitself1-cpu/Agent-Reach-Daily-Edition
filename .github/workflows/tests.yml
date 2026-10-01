@@ -1,7 +1,8 @@
 name: tests
 
 # Offline test suite and lint on every push and pull request. No Ollama or live
-# data: the suite uses mock HTTP and a fake Ollama (see tests/fakes.py).
+# data: the suite uses mock HTTP and a fake Ollama (tests/fakes.py, tests/daily_fakes.py).
+# Tk window tests skip without a display.
 
 on:
   push:
@@ -50,3 +51,9 @@ jobs:
 
       - name: CLI smoke test
         run: python -m agent_reach --no-llm --help
+
+      - name: Daily CLI smoke test
+        run: |
+          python -m agent_reach.daily --version
+          python -m agent_reach.daily --help
+          python -m agent_reach.daily --install-task --dry-run --data-dir "$RUNNER_TEMP/agent reach daily"

@@ -55,6 +55,31 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     return p.parse_args(argv)
 
 
+def _refresh_command(args: argparse.Namespace, paths: DataPaths) -> int:
+    import logging
+
+    from agent_reach.daily.logs import move_logging, setup_logging
+    from agent_reach.daily.refresh import refresh
+
+    paths.ensure()
+    trigger = args.trigger or ("scheduled" if args.refresh_if_due else "cli")
+    setup_logging(paths, "scheduler" if args.refresh_if_due else "refresh", args.log_level)
+    if args.refresh_if_due:
+        # quick due check happens inside refresh(); switch to refresh.log once real work may start
+        from agent_reach.daily.prefs import load_prefs
+        from agent_reach.daily.state import check_due, load_state
+        from agent_reach.daily.timeutil import utcnow
+
+        prefs, _ = load_prefs(paths)
+        state, _ = load_state(paths)
+        if check_due(state, prefs, utcnow()).due or state.last_attempt_outcome == "running":
+            move_logging(paths, "scheduler", "refresh", args.log_level)
+    result = refresh(paths, trigger=trigger, force=args.refresh_now, allow_extractive=args.allow_extractive)
+    logging.getLogger("agent_reach.daily").info("exit %d %s: %s", result.code, result.outcome, result.message)
+    print(f"{result.outcome}: {result.message}")
+    return result.code
+
+
 def main(argv: list[str] | None = None) -> int:
     args = parse_args(argv)
     paths = DataPaths.resolve(args.data_dir)
@@ -65,28 +90,13 @@ def main(argv: list[str] | None = None) -> int:
         return run_gui(paths)
 
     if args.refresh_if_due or args.refresh_now:
-        from agent_reach.daily.logs import move_logging, setup_logging
-        from agent_reach.daily.refresh import refresh
+        try:
+            return _refresh_command(args, paths)
+        except Exception:  # noqa: BLE001 - under pythonw.exe there is no console: the log is the only witness
+            import logging
 
-        paths.ensure()
-        trigger = args.trigger or ("scheduled" if args.refresh_if_due else "cli")
-        setup_logging(paths, "scheduler" if args.refresh_if_due else "refresh", args.log_level)
-        if args.refresh_if_due:
-            # quick due check happens inside refresh(); switch to refresh.log once real work may start
-            from agent_reach.daily.prefs import load_prefs
-            from agent_reach.daily.state import check_due, load_state
-            from agent_reach.daily.timeutil import utcnow
-
-            prefs, _ = load_prefs(paths)
-            state, _ = load_state(paths)
-            if check_due(state, prefs, utcnow()).due or state.last_attempt_outcome == "running":
-                move_logging(paths, "scheduler", "refresh", args.log_level)
-        result = refresh(paths, trigger=trigger, force=args.refresh_now, allow_extractive=args.allow_extractive)
-        import logging
-
-        logging.getLogger("agent_reach.daily").info("exit %d %s: %s", result.code, result.outcome, result.message)
-        print(f"{result.outcome}: {result.message}")
-        return result.code
+            logging.getLogger("agent_reach.daily").exception("refresh command crashed")
+            return 30
 
     if args.status:
         from agent_reach.daily.refresh import dumps, status_payload

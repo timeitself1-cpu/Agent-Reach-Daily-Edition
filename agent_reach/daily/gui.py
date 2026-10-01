@@ -225,7 +225,7 @@ class DailyWindow:
 
         right = ttk.Frame(header, style="Header.TFrame")
         right.grid(row=0, column=1, rowspan=5, sticky="ne", padx=(self.px(12), 0))
-        self.refresh_btn = ttk.Button(right, text="⟳  Refresh", style="Refresh.TButton", command=self.refresh_now)
+        self.refresh_btn = ttk.Button(right, text="Refresh", style="Refresh.TButton", command=self.refresh_now)
         self.refresh_btn.grid(row=0, column=0, columnspan=3, sticky="ew")
         self.progress = ttk.Progressbar(right, mode="indeterminate", length=self.px(150))
         self.cancel_btn = ttk.Button(right, text="Cancel refresh", style="Small.TButton", command=self.cancel_refresh)
@@ -319,7 +319,8 @@ class DailyWindow:
         t.tag_configure("bad", foreground="#a50e0e", font=self.f_bold)
         t.tag_configure("bold", font=self.f_bold)
         for name, (bg, fg) in {**CATEGORY_COLORS, **LABEL_COLORS}.items():
-            t.tag_configure(f"chip:{name}", background=bg, foreground=fg, font=self.f_chip)
+            # lmargincolor: a line that starts with a chip must not paint its left margin too
+            t.tag_configure(f"chip:{name}", background=bg, foreground=fg, font=self.f_chip, lmargincolor=CARD)
 
     # ------------------------------------------------------------ polling / render
     def _schedule_poll(self) -> None:
@@ -365,7 +366,7 @@ class DailyWindow:
                 self._schedule_poll()
         else:
             self.refresh_btn.state(["!disabled"])
-            self.refresh_btn.configure(text="⟳  Refresh")
+            self.refresh_btn.configure(text="Refresh")
             self.cancel_btn.state(["!disabled"])
             self.progress.stop()
             self.progress.grid_remove()
@@ -433,9 +434,6 @@ class DailyWindow:
 
     def _chip(self, name: str) -> None:
         tag = f"chip:{name}" if f"chip:{name}" in self.text.tag_names() else "chip:Continuing"
-        if self.text.get("end-2c") == "\n":
-            # a line that starts with a coloured tag would paint the left margin too
-            self.text.insert("end", "\u200b", ("meta",))
         self.text.insert("end", f" {name} ", ("meta", tag))
         self.text.insert("end", "  ", ("meta",))
 
