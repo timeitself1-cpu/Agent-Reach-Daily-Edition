@@ -164,6 +164,22 @@ Wikipedia channel is partial, never failed.
 5. The edition is published only with >= `min_ok_sources` (2) responding sources and
    >= `min_useful_stories` (3) stories; otherwise the previous edition stays.
 
+### Reading features (`daily/reading.py`, no Tk)
+
+- **In brief:** the lead sentence of the first five Top Stories (clipped at 170 characters), in the
+  window and the HTML export.
+- **Tags:** NEW / UPDATED come from the edition's `changes` (no model). DAY n comes from walking back
+  through up to 7 earlier cached editions with the same matching rules as "what changed"; the run
+  ends at the first edition that does not carry the story (`AppController.developing`, cached per
+  edition).
+- **Read state:** `state/reading.json` maps `story_id` to when it was opened (written only by the
+  window, kept 14 days). A story that gains new evidence gets a new `story_id` and reads as unread.
+  Sidebar counts are unread counts.
+- **Topics:** `follow_topics` / `mute_topics` in settings (whole words or phrases, any case, matched
+  on headline, summary, key names and evidence titles). Followed stories are starred and gathered in
+  a Following section; muted stories are left out of every section and search. `Story.entities`
+  (optional; the cluster's key names) feeds the right-click Follow / Mute suggestions.
+
 ### Publication-time validation
 
 `ingestion/base.py` parses RFC-822 and ISO-8601 times and normalises every offset or zone name to

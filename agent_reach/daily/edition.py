@@ -123,6 +123,7 @@ class Story(BaseModel):
     member_item_ids: list[int] = Field(min_length=1)
     evidence: list[EvidenceLink] = Field(min_length=1)
     tech_only: bool = False
+    entities: list[str] = Field(default_factory=list)  # key names (people, places, organisations); may be empty
     evidence_strength: EvidenceStrength | None = None  # deterministic; None in editions written before it existed
 
 
@@ -561,6 +562,7 @@ def build_story(rank: int, cluster: MacroCluster, items: dict[int, CleanedTrendI
         evidence=evidence,
         evidence_strength=assess(all_evidence, reference or datetime.now(timezone.utc)),
         tech_only=tech_only(cluster),
+        entities=list(cluster.primary_entities)[:6],
     )
 
 

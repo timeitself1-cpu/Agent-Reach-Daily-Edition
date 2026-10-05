@@ -42,6 +42,12 @@ article p { margin:0; color:var(--ink2); }
 .kicker { color:var(--muted); font-size:.78rem; font-weight:600; letter-spacing:.02em; }
 .cat { color:var(--accent); text-transform:uppercase; margin-right:6px; }
 .label { text-transform:uppercase; margin-right:6px; }
+.tag { text-transform:uppercase; margin-right:6px; }
+.tag.new { color:#248a3d; } .tag.updated { color:var(--accent); }
+.brief { background:var(--card); border:1px solid var(--line); border-radius:14px; padding:12px 20px; margin:14px 0 4px; }
+.brief h2 { font-size:.78rem; letter-spacing:.06em; text-transform:uppercase; color:var(--accent); margin:0 0 4px; }
+.brief ul { margin:0; padding-left:18px; } .brief li { margin:4px 0; color:var(--ink2); }
+.brief a { color:inherit; text-decoration:none; } .brief a:hover { color:var(--accent); text-decoration:underline; }
 .why { margin-top:8px !important; }
 .why strong { color:var(--accent); font-size:.78rem; letter-spacing:.04em; text-transform:uppercase; margin-right:4px; }
 details.evidence { margin:10px 0 0; }
@@ -89,9 +95,14 @@ def _headline(s: Story) -> str:
 
 
 def _story(s: Story, edition: DailyEdition, number: int | None = None) -> str:
+    from agent_reach.daily.reading import change_tags
+
     strength = strength_of(s, edition.generation_completed_utc)
+    change = change_tags(edition).get(s.rank, "")
     publishers = strength.publishers or sorted({ev.publisher or ev.source_name for ev in s.evidence})
     kicker = [f'<span class="cat">{_e(s.category.value)}</span>']
+    if change:
+        kicker.append(f'<span class="tag {change}">{_e(change)}</span>')
     kicker += [f'<span class="label">{_e(label)}</span>' for label in s.labels]
     names = ", ".join(publishers[:3]) + (f" +{len(publishers) - 3}" if len(publishers) > 3 else "")
     kicker.append(_e(names))
@@ -177,6 +188,11 @@ def render_edition_html(edition: DailyEdition) -> str:
     top = top_stories(edition)
     groups = [("Top Stories", top)] + category_sections(edition)
     nav = "".join(f'<a href="#{_slug(t)}">{_e(t)} ({len(st)})</a>' for t, st in groups)
+    from agent_reach.daily.reading import in_brief
+
+    brief = "".join(f'<li><a href="#story-{st.rank}">{_e(line)}</a></li>' for st, line in in_brief(top))
+    brief_html = f'<section class="brief" aria-label="In brief"><h2>In brief</h2><ul>{brief}</ul></section>' \
+        if len(top) >= 3 else ""
     shown: set[int] = set()
     body = "".join(_section(t, st, edition, shown) for t, st in groups) if edition.stories else \
         "<p>No stories in this edition.</p>"
@@ -191,6 +207,7 @@ def render_edition_html(edition: DailyEdition) -> str:
 <p class="sub">{_e(updated_line(edition.generation_completed_utc))}{revision}</p>
 {"".join(banners)}
 <nav class="sections" aria-label="Sections">{nav}</nav>
+{brief_html}
 {body}
 <div class="more">
 {_changes(edition)}

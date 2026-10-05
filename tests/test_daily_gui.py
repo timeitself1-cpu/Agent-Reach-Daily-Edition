@@ -235,9 +235,9 @@ def test_headline_opens_the_main_article_and_j_k_move_between_stories(root, dail
     opened = []
     monkeypatch.setattr(G.webbrowser, "open", lambda url, new=0: opened.append(url))
     w, _ = _window(root, daily_paths)
-    name = next(n for n, t in w._links.items() if t == primary_url(first))
+    name = next(n for n, t in w._links.items() if t.startswith("open:") and t.endswith(primary_url(first)))
     w._click(name)
-    assert opened == [primary_url(first)]
+    assert opened == [primary_url(first)] and first.story_id in w._read  # opening a story marks it read
     root.deiconify()
     root.geometry("900x500")
     root.update()
@@ -275,3 +275,71 @@ def test_feed_doctor_banner_and_turn_off_failing_feeds(root, daily_paths):
     assert "Failing since" in dialog.feed_tree.item("0", "values")[3]
     dialog.turn_off_failing()
     assert not dialog.feeds[0].enabled and dialog.feeds[1].enabled
+
+
+def test_in_brief_follow_mute_read_state_and_story_menu(root, daily_paths, monkeypatch):
+    from agent_reach.daily import gui as G
+    from agent_reach.daily.prefs import load_prefs
+
+    heads = ["Norvale Ferry Strike Halts Island Service", "Port Calder Earthquake Damages Roads",
+             "Riverton Hawks Win Championship Final", "Lumen Summit Agrees Methane Pledge",
+             "Corvid Labs Releases Open Model"]
+    stories = [make_story(headline=h, sentences=[f"{h.split()[0]} lead sentence for the brief."]) for h in heads]
+    stories[0].entities = ["Norvale", "Norvale Port Authority"]
+    EditionStore(daily_paths).publish(make_edition(stories))
+    monkeypatch.setattr(G.webbrowser, "open", lambda url, new=0: None)
+    w, _ = _window(root, daily_paths)
+    body = _text(w)
+    assert "IN BRIEF" in body and "Norvale lead sentence for the brief." in body
+    assert body.index("IN BRIEF") < body.index("1\tNorvale Ferry Strike")
+    top_row = [c for c in w.section_box.winfo_children() if c.winfo_class() == "Frame"][0]
+    assert [c.cget("text") for c in top_row.winfo_children() if c.winfo_class() == "Label"][-1] == "5"  # unread
+
+    # right-click menu: follow a key name, then mute another story
+    items = [label for label, _ in w.story_menu_items(stories[0])]
+    assert "Open article" in items and "Mark as read" in items and "Follow \u201cNorvale\u201d" in items
+    w.set_topic("Norvale", "follow", True)
+    assert load_prefs(daily_paths)[0].follow_topics == ["Norvale"]
+    keys = [k for k, _, _ in w.sections(w.snap.shown)]
+    assert keys[:2] == ["top", "following"]
+    assert "\u2605 NORVALE" in _text(w)
+    w.set_topic("Riverton", "mute", True)
+    assert "Riverton Hawks" not in _text(w) and "1 muted" in _text(w)
+
+    # read state: dimmed headline, unread count drops, Mark all as read clears the badge
+    w.mark_read([stories[1].story_id])
+    ranges = w.text.tag_ranges("read")
+    assert ranges and "Port Calder" in w.text.get(ranges[0], ranges[1])
+    w.mark_all_read()
+    top_row = [c for c in w.section_box.winfo_children() if c.winfo_class() == "Frame"][0]
+    assert [c.cget("text") for c in top_row.winfo_children() if c.winfo_class() == "Label"][-1] == ""
+    assert w.story_at("story2") is not None
+
+
+def test_topics_tab_saves_follow_and_mute(root, daily_paths):
+    from agent_reach.daily.gui import SettingsDialog
+    from agent_reach.daily.prefs import load_prefs
+
+    w, _ = _window(root, daily_paths)
+    dialog = SettingsDialog(w, load_prefs(daily_paths)[0])
+    root.update()
+    dialog.follow_text.insert("1.0", "Packers\n  Jordan Love \n\npackers")
+    dialog.mute_text.insert("1.0", "Crypto")
+    dialog.save()
+    prefs, _ = load_prefs(daily_paths)
+    assert prefs.follow_topics == ["Packers", "Jordan Love"] and prefs.mute_topics == ["Crypto"]
+
+
+def test_o_and_s_keys_act_on_the_current_story(root, daily_paths, monkeypatch):
+    from agent_reach.daily import gui as G
+
+    stories = [make_story(headline=f"Story Number {n} Happens Today", url=f"https://wire-one.test/{n}")
+               for n in ("one", "two", "three")]
+    EditionStore(daily_paths).publish(make_edition(stories))
+    opened = []
+    monkeypatch.setattr(G.webbrowser, "open", lambda url, new=0: opened.append(url))
+    w, _ = _window(root, daily_paths)
+    w.open_current()
+    assert opened == ["https://wire-one.test/one"] and stories[0].story_id in w._read
+    w.toggle_current_sources()
+    assert stories[0].story_id in w._expanded and "Hide sources" in _text(w)

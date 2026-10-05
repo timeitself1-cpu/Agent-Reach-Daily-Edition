@@ -114,6 +114,22 @@ class AppController:
         self.child = None
         self.selected_date: date | None = None  # None = follow the latest edition
         self.demo: DailyEdition | None = None
+        self._developing: tuple[str, dict] | None = None  # (run_id, rank -> first-seen date)
+
+    def developing(self, edition: DailyEdition) -> dict:
+        """rank -> date first seen, for stories carried over from earlier editions (cached per edition)."""
+        from agent_reach.daily.reading import DEVELOPING_LOOKBACK, developing_since
+
+        if edition.demo:
+            return {}
+        if self._developing is None or self._developing[0] != edition.run_id:
+            earlier = []
+            for d in [d for d in self.store.list_dates() if d < edition.edition_date][:DEVELOPING_LOOKBACK]:
+                older, _ = self.store.load_date(d)
+                if older is not None:
+                    earlier.append(older)
+            self._developing = (edition.run_id, developing_since(edition, earlier))
+        return self._developing[1]
 
     # ------------------------------------------------------------ data
     def activity(self) -> RefreshActivity:

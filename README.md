@@ -51,8 +51,12 @@ Then **double-click "Agent Reach"** on the Desktop. The first time, choose
 | Older editions | the edition date list next to Search (30 days are kept) |
 | Top 10 overall, then the top 10 of each category | the **Sections** sidebar: Top Stories, News, Tech, Science & AI, Sports, Entertainment, Internet Culture (Ctrl+1 to Ctrl+7) |
 | Everything else (demo, data folder, model check, help) | the **...** button at the right of the toolbar |
-| Open a story's main article | click its headline |
-| Move between stories | J (next) and K (previous); every shortcut is under **...** > Keyboard shortcuts |
+| The day in ten seconds | **In brief** at the top of Top Stories: the lead sentence of the first five stories (click one to jump to it) |
+| What is new | **NEW** and **UPDATED** tags (compared with the previous edition) and **DAY 3** on stories that have run for several days |
+| Open a story's main article | click its headline (or press O); the story then shows as read (dimmed) |
+| Move between stories | J (next) and K (previous), S shows the sources; every shortcut is under **...** > Keyboard shortcuts |
+| Unread counts | the numbers in the sidebar count stories you have not opened yet; **...** > Mark all as read clears them |
+| Follow or mute a topic | right-click a story > Follow / Mute a name in it, or Settings > **Topics** (one per line). Followed stories get a star and a **Following** section; muted ones are hidden everywhere |
 | Search | **Search** box (Ctrl+F, Esc clears and returns to Top Stories) |
 | What changed since the last refresh | **Details** > Changes (kept out of the reading view) |
 | Source health, timings, run details | **Details** (Ctrl+D) |
@@ -215,5 +219,5 @@ checks do), never sees the web, and its output is checked before it is shown. De
 
 Tests never touch the network or a real Ollama. `tests/daily_fakes.py` holds synthetic publisher
 feeds (fictional places on `.test` hosts) and a deterministic fake model; `samples/DEMO-edition.json`
-is the clearly labelled demo edition. Version: Agent Reach Daily 1.0 release candidate 6
+is the clearly labelled demo edition. Version: Agent Reach Daily 1.0 release candidate 7
 (`python -m agent_reach.daily --version`).

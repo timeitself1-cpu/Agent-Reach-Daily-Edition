@@ -114,6 +114,10 @@ class DailyPrefs(BaseModel):
     items_per_feed: int = Field(default=10, ge=3, le=30)
 
     appearance: Literal["system", "light", "dark"] = "system"
+    # topics: stories mentioning a followed topic are starred and gathered under "Following";
+    # stories mentioning a muted topic are hidden (whole words, any case)
+    follow_topics: list[str] = Field(default_factory=list)
+    mute_topics: list[str] = Field(default_factory=list)
 
     @model_validator(mode="before")
     @classmethod
@@ -186,6 +190,16 @@ class DailyPrefs(BaseModel):
 
     def enabled_youtube_channels(self) -> list[FeedSpec]:
         return [f for f in self.feeds if f.enabled and f.channel_id is not None]
+
+    @field_validator("follow_topics", "mute_topics")
+    @classmethod
+    def _topics(cls, v: list[str]) -> list[str]:
+        out: list[str] = []
+        for t in v:
+            t = " ".join(str(t).split())[:60]
+            if len(t) >= 2 and t.lower() not in {o.lower() for o in out}:
+                out.append(t)
+        return out[:100]
 
     @field_validator("enabled_sources")
     @classmethod

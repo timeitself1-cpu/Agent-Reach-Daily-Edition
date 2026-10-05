@@ -48,11 +48,12 @@ from agent_reach.daily.edition import (
     safe_url,
     top_stories,
 )
+from agent_reach.daily import reading as RD
 from agent_reach.daily.paths import DataPaths
 from agent_reach.daily.feeds import FeedSpec, default_feeds
 from agent_reach.daily.prefs import DailyPrefs, SOURCE_NOTES, save_prefs
 from agent_reach.daily.strength import strength_of
-from agent_reach.daily.timeutil import format_central, format_clock, format_long_date, format_short_date
+from agent_reach.daily.timeutil import format_central, format_clock, format_long_date, format_short_date, utcnow
 
 log = logging.getLogger(__name__)
 
@@ -74,6 +75,7 @@ PALETTES: dict[str, dict] = {
             "News": ("#e5f0ff", "#0060df"), "Sports": ("#e3f6e8", "#248a3d"), "Entertainment": ("#fdebf3", "#c41e6a"),
             "Tech": ("#eef0f3", "#5e5ce6"), "Science & AI": ("#fff4e0", "#b25000"),
             "Internet Culture": ("#f4ecff", "#8944ab")},
+        "tags": {"new": "#248a3d", "updated": "#0060df", "day": "#b25000", "follow": "#a05a00"},
         "labels": {
             "Hot": ("#ffe5e3", "#d70015"), "Rising": ("#fff1dd", "#b25000"), "New": ("#e1f5f2", "#0b7a6b"),
             "Uncertain trend": ("#eef0f3", "#6e6e73"), "Continuing": ("#eef0f3", "#6e6e73"),
@@ -90,6 +92,7 @@ PALETTES: dict[str, dict] = {
             "News": ("#14243d", "#64a8ff"), "Sports": ("#14301d", "#4cd964"), "Entertainment": ("#3a1528", "#ff7eb6"),
             "Tech": ("#26263a", "#a5a3ff"), "Science & AI": ("#3a2a10", "#ffb340"),
             "Internet Culture": ("#2c1a3a", "#d39bff")},
+        "tags": {"new": "#30d158", "updated": "#64a8ff", "day": "#ffb340", "follow": "#ffd60a"},
         "labels": {
             "Hot": ("#3c1614", "#ff6961"), "Rising": ("#3a2a10", "#ffb340"), "New": ("#10302b", "#5edcc8"),
             "Uncertain trend": ("#2c2c2e", "#aeaeb2"), "Continuing": ("#2c2c2e", "#aeaeb2"),
@@ -101,6 +104,7 @@ PALETTES: dict[str, dict] = {
 
 TOP = "top"
 SEARCH = "search"
+FOLLOWING = "following"
 
 
 def dark_title_bar(window: tk.Misc, dark: bool) -> None:
@@ -151,6 +155,9 @@ class DailyWindow:
         self._cancelling = False
         self._generated_at = None
         self.section = TOP
+        self._read: set[str] = set(RD.load_reading(paths).read)
+        self._mark_story: dict[str, Story] = {}
+        self._story_marks: list[str] = []
         # 1.0 at 96 DPI; pixel sizes scale with Windows display scaling (fonts scale by themselves)
         self.scale = max(1.0, root.winfo_fpixels("1i") / 96.0)
 
@@ -295,6 +302,7 @@ class DailyWindow:
         menu.add_command(label="Export as web page...", accelerator="Ctrl+E", command=self.export_html)
         menu.add_command(label="Settings...", accelerator="Ctrl+,", command=self.open_settings)
         menu.add_separator()
+        menu.add_command(label="Mark all as read", command=self.mark_all_read)
         menu.add_command(label="Expand all sources", command=lambda: self._expand_all(True))
         menu.add_command(label="Collapse all sources", command=lambda: self._expand_all(False))
         menu.add_command(label="Latest edition", command=self.show_latest)
@@ -323,6 +331,8 @@ class DailyWindow:
             self.root.bind(f"<Control-Key-{n}>", lambda e, n=n: self._section_by_number(n))
         for key, step in (("j", 1), ("k", -1)):
             self.root.bind(f"<KeyPress-{key}>", lambda e, step=step: None if self._typing() else self.jump_story(step))
+        self.root.bind("<KeyPress-o>", lambda e: None if self._typing() else self.open_current())
+        self.root.bind("<KeyPress-s>", lambda e: None if self._typing() else self.toggle_current_sources())
         self.root.bind("<Home>", lambda e: self.text.yview_moveto(0))
         self.root.bind("<End>", lambda e: self.text.yview_moveto(1))
         self.root.bind("<Prior>", lambda e: self.text.yview_scroll(-1, "pages"))
@@ -345,6 +355,8 @@ class DailyWindow:
         messagebox.showinfo(APP_NAME, (
             "Keyboard shortcuts\n\n"
             "J / K          next / previous story\n"
+            "O              open the story's main article\n"
+            "S              show or hide the story's sources\n"
             "Ctrl+1 ... 7   Top Stories, then each category\n"
             "Ctrl+F         search (Esc clears)\n"
             "F5 or Ctrl+R   refresh now\n"
@@ -353,7 +365,8 @@ class DailyWindow:
             "Ctrl+,         settings\n"
             "Home / End     top / bottom\n"
             "Ctrl+Q         quit\n\n"
-            "Click a headline to open its main article; click Sources to see every report."), parent=self.root)
+            "Click a headline to open its main article; click Sources to see every report. Right-click a story "
+            "to mark it read, or to follow or mute the names in it."), parent=self.root)
 
     def show_about(self) -> None:
         messagebox.showinfo(APP_NAME, f"{APP_NAME} {VERSION_LABEL}\n\nLocal daily news from public sources, summarized "
@@ -456,6 +469,8 @@ class DailyWindow:
         scroll.grid(row=0, column=1, sticky="ns")
         self.text.bind("<Button-1>", lambda e: self.text.focus_set(), add="+")
         self.text.bind("<Configure>", self._fit_column)
+        for seq in ("<Button-3>", "<Button-2>"):  # right click (Windows/Linux), and Mac-style secondary click
+            self.text.bind(seq, self._story_menu)
         self._text_tags()
         self.root.bind("<Configure>", self._on_resize)
 
@@ -500,6 +515,13 @@ class DailyWindow:
         t.tag_configure("bold", font=self.f_bold)
         for name, (_tint, fg) in {**c["categories"], **c["labels"]}.items():
             t.tag_configure(f"chip:{name}", foreground=fg, font=self.f_kicker)
+        for name, fg in c["tags"].items():
+            t.tag_configure(f"tag:{name}", foreground=fg, font=self.f_kicker)
+        t.tag_configure("read", foreground=c["muted"])  # headlines already read
+        t.tag_configure("brief_head", font=self.f_kicker, foreground=c["accent"], spacing1=self.px(6),
+                        spacing3=self.px(2))
+        t.tag_configure("brief", font=self.f_base, foreground=c["ink2"], lmargin1=self.px(4),
+                        lmargin2=self.px(18), spacing1=self.px(3))
         t.tag_raise("why_label")  # tag priority follows creation order, not the order a tuple lists them
 
     # ------------------------------------------------------------ polling / render
@@ -614,18 +636,27 @@ class DailyWindow:
 
     # ------------------------------------------------------------ sidebar
     def sections(self, edition) -> list[tuple[str, str, list[Story]]]:
-        """[(key, title, stories)] for the sidebar: Top Stories, then non-empty categories."""
+        """[(key, title, stories)] for the sidebar: Top Stories, Following (when a followed topic
+        appears), then non-empty categories. Stories about a muted topic are left out everywhere."""
         if edition is None:
             return []
-        out = [(TOP, "Top Stories", top_stories(edition))]
-        out += [(cat, cat, stories) for cat, stories in category_sections(edition)]
-        return out
+        prefs = self.snap.prefs if self.snap else DailyPrefs()
+        mute = lambda stories: RD.without_muted(stories, prefs.mute_topics)[0]  # noqa: E731
+        out = [(TOP, "Top Stories", mute(top_stories(edition)))]
+        follow = mute(RD.followed(edition.stories, prefs.follow_topics))
+        if follow:
+            out.append((FOLLOWING, "Following", follow))
+        out += [(cat, cat, mute(stories)) for cat, stories in category_sections(edition)]
+        return [x for x in out if x[2] or x[0] == TOP]
+
+    def unread(self, stories: list[Story]) -> int:
+        return sum(1 for s in stories if s.story_id not in self._read)
 
     def _render_sidebar(self, snap: Snapshot) -> None:
         sections = self.sections(snap.shown)
         if self.section not in {k for k, _, _ in sections} and self.section != SEARCH:
             self.section = TOP
-        key = (tuple((k, len(s)) for k, _, s in sections), self.section, self.mode)
+        key = (tuple((k, len(s), self.unread(s)) for k, _, s in sections), self.section, self.mode)
         if key == self._sidebar_key:
             return
         self._sidebar_key = key
@@ -643,13 +674,19 @@ class DailyWindow:
             row.grid(row=i, column=0, sticky="ew", pady=1)
             row.columnconfigure(1, weight=1)
             dot = tk.Canvas(row, width=d + 2, height=d + 2, bg=bg, highlightthickness=0)
-            colour = c["accent"] if k == TOP else c["categories"].get(k, (None, c["muted"]))[1]
-            dot.create_oval(1, 1, d, d, fill=colour, outline="")
+            colour = (c["accent"] if k == TOP else c["tags"]["follow"] if k == FOLLOWING
+                      else c["categories"].get(k, (None, c["muted"]))[1])
+            if k == FOLLOWING:
+                dot.configure(width=d + 6, height=d + 4)
+                dot.create_text((d + 6) // 2, (d + 4) // 2, text="\u2605", fill=colour, font=self.f_small)
+            else:
+                dot.create_oval(1, 1, d, d, fill=colour, outline="")
             dot.grid(row=0, column=0, sticky="w", padx=(0, self.px(8)))
             name = tk.Label(row, text=title, bg=bg, fg=c["ink"], anchor="w",
                             font=self.f_side_bold if selected else self.f_side)
             name.grid(row=0, column=1, sticky="w")
-            count = tk.Label(row, text=str(len(stories)), bg=bg, fg=c["muted"], font=self.f_small)
+            n_unread = self.unread(stories)  # like a mail app: the badge counts what is still unread
+            count = tk.Label(row, text=str(n_unread) if n_unread else "", bg=bg, fg=c["muted"], font=self.f_small)
             count.grid(row=0, column=2, sticky="e")
             parts = (row, dot, name, count)
             for w in parts:
@@ -752,9 +789,10 @@ class DailyWindow:
         assert edition is not None
         self._generated_at = edition.generation_completed_utc
         query = self.search_var.get().strip()
+        prefs = snap.prefs
         if self.section == SEARCH:
             title = "Search"
-            stories = filter_stories(edition.stories, "All", query)
+            stories, _ = RD.without_muted(filter_stories(edition.stories, "All", query), prefs.mute_topics)
             sub = f"{len(stories)} {'story' if len(stories) == 1 else 'stories'} matching “{query}”"
         else:
             sections = {k: (title, st) for k, title, st in self.sections(edition)}
@@ -763,8 +801,13 @@ class DailyWindow:
             sub = f"{d:%A}, {format_long_date(d)}   ·   {len(stories)} {'story' if len(stories) == 1 else 'stories'}"
             if not edition.demo:
                 sub += f"   ·   updated {format_clock(edition.generation_completed_utc)}"
+            muted = RD.without_muted(edition.stories, prefs.mute_topics)[1]
+            if muted:
+                sub += f"   ·   {muted} muted"
         t.insert("end", title + "\n", ("h1",))
         t.insert("end", sub + "\n", ("sub",))
+        if self.section == TOP and len(stories) >= 3:
+            self._render_brief(stories)
         if not edition.stories:
             t.insert("end", "\nThis edition has no stories.\n", ("plain",))
         elif not stories:
@@ -772,8 +815,10 @@ class DailyWindow:
             t.insert("end", "Clear search", ("plain",) + self._link_tag("action:clear"))
             t.insert("end", "\n")
         now = self.ctrl.now_fn()
-        show_category = self.section in (TOP, SEARCH)
-        self._story_marks = []
+        show_category = self.section in (TOP, SEARCH, FOLLOWING)
+        self._story_marks, self._mark_story = [], {}
+        tags = RD.change_tags(edition)
+        since = self.ctrl.developing(edition)
         for i, s in enumerate(stories, start=1):
             if i > 1:
                 t.insert("end", "\n", ("gap",))
@@ -782,8 +827,22 @@ class DailyWindow:
             t.mark_set(mark, "end-1c")
             t.mark_gravity(mark, "left")
             self._story_marks.append(mark)
-            self._render_story(s, now, number=i, show_category=show_category)
+            self._mark_story[mark] = s
+            day = RD.day_label(since[s.rank], edition.edition_date) if s.rank in since else ""
+            self._render_story(s, now, number=i, show_category=show_category, change=tags.get(s.rank, ""),
+                               day=day, follows=RD.matching_topics(s, prefs.follow_topics))
         t.insert("end", "\n")
+
+    def _render_brief(self, stories: list[Story]) -> None:
+        """'In brief': the lead sentence of the first five stories; a click jumps to the story."""
+        t = self.text
+        t.insert("end", "IN BRIEF\n", ("brief_head",))
+        for i, (_story, line) in enumerate(RD.in_brief(stories), start=1):
+            t.insert("end", "\u2022  ", ("brief",))
+            t.insert("end", line, ("brief", self._action_tag(f"jump:{i}")))
+            t.insert("end", "\n", ("brief",))
+        t.tag_bind("brief", "<Enter>", lambda e: t.configure(cursor="hand2"))
+        t.tag_bind("brief", "<Leave>", lambda e: t.configure(cursor="arrow"))
 
     def _action_tag(self, target: str) -> str:
         """A per-link tag name that runs ``target`` (URL, toggle or action) when clicked."""
@@ -820,17 +879,123 @@ class DailyWindow:
         elif target.startswith("toggle:"):
             sid = target.split(":", 1)[1]
             self._expanded.symmetric_difference_update({sid})
+            if sid in self._expanded:
+                self.mark_read([sid], refresh=False)
             self.refresh_view(force=True)
+        elif target.startswith("open:"):
+            sid, url = target[5:].split("\t", 1)
+            self._open_url(url)
+            self.mark_read([sid])
+        elif target.startswith("jump:"):
+            mark = f"story{target[5:]}"
+            if mark in self._mark_story:
+                self.text.yview(mark)
         else:
             self._open_url(target)
         return "break"
+
+    def mark_read(self, story_ids: list[str], read: bool = True, refresh: bool = True) -> None:
+        """Remember (in the data folder) which stories the reader has opened."""
+        state = RD.set_read(self.paths, story_ids, utcnow(), read=read)
+        self._read = set(state.read)
+        self._sidebar_key = None
+        if refresh:
+            self.refresh_view(force=True)
+
+    def story_at(self, index: str) -> Story | None:
+        """The story whose block contains a text index (the last story mark at or before it)."""
+        line = int(self.text.index(index).split(".")[0])
+        found = None
+        for mark in self._story_marks:
+            if int(self.text.index(mark).split(".")[0]) <= line:
+                found = self._mark_story.get(mark)
+        return found
+
+    def story_menu_items(self, story: Story) -> list[tuple[str, object]]:
+        """(label, action) for the right-click menu of a story; None marks a separator."""
+        items: list[tuple[str, object]] = []
+        url = primary_url(story)
+        if url:
+            items.append(("Open article", lambda: (self._open_url(url), self.mark_read([story.story_id]))))
+            items.append(("Copy link", lambda: (self.root.clipboard_clear(), self.root.clipboard_append(url))))
+        if story.story_id in self._read:
+            items.append(("Mark as unread", lambda: self.mark_read([story.story_id], read=False)))
+        else:
+            items.append(("Mark as read", lambda: self.mark_read([story.story_id])))
+        prefs = self.snap.prefs if self.snap else DailyPrefs()
+        names = RD.topic_suggestions(story)
+        if names:
+            items.append(("", None))
+            for name in names:
+                if name.lower() in {t.lower() for t in prefs.follow_topics}:
+                    items.append((f"Stop following \u201c{name}\u201d", lambda n=name: self.set_topic(n, "follow", False)))
+                else:
+                    items.append((f"Follow \u201c{name}\u201d", lambda n=name: self.set_topic(n, "follow", True)))
+            for name in names:
+                items.append((f"Mute \u201c{name}\u201d", lambda n=name: self.set_topic(n, "mute", True)))
+        return items
+
+    def _story_menu(self, event) -> str | None:
+        story = self.story_at(f"@{event.x},{event.y}")
+        if story is None:
+            return None
+        menu = tk.Menu(self.root, tearoff=False)
+        for label, action in self.story_menu_items(story):
+            if action is None:
+                menu.add_separator()
+            else:
+                menu.add_command(label=label, command=action)
+        try:
+            menu.tk_popup(event.x_root, event.y_root)
+        finally:
+            menu.grab_release()
+        return "break"
+
+    def set_topic(self, topic: str, kind: str, on: bool) -> None:
+        """Follow / unfollow / mute a topic from the story menu (saved in Settings > Topics)."""
+        from agent_reach.daily.prefs import load_prefs
+
+        prefs, _ = load_prefs(self.paths)
+        key = "follow_topics" if kind == "follow" else "mute_topics"
+        topics = [t for t in getattr(prefs, key) if t.lower() != topic.lower()]
+        if on:
+            topics.append(topic)
+        save_prefs(self.paths, prefs.model_copy(update={key: topics}))
+        self._sidebar_key = None
+        self.refresh_view(force=True)
+
+    def current_story(self) -> Story | None:
+        """The story at the top of the reading pane (what J / K moved to)."""
+        story = self.story_at("@0,0")
+        return story or (self._mark_story.get(self._story_marks[0]) if self._story_marks else None)
+
+    def open_current(self) -> None:
+        story = self.current_story()
+        url = primary_url(story) if story else None
+        if story is not None and url:
+            self._open_url(url)
+            self.mark_read([story.story_id])
+
+    def toggle_current_sources(self) -> None:
+        story = self.current_story()
+        if story is not None:
+            self._expanded.symmetric_difference_update({story.story_id})
+            if story.story_id in self._expanded:
+                self.mark_read([story.story_id], refresh=False)
+            self.refresh_view(force=True)
+
+    def mark_all_read(self) -> None:
+        shown = self.snap.shown if self.snap else None
+        if shown is not None and not shown.demo:
+            self.mark_read([s.story_id for s in shown.stories])
 
     def _open_url(self, target: str) -> None:
         url = safe_url(target)
         if url:
             webbrowser.open(url, new=2)
 
-    def _render_story(self, s: Story, now, number: int, show_category: bool = True) -> None:
+    def _render_story(self, s: Story, now, number: int, show_category: bool = True, change: str = "",
+                      day: str = "", follows: list[str] | None = None) -> None:
         t = self.text
         strength = strength_of(s, self._generated_at)
         names = strength.publishers or [name for name, _ in story_publishers(s, limit=6)[0]]
@@ -839,7 +1004,18 @@ class DailyWindow:
         if show_category:
             t.insert("end", s.category.value.upper(), ("kicker", f"chip:{s.category.value}"))
             t.insert("end", "   ", ("kicker",))
+        if follows:
+            t.insert("end", "\u2605 " + follows[0].upper(), ("kicker", "tag:follow"))
+            t.insert("end", "   ", ("kicker",))
+        if change:
+            t.insert("end", change.upper(), ("kicker", f"tag:{change}"))
+            t.insert("end", "   ", ("kicker",))
+        if day:
+            t.insert("end", day.upper(), ("kicker", "tag:day"))
+            t.insert("end", "   ", ("kicker",))
         for label in s.labels:
+            if change == "new" and label == "New":
+                continue  # one NEW is enough
             tag = f"chip:{label}" if f"chip:{label}" in t.tag_names() else "kicker"
             t.insert("end", label.upper(), ("kicker", tag))
             t.insert("end", "   ", ("kicker",))
@@ -847,14 +1023,15 @@ class DailyWindow:
         t.insert("end", "  \u00b7  ".join(m for m in meta if m) + "\n", ("kicker",))
         t.insert("end", f"{number}\t", ("headline", "rank"))
         url = primary_url(s)
-        if url:  # the headline opens the main article (hover: accent colour)
-            name = self._action_tag(url)
-            t.insert("end", s.headline, ("headline", "headline_link", name))
+        read = ("read",) if s.story_id in self._read else ()
+        if url:  # the headline opens the main article (hover: accent colour) and marks the story read
+            name = self._action_tag(f"open:{s.story_id}\t{url}")
+            t.insert("end", s.headline, ("headline", "headline_link", name) + read)
             t.tag_bind(name, "<Enter>", lambda e, n=name: t.tag_configure(n, foreground=self.c["accent"]), add="+")
             t.tag_bind(name, "<Leave>", lambda e, n=name: t.tag_configure(n, foreground=""), add="+")
             t.insert("end", "\n", ("headline",))
         else:
-            t.insert("end", s.headline + "\n", ("headline",))
+            t.insert("end", s.headline + "\n", ("headline",) + read)
         t.insert("end", " ".join(s.sentences) + "\n", ("body",))
         if s.why_it_matters:
             t.insert("end", "WHY IT MATTERS   ", ("why", "why_label"))
@@ -1241,6 +1418,7 @@ class SettingsDialog:
         self._model_tab(nb)
         self._schedule_tab(nb)
         self._storage_tab(nb)
+        self._topics_tab(nb)
         self._appearance_tab(nb)
         btns = ttk.Frame(top, padding=(10, 0, 10, 10))
         btns.pack(fill="x")
@@ -1519,6 +1697,31 @@ class SettingsDialog:
                             "this. The newest edition is never deleted by retention, even after failed refreshes.",
                   wraplength=560, foreground=self.window.c["muted"]).grid(row=7, column=0, columnspan=2, sticky="w", pady=(8, 0))
 
+    def _topics_tab(self, nb) -> None:
+        frm = self._tab(nb, "Topics")
+        frm.columnconfigure(0, weight=1)
+        frm.columnconfigure(1, weight=1)
+        frm.rowconfigure(2, weight=1)
+        ttk.Label(frm, text="One topic per line: a name, team, company or phrase (whole words, any case). You can "
+                            "also right-click any story to follow or mute its names.",
+                  wraplength=self.window.px(740)).grid(row=0, column=0, columnspan=2, sticky="w", pady=(0, 8))
+        ttk.Label(frm, text="Follow (starred, and gathered under Following)", font=self.window.f_bold).grid(
+            row=1, column=0, sticky="w")
+        ttk.Label(frm, text="Mute (hidden everywhere)", font=self.window.f_bold).grid(row=1, column=1, sticky="w",
+                                                                                     padx=(12, 0))
+        c = self.window.c
+        self.follow_text = tk.Text(frm, height=10, width=30, bg=c["field"], fg=c["ink"], insertbackground=c["ink"],
+                                   relief="solid", bd=1, font=self.window.f_base)
+        self.follow_text.grid(row=2, column=0, sticky="nsew", pady=(4, 0))
+        self.mute_text = tk.Text(frm, height=10, width=30, bg=c["field"], fg=c["ink"], insertbackground=c["ink"],
+                                 relief="solid", bd=1, font=self.window.f_base)
+        self.mute_text.grid(row=2, column=1, sticky="nsew", pady=(4, 0), padx=(12, 0))
+        self.follow_text.insert("1.0", "\n".join(self.prefs.follow_topics))
+        self.mute_text.insert("1.0", "\n".join(self.prefs.mute_topics))
+
+    def _topic_lines(self, widget: tk.Text) -> list[str]:
+        return [line.strip() for line in widget.get("1.0", "end").splitlines() if line.strip()]
+
     def _appearance_tab(self, nb) -> None:
         frm = self._tab(nb, "Appearance")
         self.appearance_var = tk.StringVar(value=self.prefs.appearance)
@@ -1604,6 +1807,7 @@ class SettingsDialog:
                 max_story_age_hours=float(self.age_var.get()),
                 feeds=[f.model_dump() for f in self.feeds], items_per_feed=int(self.per_feed_var.get()),
                 max_items_for_llm=int(self.budget_var.get()), appearance=self.appearance_var.get(),
+                follow_topics=self._topic_lines(self.follow_text), mute_topics=self._topic_lines(self.mute_text),
             )
             prefs = DailyPrefs.model_validate(data)
             if "news_rss" in prefs.enabled_sources and not prefs.enabled_rss_feeds():
