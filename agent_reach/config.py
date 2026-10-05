@@ -14,6 +14,49 @@ from pathlib import Path
 from pydantic import Field, field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
+#: "Category|CHANNEL_ID|Name": channels whose recent uploads form the YouTube source. YouTube retired its
+#: public Trending page in 2025, so "trending" here means the most-watched recent uploads (views per hour)
+#: of these news, technology, science, sports and entertainment channels. Every channel posts most days.
+DEFAULT_YOUTUBE_CHANNELS: tuple[str, ...] = (
+    "News|UC16niRr50-MSBwiO3YDb3RA|BBC News",
+    "News|UChqUTb7kYRX8-EiaN3XFrSQ|Reuters",
+    "News|UC52X5wxOL_s5yw0dQk7NtgA|Associated Press",
+    "News|UCeY0bbntWzzVIaj2z3QigXg|NBC News",
+    "News|UCBi2mrWuNuyYy4gbM6fU18Q|ABC News",
+    "News|UC8p1vwvWtl6T73JiExfWs1g|CBS News",
+    "News|UC6ZFN9Tx6xh-skXCuRHCDpQ|PBS NewsHour",
+    "News|UCNye-wNBqNL5ZzHSJj3l8Bg|Al Jazeera English",
+    "News|UCoMdktPbSTixAyNGwb-UYkQ|Sky News",
+    "News|UCrp_UI8XtuYfpiqluWLD7Lw|CNBC Television",
+    "Tech|UCrM7B7SL_g1edFOnmj-SDKg|Bloomberg Technology",
+    "Tech|UCOmcA3f_RrH6b9NmcNa4tdg|CNET",
+    "Tech|UCddiUEpeqJcYeBxX1IVBKvQ|The Verge",
+    "Tech|UCXuqSBlHAE6Xw-yeJA0Tunw|Linus Tech Tips",
+    "Tech|UCBJycsmduvYEL83R_U4JriQ|Marques Brownlee",
+    "Tech|UCsBjURrPoezykLs9EqgamOA|Fireship",
+    "Science & AI|UCLA_DiR1FfKNvjuUpBHmylQ|NASA",
+    "Sports|UCiWLfSweyRNmLpgEHekhoAg|ESPN",
+    "Sports|UCDVYQ4Zhbm3S2dlz7P1GBDg|NFL",
+    "Sports|UCWJ2lWNubArHWmf3FIHbfcQ|NBA",
+    "Entertainment|UCKy1dAqELo0zrOtPkf0eTMw|IGN",
+    "Entertainment|UCdtXPiqI2cLorKaPrfpKc4g|Entertainment Tonight",
+)
+
+#: Google News sections the daily app reads besides the top stories: "Category|TOPIC|Name" for a Google
+#: News topic, or "Category|search words|Name" for a search limited to the last day.
+DEFAULT_GOOGLE_NEWS_SECTIONS: tuple[str, ...] = (
+    "News|WORLD|Google News - World",
+    "News|NATION|Google News - U.S.",
+    "News|BUSINESS|Google News - Business",
+    "News|HEALTH|Google News - Health",
+    "Tech|TECHNOLOGY|Google News - Technology",
+    "Science & AI|SCIENCE|Google News - Science",
+    "Science & AI|artificial intelligence|Google News - AI",
+    "Sports|SPORTS|Google News - Sports",
+    "Entertainment|ENTERTAINMENT|Google News - Entertainment",
+    "Internet Culture|tiktok OR viral OR meme|Google News - Viral & TikTok",
+)
+
 
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(
@@ -88,6 +131,13 @@ class Settings(BaseSettings):
     # shared 40-item pool), so adding publishers does not starve the existing ones.
     news_rss_max_total_items: int = Field(default=300, ge=10, le=2000)
     max_items_per_source: int = Field(default=40, ge=5, le=200)
+    youtube_channels: list[str] = Field(default_factory=lambda: list(DEFAULT_YOUTUBE_CHANNELS))
+    youtube_items_per_channel: int = Field(default=4, ge=1, le=15)  # most-watched recent uploads per channel
+    youtube_max_age_hours: float = Field(default=72.0, gt=0.0, le=720.0)  # older uploads are not today's trend
+    youtube_max_total_items: int = Field(default=120, ge=5, le=1000)
+    # extra Google News sections (see DEFAULT_GOOGLE_NEWS_SECTIONS); empty = top stories only
+    google_news_sections: list[str] = Field(default_factory=list)
+    google_news_items_per_section: int = Field(default=20, ge=1, le=100)
     enabled_sources: list[str] = Field(
         default_factory=lambda: [
             "x_trends24",
@@ -122,6 +172,8 @@ class Settings(BaseSettings):
     min_items_per_source_for_llm: int = Field(default=6, ge=0)
     # per-publisher-feed floor inside news_rss, so one prolific feed cannot crowd out the others
     min_items_per_feed_for_llm: int = Field(default=3, ge=0)
+    # the same floor for each YouTube channel and each Google News section
+    min_items_per_channel_feed_for_llm: int = Field(default=1, ge=0)
 
     # ----------------------------------------------------------- clustering
     min_cluster_items: int = Field(default=2, ge=1)
@@ -160,6 +212,31 @@ class Settings(BaseSettings):
             url = rest.split("|", 1)[0]
             if not sep or category.strip() not in CategoryEnum.values() or not url.strip().startswith(("http://", "https://")):
                 raise ValueError(f"news_rss_feeds entry must be 'Category|http(s)://url[|Name]' with a valid category: {entry!r}")
+        return v
+
+    @field_validator("youtube_channels")
+    @classmethod
+    def _channels(cls, v: list[str]) -> list[str]:
+        import re
+
+        from agent_reach.models import CategoryEnum
+
+        for entry in v:
+            category, _, rest = entry.partition("|")
+            channel = rest.split("|", 1)[0].strip()
+            if category.strip() not in CategoryEnum.values() or not re.fullmatch(r"UC[\w-]{22}", channel):
+                raise ValueError(f"youtube_channels entry must be 'Category|UC<22 characters>[|Name]': {entry!r}")
+        return v
+
+    @field_validator("google_news_sections")
+    @classmethod
+    def _sections(cls, v: list[str]) -> list[str]:
+        from agent_reach.models import CategoryEnum
+
+        for entry in v:
+            category, sep, rest = entry.partition("|")
+            if not sep or category.strip() not in CategoryEnum.values() or not rest.split("|", 1)[0].strip():
+                raise ValueError(f"google_news_sections entry must be 'Category|TOPIC or search words[|Name]': {entry!r}")
         return v
 
     @field_validator("hdbscan_selection")

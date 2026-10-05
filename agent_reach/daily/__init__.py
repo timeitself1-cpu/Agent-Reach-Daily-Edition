@@ -19,5 +19,5 @@ Modules (light imports only; the pipeline is imported lazily by ``refresh``):
 APP_NAME = "Agent Reach Daily"
 APP_ID = "AgentReachDaily"
 #: Release identity of the Daily app (PEP 440). "rc" until the Windows acceptance checks pass.
-__version__ = "1.0.0rc3"
-VERSION_LABEL = "v1.0 (release candidate 3)"
+__version__ = "1.0.0rc4"
+VERSION_LABEL = "v1.0 (release candidate 4)"

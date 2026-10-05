@@ -314,3 +314,22 @@ def test_refresh_command_crash_is_logged_not_lost(daily_paths, monkeypatch):
                 logging.getLogger().removeHandler(h)
     log = (daily_paths.logs_dir / "refresh.log").read_text()
     assert "refresh command crashed" in log and "unexpected disk problem" in log
+
+
+def test_compact_sidebar_times_and_feed_notes():
+    from agent_reach.daily.app import compact_times, feed_note
+    from agent_reach.daily.edition import FeedHealth, SourceHealth
+
+    class Snap:
+        last_success = "Last successful refresh today 7:20 AM CDT"
+        next_refresh = "Next refresh tomorrow 7:05 AM CDT (in 23 h)"
+        coverage_line = "Sources: 6 healthy"
+
+    assert compact_times(Snap()) == ["Updated today 7:20 AM CDT", "Next: tomorrow 7:05 AM CDT", "Sources: 6 healthy"]
+    feeds = [FeedHealth(name="A", url="https://a.test", status="ok"),
+             FeedHealth(name="B", url="https://b.test", status="failed"),
+             FeedHealth(name="C", url="https://c.test", status="empty")]
+    yt = SourceHealth(source="youtube", name="YouTube", status="partial", feeds=feeds)
+    assert feed_note(yt) == "1 of 3 channels failed; 1 had nothing new (expand)"
+    rss = SourceHealth(source="news_rss", name="News feeds", status="ok", feeds=feeds[:1])
+    assert feed_note(rss) == "1 feed (expand)"

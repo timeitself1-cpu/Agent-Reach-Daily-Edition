@@ -16,7 +16,7 @@ from typing import Any, Literal
 
 from pydantic import BaseModel, ConfigDict, Field, ValidationError, field_validator, model_validator
 
-from agent_reach.daily.feeds import ADDED_IN_V2, FeedSpec, default_feeds, feeds_from_entries
+from agent_reach.daily.feeds import ADDED_IN_V2, ADDED_IN_V3, FeedSpec, default_feeds, feeds_from_entries
 from agent_reach.daily.fsutil import atomic_write_json, read_json
 from agent_reach.daily.paths import DataPaths
 from agent_reach.daily.timeutil import parse_hhmm
@@ -25,23 +25,25 @@ log = logging.getLogger(__name__)
 
 #: General-interest defaults. Tech-only feeds (GitHub, Product Hunt, arXiv) are available but
 #: off, so the number of enabled tech feeds cannot by itself dominate the edition.
-DAILY_DEFAULT_SOURCES = ["google_news", "news_rss", "google_trends", "wikipedia", "reddit", "x_trends24", "hackernews"]
+DAILY_DEFAULT_SOURCES = ["google_news", "news_rss", "youtube", "google_trends", "wikipedia", "reddit", "x_trends24",
+                         "tiktok", "hackernews"]
 TECH_SOURCES = frozenset({"hackernews", "github", "producthunt", "arxiv"})
 GENERAL_NEWS_SOURCES = frozenset({"google_news", "news_rss"})
 SOURCE_NOTES = {
-    "google_news": "Google News top stories (RSS)",
-    "news_rss": "Publisher feeds (the list below)",
+    "google_news": "Google News: top stories and one section per category (RSS)",
+    "news_rss": "Publisher feeds (Publisher feeds tab)",
+    "youtube": "YouTube: most-watched new videos of the channels in Publisher feeds",
     "google_trends": "Google Trends daily searches (RSS)",
     "wikipedia": "Wikipedia most-read articles (Wikimedia API)",
     "reddit": "Reddit top posts (often rate-limited or blocked)",
     "x_trends24": "X trends via trends24.in (scrape; may break)",
-    "tiktok": "TikTok Creative Center (usually bot-gated)",
+    "tiktok": "TikTok trending hashtags (Creative Center; often blocked)",
     "hackernews": "Hacker News front page (tech)",
     "github": "GitHub Trending (tech)",
     "producthunt": "Product Hunt launches (tech)",
     "arxiv": "arXiv AI/ML papers (research)",
 }
-PREFS_VERSION = 2
+PREFS_VERSION = 3
 DAILY_VELOCITY_WINDOWS = [24.0, 48.0, 168.0]
 DAILY_VELOCITY_WEIGHTS = [0.5, 0.3, 0.2]
 DAILY_VELOCITY_TOLERANCE = 0.25
@@ -79,9 +81,10 @@ class DailyPrefs(BaseModel):
     max_per_category: int = Field(default=4, ge=1, le=30)
     max_tech_only_share: float = Field(default=0.34, ge=0.0, le=1.0)  # of Top Stories
     min_useful_stories: int = Field(default=3, ge=1, le=50)
+    min_ok_sources: int = Field(default=2, ge=1, le=20)
     max_story_age_hours: float = Field(default=48.0, ge=6.0, le=336.0)  # older publication times are not "today"
     # processing budget: articles grouped and labelled per refresh (more = broader but slower on CPU)
-    max_items_for_llm: int = Field(default=200, ge=40, le=400)
+    max_items_for_llm: int = Field(default=260, ge=40, le=400)
     items_per_feed: int = Field(default=10, ge=3, le=30)
 
     appearance: Literal["system", "light", "dark"] = "system"
@@ -93,7 +96,9 @@ class DailyPrefs(BaseModel):
 
         * before per-feed control: 'Category|URL' strings -> feeds;
         * version 1 -> 2: sections of 10 instead of one 15-story list, a 200-article processing
-          budget instead of 150, and the technology/AI/science feeds added in version 2.
+          budget instead of 150, and the technology/AI/science feeds added in version 2;
+        * version 2 -> 3: more publishers in every section, YouTube channels, the YouTube and TikTok
+          channels switched on, and a 260-article budget instead of 200.
         """
         if not isinstance(data, dict):
             return data
@@ -109,14 +114,21 @@ class DailyPrefs(BaseModel):
             version = int(data.get("prefs_version", PREFS_VERSION))
         except (TypeError, ValueError):
             version = 1
-        if version < 2:
-            for key, old, new in (("max_stories", 15, 10), ("max_per_category", 5, 4), ("max_items_for_llm", 150, 200)):
+        steps = [(2, (("max_stories", 15, 10), ("max_per_category", 5, 4), ("max_items_for_llm", 150, 200)), ADDED_IN_V2, ()),
+                 (3, (("max_items_for_llm", 200, 260),), ADDED_IN_V3, ("youtube", "tiktok"))]
+        for target, defaults, added_feeds, added_sources in steps:
+            if version >= target:
+                continue
+            for key, old, new in defaults:
                 if data.get(key) == old:
                     data[key] = new
             if isinstance(data.get("feeds"), list):
                 have = {str((f.get("url") if isinstance(f, dict) else getattr(f, "url", "")) or "").lower()
                         for f in data["feeds"]}
-                data["feeds"] = list(data["feeds"]) + [f.model_copy() for f in ADDED_IN_V2 if f.url.lower() not in have]
+                data["feeds"] = list(data["feeds"]) + [f.model_copy() for f in added_feeds if f.url.lower() not in have]
+            if isinstance(data.get("enabled_sources"), list):
+                data["enabled_sources"] = list(data["enabled_sources"]) + [
+                    x for x in added_sources if x not in data["enabled_sources"]]
         data["prefs_version"] = PREFS_VERSION
         return data
 
@@ -133,7 +145,12 @@ class DailyPrefs(BaseModel):
 
     def enabled_feeds(self) -> list[FeedSpec]:
         return [f for f in self.feeds if f.enabled]
-    min_ok_sources: int = Field(default=2, ge=1, le=20)
+
+    def enabled_rss_feeds(self) -> list[FeedSpec]:
+        return [f for f in self.feeds if f.enabled and f.channel_id is None]
+
+    def enabled_youtube_channels(self) -> list[FeedSpec]:
+        return [f for f in self.feeds if f.enabled and f.channel_id is not None]
 
     @field_validator("enabled_sources")
     @classmethod
@@ -203,13 +220,20 @@ def build_settings(prefs: DailyPrefs, paths: DataPaths, **overrides: Any):
     """Pipeline Settings for a daily refresh (explicit values override env and .env)."""
     from agent_reach.config import Settings
 
+    from agent_reach.config import DEFAULT_GOOGLE_NEWS_SECTIONS
+
+    channels = [f.entry() for f in prefs.enabled_youtube_channels()]
+    sources = [s for s in prefs.enabled_sources if s != "youtube" or channels]  # no channels on: nothing to read
     values: dict[str, Any] = dict(
         db_path=paths.db,
         retention_days=max(prefs.retention_days, MIN_DB_RETENTION_DAYS),
-        enabled_sources=list(prefs.enabled_sources),
-        news_rss_feeds=[f.entry() for f in prefs.enabled_feeds()],
+        enabled_sources=sources or list(prefs.enabled_sources),
+        news_rss_feeds=[f.entry() for f in prefs.enabled_rss_feeds()],
         news_rss_items_per_feed=prefs.items_per_feed,
-        news_rss_max_total_items=400,
+        news_rss_max_total_items=800,
+        youtube_channels=channels,
+        youtube_items_per_channel=3,
+        google_news_sections=list(DEFAULT_GOOGLE_NEWS_SECTIONS),
         max_items_for_llm=prefs.max_items_for_llm,
         max_items_per_source=60,
         # A lone article from a real publisher is a story (most tech and science news is reported by one
@@ -220,6 +244,7 @@ def build_settings(prefs: DailyPrefs, paths: DataPaths, **overrides: Any):
         singleton_keep_score=0.35,  # about the top 7 of each publisher feed (percentile within the channel)
         singleton_keep_relevance=6,
         min_items_per_feed_for_llm=2,
+        min_items_per_channel_feed_for_llm=1,
         geo=prefs.geo,
         ollama_host=prefs.ollama_host,
         ollama_model=prefs.ollama_model,

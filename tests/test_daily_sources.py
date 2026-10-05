@@ -27,15 +27,19 @@ ORGS = {"BBC News": "BBC", "BBC Sport": "BBC"}
 def test_default_feeds_are_broad_and_valid():
     feeds = default_feeds()
     orgs = {ORGS.get(f.publisher, f.publisher) for f in feeds}
-    assert 30 <= len(feeds) <= 45 and len(orgs) >= 20
-    assert len({f.url for f in feeds}) == len(feeds) and len({f.name for f in feeds}) == len(feeds)
+    assert 80 <= len(feeds) <= 110 and len(orgs) >= 50
+    assert len({f.url for f in feeds}) == len(feeds) and len({(f.kind, f.name) for f in feeds}) == len(feeds)
+    youtube = [f for f in feeds if f.kind == "YouTube"]
+    assert 15 <= len(youtube) <= 30 and {f.category for f in youtube} >= {"News", "Tech", "Sports", "Entertainment"}
     assert all(f.url.startswith("https://") and f.enabled for f in feeds)
     assert {f.category for f in feeds} >= {"News", "Sports", "Entertainment", "Science & AI", "Tech"}
     names = " ".join(f.name for f in feeds)
     for wanted in ("PBS", "Le Monde", "NASA", "ScienceDaily", "Business", "Health"):
         assert wanted in names
     assert sum(f.category == "Tech" for f in feeds) >= 8 and sum(f.category == "Science & AI" for f in feeds) >= 6
-    assert sum(f.category == "News" for f in feeds) >= 12  # general news is still the largest group
+    assert sum(f.category == "News" for f in feeds) >= 30  # general news is still the largest group
+    assert sum(f.category == "Sports" for f in feeds) >= 8 and sum(f.category == "Entertainment" for f in feeds) >= 10
+    assert sum(f.category == "Internet Culture" for f in feeds) >= 2
 
 
 def test_untouched_old_settings_upgrade_and_custom_feeds_are_kept(daily_paths):
@@ -56,7 +60,9 @@ def test_feed_settings_round_trip_and_only_enabled_feeds_are_collected(daily_pat
     prefs, _ = load_prefs(daily_paths)
     assert len(prefs.feeds) == len(DEFAULT_FEEDS) + 1 and not prefs.feeds[0].enabled
     s = build_settings(prefs, daily_paths)
-    assert len(s.news_rss_feeds) == len(DEFAULT_FEEDS)  # one off, one added
+    n_youtube = sum(f.kind == "YouTube" for f in DEFAULT_FEEDS)
+    assert len(s.news_rss_feeds) == len(DEFAULT_FEEDS) - n_youtube  # one off, one added; channels go to youtube
+    assert len(s.youtube_channels) == n_youtube and all("|UC" in e for e in s.youtube_channels)
     assert "News|https://local.test/metro.xml|Local Paper - Metro" in s.news_rss_feeds
     assert s.news_rss_items_per_feed == 12 and s.max_items_for_llm == 200
     assert parse_feed_entry("News|https://local.test/metro.xml|Local Paper - Metro") == (
@@ -185,7 +191,10 @@ def test_feed_health_and_publishers_in_a_real_edition(daily_env):
     assert all(f.status == "ok" for name, f in feeds.items() if name != "Arts Four")
     assert sum(f.used for f in rss.feeds) == rss.used > 0
     assert all(f.used <= f.collected for f in rss.feeds)
-    assert any("1 of 6 publisher feeds returned nothing" in w for w in ed.coverage.warnings)
+    gn = next(h for h in ed.source_health if h.source == "google_news")
+    total = len(rss.feeds) + len(gn.feeds)  # publisher feeds + Google News sections
+    assert len(gn.feeds) == 11 and all(f.status == "ok" for f in gn.feeds)
+    assert any(f"1 of {total} feeds returned nothing: Arts Four" in w for w in ed.coverage.warnings)
     pubs = {r.publisher: r for r in A.publisher_breakdown(ed)}
     assert "Daily Two" in pubs and "Google News" in pubs["Daily Two"].channels  # publisher reached via an aggregator
     assert A.coverage_summary(ed) == "Sources: 2 healthy · 1 partial"

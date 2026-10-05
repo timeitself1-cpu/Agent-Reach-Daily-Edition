@@ -153,7 +153,7 @@ def test_each_story_has_one_accessible_collapsible_evidence_section():
     assert len(articles) == 3
     for art in articles:
         assert art.count('<details class="evidence">') == 1 and art.count("<summary>") == 1
-        assert re.search(r"<summary>Sources and evidence \(\d+\) &middot; (Strong|Moderate|Limited) evidence</summary>", art)
+        assert re.search(r"<summary>Sources \(\d+\) &middot; (Strong|Moderate|Limited) evidence</summary>", art)
         assert art.index("<details") < art.index('<ul class="evidence">') < art.index("</details>")  # list is inside
     assert "&lt;script&gt;alert(&quot;x&quot;)&lt;/script&gt;" in page
     assert "<script" not in page.lower() and "onmouseover" not in page.replace("&lt;b onmouseover=1&gt;", "")

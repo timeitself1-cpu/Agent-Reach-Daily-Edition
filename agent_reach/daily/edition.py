@@ -40,13 +40,14 @@ EXCERPT_CHARS = 320
 SOURCE_NAMES = {
     "x_trends24": "X (trends24)", "reddit": "Reddit", "tiktok": "TikTok", "google_trends": "Google Trends",
     "google_news": "Google News", "wikipedia": "Wikipedia", "arxiv": "arXiv", "hackernews": "Hacker News",
-    "github": "GitHub", "producthunt": "Product Hunt", "news_rss": "News feeds",
+    "github": "GitHub", "producthunt": "Product Hunt", "news_rss": "News feeds", "youtube": "YouTube",
 }
 MOMENTUM_LABELS = {"SURGING": "Hot", "RISING": "Rising", "NEW": "New", "STEADY": "Continuing",
                    "COOLING": "Cooling", "FADING": "Fading", "UNCERTAIN": "Uncertain trend"}
-#: Platforms whose items come from a named publisher (an article), not a trend list or social post.
-PUBLISHER_PLATFORMS = frozenset({"news_rss", "google_news", "hackernews", "arxiv"})
-#: Held-back stories (over a category or tech cap) may still fill empty slots only when this strong.
+#: Platforms whose items come from a named publisher (an article or a channel's video), not a trend list or
+#: social post.
+PUBLISHER_PLATFORMS = frozenset({"news_rss", "google_news", "hackernews", "arxiv", "youtube"})
+#: A lone trend/social signal with no publisher article is kept only when the model rates it this relevant.
 STRONG_RELEVANCE = 7
 META_SENTENCE_RX = re.compile(
     r"^(?:signals were observed on .*|.* (?:is|are) carrying \d+ related signals? about .*|"
@@ -562,11 +563,13 @@ def build_coverage(health: list[SourceHealth], stories: list[Story], selection: 
         warnings.append(f"Unavailable this run: {', '.join(failed)}.")
     if partial:
         warnings.append(f"Partial or empty coverage: {', '.join(partial)}.")
-    all_feeds = [f for h in health for f in h.feeds]
-    bad_feeds = [f.name for f in all_feeds if f.status != "ok"]
+    # A YouTube channel with no new upload answered normally; only failures and empty article feeds count.
+    all_feeds = [(h, f) for h in health for f in h.feeds]
+    bad_feeds = [f.name for h, f in all_feeds
+                 if f.status == "failed" or (f.status == "empty" and h.source != "youtube")]
     if bad_feeds:
         shown = ", ".join(bad_feeds[:6]) + (f" and {len(bad_feeds) - 6} more" if len(bad_feeds) > 6 else "")
-        warnings.append(f"{len(bad_feeds)} of {len(all_feeds)} publisher feeds returned nothing: {shown}.")
+        warnings.append(f"{len(bad_feeds)} of {len(all_feeds)} feeds returned nothing: {shown}.")
     if not general:
         warnings.append("No general-news source responded, so this edition may over-represent social and tech trends.")
     top = selection.top or stories

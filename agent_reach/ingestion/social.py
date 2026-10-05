@@ -254,11 +254,18 @@ class RedditIngester(BaseIngester):
 
 
 # =====================================================================  TikTok
+_ESCAPED_HASHTAG_RX = re.compile(r'\\?"hashtag_?[nN]ame\\?"\s*:\s*\\?"([^"\\]{2,80})')
+
+
 class TikTokCreativeCenterIngester(BaseIngester):
     """Trending hashtags from TikTok Creative Center.
 
-    The public page embeds its initial data in ``__NEXT_DATA__``; we walk that JSON
-    for hashtag records rather than depending on a signed private API.
+    The public page embeds its initial data either in ``__NEXT_DATA__`` (pages router) or in escaped
+    JSON chunks (``self.__next_f.push``, app router); both are read, then the rendered '# name' cards.
+    A page that loads without hashtag data is tried once more without the country/period parameters
+    (a blocked or failing request is not repeated beyond its retries). TikTok often blocks
+    data-centre and automated clients; the source then fails on its own and the edition is built
+    from the rest.
     """
 
     source = SourceName.TIKTOK
@@ -269,28 +276,22 @@ class TikTokCreativeCenterIngester(BaseIngester):
         self.min_request_interval_s = self.settings.tiktok_request_spacing_s
 
     async def fetch(self) -> list[RawTrendItem]:
-        # 5 s timeout, backoff retries on 403/429/5xx, attempts paced 2 s apart
-        html = await self.get_text(
-            self.PAGE,
-            params={"countryCode": self.settings.geo, "period": 7},
-            timeout=self.settings.tiktok_timeout_s,
-            max_retries=self.settings.tiktok_max_retries,
-            retry_statuses={403},
-        )
-        soup = BeautifulSoup(html, "html.parser")
-        script = soup.find("script", id="__NEXT_DATA__")
         records: list[dict[str, Any]] = []
-        if script and script.string:
+        errors: list[str] = []
+        for params in ({"countryCode": self.settings.geo, "period": 7}, None):
             try:
-                records = list(self._walk(json.loads(script.string)))
-            except json.JSONDecodeError as exc:
-                raise IngestionError(f"TikTok __NEXT_DATA__ invalid JSON: {exc}") from exc
+                # 5 s timeout, backoff retries on 403/429/5xx, attempts paced 2 s apart
+                html = await self.get_text(self.PAGE, params=params, timeout=self.settings.tiktok_timeout_s,
+                                           max_retries=self.settings.tiktok_max_retries, retry_statuses={403})
+            except IngestionError as exc:  # blocked or down: asking again with other parameters would not help
+                errors.append(str(exc)[:160])
+                break
+            records = self.records_from_html(html)
+            if records:
+                break
+            errors.append("no hashtag data in the page (likely bot-gated)")
         if not records:
-            # markup fallback: hashtag cards render '# name' in spans
-            for span in soup.find_all(string=re.compile(r"^#\s?\w{2,}")):
-                records.append({"hashtagName": str(span).strip().lstrip("# ").strip()})
-        if not records:
-            raise IngestionError("TikTok Creative Center returned no hashtag data (likely bot-gated)")
+            raise IngestionError("TikTok Creative Center returned no hashtag data: " + "; ".join(errors)[:240])
 
         seen: set[str] = set()
         items: list[RawTrendItem] = []
@@ -320,6 +321,24 @@ class TikTokCreativeCenterIngester(BaseIngester):
             if item and not item.metadata.get("is_promoted"):
                 items.append(item)
         return items
+
+    @classmethod
+    def records_from_html(cls, html: str) -> list[dict[str, Any]]:
+        """Hashtag records from any of the page's data shapes (empty when none is present)."""
+        soup = BeautifulSoup(html, "html.parser")
+        script = soup.find("script", id="__NEXT_DATA__")
+        if script and script.string:
+            try:
+                records = list(cls._walk(json.loads(script.string)))
+            except json.JSONDecodeError:
+                records = []
+            if records:
+                return records
+        names = list(dict.fromkeys(m.group(1).strip() for m in _ESCAPED_HASHTAG_RX.finditer(html)))
+        if names:
+            return [{"hashtagName": name} for name in names]
+        return [{"hashtagName": str(span).strip().lstrip("# ").strip()}
+                for span in soup.find_all(string=re.compile(r"^#\s?\w{2,}"))]
 
     @classmethod
     def _walk(cls, node: Any):

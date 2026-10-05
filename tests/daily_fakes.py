@@ -160,6 +160,15 @@ HN = [
     ("Frostline smart fridges bricked by firmware update", "https://frostline.test/status", 11, 300),
 ]
 
+#: YouTube channel feeds: channel id -> (channel name, [(video id, title, hours ago, views, description)])
+YOUTUBE_CHANNELS: dict[str, tuple[str, list[tuple[str, str, float, int, str]]]] = {
+    "UCwireonewireonewireone1": ("Wire One", [
+        ("vid-ferry", "Norvale ferry strike: islanders stranded as workers walk out | Wire One", 3, 120_000,
+         "Ferry workers in Norvale began a 48-hour strike over pay.\nSubscribe for more: https://wire-one.test"),
+        ("vid-old", "Wire One documentary from last month", 24 * 30, 2_000_000, ""),
+    ]),
+}
+
 PAGES: dict[str, tuple[str, str]] = {
     "wire-one.test/norvale-ferry-strike": ("Norvale ferry strike halts island service",
                                            "Ferry workers in Norvale began a 48-hour strike over pay on Tuesday, halting service to three islands. "
@@ -233,6 +242,22 @@ class FakeNet:
                 f"{t.rsplit(' - ', 1)[1]}</source></item>"
                 for i, (t, h) in enumerate(GOOGLE_NEWS))
             return httpx.Response(200, content=_rss(items, "Google News"))
+        if host == "www.youtube.com" and path == "/feeds/videos.xml":
+            cid = req.url.params.get("channel_id", "")
+            if cid not in YOUTUBE_CHANNELS:
+                return httpx.Response(404)
+            name, videos = YOUTUBE_CHANNELS[cid]
+            entries = "".join(
+                f"<entry><yt:videoId>{vid}</yt:videoId><title>{title}</title>"
+                f'<link rel="alternate" href="https://www.youtube.com/watch?v={vid}"/>'
+                f"<published>{datetime.fromtimestamp(NOW - h * 3600, tz=timezone.utc).isoformat()}</published>"
+                f"<media:group><media:description>{desc}</media:description>"
+                f'<media:community><media:statistics views="{views}"/></media:community></media:group></entry>'
+                for vid, title, h, views, desc in videos)
+            return httpx.Response(200, content=(
+                '<?xml version="1.0"?><feed xmlns="http://www.w3.org/2005/Atom" '
+                'xmlns:yt="http://www.youtube.com/xml/schemas/2015" xmlns:media="http://search.yahoo.com/mrss/">'
+                f"<title>{name}</title>{entries}</feed>").encode())
         if "algolia" in host:
             hits = [{"objectID": str(i), "title": t, "url": u, "points": p, "num_comments": 80,
                      "created_at_i": int(NOW - h * 3600)} for i, (t, u, h, p) in enumerate(HN)]

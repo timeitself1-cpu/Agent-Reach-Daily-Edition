@@ -162,6 +162,7 @@ SOURCE_WEIGHT: dict[SourceName, float] = {
     SourceName.HACKERNEWS: 0.95,
     SourceName.GOOGLE_NEWS: 0.90,
     SourceName.NEWS_RSS: 0.90,
+    SourceName.YOUTUBE: 0.80,
     SourceName.X_TRENDS24: 0.85,
     SourceName.WIKIPEDIA: 0.80,
     SourceName.REDDIT: 0.80,
@@ -171,7 +172,11 @@ SOURCE_WEIGHT: dict[SourceName, float] = {
     SourceName.ARXIV: 0.55,
 }
 SOCIAL_SOURCES = frozenset({SourceName.REDDIT, SourceName.X_TRENDS24, SourceName.TIKTOK})
-ANECDOTE_SOURCES = frozenset({SourceName.REDDIT, SourceName.X_TRENDS24, SourceName.TIKTOK, SourceName.GOOGLE_NEWS})
+ANECDOTE_SOURCES = frozenset({SourceName.REDDIT, SourceName.X_TRENDS24, SourceName.TIKTOK, SourceName.GOOGLE_NEWS,
+                              SourceName.YOUTUBE})
+#: Sources made of several feeds (publisher feeds, YouTube channels, Google News sections): each feed
+#: gets its own floor in the processing budget.
+MULTI_FEED_SOURCES = frozenset({SourceName.NEWS_RSS, SourceName.YOUTUBE, SourceName.GOOGLE_NEWS})
 
 
 # --------------------------------------------------------------------- text utils
@@ -243,6 +248,7 @@ SOURCE_DISPLAY: dict[str, str] = {
     "github": "GitHub",
     "producthunt": "Product Hunt",
     "news_rss": "News feeds",
+    "youtube": "YouTube",
 }
 
 MD_LINK_RX = re.compile(r"\[([^\]]{1,200})\]\((?:https?://|www\.)[^)]*\)")
@@ -426,20 +432,27 @@ class TrendCleaner:
     def select_for_llm(self, cleaned: list[CleanedTrendItem]) -> list[CleanedTrendItem]:
         """Top-scored items within the processing budget, with fair floors.
 
-        Every platform gets ``min_items_per_source_for_llm`` and, inside the publisher-feed
-        source, every feed gets ``min_items_per_feed_for_llm``, so one prolific source or feed
-        cannot crowd out the others. The rest of the budget goes to the highest scores.
+        Every platform gets ``min_items_per_source_for_llm``; inside multi-feed sources every
+        publisher feed gets ``min_items_per_feed_for_llm`` and every YouTube channel or Google News
+        section gets ``min_items_per_channel_feed_for_llm``, so one prolific source or feed cannot
+        crowd out the others. The rest of the budget goes to the highest scores.
         """
-        cap = self.settings.max_items_for_llm
-        floor = self.settings.min_items_per_source_for_llm
-        feed_floor = self.settings.min_items_per_feed_for_llm
+        s = self.settings
+        cap = s.max_items_for_llm
         by_group: dict[tuple[SourceName, str], list[CleanedTrendItem]] = defaultdict(list)
         for it in sorted(cleaned, key=lambda x: x.heuristic_score, reverse=True):
-            feed = str(it.metadata.get("feed") or "") if it.source is SourceName.NEWS_RSS else ""
+            multi = it.source in MULTI_FEED_SOURCES and not it.metadata.get("top_stories")
+            feed = str(it.metadata.get("feed") or "") if multi else ""
             by_group[(it.source, feed)].append(it)
         chosen: dict[int, CleanedTrendItem] = {}
-        for (_source, feed), lst in by_group.items():
-            for it in lst[:(feed_floor if feed else floor)]:
+        for (source, feed), lst in by_group.items():
+            if not feed:
+                floor = s.min_items_per_source_for_llm
+            elif source is SourceName.NEWS_RSS:
+                floor = s.min_items_per_feed_for_llm
+            else:
+                floor = s.min_items_per_channel_feed_for_llm
+            for it in lst[:floor]:
                 if len(chosen) >= cap:
                     break
                 chosen[it.item_id] = it
@@ -532,7 +545,8 @@ class TrendCleaner:
                 a, b = groups[i][0], groups[j][0]
                 if abs(len(a) - len(b)) > 0.3 * max(len(a), len(b)):
                     continue
-                if SequenceMatcher(None, a, b).ratio() >= 0.9:
+                matcher = SequenceMatcher(None, a, b)  # cheap upper bounds first: O(n^2) pairs on big runs
+                if matcher.real_quick_ratio() >= 0.9 and matcher.quick_ratio() >= 0.9 and matcher.ratio() >= 0.9:
                     merged_into[j] = i
         final: dict[int, list[tuple[RawTrendItem, str]]] = {}
         for idx, (_, members) in enumerate(groups):

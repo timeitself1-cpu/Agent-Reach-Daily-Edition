@@ -17,6 +17,7 @@ from agent_reach.ingestion.search import (
 from agent_reach.ingestion.news import NewsRSSIngester
 from agent_reach.ingestion.social import RedditIngester, TikTokCreativeCenterIngester, XTrends24Ingester
 from agent_reach.ingestion.tech import GitHubTrendingIngester, HackerNewsIngester, ProductHuntIngester
+from agent_reach.ingestion.video import YouTubeIngester
 
 INGESTER_REGISTRY: dict[str, type[BaseIngester]] = {
     "x_trends24": XTrends24Ingester,
@@ -30,6 +31,7 @@ INGESTER_REGISTRY: dict[str, type[BaseIngester]] = {
     "github": GitHubTrendingIngester,
     "producthunt": ProductHuntIngester,
     "news_rss": NewsRSSIngester,
+    "youtube": YouTubeIngester,
 }
 
 

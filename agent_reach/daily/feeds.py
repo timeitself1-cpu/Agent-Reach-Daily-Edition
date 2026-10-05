@@ -1,12 +1,15 @@
 """Publisher feeds for the daily edition: defaults, validation and a one-feed test.
 
-Each feed is one publisher channel (``FeedSpec``). Enabled feeds become ``news_rss_feeds``
-entries (``"Category|URL|Name"``) for the pipeline, where every feed has its own allowance,
+Each feed is one publisher channel (``FeedSpec``): an RSS/Atom/RDF feed, or a YouTube channel
+(its public channel feed). Enabled RSS feeds become ``news_rss_feeds`` entries
+(``"Category|URL|Name"``) and enabled YouTube channels become ``youtube_channels`` entries
+(``"Category|CHANNEL_ID|Name"``) for the pipeline, where every feed has its own allowance,
 selection floor and health line.
 
-The defaults cover world, US, business, science, health, technology, AI, sports and culture news
-from 25 organisations. Feed addresses change over time: a feed that stops working only makes
-the source partial (shown per feed in Details), and Settings > Sources > Test checks any feed.
+The defaults cover world, US, business, science, health, technology, AI, sports, culture and
+internet news from about 60 organisations, plus 22 YouTube news, tech, science, sports and
+entertainment channels. Feed addresses change over time: a feed that stops working only makes the
+source partial (shown per feed in Details), and Settings > Publisher feeds > Test checks any feed.
 Categories use the edition's fixed category set (business and health stories file under News).
 """
 
@@ -19,6 +22,8 @@ from urllib.parse import urlsplit
 
 from pydantic import BaseModel, ConfigDict, field_validator
 
+from agent_reach.config import DEFAULT_YOUTUBE_CHANNELS
+from agent_reach.ingestion.video import channel_id_from_url, youtube_feed_url
 from agent_reach.models import CategoryEnum
 
 
@@ -45,6 +50,13 @@ class FeedSpec(BaseModel):
         parts = urlsplit(v)
         if parts.scheme not in ("http", "https") or not parts.hostname or "|" in v or " " in v:
             raise ValueError("feed address must be an http(s):// URL")
+        if (parts.hostname or "").lower().removeprefix("www.").removeprefix("m.") == "youtube.com":
+            channel = channel_id_from_url(v)
+            if channel is None:
+                raise ValueError("for a YouTube channel use its channel address (https://www.youtube.com/channel/UC...) "
+                                 "or its feed address (https://www.youtube.com/feeds/videos.xml?channel_id=UC...); "
+                                 "an @handle address cannot be read without the channel id")
+            return youtube_feed_url(channel)
         return v
 
     @field_validator("category")
@@ -54,8 +66,18 @@ class FeedSpec(BaseModel):
             raise ValueError(f"category must be one of {', '.join(CategoryEnum.values())}")
         return v
 
+    @property
+    def channel_id(self) -> str | None:
+        """The YouTube channel id when this feed is a YouTube channel, else None."""
+        return channel_id_from_url(self.url)
+
+    @property
+    def kind(self) -> str:
+        return "YouTube" if self.channel_id else "Feed"
+
     def entry(self) -> str:
-        return f"{self.category}|{self.url}|{self.name}"
+        """The pipeline entry: 'Category|URL|Name' (news_rss) or 'Category|CHANNEL_ID|Name' (youtube)."""
+        return f"{self.category}|{self.channel_id or self.url}|{self.name}"
 
     @property
     def publisher(self) -> str:
@@ -66,7 +88,7 @@ def _f(name: str, url: str, category: str = "News") -> FeedSpec:
     return FeedSpec(name=name, url=url, category=category)
 
 
-#: Default publisher feeds (38 with ADDED_IN_V2, from 25 organisations). Business and health file under News.
+#: Default publisher feeds (with ADDED_IN_V2 and ADDED_IN_V3 below). Business and health file under News.
 DEFAULT_FEEDS: list[FeedSpec] = [
     # world and US news
     _f("BBC News - World", "https://feeds.bbci.co.uk/news/world/rss.xml"),
@@ -117,7 +139,56 @@ ADDED_IN_V2: list[FeedSpec] = [
     _f("The Guardian - Science", "https://www.theguardian.com/science/rss", "Science & AI"),
     _f("NPR - Science", "https://feeds.npr.org/1007/rss.xml", "Science & AI"),
 ]
-DEFAULT_FEEDS = DEFAULT_FEEDS + ADDED_IN_V2
+#: Added in settings version 3: more publishers in every section, and YouTube channels.
+ADDED_IN_V3: list[FeedSpec] = [
+    # news and politics
+    _f("New York Times - Home Page", "https://rss.nytimes.com/services/xml/rss/nyt/HomePage.xml"),
+    _f("Washington Post - World", "https://feeds.washingtonpost.com/rss/world"),
+    _f("NBC News - Top Stories", "https://feeds.nbcnews.com/nbcnews/public/news"),
+    _f("ABC News - Top Stories", "https://abcnews.go.com/abcnews/topstories"),
+    _f("Fox News - Latest", "https://moxie.foxnews.com/google-publisher/latest.xml"),
+    _f("Sky News - World", "https://feeds.skynews.com/feeds/rss/world.xml"),
+    _f("The Independent - World", "https://www.independent.co.uk/news/world/rss"),
+    _f("Politico - Politics", "https://rss.politico.com/politics-news.xml"),
+    _f("The Hill", "https://thehill.com/feed/"),
+    _f("MarketWatch - Top Stories", "https://feeds.content.dowjones.io/public/rss/mw_topstories"),
+    # technology
+    _f("ZDNET", "https://www.zdnet.com/news/rss.xml", "Tech"),
+    _f("Gizmodo", "https://gizmodo.com/feed", "Tech"),
+    _f("9to5Mac", "https://9to5mac.com/feed/", "Tech"),
+    _f("Tom's Hardware", "https://www.tomshardware.com/feeds/all", "Tech"),
+    _f("Android Authority", "https://www.androidauthority.com/feed/", "Tech"),
+    # science and AI
+    _f("Ars Technica - AI", "https://arstechnica.com/ai/feed/", "Science & AI"),
+    _f("The Decoder", "https://the-decoder.com/feed/", "Science & AI"),
+    _f("Google - AI", "https://blog.google/technology/ai/rss/", "Science & AI"),
+    _f("OpenAI - News", "https://openai.com/news/rss.xml", "Science & AI"),
+    _f("Hugging Face - Blog", "https://huggingface.co/blog/feed.xml", "Science & AI"),
+    _f("New Scientist", "https://www.newscientist.com/feed/home/", "Science & AI"),
+    _f("Space.com", "https://www.space.com/feeds/all", "Science & AI"),
+    _f("Quanta Magazine", "https://www.quantamagazine.org/feed/", "Science & AI"),
+    _f("Nature", "https://www.nature.com/nature.rss", "Science & AI"),
+    # sports
+    _f("CBS Sports - Headlines", "https://www.cbssports.com/rss/headlines/", "Sports"),
+    _f("Yahoo Sports", "https://sports.yahoo.com/rss/", "Sports"),
+    _f("Sky Sports - News", "https://www.skysports.com/rss/12040", "Sports"),
+    _f("The Guardian - Sport", "https://www.theguardian.com/sport/rss", "Sports"),
+    # entertainment
+    _f("Variety", "https://variety.com/feed/", "Entertainment"),
+    _f("The Hollywood Reporter", "https://www.hollywoodreporter.com/feed/", "Entertainment"),
+    _f("Deadline", "https://deadline.com/feed/", "Entertainment"),
+    _f("Billboard", "https://www.billboard.com/feed/", "Entertainment"),
+    _f("Rolling Stone", "https://www.rollingstone.com/feed/", "Entertainment"),
+    _f("IGN", "https://feeds.feedburner.com/ign/all", "Entertainment"),
+    _f("Polygon", "https://www.polygon.com/rss/index.xml", "Entertainment"),
+    # internet culture
+    _f("The Daily Dot", "https://www.dailydot.com/feed/", "Internet Culture"),
+    _f("Mashable", "https://mashable.com/feeds/rss/all", "Internet Culture"),
+    # YouTube channels (most-watched recent uploads; see agent_reach.ingestion.video)
+    *[_f(name, youtube_feed_url(cid), category)
+      for category, cid, name in (e.split("|") for e in DEFAULT_YOUTUBE_CHANNELS)],
+]
+DEFAULT_FEEDS = DEFAULT_FEEDS + ADDED_IN_V2 + ADDED_IN_V3
 
 #: The six feeds shipped before per-feed settings existed (used to migrate untouched settings).
 LEGACY_DEFAULT_ENTRIES = [
@@ -161,20 +232,26 @@ def check_feed(spec: FeedSpec, settings=None) -> FeedTestResult:
     """Fetch one feed now and report what the next refresh would get from it. Never raises."""
     from agent_reach.config import Settings
     from agent_reach.ingestion.news import NewsRSSIngester
+    from agent_reach.ingestion.video import YouTubeIngester
 
     settings = settings or Settings()
-    settings = settings.model_copy(update={"news_rss_feeds": [spec.entry()], "http_max_retries": 1})
+    youtube = spec.channel_id is not None
+    key = "youtube_channels" if youtube else "news_rss_feeds"
+    settings = settings.model_copy(update={key: [spec.entry()], "http_max_retries": 1})
+    ingester = YouTubeIngester if youtube else NewsRSSIngester
 
     async def run():
         import httpx
 
         async with httpx.AsyncClient(timeout=settings.http_timeout_s) as client:  # same client as a refresh
-            return await NewsRSSIngester(client, settings, asyncio.Semaphore(2)).run()
+            return await ingester(client, settings, asyncio.Semaphore(2)).run()
 
     try:
         items, stat = asyncio.run(run())
     except Exception as exc:  # noqa: BLE001 - a test result, never a crash
         return FeedTestResult(False, 0, f"Could not test the feed: {type(exc).__name__}: {str(exc)[:160]}")
+    if stat.ok and not items and youtube and stat.feeds and stat.feeds[0].ok:
+        return FeedTestResult(True, 0, f"Working, but {stat.feeds[0].error or 'no recent uploads'}.")
     if not stat.ok or not items:
         from agent_reach.daily.edition import friendly_error
 

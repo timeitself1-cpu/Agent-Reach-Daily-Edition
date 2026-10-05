@@ -203,3 +203,20 @@ def test_sidebar_sections_top_stories_and_categories(root, daily_env):
     w._clear_filters()
     root.update()
     assert _text(w).startswith("Top Stories\n")
+
+
+def test_clean_toolbar_menu_search_hint_and_reading_column(root, daily_paths):
+    EditionStore(daily_paths).publish(make_edition())
+    w, _ = _window(root, daily_paths)
+    assert not root.cget("menu")  # no classic menu bar: the "..." menu holds the commands
+    labels = [w.menu.entrycget(i, "label") for i in range(w.menu.index("end") + 1) if w.menu.type(i) == "command"]
+    assert {"Settings...", "Export as web page...", "Demo edition (not real news)", "Quit"} <= set(labels)
+    assert w.search_hint.winfo_manager() == "place"  # 'Search' placeholder in the empty box
+    w.search_var.set("ferry")
+    root.update()
+    assert w.search_hint.winfo_manager() == "" and w.search_var.get() == "ferry"  # never written into the box
+    w._clear_filters()
+    root.deiconify()
+    root.geometry("1500x800")
+    root.update()
+    assert int(str(w.text.cget("padx"))) > w.px(36)  # wide window: the text column stays readable and centred

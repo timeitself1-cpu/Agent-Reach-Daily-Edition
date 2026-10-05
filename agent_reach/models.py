@@ -54,6 +54,7 @@ class SourceName(str, Enum):
     GITHUB = "github"
     PRODUCTHUNT = "producthunt"
     NEWS_RSS = "news_rss"
+    YOUTUBE = "youtube"
 
 
 class RawTrendItem(BaseModel):
@@ -146,7 +147,7 @@ PUBLISHED_FUTURE_TOLERANCE = timedelta(minutes=15)
 
 
 class FeedStat(BaseModel):
-    """One publisher feed inside a multi-feed source (e.g. news_rss)."""
+    """One feed inside a multi-feed source (a news_rss publisher feed, a YouTube channel, a Google News section)."""
 
     name: str
     url: str

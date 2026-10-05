@@ -14,52 +14,56 @@ from agent_reach.daily.strength import strength_of
 from agent_reach.daily.timeutil import edition_heading, format_central, updated_line
 
 CSS = """
-:root { --bg:#f6f5f2; --card:#fff; --ink:#1d1d1f; --muted:#5f6368; --line:#e2e0da; --accent:#1a5fb4;
-        --warn-bg:#fff4d6; --warn-ink:#6b4e00; --demo-bg:#ffe1e1; --demo-ink:#8a1010; }
-@media (prefers-color-scheme: dark) { :root { --bg:#17181a; --card:#212226; --ink:#ececec; --muted:#a3a7ad;
-  --line:#33353a; --accent:#8ab4f8; --warn-bg:#3a3018; --warn-ink:#f3d58a; --demo-bg:#4a1d1d; --demo-ink:#ffc9c9; } }
+:root { --bg:#f5f5f7; --card:#fff; --ink:#1d1d1f; --ink2:#3a3a3c; --muted:#6e6e73; --line:#e5e5ea; --accent:#0066cc;
+        --warn-bg:#fff4d6; --warn-ink:#6b4e00; --demo-bg:#ffe1e1; --demo-ink:#8a1010; --shadow:0 1px 3px rgba(0,0,0,.06); }
+@media (prefers-color-scheme: dark) { :root { --bg:#1c1c1e; --card:#2c2c2e; --ink:#f5f5f7; --ink2:#d1d1d6; --muted:#98989d;
+  --line:#3a3a3c; --accent:#4da3ff; --warn-bg:#3a3018; --warn-ink:#f3d58a; --demo-bg:#4a1d1d; --demo-ink:#ffc9c9;
+  --shadow:none; } }
 * { box-sizing:border-box; }
-body { margin:0; background:var(--bg); color:var(--ink);
+body { margin:0; background:var(--bg); color:var(--ink); -webkit-font-smoothing:antialiased;
        font:16px/1.55 -apple-system, BlinkMacSystemFont, "Segoe UI Variable Text", "Segoe UI", system-ui, sans-serif; }
-nav.sections { display:flex; flex-wrap:wrap; gap:6px 14px; margin:6px 0 18px; font-size:.92rem; }
-nav.sections a { text-decoration:none; }
-section.sec > h2 { font-size:1.45rem; margin:30px 0 4px; }
-section.sec > .count { color:var(--muted); font-size:.9rem; margin:0 0 6px; }
-ul.also { list-style:none; padding:0; margin:8px 0 0; }
-ul.also li { padding:8px 0; border-top:1px solid var(--line); }
-ul.also .num { color:var(--muted); font-weight:600; margin-right:8px; }
-.more { margin-top:30px; }
-.more > details { border-top:1px solid var(--line); padding:10px 0; }
-.more > details > summary { cursor:pointer; color:var(--muted); }
-main { max-width:860px; margin:0 auto; padding:24px 16px 48px; }
-h1 { font-size:1.9rem; margin:0 0 4px; }
-.sub { color:var(--muted); margin:0 0 16px; }
-.banner { border-radius:8px; padding:10px 14px; margin:12px 0; background:var(--warn-bg); color:var(--warn-ink); }
+main { max-width:820px; margin:0 auto; padding:32px 20px 56px; }
+h1 { font-size:2rem; letter-spacing:-.01em; margin:0 0 2px; }
+.sub { color:var(--muted); margin:0 0 14px; }
+nav.sections { display:flex; flex-wrap:wrap; gap:8px; margin:8px 0 10px; font-size:.9rem; }
+nav.sections a { text-decoration:none; color:var(--ink2); background:var(--card); border:1px solid var(--line);
+                 border-radius:999px; padding:3px 12px; }
+nav.sections a:hover { color:var(--accent); }
+section.sec > h2 { font-size:1.5rem; letter-spacing:-.01em; margin:34px 0 0; }
+section.sec > .count { color:var(--muted); font-size:.9rem; margin:0 0 8px; }
+.banner { border-radius:10px; padding:10px 14px; margin:12px 0; background:var(--warn-bg); color:var(--warn-ink); }
 .demo { background:var(--demo-bg); color:var(--demo-ink); font-weight:700; }
-.overview { font-size:1.05rem; margin:12px 0 20px; }
-article { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:16px 20px; margin:12px 0; }
-article h2 { font-size:1.2rem; margin:0 0 6px; }
-.meta { color:var(--muted); font-size:.85rem; margin-bottom:8px; }
-.chip { display:inline-block; border:1px solid var(--line); border-radius:999px; padding:0 8px; margin-right:6px; font-size:.8rem; }
-.label { font-weight:600; }
-.why { margin-top:6px; }
-details.evidence { margin:10px 0 0; border-top:1px solid var(--line); padding-top:8px; }
-details.evidence > summary { cursor:pointer; color:var(--muted); font-size:.9rem; padding:2px 0; }
+article { background:var(--card); border:1px solid var(--line); border-radius:14px; box-shadow:var(--shadow);
+          padding:16px 20px; margin:12px 0; }
+article h3 { font-size:1.15rem; line-height:1.35; margin:2px 0 6px; }
+article p { margin:0; color:var(--ink2); }
+.kicker { color:var(--muted); font-size:.78rem; font-weight:600; letter-spacing:.02em; }
+.cat { color:var(--accent); text-transform:uppercase; margin-right:6px; }
+.label { text-transform:uppercase; margin-right:6px; }
+.why { margin-top:8px !important; }
+.why strong { color:var(--accent); font-size:.78rem; letter-spacing:.04em; text-transform:uppercase; margin-right:4px; }
+details.evidence { margin:10px 0 0; }
+details.evidence > summary { cursor:pointer; color:var(--muted); font-size:.85rem; padding:2px 0; }
 details.evidence > summary:hover { color:var(--ink); }
 summary:focus-visible { outline:2px solid var(--accent); outline-offset:2px; border-radius:4px; }
-.strength { font-size:.85rem; color:var(--muted); margin:6px 0 0; }
-.changes { background:var(--card); border:1px solid var(--line); border-radius:10px; padding:12px 18px; margin:14px 0; }
-.changes h2 { font-size:1.05rem; margin:0 0 4px; }
-.changes ul { margin:6px 0 0; padding-left:18px; font-size:.92rem; }
-.changes .kind { font-weight:600; }
-@media print { details.evidence > summary { display:none; } }
-ul.evidence { margin:6px 0 0; padding-left:18px; font-size:.9rem; }
+.strength { font-size:.85rem; color:var(--muted) !important; margin:6px 0 0 !important; }
+ul.evidence { margin:6px 0 0; padding-left:18px; font-size:.88rem; }
 ul.evidence li { margin:4px 0; }
-a { color:var(--accent); }
 .excerpt { color:var(--muted); display:block; }
-table { border-collapse:collapse; width:100%; font-size:.9rem; }
+ul.also { list-style:none; padding:0; margin:6px 0 0; }
+ul.also li { padding:8px 2px; border-top:1px solid var(--line); }
+ul.also .num { color:var(--muted); font-weight:600; margin-right:8px; }
+ul.also .count { color:var(--muted); font-size:.85rem; }
+.more { margin-top:36px; }
+.more > details { border-top:1px solid var(--line); padding:10px 0; }
+.more > details > summary { cursor:pointer; color:var(--muted); }
+.more ul { font-size:.9rem; }
+.more .kind { font-weight:600; }
+a { color:var(--accent); }
+table { border-collapse:collapse; width:100%; font-size:.88rem; }
 td, th { border-bottom:1px solid var(--line); padding:4px 6px; text-align:left; vertical-align:top; }
-footer { color:var(--muted); font-size:.8rem; margin-top:28px; }
+footer { color:var(--muted); font-size:.78rem; margin-top:28px; }
+@media print { details.evidence > summary { display:none; } article { box-shadow:none; } }
 """
 
 
@@ -75,10 +79,14 @@ def _link(url: str | None, text: str) -> str:
 
 
 def _story(s: Story, edition: DailyEdition, number: int | None = None) -> str:
-    chips = [f'<span class="chip">{_e(s.category.value)}</span>']
-    chips += [f'<span class="chip label">{_e(label)}</span>' for label in s.labels]
+    strength = strength_of(s, edition.generation_completed_utc)
+    publishers = strength.publishers or sorted({ev.publisher or ev.source_name for ev in s.evidence})
+    kicker = [f'<span class="cat">{_e(s.category.value)}</span>']
+    kicker += [f'<span class="label">{_e(label)}</span>' for label in s.labels]
+    names = ", ".join(publishers[:3]) + (f" +{len(publishers) - 3}" if len(publishers) > 3 else "")
+    kicker.append(_e(names))
     body = " ".join(_e(x) for x in s.sentences)
-    why = f'<p class="why"><strong>Why it matters:</strong> {_e(s.why_it_matters)}</p>' if s.why_it_matters else ""
+    why = (f'<p class="why"><strong>Why it matters</strong> {_e(s.why_it_matters)}</p>' if s.why_it_matters else "")
     items = []
     for ev in s.evidence:
         if ev.published_at_utc:
@@ -90,14 +98,11 @@ def _story(s: Story, edition: DailyEdition, number: int | None = None) -> str:
         pub = f" ({_e(ev.publisher)})" if ev.publisher else ""
         excerpt = f'<span class="excerpt">{_e(ev.excerpt)}</span>' if ev.excerpt else ""
         items.append(f"<li>{_e(ev.source_name)}: {_link(ev.url, ev.title)}{pub}{when}{excerpt}</li>")
-    platforms = ", ".join(s.platforms)
-    strength = strength_of(s, edition.generation_completed_utc)
     return (
-        f'<article id="story-{s.rank}"><h2>{number or s.rank}. {_e(s.headline)}</h2>'
-        f'<div class="meta">{"".join(chips)} {_e(strength.label)} &middot; {_e(s.raw_item_count)} signal(s) from '
-        f'{_e(platforms)}</div>'
+        f'<article id="story-{s.rank}"><div class="kicker">{" ".join(kicker)}</div>'
+        f"<h3>{number or s.rank}. {_e(s.headline)}</h3>"
         f"<p>{body}</p>{why}"
-        f'<details class="evidence"><summary>Sources and evidence ({len(s.evidence)}) &middot; {_e(strength.label)}'
+        f'<details class="evidence"><summary>Sources ({len(s.evidence)}) &middot; {_e(strength.label)}'
         f'</summary><p class="strength">{_e(strength.label)}: {_e("; ".join(strength.reasons))}.</p>'
         f'<ul class="evidence">{"".join(items)}</ul></details></article>'
     )

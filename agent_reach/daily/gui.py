@@ -27,7 +27,9 @@ from agent_reach.daily import APP_NAME, VERSION_LABEL
 from agent_reach.daily.app import (
     AppController,
     Snapshot,
+    compact_times,
     details_report,
+    feed_note,
     filter_stories,
     load_window_geometry,
     publisher_breakdown,
@@ -160,9 +162,11 @@ class DailyWindow:
         root.report_callback_exception = self._callback_error
         self._fonts()
         self._style()
-        self._build_menu()
         self._build()
+        self.menu = self._build_menu()
+        self._bind_keys()
         self.apply_theme(self.mode)
+        self._update_search_hint()
         self.refresh_view(force=True)
         if auto_refresh:
             root.after(1200, self._launch_check)
@@ -247,6 +251,7 @@ class DailyWindow:
         style.configure("Muted.TLabel", background=c["bg"], foreground=c["muted"], font=self.f_small)
         style.configure("Refresh.TButton", font=self.f_button, padding=(self.px(14), self.px(4)))
         style.configure("Small.TButton", font=self.f_small, padding=(self.px(6), self.px(2)))
+        style.configure("Accent.TButton", font=self.f_bold, padding=(self.px(14), self.px(3)))
 
     def apply_theme(self, mode: str) -> None:
         """Switch between the light and dark palettes without restarting."""
@@ -257,7 +262,6 @@ class DailyWindow:
         for w in (self.toolbar, self.banner_frame, self.title_box):
             w.configure(bg=c["bg"])
         self.app_label.configure(bg=c["bg"], fg=c["ink"])
-        self.date_label.configure(bg=c["bg"], fg=c["muted"])
         self.divider.configure(bg=c["rule"])
         self.sidebar.configure(bg=c["sidebar"])
         self.section_box.configure(bg=c["sidebar"])
@@ -267,7 +271,10 @@ class DailyWindow:
         self.status_label.configure(bg=c["sidebar"], fg=c["ink"])
         self.times_label.configure(bg=c["sidebar"], fg=c["muted"])
         self.links_frame.configure(bg=c["sidebar"])
-        self.search_label.configure(bg=c["bg"], fg=c["muted"])
+        self.search_hint.configure(bg=c["field"], fg=c["muted"])
+        if hasattr(self, "menu"):
+            self.menu.configure(bg=c["card"], fg=c["ink"], activebackground=c["accent"], activeforeground="#ffffff",
+                                disabledforeground=c["muted"], bd=0, relief="flat")
         for lbl in self.footer_links:
             lbl.configure(bg=c["sidebar"], fg=c["link"])
         self.text.configure(bg=c["card"], fg=c["ink"], insertbackground=c["ink"], selectbackground=c["select"],
@@ -278,43 +285,36 @@ class DailyWindow:
         if self.snap is not None:
             self.refresh_view(force=True)
 
-    def _build_menu(self) -> None:
-        menubar = tk.Menu(self.root)
-        m_file = tk.Menu(menubar, tearoff=False)
-        m_file.add_command(label="Export edition as HTML...", accelerator="Ctrl+E", command=self.export_html)
-        m_file.add_separator()
-        m_file.add_command(label="Open data folder", command=lambda: self._open_path(self.paths.root))
-        m_file.add_command(label="Open logs folder", command=lambda: self._open_path(self.paths.logs_dir))
-        m_file.add_separator()
-        m_file.add_command(label="Exit", command=self._on_close)
-        menubar.add_cascade(label="File", menu=m_file)
-        m_view = tk.Menu(menubar, tearoff=False)
-        m_view.add_command(label="Top Stories", accelerator="Ctrl+1", command=lambda: self.show_section(TOP))
-        m_view.add_command(label="Latest edition", command=self.show_latest)
-        m_view.add_command(label="Details, sources and changes...", accelerator="Ctrl+D", command=self.show_details)
-        m_view.add_separator()
-        m_view.add_command(label="Expand all source details", command=lambda: self._expand_all(True))
-        m_view.add_command(label="Collapse all source details", command=lambda: self._expand_all(False))
-        m_view.add_separator()
-        m_view.add_command(label="Demo edition (NOT real news)", command=self.show_demo)
-        menubar.add_cascade(label="View", menu=m_view)
-        m_tools = tk.Menu(menubar, tearoff=False)
-        m_tools.add_command(label="Refresh now", accelerator="F5", command=self.refresh_now)
-        m_tools.add_command(label="Check local model (Ollama)", command=self._start_prereq_check)
-        m_tools.add_command(label="Settings...", command=self.open_settings)
-        menubar.add_cascade(label="Tools", menu=m_tools)
-        m_help = tk.Menu(menubar, tearoff=False)
-        m_help.add_command(label="How refreshing works", command=self.show_help)
-        m_help.add_command(label="About", command=lambda: messagebox.showinfo(
-            APP_NAME, f"{APP_NAME} {VERSION_LABEL}\n\nLocal daily news from public sources, summarized on this PC "
-                      f"by a local model (Ollama). No paid or cloud AI service is used.\n\nData folder:\n{self.paths.root}",
-            parent=self.root))
-        menubar.add_cascade(label="Help", menu=m_help)
-        self.root.config(menu=menubar)
+    def _build_menu(self) -> tk.Menu:
+        """The toolbar's "..." menu (no classic menu bar). Every command also has a shortcut or a link."""
+        menu = tk.Menu(self.root, tearoff=False)
+        menu.add_command(label="Refresh now", accelerator="F5", command=self.refresh_now)
+        menu.add_command(label="Details, sources and changes", accelerator="Ctrl+D", command=self.show_details)
+        menu.add_command(label="Export as web page...", accelerator="Ctrl+E", command=self.export_html)
+        menu.add_command(label="Settings...", accelerator="Ctrl+,", command=self.open_settings)
+        menu.add_separator()
+        menu.add_command(label="Expand all sources", command=lambda: self._expand_all(True))
+        menu.add_command(label="Collapse all sources", command=lambda: self._expand_all(False))
+        menu.add_command(label="Latest edition", command=self.show_latest)
+        menu.add_command(label="Demo edition (not real news)", command=self.show_demo)
+        menu.add_separator()
+        menu.add_command(label="Check local model (Ollama)", command=self._start_prereq_check)
+        menu.add_command(label="Open data folder", command=lambda: self._open_path(self.paths.root))
+        menu.add_command(label="Open logs folder", command=lambda: self._open_path(self.paths.logs_dir))
+        menu.add_separator()
+        menu.add_command(label="How refreshing works", command=self.show_help)
+        menu.add_command(label="About Agent Reach", command=self.show_about)
+        menu.add_separator()
+        menu.add_command(label="Quit", accelerator="Ctrl+Q", command=self._on_close)
+        return menu
+
+    def _bind_keys(self) -> None:
         for seq in ("<F5>", "<Control-r>"):
             self.root.bind(seq, lambda e: self.refresh_now())
         self.root.bind("<Control-e>", lambda e: self.export_html())
         self.root.bind("<Control-d>", lambda e: self.show_details())
+        self.root.bind("<Control-comma>", lambda e: self.open_settings())
+        self.root.bind("<Control-q>", lambda e: self._on_close())
         self.root.bind("<Control-f>", lambda e: self.search_entry.focus_set())
         for n in range(1, 8):
             self.root.bind(f"<Control-Key-{n}>", lambda e, n=n: self._section_by_number(n))
@@ -323,41 +323,55 @@ class DailyWindow:
         self.root.bind("<Prior>", lambda e: self.text.yview_scroll(-1, "pages"))
         self.root.bind("<Next>", lambda e: self.text.yview_scroll(1, "pages"))
 
+    def _show_menu(self) -> None:
+        b = self.more_btn
+        try:
+            self.menu.tk_popup(b.winfo_rootx(), b.winfo_rooty() + b.winfo_height())
+        finally:
+            self.menu.grab_release()
+
+    def show_about(self) -> None:
+        messagebox.showinfo(APP_NAME, f"{APP_NAME} {VERSION_LABEL}\n\nLocal daily news from public sources, summarized "
+                                      "on this PC by a local model (Ollama). No paid or cloud AI service is used.\n\n"
+                                      f"Data folder:\n{self.paths.root}", parent=self.root)
+
     def _build(self) -> None:
         root, c = self.root, self.c
         root.columnconfigure(0, weight=1)
         root.rowconfigure(2, weight=1)
         pad = self.px(16)
 
-        # ---- toolbar: app + edition date on the left; search, edition and Refresh on the right
+        # ---- toolbar: the edition title on the left; search, edition date, Refresh and "..." on the right
         self.toolbar = tk.Frame(root, bg=c["bg"], padx=pad, pady=self.px(10))
         self.toolbar.grid(row=0, column=0, sticky="ew")
         self.toolbar.columnconfigure(0, weight=1)
         self.title_box = tk.Frame(self.toolbar, bg=c["bg"])
         self.title_box.grid(row=0, column=0, sticky="w")
         self.heading_var = tk.StringVar()
-        self.date_line_var = tk.StringVar()
+        self.date_line_var = tk.StringVar()  # the date is shown under each section title, not twice
         self.app_label = tk.Label(self.title_box, textvariable=self.heading_var, font=self.f_app, bg=c["bg"],
                                   fg=c["ink"])
         self.app_label.pack(side="left")
-        self.date_label = tk.Label(self.title_box, textvariable=self.date_line_var, font=self.f_sub, bg=c["bg"],
-                                   fg=c["muted"])
-        self.date_label.pack(side="left", padx=(self.px(10), 0))
         right = ttk.Frame(self.toolbar, style="Header.TFrame")
         right.grid(row=0, column=1, sticky="e")
-        self.search_label = tk.Label(right, text="Search", bg=c["bg"], fg=c["muted"], font=self.f_small)
-        self.search_label.pack(side="left", padx=(0, self.px(6)))
         self.search_var = tk.StringVar()
-        self.search_entry = ttk.Entry(right, textvariable=self.search_var, width=22)
+        self.search_entry = ttk.Entry(right, textvariable=self.search_var, width=24)
         self.search_entry.pack(side="left", padx=(0, self.px(8)))
         self.search_entry.bind("<Escape>", lambda e: self._clear_filters())
-        self.search_var.trace_add("write", lambda *a: self._on_search())
+        self.search_hint = tk.Label(self.search_entry, text="Search", bg=c["field"], fg=c["muted"], font=self.f_small,
+                                    cursor="xterm")
+        self.search_hint.bind("<Button-1>", lambda e: self.search_entry.focus_set())
+        for seq in ("<FocusIn>", "<FocusOut>"):
+            self.search_entry.bind(seq, lambda e: self._update_search_hint(), add="+")
+        self.search_var.trace_add("write", lambda *a: (self._update_search_hint(), self._on_search()))
         self.date_var = tk.StringVar()
-        self.date_box = ttk.Combobox(right, textvariable=self.date_var, state="readonly", width=16)
+        self.date_box = ttk.Combobox(right, textvariable=self.date_var, state="readonly", width=15)
         self.date_box.pack(side="left", padx=(0, self.px(8)))
         self.date_box.bind("<<ComboboxSelected>>", self._on_date)
         self.progress = ttk.Progressbar(right, mode="indeterminate", length=self.px(90))
         self.cancel_btn = ttk.Button(right, text="Stop", style="Small.TButton", command=self.cancel_refresh)
+        self.more_btn = ttk.Button(right, text="\u2026", width=3, style="Small.TButton", command=self._show_menu)
+        self.more_btn.pack(side="right", padx=(self.px(6), 0))
         self.refresh_btn = ttk.Button(right, text="Refresh", style="Refresh.TButton", command=self.refresh_now)
         self.refresh_btn.pack(side="right")
 
@@ -416,6 +430,7 @@ class DailyWindow:
         self.text.grid(row=0, column=0, sticky="nsew")
         scroll.grid(row=0, column=1, sticky="ns")
         self.text.bind("<Button-1>", lambda e: self.text.focus_set(), add="+")
+        self.text.bind("<Configure>", self._fit_column)
         self._text_tags()
         self.root.bind("<Configure>", self._on_resize)
 
@@ -484,12 +499,7 @@ class DailyWindow:
         self.date_line_var.set(snap.date_line)
         self.status_var.set(snap.status)
         self._draw_dot(snap.status_kind)
-        times = [snap.last_success]
-        if snap.next_refresh:
-            times.append(snap.next_refresh)
-        if snap.coverage_line:
-            times.append(snap.coverage_line)
-        self.times_var.set("\n".join(times))
+        self.times_var.set("\n".join(compact_times(snap)))
         if snap.activity.running or self._cancelling:
             self.refresh_btn.state(["disabled"])
             self.refresh_btn.configure(text="Refreshing...")
@@ -544,6 +554,13 @@ class DailyWindow:
                      font=self.f_bold if b.kind == "demo" else self.f_small,
                      padx=self.px(12), pady=self.px(6)).pack(fill="x", pady=(0, self.px(8)))
 
+    def _fit_column(self, event=None) -> None:
+        """Keep lines readable: the text column is at most ~820 px wide and centred in the pane."""
+        width = event.width if event is not None else self.text.winfo_width()
+        pad = max(self.px(36), (width - self.px(820)) // 2)
+        if int(str(self.text.cget("padx"))) != pad:
+            self.text.configure(padx=pad)
+
     def _on_resize(self, event) -> None:
         if event.widget is self.root:
             width = max(self.px(400), event.width - self.px(60))
@@ -587,18 +604,23 @@ class DailyWindow:
         if sections:
             tk.Label(self.section_box, text="SECTIONS", bg=c["sidebar"], fg=c["muted"], font=self.f_side_head,
                      anchor="w").grid(row=0, column=0, sticky="ew", padx=self.px(8), pady=(0, self.px(4)))
+        d = self.px(8)
         for i, (k, title, stories) in enumerate(sections, start=1):
             selected = k == self.section
             bg = c["sidebar_sel"] if selected else c["sidebar"]
             row = tk.Frame(self.section_box, bg=bg, padx=self.px(8), pady=self.px(5), cursor="hand2")
             row.grid(row=i, column=0, sticky="ew", pady=1)
-            row.columnconfigure(0, weight=1)
+            row.columnconfigure(1, weight=1)
+            dot = tk.Canvas(row, width=d + 2, height=d + 2, bg=bg, highlightthickness=0)
+            colour = c["accent"] if k == TOP else c["categories"].get(k, (None, c["muted"]))[1]
+            dot.create_oval(1, 1, d, d, fill=colour, outline="")
+            dot.grid(row=0, column=0, sticky="w", padx=(0, self.px(8)))
             name = tk.Label(row, text=title, bg=bg, fg=c["ink"], anchor="w",
                             font=self.f_side_bold if selected else self.f_side)
-            name.grid(row=0, column=0, sticky="w")
+            name.grid(row=0, column=1, sticky="w")
             count = tk.Label(row, text=str(len(stories)), bg=bg, fg=c["muted"], font=self.f_small)
-            count.grid(row=0, column=1, sticky="e")
-            for w in (row, name, count):
+            count.grid(row=0, column=2, sticky="e")
+            for w in (row, dot, name, count):
                 w.bind("<Button-1>", lambda e, k=k: self.show_section(k))
 
     def show_section(self, key: str) -> None:
@@ -612,6 +634,17 @@ class DailyWindow:
         sections = self.sections(self.snap.shown if self.snap else None)
         if 0 < n <= len(sections):
             self.show_section(sections[n - 1][0])
+
+    def _update_search_hint(self) -> None:
+        """'Search' placeholder inside the empty, unfocused search box (never written into the box)."""
+        try:
+            focused = self.root.focus_get() is self.search_entry
+        except (KeyError, tk.TclError):  # focus in a closed dialog
+            focused = False
+        if self.search_var.get() or focused:
+            self.search_hint.place_forget()
+        else:
+            self.search_hint.place(x=self.px(7), rely=0.5, anchor="w")
 
     def _on_search(self) -> None:
         if self.search_var.get().strip():
@@ -675,8 +708,8 @@ class DailyWindow:
         t.insert("end", "    ")
         demo = ttk.Button(t, text="Preview the demo edition", command=self.show_demo)
         t.window_create("end", window=demo)
-        t.insert("end", "\n\nA new edition is collected every 24 hours while your PC is on (Help > How refreshing "
-                        "works). The demo edition uses clearly marked synthetic stories.\n", ("plain", "muted"))
+        t.insert("end", "\n\nA new edition is collected every 24 hours while your PC is on (\u2026 menu > How "
+                        "refreshing works). The demo edition uses clearly marked synthetic stories.\n", ("plain", "muted"))
 
     def _render_edition(self, snap: Snapshot) -> None:
         t = self.text
@@ -737,7 +770,7 @@ class DailyWindow:
         strength = strength_of(s, self._generated_at)
         names = strength.publishers or [name for name, _ in story_publishers(s, limit=6)[0]]
         pubs, more = names[:3], max(0, len(names) - 3)
-        # kicker: CATEGORY  LABEL  age · publishers · evidence
+        # kicker: CATEGORY  LABEL  age · publishers
         if show_category:
             t.insert("end", s.category.value.upper(), ("kicker", f"chip:{s.category.value}"))
             t.insert("end", "   ", ("kicker",))
@@ -745,8 +778,8 @@ class DailyWindow:
             tag = f"chip:{label}" if f"chip:{label}" in t.tag_names() else "kicker"
             t.insert("end", label.upper(), ("kicker", tag))
             t.insert("end", "   ", ("kicker",))
-        meta = [story_age(s, now), ", ".join(pubs) + (f" +{more}" if more else ""), strength.label]
-        t.insert("end", "  ·  ".join(m for m in meta if m) + "\n", ("kicker",))
+        meta = [story_age(s, now), ", ".join(pubs) + (f" +{more}" if more else "")]
+        t.insert("end", "  \u00b7  ".join(m for m in meta if m) + "\n", ("kicker",))
         t.insert("end", f"{number}\t", ("headline", "rank"))
         t.insert("end", s.headline + "\n", ("headline",))
         t.insert("end", " ".join(s.sentences) + "\n", ("body",))
@@ -756,7 +789,7 @@ class DailyWindow:
         expanded = s.story_id in self._expanded
         t.insert("end", "Hide sources" if expanded else f"Sources ({len(s.evidence)})",
                  ("sources",) + self._link_tag(f"toggle:{s.story_id}", small=True))
-        t.insert("end", "\n", ("sources",))
+        t.insert("end", f"   \u00b7   {strength.label}\n", ("sources",))
         if expanded:
             t.insert("end", f"{strength.label}: {'; '.join(strength.reasons)}.\n", ("excerpt",))
             self._render_evidence(s)
@@ -1028,24 +1061,23 @@ class DetailsWindow:
         feeds = [f for h in edition.source_health for f in h.feeds]
         line = f"{health_summary(edition.source_health)}   ({len(edition.source_health)} collection channels"
         if feeds:
-            line += f"; {sum(f.status == 'ok' for f in feeds)} of {len(feeds)} publisher feeds delivered articles"
+            line += f"; {sum(f.status == 'ok' for f in feeds)} of {len(feeds)} feeds delivered something"
         ttk.Label(frm, text=line + ")", font=w.f_bold).pack(anchor="w", pady=(0, w.px(6)))
         tree = self._tree(frm, [("name", "Channel / publisher feed", 250, "w"), ("status", "Status", 80, "w"),
                                 ("collected", "Collected", 90, "e"), ("used", "Used", 60, "e"),
                                 ("notes", "Notes", 360, "w")])
         labels = {"ok": "OK", "partial": "PARTIAL", "empty": "EMPTY", "failed": "FAILED"}
         for h in edition.source_health:
-            bad = [f for f in h.feeds if f.status != "ok"]
-            note = (f"{len(bad)} of {len(h.feeds)} feeds returned nothing (expand)" if bad
-                    else f"{len(h.feeds)} publisher feeds (expand)" if h.feeds else friendly_error(h.error))
-            node = tree.insert("", "end", text=h.name, open=bool(bad),
+            failed = any(f.status == "failed" for f in h.feeds)
+            note = feed_note(h) if h.feeds else friendly_error(h.error)
+            node = tree.insert("", "end", text=h.name, open=failed,
                                values=(labels.get(h.status, h.status.upper()), h.item_count, h.used, note))
             for f in sorted(h.feeds, key=lambda f: (f.status == "ok", -f.used, f.name.lower())):
                 tree.insert(node, "end", text=f.name, values=(labels.get(f.status, f.status.upper()), f.collected,
                                                               f.used, friendly_error(f.error) or (f.category or "")))
-        ttk.Label(frm, text="Collected: articles taken in this refresh. Used: articles cited in this edition. "
-                            "PARTIAL: the channel answered but some of it failed (for example a rate limit or a broken "
-                            "feed). Expand a channel to see its publisher feeds.", style="Muted.TLabel",
+        ttk.Label(frm, text="Collected: items taken in this refresh. Used: items cited in this edition. PARTIAL: the "
+                            "channel answered but some of it failed (for example a rate limit or a broken feed). Expand "
+                            "a channel to see its feeds, YouTube channels or Google News sections.", style="Muted.TLabel",
                   wraplength=w.px(780)).pack(anchor="w", pady=(w.px(6), 0))
 
     def _publishers_tab(self, nb: ttk.Notebook, snap: Snapshot) -> None:
@@ -1173,9 +1205,9 @@ class SettingsDialog:
         from agent_reach.ingestion import INGESTER_REGISTRY
 
         frm = self._tab(nb, "Sources")
-        ttk.Label(frm, text="Collection channels. 'Publisher feeds' gathers articles from the publishers on the next "
-                            "tab; the others are aggregators and trend lists. Tech-only channels are capped in the "
-                            "edition.", wraplength=self.window.px(740)).grid(row=0, column=0, columnspan=2, sticky="w",
+        ttk.Label(frm, text="Collection channels. 'Publisher feeds' and 'YouTube' read the publishers and channels "
+                            "on the next tab; the others are aggregators and trend lists. Tech-only channels are capped "
+                            "in Top Stories.", wraplength=self.window.px(740)).grid(row=0, column=0, columnspan=2, sticky="w",
                                                                              pady=(0, 8))
         self.source_vars: dict[str, tk.BooleanVar] = {}
         for i, name in enumerate(INGESTER_REGISTRY):
@@ -1208,16 +1240,18 @@ class SettingsDialog:
         ttk.Label(frm, textvariable=self.feeds_summary).grid(row=0, column=0, sticky="w", pady=(0, 6))
         box = ttk.Frame(frm)
         box.grid(row=1, column=0, sticky="nsew")
-        cols = ("on", "category", "result")
+        cols = ("on", "kind", "category", "result")
         self.feed_tree = tree = ttk.Treeview(box, columns=cols, show="tree headings", height=12, selectmode="extended")
-        tree.heading("#0", text="Publisher feed", anchor="w")
+        tree.heading("#0", text="Publisher", anchor="w")
         tree.heading("on", text="On", anchor="w")
+        tree.heading("kind", text="Type", anchor="w")
         tree.heading("category", text="Category", anchor="w")
         tree.heading("result", text="Last test", anchor="w")
-        tree.column("#0", width=w.px(250), stretch=False)
+        tree.column("#0", width=w.px(230), stretch=False)
         tree.column("on", width=w.px(40), stretch=False)
+        tree.column("kind", width=w.px(70), stretch=False)
         tree.column("category", width=w.px(110), stretch=False)
-        tree.column("result", width=w.px(300), stretch=True)
+        tree.column("result", width=w.px(260), stretch=True)
         sb = ttk.Scrollbar(box, orient="vertical", command=tree.yview)
         tree.configure(yscrollcommand=sb.set)
         tree.pack(side="left", fill="both", expand=True)
@@ -1234,9 +1268,10 @@ class SettingsDialog:
         ttk.Button(tests, text="Test selected", command=self._test_selected).pack(side="left", padx=(0, 4))
         ttk.Button(tests, text="Test all feeds", command=self._test_all).pack(side="left", padx=(0, 4))
         ttk.Button(tests, text="Restore defaults", command=self._restore_feeds).pack(side="right")
-        ttk.Label(frm, text="Each feed is one publisher channel with its own allowance and its own health line in "
-                            "Details. A feed that stops working never blocks the edition; it shows as failed. "
-                            "Testing fetches the feed now over the internet.", style="Muted.TLabel",
+        ttk.Label(frm, text="Each feed (an RSS feed or a YouTube channel) has its own allowance and its own health "
+                            "line in Details. A feed that stops working never blocks the edition; it shows as failed. "
+                            "YouTube channels are read when 'YouTube' is on in Sources. Testing fetches the feed now "
+                            "over the internet.", style="Muted.TLabel",
                   wraplength=w.px(740)).grid(row=4, column=0, sticky="w", pady=(6, 0))
         self._fill_feeds()
 
@@ -1245,15 +1280,16 @@ class SettingsDialog:
         tree.delete(*tree.get_children())
         for i, f in enumerate(self.feeds):
             tree.insert("", "end", iid=str(i), text=f.name,
-                        values=("yes" if f.enabled else "no", f.category, self.feed_results.get(f.url, "")))
+                        values=("yes" if f.enabled else "no", f.kind, f.category, self.feed_results.get(f.url, "")))
         if select:
             ids = [str(i) for i, f in enumerate(self.feeds) if f.url in select]
             tree.selection_set(ids)
             if ids:
                 tree.see(ids[0])
         on = [f for f in self.feeds if f.enabled]
-        self.feeds_summary.set(f"{len(on)} of {len(self.feeds)} feeds on, from {len({f.publisher for f in on})} "
-                               f"publishers. Double-click a feed to edit it.")
+        videos = sum(f.kind == "YouTube" for f in on)
+        self.feeds_summary.set(f"{len(on) - videos} feeds and {videos} YouTube channels on, from "
+                               f"{len({f.publisher for f in on})} publishers. Double-click one to edit it.")
 
     def _selected_feeds(self) -> list[FeedSpec]:
         return [self.feeds[int(i)] for i in self.feed_tree.selection()]
@@ -1477,7 +1513,7 @@ class SettingsDialog:
                 max_items_for_llm=int(self.budget_var.get()), appearance=self.appearance_var.get(),
             )
             prefs = DailyPrefs.model_validate(data)
-            if "news_rss" in prefs.enabled_sources and not prefs.enabled_feeds():
+            if "news_rss" in prefs.enabled_sources and not prefs.enabled_rss_feeds():
                 raise ValueError("'Publisher feeds' is on but every publisher feed is turned off.")
         except (ValueError, TypeError) as exc:
             messagebox.showerror(APP_NAME, f"Please check the settings:\n\n{exc}", parent=self.top)
@@ -1510,12 +1546,14 @@ class FeedDialog:
         ttk.Label(frm, text="Name").grid(row=0, column=0, sticky="w", pady=3)
         name = ttk.Entry(frm, textvariable=self.name_var, width=48)
         name.grid(row=0, column=1, sticky="ew", pady=3)
-        ttk.Label(frm, text="Feed address (RSS or Atom)").grid(row=1, column=0, sticky="w", pady=3, padx=(0, 8))
+        ttk.Label(frm, text="Address (RSS/Atom feed or\nYouTube channel)").grid(row=1, column=0, sticky="w", pady=3,
+                                                                              padx=(0, 8))
         ttk.Entry(frm, textvariable=self.url_var, width=48).grid(row=1, column=1, sticky="ew", pady=3)
         ttk.Label(frm, text="Category").grid(row=2, column=0, sticky="w", pady=3)
         ttk.Combobox(frm, textvariable=self.cat_var, state="readonly", values=all_categories(), width=18).grid(
             row=2, column=1, sticky="w", pady=3)
-        self.result_var = tk.StringVar(value="Business and health feeds belong under News.")
+        self.result_var = tk.StringVar(value="Business and health feeds belong under News. For YouTube, paste the "
+                                             "channel address (youtube.com/channel/UC...).")
         ttk.Label(frm, textvariable=self.result_var, wraplength=w.px(460), style="Muted.TLabel").grid(
             row=3, column=0, columnspan=2, sticky="w", pady=(8, 8))
         btns = ttk.Frame(frm)

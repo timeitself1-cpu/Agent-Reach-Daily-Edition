@@ -197,3 +197,27 @@ def test_prefs_changes_take_effect_on_the_next_refresh(daily_env):
 
     assert max(Counter(s.category.value for s in out.edition.stories).values()) == 3
     assert isinstance(load_prefs(daily_env.paths)[0], DailyPrefs)
+
+
+def test_youtube_channel_videos_join_the_matching_story(daily_env):
+    from agent_reach.daily.feeds import FeedSpec
+    from agent_reach.ingestion.video import youtube_feed_url
+
+    prefs, _ = load_prefs(daily_env.paths)
+    channel = FeedSpec(name="Wire One", url=youtube_feed_url("UCwireonewireonewireone1"), category="News")
+    save_prefs(daily_env.paths, prefs.model_copy(update={"feeds": [*prefs.feeds, channel],
+                                                         "enabled_sources": [*prefs.enabled_sources, "youtube"]}))
+    out = _refresh(daily_env)
+    assert out.code == R.EXIT_PUBLISHED, out.message
+    health = {h.source: h for h in out.edition.source_health}
+    assert health["youtube"].status == "ok" and health["youtube"].feeds[0].collected == 1  # the old video is skipped
+    ferry = next(s for s in out.edition.stories if "Ferry" in s.headline)
+    video = next(e for e in ferry.evidence if e.source == "youtube")
+    assert video.publisher == "Wire One" and video.source_name == "YouTube" and video.published_at_utc is not None
+    assert "|" not in video.title and health["youtube"].used == 1
+    # the channel belongs to a publisher already in the story: it is not counted as another independent report
+    from agent_reach.daily.strength import origin
+
+    assert origin(video.publisher, video.url) in {origin(e.publisher, e.url) for e in ferry.evidence
+                                                  if e.source == "news_rss"}
+    assert ferry.evidence_strength.duplicates_collapsed >= 1

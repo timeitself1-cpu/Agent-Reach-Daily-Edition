@@ -371,6 +371,37 @@ def failure_text(state: RefreshState, *, has_edition: bool) -> str:
     return f"{head} {reason}{keep}".replace("  ", " ").strip()
 
 
+def compact_times(snap: Snapshot) -> list[str]:
+    """Short sidebar lines, e.g. 'Updated today 7:20 AM CDT', 'Next: tomorrow 7:05 AM CDT (in 24 h)'."""
+    lines = [snap.last_success.replace("Last successful refresh ", "Updated ", 1)]
+    nxt = snap.next_refresh
+    if nxt.startswith("Next refresh: "):
+        nxt = "Next: " + nxt.removeprefix("Next refresh: ")
+    elif nxt.startswith("Next refresh "):
+        nxt = "Next: " + nxt.removeprefix("Next refresh ")
+    nxt = re.sub(r"\s*\(in [^)]*\)$", "", nxt)  # 'in 24 h' is implied by the time; keeps the line short
+    if nxt:
+        lines.append(nxt)
+    if snap.coverage_line:
+        lines.append(snap.coverage_line)
+    return lines
+
+
+def feed_note(health) -> str:
+    """Details line for a channel made of feeds, e.g. '2 of 75 feeds failed; 3 had nothing new'."""
+    feeds = list(health.feeds)
+    if not feeds:
+        return ""
+    noun = "channels" if health.source == "youtube" else "sections" if health.source == "google_news" else "feeds"
+    failed = sum(f.status == "failed" for f in feeds)
+    empty = sum(f.status == "empty" for f in feeds)
+    one = noun[:-1] if len(feeds) == 1 else noun
+    parts = [f"{failed} of {len(feeds)} {noun} failed"] if failed else [f"{len(feeds)} {one}"]
+    if empty:
+        parts.append(f"{empty} had nothing new" if health.source == "youtube" else f"{empty} returned nothing")
+    return "; ".join(parts) + " (expand)"
+
+
 def coverage_summary(edition: DailyEdition) -> str:
     """Compact, honest source-health line, e.g. 'Sources: 6 healthy \u00b7 1 partial'."""
     return "Sources: " + health_summary(edition.source_health)

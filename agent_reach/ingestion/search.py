@@ -2,9 +2,10 @@
 
 from __future__ import annotations
 
+import asyncio
 import re
 from datetime import datetime, timedelta, timezone
-from urllib.parse import quote
+from urllib.parse import quote, urlencode
 
 from agent_reach.ingestion.base import (
     BaseIngester,
@@ -14,7 +15,7 @@ from agent_reach.ingestion.base import (
     xml_child_text,
     xml_local,
 )
-from agent_reach.models import CategoryEnum, RawTrendItem, SourceName
+from agent_reach.models import CategoryEnum, FeedStat, RawTrendItem, SourceName
 
 
 # =====================================================================  Google Trends
@@ -70,19 +71,81 @@ class GoogleTrendsIngester(BaseIngester):
 
 
 # =====================================================================  Google News
+#: Google News topic sections (``/rss/headlines/section/topic/<TOPIC>``).
+GOOGLE_NEWS_TOPICS = frozenset({"WORLD", "NATION", "BUSINESS", "TECHNOLOGY", "SCIENCE", "HEALTH", "SPORTS",
+                                "ENTERTAINMENT"})
+
+
+def parse_section_entry(entry: str) -> tuple[CategoryEnum, str, str]:
+    """'Category|TOPIC or search words|Name' -> (category, topic or query, name)."""
+    category, _, rest = entry.partition("|")
+    key, _, name = rest.partition("|")
+    key = key.strip()
+    return CategoryEnum(category.strip()), key, name.strip() or f"Google News - {key.title()}"
+
+
 class GoogleNewsIngester(BaseIngester):
-    """Top stories RSS. Google appends ' - Publisher' to titles; we split that off."""
+    """Top stories RSS, plus optional per-category sections (``google_news_sections``).
+
+    Google appends ' - Publisher' to titles; we split that off and keep the publisher. A section is a
+    Google News topic (WORLD, TECHNOLOGY, SPORTS, ...) or a search limited to the last day. Each
+    section is its own feed with its own allowance and health line; a failing section only makes the
+    source partial. Scores are rank-based (1.0 for each section's first story), so every section's
+    lead stories rank alike.
+    """
 
     source = SourceName.GOOGLE_NEWS
+    BASE = "https://news.google.com/rss"
+
+    def item_cap(self) -> int:
+        sections = len(self.settings.google_news_sections)
+        base = self.settings.max_items_per_source
+        return base + sections * self.settings.google_news_items_per_section if sections else base
+
+    def _locale(self) -> dict[str, str]:
+        geo = self.settings.geo.upper()
+        return {"hl": f"en-{geo}", "gl": geo, "ceid": f"{geo}:en"}
+
+    def section_url(self, key: str) -> str:
+        params = self._locale()
+        if key in GOOGLE_NEWS_TOPICS:
+            return f"{self.BASE}/headlines/section/topic/{key}?{urlencode(params)}"
+        return f"{self.BASE}/search?{urlencode({'q': f'{key} when:1d', **params})}"
 
     async def fetch(self) -> list[RawTrendItem]:
-        geo = self.settings.geo.upper()
-        root = await self.get_xml(
-            "https://news.google.com/rss",
-            params={"hl": f"en-{geo}", "gl": geo, "ceid": f"{geo}:en"},
-        )
+        top_url = f"{self.BASE}?{urlencode(self._locale())}"
+        sections = [parse_section_entry(e) for e in self.settings.google_news_sections]
+        if not sections:
+            return await self._read(top_url, CategoryEnum.NEWS, None, self.settings.max_items_per_source)
+        jobs = [("Google News - Top stories", top_url, CategoryEnum.NEWS, "", self.settings.max_items_per_source)]
+        jobs += [(name, self.section_url(key), cat, name, self.settings.google_news_items_per_section)
+                 for cat, key, name in sections]
+        results = await asyncio.gather(*(self._read(url, cat, sec, limit) for _, url, cat, sec, limit in jobs),
+                                       return_exceptions=True)
+        per_section: list[list[RawTrendItem]] = []
+        failures: list[str] = []
+        self.feed_stats = []
+        for (name, url, cat, _sec, _limit), res in zip(jobs, results):
+            if isinstance(res, BaseException) or not res:
+                err = (str(res)[:160] or type(res).__name__) if isinstance(res, BaseException) else "no entries"
+                failures.append(f"{name}: {err[:80]}")
+                self.feed_stats.append(FeedStat(name=name, url=url, category=cat.value, ok=False, error=err))
+                continue
+            per_section.append(res)
+            self.feed_stats.append(FeedStat(name=name, url=url, category=cat.value, ok=True, item_count=len(res)))
+        if not per_section:
+            raise IngestionError("all Google News sections failed: " + "; ".join(failures)[:250])
+        if failures:
+            self.warnings.append(f"{len(failures)}/{len(jobs)} sections failed ({'; '.join(failures)})")
         out: list[RawTrendItem] = []
-        entries = [el for el in root.iter() if xml_local(el.tag) == "item"]
+        for rank in range(max(len(x) for x in per_section)):  # round-robin: a cap never drops a whole section
+            out.extend(x[rank] for x in per_section if rank < len(x))
+        return out
+
+    async def _read(self, url: str, category: CategoryEnum, section: str | None, limit: int) -> list[RawTrendItem]:
+        root = await self.get_xml(url)
+        out: list[RawTrendItem] = []
+        entries = [el for el in root.iter() if xml_local(el.tag) == "item"][:limit]
         n = len(entries)
         for rank, el in enumerate(entries, start=1):
             raw_title = xml_child_text(el, "title") or ""
@@ -92,14 +155,19 @@ class GoogleNewsIngester(BaseIngester):
                 title = raw_title[: -len(publisher) - 3]
             else:
                 title = re.sub(r"\s+-\s+[^-]{2,60}$", "", raw_title)
+            metadata = {"publisher": publisher, "rank": rank,
+                        "publisher_url": next((node.get("url") for node in el if xml_local(node.tag) == "source"), None)}
+            if section is not None:  # with sections, every section (top stories too) has its own health line
+                metadata.update(feed=url, section=section or "Top stories")
+                if not section:
+                    metadata["top_stories"] = True  # keeps the source-wide floor in the processing budget
             item = self.make_item(
                 title=title,
-                raw_score=float(n - rank + 1),
+                raw_score=round(1.0 - (rank - 1) / max(1, n), 4),
                 url=xml_child_text(el, "link"),
                 published_at=parse_optional_datetime(xml_child_text(el, "pubDate")),
-                category_hint=CategoryEnum.NEWS,
-                metadata={"publisher": publisher, "rank": rank,
-                          "publisher_url": next((node.get("url") for node in el if xml_local(node.tag) == "source"), None)},
+                category_hint=category,
+                metadata=metadata,
             )
             if item:
                 out.append(item)

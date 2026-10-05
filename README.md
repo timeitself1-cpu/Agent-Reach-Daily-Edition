@@ -48,14 +48,16 @@ Then **double-click "Agent Reach"** on the Desktop. The first time, choose
 | Open the app | Desktop / Start-menu shortcut **Agent Reach**, or double-click `AgentReachDaily.pyw` (fallback: `AgentReachDaily.cmd`) |
 | Refresh now | the **Refresh** button, F5 or Ctrl+R |
 | Read the sources of a story | click **Sources (N)** under the story to expand its articles |
-| Older editions | the **Edition** list (30 days are kept) |
-| Top 10 overall, then the top 10 of each category | the **Sections** sidebar: Top Stories, News, Tech, Science & AI, Sports, Entertainment (Ctrl+1 to Ctrl+7) |
+| Older editions | the edition date list next to Search (30 days are kept) |
+| Top 10 overall, then the top 10 of each category | the **Sections** sidebar: Top Stories, News, Tech, Science & AI, Sports, Entertainment, Internet Culture (Ctrl+1 to Ctrl+7) |
+| Everything else (demo, data folder, model check, help) | the **...** button at the right of the toolbar |
 | Search | **Search** box (Ctrl+F, Esc clears and returns to Top Stories) |
 | What changed since the last refresh | **Details** > Changes (kept out of the reading view) |
 | Source health, timings, run details | **Details** (Ctrl+D) |
 | Save today's edition as a web page | **Export** (Ctrl+E) |
-| Preview the layout with sample stories | View > Demo edition (clearly marked DEMO, not real news) |
-| Choose publishers, add a local outlet, test a feed | Settings > **Publisher feeds** (Add feed, Edit, Turn on/off, Test, Restore defaults) |
+| Preview the layout with sample stories | **...** > Demo edition (clearly marked DEMO, not real news) |
+| Choose publishers or YouTube channels, add a local outlet, test a feed | Settings (Ctrl+,) > **Publisher feeds** (Add feed, Edit, Turn on/off, Test, Restore defaults). For a YouTube channel, paste its `youtube.com/channel/UC...` address |
+| Turn sources on or off (YouTube, TikTok, Reddit, X, ...) | Settings > **Sources** |
 | Dark mode | Settings > **Appearance** (Match Windows, Light or Dark) |
 | See which feeds and publishers fed today's edition | **Details** > Sources (per-feed health, collected, used) and Publishers |
 
@@ -110,16 +112,31 @@ Everything lives in `%LOCALAPPDATA%\AgentReachDaily` (for example
 
 - All AI work runs locally through Ollama. Nothing is sent to OpenAI, Anthropic, Google or any
   other AI service, and no API key or subscription is needed.
-- The internet is used to read public sources: 38 publisher feeds from 23 organisations by default
-  (BBC, NPR, The Guardian, PBS News, CBS News, Al Jazeera, Le Monde, France 24, DW, CNBC, NASA,
-  ScienceDaily, ESPN; for tech and AI: Ars Technica, The Verge, TechCrunch, Wired, Engadget,
-  The Register, Lobsters, MIT Technology Review, VentureBeat AI, MIT News AI) covering world, US,
-  business, science, health, technology, AI, sports and culture; plus Google News and Google
-  Trends RSS, Wikipedia's most-read list, Hacker News, and optionally Reddit, X trends
-  (trends24.in), TikTok, GitHub Trending, Product Hunt and arXiv. Each publisher feed has its own
-  allowance, so adding feeds never squeezes the others, and you can add local outlets in
-  Settings > Publisher feeds. Settings saved by an older version keep your own feeds and gain the
-  new defaults once.
+- The internet is used to read public sources, with no account or API key:
+  - **75 publisher feeds from about 60 organisations**: world and US news (BBC, NPR, The Guardian,
+    PBS, CBS, NBC, ABC, Fox News, New York Times, Washington Post, Al Jazeera, Le Monde, France 24,
+    DW, Sky News, The Independent, Politico, The Hill), business (CNBC, MarketWatch), technology
+    (Ars Technica, The Verge, TechCrunch, Wired, Engadget, The Register, ZDNET, Gizmodo, 9to5Mac,
+    Tom's Hardware, Android Authority, Lobsters), science and AI (NASA, ScienceDaily, MIT Technology
+    Review, VentureBeat AI, MIT News AI, Ars Technica AI, The Decoder, Google AI, OpenAI,
+    Hugging Face, New Scientist, Space.com, Quanta, Nature), sports (ESPN, BBC Sport, CBS Sports,
+    Yahoo Sports, Sky Sports, Guardian Sport), entertainment (Variety, The Hollywood Reporter,
+    Deadline, Billboard, Rolling Stone, IGN, Polygon) and internet culture (The Daily Dot, Mashable);
+  - **22 YouTube channels** (BBC News, Reuters, AP, NBC, ABC, CBS, PBS, Al Jazeera, Sky News, CNBC,
+    Bloomberg Technology, CNET, The Verge, Linus Tech Tips, Marques Brownlee, Fireship, NASA, ESPN,
+    NFL, NBA, IGN, Entertainment Tonight) through their public channel feeds. YouTube retired its
+    Trending page in 2025, so "trending" here means each channel's most-watched uploads of the
+    last 72 hours, ranked by views per hour;
+  - **Google News** top stories plus one section per category (World, U.S., Business, Health,
+    Technology, Science, Sports, Entertainment, an "artificial intelligence" search and a
+    "TikTok / viral" search);
+  - **TikTok** trending hashtags (Creative Center; TikTok often blocks automated readers, and the
+    edition is then built from the rest), Google Trends, Wikipedia's most-read list, Hacker News,
+    Reddit and X trends (trends24.in); GitHub Trending, Product Hunt and arXiv are available but off.
+
+  Each feed and channel has its own allowance and its own health line in Details, so adding feeds
+  never squeezes the others, and you can add local outlets in Settings > Publisher feeds. Settings
+  saved by an older version keep your own choices and gain the new feeds and sources once.
   Article pages are fetched to give the model context. Model downloads come from Ollama.
 - Exported HTML files are self-contained (no scripts, no remote assets); only the article links
   need the internet.
@@ -131,8 +148,10 @@ Everything lives in `%LOCALAPPDATA%\AgentReachDaily` (for example
 | "Ollama is not running" | Start **Ollama** from the Start menu (the app also tries to start it). Check with `--check`. |
 | "model(s) ... are missing" | `ollama pull llama3.1:8b` and `ollama pull nomic-embed-text`, or re-run setup with `-PullModels`. |
 | "No news source responded" | You are offline or a firewall blocks the feeds. The previous edition is kept; it retries automatically. |
-| A source shows PARTIAL or FAILED (Details) | Normal from time to time (Reddit and X often rate-limit automated readers). The edition is built from the rest and says what was missing. Expand "News feeds" in Details to see which publisher feed failed and why. |
+| A source shows PARTIAL or FAILED (Details) | Normal from time to time (Reddit and X often rate-limit automated readers). The edition is built from the rest and says what was missing. Expand "News feeds", "YouTube" or "Google News" in Details to see which feed, channel or section failed and why. |
 | A publisher feed keeps failing | Feed addresses move. Settings > Publisher feeds > select it > **Test**; then Edit the address or turn the feed off. |
+| TikTok always shows FAILED | TikTok blocks many automated readers. Nothing is lost: viral and TikTok news still arrives through the Google News "TikTok / viral" section. Turn TikTok off in Settings > Sources to hide the line. |
+| A refresh takes too long | Each refresh groups and summarizes up to 260 articles. On a PC without a graphics card, lower "Articles grouped and summarized per refresh" in Settings > Sources (for example to 150), or turn off feeds you do not read. |
 | "found too little news to publish" | Fewer than 3 good stories or fewer than 2 working sources. Wait for the automatic retry or press Refresh later. |
 | Wrong date or time zone | Times are US Central (CST/CDT) on purpose. If times look wrong by hours, re-run setup: it installs `tzdata`, which Windows needs. |
 | Background refresh never happens | Settings > Schedule shows the task status; **Enable / update** re-registers it. Check `logs\scheduler.log`. The task only runs while you are logged on. |
@@ -155,6 +174,7 @@ The original pipeline still runs on its own and writes an ASCII executive report
 .\.venv\Scripts\python.exe -m agent_reach                # one run with Ollama
 .\.venv\Scripts\python.exe -m agent_reach --no-llm       # deterministic grouping, no Ollama
 .\.venv\Scripts\python.exe -m agent_reach --loop --interval 30
+.\.venv\Scripts\python.exe -m agent_reach --sources youtube google_news hackernews   # pick sources
 ```
 
 It uses `agent_reach.db` in the current folder (or `AGENT_REACH_DB_PATH`) and `.env` settings,
@@ -183,5 +203,5 @@ checks do), never sees the web, and its output is checked before it is shown. De
 
 Tests never touch the network or a real Ollama. `tests/daily_fakes.py` holds synthetic publisher
 feeds (fictional places on `.test` hosts) and a deterministic fake model; `samples/DEMO-edition.json`
-is the clearly labelled demo edition. Version: Agent Reach Daily 1.0 release candidate 3
+is the clearly labelled demo edition. Version: Agent Reach Daily 1.0 release candidate 4
 (`python -m agent_reach.daily --version`).
