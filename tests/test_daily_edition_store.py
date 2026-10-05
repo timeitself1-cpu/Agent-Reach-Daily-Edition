@@ -99,8 +99,8 @@ def test_weak_single_trend_signals_are_left_out():
     assert sel.dropped_weak == 1
 
 
-def test_balance_caps_tech_and_categories_without_filler():
-    prefs = DailyPrefs(max_stories=6, max_per_category=2, max_tech_only_share=0.34)
+def test_sections_keep_top_n_per_category_and_a_balanced_top_stories():
+    prefs = DailyPrefs(max_stories=3, max_per_category=2, max_tech_only_share=0.34)
     tech = [make_story(headline=h, category="Tech", tech_only=True, relevance=9, now=NOW, platforms=["hackernews"])
             for h in ("Frostline Fridges Bricked by Update", "Halden Hospitals Hit by Ransomware",
                       "Rust Compiler Ships Faster Builds", "Quantum Chip Benchmark Published")]
@@ -109,12 +109,38 @@ def test_balance_caps_tech_and_categories_without_filler():
                          ("Norvale Ferry Strike Halts Service", 7), ("Oakdene Council Delays Budget Vote", 5))]
     sel = E.select_stories(tech + news, prefs, now=NOW)
     heads = [s.headline for s in sel.stories]
-    assert sum(s.tech_only for s in sel.stories) == 2  # int(6 * 0.34): tech never fills beyond its cap
-    assert "Norvale Ferry Strike Halts Service" in heads  # held back by the News cap, strong: fills a free slot
-    assert "Oakdene Council Delays Budget Vote" not in heads  # weak held-back story is not used as filler
-    assert len(sel.stories) == 5 < prefs.max_stories  # quality over quota
+    assert [s.headline for s in sel.stories if s.category.value == "Tech"] == [s.headline for s in tech[:3]]
+    assert [s.headline for s in sel.stories if s.category.value == "News"] == [s.headline for s in news[:3]]
+    assert sel.held_back == 2  # the 4th of each category is beyond the section size
     assert heads == [h for h in [s.headline for s in tech + news] if h in heads]  # pipeline order kept
-    assert sel.filled_from_held_back == 1
+    top = [s.headline for s in sel.top]
+    assert len(top) == 3 and sum(s.tech_only for s in sel.top) == 1  # int(3 * 0.34): tech stays a minority
+    assert top == ["Frostline Fridges Bricked by Update", "Port Calder Earthquake Damages Roads",
+                   "Lumen Summit Agrees Methane Pledge"]
+
+
+def test_top_stories_fill_from_the_next_best_when_caps_leave_gaps():
+    prefs = DailyPrefs(max_stories=4, max_per_category=1)
+    news = [make_story(headline=h, category="News", relevance=8, now=NOW)
+            for h in ("Port Calder Earthquake Damages Roads", "Lumen Summit Agrees Methane Pledge",
+                      "Norvale Ferry Strike Halts Service")]
+    sel = E.select_stories(news, prefs, now=NOW)
+    assert len(sel.top) == 3 and sel.filled_from_held_back == 2  # only one category: no artificial gap
+
+
+def test_edition_sections_and_top_stories_helpers():
+    stories = [make_story(headline="Tech One Item", category="Tech", now=NOW),
+               make_story(headline="News One Item", category="News", now=NOW),
+               make_story(headline="Sports One Item", category="Sports", now=NOW)]
+    ed = make_edition(stories)
+    assert [s.headline for s in E.top_stories(ed)] == ["Tech One Item", "News One Item", "Sports One Item"]
+    assert [c for c, _ in E.category_sections(ed)] == ["News", "Tech", "Sports"]  # reading order, empty ones skipped
+    ed.top_ranks = [2]
+    assert [s.headline for s in E.top_stories(ed)] == ["News One Item"]
+    data = json.loads(ed.model_dump_json())
+    data["top_ranks"] = [9]
+    with pytest.raises(ValidationError):
+        E.DailyEdition.model_validate(data)
 
 
 def test_publication_gate_refuses_weak_editions():

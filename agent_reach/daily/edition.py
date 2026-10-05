@@ -193,6 +193,7 @@ class DailyEdition(BaseModel):
     overview: str
     notes: list[str] = Field(default_factory=list)
     stories: list[Story]
+    top_ranks: list[int] = Field(default_factory=list)  # Top Stories (ranks into stories); empty in older editions
     changes: EditionChanges | None = None  # vs. the previously persisted edition; None for the first edition
 
     @model_validator(mode="after")
@@ -210,6 +211,8 @@ class DailyEdition(BaseModel):
             raise ValueError("story ranks must be 1..n")
         if not self.accounting.balanced:
             raise ValueError("an edition requires a balanced item ledger")
+        if len(set(self.top_ranks)) != len(self.top_ranks) or any(not 1 <= r <= len(self.stories) for r in self.top_ranks):
+            raise ValueError("top_ranks must be distinct story ranks")
         # Ordering against generation time: evidence cannot be published (or retrieved) after the
         # edition was generated. Such times are dropped rather than rejecting the whole edition, so a
         # cached edition written before this check still loads, without the impossible date.
@@ -350,7 +353,8 @@ def same_topic(a: Story, b: Story) -> bool:
 @dataclass
 class Selection:
     stories: list[Story]
-    held_back: int = 0
+    top: list[Story] = field(default_factory=list)  # Top Stories, in rank order
+    held_back: int = 0  # beyond the per-category section size
     filled_from_held_back: int = 0
     dropped_unsupported: int = 0
     dropped_stale: int = 0
@@ -360,13 +364,14 @@ class Selection:
 
 
 def select_stories(stories: list[Story], prefs: DailyPrefs, *, now: datetime) -> Selection:
-    """Choose a balanced edition from stories in pipeline rank order. Quality beats story count.
+    """Choose the edition from stories in pipeline rank order: sections of ``max_stories``.
 
     1. Drop stale stories (every stated publication time older than ``max_story_age_hours``),
        weak single uncorroborated trend signals, and repeats of a story already chosen.
-    2. Keep the pipeline ranking while capping each category and the tech-only share.
-    3. A story held back by a cap fills an empty slot only when it is strong (relevance >= 7)
-       and not tech-only. Empty slots are otherwise left empty: no filler to reach a quota.
+    2. Each category keeps its top ``max_stories`` (10) stories in rank order.
+    3. Top Stories are the ``max_stories`` best of those, with at most ``max_per_category`` from one
+       category and at most ``max_tech_only_share`` tech-only stories, so the top of the edition
+       stays broad. If the caps leave slots empty, the next best stories fill them.
     """
     sel = Selection(stories=[])
     candidates: list[Story] = []
@@ -380,32 +385,65 @@ def select_stories(stories: list[Story], prefs: DailyPrefs, *, now: datetime) ->
         else:
             candidates.append(s)
 
-    limit = prefs.max_stories
-    tech_cap = limit if prefs.max_tech_only_share >= 1 else int(limit * prefs.max_tech_only_share)
-    chosen: list[Story] = []
-    held: list[Story] = []
+    per_section = prefs.max_stories
     per_cat: Counter[str] = Counter()
-    tech = 0
+    chosen: list[Story] = []
     for s in candidates:
-        if len(chosen) >= limit:
-            break
-        if per_cat[s.category.value] >= prefs.max_per_category or (s.tech_only and tech >= tech_cap):
-            held.append(s)
-            continue
-        chosen.append(s)
-        per_cat[s.category.value] += 1
-        tech += s.tech_only
-    for s in held:
-        if len(chosen) >= limit:
-            break
-        if s.relevance_score >= STRONG_RELEVANCE and not s.tech_only:
+        if per_cat[s.category.value] < per_section:
             chosen.append(s)
+            per_cat[s.category.value] += 1
+        else:
+            sel.held_back += 1
+
+    tech_cap = per_section if prefs.max_tech_only_share >= 1 else int(per_section * prefs.max_tech_only_share)
+    top: list[Story] = []
+    top_cat: Counter[str] = Counter()
+    tech = 0
+    for s in chosen:
+        if len(top) >= per_section:
+            break
+        if top_cat[s.category.value] < prefs.max_per_category and not (s.tech_only and tech >= tech_cap):
+            top.append(s)
+            top_cat[s.category.value] += 1
+            tech += s.tech_only
+    in_top = {id(s) for s in top}
+    for s in chosen:  # caps left slots empty: the next best real stories fill them
+        if len(top) >= per_section:
+            break
+        if id(s) not in in_top:
+            top.append(s)
+            in_top.add(id(s))
             sel.filled_from_held_back += 1
-    order = {id(s): i for i, s in enumerate(stories)}
-    chosen.sort(key=lambda s: order[id(s)])
+    order = {id(s): i for i, s in enumerate(chosen)}
     sel.stories = chosen
-    sel.held_back = len(held) - sel.filled_from_held_back
+    sel.top = sorted(top, key=lambda s: order[id(s)])
     return sel
+
+
+def top_stories(edition: "DailyEdition") -> list[Story]:
+    """Top Stories in rank order (older editions without sections: their first ten stories)."""
+    if edition.top_ranks:
+        by_rank = {s.rank: s for s in edition.stories}
+        return [by_rank[r] for r in edition.top_ranks if r in by_rank]
+    return list(edition.stories[:10])
+
+
+#: Reading order of the category sections (any category not listed follows in enum order).
+SECTION_ORDER = ["News", "Tech", "Science & AI", "Sports", "Entertainment", "Internet Culture"]
+
+
+def section_order() -> list[str]:
+    return SECTION_ORDER + [c for c in CategoryEnum.values() if c not in SECTION_ORDER]
+
+
+def category_sections(edition: "DailyEdition") -> list[tuple[str, list[Story]]]:
+    """[(category, stories in rank order)] for every category that has stories, in reading order."""
+    out = []
+    for cat in section_order():
+        stories = [s for s in edition.stories if s.category.value == cat]
+        if stories:
+            out.append((cat, stories))
+    return out
 
 
 def build_story(rank: int, cluster: MacroCluster, items: dict[int, CleanedTrendItem],
@@ -531,14 +569,13 @@ def build_coverage(health: list[SourceHealth], stories: list[Story], selection: 
         warnings.append(f"{len(bad_feeds)} of {len(all_feeds)} publisher feeds returned nothing: {shown}.")
     if not general:
         warnings.append("No general-news source responded, so this edition may over-represent social and tech trends.")
-    if selection.filled_from_held_back:
-        warnings.append(f"Not enough stories in other categories to balance the edition; "
-                        f"{selection.filled_from_held_back} strong story(ies) beyond the per-category limit were included.")
-    if stories and tech_n / len(stories) > 0.5:
-        warnings.append(f"{tech_n} of {len(stories)} stories come only from tech sources.")
+    top = selection.top or stories
+    top_tech = sum(s.tech_only for s in top)
+    if top and top_tech / len(top) > 0.5:
+        warnings.append(f"{top_tech} of {len(top)} top stories come only from tech sources.")
     if "lexical" in (report.llm_mode or ""):
         warnings.append("Embedding model unavailable: stories were grouped by shared words (less precise).")
-    balanced = general and not selection.filled_from_held_back and len(counts) >= 3 and (not stories or tech_n / len(stories) <= 0.5)
+    balanced = general and len(counts) >= 3 and (not top or top_tech / len(top) <= 0.5)
     return Coverage(
         sources_attempted=len(health), sources_ok=len(ok), failed=failed, partial=partial,
         category_counts=dict(counts.most_common()), general_news_available=general,
@@ -550,8 +587,8 @@ def build_overview(stories: list[Story], coverage: Coverage) -> str:
     if not stories:
         return ""
     cats = ", ".join(f"{k} {v}" for k, v in coverage.category_counts.items())
-    text = (f"{len(stories)} {'story' if len(stories) == 1 else 'stories'} from {coverage.sources_ok} of "
-            f"{coverage.sources_attempted} sources: {cats}.")
+    text = (f"{len(stories)} {'story' if len(stories) == 1 else 'stories'} in {len(coverage.category_counts)} "
+            f"sections from {coverage.sources_ok} of {coverage.sources_attempted} sources: {cats}.")
     if coverage.failed or coverage.partial or not coverage.balanced:
         text += " Coverage is partial today (see Details)."
     return text
@@ -615,6 +652,7 @@ def assemble_edition(
         overview=build_overview(stories, coverage),
         notes=notes,
         stories=stories,
+        top_ranks=[st.rank for st in selection.top],
     )
 
 

@@ -86,11 +86,16 @@ Publisher feeds are configured per feed (`daily/feeds.py`, Settings > Publisher 
 address, category, on/off. Each feed is one channel inside the `news_rss` source:
 
 - **Intake:** each feed contributes up to `items_per_feed` (10) articles; the source cap is
-  `items_per_feed x feeds`, bounded by `news_rss_max_total_items` (300), and feeds are interleaved
+  `items_per_feed x feeds`, bounded by `news_rss_max_total_items` (400), and feeds are interleaved
   by rank, so a cap never drops a whole feed and adding feeds never shrinks the others.
-- **Processing budget:** `max_items_for_llm` (150) articles are grouped and labelled per refresh.
+- **Processing budget:** `max_items_for_llm` (200) articles are grouped and labelled per refresh.
   Every channel keeps `min_items_per_source_for_llm` (6) and every publisher feed keeps
-  `min_items_per_feed_for_llm` (3) of that budget; the rest goes to the highest scores.
+  `min_items_per_feed_for_llm` (2) of that budget; the rest goes to the highest scores.
+- **Single-report stories:** the Daily app runs the clusterer with `outlier_policy="keep_top"`:
+  a density outlier stays as its own one-article story (never merged into a mixed cluster) when
+  its heuristic score is >= `singleton_keep_score` (0.35, roughly the top 7 of each feed, since
+  the score is a percentile within the channel) or its relevance is >= 6. Without this, a niche
+  section such as Tech, whose news is often reported by one outlet, came out empty.
 - **Health:** `SourceStat.feeds` records every feed (OK / EMPTY / FAILED, articles collected); the
   edition adds how many of each feed's articles were cited ("used"). A channel that answered but hit
   errors (a failing feed, a Reddit 429 with RSS fallback) is PARTIAL, never "healthy".
@@ -101,9 +106,15 @@ address, category, on/off. Each feed is one channel inside the `news_rss` source
    Undated items (trend lists, Wikipedia) are kept but never shown with an age.
 2. A single trend/social signal with no publisher article and relevance below 7 is dropped.
 3. Repeats are dropped: same entity set, a shared article URL, or near-identical headline words.
-4. At most `max_per_category` (5) stories per category and `max_tech_only_share` (34%) tech-only
-   stories, in pipeline rank order. A capped story fills a free slot only if it is strong
-   (relevance >= 7) and not tech-only. Free slots otherwise stay empty.
+4. **Sections.** Each category keeps its top `max_stories` (10) stories in rank order; the
+   overflow is counted as held back. **Top Stories** are the `max_stories` best of those, with at
+   most `max_per_category` (4) from one category and `max_tech_only_share` (34%) tech-only
+   stories, so the top stays broad. If the caps leave Top Stories short, the next best stories
+   fill it. The edition stores the Top Stories as `top_ranks` (optional; older editions show their
+   first ten stories). Sections are shown in a fixed order: News, Tech, Science & AI, Sports,
+   Entertainment, Internet Culture.
+   The grounded brief pass runs on Top Stories plus the first 3 of each category, which bounds
+   model time.
 5. The edition is published only with >= `min_ok_sources` (2) responding sources and
    >= `min_useful_stories` (3) stories; otherwise the previous edition stays.
 
@@ -136,7 +147,9 @@ revision compares with the revision it replaces) and the result is stored in the
 near-identical headline words. Reported: new; materially updated (new independent publishers, a
 substantially rewritten summary or headline, a category change, a new "why it matters"); signals
 up/down (raw signals changed by >= 50% and >= 2, or independent reports by >= 2); and stories no
-longer listed. The first edition has nothing to compare with.
+longer listed. The first edition has nothing to compare with. The window shows this only in
+Details > Changes and the HTML export keeps it in a collapsed block at the bottom, so it never
+takes reading space.
 
 ### Grounding gate for model text
 

@@ -309,7 +309,8 @@ def test_refresh_persists_changes_against_the_previous_edition(daily_env):
     assert {"Riverton Hawks Win Championship Final in Overtime", "Kestrel City Marathon Sets Course Record"} <= gone
     assert not ch.new and ch.unchanged >= 5
     page = render_edition_html(second)
-    assert "What changed since last refresh" in page and "No longer listed (2)" in page
+    assert "<details><summary>What changed since last refresh (2 no longer listed)</summary>" in page
+    assert page.index("What changed since last refresh") > page.index('<section class="sec"')  # after the news
     assert "Riverton Hawks Win Championship Final in Overtime" in page
 
 

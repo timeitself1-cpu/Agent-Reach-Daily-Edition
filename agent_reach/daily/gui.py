@@ -36,51 +36,68 @@ from agent_reach.daily.app import (
     story_age,
     story_publishers,
 )
-from agent_reach.daily.edition import Story, all_categories, friendly_error, health_summary, safe_url
+from agent_reach.daily.edition import (
+    Story,
+    all_categories,
+    category_sections,
+    friendly_error,
+    health_summary,
+    safe_url,
+    top_stories,
+)
 from agent_reach.daily.paths import DataPaths
 from agent_reach.daily.feeds import FeedSpec, default_feeds
 from agent_reach.daily.prefs import DailyPrefs, SOURCE_NOTES, save_prefs
 from agent_reach.daily.strength import strength_of
-from agent_reach.daily.timeutil import format_central, format_short_date
+from agent_reach.daily.timeutil import format_central, format_long_date, format_short_date
 
 log = logging.getLogger(__name__)
 
-STATUS_DOT = {"current": "#188038", "stale": "#b06000", "refreshing": "#1a73e8", "failed": "#c5221f",
-              "empty": "#80868b", "demo": "#a50e0e", "archive": "#5f6368"}
+POLL_RUNNING_MS = 1000
+POLL_IDLE_MS = 30000
 
-#: Light and dark palettes. Chip/banner pairs are (background, text) with readable contrast in each.
+STATUS_DOT = {"current": "#34c759", "stale": "#ff9f0a", "refreshing": "#0a84ff", "failed": "#ff3b30",
+              "empty": "#8e8e93", "demo": "#ff3b30", "archive": "#8e8e93"}
+
+#: macOS-like light and dark palettes. Category values are (tint, text) pairs; the reading view uses
+#: the text colour for the small category label above each headline.
 PALETTES: dict[str, dict] = {
     "light": {
-        "bg": "#f6f5f2", "card": "#ffffff", "ink": "#1d1d1f", "muted": "#5f6368", "accent": "#1a5fb4",
-        "link": "#1a5fb4", "rule": "#e2e0da", "rank": "#9aa0a6", "field": "#ffffff", "button": "#ecebe7",
-        "button_active": "#e0dfda", "select": "#cfe0fc", "ok": "#137333", "bad": "#a50e0e",
+        "bg": "#ececec", "sidebar": "#e8e8ea", "card": "#ffffff", "ink": "#1d1d1f", "ink2": "#3a3a3c",
+        "muted": "#86868b", "accent": "#007aff", "link": "#0066cc", "rule": "#d8d8dc", "rank": "#aeaeb2",
+        "field": "#ffffff", "button": "#f5f5f7", "button_active": "#e5e5ea", "select": "#d0d0d7",
+        "sidebar_sel": "#d4d4da", "ok": "#248a3d", "bad": "#d70015",
         "categories": {
-            "News": ("#e8f0fe", "#1a4fa0"), "Sports": ("#e6f4ea", "#137333"), "Entertainment": ("#fce8f3", "#a1145c"),
-            "Tech": ("#eceff1", "#37474f"), "Science & AI": ("#fef7e0", "#7a4f00"),
-            "Internet Culture": ("#f3e8fd", "#6a1b9a")},
+            "News": ("#e5f0ff", "#0060df"), "Sports": ("#e3f6e8", "#248a3d"), "Entertainment": ("#fdebf3", "#c41e6a"),
+            "Tech": ("#eef0f3", "#5e5ce6"), "Science & AI": ("#fff4e0", "#b25000"),
+            "Internet Culture": ("#f4ecff", "#8944ab")},
         "labels": {
-            "Hot": ("#fde2e1", "#a50e0e"), "Rising": ("#fef0d9", "#8a4b00"), "New": ("#e0f2f1", "#00695c"),
-            "Uncertain trend": ("#eceff1", "#455a64"), "Continuing": ("#f1f3f4", "#3c4043"),
-            "Steady": ("#f1f3f4", "#3c4043"), "Cooling": ("#f1f3f4", "#5f6368"), "Fading": ("#f1f3f4", "#5f6368")},
-        "banners": {"info": ("#e8f0fe", "#174ea6"), "warn": ("#fff4d6", "#6b4e00"),
-                    "error": ("#fce8e6", "#a50e0e"), "demo": ("#ffd7d7", "#8a1010")},
+            "Hot": ("#ffe5e3", "#d70015"), "Rising": ("#fff1dd", "#b25000"), "New": ("#e1f5f2", "#0b7a6b"),
+            "Uncertain trend": ("#eef0f3", "#6e6e73"), "Continuing": ("#eef0f3", "#6e6e73"),
+            "Steady": ("#eef0f3", "#6e6e73"), "Cooling": ("#eef0f3", "#86868b"), "Fading": ("#eef0f3", "#86868b")},
+        "banners": {"info": ("#e5f0ff", "#0040a8"), "warn": ("#fff4d6", "#7a5200"),
+                    "error": ("#ffe5e3", "#a1000f"), "demo": ("#ffe1e1", "#a1000f")},
     },
     "dark": {
-        "bg": "#17181a", "card": "#202124", "ink": "#e8eaed", "muted": "#a8adb3", "accent": "#8ab4f8",
-        "link": "#8ab4f8", "rule": "#3c4043", "rank": "#7c8187", "field": "#2a2b2e", "button": "#2d2f33",
-        "button_active": "#3c4043", "select": "#3b4a63", "ok": "#81c995", "bad": "#f28b82",
+        "bg": "#1e1e1e", "sidebar": "#252527", "card": "#1c1c1e", "ink": "#f5f5f7", "ink2": "#d1d1d6",
+        "muted": "#98989d", "accent": "#0a84ff", "link": "#4da3ff", "rule": "#38383a", "rank": "#636366",
+        "field": "#2c2c2e", "button": "#2c2c2e", "button_active": "#3a3a3c", "select": "#3a3a3c",
+        "sidebar_sel": "#39393d", "ok": "#30d158", "bad": "#ff6961",
         "categories": {
-            "News": ("#1f2a3d", "#aecbfa"), "Sports": ("#1e3a2a", "#81c995"), "Entertainment": ("#3d1f33", "#f8a5d2"),
-            "Tech": ("#2d3236", "#cfd8dc"), "Science & AI": ("#3a3018", "#fdd663"),
-            "Internet Culture": ("#2f1f3d", "#d7aefb")},
+            "News": ("#14243d", "#64a8ff"), "Sports": ("#14301d", "#4cd964"), "Entertainment": ("#3a1528", "#ff7eb6"),
+            "Tech": ("#26263a", "#a5a3ff"), "Science & AI": ("#3a2a10", "#ffb340"),
+            "Internet Culture": ("#2c1a3a", "#d39bff")},
         "labels": {
-            "Hot": ("#3c1f1f", "#f28b82"), "Rising": ("#3d2d14", "#fcc66b"), "New": ("#173a36", "#80cbc4"),
-            "Uncertain trend": ("#2d3236", "#bdc1c6"), "Continuing": ("#2d3236", "#e8eaed"),
-            "Steady": ("#2d3236", "#e8eaed"), "Cooling": ("#2d3236", "#a8adb3"), "Fading": ("#2d3236", "#a8adb3")},
-        "banners": {"info": ("#1f2a3d", "#aecbfa"), "warn": ("#3a3018", "#fdd663"),
-                    "error": ("#3c1f1f", "#f28b82"), "demo": ("#4a1d1d", "#ffc9c9")},
+            "Hot": ("#3c1614", "#ff6961"), "Rising": ("#3a2a10", "#ffb340"), "New": ("#10302b", "#5edcc8"),
+            "Uncertain trend": ("#2c2c2e", "#aeaeb2"), "Continuing": ("#2c2c2e", "#aeaeb2"),
+            "Steady": ("#2c2c2e", "#aeaeb2"), "Cooling": ("#2c2c2e", "#98989d"), "Fading": ("#2c2c2e", "#98989d")},
+        "banners": {"info": ("#14243d", "#9cc7ff"), "warn": ("#3a2f10", "#ffd36b"),
+                    "error": ("#3c1614", "#ff8a80"), "demo": ("#4a1d1d", "#ffc9c9")},
     },
 }
+
+TOP = "top"
+SEARCH = "search"
 
 
 def dark_title_bar(window: tk.Misc, dark: bool) -> None:
@@ -99,10 +116,6 @@ def dark_title_bar(window: tk.Misc, dark: bool) -> None:
         pass
 
 
-POLL_RUNNING_MS = 1000
-POLL_IDLE_MS = 30000
-
-
 def _enable_dpi_awareness() -> None:
     if sys.platform != "win32":
         return
@@ -115,6 +128,8 @@ def _enable_dpi_awareness() -> None:
 
 
 class DailyWindow:
+    """Reader window: toolbar, section sidebar (Top Stories + categories) and a clean story list."""
+
     def __init__(self, root: tk.Tk, paths: DataPaths, controller: AppController | None = None,
                  auto_refresh: bool = True) -> None:
         self.root = root
@@ -123,6 +138,7 @@ class DailyWindow:
         self.snap: Snapshot | None = None
         self._rendered_key: tuple | None = None
         self._banner_key: tuple | None = None
+        self._sidebar_key: tuple | None = None
         self._links: dict[str, str] = {}
         self._date_values: list[date] = []
         self._expanded: set[str] = set()
@@ -130,6 +146,8 @@ class DailyWindow:
         self._prereq_text: str | None = None  # None until a check starts
         self._poll_job: str | None = None
         self._cancelling = False
+        self._generated_at = None
+        self.section = TOP
         # 1.0 at 96 DPI; pixel sizes scale with Windows display scaling (fonts scale by themselves)
         self.scale = max(1.0, root.winfo_fpixels("1i") / 96.0)
 
@@ -137,8 +155,8 @@ class DailyWindow:
         self.mode = resolve_appearance(prefs0.appearance)
         self.c = PALETTES[self.mode]
         root.title(APP_NAME)
-        root.minsize(self.px(760), self.px(540))
-        root.geometry(load_window_geometry(paths) or f"{self.px(1060)}x{self.px(800)}")
+        root.minsize(self.px(780), self.px(540))
+        root.geometry(load_window_geometry(paths) or f"{self.px(1120)}x{self.px(820)}")
         root.report_callback_exception = self._callback_error
         self._fonts()
         self._style()
@@ -156,24 +174,34 @@ class DailyWindow:
 
     # ------------------------------------------------------------ setup
     def _fonts(self) -> None:
-        family = "Segoe UI" if sys.platform == "win32" else "TkDefaultFont"
-        f = lambda size, **kw: tkfont.Font(family=family, size=size, **kw)  # noqa: E731
+        families = set(tkfont.families(self.root))
+        if sys.platform == "win32":
+            text = "Segoe UI Variable Text" if "Segoe UI Variable Text" in families else "Segoe UI"
+            display = "Segoe UI Variable Display" if "Segoe UI Variable Display" in families else text
+        else:
+            text = display = "TkDefaultFont"
+        f = lambda size, family=text, **kw: tkfont.Font(family=family, size=size, **kw)  # noqa: E731
         self.f_base = f(11)
         self.f_small = f(9)
-        self.f_brand = f(9, weight="bold")
-        self.f_heading = f(22, weight="bold")
-        self.f_sub = f(12)
-        self.f_status = f(10, weight="bold")
-        self.f_rank = f(15, weight="bold")
-        self.f_title = f(15, weight="bold")
         self.f_bold = f(11, weight="bold")
-        self.f_chip = f(9, weight="bold")
-        self.f_kicker = f(9, weight="bold")
-        self.f_overview = f(12)
-        self.f_link = f(10, underline=True)
+        self.f_title = f(14, display, weight="bold")  # story headline
+        self.f_h1 = f(22, display, weight="bold")  # section title
+        self.f_app = f(13, display, weight="bold")
+        self.f_sub = f(11)
+        self.f_status = f(9, weight="bold")
+        self.f_rank = f(13, display, weight="bold")
+        self.f_kicker = f(8, weight="bold")
+        self.f_side = f(10)
+        self.f_side_bold = f(10, weight="bold")
+        self.f_side_head = f(8, weight="bold")
+        self.f_link = f(9, underline=True)
         self.f_small_link = f(9, underline=True)
-        self.f_tiny = f(3)
-        self.f_button = f(11, weight="bold")
+        self.f_tiny = f(4)
+        self.f_button = f(10, weight="bold")
+        self.f_brand = self.f_side_head
+        self.f_chip = self.f_kicker
+        self.f_heading = self.f_h1
+        self.f_overview = self.f_sub
 
     def _style(self) -> None:
         """ttk styles for the current palette. Dark mode needs the recolourable 'clam' theme
@@ -207,7 +235,7 @@ class DailyWindow:
             style.map("TRadiobutton", background=[("active", c["bg"])])
             style.configure("Horizontal.TProgressbar", background=c["accent"], troughcolor=c["button"])
             for name in ("Vertical.TScrollbar", "Horizontal.TScrollbar"):
-                style.configure(name, background=c["button"], troughcolor=c["bg"], bordercolor=c["rule"],
+                style.configure(name, background=c["button"], troughcolor=c["card"], bordercolor=c["card"],
                                 arrowcolor=c["muted"])
                 style.map(name, background=[("active", c["button_active"])])
             self.root.option_add("*TCombobox*Listbox.background", c["field"])
@@ -216,9 +244,8 @@ class DailyWindow:
             self.root.option_add("*TCombobox*Listbox.selectForeground", c["ink"])
         style.configure("Header.TFrame", background=c["bg"])
         style.configure("Header.TLabel", background=c["bg"], foreground=c["ink"])
-        style.configure("Brand.TLabel", background=c["bg"], foreground=c["accent"], font=self.f_brand)
         style.configure("Muted.TLabel", background=c["bg"], foreground=c["muted"], font=self.f_small)
-        style.configure("Refresh.TButton", font=self.f_button, padding=(self.px(16), self.px(7)))
+        style.configure("Refresh.TButton", font=self.f_button, padding=(self.px(14), self.px(4)))
         style.configure("Small.TButton", font=self.f_small, padding=(self.px(6), self.px(2)))
 
     def apply_theme(self, mode: str) -> None:
@@ -227,16 +254,27 @@ class DailyWindow:
         self.c = c = PALETTES[self.mode]
         self._style()
         self.root.configure(bg=c["bg"])
-        for w in (self.status_row, self.banner_frame, self.body_frame):
+        for w in (self.toolbar, self.banner_frame, self.title_box):
             w.configure(bg=c["bg"])
-        self.status_dot.configure(bg=c["bg"])
-        self.status_label.configure(bg=c["bg"], fg=c["ink"])
-        self.times_label.configure(bg=c["bg"], fg=c["muted"])
+        self.app_label.configure(bg=c["bg"], fg=c["ink"])
+        self.date_label.configure(bg=c["bg"], fg=c["muted"])
+        self.divider.configure(bg=c["rule"])
+        self.sidebar.configure(bg=c["sidebar"])
+        self.section_box.configure(bg=c["sidebar"])
+        self.side_footer.configure(bg=c["sidebar"])
+        self.status_row.configure(bg=c["sidebar"])
+        self.status_dot.configure(bg=c["sidebar"])
+        self.status_label.configure(bg=c["sidebar"], fg=c["ink"])
+        self.times_label.configure(bg=c["sidebar"], fg=c["muted"])
+        self.links_frame.configure(bg=c["sidebar"])
+        self.search_label.configure(bg=c["bg"], fg=c["muted"])
+        for lbl in self.footer_links:
+            lbl.configure(bg=c["sidebar"], fg=c["link"])
         self.text.configure(bg=c["card"], fg=c["ink"], insertbackground=c["ink"], selectbackground=c["select"],
-                            selectforeground=c["ink"], highlightbackground=c["rule"], highlightcolor=c["rule"])
+                            selectforeground=c["ink"])
         self._text_tags()
         dark_title_bar(self.root, self.mode == "dark")
-        self._banner_key = None
+        self._banner_key = self._sidebar_key = None
         if self.snap is not None:
             self.refresh_view(force=True)
 
@@ -251,8 +289,9 @@ class DailyWindow:
         m_file.add_command(label="Exit", command=self._on_close)
         menubar.add_cascade(label="File", menu=m_file)
         m_view = tk.Menu(menubar, tearoff=False)
-        m_view.add_command(label="Latest edition", accelerator="Home", command=self.show_latest)
-        m_view.add_command(label="Details and source health...", accelerator="Ctrl+D", command=self.show_details)
+        m_view.add_command(label="Top Stories", accelerator="Ctrl+1", command=lambda: self.show_section(TOP))
+        m_view.add_command(label="Latest edition", command=self.show_latest)
+        m_view.add_command(label="Details, sources and changes...", accelerator="Ctrl+D", command=self.show_details)
         m_view.add_separator()
         m_view.add_command(label="Expand all source details", command=lambda: self._expand_all(True))
         m_view.add_command(label="Collapse all source details", command=lambda: self._expand_all(False))
@@ -277,150 +316,145 @@ class DailyWindow:
         self.root.bind("<Control-e>", lambda e: self.export_html())
         self.root.bind("<Control-d>", lambda e: self.show_details())
         self.root.bind("<Control-f>", lambda e: self.search_entry.focus_set())
+        for n in range(1, 8):
+            self.root.bind(f"<Control-Key-{n}>", lambda e, n=n: self._section_by_number(n))
         self.root.bind("<Home>", lambda e: self.text.yview_moveto(0))
         self.root.bind("<End>", lambda e: self.text.yview_moveto(1))
         self.root.bind("<Prior>", lambda e: self.text.yview_scroll(-1, "pages"))
         self.root.bind("<Next>", lambda e: self.text.yview_scroll(1, "pages"))
 
     def _build(self) -> None:
-        root = self.root
+        root, c = self.root, self.c
         root.columnconfigure(0, weight=1)
-        root.rowconfigure(3, weight=1)
-        pad = self.px(20)
+        root.rowconfigure(2, weight=1)
+        pad = self.px(16)
 
-        # ---- header: brand, title, date, status | Refresh
-        header = ttk.Frame(root, style="Header.TFrame", padding=(pad, self.px(12), pad, self.px(4)))
-        header.grid(row=0, column=0, sticky="ew")
-        header.columnconfigure(0, weight=1)
+        # ---- toolbar: app + edition date on the left; search, edition and Refresh on the right
+        self.toolbar = tk.Frame(root, bg=c["bg"], padx=pad, pady=self.px(10))
+        self.toolbar.grid(row=0, column=0, sticky="ew")
+        self.toolbar.columnconfigure(0, weight=1)
+        self.title_box = tk.Frame(self.toolbar, bg=c["bg"])
+        self.title_box.grid(row=0, column=0, sticky="w")
         self.heading_var = tk.StringVar()
         self.date_line_var = tk.StringVar()
+        self.app_label = tk.Label(self.title_box, textvariable=self.heading_var, font=self.f_app, bg=c["bg"],
+                                  fg=c["ink"])
+        self.app_label.pack(side="left")
+        self.date_label = tk.Label(self.title_box, textvariable=self.date_line_var, font=self.f_sub, bg=c["bg"],
+                                   fg=c["muted"])
+        self.date_label.pack(side="left", padx=(self.px(10), 0))
+        right = ttk.Frame(self.toolbar, style="Header.TFrame")
+        right.grid(row=0, column=1, sticky="e")
+        self.search_label = tk.Label(right, text="Search", bg=c["bg"], fg=c["muted"], font=self.f_small)
+        self.search_label.pack(side="left", padx=(0, self.px(6)))
+        self.search_var = tk.StringVar()
+        self.search_entry = ttk.Entry(right, textvariable=self.search_var, width=22)
+        self.search_entry.pack(side="left", padx=(0, self.px(8)))
+        self.search_entry.bind("<Escape>", lambda e: self._clear_filters())
+        self.search_var.trace_add("write", lambda *a: self._on_search())
+        self.date_var = tk.StringVar()
+        self.date_box = ttk.Combobox(right, textvariable=self.date_var, state="readonly", width=16)
+        self.date_box.pack(side="left", padx=(0, self.px(8)))
+        self.date_box.bind("<<ComboboxSelected>>", self._on_date)
+        self.progress = ttk.Progressbar(right, mode="indeterminate", length=self.px(90))
+        self.cancel_btn = ttk.Button(right, text="Stop", style="Small.TButton", command=self.cancel_refresh)
+        self.refresh_btn = ttk.Button(right, text="Refresh", style="Refresh.TButton", command=self.refresh_now)
+        self.refresh_btn.pack(side="right")
+
+        self.banner_frame = tk.Frame(root, bg=c["bg"], padx=pad)
+        self.banner_frame.grid(row=1, column=0, sticky="ew")
+
+        # ---- main: sidebar | divider | reading pane
+        main = tk.Frame(root, bg=c["rule"])
+        main.grid(row=2, column=0, sticky="nsew")
+        main.rowconfigure(0, weight=1)
+        main.columnconfigure(2, weight=1)
+        self.sidebar = tk.Frame(main, bg=c["sidebar"], width=self.px(232))
+        self.sidebar.grid(row=0, column=0, sticky="ns")
+        self.sidebar.grid_propagate(False)
+        self.sidebar.columnconfigure(0, weight=1)
+        self.sidebar.rowconfigure(1, weight=1)
+        self.section_box = tk.Frame(self.sidebar, bg=c["sidebar"], padx=self.px(8), pady=self.px(10))
+        self.section_box.grid(row=0, column=0, sticky="new")
+        self.section_box.columnconfigure(0, weight=1)
+        self.side_footer = tk.Frame(self.sidebar, bg=c["sidebar"], padx=self.px(14), pady=self.px(12))
+        self.side_footer.grid(row=2, column=0, sticky="sew")
+        self.status_row = tk.Frame(self.side_footer, bg=c["sidebar"])
+        self.status_row.pack(fill="x", anchor="w")
+        self.status_dot = tk.Canvas(self.status_row, width=self.px(10), height=self.px(10), bg=c["sidebar"],
+                                    highlightthickness=0)
+        self.status_dot.pack(side="left", padx=(0, self.px(6)))
         self.status_var = tk.StringVar()
         self.times_var = tk.StringVar()
-        ttk.Label(header, text="AGENT REACH  ·  DAILY EDITION", style="Brand.TLabel").grid(row=0, column=0, sticky="w")
-        ttk.Label(header, textvariable=self.heading_var, style="Header.TLabel", font=self.f_heading).grid(
-            row=1, column=0, sticky="w")
-        ttk.Label(header, textvariable=self.date_line_var, style="Header.TLabel", font=self.f_sub).grid(
-            row=2, column=0, sticky="w")
-        self.status_row = status_row = tk.Frame(header, bg=self.c["bg"])
-        status_row.grid(row=3, column=0, sticky="ew", pady=(self.px(8), 0))
-        status_row.columnconfigure(1, weight=1)
-        self.status_dot = tk.Canvas(status_row, width=self.px(12), height=self.px(12), bg=self.c["bg"],
-                                    highlightthickness=0)
-        self.status_dot.grid(row=0, column=0, sticky="w", padx=(0, self.px(6)))
-        self.status_label = tk.Label(status_row, textvariable=self.status_var, bg=self.c["bg"], fg=self.c["ink"],
-                                     font=self.f_status,
-                                     anchor="w", justify="left")
-        self.status_label.grid(row=0, column=1, sticky="ew")
-        self.times_label = tk.Label(header, textvariable=self.times_var, bg=self.c["bg"], fg=self.c["muted"],
-                                    font=self.f_small,
-                                    anchor="w", justify="left")
-        self.times_label.grid(row=4, column=0, sticky="ew", pady=(self.px(2), 0))
-        for lbl in (self.status_label, self.times_label):  # wrap to the real column width
-            lbl.configure(wraplength=self.px(420))
-            lbl.bind("<Configure>", lambda e: e.widget.configure(wraplength=max(self.px(200), e.width - 2)))
-
-        right = ttk.Frame(header, style="Header.TFrame")
-        right.grid(row=0, column=1, rowspan=5, sticky="ne", padx=(self.px(12), 0))
-        self.refresh_btn = ttk.Button(right, text="Refresh", style="Refresh.TButton", command=self.refresh_now)
-        self.refresh_btn.grid(row=0, column=0, columnspan=3, sticky="ew")
-        self.progress = ttk.Progressbar(right, mode="indeterminate", length=self.px(150))
-        self.cancel_btn = ttk.Button(right, text="Cancel refresh", style="Small.TButton", command=self.cancel_refresh)
-        links = ttk.Frame(right, style="Header.TFrame")
-        links.grid(row=3, column=0, columnspan=3, sticky="e", pady=(self.px(8), 0))
-        ttk.Button(links, text="Details", style="Small.TButton", command=self.show_details).pack(side="left")
-        ttk.Button(links, text="Export", style="Small.TButton", command=self.export_html).pack(side="left", padx=self.px(4))
-        ttk.Button(links, text="Settings", style="Small.TButton", command=self.open_settings).pack(side="left")
-
-        # ---- filter bar: grid with a stretchy search box, so it shrinks instead of clipping controls
-        bar = ttk.Frame(root, style="Header.TFrame", padding=(pad, self.px(6), pad, self.px(6)))
-        bar.grid(row=1, column=0, sticky="ew")
-        bar.columnconfigure(5, weight=1)
-        gap = (self.px(4), self.px(12))
-        ttk.Label(bar, text="Edition", style="Header.TLabel").grid(row=0, column=0, sticky="w")
-        self.date_var = tk.StringVar()
-        self.date_box = ttk.Combobox(bar, textvariable=self.date_var, state="readonly", width=21)
-        self.date_box.grid(row=0, column=1, sticky="w", padx=gap)
-        self.date_box.bind("<<ComboboxSelected>>", self._on_date)
-        ttk.Label(bar, text="Category", style="Header.TLabel").grid(row=0, column=2, sticky="w")
-        self.cat_var = tk.StringVar(value="All")
-        self.cat_box = ttk.Combobox(bar, textvariable=self.cat_var, state="readonly", width=14,
-                                    values=["All", *all_categories()])
-        self.cat_box.grid(row=0, column=3, sticky="w", padx=gap)
-        self.cat_box.bind("<<ComboboxSelected>>", lambda e: self.refresh_view(force=True))
-        ttk.Label(bar, text="Search", style="Header.TLabel").grid(row=0, column=4, sticky="w")
-        self.search_var = tk.StringVar()
-        self.search_entry = ttk.Entry(bar, textvariable=self.search_var, width=12)
-        self.search_entry.grid(row=0, column=5, sticky="ew", padx=(self.px(4), self.px(4)))
-        self.search_entry.bind("<Escape>", lambda e: self._clear_filters())
-        self.search_var.trace_add("write", lambda *a: self.refresh_view(force=True))
-        ttk.Button(bar, text="Clear", style="Small.TButton", command=self._clear_filters).grid(row=0, column=6, sticky="e")
-
-        self.banner_frame = tk.Frame(root, bg=self.c["bg"], padx=pad)
-        self.banner_frame.grid(row=2, column=0, sticky="ew")
-
-        # ---- reading area
-        self.body_frame = body = tk.Frame(root, bg=self.c["bg"], padx=pad, pady=self.px(4))
-        body.grid(row=3, column=0, sticky="nsew")
-        body.columnconfigure(0, weight=1)
+        self.status_label = tk.Label(self.status_row, textvariable=self.status_var, bg=c["sidebar"], fg=c["ink"],
+                                     font=self.f_status, anchor="w", justify="left", wraplength=self.px(190))
+        self.status_label.pack(side="left", fill="x")
+        self.times_label = tk.Label(self.side_footer, textvariable=self.times_var, bg=c["sidebar"], fg=c["muted"],
+                                    font=self.f_small, anchor="w", justify="left", wraplength=self.px(205))
+        self.times_label.pack(fill="x", anchor="w", pady=(self.px(4), self.px(8)))
+        links = tk.Frame(self.side_footer, bg=c["sidebar"])
+        links.pack(fill="x", anchor="w")
+        self.footer_links = []
+        for text, cmd in (("Details", self.show_details), ("Export", self.export_html), ("Settings", self.open_settings)):
+            lbl = tk.Label(links, text=text, bg=c["sidebar"], fg=c["link"], font=self.f_small, cursor="hand2")
+            lbl.pack(side="left", padx=(0, self.px(12)))
+            lbl.bind("<Button-1>", lambda e, cmd=cmd: cmd())
+            self.footer_links.append(lbl)
+        self.links_frame = links
+        self.divider = tk.Frame(main, bg=c["rule"], width=1)
+        self.divider.grid(row=0, column=1, sticky="ns")
+        body = tk.Frame(main, bg=c["card"])
+        body.grid(row=0, column=2, sticky="nsew")
         body.rowconfigure(0, weight=1)
-        self.text = tk.Text(body, wrap="word", bg=self.c["card"], fg=self.c["ink"], relief="flat", bd=0, padx=self.px(26),
-                            pady=self.px(18), font=self.f_base, cursor="arrow", highlightthickness=1,
-                            highlightbackground=self.c["rule"], highlightcolor=self.c["rule"], spacing1=1, spacing3=1,
-                            takefocus=1)
+        body.columnconfigure(0, weight=1)
+        self.body_frame = body
+        self.text = tk.Text(body, wrap="word", bg=c["card"], fg=c["ink"], relief="flat", bd=0,
+                            padx=self.px(36), pady=self.px(22), font=self.f_base, cursor="arrow",
+                            highlightthickness=0, spacing1=1, spacing3=1, takefocus=1)
         scroll = ttk.Scrollbar(body, orient="vertical", command=self.text.yview)
         self.text.configure(yscrollcommand=scroll.set)
         self.text.grid(row=0, column=0, sticky="nsew")
         scroll.grid(row=0, column=1, sticky="ns")
         self.text.bind("<Button-1>", lambda e: self.text.focus_set(), add="+")
         self._text_tags()
-
-        footer = ttk.Frame(root, style="Header.TFrame", padding=(pad, self.px(2), pad, self.px(8)))
-        footer.grid(row=4, column=0, sticky="ew")
-        self.footer_var = tk.StringVar()
-        ttk.Label(footer, textvariable=self.footer_var, style="Muted.TLabel").pack(side="left")
-        ttk.Label(footer, text=VERSION_LABEL, style="Muted.TLabel").pack(side="right")
         self.root.bind("<Configure>", self._on_resize)
 
     def _text_tags(self) -> None:
         t = self.text
         c = self.c
-        indent = self.px(46)
-        t.tag_configure("overview", font=self.f_overview, foreground=c["ink"], spacing3=self.px(6))
-        t.tag_configure("baseline", font=self.f_small, foreground=c["muted"], spacing3=self.px(4))
-        t.tag_configure("headline", font=self.f_title, lmargin1=0, lmargin2=indent, tabs=(indent,),
-                        spacing1=self.px(4), spacing3=self.px(2))
+        indent = self.px(34)
+        t.tag_configure("h1", font=self.f_h1, foreground=c["ink"], spacing3=self.px(2))
+        t.tag_configure("sub", font=self.f_sub, foreground=c["muted"], spacing3=self.px(10))
+        t.tag_configure("kicker", font=self.f_kicker, foreground=c["muted"], lmargin1=indent, lmargin2=indent,
+                        spacing1=self.px(16))
+        t.tag_configure("headline", font=self.f_title, foreground=c["ink"], lmargin1=0, lmargin2=indent,
+                        tabs=(indent,), spacing1=self.px(3), spacing3=self.px(3))
         t.tag_configure("rank", font=self.f_rank, foreground=c["rank"])
-        t.tag_configure("meta", font=self.f_small, foreground=c["muted"], lmargin1=indent, lmargin2=indent,
-                        spacing3=self.px(4))
-        t.tag_configure("body", font=self.f_base, lmargin1=indent, lmargin2=indent, spacing1=self.px(2),
-                        spacing3=self.px(2))
-        t.tag_configure("kicker", font=self.f_kicker, foreground=c["accent"], lmargin1=indent, lmargin2=indent,
-                        spacing1=self.px(8))
-        t.tag_configure("kicker_plain", font=self.f_kicker, foreground=c["accent"], spacing1=self.px(6))
-        t.tag_configure("change", font=self.f_small, lmargin1=self.px(8), lmargin2=self.px(20))
-        t.tag_configure("why", font=self.f_base, lmargin1=indent, lmargin2=indent, spacing1=self.px(2))
-        t.tag_configure("sources", font=self.f_small, foreground=c["muted"], lmargin1=indent, lmargin2=indent,
-                        spacing1=self.px(8))
-        t.tag_configure("evidence", font=self.f_small, lmargin1=indent + self.px(12), lmargin2=indent + self.px(24),
+        t.tag_configure("body", font=self.f_base, foreground=c["ink2"], lmargin1=indent, lmargin2=indent,
+                        spacing1=self.px(1), spacing3=self.px(2))
+        t.tag_configure("why_label", font=self.f_kicker, foreground=c["accent"])
+        t.tag_configure("why", font=self.f_base, foreground=c["ink2"], lmargin1=indent, lmargin2=indent,
                         spacing1=self.px(4))
-        t.tag_configure("excerpt", font=self.f_small, foreground=c["muted"], lmargin1=indent + self.px(24),
-                        lmargin2=indent + self.px(24))
+        t.tag_configure("sources", font=self.f_small, foreground=c["muted"], lmargin1=indent, lmargin2=indent,
+                        spacing1=self.px(5))
+        t.tag_configure("evidence", font=self.f_small, foreground=c["ink2"], lmargin1=indent + self.px(10),
+                        lmargin2=indent + self.px(22), spacing1=self.px(4))
+        t.tag_configure("excerpt", font=self.f_small, foreground=c["muted"], lmargin1=indent + self.px(22),
+                        lmargin2=indent + self.px(22))
         t.tag_configure("link", font=self.f_link, foreground=c["link"])
         t.tag_configure("small_link", font=self.f_small_link, foreground=c["link"])
         for tag in ("link", "small_link"):
             t.tag_bind(tag, "<Enter>", lambda e: t.configure(cursor="hand2"))
             t.tag_bind(tag, "<Leave>", lambda e: t.configure(cursor="arrow"))
-        t.tag_configure("sep", font=self.f_tiny, spacing1=self.px(14), spacing3=self.px(14))
-        t.tag_configure("rule", font=self.f_tiny, background=c["rule"])
-        t.tag_configure("h2", font=self.f_title, spacing1=self.px(6), spacing3=self.px(6))
-        t.tag_configure("plain", font=self.f_base, spacing1=self.px(2), spacing3=self.px(2))
+        t.tag_configure("h2", font=self.f_title, foreground=c["ink"], spacing1=self.px(6), spacing3=self.px(6))
+        t.tag_configure("plain", font=self.f_base, foreground=c["ink2"], spacing1=self.px(2), spacing3=self.px(2))
         t.tag_configure("muted", foreground=c["muted"])
         t.tag_configure("ok", foreground=c["ok"], font=self.f_bold)
         t.tag_configure("bad", foreground=c["bad"], font=self.f_bold)
         t.tag_configure("bold", font=self.f_bold)
-        for name, (bg, fg) in {**c["categories"], **c["labels"]}.items():
-            # lmargincolor: a line that starts with a chip must not paint its left margin too
-            t.tag_configure(f"chip:{name}", background=bg, foreground=fg, font=self.f_chip, lmargincolor=c["card"])
+        for name, (_tint, fg) in {**c["categories"], **c["labels"]}.items():
+            t.tag_configure(f"chip:{name}", foreground=fg, font=self.f_kicker)
+        t.tag_raise("why_label")  # tag priority follows creation order, not the order a tuple lists them
 
     # ------------------------------------------------------------ polling / render
     def _schedule_poll(self) -> None:
@@ -453,12 +487,15 @@ class DailyWindow:
         times = [snap.last_success]
         if snap.next_refresh:
             times.append(snap.next_refresh)
-        self.times_var.set("   \u00b7   ".join(times))
+        if snap.coverage_line:
+            times.append(snap.coverage_line)
+        self.times_var.set("\n".join(times))
         if snap.activity.running or self._cancelling:
             self.refresh_btn.state(["disabled"])
             self.refresh_btn.configure(text="Refreshing...")
-            self.progress.grid(row=1, column=0, columnspan=3, sticky="ew", pady=(self.px(6), 0))
-            self.cancel_btn.grid(row=2, column=0, columnspan=3, sticky="e", pady=(self.px(4), 0))
+            if not self.progress.winfo_ismapped():
+                self.cancel_btn.pack(side="right", padx=(self.px(6), 0))
+                self.progress.pack(side="right", padx=(self.px(8), 0))
             self.progress.start(12)
             if self._cancelling:
                 self.cancel_btn.state(["disabled"])
@@ -469,20 +506,15 @@ class DailyWindow:
             self.refresh_btn.configure(text="Refresh")
             self.cancel_btn.state(["!disabled"])
             self.progress.stop()
-            self.progress.grid_remove()
-            self.cancel_btn.grid_remove()
+            self.progress.pack_forget()
+            self.cancel_btn.pack_forget()
         self._render_banners(snap)
         self._update_dates(snap)
+        self._render_sidebar(snap)
         shown = snap.shown
-        if shown is not None:
-            self.footer_var.set(f"{snap.coverage_line}   ·   Summaries by "
-                                + (f"local model {shown.model.llm_model}" if shown.model.summaries == "local_model"
-                                   else "source lead sentences (local model not used)"))
-        else:
-            self.footer_var.set(f"Data folder: {self.paths.root}")
         key = (shown.edition_date, shown.revision, shown.demo, shown.run_id) if shown else ("none", snap.first_run,
                                                                                           snap.activity.running)
-        key = key + (self.cat_var.get(), self.search_var.get(), tuple(sorted(self._expanded)),
+        key = key + (self.section, self.search_var.get(), tuple(sorted(self._expanded)),
                      self._prereq_text if shown is None else "", snap.state.last_attempt_outcome)
         if force or key != self._rendered_key:
             self._rendered_key = key
@@ -491,7 +523,7 @@ class DailyWindow:
     def _draw_dot(self, kind: str) -> None:
         c = self.status_dot
         c.delete("all")
-        d = self.px(10)
+        d = self.px(8)
         c.create_oval(1, 1, d, d, fill=STATUS_DOT.get(kind, self.c["muted"]), outline="")
 
     def _render_banners(self, snap: Snapshot) -> None:
@@ -506,11 +538,11 @@ class DailyWindow:
             return
         self.banner_frame.grid()
         width = max(self.px(400), self.root.winfo_width() - self.px(60))
-        for b in snap.banners[:4]:
+        for b in snap.banners[:3]:
             bg, fg = self.c["banners"].get(b.kind, self.c["banners"]["info"])
             tk.Label(self.banner_frame, text=b.text, bg=bg, fg=fg, anchor="w", justify="left", wraplength=width,
-                     font=self.f_bold if b.kind in ("demo", "error") else self.f_small,
-                     padx=self.px(12), pady=self.px(6)).pack(fill="x", pady=(self.px(2), self.px(2)))
+                     font=self.f_bold if b.kind == "demo" else self.f_small,
+                     padx=self.px(12), pady=self.px(6)).pack(fill="x", pady=(0, self.px(8)))
 
     def _on_resize(self, event) -> None:
         if event.widget is self.root:
@@ -522,7 +554,7 @@ class DailyWindow:
         dates = self.ctrl.list_dates()
         if dates != self._date_values:
             self._date_values = dates
-            labels = [format_short_date(d) + ("  (latest)" if i == 0 else "") for i, d in enumerate(dates)]
+            labels = [format_short_date(d) for d in dates]
             self.date_box.configure(values=labels)
         shown = snap.shown
         if shown is not None and not shown.demo and shown.edition_date in dates:
@@ -532,15 +564,67 @@ class DailyWindow:
         else:
             self.date_var.set("")
 
-    def _chip(self, name: str) -> None:
-        tag = f"chip:{name}" if f"chip:{name}" in self.text.tag_names() else "chip:Continuing"
-        self.text.insert("end", f" {name} ", ("meta", tag))
-        self.text.insert("end", "  ", ("meta",))
+    # ------------------------------------------------------------ sidebar
+    def sections(self, edition) -> list[tuple[str, str, list[Story]]]:
+        """[(key, title, stories)] for the sidebar: Top Stories, then non-empty categories."""
+        if edition is None:
+            return []
+        out = [(TOP, "Top Stories", top_stories(edition))]
+        out += [(cat, cat, stories) for cat, stories in category_sections(edition)]
+        return out
 
+    def _render_sidebar(self, snap: Snapshot) -> None:
+        sections = self.sections(snap.shown)
+        if self.section not in {k for k, _, _ in sections} and self.section != SEARCH:
+            self.section = TOP
+        key = (tuple((k, len(s)) for k, _, s in sections), self.section, self.mode)
+        if key == self._sidebar_key:
+            return
+        self._sidebar_key = key
+        for child in self.section_box.winfo_children():
+            child.destroy()
+        c = self.c
+        if sections:
+            tk.Label(self.section_box, text="SECTIONS", bg=c["sidebar"], fg=c["muted"], font=self.f_side_head,
+                     anchor="w").grid(row=0, column=0, sticky="ew", padx=self.px(8), pady=(0, self.px(4)))
+        for i, (k, title, stories) in enumerate(sections, start=1):
+            selected = k == self.section
+            bg = c["sidebar_sel"] if selected else c["sidebar"]
+            row = tk.Frame(self.section_box, bg=bg, padx=self.px(8), pady=self.px(5), cursor="hand2")
+            row.grid(row=i, column=0, sticky="ew", pady=1)
+            row.columnconfigure(0, weight=1)
+            name = tk.Label(row, text=title, bg=bg, fg=c["ink"], anchor="w",
+                            font=self.f_side_bold if selected else self.f_side)
+            name.grid(row=0, column=0, sticky="w")
+            count = tk.Label(row, text=str(len(stories)), bg=bg, fg=c["muted"], font=self.f_small)
+            count.grid(row=0, column=1, sticky="e")
+            for w in (row, name, count):
+                w.bind("<Button-1>", lambda e, k=k: self.show_section(k))
+
+    def show_section(self, key: str) -> None:
+        self.section = key
+        if self.search_var.get():
+            self.search_var.set("")  # leaving search
+        self.refresh_view(force=True)
+        self.text.yview_moveto(0)
+
+    def _section_by_number(self, n: int) -> None:
+        sections = self.sections(self.snap.shown if self.snap else None)
+        if 0 < n <= len(sections):
+            self.show_section(sections[n - 1][0])
+
+    def _on_search(self) -> None:
+        if self.search_var.get().strip():
+            self.section = SEARCH
+        elif self.section == SEARCH:
+            self.section = TOP
+        self.refresh_view(force=True)
+
+    # ------------------------------------------------------------ reading pane
     def _render_body(self, snap: Snapshot) -> None:
         t = self.text
         y = t.yview()[0]
-        same_edition = getattr(self, "_body_edition", None) == (snap.shown.run_id if snap.shown else None)
+        same = getattr(self, "_body_view", None) == (snap.shown.run_id if snap.shown else None, self.section)
         t.configure(state="normal")
         t.delete("1.0", "end")
         for tag in list(self._links):
@@ -554,29 +638,29 @@ class DailyWindow:
         else:
             self._render_edition(snap)
         t.configure(state="disabled")
-        self._body_edition = snap.shown.run_id if snap.shown else None
-        t.yview_moveto(y if same_edition else 0)
+        self._body_view = (snap.shown.run_id if snap.shown else None, self.section)
+        t.yview_moveto(y if same else 0)
 
     def _render_collecting(self, snap: Snapshot) -> None:
         t = self.text
-        t.insert("end", "Collecting today's news\n", ("h2",))
-        t.insert("end", f"{snap.activity.message}\n\n", ("plain", "bold"))
+        t.insert("end", "Collecting today's news\n", ("h1",))
+        t.insert("end", f"{snap.activity.message}\n\n", ("sub",))
         t.insert("end", "Public news sources are fetched over the internet, then the local model on this PC groups and "
                         "summarizes them. On a computer without a graphics card this can take 10 to 40 minutes.\n\n"
-                        "You can keep reading or close this window: the refresh continues in the background and the "
-                        "new edition appears here when it is ready.\n", ("plain", "muted"))
+                        "You can close this window: the refresh continues in the background and the new edition "
+                        "appears here when it is ready.\n", ("plain", "muted"))
 
     def _render_first_run(self, snap: Snapshot) -> None:
         t = self.text
         if snap.state.last_attempt_outcome:
-            t.insert("end", "No edition yet\n", ("h2",))
+            t.insert("end", "No edition yet\n", ("h1",))
             t.insert("end", "The last refresh did not produce an edition (the reason is shown above). Check the "
                             "items below, then choose Refresh.\n\n", ("plain",))
         else:
-            t.insert("end", "Welcome to Agent Reach\n", ("h2",))
-            t.insert("end", "Agent Reach collects public news sources, removes noise, groups related reports and "
-                            "writes a short daily briefing with a local AI model (Ollama) on this PC. Nothing is sent "
-                            "to a paid or cloud AI service.\n\n", ("plain",))
+            t.insert("end", "Welcome to Agent Reach\n", ("h1",))
+            t.insert("end", "Agent Reach collects public news, removes noise, groups related reports and writes a "
+                            "short daily briefing with a local AI model (Ollama) on this PC. Nothing is sent to a paid "
+                            "or cloud AI service.\n\n", ("plain",))
         t.insert("end", "Before the first refresh\n", ("bold",))
         t.insert("end", "1.  This app: ", ("plain",))
         t.insert("end", "ready\n", ("ok",))
@@ -585,64 +669,43 @@ class DailyWindow:
             self._start_prereq_check(announce=False)
         text = self._prereq_text or ""
         t.insert("end", text + "\n", ("ok",) if text.startswith("ready") else ("plain",))
-        t.insert("end", "3.  Internet access for the news sources. Some sources (X, Reddit) are often blocked; the "
-                        "edition says which sources were missing.\n\n", ("plain",))
+        t.insert("end", "3.  Internet access for the news sources.\n\n", ("plain",))
         btn = ttk.Button(t, text="Collect today's news now", style="Refresh.TButton", command=self.refresh_now)
         t.window_create("end", window=btn)
         t.insert("end", "    ")
         demo = ttk.Button(t, text="Preview the demo edition", command=self.show_demo)
         t.window_create("end", window=demo)
-        t.insert("end", "\n\nThe first edition is a baseline: stories are not marked new, rising or continuing until "
-                        "there is an earlier edition to compare with. After that a new edition is collected every 24 "
-                        "hours while your PC is on (Help > How refreshing works). The demo edition uses clearly "
-                        "marked synthetic stories.\n", ("plain", "muted"))
+        t.insert("end", "\n\nA new edition is collected every 24 hours while your PC is on (Help > How refreshing "
+                        "works). The demo edition uses clearly marked synthetic stories.\n", ("plain", "muted"))
 
     def _render_edition(self, snap: Snapshot) -> None:
         t = self.text
         edition = snap.shown
         assert edition is not None
-        stories = filter_stories(edition.stories, self.cat_var.get(), self.search_var.get())
-        filtered = bool(self.search_var.get().strip()) or self.cat_var.get() not in ("", "All")
         self._generated_at = edition.generation_completed_utc
-        if edition.overview and not filtered:
-            t.insert("end", edition.overview + "\n", ("overview",))
-        if not filtered and not edition.demo:
-            self._render_changes(edition)
-        if not filtered and stories and all(s.velocity_basis == "cold_start" for s in edition.stories):
-            t.insert("end", "Baseline edition: trend labels (new, rising, continuing) appear once there is an earlier "
-                            "edition to compare with.\n", ("baseline",))
-        if snap.details and not filtered:
-            t.insert("end", f"{len(snap.details)} coverage note(s) for this edition. ", ("baseline",))
-            t.insert("end", "Show details", ("baseline",) + self._link_tag("action:details", small=True))
-            t.insert("end", "\n", ("baseline",))
+        query = self.search_var.get().strip()
+        if self.section == SEARCH:
+            title = "Search"
+            stories = filter_stories(edition.stories, "All", query)
+            sub = f"{len(stories)} {'story' if len(stories) == 1 else 'stories'} matching “{query}”"
+        else:
+            sections = {k: (title, st) for k, title, st in self.sections(edition)}
+            title, stories = sections.get(self.section, ("Top Stories", top_stories(edition)))
+            d = edition.edition_date
+            sub = f"{d:%A}, {format_long_date(d)}   ·   {len(stories)} {'story' if len(stories) == 1 else 'stories'}"
+        t.insert("end", title + "\n", ("h1",))
+        t.insert("end", sub + "\n", ("sub",))
         if not edition.stories:
             t.insert("end", "\nThis edition has no stories.\n", ("plain",))
         elif not stories:
-            t.insert("end", "\nNo stories match the current category and search. ", ("plain",))
-            t.insert("end", "Clear filters", ("plain",) + self._link_tag("action:clear"))
+            t.insert("end", "\nNothing matches your search. ", ("plain",))
+            t.insert("end", "Clear search", ("plain",) + self._link_tag("action:clear"))
             t.insert("end", "\n")
         now = self.ctrl.now_fn()
-        for i, s in enumerate(stories):
-            self._render_story(s, now, first=(i == 0 and filtered))
-        t.insert("end", "\n", ("sep",))
-
-    def _render_changes(self, edition) -> None:
-        """'What changed since last refresh' from the comparison stored in the edition."""
-        t = self.text
-        t.insert("end", "WHAT CHANGED SINCE LAST REFRESH\n", ("kicker_plain",))
-        ch = edition.changes
-        if ch is None:
-            t.insert("end", "First edition: there is no earlier edition to compare with.\n", ("baseline",))
-            return
-        when = format_central(ch.compared_generated_utc)
-        unchanged = f"; {ch.unchanged} unchanged" if ch.unchanged else ""
-        t.insert("end", f"{ch.summary()}{unchanged} (compared with the edition generated {when}).\n", ("baseline",))
-        names = {"new": "New", "updated": "Updated", "signals_up": "Growing", "signals_down": "Fading"}
-        for c in [*ch.new, *ch.updated, *ch.signals_up, *ch.signals_down]:
-            detail = f" \u2014 {c.detail}" if c.detail and c.kind != "new" else ""
-            t.insert("end", f"\u2022 {names[c.kind]}: {c.headline}{detail}\n", ("change",))
-        if ch.gone:
-            t.insert("end", "\u2022 No longer listed: " + "; ".join(c.headline for c in ch.gone) + "\n", ("change",))
+        show_category = self.section in (TOP, SEARCH)
+        for i, s in enumerate(stories, start=1):
+            self._render_story(s, now, number=i, show_category=show_category)
+        t.insert("end", "\n")
 
     def _link_tag(self, target: str, small: bool = False) -> tuple[str, str]:
         name = f"link{len(self._links)}"
@@ -669,37 +732,29 @@ class DailyWindow:
         if url:
             webbrowser.open(url, new=2)
 
-    def _render_story(self, s: Story, now, first: bool = False) -> None:
+    def _render_story(self, s: Story, now, number: int, show_category: bool = True) -> None:
         t = self.text
-        if not first:
-            t.insert("end", "\n", ("sep",))
-        t.insert("end", f"{s.rank:02d}\t", ("headline", "rank"))
-        t.insert("end", s.headline + "\n", ("headline",))
-        self._chip(s.category.value)
-        for label in s.labels:
-            self._chip(label)
-        n_sources = len({(e.publisher or e.source_name) for e in s.evidence})
         strength = strength_of(s, self._generated_at)
-        t.insert("end", f"{story_age(s, now)}   ·   {n_sources} source{'s' if n_sources != 1 else ''}"
-                        f"   ·   {strength.label}\n", ("meta",))
+        names = strength.publishers or [name for name, _ in story_publishers(s, limit=6)[0]]
+        pubs, more = names[:3], max(0, len(names) - 3)
+        # kicker: CATEGORY  LABEL  age · publishers · evidence
+        if show_category:
+            t.insert("end", s.category.value.upper(), ("kicker", f"chip:{s.category.value}"))
+            t.insert("end", "   ", ("kicker",))
+        for label in s.labels:
+            tag = f"chip:{label}" if f"chip:{label}" in t.tag_names() else "kicker"
+            t.insert("end", label.upper(), ("kicker", tag))
+            t.insert("end", "   ", ("kicker",))
+        meta = [story_age(s, now), ", ".join(pubs) + (f" +{more}" if more else ""), strength.label]
+        t.insert("end", "  ·  ".join(m for m in meta if m) + "\n", ("kicker",))
+        t.insert("end", f"{number}\t", ("headline", "rank"))
+        t.insert("end", s.headline + "\n", ("headline",))
         t.insert("end", " ".join(s.sentences) + "\n", ("body",))
         if s.why_it_matters:
-            t.insert("end", "WHY IT MATTERS\n", ("kicker",))
+            t.insert("end", "WHY IT MATTERS   ", ("why", "why_label"))
             t.insert("end", s.why_it_matters + "\n", ("why",))
-        pubs, more = story_publishers(s)
-        t.insert("end", "Sources:  ", ("sources",))
-        for i, (name, url) in enumerate(pubs):
-            if i:
-                t.insert("end", "  ·  ", ("sources",))
-            if url:
-                t.insert("end", name, ("sources",) + self._link_tag(url, small=True))
-            else:
-                t.insert("end", name, ("sources",))
-        if more:
-            t.insert("end", f"  +{more} more", ("sources",))
         expanded = s.story_id in self._expanded
-        t.insert("end", "     ", ("sources",))
-        t.insert("end", "Hide source details" if expanded else "Source details",
+        t.insert("end", "Hide sources" if expanded else f"Sources ({len(s.evidence)})",
                  ("sources",) + self._link_tag(f"toggle:{s.story_id}", small=True))
         t.insert("end", "\n", ("sources",))
         if expanded:
@@ -709,18 +764,17 @@ class DailyWindow:
     def _render_evidence(self, s: Story) -> None:
         t = self.text
         for ev in s.evidence:
-            t.insert("end", f"• {ev.source_name}: ", ("evidence",))
-            if ev.url:
-                t.insert("end", ev.title, ("evidence",) + self._link_tag(ev.url, small=True))
+            t.insert("end", "• ", ("evidence",))
+            url = safe_url(ev.url)
+            if url:
+                t.insert("end", ev.title, ("evidence",) + self._link_tag(url, small=True))
             else:
                 t.insert("end", ev.title, ("evidence",))
-            extra = [ev.publisher] if ev.publisher and ev.publisher != ev.source_name else []
+            extra = [ev.publisher or ev.source_name]
             if ev.published_at_utc:
                 extra.append("published " + format_central(ev.published_at_utc))
             else:
                 extra.append("publication time not stated")
-                if ev.retrieved_at_utc:
-                    extra.append("retrieved " + format_central(ev.retrieved_at_utc))
             t.insert("end", f"  ({'; '.join(extra)})\n", ("evidence", "muted"))
             if ev.excerpt:
                 t.insert("end", ev.excerpt + "\n", ("excerpt",))
@@ -809,8 +863,9 @@ class DailyWindow:
         self.refresh_view(force=True)
 
     def _clear_filters(self) -> None:
-        self.cat_var.set("All")
         self.search_var.set("")
+        if self.section == SEARCH:
+            self.section = TOP
         self.refresh_view(force=True)
 
     def export_html(self) -> None:
@@ -935,6 +990,7 @@ class DetailsWindow:
         nb.pack(fill="both", expand=True, padx=window.px(10), pady=(window.px(10), 0))
         self._sources_tab(nb, snap)
         self._publishers_tab(nb, snap)
+        self._changes_tab(nb, snap)
         for title, rows in details_report(snap, window.paths):
             self._text_tab(nb, title, rows)
         btns = ttk.Frame(top, padding=window.px(10))
@@ -1010,6 +1066,26 @@ class DetailsWindow:
         ttk.Label(frm, text="Includes publishers that arrive through aggregators such as Google News. A publisher "
                             "name is a rough diversity indicator, not proof of independent reporting.",
                   style="Muted.TLabel", wraplength=w.px(780)).pack(anchor="w", pady=(w.px(6), 0))
+
+    def _changes_tab(self, nb: ttk.Notebook, snap: Snapshot) -> None:
+        """What changed since the last refresh (kept out of the reading view)."""
+        rows: list[tuple[str, str]] = []
+        edition = snap.shown
+        ch = edition.changes if edition is not None else None
+        if edition is None or edition.demo:
+            rows.append(("", "No edition to compare."))
+        elif ch is None:
+            rows.append(("", "First edition: there is no earlier edition to compare with."))
+        else:
+            rows.append(("Compared with", f"the edition generated {format_central(ch.compared_generated_utc)}"
+                                          + (f" (revision {ch.compared_revision})" if ch.compared_revision > 1 else "")))
+            rows.append(("Summary", ch.summary() + (f"; {ch.unchanged} unchanged" if ch.unchanged else "")))
+            names = {"new": "New", "updated": "Updated", "signals_up": "Growing", "signals_down": "Fading",
+                     "gone": "No longer listed"}
+            for c in [*ch.new, *ch.updated, *ch.signals_up, *ch.signals_down, *ch.gone]:
+                detail = f" \u2014 {c.detail}" if c.detail and c.kind not in ("new", "gone") else ""
+                rows.append((names[c.kind], c.headline + detail))
+        self._text_tab(nb, "Changes", rows)
 
     def _text_tab(self, nb: ttk.Notebook, title: str, rows: list[tuple[str, str]]) -> None:
         w = self.window
@@ -1300,8 +1376,8 @@ class SettingsDialog:
         self.age_var = tk.StringVar(value=f"{self.prefs.max_story_age_hours:g}")
         ttk.Label(frm, text="Keep editions for (days):").grid(row=0, column=0, sticky="w", pady=3)
         ttk.Spinbox(frm, from_=1, to=3650, textvariable=self.retention_var, width=8).grid(row=0, column=1, sticky="w")
-        ttk.Label(frm, text="Most stories per edition:").grid(row=1, column=0, sticky="w", pady=3)
-        ttk.Spinbox(frm, from_=3, to=50, textvariable=self.max_var, width=8).grid(row=1, column=1, sticky="w")
+        ttk.Label(frm, text="Stories per section (Top Stories and each category):").grid(row=1, column=0, sticky="w", pady=3)
+        ttk.Spinbox(frm, from_=3, to=30, textvariable=self.max_var, width=8).grid(row=1, column=1, sticky="w")
         ttk.Label(frm, text="Leave out stories published more than (hours) ago:").grid(row=2, column=0, sticky="w", pady=3)
         ttk.Spinbox(frm, from_=6, to=336, textvariable=self.age_var, width=8).grid(row=2, column=1, sticky="w")
         ttk.Label(frm, text=f"Data folder: {self.window.paths.root}", wraplength=560).grid(
@@ -1310,8 +1386,8 @@ class SettingsDialog:
                    command=lambda: DailyWindow._open_path(self.window.paths.root)).grid(row=4, column=0, sticky="w")
         ttk.Separator(frm).grid(row=5, column=0, columnspan=2, sticky="ew", pady=12)
         ttk.Button(frm, text="Delete all cached editions...", command=self._reset_cache).grid(row=6, column=0, sticky="w")
-        ttk.Label(frm, text="Fewer, stronger stories are preferred to filler: an edition can have fewer stories than "
-                            "the maximum. The newest edition is never deleted by retention, even after failed refreshes.",
+        ttk.Label(frm, text="Fewer, stronger stories are preferred to filler: a section can have fewer stories than "
+                            "this. The newest edition is never deleted by retention, even after failed refreshes.",
                   wraplength=560, foreground=self.window.c["muted"]).grid(row=7, column=0, columnspan=2, sticky="w", pady=(8, 0))
 
     def _appearance_tab(self, nb) -> None:

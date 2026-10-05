@@ -47,9 +47,11 @@ Then **double-click "Agent Reach"** on the Desktop. The first time, choose
 |---|---|
 | Open the app | Desktop / Start-menu shortcut **Agent Reach**, or double-click `AgentReachDaily.pyw` (fallback: `AgentReachDaily.cmd`) |
 | Refresh now | the **Refresh** button, F5 or Ctrl+R |
-| Read the sources of a story | click a publisher name, or **Source details** under the story |
+| Read the sources of a story | click **Sources (N)** under the story to expand its articles |
 | Older editions | the **Edition** list (30 days are kept) |
-| Search / filter | **Category** list, **Search** box (Ctrl+F, Esc clears) |
+| Top 10 overall, then the top 10 of each category | the **Sections** sidebar: Top Stories, News, Tech, Science & AI, Sports, Entertainment (Ctrl+1 to Ctrl+7) |
+| Search | **Search** box (Ctrl+F, Esc clears and returns to Top Stories) |
+| What changed since the last refresh | **Details** > Changes (kept out of the reading view) |
 | Source health, timings, run details | **Details** (Ctrl+D) |
 | Save today's edition as a web page | **Export** (Ctrl+E) |
 | Preview the layout with sample stories | View > Demo edition (clearly marked DEMO, not real news) |
@@ -108,13 +110,16 @@ Everything lives in `%LOCALAPPDATA%\AgentReachDaily` (for example
 
 - All AI work runs locally through Ollama. Nothing is sent to OpenAI, Anthropic, Google or any
   other AI service, and no API key or subscription is needed.
-- The internet is used to read public sources: 26 publisher feeds from 15 organisations by default
+- The internet is used to read public sources: 38 publisher feeds from 23 organisations by default
   (BBC, NPR, The Guardian, PBS News, CBS News, Al Jazeera, Le Monde, France 24, DW, CNBC, NASA,
-  ScienceDaily, Ars Technica, The Verge, ESPN) covering world, US, business, science, health,
-  technology, sports and culture; plus Google News and Google Trends RSS, Wikipedia's most-read
-  list, Hacker News, and optionally Reddit, X trends (trends24.in), TikTok, GitHub Trending,
-  Product Hunt and arXiv. Each publisher feed has its own allowance, so adding feeds never squeezes
-  the others, and you can add local outlets in Settings > Publisher feeds.
+  ScienceDaily, ESPN; for tech and AI: Ars Technica, The Verge, TechCrunch, Wired, Engadget,
+  The Register, Lobsters, MIT Technology Review, VentureBeat AI, MIT News AI) covering world, US,
+  business, science, health, technology, AI, sports and culture; plus Google News and Google
+  Trends RSS, Wikipedia's most-read list, Hacker News, and optionally Reddit, X trends
+  (trends24.in), TikTok, GitHub Trending, Product Hunt and arXiv. Each publisher feed has its own
+  allowance, so adding feeds never squeezes the others, and you can add local outlets in
+  Settings > Publisher feeds. Settings saved by an older version keep your own feeds and gain the
+  new defaults once.
   Article pages are fetched to give the model context. Model downloads come from Ollama.
 - Exported HTML files are self-contained (no scripts, no remote assets); only the article links
   need the internet.
@@ -178,5 +183,5 @@ checks do), never sees the web, and its output is checked before it is shown. De
 
 Tests never touch the network or a real Ollama. `tests/daily_fakes.py` holds synthetic publisher
 feeds (fictional places on `.test` hosts) and a deterministic fake model; `samples/DEMO-edition.json`
-is the clearly labelled demo edition. Version: Agent Reach Daily 1.0 release candidate 2
+is the clearly labelled demo edition. Version: Agent Reach Daily 1.0 release candidate 3
 (`python -m agent_reach.daily --version`).

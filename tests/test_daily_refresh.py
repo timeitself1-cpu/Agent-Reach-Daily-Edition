@@ -190,7 +190,10 @@ def test_status_payload_reports_without_network(daily_env):
 
 def test_prefs_changes_take_effect_on_the_next_refresh(daily_env):
     prefs, _ = load_prefs(daily_env.paths)
-    save_prefs(daily_env.paths, prefs.model_copy(update={"max_stories": 4}))
+    save_prefs(daily_env.paths, prefs.model_copy(update={"max_stories": 3}))  # stories per section
     out = _refresh(daily_env)
-    assert out.code == R.EXIT_PUBLISHED and len(out.edition.stories) == 4
+    assert out.code == R.EXIT_PUBLISHED and len(out.edition.top_ranks) == 3
+    from collections import Counter
+
+    assert max(Counter(s.category.value for s in out.edition.stories).values()) == 3
     assert isinstance(load_prefs(daily_env.paths)[0], DailyPrefs)

@@ -16,7 +16,7 @@ from typing import Any, Literal
 
 from pydantic import BaseModel, ConfigDict, Field, ValidationError, field_validator, model_validator
 
-from agent_reach.daily.feeds import FeedSpec, default_feeds, feeds_from_entries
+from agent_reach.daily.feeds import ADDED_IN_V2, FeedSpec, default_feeds, feeds_from_entries
 from agent_reach.daily.fsutil import atomic_write_json, read_json
 from agent_reach.daily.paths import DataPaths
 from agent_reach.daily.timeutil import parse_hhmm
@@ -41,6 +41,7 @@ SOURCE_NOTES = {
     "producthunt": "Product Hunt launches (tech)",
     "arxiv": "arXiv AI/ML papers (research)",
 }
+PREFS_VERSION = 2
 DAILY_VELOCITY_WINDOWS = [24.0, 48.0, 168.0]
 DAILY_VELOCITY_WEIGHTS = [0.5, 0.3, 0.2]
 DAILY_VELOCITY_TOLERANCE = 0.25
@@ -50,7 +51,7 @@ MIN_DB_RETENTION_DAYS = 10
 class DailyPrefs(BaseModel):
     model_config = ConfigDict(extra="ignore", validate_assignment=True)
 
-    prefs_version: int = 1
+    prefs_version: int = PREFS_VERSION
     enabled_sources: list[str] = Field(default_factory=lambda: list(DAILY_DEFAULT_SOURCES))
     feeds: list[FeedSpec] = Field(default_factory=default_feeds)  # one entry per publisher feed
     geo: str = "US"
@@ -72,27 +73,51 @@ class DailyPrefs(BaseModel):
     max_run_minutes: float = Field(default=90.0, ge=5.0, le=360.0)
 
     retention_days: int = Field(default=30, ge=1, le=3650)
-    max_stories: int = Field(default=15, ge=3, le=50)
-    max_per_category: int = Field(default=5, ge=1, le=50)
-    max_tech_only_share: float = Field(default=0.34, ge=0.0, le=1.0)
+    # sections: Top Stories, then each category. max_stories = stories per section (top 10 overall,
+    # top 10 per category); max_per_category = most stories one category may place in Top Stories.
+    max_stories: int = Field(default=10, ge=3, le=30)
+    max_per_category: int = Field(default=4, ge=1, le=30)
+    max_tech_only_share: float = Field(default=0.34, ge=0.0, le=1.0)  # of Top Stories
     min_useful_stories: int = Field(default=3, ge=1, le=50)
     max_story_age_hours: float = Field(default=48.0, ge=6.0, le=336.0)  # older publication times are not "today"
     # processing budget: articles grouped and labelled per refresh (more = broader but slower on CPU)
-    max_items_for_llm: int = Field(default=150, ge=40, le=400)
+    max_items_for_llm: int = Field(default=200, ge=40, le=400)
     items_per_feed: int = Field(default=10, ge=3, le=30)
 
     appearance: Literal["system", "light", "dark"] = "system"
 
     @model_validator(mode="before")
     @classmethod
-    def _migrate_feeds(cls, data: Any) -> Any:
-        """Settings written before per-feed control stored 'Category|URL' strings."""
-        if isinstance(data, dict) and "feeds" not in data and isinstance(data.get("news_rss_feeds"), list):
-            data = dict(data)
+    def _migrate(cls, data: Any) -> Any:
+        """Bring settings written by earlier versions up to date (values the user changed are kept).
+
+        * before per-feed control: 'Category|URL' strings -> feeds;
+        * version 1 -> 2: sections of 10 instead of one 15-story list, a 200-article processing
+          budget instead of 150, and the technology/AI/science feeds added in version 2.
+        """
+        if not isinstance(data, dict):
+            return data
+        data = dict(data)
+        if "feeds" not in data and isinstance(data.get("news_rss_feeds"), list):
             try:
                 data["feeds"] = feeds_from_entries([str(e) for e in data.pop("news_rss_feeds")])
             except (ValueError, TypeError):
                 data["feeds"] = default_feeds()
+        # Every settings file this app writes records its version, so only an explicit older version
+        # is migrated; values built in code (or hand-written without a version) are taken as they are.
+        try:
+            version = int(data.get("prefs_version", PREFS_VERSION))
+        except (TypeError, ValueError):
+            version = 1
+        if version < 2:
+            for key, old, new in (("max_stories", 15, 10), ("max_per_category", 5, 4), ("max_items_for_llm", 150, 200)):
+                if data.get(key) == old:
+                    data[key] = new
+            if isinstance(data.get("feeds"), list):
+                have = {str((f.get("url") if isinstance(f, dict) else getattr(f, "url", "")) or "").lower()
+                        for f in data["feeds"]}
+                data["feeds"] = list(data["feeds"]) + [f.model_copy() for f in ADDED_IN_V2 if f.url.lower() not in have]
+        data["prefs_version"] = PREFS_VERSION
         return data
 
     @field_validator("feeds")
@@ -184,7 +209,17 @@ def build_settings(prefs: DailyPrefs, paths: DataPaths, **overrides: Any):
         enabled_sources=list(prefs.enabled_sources),
         news_rss_feeds=[f.entry() for f in prefs.enabled_feeds()],
         news_rss_items_per_feed=prefs.items_per_feed,
+        news_rss_max_total_items=400,
         max_items_for_llm=prefs.max_items_for_llm,
+        max_items_per_source=60,
+        # A lone article from a real publisher is a story (most tech and science news is reported by one
+        # outlet a day). Keep reasonably ranked uncorroborated items as single-item stories instead of
+        # discarding them as density noise; evidence strength then shows them as "limited", and the
+        # edition still drops weak single trend/social signals.
+        outlier_policy="keep_top",
+        singleton_keep_score=0.35,  # about the top 7 of each publisher feed (percentile within the channel)
+        singleton_keep_relevance=6,
+        min_items_per_feed_for_llm=2,
         geo=prefs.geo,
         ollama_host=prefs.ollama_host,
         ollama_model=prefs.ollama_model,

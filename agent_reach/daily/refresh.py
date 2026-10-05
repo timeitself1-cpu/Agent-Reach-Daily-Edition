@@ -55,6 +55,7 @@ EXIT_NO_UPDATE = 20
 EXIT_FAILED = 30
 EXIT_PREREQ = 31
 MAX_DIAGNOSTICS = 30
+BRIEF_PER_CATEGORY = 3  # besides Top Stories, the local model writes notes for each category's top 3
 
 
 @dataclass
@@ -272,14 +273,22 @@ async def _attempt(paths: DataPaths, prefs: DailyPrefs, store: EditionStore, *, 
     stories = selection.stories
 
     if chat_ok and prefs.why_it_matters and stories:
-        progress("brief", f"Writing 'why it matters' notes for {len(stories)} stories")
+        # On a CPU every model call is slow: notes go to Top Stories and each category's top 3.
+        brief_ids = {id(s) for s in selection.top}
+        per_cat: dict[str, int] = {}
+        for s in stories:
+            if per_cat.get(s.category.value, 0) < BRIEF_PER_CATEGORY:
+                brief_ids.add(id(s))
+            per_cat[s.category.value] = per_cat.get(s.category.value, 0) + 1
+        brief_stories = [s for s in stories if id(s) in brief_ids]
+        progress("brief", f"Writing 'why it matters' notes for {len(brief_stories)} stories")
         from agent_reach.daily.brief import enrich_stories
         from agent_reach.pipeline.clusterer import SemanticClusterer
 
         remaining = max(30.0, budget - (now_fn() - started).total_seconds())
         try:
             client = SemanticClusterer(settings)._get_client()
-            await asyncio.wait_for(enrich_stories(stories, settings, client=client, budget_s=min(600.0, remaining)),
+            await asyncio.wait_for(enrich_stories(brief_stories, settings, client=client, budget_s=min(600.0, remaining)),
                                    timeout=min(900.0, remaining))
         except (asyncio.TimeoutError, ImportError) as exc:
             log.warning("brief pass skipped: %s", type(exc).__name__)

@@ -70,12 +70,13 @@ def test_edition_rendering_is_plain_text_with_safe_links(root, daily_paths):
     EditionStore(daily_paths).publish(make_edition([evil, make_story(headline="Second Story Today")]))
     w, _ = _window(root, daily_paths)
     body = _text(w)
-    assert "01\t<b>Bold</b> & <script>x()</script> Headline" in body  # shown literally, never interpreted
+    assert "1\t<b>Bold</b> & <script>x()</script> Headline" in body  # shown literally, never interpreted
+    toggles = [n for n, t in w._links.items() if t.startswith("toggle:")]
+    for name in toggles:  # sources are collapsed by default; links appear when expanded
+        w._click(name)
+        root.update()
     assert all(not t.startswith("javascript:") for t in w._links.values())
     assert any(t.startswith("https://wire-one.test/") for t in w._links.values())
-    toggle = next(n for n, t in w._links.items() if t.startswith("toggle:"))
-    w._click(toggle)
-    root.update()
     assert "publication time not stated" in _text(w) or "published " in _text(w)
     w.search_var.set("second story")
     root.update()
@@ -109,10 +110,11 @@ def test_dark_mode_and_live_theme_switch(root, daily_paths):
     EditionStore(daily_paths).publish(make_edition())
     w, _ = _window(root, daily_paths)
     assert w.mode == "dark" and w.text["background"] == PALETTES["dark"]["card"]
-    assert w.text.tag_cget("chip:News", "background") == PALETTES["dark"]["categories"]["News"][0]
+    assert w.text.tag_cget("chip:News", "foreground") == PALETTES["dark"]["categories"]["News"][1]
+    assert w.sidebar["bg"] == PALETTES["dark"]["sidebar"]
     w.apply_theme("light")
     root.update()
-    assert w.text["background"] == PALETTES["light"]["card"] and w.status_label["bg"] == PALETTES["light"]["bg"]
+    assert w.text["background"] == PALETTES["light"]["card"] and w.status_label["bg"] == PALETTES["light"]["sidebar"]
 
 
 def test_details_show_publisher_feeds_and_settings_manage_them(root, daily_env):
@@ -130,7 +132,7 @@ def test_details_show_publisher_feeds_and_settings_manage_them(root, daily_env):
     channel_tree = trees[0]
     rss = next(i for i in channel_tree.get_children() if channel_tree.item(i, "text") == "News feeds")
     children = [channel_tree.item(c, "text") for c in channel_tree.get_children(rss)]
-    assert "Wire One - World" in children and len(children) == 5
+    assert "Wire One - World" in children and "Tech Seven" in children and len(children) == 6
     assert channel_tree.item(rss, "values")[0] == "OK"
     publishers = [trees[1].item(i, "text") for i in trees[1].get_children()]
     assert "Wire One - World" in publishers and "Daily Two" in publishers
@@ -138,7 +140,7 @@ def test_details_show_publisher_feeds_and_settings_manage_them(root, daily_env):
 
     dialog = SettingsDialog(w, load_prefs(daily_env.paths)[0])
     root.update()
-    assert len(dialog.feed_tree.get_children()) == 5
+    assert len(dialog.feed_tree.get_children()) == 6
     assert dialog.save_feed(None, FeedSpec(name="Local Paper", url="https://local.test/rss")) is None
     assert dialog.save_feed(None, FeedSpec(name="Dup", url="https://LOCAL.test/rss")) is not None
     dialog.feed_tree.selection_set("0")
@@ -164,11 +166,40 @@ def test_window_shows_evidence_strength_and_changes(root, daily_env):
     refresh(daily_env.paths, trigger="manual", force=True, ollama_probe=lambda p: OllamaUp())
     w, _ = _window(root, daily_env.paths)
     body = _text(w)
-    assert "WHAT CHANGED SINCE LAST REFRESH" in body and "First edition" in body
     assert "Strong evidence" in body or "Moderate evidence" in body
+    assert "What changed" not in body and "WHAT CHANGED" not in body
     daily_env.net.down.add("sports")
     refresh(daily_env.paths, trigger="manual", force=True, ollama_probe=lambda p: OllamaUp())
     w.refresh_view(force=True)
     root.update()
+    assert "What changed" not in _text(w) and "No longer listed" not in _text(w)  # kept out of the reading view
+    from agent_reach.daily.gui import DetailsWindow
+
+    DetailsWindow(w)
+    root.update()
+    texts = [c.get("1.0", "end") for c in _walk(root) if c.winfo_class() == "Text" and c is not w.text]
+    changes = next(t for t in texts if "No longer listed" in t)
+    assert "Riverton Hawks Win Championship Final in Overtime" in changes
+
+
+def test_sidebar_sections_top_stories_and_categories(root, daily_env):
+    from agent_reach.daily.gui import TOP
+    from agent_reach.daily.refresh import refresh
+    from tests.daily_fakes import OllamaUp
+
+    refresh(daily_env.paths, trigger="manual", force=True, ollama_probe=lambda p: OllamaUp())
+    w, _ = _window(root, daily_env.paths)
+    keys = [k for k, _, _ in w.sections(w.snap.shown)]
+    assert keys[0] == TOP and {"News", "Tech", "Science & AI", "Sports"} <= set(keys)
+    assert _text(w).startswith("Top Stories\n")
+    w.show_section("Tech")
+    root.update()
     body = _text(w)
-    assert "No longer listed: " in body and "Riverton Hawks" in body.split("No longer listed: ")[1]
+    assert body.startswith("Tech\n") and "Nimbus Phone 5 Adds Satellite Messaging" in body
+    assert "Ferry" not in body  # a category view lists only that category
+    w.search_var.set("satellite")
+    root.update()
+    assert _text(w).startswith("Search\n") and "Nimbus Phone 5" in _text(w)
+    w._clear_filters()
+    root.update()
+    assert _text(w).startswith("Top Stories\n")

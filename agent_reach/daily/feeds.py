@@ -4,8 +4,8 @@ Each feed is one publisher channel (``FeedSpec``). Enabled feeds become ``news_r
 entries (``"Category|URL|Name"``) for the pipeline, where every feed has its own allowance,
 selection floor and health line.
 
-The defaults cover world, US, business, science, health, technology, sports and culture news
-from 15 organisations. Feed addresses change over time: a feed that stops working only makes
+The defaults cover world, US, business, science, health, technology, AI, sports and culture news
+from 25 organisations. Feed addresses change over time: a feed that stops working only makes
 the source partial (shown per feed in Details), and Settings > Sources > Test checks any feed.
 Categories use the edition's fixed category set (business and health stories file under News).
 """
@@ -66,7 +66,7 @@ def _f(name: str, url: str, category: str = "News") -> FeedSpec:
     return FeedSpec(name=name, url=url, category=category)
 
 
-#: Default publisher feeds (26 feeds, 15 organisations). Business and health file under News.
+#: Default publisher feeds (38 with ADDED_IN_V2, from 25 organisations). Business and health file under News.
 DEFAULT_FEEDS: list[FeedSpec] = [
     # world and US news
     _f("BBC News - World", "https://feeds.bbci.co.uk/news/world/rss.xml"),
@@ -101,6 +101,23 @@ DEFAULT_FEEDS: list[FeedSpec] = [
     _f("The Guardian - Culture", "https://www.theguardian.com/culture/rss", "Entertainment"),
     _f("NPR - Arts & Life", "https://feeds.npr.org/1008/rss.xml", "Entertainment"),
 ]
+
+#: Added in settings version 2: deeper technology, AI and science coverage (alongside Hacker News).
+ADDED_IN_V2: list[FeedSpec] = [
+    _f("TechCrunch", "https://techcrunch.com/feed/", "Tech"),
+    _f("Wired", "https://www.wired.com/feed/rss", "Tech"),
+    _f("Engadget", "https://www.engadget.com/rss.xml", "Tech"),
+    _f("The Register", "https://www.theregister.com/headlines.atom", "Tech"),
+    _f("The Guardian - Technology", "https://www.theguardian.com/technology/rss", "Tech"),
+    _f("NPR - Technology", "https://feeds.npr.org/1019/rss.xml", "Tech"),
+    _f("Lobsters", "https://lobste.rs/rss", "Tech"),
+    _f("MIT Technology Review", "https://www.technologyreview.com/feed/", "Science & AI"),
+    _f("VentureBeat - AI", "https://venturebeat.com/category/ai/feed/", "Science & AI"),
+    _f("MIT News - Artificial Intelligence", "https://news.mit.edu/rss/topic/artificial-intelligence2", "Science & AI"),
+    _f("The Guardian - Science", "https://www.theguardian.com/science/rss", "Science & AI"),
+    _f("NPR - Science", "https://feeds.npr.org/1007/rss.xml", "Science & AI"),
+]
+DEFAULT_FEEDS = DEFAULT_FEEDS + ADDED_IN_V2
 
 #: The six feeds shipped before per-feed settings existed (used to migrate untouched settings).
 LEGACY_DEFAULT_ENTRIES = [

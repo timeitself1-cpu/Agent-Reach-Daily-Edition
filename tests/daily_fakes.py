@@ -70,6 +70,18 @@ TOPICS: dict[str, dict] = {
                    summary="A faulty Frostline firmware update disabled thousands of smart fridges. "
                            "The company said a fix is rolling out this week.",
                    entities=["Frostline"], relevance=7, keywords=["frostline"]),
+    "phone": dict(category="Tech", headline="Nimbus Phone 5 Adds Satellite Messaging",
+                  summary="Nimbus launched the Phone 5 with built-in satellite messaging for areas without coverage. "
+                          "The phone goes on sale next month.",
+                  entities=["Nimbus", "Phone 5"], relevance=7, keywords=["nimbus phone"]),
+    "chip": dict(category="Tech", headline="Brightwave Unveils Low-Power Laptop Chip",
+                 summary="Brightwave unveiled a laptop processor it says doubles battery life. "
+                         "The first laptops using it ship in spring.",
+                 entities=["Brightwave"], relevance=7, keywords=["brightwave"]),
+    "agent": dict(category="Science & AI", headline="Larkspur AI Releases Coding Agent Benchmark",
+                  summary="Larkspur AI published a benchmark that measures how well coding agents fix real bugs. "
+                          "The leading agent solved 41 percent of the tasks.",
+                  entities=["Larkspur AI"], relevance=7, keywords=["larkspur"]),
     "stale": dict(category="News", headline="Mayor of Oakdene Resigns After Audit",
                   summary="The mayor of Oakdene resigned after an audit found missing funds. "
                           "The city council appointed an interim mayor.",
@@ -113,6 +125,14 @@ FEED_ITEMS: dict[str, list[tuple[str, str, float | None, str]]] = {
          "Northern Lantern opened with $48 million."),
         ("Halcyon Studio drama Northern Lantern opens at number one box office", "https://arts-four.test/lantern-opens", None,
          "Critics praised the lead performance."),
+    ],
+    "tech": [  # single-article stories: no other feed covers them (typical for tech news)
+        ("Nimbus Phone 5 launches with satellite messaging", "https://tech-seven.test/nimbus-phone-5", 4,
+         "Nimbus launched the Phone 5 with built-in satellite messaging."),
+        ("Brightwave unveils low-power laptop chip", "https://tech-seven.test/brightwave-chip", 6,
+         "Brightwave says the chip doubles battery life."),
+        ("Larkspur AI releases coding agent benchmark", "https://tech-seven.test/larkspur-benchmark", 5,
+         "The leading agent solved 41 percent of the tasks."),
     ],
     "science": [
         ("Water vapour detected on exoplanet Tessa-9b by Orion telescope", "https://science-five.test/tessa-9b-water", 10,
@@ -176,8 +196,9 @@ def _rss_item(title: str, link: str, hours: float | None, desc: str) -> str:
 
 
 FEED_TITLES = {"world": "Wire One - World", "us": "Daily Two - US", "sports": "Sports Three",
-               "arts": "Arts Four", "science": "Science Five"}
-FEED_CATEGORY = {"world": "News", "us": "News", "sports": "Sports", "arts": "Entertainment", "science": "Science & AI"}
+               "arts": "Arts Four", "science": "Science Five", "tech": "Tech Seven"}
+FEED_CATEGORY = {"world": "News", "us": "News", "sports": "Sports", "arts": "Entertainment", "science": "Science & AI",
+                 "tech": "Tech"}
 
 
 def feed_settings_entries() -> list[str]:

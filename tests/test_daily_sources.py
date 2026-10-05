@@ -27,14 +27,15 @@ ORGS = {"BBC News": "BBC", "BBC Sport": "BBC"}
 def test_default_feeds_are_broad_and_valid():
     feeds = default_feeds()
     orgs = {ORGS.get(f.publisher, f.publisher) for f in feeds}
-    assert 20 <= len(feeds) <= 30 and len(orgs) >= 15
+    assert 30 <= len(feeds) <= 45 and len(orgs) >= 20
     assert len({f.url for f in feeds}) == len(feeds) and len({f.name for f in feeds}) == len(feeds)
     assert all(f.url.startswith("https://") and f.enabled for f in feeds)
     assert {f.category for f in feeds} >= {"News", "Sports", "Entertainment", "Science & AI", "Tech"}
     names = " ".join(f.name for f in feeds)
     for wanted in ("PBS", "Le Monde", "NASA", "ScienceDaily", "Business", "Health"):
         assert wanted in names
-    assert sum(f.category == "Tech" for f in feeds) <= 3  # technology does not dominate the defaults
+    assert sum(f.category == "Tech" for f in feeds) >= 8 and sum(f.category == "Science & AI" for f in feeds) >= 6
+    assert sum(f.category == "News" for f in feeds) >= 12  # general news is still the largest group
 
 
 def test_untouched_old_settings_upgrade_and_custom_feeds_are_kept(daily_paths):
@@ -176,15 +177,15 @@ def test_feed_health_and_publishers_in_a_real_edition(daily_env):
     daily_env.net.down.add("arts")
     ed = refresh(daily_env.paths, trigger="manual", force=True, ollama_probe=lambda p: OllamaUp()).edition
     rss = next(h for h in ed.source_health if h.source == "news_rss")
-    assert rss.status == "partial" and len(rss.feeds) == 5
+    assert rss.status == "partial" and len(rss.feeds) == 6
     feeds = {f.name: f for f in rss.feeds}
-    assert set(feeds) == {"Wire One - World", "Daily Two - US", "Sports Three", "Arts Four", "Science Five"}
+    assert set(feeds) == {"Wire One - World", "Daily Two - US", "Sports Three", "Arts Four", "Science Five", "Tech Seven"}
     assert feeds["Arts Four"].status == "failed" and feeds["Arts Four"].collected == 0
     assert "503" in feeds["Arts Four"].error
     assert all(f.status == "ok" for name, f in feeds.items() if name != "Arts Four")
     assert sum(f.used for f in rss.feeds) == rss.used > 0
     assert all(f.used <= f.collected for f in rss.feeds)
-    assert any("1 of 5 publisher feeds returned nothing" in w for w in ed.coverage.warnings)
+    assert any("1 of 6 publisher feeds returned nothing" in w for w in ed.coverage.warnings)
     pubs = {r.publisher: r for r in A.publisher_breakdown(ed)}
     assert "Daily Two" in pubs and "Google News" in pubs["Daily Two"].channels  # publisher reached via an aggregator
     assert A.coverage_summary(ed) == "Sources: 2 healthy · 1 partial"
