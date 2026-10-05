@@ -316,7 +316,18 @@ async def _attempt(paths: DataPaths, prefs: DailyPrefs, store: EditionStore, *, 
     msg = f"Published {len(final.stories)} stories for {final.edition_date.isoformat()}"
     if final.revision > 1:
         msg += f" (revision {final.revision}, replaces the earlier edition for this date)"
-    return RefreshOutcome(EXIT_PUBLISHED, "published", msg + ".", final)
+    msg += "."
+    if prefs.podcast_auto:
+        # the edition is already published: a podcast problem is reported, never a failed refresh
+        progress("podcast", "Recording the daily podcast")
+        from agent_reach.daily.podcast import make_podcast
+
+        try:
+            pod = await asyncio.to_thread(make_podcast, paths, final, prefs)
+            msg += f" {pod.message}"
+        except Exception:  # noqa: BLE001
+            log.exception("podcast failed")
+    return RefreshOutcome(EXIT_PUBLISHED, "published", msg, final)
 
 
 def finalize_cancelled(paths: DataPaths, now_fn: Callable[[], datetime] = utcnow) -> bool:

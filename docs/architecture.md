@@ -180,6 +180,18 @@ Wikipedia channel is partial, never failed.
   a Following section; muted stories are left out of every section and search. `Story.entities`
   (optional; the cluster's key names) feeds the right-click Follow / Mute suggestions.
 
+### Daily podcast (`daily/podcast.py`)
+
+Built after a successful publish when `podcast_auto` is on (and on demand from the window or
+`--podcast`). The script is deterministic: intro, the first `podcast_stories` Top Stories (headline,
+summary sentences, grounded "why it matters", named publishers from evidence strength), followed
+topics, two headlines per section, outro; muted topics are skipped. No model text is added. Speech
+uses Windows `System.Speech` through Windows PowerShell 5.1 (`-EncodedCommand`, paths passed in
+environment variables, SSML with pauses, 22 kHz mono WAV; the SSML language follows the chosen
+voice), or `espeak-ng` elsewhere. Audio is written to a `.part.wav` and renamed when complete;
+podcasts older than `podcast_keep_days` are deleted. A podcast failure is reported in the refresh
+message and never affects the edition.
+
 ### Publication-time validation
 
 `ingestion/base.py` parses RFC-822 and ISO-8601 times and normalises every offset or zone name to

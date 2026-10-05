@@ -119,6 +119,13 @@ class DailyPrefs(BaseModel):
     follow_topics: list[str] = Field(default_factory=list)
     mute_topics: list[str] = Field(default_factory=list)
 
+    # podcast: a spoken edition recorded on this PC after each successful refresh (see daily/podcast.py)
+    podcast_auto: bool = True
+    podcast_voice: str = ""  # an installed Windows voice; empty = the system default
+    podcast_rate: int = Field(default=0, ge=-5, le=5)  # speaking speed
+    podcast_stories: int = Field(default=8, ge=3, le=15)  # top stories told in full
+    podcast_keep_days: int = Field(default=7, ge=1, le=60)
+
     @model_validator(mode="before")
     @classmethod
     def _migrate(cls, data: Any) -> Any:

@@ -343,3 +343,41 @@ def test_o_and_s_keys_act_on_the_current_story(root, daily_paths, monkeypatch):
     assert opened == ["https://wire-one.test/one"] and stories[0].story_id in w._read
     w.toggle_current_sources()
     assert stories[0].story_id in w._expanded and "Hide sources" in _text(w)
+
+
+def test_listen_records_then_plays_the_podcast(root, daily_paths, monkeypatch):
+    import wave
+
+    from agent_reach.daily import podcast as P
+
+    def engine(ssml, text, out, voice, rate):
+        with wave.open(str(out), "wb") as w:
+            w.setnchannels(1)
+            w.setsampwidth(2)
+            w.setframerate(8000)
+            w.writeframes(b"\x00\x00" * 800)
+
+    monkeypatch.setattr(P, "default_synthesizer", lambda: engine)
+    EditionStore(daily_paths).publish(make_edition())
+    w, _ = _window(root, daily_paths)
+    played = []
+    monkeypatch.setattr(w, "play", lambda audio: played.append(audio))
+    w.record_podcast(then_open=True)
+    for _ in range(100):
+        root.update()
+        if played:
+            break
+        root.after(50)
+    assert played and played[0].name.endswith(".wav") and not w._podcast_busy
+    w.listen()  # it exists now: plays straight away, without recording again
+    assert len(played) == 2
+    from agent_reach.daily.gui import SettingsDialog
+    from agent_reach.daily.prefs import load_prefs
+
+    dialog = SettingsDialog(w, load_prefs(daily_paths)[0])
+    root.update()
+    dialog.podcast_auto_var.set(False)
+    dialog.podcast_rate_var.set("-2")
+    dialog.save()
+    prefs, _ = load_prefs(daily_paths)
+    assert prefs.podcast_auto is False and prefs.podcast_rate == -2 and prefs.podcast_voice == ""

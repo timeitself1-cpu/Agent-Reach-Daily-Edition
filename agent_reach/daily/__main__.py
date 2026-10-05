@@ -11,7 +11,7 @@
 Exit codes: 0 published / ok, 2 usage or setup error, 10 not due, 11 another refresh running,
 12 waiting for failure backoff, 20 ran but nothing publishable (previous edition kept),
 30 failed (previous edition kept), 31 Ollama/model unavailable (nothing fetched),
-1 a --check found missing prerequisites.
+1 a --check found missing prerequisites, or --podcast could not record.
 """
 
 from __future__ import annotations
@@ -41,11 +41,12 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     mode.add_argument("--task-status", action="store_true", help="show the scheduled task status")
     mode.add_argument("--init", action="store_true", help="create the data folder and default settings")
     mode.add_argument("--reset-cache", action="store_true", help="delete all cached editions (requires --yes)")
+    mode.add_argument("--podcast", action="store_true", help="record the podcast of an edition (latest, or --date)")
     mode.add_argument("--gui", action="store_true", help="open the desktop window")
     p.add_argument("--trigger", default=None, choices=["scheduled", "gui_launch", "manual", "cli"])
     p.add_argument("--allow-extractive", action="store_true",
                    help="publish with extractive summaries if the local model is unavailable")
-    p.add_argument("--date", type=date.fromisoformat, help="edition date for --export-html (default: latest)")
+    p.add_argument("--date", type=date.fromisoformat, help="edition date for --export-html / --podcast (default: latest)")
     p.add_argument("--data-dir", type=Path, help="data folder (default %%LOCALAPPDATA%%\\AgentReachDaily)")
     p.add_argument("--yes", action="store_true", help="confirm destructive actions")
     p.add_argument("--dry-run", action="store_true",
@@ -128,6 +129,21 @@ def main(argv: list[str] | None = None) -> int:
         args.export_html.write_text(render_edition_html(edition), encoding="utf-8")
         print(f"Exported {edition.edition_date.isoformat()} to {args.export_html}")
         return 0
+
+    if args.podcast:
+        from agent_reach.daily.podcast import make_podcast
+        from agent_reach.daily.prefs import load_prefs
+        from agent_reach.daily.store import EditionStore
+
+        paths.ensure()
+        store = EditionStore(paths)
+        edition = store.load_date(args.date)[0] if args.date else store.load_latest().edition
+        if edition is None:
+            print("No cached edition found for that date." if args.date else "No cached edition yet.", file=sys.stderr)
+            return EXIT_USAGE
+        result = make_podcast(paths, edition, load_prefs(paths)[0])
+        print(result.message + (f" {result.audio}" if result.audio else ""))
+        return 0 if result.ok else 1
 
     if args.install_task or args.uninstall_task or args.task_status:
         from agent_reach.daily import scheduler

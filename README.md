@@ -51,6 +51,7 @@ Then **double-click "Agent Reach"** on the Desktop. The first time, choose
 | Older editions | the edition date list next to Search (30 days are kept) |
 | Top 10 overall, then the top 10 of each category | the **Sections** sidebar: Top Stories, News, Tech, Science & AI, Sports, Entertainment, Internet Culture (Ctrl+1 to Ctrl+7) |
 | Everything else (demo, data folder, model check, help) | the **...** button at the right of the toolbar |
+| Listen to the news | **Listen** in the toolbar (or P): a 5-8 minute podcast of the top stories, recorded after every refresh. Settings > **Podcast** sets the voice, speed and length or turns it off |
 | The day in ten seconds | **In brief** at the top of Top Stories: the lead sentence of the first five stories (click one to jump to it) |
 | What is new | **NEW** and **UPDATED** tags (compared with the previous edition) and **DAY 3** on stories that have run for several days |
 | Open a story's main article | click its headline (or press O); the story then shows as read (dimmed) |
@@ -113,6 +114,22 @@ Everything lives in `%LOCALAPPDATA%\AgentReachDaily` (for example
 | `logs\` | `gui.log`, `refresh.log`, `scheduler.log` (rotating, about 6 MB each at most) |
 | `diagnostics\` | details of the last 30 failed or unpublished refreshes |
 | `exports\` | default folder for exported HTML editions |
+
+## The daily podcast
+
+After every successful refresh the app records a spoken edition: an introduction, the top stories
+(headline, summary, "why it matters" and who reported them), a quick round of headlines from each
+section and the topics you follow, then a sign-off. It reads only the edition's own text, so it says
+exactly what the window shows, and it is spoken by the voices built into Windows: no download,
+account or cloud service. Each podcast is saved as `podcasts\YYYY-MM-DD.wav` with a transcript
+(`.txt`) in the data folder and kept for 7 days.
+
+- **Listen** (toolbar, P, or **...** > Listen to the podcast) plays it in your default audio player.
+- **...** > Record the podcast again re-records it (after changing the voice, for example).
+- Settings > **Podcast**: on/off, voice, speed, how many stories are told in full, how long to keep them.
+  More voices: Windows Settings > Time & language > Speech > Add voices.
+- From PowerShell: `.\.venv\Scripts\python.exe -m agent_reach.daily --podcast` (add `--date 2026-10-05`
+  for an older edition).
 
 ## Privacy and cost
 
@@ -219,5 +236,5 @@ checks do), never sees the web, and its output is checked before it is shown. De
 
 Tests never touch the network or a real Ollama. `tests/daily_fakes.py` holds synthetic publisher
 feeds (fictional places on `.test` hosts) and a deterministic fake model; `samples/DEMO-edition.json`
-is the clearly labelled demo edition. Version: Agent Reach Daily 1.0 release candidate 7
+is the clearly labelled demo edition. Version: Agent Reach Daily 1.0 release candidate 8
 (`python -m agent_reach.daily --version`).

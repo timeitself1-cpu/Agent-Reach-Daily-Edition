@@ -13,6 +13,7 @@
         diagnostics\\                  failed / no-update attempt diagnostics
         logs\\                         rotating logs (gui.log, refresh.log, scheduler.log)
         exports\\                      default folder for exported HTML editions
+        podcasts\\                     spoken editions (YYYY-MM-DD.wav + transcript .txt)
 
 ``AGENT_REACH_DAILY_HOME`` overrides the root (tests, portable installs).
 """
@@ -105,8 +106,12 @@ class DataPaths:
     def exports_dir(self) -> Path:
         return self.root / "exports"
 
+    @property
+    def podcasts_dir(self) -> Path:
+        return self.root / "podcasts"
+
     def ensure(self) -> "DataPaths":
         for d in (self.state_dir, self.editions_dir, self.quarantine_dir, self.db.parent,
-                  self.diagnostics_dir, self.logs_dir, self.exports_dir):
+                  self.diagnostics_dir, self.logs_dir, self.exports_dir, self.podcasts_dir):
             d.mkdir(parents=True, exist_ok=True)
         return self

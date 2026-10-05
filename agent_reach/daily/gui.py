@@ -150,6 +150,8 @@ class DailyWindow:
         self._date_values: list[date] = []
         self._expanded: set[str] = set()
         self._prereq_q: queue.Queue = queue.Queue()
+        self._podcast_q: queue.Queue = queue.Queue()
+        self._podcast_busy = False
         self._prereq_text: str | None = None  # None until a check starts
         self._poll_job: str | None = None
         self._cancelling = False
@@ -309,6 +311,10 @@ class DailyWindow:
         menu.add_command(label="Demo edition (not real news)", command=self.show_demo)
         menu.add_separator()
         menu.add_command(label="Check local model (Ollama)", command=self._start_prereq_check)
+        menu.add_command(label="Listen to the podcast", command=self.listen)
+        menu.add_command(label="Record the podcast again", command=lambda: self.record_podcast(then_open=True))
+        menu.add_command(label="Open podcasts folder", command=lambda: self._open_path(self.paths.podcasts_dir))
+        menu.add_separator()
         menu.add_command(label="Open data folder", command=lambda: self._open_path(self.paths.root))
         menu.add_command(label="Open logs folder", command=lambda: self._open_path(self.paths.logs_dir))
         menu.add_separator()
@@ -333,6 +339,7 @@ class DailyWindow:
             self.root.bind(f"<KeyPress-{key}>", lambda e, step=step: None if self._typing() else self.jump_story(step))
         self.root.bind("<KeyPress-o>", lambda e: None if self._typing() else self.open_current())
         self.root.bind("<KeyPress-s>", lambda e: None if self._typing() else self.toggle_current_sources())
+        self.root.bind("<KeyPress-p>", lambda e: None if self._typing() else self.listen())
         self.root.bind("<Home>", lambda e: self.text.yview_moveto(0))
         self.root.bind("<End>", lambda e: self.text.yview_moveto(1))
         self.root.bind("<Prior>", lambda e: self.text.yview_scroll(-1, "pages"))
@@ -357,6 +364,7 @@ class DailyWindow:
             "J / K          next / previous story\n"
             "O              open the story's main article\n"
             "S              show or hide the story's sources\n"
+            "P              listen to the podcast\n"
             "Ctrl+1 ... 7   Top Stories, then each category\n"
             "Ctrl+F         search (Esc clears)\n"
             "F5 or Ctrl+R   refresh now\n"
@@ -412,6 +420,8 @@ class DailyWindow:
         self.more_btn.pack(side="right", padx=(self.px(6), 0))
         self.refresh_btn = ttk.Button(right, text="Refresh", style="Refresh.TButton", command=self.refresh_now)
         self.refresh_btn.pack(side="right")
+        self.listen_btn = ttk.Button(right, text="\u25b6 Listen", style="Small.TButton", command=self.listen)
+        self.listen_btn.pack(side="right", padx=(0, self.px(8)))
 
         self.banner_frame = tk.Frame(root, bg=c["bg"], padx=pad)
         self.banner_frame.grid(row=1, column=0, sticky="ew")
@@ -984,6 +994,69 @@ class DailyWindow:
                 self.mark_read([story.story_id], refresh=False)
             self.refresh_view(force=True)
 
+    # ------------------------------------------------------------ podcast
+    def listen(self) -> None:
+        """Play the podcast of the edition on screen; record it first when it does not exist yet."""
+        from agent_reach.daily.podcast import existing_podcast
+
+        edition = self.snap.shown if self.snap else None
+        if edition is None or edition.demo:
+            messagebox.showinfo(APP_NAME, "There is no edition to listen to yet." if edition is None
+                                else "The demo edition has no podcast.", parent=self.root)
+            return
+        audio = existing_podcast(self.paths, edition.edition_date)
+        if audio is not None:
+            self.play(audio)
+        elif self._podcast_busy:
+            self._flash_status("The podcast is being recorded...")
+        elif messagebox.askyesno(APP_NAME, "Record today's podcast now? It is spoken by this PC's own voice and "
+                                           "usually takes a minute or two.", parent=self.root):
+            self.record_podcast(then_open=True)
+
+    def record_podcast(self, then_open: bool = False) -> None:
+        """Record the podcast in the background; the window stays responsive."""
+        from agent_reach.daily.podcast import make_podcast
+
+        edition = self.snap.shown if self.snap else None
+        if edition is None or edition.demo or self._podcast_busy:
+            return
+        prefs = self.snap.prefs
+        self._podcast_busy = True
+        self.listen_btn.state(["disabled"])
+        self._flash_status("Recording the podcast...")
+
+        def work() -> None:
+            try:
+                self._podcast_q.put((make_podcast(self.paths, edition, prefs), then_open))
+            except Exception as exc:  # noqa: BLE001 - reported in the window
+                log.exception("podcast failed")
+                self._podcast_q.put((exc, then_open))
+
+        threading.Thread(target=work, name="podcast", daemon=True).start()
+        self.root.after(300, self._poll_podcast)
+
+    def _poll_podcast(self) -> None:
+        try:
+            result, then_open = self._podcast_q.get_nowait()
+        except queue.Empty:
+            self.root.after(300, self._poll_podcast)
+            return
+        self._podcast_busy = False
+        self.listen_btn.state(["!disabled"])
+        self.refresh_view(force=True)
+        if isinstance(result, Exception) or not result.ok:
+            text = str(result) if isinstance(result, Exception) else result.message
+            messagebox.showwarning(APP_NAME, text, parent=self.root)
+        elif then_open and result.audio is not None:
+            self.play(result.audio)
+
+    def play(self, audio: Path) -> None:
+        """Open the recording in the default audio player."""
+        if sys.platform == "win32":
+            os.startfile(str(audio))  # type: ignore[attr-defined]
+        else:
+            webbrowser.open(audio.as_uri())
+
     def mark_all_read(self) -> None:
         shown = self.snap.shown if self.snap else None
         if shown is not None and not shown.demo:
@@ -1419,6 +1492,7 @@ class SettingsDialog:
         self._schedule_tab(nb)
         self._storage_tab(nb)
         self._topics_tab(nb)
+        self._podcast_tab(nb)
         self._appearance_tab(nb)
         btns = ttk.Frame(top, padding=(10, 0, 10, 10))
         btns.pack(fill="x")
@@ -1697,6 +1771,42 @@ class SettingsDialog:
                             "this. The newest edition is never deleted by retention, even after failed refreshes.",
                   wraplength=560, foreground=self.window.c["muted"]).grid(row=7, column=0, columnspan=2, sticky="w", pady=(8, 0))
 
+    def _podcast_tab(self, nb) -> None:
+        from agent_reach.daily.podcast import list_voices
+
+        frm = self._tab(nb, "Podcast")
+        self.podcast_auto_var = tk.BooleanVar(value=self.prefs.podcast_auto)
+        self.podcast_voice_var = tk.StringVar(value=self.prefs.podcast_voice or "System default")
+        self.podcast_rate_var = tk.StringVar(value=str(self.prefs.podcast_rate))
+        self.podcast_stories_var = tk.StringVar(value=str(self.prefs.podcast_stories))
+        self.podcast_keep_var = tk.StringVar(value=str(self.prefs.podcast_keep_days))
+        ttk.Checkbutton(frm, text="Record a podcast of the top stories after every refresh",
+                        variable=self.podcast_auto_var).grid(row=0, column=0, columnspan=2, sticky="w", pady=(0, 10))
+        ttk.Label(frm, text="Voice:").grid(row=1, column=0, sticky="w", pady=3)
+        self.voice_box = ttk.Combobox(frm, textvariable=self.podcast_voice_var, state="readonly", width=34,
+                                      values=["System default"])
+        self.voice_box.grid(row=1, column=1, sticky="w")
+        ttk.Label(frm, text="Speed (-5 slower to 5 faster):").grid(row=2, column=0, sticky="w", pady=3)
+        ttk.Spinbox(frm, from_=-5, to=5, textvariable=self.podcast_rate_var, width=6).grid(row=2, column=1, sticky="w")
+        ttk.Label(frm, text="Top stories told in full:").grid(row=3, column=0, sticky="w", pady=3)
+        ttk.Spinbox(frm, from_=3, to=15, textvariable=self.podcast_stories_var, width=6).grid(row=3, column=1,
+                                                                                              sticky="w")
+        ttk.Label(frm, text="Keep podcasts for (days):").grid(row=4, column=0, sticky="w", pady=3)
+        ttk.Spinbox(frm, from_=1, to=60, textvariable=self.podcast_keep_var, width=6).grid(row=4, column=1, sticky="w")
+        ttk.Label(frm, text="The podcast reads the edition's own headlines, summaries and 'why it matters' notes, then "
+                            "a quick round of headlines from each section and the topics you follow (about 5 to 8 "
+                            "minutes). It is spoken by the voices built into Windows - add more under Windows "
+                            "Settings > Time & language > Speech - and saved as a .wav file with a transcript in "
+                            "the podcasts folder. Nothing is sent anywhere.",
+                  wraplength=self.window.px(740), style="Muted.TLabel").grid(row=5, column=0, columnspan=2,
+                                                                             sticky="w", pady=(12, 0))
+
+        def show(result) -> None:
+            if not isinstance(result, Exception) and result:
+                self.voice_box.configure(values=["System default", *result])
+
+        self._bg(list_voices, show)
+
     def _topics_tab(self, nb) -> None:
         frm = self._tab(nb, "Topics")
         frm.columnconfigure(0, weight=1)
@@ -1808,6 +1918,9 @@ class SettingsDialog:
                 feeds=[f.model_dump() for f in self.feeds], items_per_feed=int(self.per_feed_var.get()),
                 max_items_for_llm=int(self.budget_var.get()), appearance=self.appearance_var.get(),
                 follow_topics=self._topic_lines(self.follow_text), mute_topics=self._topic_lines(self.mute_text),
+                podcast_auto=self.podcast_auto_var.get(), podcast_rate=int(self.podcast_rate_var.get()),
+                podcast_voice="" if self.podcast_voice_var.get() == "System default" else self.podcast_voice_var.get(),
+                podcast_stories=int(self.podcast_stories_var.get()), podcast_keep_days=int(self.podcast_keep_var.get()),
             )
             prefs = DailyPrefs.model_validate(data)
             if "news_rss" in prefs.enabled_sources and not prefs.enabled_rss_feeds():
