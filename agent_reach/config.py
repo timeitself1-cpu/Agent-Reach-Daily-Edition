@@ -87,7 +87,7 @@ class Settings(BaseSettings):
     hdbscan_min_cluster_size: int = Field(default=2, ge=2, le=20)
     hdbscan_min_samples: int = Field(default=1, ge=1, le=20)
     hdbscan_selection: str = "leaf"  # "leaf" = many small tight clusters (entity isolation); "eom" = larger
-    density_member_min_cosine: float = Field(default=0.55, ge=0.0, le=1.0)  # member-to-centroid gate
+    density_member_min_cosine: float = Field(default=0.62, ge=0.0, le=1.0)  # member-to-centroid gate (0.55 was too loose)
     density_fallback_cosine: float = Field(default=0.78, ge=0.0, le=1.0)  # threshold mode when sklearn missing
     outlier_policy: str = "drop"  # "drop" = density outliers are noise; "keep_top" = keep outliers >= singleton_keep_score
 

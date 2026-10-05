@@ -16,7 +16,15 @@ from typing import Any, Literal
 
 from pydantic import BaseModel, ConfigDict, Field, ValidationError, field_validator, model_validator
 
-from agent_reach.daily.feeds import ADDED_IN_V2, ADDED_IN_V3, ADDED_IN_V4, FeedSpec, default_feeds, feeds_from_entries
+from agent_reach.daily.feeds import (
+    ADDED_IN_V2,
+    ADDED_IN_V3,
+    ADDED_IN_V4,
+    REPLACED_IN_V5,
+    FeedSpec,
+    default_feeds,
+    feeds_from_entries,
+)
 from agent_reach.daily.fsutil import atomic_write_json, read_json
 from agent_reach.daily.paths import DataPaths
 from agent_reach.daily.timeutil import parse_hhmm
@@ -26,7 +34,7 @@ log = logging.getLogger(__name__)
 #: General-interest defaults. Tech-only feeds (GitHub, Product Hunt, arXiv) are available but
 #: off, so the number of enabled tech feeds cannot by itself dominate the edition.
 DAILY_DEFAULT_SOURCES = ["google_news", "news_rss", "youtube", "google_trends", "wikipedia", "reddit", "x_trends24",
-                         "tiktok", "hackernews", "mastodon", "bluesky"]
+                         "hackernews", "mastodon", "bluesky"]  # TikTok blocks automated readers: available, off
 TECH_SOURCES = frozenset({"hackernews", "github", "producthunt", "arxiv"})
 GENERAL_NEWS_SOURCES = frozenset({"google_news", "news_rss"})
 SOURCE_NOTES = {
@@ -45,11 +53,27 @@ SOURCE_NOTES = {
     "producthunt": "Product Hunt launches (tech)",
     "arxiv": "arXiv AI/ML papers (research)",
 }
-PREFS_VERSION = 4
+PREFS_VERSION = 5
 DAILY_VELOCITY_WINDOWS = [24.0, 48.0, 168.0]
 DAILY_VELOCITY_WEIGHTS = [0.5, 0.3, 0.2]
 DAILY_VELOCITY_TOLERANCE = 0.25
 MIN_DB_RETENTION_DAYS = 10
+
+
+def _replace_feeds(feeds: list) -> list:
+    """Swap feeds listed in REPLACED_IN_V5 for their replacement (keeping on/off), or drop them."""
+    have = {str((f.get("url") if isinstance(f, dict) else getattr(f, "url", "")) or "").lower() for f in feeds}
+    out = []
+    for f in feeds:
+        url = str((f.get("url") if isinstance(f, dict) else getattr(f, "url", "")) or "")
+        if url not in REPLACED_IN_V5:
+            out.append(f)
+            continue
+        new = REPLACED_IN_V5[url]
+        if new is not None and new.url.lower() not in have:
+            enabled = f.get("enabled", True) if isinstance(f, dict) else getattr(f, "enabled", True)
+            out.append(new.model_copy(update={"enabled": bool(enabled)}))
+    return out
 
 
 class DailyPrefs(BaseModel):
@@ -101,7 +125,9 @@ class DailyPrefs(BaseModel):
           budget instead of 150, and the technology/AI/science feeds added in version 2;
         * version 2 -> 3: more publishers in every section, YouTube channels, the YouTube and TikTok
           channels switched on, and a 260-article budget instead of 200;
-        * version 3 -> 4: more publishers, and the Mastodon and Bluesky channels switched on.
+        * version 3 -> 4: more publishers, and the Mastodon and Bluesky channels switched on;
+        * version 4 -> 5: TikTok off (it blocks automated readers), and three feeds that failed in real
+          use fixed or removed (``REPLACED_IN_V5``).
         """
         if not isinstance(data, dict):
             return data
@@ -133,6 +159,11 @@ class DailyPrefs(BaseModel):
             if isinstance(data.get("enabled_sources"), list):
                 data["enabled_sources"] = list(data["enabled_sources"]) + [
                     x for x in added_sources if x not in data["enabled_sources"]]
+        if version < 5:
+            if isinstance(data.get("enabled_sources"), list):
+                data["enabled_sources"] = [x for x in data["enabled_sources"] if x != "tiktok"]
+            if isinstance(data.get("feeds"), list):
+                data["feeds"] = _replace_feeds(data["feeds"])
         data["prefs_version"] = PREFS_VERSION
         return data
 

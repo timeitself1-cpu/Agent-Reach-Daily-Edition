@@ -26,7 +26,7 @@ from typing import Any
 
 from pydantic import BaseModel, Field, field_validator
 
-from agent_reach.daily.edition import SENTENCE_SPLIT_RX, Story
+from agent_reach.daily.edition import SENTENCE_SPLIT_RX, WEAK_SENTENCE_RX, Story
 from agent_reach.models import _coerce_ids
 from agent_reach.pipeline.cleaner import STOPWORDS, dedupe_key, sanitize_summary, significant_tokens
 from agent_reach.pipeline.clusterer import FILLER_RX, INSUFFICIENT_RX, extract_json
@@ -126,12 +126,36 @@ def _has_word(word: str, text_lower: str) -> bool:
     return re.search(r"(?<![a-z0-9])" + re.escape(word) + r"(?![a-z0-9])", text_lower) is not None
 
 
+#: 'Why it matters' that names no concrete effect ('highlights concerns', 'would be significantly impacted').
+VAGUE_EFFECT_RX = re.compile(
+    r"\b(?:highlights|underscores|raises|raising|sparks|fuels) (?:concerns?|questions|fears|debate|the issue)\b"
+    r"|\bsignificantly (?:impacted|affected|impact|affect)\b|\b(?:has|have|could have) implications\b"
+    r"|\bconcerns? about\b|\bgrowing (?:concern|problem|issue|trend)\b|\bis (?:proliferating|on the rise)\b"
+    r"|\b(?:impacts?|affects?) the (?:industry|market|sector|landscape|world)\b",
+    re.IGNORECASE,
+)
+#: Who or what is affected: an ordinary group noun counts as concrete ('residents', 'patients').
+AFFECTED_RX = re.compile(r"\b(?:" + "|".join(sorted(COMMON_OPENERS)) + r")\b", re.IGNORECASE)
+
+
+def concrete_effect(sentence: str) -> bool:
+    """A 'why it matters' sentence must name who or what is affected (a group, a name or a number)
+    and must not be a vague significance claim."""
+    if VAGUE_EFFECT_RX.search(sentence) or WEAK_SENTENCE_RX.search(sentence):
+        return False
+    names = [m.group(0) for m in CAP_WORD_RX.finditer(sentence)][1:]  # the first word opens the sentence
+    return bool(AFFECTED_RX.search(sentence) or NUMBER_RX.search(sentence)
+                or any(n.lower() not in STARTERS and n.lower() not in STOPWORDS for n in names))
+
+
 def grounded(sentence: str, evidence: str) -> bool:
     """Deterministic gate: every name, number and quantity must come from the evidence.
 
     Prefer omission over hallucination: anything unverifiable rejects the whole sentence.
     """
     if not sentence or INSUFFICIENT_RX.search(sentence) or FILLER_RX.search(sentence) or GENERIC_RX.search(sentence):
+        return False
+    if WEAK_SENTENCE_RX.search(sentence):
         return False
     if re.search(r"https?://|www\.|[@#]\w", sentence, re.IGNORECASE):
         return False
@@ -183,7 +207,8 @@ def apply_brief(story: Story, details: str, why: str) -> tuple[int, int]:
     why_added = 0
     why = sanitize_summary(why or "")
     first = SENTENCE_SPLIT_RX.split(why)[0].strip() if why else ""
-    if 30 <= len(first) <= 260 and grounded(first, evidence) and _novel(first, story.sentences):
+    if (30 <= len(first) <= 260 and grounded(first, evidence) and concrete_effect(first)
+            and _novel(first, story.sentences)):
         story.why_it_matters = first
         why_added = 1
     return added, why_added

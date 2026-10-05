@@ -239,3 +239,15 @@ def test_social_and_wikipedia_channels_join_stories_without_inflating_evidence(d
     strength = ferry.evidence_strength
     # a shared copy of Wire One's own article and a Bluesky topic add no independent report
     assert sorted(strength.publishers) == ["Daily Two", "Wire One"]
+
+
+def test_refresh_records_feed_health_for_the_feed_doctor(daily_env):
+    from agent_reach.daily.feedhealth import load_feed_health
+
+    daily_env.net.down.add("arts")
+    assert _refresh(daily_env).code == R.EXIT_PUBLISHED
+    health = load_feed_health(daily_env.paths)
+    arts = next(r for r in health.feeds.values() if r.name == "Arts Four")
+    world = next(r for r in health.feeds.values() if r.name == "Wire One - World")
+    assert arts.failures_in_row == 1 and arts.failing_since_utc is not None and "503" in arts.last_error
+    assert world.failures_in_row == 0 and world.last_ok_utc is not None

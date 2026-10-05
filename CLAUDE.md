@@ -30,7 +30,7 @@ Every change must leave `pytest` green and `pyflakes` clean. `.github/workflows/
 1. **Item ledger balances.** `ingested == sum(discarded[reason]) + clustered`, in raw-item units (`CleanedTrendItem.raw_weight`). Every dropped item goes into exactly one named bucket (`models.DISCARD_STAGES`). `ClusterOutcome.assert_partition` and `PipelineAccounting` enforce this; tests assert it.
 2. **The LLM never decides grouping.** Grouping comes from embeddings + HDBSCAN (`pipeline/density.py`), or the lexical fallback. The LLM only labels groups.
 3. **Outliers are noise.** They are dropped, never forced into a mixed cluster.
-4. **Entity isolation.** A cluster must be connected by distinctive shared tokens, a literally shared entity, or entities that co-occur in another item of the run (`LinkIndex`). An LLM entity list alone is never evidence.
+4. **Entity isolation.** A cluster must be connected by distinctive shared tokens, a literally shared entity, or entities that co-occur in another item of the run (`LinkIndex`), and every member must mention one of the cluster's key names (`_key_name_gate`, names learned from the run's text). An LLM entity list or headline alone is never evidence.
 5. **No filler.** `[INSUFFICIENT_DATA]`, placeholder summaries (`FILLER_RX`) and relevance <= 3 are dropped before the report.
 6. **Ingesters never raise.** `BaseIngester.run()` returns `([], SourceStat(ok=False, ...))` on any failure. Reddit and TikTok use a 5 s timeout, 403/429 backoff retries and at least 2 s pacing.
 7. **Output contract.** `PipelineReport` (`schema_version`) is consumed by future modules. Changing or removing fields requires bumping `schema_version`; adding optional fields does not.
@@ -55,7 +55,7 @@ Every change must leave `pytest` green and `pyflakes` clean. `.github/workflows/
 
 ## Known open items
 
-- Similarity thresholds (`density_member_min_cosine=0.55`, `hdbscan_selection="leaf"`) are defaults for `nomic-embed-text`. They have not been calibrated on real output yet. Use the `stage 3a density` log line from a cloud-runner artifact to tune them.
+- Similarity thresholds (`density_member_min_cosine=0.62`, `hdbscan_selection="leaf"`) are defaults for `nomic-embed-text`. 0.55 let unrelated reports into stories in a real edition (October 5, 2026); 0.62 plus the key-name gate (`clusterer._key_name_gate`) is the current setting. Use the `stage 3a density` log line from a real run to tune further.
 - Google News links are `news.google.com` redirect pages with no article text, so those items get no context.
 - Reddit is usually blocked from data-centre IPs (CI). The robust fix is Reddit's OAuth API, with credentials as GitHub secrets.
 

@@ -56,6 +56,18 @@ META_SENTENCE_RX = re.compile(
     re.IGNORECASE,
 )
 SENTENCE_SPLIT_RX = re.compile(r"(?<=[.!?])\s+(?=[A-Z0-9\"'(])")
+#: Sentences that say nothing about what happened (seen in real editions): dropped from summaries.
+WEAK_SENTENCE_RX = re.compile(
+    r"\b(?:drawing|draws|drew|sparking|sparks|sparked|attracting|attracts|garnering|gaining|generating)\s+"
+    r"(?:significant\s+|widespread\s+|much\s+|a lot of\s+|considerable\s+)?(?:attention|interest|buzz|discussion)\b"
+    r"|^(?:this|these|the (?:news|move|update|development|story|incident|announcement|event|report))\s+"
+    r"(?:showcases|highlights|underscores|demonstrates|illustrates|reflects|signals|marks|shows|is notable|has sparked)\b"
+    r"|\b(?:demonstrates|shows|reflects|underscores) (?:the|its|their) (?:company's |firm's )?(?:commitment|dedication)\b"
+    r"|\bis notable because\b|\bin various (?:scientific )?(?:journals|outlets|publications|media)\b"
+    r"|\bdue to the (?:controversy|tragedy|high-profile nature|unexpected nature|lighthearted|humorous)\b"
+    r"|\bthis (?:trend|development) is\b|\b(?:is|are) a (?:growing|major|serious) concern\b",
+    re.IGNORECASE,
+)
 
 
 def source_name(source: str) -> str:
@@ -243,9 +255,23 @@ def story_labels(cluster: MacroCluster) -> list[str]:
     return [label] if label else []
 
 
+def repeats(sentence: str, earlier: list[str], share: float = 0.6) -> bool:
+    """True when most of a sentence's meaningful words were already said."""
+    from agent_reach.pipeline.cleaner import dedupe_key, significant_tokens
+
+    toks = significant_tokens(dedupe_key(sentence))
+    if not toks:
+        return True
+    return any(len(toks & significant_tokens(dedupe_key(e))) >= share * len(toks) for e in earlier)
+
+
 def body_sentences(summary: str) -> list[str]:
-    parts = [s.strip() for s in SENTENCE_SPLIT_RX.split(summary or "") if s.strip()]
-    return [s for s in parts if not META_SENTENCE_RX.match(s)][:2]
+    """Up to two summary sentences, without meta lines, empty filler or repeats of an earlier sentence."""
+    out: list[str] = []
+    for s in (p.strip() for p in SENTENCE_SPLIT_RX.split(summary or "")):
+        if s and not META_SENTENCE_RX.match(s) and not WEAK_SENTENCE_RX.search(s) and not repeats(s, out):
+            out.append(s)
+    return out[:2]
 
 
 def _host(url: str | None) -> str | None:
@@ -367,6 +393,33 @@ def same_topic(a: Story, b: Story) -> bool:
     return len(shared) >= 2 and len(shared) / max(1, min(len(ta), len(tb))) >= 0.6
 
 
+#: First-person columns ('How I made a paid Mac app ...'): kept, but below the news and out of Top Stories.
+FIRST_PERSON_RX = re.compile(
+    r"^(?:how|why|what|when) i\b|^i(?:'m|'ve|'d| am| was| have| tried| made| built| used| tested| spent| switched|"
+    r" quit| asked| bought| love| hate)\b|^my\b|\bhere'?s (?:how|why) i\b",
+    re.IGNORECASE,
+)
+#: A story told only through video clips (highlights, reactions, recaps) is not a report.
+CLIP_TITLE_RX = re.compile(r"\b(?:highlights|full game|full match|full episode|reaction|recap|live ?stream)\b",
+                           re.IGNORECASE)
+#: A category may place this many stories beyond ``max_per_category`` in Top Stories when they are strong.
+STRONG_EXTRA_PER_CATEGORY = 2
+
+
+def is_secondary(story: Story) -> bool:
+    """A first-person column, or a story whose every report is a video clip: below the news, never on top."""
+    titles = [e.title for e in story.evidence] or [story.headline]
+    if FIRST_PERSON_RX.search(story.headline) or sum(bool(FIRST_PERSON_RX.search(t)) for t in titles) * 2 > len(titles):
+        return True
+    return all(e.source == "youtube" and CLIP_TITLE_RX.search(e.title) for e in story.evidence)
+
+
+def is_strong(story: Story) -> bool:
+    """Important and corroborated: may go beyond the per-category cap of Top Stories."""
+    corroborated = story.evidence_strength is None or story.evidence_strength.level != "limited"
+    return story.relevance_score >= 8 and corroborated
+
+
 @dataclass
 class Selection:
     stories: list[Story]
@@ -377,6 +430,7 @@ class Selection:
     dropped_stale: int = 0
     dropped_weak: int = 0
     dropped_duplicate: int = 0
+    secondary: int = 0  # first-person columns and clip-only stories moved below the news
     notes: list[str] = field(default_factory=list)
 
 
@@ -387,8 +441,11 @@ def select_stories(stories: list[Story], prefs: DailyPrefs, *, now: datetime) ->
        weak single uncorroborated trend signals, and repeats of a story already chosen.
     2. Each category keeps its top ``max_stories`` (10) stories in rank order.
     3. Top Stories are the ``max_stories`` best of those, with at most ``max_per_category`` from one
-       category and at most ``max_tech_only_share`` tech-only stories, so the top of the edition
-       stays broad. If the caps leave slots empty, the next best stories fill them.
+       category (a strong story - relevance 8+ and corroborated - may exceed it by
+       ``STRONG_EXTRA_PER_CATEGORY``) and at most ``max_tech_only_share`` tech-only stories, so the
+       top of the edition stays broad. If the caps leave slots empty, the next best stories fill them.
+    4. First-person columns and clip-only stories stay in their section, after the news, and never
+       enter Top Stories.
     """
     sel = Selection(stories=[])
     candidates: list[Story] = []
@@ -401,6 +458,9 @@ def select_stories(stories: list[Story], prefs: DailyPrefs, *, now: datetime) ->
             sel.dropped_duplicate += 1
         else:
             candidates.append(s)
+    secondary = {id(s) for s in candidates if is_secondary(s)}
+    sel.secondary = len(secondary)
+    candidates = [s for s in candidates if id(s) not in secondary] + [s for s in candidates if id(s) in secondary]
 
     per_section = prefs.max_stories
     per_cat: Counter[str] = Counter()
@@ -419,7 +479,10 @@ def select_stories(stories: list[Story], prefs: DailyPrefs, *, now: datetime) ->
     for s in chosen:
         if len(top) >= per_section:
             break
-        if top_cat[s.category.value] < prefs.max_per_category and not (s.tech_only and tech >= tech_cap):
+        if id(s) in secondary:
+            continue
+        room = prefs.max_per_category + (STRONG_EXTRA_PER_CATEGORY if is_strong(s) else 0)
+        if top_cat[s.category.value] < room and not (s.tech_only and tech >= tech_cap):
             top.append(s)
             top_cat[s.category.value] += 1
             tech += s.tech_only
@@ -427,7 +490,7 @@ def select_stories(stories: list[Story], prefs: DailyPrefs, *, now: datetime) ->
     for s in chosen:  # caps left slots empty: the next best real stories fill them
         if len(top) >= per_section:
             break
-        if id(s) not in in_top:
+        if id(s) not in in_top and id(s) not in secondary:
             top.append(s)
             in_top.add(id(s))
             sel.filled_from_held_back += 1
@@ -645,6 +708,9 @@ def assemble_edition(
                      f"than {prefs.max_story_age_hours:g} hours before this refresh.")
     if selection.dropped_duplicate:
         notes.append(f"{selection.dropped_duplicate} repeat(s) of stories already in this edition were left out.")
+    if selection.secondary:
+        notes.append(f"{selection.secondary} first-person column(s) or video-clip-only item(s) are listed after "
+                     "the news in their section and kept out of Top Stories.")
     if selection.dropped_weak:
         notes.append(f"{selection.dropped_weak} weak signal(s) (a single trend or social post with no article) "
                      "were left out.")

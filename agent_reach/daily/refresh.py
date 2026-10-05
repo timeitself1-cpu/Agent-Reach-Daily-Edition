@@ -260,6 +260,9 @@ async def _attempt(paths: DataPaths, prefs: DailyPrefs, store: EditionStore, *, 
                        f"The news run was invalid and was not published ({type(exc).__name__}: {str(exc)[:200]}).",
                        tb=traceback.format_exc())
 
+    from agent_reach.daily.feedhealth import record_run
+
+    record_run(paths, report.source_stats, now_fn())  # feed doctor: which feeds keep failing
     progress("edition", "Assembling the daily edition")
     db = TrendDatabase(settings.db_path)
     try:

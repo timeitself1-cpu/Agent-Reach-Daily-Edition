@@ -134,8 +134,8 @@ ADDED_IN_V2: list[FeedSpec] = [
     _f("NPR - Technology", "https://feeds.npr.org/1019/rss.xml", "Tech"),
     _f("Lobsters", "https://lobste.rs/rss", "Tech"),
     _f("MIT Technology Review", "https://www.technologyreview.com/feed/", "Science & AI"),
-    _f("VentureBeat - AI", "https://venturebeat.com/category/ai/feed/", "Science & AI"),
-    _f("MIT News - Artificial Intelligence", "https://news.mit.edu/rss/topic/artificial-intelligence2", "Science & AI"),
+    _f("MIT News - Artificial Intelligence", "https://news.mit.edu/topic/mitartificial-intelligence2-rss.xml",
+       "Science & AI"),
     _f("The Guardian - Science", "https://www.theguardian.com/science/rss", "Science & AI"),
     _f("NPR - Science", "https://feeds.npr.org/1007/rss.xml", "Science & AI"),
 ]
@@ -165,7 +165,7 @@ ADDED_IN_V3: list[FeedSpec] = [
     _f("OpenAI - News", "https://openai.com/news/rss.xml", "Science & AI"),
     _f("Hugging Face - Blog", "https://huggingface.co/blog/feed.xml", "Science & AI"),
     _f("New Scientist", "https://www.newscientist.com/feed/home/", "Science & AI"),
-    _f("Space.com", "https://www.space.com/feeds/all", "Science & AI"),
+    _f("SpaceNews", "https://spacenews.com/feed/", "Science & AI"),
     _f("Quanta Magazine", "https://www.quantamagazine.org/feed/", "Science & AI"),
     _f("Nature", "https://www.nature.com/nature.rss", "Science & AI"),
     # sports
@@ -238,6 +238,17 @@ ADDED_IN_V4: list[FeedSpec] = [
     _f("Boing Boing", "https://boingboing.net/feed", "Internet Culture"),
 ]
 DEFAULT_FEEDS = DEFAULT_FEEDS + ADDED_IN_V2 + ADDED_IN_V3 + ADDED_IN_V4
+
+#: Settings version 5: feeds that failed in real use, mapped to their replacement (None = removed).
+#: VentureBeat answers automated readers with HTTP 429; MIT News moved its topic feeds; Space.com's
+#: feed came back empty.
+REPLACED_IN_V5: dict[str, FeedSpec | None] = {
+    "https://venturebeat.com/category/ai/feed/": None,
+    "https://news.mit.edu/rss/topic/artificial-intelligence2": _f(
+        "MIT News - Artificial Intelligence", "https://news.mit.edu/topic/mitartificial-intelligence2-rss.xml",
+        "Science & AI"),
+    "https://www.space.com/feeds/all": _f("SpaceNews", "https://spacenews.com/feed/", "Science & AI"),
+}
 
 #: The six feeds shipped before per-feed settings existed (used to migrate untouched settings).
 LEGACY_DEFAULT_ENTRIES = [

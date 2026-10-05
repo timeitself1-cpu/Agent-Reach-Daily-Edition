@@ -55,7 +55,9 @@ FEED_CONTEXT_SOURCES = frozenset({SourceName.ARXIV, SourceName.PRODUCTHUNT, Sour
 BOILERPLATE_RX = re.compile(
     r"(cookie|subscribe|sign up|sign in|log in|newsletter|javascript|enable js|accept all|privacy policy|"
     r"all rights reserved|advertisement|skip to (main )?content|you have been blocked|access denied|"
-    r"are you a robot|captcha|checking your browser)",
+    r"are you a robot|captcha|checking your browser|thank you for visiting|browser version|limited support for css|"
+    r"compatibility mode|bookmark your favou?rite|membership today|your daily source|read the rest|appeared first on|"
+    r"check out our other channels|never miss a moment|follow us on|download the app)",
     re.IGNORECASE,
 )
 MIN_PARAGRAPH_CHARS = 60

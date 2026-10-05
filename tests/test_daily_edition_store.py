@@ -121,7 +121,7 @@ def test_sections_keep_top_n_per_category_and_a_balanced_top_stories():
 
 def test_top_stories_fill_from_the_next_best_when_caps_leave_gaps():
     prefs = DailyPrefs(max_stories=4, max_per_category=1)
-    news = [make_story(headline=h, category="News", relevance=8, now=NOW)
+    news = [make_story(headline=h, category="News", relevance=7, now=NOW)
             for h in ("Port Calder Earthquake Damages Roads", "Lumen Summit Agrees Methane Pledge",
                       "Norvale Ferry Strike Halts Service")]
     sel = E.select_stories(news, prefs, now=NOW)

@@ -25,7 +25,8 @@ _HASHTAGS_TAIL_RX = re.compile(r"(?:\s+#[\w-]+)+\s*$")
 _BOILERPLATE_LINE_RX = re.compile(
     r"^\W*(?:subscribe|follow|watch (?:more|the full|live)|sign up|download|get (?:the|our)|for more|read more|"
     r"listen|join|support|visit|click|shop|buy|sponsor|thanks to|chapters?|timestamps?|credits?|music:|"
-    r"#|http|www\.)",
+    r"check out|never miss|stay up to date|turn on notifications|#|http|www\.)"
+    r"|\bis your (?:daily |trusted )?source\b|\b24/7\b",
     re.IGNORECASE,
 )
 
@@ -74,9 +75,9 @@ def video_description(text: str | None, limit: int = 400) -> str | None:
     if not text:
         return None
     kept: list[str] = []
-    for line in text.splitlines():
-        line = " ".join(line.split())
-        if len(line) < 25 or _BOILERPLATE_LINE_RX.match(line) or "http" in line or "www." in line:
+    sentences = [s for line in text.splitlines() for s in re.split(r"(?<=[.!?])\s+", " ".join(line.split()))]
+    for line in sentences:  # channel slogans often share a line with the useful sentence
+        if len(line) < 25 or _BOILERPLATE_LINE_RX.search(line) or "http" in line or "www." in line:
             continue
         kept.append(line)
         if sum(len(k) for k in kept) >= limit or len(kept) >= 2:

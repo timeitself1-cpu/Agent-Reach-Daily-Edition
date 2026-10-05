@@ -106,6 +106,12 @@ set the item's category hint. TikTok reads the Creative Center page (pages-route
 `__NEXT_DATA__`, app-router escaped JSON, or the rendered cards); a page without data is tried
 once more without parameters, a blocked request is not repeated beyond its retries.
 
+**Feed doctor** (`daily/feedhealth.py`): after every refresh each feed's result is recorded in
+`state/feed_health.json`. A feed that failed in every refresh for 3+ days (and 2+ refreshes) is
+flagged in a notice and in Settings > Publisher feeds ("Failing since ...", "Turn off failing
+feeds"). When every feed of a channel fails at once (offline, blocked), that refresh is not
+counted against any feed.
+
 Other channels added in settings v4: **Mastodon** trending links (`/api/v1/trends/links`, public)
 are publisher articles that many people share, so they count as the publisher's report (a shared
 copy of an article already cited is cited once). **Bluesky** trending topics
@@ -137,11 +143,19 @@ Wikipedia channel is partial, never failed.
 1. Stories whose every stated publication time is older than `max_story_age_hours` (48) are dropped.
    Undated items (trend lists, Wikipedia) are kept but never shown with an age.
 2. A single trend/social signal with no publisher article and relevance below 7 is dropped.
+   Earlier, at the clean stage: advertising dressed as news ("on sale now for just $14.97 (MSRP
+   $159)") is discarded as `promotional`, and YouTube highlight reels, full replays, live streams,
+   reactions and recaps as `video_clip`. Summary sentences that say nothing ("is drawing attention
+   due to...", "this showcases...", "published in various journals") or repeat an earlier sentence are
+   dropped; "why it matters" must also name who or what is affected and avoid vague claims
+   ("highlights concerns", "significantly impacted").
 3. Repeats are dropped: same entity set, a shared article URL, or near-identical headline words.
 4. **Sections.** Each category keeps its top `max_stories` (10) stories in rank order; the
    overflow is counted as held back. **Top Stories** are the `max_stories` best of those, with at
-   most `max_per_category` (4) from one category and `max_tech_only_share` (34%) tech-only
-   stories, so the top stays broad. If the caps leave Top Stories short, the next best stories
+   most `max_per_category` (4) from one category (a strong story - relevance 8+ and corroborated -
+   may exceed that by 2) and `max_tech_only_share` (34%) tech-only stories, so the top stays broad.
+   First-person columns ("How I made...") and stories told only through video clips stay in their
+   section, after the news, and never enter Top Stories. If the caps leave Top Stories short, the next best stories
    fill it. The edition stores the Top Stories as `top_ranks` (optional; older editions show their
    first ten stories). Sections are shown in a fixed order: News, Tech, Science & AI, Sports,
    Entertainment, Internet Culture.
@@ -235,7 +249,8 @@ See [the v2.1 contract and replay benchmark](reliability-v2.1.md) for membership
    - **3b label:** the LLM only names groups (headline, category, entities, two sentences, relevance). Groups whose signals can't explain what happened and why get `[INSUFFICIENT_DATA]`.
    - **3c event coherence:** groups require event evidence and compatible timestamps. Model labels never create membership edges. Ambiguous fragments remain unassigned; deterministic reassignment requires exactly one coherent home.
    - **3d merge:** combined membership must pass event coherence; entity or cluster ID equality never triggers a merge.
-   - **3e drop:** clusters flagged `[INSUFFICIENT_DATA]`, with filler summaries ("no specific information", "details are scarce"), or with relevance <= 3 are dropped, as are weak singletons.
+   - **3d' key names:** chained links can still connect different events through generic words ('accused' + 'woman' joined a spy arrest to an unrelated murder in a real edition). Every member must therefore mention one of the story's key names: proper nouns that at least 40% of its members mention. Which words are names is learned from the run's own text (written capitalised mid-sentence far more often than lower case, or only ever seen opening a headline), never from model output. Members that fail are split off into their own coherent stories (or single-report stories that the singleton rules keep or drop). Single-word links through a short title only work for trend fragments (X, Google Trends, Wikipedia, TikTok, Bluesky), not for article titles such as "Web Search API".
+   - **3e drop:** clusters flagged `[INSUFFICIENT_DATA]`, with filler summaries ("no specific information", "details are scarce"), or with relevance <= 3 are dropped, as are weak singletons. Headlines keep up to 14 words, are cut at a clause break or before a dangling word, and a topic label from the model (a short title with no verb, e.g. "Cornell University Rape Allegations") is replaced by the best real report title when that reads as a headline.
 5. **Score and persist.** Relevance and velocity are computed, then everything is saved to SQLite.
 
 With no embedding model, grouping falls back to lexical union-find under the same noise rule. With no Ollama, labels are heuristic, and summaries use the scraped lead sentence or are flagged insufficient.
@@ -272,7 +287,7 @@ For each entity: `rate = mean(% of kept observations mentioning it per comparabl
 - Trends24, GitHub Trending and TikTok are HTML scrapes. When their markup changes, the ingester reports `FAIL` in SOURCE HEALTH and the run continues.
 - TikTok Creative Center often bot-gates unauthenticated requests. Expect intermittent `FAIL` from that source.
 - Unreachable Ollama, a missing model or invalid JSON all fall back to deterministic grouping and heuristic labels. The engine and the grouping method are shown in the report header.
-- `density_member_min_cosine` (0.55) and `hdbscan_selection` (`leaf`) are tuned for `nomic-embed-text`. If you change the embedding model, re-check the `stage 3a density` log line.
+- `density_member_min_cosine` (0.62, raised from 0.55 after a real edition) and `hdbscan_selection` (`leaf`) are tuned for `nomic-embed-text`. If you change the embedding model, re-check the `stage 3a density` log line.
 
 ### Cloud runner (GitHub Actions)
 

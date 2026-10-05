@@ -1229,6 +1229,11 @@ class SettingsDialog:
         self._pending = 0
         self.feeds: list[FeedSpec] = [f.model_copy() for f in prefs.feeds]
         self.feed_results: dict[str, str] = {}
+        from agent_reach.daily.feedhealth import failing_feeds, load_feed_health
+        from agent_reach.daily.timeutil import utcnow
+
+        # feed doctor: feeds that have failed in every refresh for 3+ days
+        self.failing = {r.url.lower(): r for r in failing_feeds(load_feed_health(window.paths), utcnow())}
         nb = ttk.Notebook(top)
         nb.pack(fill="both", expand=True, padx=10, pady=10)
         self._sources_tab(nb)
@@ -1341,6 +1346,9 @@ class SettingsDialog:
         ttk.Button(tests, text="Test selected", command=self._test_selected).pack(side="left", padx=(0, 4))
         ttk.Button(tests, text="Test all feeds", command=self._test_all).pack(side="left", padx=(0, 4))
         ttk.Button(tests, text="Restore defaults", command=self._restore_feeds).pack(side="right")
+        self.off_failing_btn = ttk.Button(tests, text="Turn off failing feeds", command=self.turn_off_failing)
+        if self.failing:
+            self.off_failing_btn.pack(side="right", padx=(0, 4))
         ttk.Label(frm, text="Each feed (an RSS feed or a YouTube channel) has its own allowance and its own health "
                             "line in Details. A feed that stops working never blocks the edition; it shows as failed. "
                             "YouTube channels are read when 'YouTube' is on in Sources. Testing fetches the feed now "
@@ -1352,8 +1360,13 @@ class SettingsDialog:
         tree = self.feed_tree
         tree.delete(*tree.get_children())
         for i, f in enumerate(self.feeds):
+            note = self.feed_results.get(f.url, "")
+            bad = self.failing.get(f.url.lower())
+            if not note and bad is not None and bad.failing_since_utc is not None:
+                note = (f"Failing since {format_short_date(bad.failing_since_utc.date())} "
+                        f"({bad.failures_in_row} refreshes): {friendly_error(bad.last_error) or 'no articles'}")
             tree.insert("", "end", iid=str(i), text=f.name,
-                        values=("yes" if f.enabled else "no", f.kind, f.category, self.feed_results.get(f.url, "")))
+                        values=("yes" if f.enabled else "no", f.kind, f.category, note))
         if select:
             ids = [str(i) for i, f in enumerate(self.feeds) if f.url in select]
             tree.selection_set(ids)
@@ -1400,6 +1413,13 @@ class SettingsDialog:
         if sel and messagebox.askyesno(APP_NAME, f"Remove {len(sel)} feed(s) from the list?", parent=self.top):
             self.feeds = [f for f in self.feeds if f not in sel]
             self._fill_feeds()
+
+    def turn_off_failing(self) -> None:
+        """Turn off every feed the feed doctor flags (they stay in the list and can be turned on again)."""
+        hit = [f for f in self.feeds if f.enabled and f.url.lower() in self.failing]
+        for f in hit:
+            f.enabled = False
+        self._fill_feeds(select=[f.url for f in hit])
 
     def _restore_feeds(self) -> None:
         if messagebox.askyesno(APP_NAME, "Replace the feed list with the default publishers? Feeds you added will "

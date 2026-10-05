@@ -49,6 +49,7 @@ from agent_reach.pipeline.cleaner import (
     dedupe_key,
     display_sources,
     is_generic_headline,
+    is_label_headline,
     normalize_text,
     sanitize_headline,
     sanitize_summary,
@@ -60,7 +61,7 @@ log = logging.getLogger(__name__)
 #: llama3.1:8b starts dropping commas / truncating JSON above ~25 items per call.
 MAX_BATCH_SIZE = 25
 MIN_BATCH_SIZE = 5
-HEADLINE_MAX_WORDS = 10
+HEADLINE_MAX_WORDS = 14
 
 CATEGORY_ALIASES: dict[str, CategoryEnum] = {
     "sports": CategoryEnum.SPORTS,
@@ -112,8 +113,8 @@ CATEGORY_ALIASES: dict[str, CategoryEnum] = {
     "machine learning": CategoryEnum.SCIENCE_AI,
 }
 
-_WRITING_RULES = """HEADLINE rules: an authoritative, specific Title Case title of at most 10 words that names the concrete entity or event (e.g. "Packers Edge Falcons on Thursday Night Football", "OpenAI Releases GPT-6 With Native Agents"). Never write generic umbrella titles such as "Entertainment: Music and Film", "Tech: Tools and Innovations" or "Global Events and Diplomacy". Do not prefix the headline with the category name.
-SUMMARY rules: exactly TWO complete, grammatically correct sentences in active voice. Sentence 1 states what happened and who did it. Sentence 2 explains why it is drawing attention, using the provided context. Use ONLY facts present in the titles and context; never invent numbers, dates, scores or quotes. Never include URLs, @handles, hashtags, emoji, markdown or JSON fragments. Never write filler such as "this has significant implications", "worth monitoring", "no specific information is available" or "details are scarce".
+_WRITING_RULES = """HEADLINE rules: a news headline of at most 14 words with a subject and a verb that says what happened (e.g. "Packers Edge Falcons on Thursday Night Football", "OpenAI Releases GPT-6 With Native Agents", "FBI Arrests Woman Accused of Spying on Taiwan Leader's Family"). Never a topic label such as "Cornell University Rape Allegations" or "Big Tech's Military-Industrial Complex", and never generic umbrella titles such as "Entertainment: Music and Film". Do not prefix the headline with the category name.
+SUMMARY rules: exactly TWO complete, grammatically correct sentences in active voice. Sentence 1 states what happened and who did it. Sentence 2 adds the most important concrete detail from the context: a number, who is affected, or what happens next. Use ONLY facts present in the titles and context; never invent numbers, dates, scores or quotes. Never include URLs, @handles, hashtags, emoji, markdown or JSON fragments. Never write filler such as "this is drawing attention", "this showcases", "this highlights", "this has significant implications", "worth monitoring", "no specific information is available" or "details are scarce", and never repeat sentence 1.
 CATEGORY rules: exactly one of Sports, Entertainment, Tech, News, Internet Culture, Science & AI. Tech = software, hardware, developer tools, startups, tech companies, cybersecurity. Science & AI = AI models and research, scientific discoveries, space, research papers. Never label sports, celebrities, politics, pets or memes as Tech.
 PRIMARY_ENTITIES: 1-5 proper nouns (people, teams, organizations, products) that appear in the group's own signals.
 RELEVANCE_SCORE: integer 1-10 for significance and breadth of interest (10 = major global story, 1 = trivial)."""
@@ -312,6 +313,14 @@ EVENT_FAMILIES = (
     {"breach", "vulnerability", "exploit", "hacked"},
 )
 EVENT_WORDS = frozenset().union(*EVENT_FAMILIES)
+#: Trend lists whose titles are fragments ('Packers', 'Bijan'): only these may link to a full
+#: headline through a single distinctive word. A short article title ('Web Search API') may not.
+FRAGMENT_SOURCES = frozenset({SourceName.X_TRENDS24, SourceName.GOOGLE_TRENDS, SourceName.WIKIPEDIA,
+                              SourceName.TIKTOK, SourceName.BLUESKY})
+#: A story's key names are the names that at least this share of its members mention.
+KEY_NAME_SHARE = 0.4
+_WORD_RX = re.compile(r"[A-Za-z][A-Za-z0-9'&]*")
+_SENTENCE_OPENERS = frozenset(".!?:|\"'(\u2018\u201c")
 
 
 class LinkIndex:
@@ -334,6 +343,73 @@ class LinkIndex:
         self.rare_cap = max(4, int(0.06 * n))
         self._rx_cache: dict[str, re.Pattern[str] | None] = {}
         self._co_cache: dict[tuple[str, str], bool] = {}
+        self.name_words = self._name_words(pool.values())
+        self._names: dict[int, frozenset[str]] = {}
+
+    # ............................................................ names
+    @staticmethod
+    def _name_text(it: CleanedTrendItem) -> str:
+        return f"{it.normalized_title}. {(it.context or '')[:300]}"
+
+    @classmethod
+    def _name_words(cls, items) -> frozenset[str]:
+        """Words written capitalised mid-sentence far more often than lower-case across the run.
+
+        'Taiwan', 'FBI' and 'Nobel' qualify; 'accused' or 'woman' (capitalised only in Title Case
+        headlines) do not. Decided from the run's own text, never from model output.
+        """
+        cap: Counter[str] = Counter()
+        low: Counter[str] = Counter()
+        opening: Counter[str] = Counter()
+        for it in items:
+            text = cls._name_text(it)
+            for m in _WORD_RX.finditer(text):
+                w = m.group(0).strip("'")
+                if len(w) < 3:
+                    continue
+                before = text[max(0, m.start() - 4): m.start()].rstrip()
+                if not before or before[-1] in _SENTENCE_OPENERS:
+                    if w[0].isupper():
+                        opening[w.lower()] += 1  # weak evidence: a sentence starts with it
+                    continue
+                (cap if w[0].isupper() else low)[w.lower()] += 1
+        names = {w for w, n in cap.items() if n > 2 * low[w]}
+        # a word seen only at the start of headlines ('Germany at risk...') is a name unless the run
+        # also writes it in lower case somewhere
+        names |= {w for w in opening if low[w] == 0 and w not in cap}
+        return frozenset(w for w in names if w not in STOPWORDS)
+
+    def names(self, item_id: int) -> frozenset[str]:
+        if item_id not in self._names:
+            it = self.items[item_id]
+            words = {m.group(0).strip("'-").lower() for m in _WORD_RX.finditer(self._name_text(it))}
+            self._names[item_id] = frozenset(w for w in words if w in self.name_words)
+        return self._names[item_id]
+
+    @staticmethod
+    def same_name(a: str, b: str) -> bool:
+        """'taiwan' ~ 'taiwanese', 'brazil' ~ 'brazilian': equal, or one a 4+ letter prefix of the other."""
+        if a == b:
+            return True
+        short, long_ = sorted((a, b), key=len)
+        return len(short) >= 4 and long_.startswith(short)
+
+    def key_names(self, ids: list[int]) -> list[str]:
+        """Names mentioned by at least KEY_NAME_SHARE of the members (and by two or more)."""
+        need = max(2, -(-int(KEY_NAME_SHARE * 100) * len(ids) // 100))
+        counts: Counter[str] = Counter()
+        for i in ids:
+            for n in self.names(i):
+                counts[n] += 1
+        keys = []
+        for name in counts:
+            support = sum(1 for i in ids if any(self.same_name(name, m) for m in self.names(i)))
+            if support >= need:
+                keys.append(name)
+        return sorted(keys)
+
+    def mentions_key(self, item_id: int, keys: list[str]) -> bool:
+        return any(self.same_name(k, n) for k in keys for n in self.names(item_id))
 
     def _entity_rx(self, entity: str) -> re.Pattern[str] | None:
         key = dedupe_key(entity)
@@ -368,8 +444,10 @@ class LinkIndex:
         jacc = len(shared) / len(ta | tb)
         if len(shared) >= 2 and (jacc >= 0.25 or len(rare) >= 2):
             return True
-        # short fragments ('Packers', 'Bijan') link to a fuller title via one distinctive name
-        if rare and min(len(ta), len(tb)) <= 3 and any(len(t) >= 5 for t in rare):
+        # short trend fragments ('Packers', 'Bijan') link to a fuller title via one distinctive name
+        short = a if len(ta) <= len(tb) else b
+        if (rare and min(len(ta), len(tb)) <= 3 and any(len(t) >= 5 for t in rare)
+                and self.items[short].source in FRAGMENT_SOURCES):
             return True
         return False
 
@@ -626,6 +704,7 @@ class SemanticClusterer:
         drafts = self._deterministic_merge(drafts, index)
         drafts, final_orphans = self._enforce_coherence(drafts, index)
         discards["unsupported_grouping"].extend(final_orphans)
+        drafts = self._key_name_gate(drafts, index)
         if llm_ok:
             drafts, _ = await self._relabel(drafts, [], by_id)
         else:
@@ -747,6 +826,45 @@ class SemanticClusterer:
         if split_count or orphans:
             log.info("coherence: split %d mixed clusters, %d items orphaned for re-assignment", split_count, len(orphans))
         return out, orphans
+
+    def _key_name_gate(self, drafts: list[DraftCluster], index: LinkIndex, depth: int = 0) -> list[DraftCluster]:
+        """Every member must mention one of its story's key names (deterministic, from the run's text).
+
+        Chained links ('accused' + 'woman' joining a spy arrest to an unrelated murder) can connect
+        reports of different events. A member that names none of the names most of its story shares
+        is split off; split-off members form their own coherent stories (or single-report stories,
+        which the singleton rules then keep or drop). Model labels never take part.
+        """
+        out: list[DraftCluster] = []
+        split = 0
+        for d in drafts:
+            if len(d.item_ids) < 2:
+                out.append(d)
+                continue
+            keys = index.key_names(d.item_ids)
+            if not keys:
+                out.append(d)  # nothing named in common: the lexical coherence check stands alone
+                continue
+            kept = [i for i in d.item_ids if index.mentions_key(i, keys)]
+            removed = [i for i in d.item_ids if i not in kept]
+            if not removed:
+                out.append(d)
+                continue
+            split += 1
+            parts = index.components(kept, []) if len(kept) > 1 else ([kept] if kept else [])
+            core = max(parts, key=len) if parts else []
+            for part in parts:
+                same = part is core
+                out.append(DraftCluster(item_ids=list(part), headline=d.headline if same else "",
+                                        category_raw=d.category_raw if same else "",
+                                        entities=list(d.entities) if same else [], summary=d.summary if same else "",
+                                        relevance=d.relevance, needs_label=True))
+            rest = [DraftCluster(item_ids=list(c), headline="", category_raw="", needs_label=True)
+                    for c in (index.components(removed, []) if len(removed) > 1 else [removed])]
+            out.extend(self._key_name_gate(rest, index, depth + 1) if depth < 2 else rest)
+        if split:
+            log.info("key-name gate: %d stories had members naming none of their key names; split off", split)
+        return out
 
     @staticmethod
     def _rehome_orphans(drafts: list[DraftCluster], orphans: list[int], index: LinkIndex) -> list[int]:
@@ -907,7 +1025,10 @@ class SemanticClusterer:
 
         def rank(m: CleanedTrendItem) -> float:
             n_tok = len(significant_tokens(m.normalized_title))
-            return m.heuristic_score + 0.04 * min(n_tok, 8) - (0.3 if n_tok < 2 else 0.0)
+            words = len(m.normalized_title.split())
+            return (m.heuristic_score + 0.04 * min(n_tok, 8) - (0.3 if n_tok < 2 else 0.0)
+                    - (0.2 if words > HEADLINE_MAX_WORDS else 0.0)  # would have to be cut
+                    - (0.2 if is_label_headline(m.normalized_title) else 0.0))
 
         ordered = sorted(members, key=lambda m: m.heuristic_score, reverse=True)
         title = max(ordered[:6], key=rank).normalized_title
@@ -964,8 +1085,12 @@ class SemanticClusterer:
             category = self._guard_category(coerce_category(d.category_raw, fallback), members)
 
             headline = sanitize_headline(d.headline, HEADLINE_MAX_WORDS)
-            if not headline or is_generic_headline(headline):
-                headline = sanitize_headline(self._best_member_title(members), HEADLINE_MAX_WORDS)
+            if not headline or is_generic_headline(headline) or is_label_headline(headline):
+                # a model label ('Cornell University Rape Allegations') is replaced by the best real
+                # report title, when one reads as a headline
+                fallback = sanitize_headline(self._best_member_title(members), HEADLINE_MAX_WORDS)
+                if fallback and (not headline or not is_label_headline(fallback)):
+                    headline = fallback
 
             entities = clean_entities(d.entities)
             if not entities:

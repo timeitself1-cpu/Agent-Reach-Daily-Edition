@@ -174,7 +174,7 @@ DISCARD_STAGES: dict[str, str] = {
     "reddit_low_signal_subreddit": "clean", "reddit_low_engagement": "clean", "reddit_unverified_metrics": "clean",
     "hn_low_points": "clean", "github_low_stars": "clean", "generic_hashtag": "clean",
     "too_short_or_non_ascii": "clean", "personal_anecdote": "clean", "meme_or_photo": "clean", "pet_post": "clean",
-    "box_score_or_betting": "clean", "no_signal_tokens": "clean",
+    "box_score_or_betting": "clean", "no_signal_tokens": "clean", "promotional": "clean", "video_clip": "clean",
     # stage 2 - candidate budget
     "not_selected_budget": "select",
     # stage 3 - clustering

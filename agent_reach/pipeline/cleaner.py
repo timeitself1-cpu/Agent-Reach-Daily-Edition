@@ -126,6 +126,19 @@ BOX_SCORE_RX = re.compile(
     r"|\b\d+\s*(?:pts|reb|ast|yds|rec|tds?)\b.*\b\d+\s*(?:pts|reb|ast|yds|rec|tds?)\b",
     re.IGNORECASE,
 )
+#: Advertising dressed as news ('this $15 E-Degree can help', 'on sale now for just $14.97 (MSRP $159)').
+PROMO_RX = re.compile(
+    r"\b(?:on sale|for just \$|save \$\d|\d+% off|percent off|promo code|coupon code|lifetime (?:subscription|license|access)|"
+    r"e-degree|bundle (?:for|at) \$|deals? of the day|best [\w\s-]{0,40} deals|prime day deals?|black friday deals?|"
+    r"cyber monday deals?|price drop|msrp|sponsored|affiliate commission)\b",
+    re.IGNORECASE,
+)
+#: Video clips that are not reports: highlight reels, full replays, live streams, reactions and recaps.
+VIDEO_CLIP_RX = re.compile(
+    r"\b(?:full game highlights|game highlights|extended highlights|highlights|full game|full match|full episode|"
+    r"live ?stream|watch live|press conference live|reaction|recap|podcast|shorts)\b|^live\b",
+    re.IGNORECASE,
+)
 GENERIC_HASHTAGS: frozenset[str] = frozenset(
     """fyp foryou foryoupage fy fypage fypシ viral viralvideo trending trend trend2026 explore explorepage
     tiktok tiktokviral capcut duet stitch fall autumn fallvibes autumnvibes falloutfit fallfashion fallseason
@@ -185,11 +198,17 @@ FLOOR_SHARE = 0.75
 
 
 # --------------------------------------------------------------------- text utils
+#: Letters with no ASCII decomposition are spelled out instead of being dropped.
+TRANSLITERATION = str.maketrans({
+    "æ": "ae", "Æ": "AE", "ø": "o", "Ø": "O", "ß": "ss", "ẞ": "SS", "œ": "oe", "Œ": "OE", "ð": "d", "Ð": "D",
+    "þ": "th", "Þ": "Th", "ł": "l", "Ł": "L", "đ": "d", "Đ": "D", "ı": "i", "ħ": "h", "Ħ": "H",
+})
 def normalize_text(text: str) -> str:
     """HTML-unescape, fold to ASCII, drop URLs/control chars, collapse whitespace."""
     if not text:
         return ""
     t = html.unescape(text)
+    t = t.translate(TRANSLITERATION)  # letters NFKD cannot decompose: 'hændelse' -> 'haendelse', 'Straße' -> 'Strasse'
     t = t.replace("’", "'").replace("‘", "'").replace("“", '"').replace("”", '"')
     t = t.replace("–", "-").replace("—", " - ").replace("…", "...")
     t = unicodedata.normalize("NFKD", t).encode("ascii", "ignore").decode("ascii")
@@ -374,7 +393,7 @@ def _title_word(word: str, first: bool) -> str:
     return word.replace(core, core[0].upper() + core[1:])
 
 
-def sanitize_headline(text: str, max_words: int = 10) -> str:
+def sanitize_headline(text: str, max_words: int = 14) -> str:
     """Title Case, <= max_words, no URLs/handles/generic category prefix, no trailing punctuation."""
     t = normalize_text(MD_LINK_RX.sub(r"\1", text or ""))
     t = BARE_URL_RX.sub("", t)
@@ -384,13 +403,17 @@ def sanitize_headline(text: str, max_words: int = 10) -> str:
     t = WS_RX.sub(" ", t).strip(" .,;:-|\"'")
     words = t.split()
     if len(words) > max_words:
-        words = words[:max_words]
-        # don't end on a dangling phrase ('... Football in Green'): cut at a late small word
-        for k in range(len(words) - 1, max(3, len(words) - 5), -1):
-            if words[k].lower().strip(",:;") in SMALL_WORDS:
-                words = words[:k]
-                break
-        while words and words[-1].lower().strip(",:;") in SMALL_WORDS:
+        clause = _clause_cut(words, max_words)
+        if clause:
+            words = clause
+        else:
+            words = words[:max_words]
+            # don't end on a dangling phrase ('... Football in Green'): cut at a late small word
+            for k in range(len(words) - 1, max(3, len(words) - 5), -1):
+                if words[k].lower().strip(",:;") in SMALL_WORDS:
+                    words = words[:k]
+                    break
+        while words and words[-1].lower().strip(",:;") in DANGLING_WORDS:
             words.pop()
     out = []
     after_colon = True
@@ -398,6 +421,61 @@ def sanitize_headline(text: str, max_words: int = 10) -> str:
         out.append(_title_word(w, after_colon or w[:1] in "\"'("))
         after_colon = w.endswith(":")
     return " ".join(out).strip(" .,;:-")
+
+
+#: Words a headline must not end on ('... Would Warp', '... Shows How iPads Enable' stay whole instead).
+DANGLING_WORDS = SMALL_WORDS | frozenset(
+    "how why what when where who whom whose which that would could will can may might should must is are was "
+    "were be been has have had its their his her our your my this these those amid after before over than "
+    "while about against between into onto via".split())
+
+
+def _clause_cut(words: list[str], max_words: int) -> list[str] | None:
+    """Cut a long title at its last clause break (':', ';', ' - ', ',') within the limit, if one leaves 5+ words."""
+    for k in range(min(len(words), max_words), 4, -1):
+        w = words[k - 1]
+        if w.endswith((":", ";", ",")) or (k < len(words) and words[k] in ("-", "|")):
+            return [*words[: k - 1], w.rstrip(":;,")]
+    return None
+
+
+#: Verbs and verb forms that make a title a headline rather than a topic label.
+HEADLINE_VERBS = frozenset("""
+is are was were be been has have had will can could would may might must should says say said
+wins win won beats beat defeats tops leads lead loses lose falls fall rises rise drops drop jumps climbs surges
+soars plunges slides tumbles gains hits hit cuts cut raises raise sets set signs sign sues sue dies die kills kill
+takes take makes make gets get joins join leaves leave quits resigns announces announce confirms confirm denies
+deny rejects reject approves approve bans ban blocks block opens open closes close returns return reveals reveal
+shows show finds find adds add ends end starts start begins begin strikes strike crashes crash freezes freeze
+pauses pause halts halt passes pass fails fail urges urge seeks seek names name picks pick fires fire hires hire
+buys buy sells sell acquires acquire expands expand delays delay recalls recall files file charges charge
+convicts sentences frees rescues evacuates erupts floods collapses breaks break launches launch unveils unveil
+releases release reports report warns warn plans plan faces face calls call arrests arrest accuses accused
+expects expect hopes hope wants want needs need gives give keeps keep goes go comes come moves move helps help
+claims claim proposes propose backs back slams slam criticizes praises vows vow pledges pledge agrees agree
+votes vote elects elect appoints appoint nominates nominate wins clinches advances eliminates trades extends
+retires debuts premieres tours introduces introduce updates update fixes fix patches patch bricks orders order
+detects detect discovers discover spots spot tests test tries try builds build hosts host holds hold stops stop
+even evens ties tie wraps wrap renews renew cancels cancel axes axe drops boosts boost sparks spark triggers
+""".split())
+
+
+def is_label_headline(text: str) -> bool:
+    """True for a topic label ('Cornell University Rape Allegations', 'Default Hard Budget Caps'):
+    a short title with no verb. Real headlines nearly always say what happened."""
+    words = [w.strip(".,:;!?'\"()").lower() for w in (text or "").split()]
+    words = [w for w in words if w]
+    if not words or len(words) > 6:
+        return False
+    for k, w in enumerate(words):
+        if w.endswith("'s"):
+            continue  # possessive: 'Big Tech's ...'
+        if w in HEADLINE_VERBS or w.endswith(("ed", "ing")):
+            return False
+        # a present-tense verb ('Disrupts', 'Calls') sits between subject and object: not first, not last
+        if 0 < k < len(words) - 1 and w.endswith("s") and not w.endswith(("ss", "us", "is")) and len(w) > 3:
+            return False
+    return True
 
 
 def is_generic_headline(text: str) -> bool:
@@ -535,6 +613,10 @@ class TrendCleaner:
             return "pet_post", ""
         if src not in (SourceName.ARXIV, SourceName.GITHUB) and BOX_SCORE_RX.search(title):
             return "box_score_or_betting", ""
+        if PROMO_RX.search(f"{title} {(item.description or '')[:300]}"):
+            return "promotional", ""
+        if src is SourceName.YOUTUBE and VIDEO_CLIP_RX.search(raw_title):
+            return "video_clip", ""
         if src in SOCIAL_SOURCES and len(significant_tokens(title)) == 0 and not re.search(r"[A-Z]", title):
             return "no_signal_tokens", ""
         return None, title

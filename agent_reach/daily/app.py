@@ -80,6 +80,7 @@ class Snapshot:
     details: list[str] = field(default_factory=list)  # secondary: coverage warnings and edition notes
     coverage_line: str = ""
     corrupt: list[str] = field(default_factory=list)
+    failing_feeds: list = field(default_factory=list)  # feed doctor: enabled feeds failing for days
 
 
 def default_spawner(args: list[str]) -> subprocess.Popen:
@@ -185,6 +186,12 @@ class AppController:
         for w in (prefs_warn, state_warn):
             if w:
                 banners.append(Banner("warn", w))
+        failing = enabled_failing_feeds(self.paths, prefs, now)
+        if failing:
+            names = ", ".join(r.name for r in failing[:4]) + (f" and {len(failing) - 4} more" if len(failing) > 4 else "")
+            banners.append(Banner("info", f"{len(failing)} feed{'s have' if len(failing) != 1 else ' has'} not worked "
+                                          f"for 3 days or more: {names}. Fix the address or turn "
+                                          f"{'them' if len(failing) != 1 else 'it'} off in Settings > Publisher feeds."))
         if latest_res.corrupt:
             banners.append(Banner("warn", f"{len(latest_res.corrupt)} saved edition file(s) are damaged and were "
                                           "skipped; they will be set aside at the next refresh."))
@@ -213,7 +220,8 @@ class AppController:
         return Snapshot(prefs=prefs, state=state, due=due, latest=latest, shown=shown, viewing_latest=viewing_latest,
                         activity=activity, first_run=first_run, heading=heading, date_line=date_line, updated=updated,
                         status=status, status_kind=kind, last_success=last_success, next_refresh=next_refresh,
-                        banners=banners, details=details, coverage_line=coverage_line, corrupt=latest_res.corrupt)
+                        banners=banners, details=details, coverage_line=coverage_line, corrupt=latest_res.corrupt,
+                        failing_feeds=failing)
 
     @staticmethod
     def _next_refresh_text(due: DueInfo, now: datetime, prefs: DailyPrefs) -> str:
@@ -310,6 +318,14 @@ class AppController:
             raise ValueError("the sample file is not marked as a demo edition")
         self.demo = edition
         return edition
+
+
+def enabled_failing_feeds(paths: DataPaths, prefs: DailyPrefs, now: datetime) -> list:
+    """Feeds the reader can act on (enabled in Publisher feeds) that the feed doctor flags."""
+    from agent_reach.daily.feedhealth import failing_feeds, load_feed_health
+
+    enabled = {f.url.lower() for f in prefs.feeds if f.enabled}
+    return [r for r in failing_feeds(load_feed_health(paths), now) if r.url.lower() in enabled]
 
 
 def filter_stories(stories: list[Story], category: str | None, query: str) -> list[Story]:

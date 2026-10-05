@@ -250,3 +250,28 @@ def test_headline_opens_the_main_article_and_j_k_move_between_stories(root, dail
     w.jump_story(-1)
     root.update()
     assert int(w.text.index("@0,0").split(".")[0]) == int(w.text.index("story1").split(".")[0])
+
+
+def test_feed_doctor_banner_and_turn_off_failing_feeds(root, daily_paths):
+    from datetime import datetime, timedelta, timezone
+
+    from agent_reach.daily.feedhealth import FeedHealthLog, FeedRecord, _path
+    from agent_reach.daily.fsutil import atomic_write_json
+    from agent_reach.daily.gui import SettingsDialog
+    from agent_reach.daily.prefs import load_prefs
+
+    prefs, _ = load_prefs(daily_paths)
+    url = prefs.feeds[0].url
+    since = datetime.now(timezone.utc) - timedelta(days=5)
+    log = FeedHealthLog(feeds={url: FeedRecord(name=prefs.feeds[0].name, url=url, source="news_rss",
+                                               failures_in_row=6, failing_since_utc=since, last_error="HTTP 404")})
+    atomic_write_json(_path(daily_paths), log.model_dump(mode="json"))
+    EditionStore(daily_paths).publish(make_edition())
+    w, _ = _window(root, daily_paths)
+    texts = [c["text"] for c in w.banner_frame.winfo_children()]
+    assert any("not worked for 3 days or more" in t and prefs.feeds[0].name in t for t in texts)
+    dialog = SettingsDialog(w, prefs)
+    root.update()
+    assert "Failing since" in dialog.feed_tree.item("0", "values")[3]
+    dialog.turn_off_failing()
+    assert not dialog.feeds[0].enabled and dialog.feeds[1].enabled
