@@ -15,7 +15,8 @@ Per-source strategy (no wasted requests):
     hackernews       linked article (Ask/Show HN without a URL: skipped)
     github           repository page (README lead)
     google_news      article page when the redirect resolves to the publisher
-    x_trends24, tiktok   search/tag pages carry no article text -> no context
+    mastodon         the shared article page (the link card's description as fallback)
+    x_trends24, tiktok, bluesky   search/tag/feed pages carry no article text -> no context
 
 The HTTP client is the pipeline's shared ``httpx.AsyncClient``; every fetch is bounded by a
 timeout, a byte cap and a concurrency limit, and failures simply leave ``context=None``.
@@ -49,7 +50,7 @@ try:  # optional, better main-text extraction
 except Exception:  # noqa: BLE001 - any import problem => BeautifulSoup fallback
     trafilatura = None
 
-NO_PAGE_SOURCES = frozenset({SourceName.X_TRENDS24, SourceName.TIKTOK})
+NO_PAGE_SOURCES = frozenset({SourceName.X_TRENDS24, SourceName.TIKTOK, SourceName.BLUESKY})
 FEED_CONTEXT_SOURCES = frozenset({SourceName.ARXIV, SourceName.PRODUCTHUNT, SourceName.YOUTUBE})
 BOILERPLATE_RX = re.compile(
     r"(cookie|subscribe|sign up|sign in|log in|newsletter|javascript|enable js|accept all|privacy policy|"

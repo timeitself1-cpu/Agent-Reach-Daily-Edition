@@ -258,6 +258,26 @@ class FakeNet:
                 '<?xml version="1.0"?><feed xmlns="http://www.w3.org/2005/Atom" '
                 'xmlns:yt="http://www.youtube.com/xml/schemas/2015" xmlns:media="http://search.yahoo.com/mrss/">'
                 f"<title>{name}</title>{entries}</feed>").encode())
+        if host == "mastodon.social" and path == "/api/v1/trends/links":
+            return httpx.Response(200, json=[
+                {"title": "Norvale ferry strike leaves islanders stranded", "url": "https://wire-one.test/norvale-ferry-strike",
+                 "provider_name": "Wire One", "description": "Ferry workers in Norvale began a 48-hour strike over pay.",
+                 "history": [{"day": "1", "accounts": "120", "uses": "300"}]}])
+        if host == "public.api.bsky.app":
+            return httpx.Response(200, json={"trends": [
+                {"topic": "norvale", "displayName": "Norvale ferry strike", "link": "/profile/trending.bsky.app/feed/1",
+                 "postCount": 5400, "category": "news"}]})
+        if host == "wikimedia.org":
+            return httpx.Response(200, json={"items": [{"articles": [
+                {"article": "Port_Calder", "views": 250000}, {"article": "Main_Page", "views": 9000000}]}]})
+        if host == "en.wikipedia.org" and "/feed/featured/" in path:
+            return httpx.Response(200, json={"news": [{
+                "story": 'A magnitude 6.8 <a href="./Port_Calder_earthquake">earthquake</a> strikes near Port Calder.',
+                "links": [{"title": "Port_Calder", "extract": "Port Calder is a coastal town.",
+                           "content_urls": {"desktop": {"page": "https://en.wikipedia.org/wiki/Port_Calder"}}}]}]})
+        if host == "en.wikipedia.org" and "/page/summary/" in path:
+            return httpx.Response(200, json={"description": "Town", "extract": "Port Calder is a coastal town hit by "
+                                                                               "a magnitude 6.8 earthquake."})
         if "algolia" in host:
             hits = [{"objectID": str(i), "title": t, "url": u, "points": p, "num_comments": 80,
                      "created_at_i": int(NOW - h * 3600)} for i, (t, u, h, p) in enumerate(HN)]

@@ -28,7 +28,7 @@ from urllib.parse import urlsplit
 from pydantic import BaseModel, Field
 
 #: Channels whose items are attention signals (searches, posts, page views), not reports.
-SIGNAL_SOURCES = frozenset({"google_trends", "x_trends24", "reddit", "wikipedia", "tiktok"})
+SIGNAL_SOURCES = frozenset({"google_trends", "x_trends24", "reddit", "wikipedia", "tiktok", "bluesky"})
 _SECTION_RX = re.compile(r"\s+[-–—|:]\s+.*$")
 _DEMO_RX = re.compile(r"\s*\(demo\)\s*$", re.IGNORECASE)
 

@@ -221,3 +221,21 @@ def test_youtube_channel_videos_join_the_matching_story(daily_env):
     assert origin(video.publisher, video.url) in {origin(e.publisher, e.url) for e in ferry.evidence
                                                   if e.source == "news_rss"}
     assert ferry.evidence_strength.duplicates_collapsed >= 1
+
+
+def test_social_and_wikipedia_channels_join_stories_without_inflating_evidence(daily_env):
+    prefs, _ = load_prefs(daily_env.paths)
+    save_prefs(daily_env.paths, prefs.model_copy(update={
+        "enabled_sources": [*prefs.enabled_sources, "mastodon", "bluesky", "wikipedia"]}))
+    out = _refresh(daily_env)
+    assert out.code == R.EXIT_PUBLISHED, out.message
+    health = {h.source: h for h in out.edition.source_health}
+    assert {"mastodon", "bluesky", "wikipedia"} <= set(health)
+    assert all(health[k].status == "ok" for k in ("mastodon", "bluesky", "wikipedia"))
+    assert out.edition.accounting.balanced
+    ferry = next(s for s in out.edition.stories if "Ferry" in s.headline)
+    assert "mastodon" in ferry.platforms  # the shared article joins its story...
+    assert sum(e.url == "https://wire-one.test/norvale-ferry-strike" for e in ferry.evidence) == 1  # ...cited once
+    strength = ferry.evidence_strength
+    # a shared copy of Wire One's own article and a Bluesky topic add no independent report
+    assert sorted(strength.publishers) == ["Daily Two", "Wire One"]

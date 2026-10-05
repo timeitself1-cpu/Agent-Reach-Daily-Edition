@@ -7,7 +7,7 @@ Each feed is one publisher channel (``FeedSpec``): an RSS/Atom/RDF feed, or a Yo
 selection floor and health line.
 
 The defaults cover world, US, business, science, health, technology, AI, sports, culture and
-internet news from about 60 organisations, plus 22 YouTube news, tech, science, sports and
+internet news from about 100 organisations, plus 22 YouTube news, tech, science, sports and
 entertainment channels. Feed addresses change over time: a feed that stops working only makes the
 source partial (shown per feed in Details), and Settings > Publisher feeds > Test checks any feed.
 Categories use the edition's fixed category set (business and health stories file under News).
@@ -188,7 +188,56 @@ ADDED_IN_V3: list[FeedSpec] = [
     *[_f(name, youtube_feed_url(cid), category)
       for category, cid, name in (e.split("|") for e in DEFAULT_YOUTUBE_CHANNELS)],
 ]
-DEFAULT_FEEDS = DEFAULT_FEEDS + ADDED_IN_V2 + ADDED_IN_V3
+#: Added in settings version 4: international, analysis, security, AI research, league and culture feeds.
+ADDED_IN_V4: list[FeedSpec] = [
+    # news and analysis
+    _f("Axios", "https://api.axios.com/feed/"),
+    _f("Vox", "https://www.vox.com/rss/index.xml"),
+    _f("The Atlantic", "https://www.theatlantic.com/feed/all/"),
+    _f("ProPublica", "https://www.propublica.org/feeds/propublica/main"),
+    _f("CBC News - Top Stories", "https://www.cbc.ca/webfeed/rss/rss-topstories"),
+    _f("ABC News Australia - Top Stories", "https://www.abc.net.au/news/feed/2942460/rss.xml"),
+    _f("South China Morning Post - World", "https://www.scmp.com/rss/91/feed"),
+    _f("The Japan Times", "https://www.japantimes.co.jp/feed/"),
+    _f("Times of India - Top Stories", "https://timesofindia.indiatimes.com/rssfeedstopstories.cms"),
+    _f("Euronews", "https://www.euronews.com/rss?format=mrss&level=theme&name=news"),
+    # business
+    _f("Business Insider", "https://feeds.businessinsider.com/custom/all"),
+    _f("Fortune", "https://fortune.com/feed/"),
+    _f("Yahoo Finance", "https://finance.yahoo.com/news/rssindex"),
+    # technology and security
+    _f("Techmeme", "https://www.techmeme.com/feed.xml", "Tech"),
+    _f("The Next Web", "https://thenextweb.com/feed", "Tech"),
+    _f("MacRumors", "https://feeds.macrumors.com/MacRumors-All", "Tech"),
+    _f("BleepingComputer", "https://www.bleepingcomputer.com/feed/", "Tech"),
+    _f("Krebs on Security", "https://krebsonsecurity.com/feed/", "Tech"),
+    _f("Fast Company", "https://www.fastcompany.com/latest/rss", "Tech"),
+    # science and AI
+    _f("Google DeepMind - Blog", "https://deepmind.google/blog/rss.xml", "Science & AI"),
+    _f("Simon Willison", "https://simonwillison.net/atom/everything/", "Science & AI"),
+    _f("MarkTechPost", "https://www.marktechpost.com/feed/", "Science & AI"),
+    _f("Science - News", "https://www.science.org/rss/news_current.xml", "Science & AI"),
+    _f("Phys.org", "https://phys.org/rss-feed/", "Science & AI"),
+    _f("ScienceAlert", "https://www.sciencealert.com/feed", "Science & AI"),
+    # sports
+    _f("ESPN - NFL", "https://www.espn.com/espn/rss/nfl/news", "Sports"),
+    _f("ESPN - NBA", "https://www.espn.com/espn/rss/nba/news", "Sports"),
+    _f("ESPN - MLB", "https://www.espn.com/espn/rss/mlb/news", "Sports"),
+    _f("ESPN - Soccer", "https://www.espn.com/espn/rss/soccer/news", "Sports"),
+    _f("BBC Sport - Football", "https://feeds.bbci.co.uk/sport/football/rss.xml", "Sports"),
+    _f("Sporting News", "https://www.sportingnews.com/us/rss", "Sports"),
+    # entertainment and games
+    _f("Pitchfork - News", "https://pitchfork.com/rss/news/", "Entertainment"),
+    _f("Collider", "https://collider.com/feed/", "Entertainment"),
+    _f("Screen Rant", "https://screenrant.com/feed/", "Entertainment"),
+    _f("Kotaku", "https://kotaku.com/rss", "Entertainment"),
+    _f("Eurogamer", "https://www.eurogamer.net/feed", "Entertainment"),
+    # internet culture and creators
+    _f("Tubefilter", "https://www.tubefilter.com/feed/", "Internet Culture"),
+    _f("Social Media Today", "https://www.socialmediatoday.com/feeds/news/", "Internet Culture"),
+    _f("Boing Boing", "https://boingboing.net/feed", "Internet Culture"),
+]
+DEFAULT_FEEDS = DEFAULT_FEEDS + ADDED_IN_V2 + ADDED_IN_V3 + ADDED_IN_V4
 
 #: The six feeds shipped before per-feed settings existed (used to migrate untouched settings).
 LEGACY_DEFAULT_ENTRIES = [

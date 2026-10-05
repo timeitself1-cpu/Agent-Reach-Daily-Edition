@@ -9,7 +9,7 @@ from __future__ import annotations
 
 from html import escape
 
-from agent_reach.daily.edition import DailyEdition, Story, category_sections, safe_url, top_stories
+from agent_reach.daily.edition import DailyEdition, Story, category_sections, primary_url, safe_url, top_stories
 from agent_reach.daily.strength import strength_of
 from agent_reach.daily.timeutil import edition_heading, format_central, updated_line
 
@@ -36,6 +36,8 @@ section.sec > .count { color:var(--muted); font-size:.9rem; margin:0 0 8px; }
 article { background:var(--card); border:1px solid var(--line); border-radius:14px; box-shadow:var(--shadow);
           padding:16px 20px; margin:12px 0; }
 article h3 { font-size:1.15rem; line-height:1.35; margin:2px 0 6px; }
+a.hl { color:inherit; text-decoration:none; }
+a.hl:hover, a.hl:focus-visible { color:var(--accent); text-decoration:underline; }
 article p { margin:0; color:var(--ink2); }
 .kicker { color:var(--muted); font-size:.78rem; font-weight:600; letter-spacing:.02em; }
 .cat { color:var(--accent); text-transform:uppercase; margin-right:6px; }
@@ -78,6 +80,14 @@ def _link(url: str | None, text: str) -> str:
     return f'<a href="{_e(safe)}" rel="noopener noreferrer nofollow" target="_blank">{_e(text)}</a>'
 
 
+def _headline(s: Story) -> str:
+    """The headline links to the story's main article when it has one."""
+    url = primary_url(s)
+    if not url:
+        return _e(s.headline)
+    return f'<a class="hl" href="{_e(url)}" rel="noopener noreferrer nofollow" target="_blank">{_e(s.headline)}</a>'
+
+
 def _story(s: Story, edition: DailyEdition, number: int | None = None) -> str:
     strength = strength_of(s, edition.generation_completed_utc)
     publishers = strength.publishers or sorted({ev.publisher or ev.source_name for ev in s.evidence})
@@ -100,7 +110,7 @@ def _story(s: Story, edition: DailyEdition, number: int | None = None) -> str:
         items.append(f"<li>{_e(ev.source_name)}: {_link(ev.url, ev.title)}{pub}{when}{excerpt}</li>")
     return (
         f'<article id="story-{s.rank}"><div class="kicker">{" ".join(kicker)}</div>'
-        f"<h3>{number or s.rank}. {_e(s.headline)}</h3>"
+        f"<h3>{number or s.rank}. {_headline(s)}</h3>"
         f"<p>{body}</p>{why}"
         f'<details class="evidence"><summary>Sources ({len(s.evidence)}) &middot; {_e(strength.label)}'
         f'</summary><p class="strength">{_e(strength.label)}: {_e("; ".join(strength.reasons))}.</p>'

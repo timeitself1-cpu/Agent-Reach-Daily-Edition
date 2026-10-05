@@ -44,6 +44,7 @@ from agent_reach.daily.edition import (
     category_sections,
     friendly_error,
     health_summary,
+    primary_url,
     safe_url,
     top_stories,
 )
@@ -51,7 +52,7 @@ from agent_reach.daily.paths import DataPaths
 from agent_reach.daily.feeds import FeedSpec, default_feeds
 from agent_reach.daily.prefs import DailyPrefs, SOURCE_NOTES, save_prefs
 from agent_reach.daily.strength import strength_of
-from agent_reach.daily.timeutil import format_central, format_long_date, format_short_date
+from agent_reach.daily.timeutil import format_central, format_clock, format_long_date, format_short_date
 
 log = logging.getLogger(__name__)
 
@@ -68,7 +69,7 @@ PALETTES: dict[str, dict] = {
         "bg": "#ececec", "sidebar": "#e8e8ea", "card": "#ffffff", "ink": "#1d1d1f", "ink2": "#3a3a3c",
         "muted": "#86868b", "accent": "#007aff", "link": "#0066cc", "rule": "#d8d8dc", "rank": "#aeaeb2",
         "field": "#ffffff", "button": "#f5f5f7", "button_active": "#e5e5ea", "select": "#d0d0d7",
-        "sidebar_sel": "#d4d4da", "ok": "#248a3d", "bad": "#d70015",
+        "sidebar_sel": "#d4d4da", "sidebar_hover": "#dfdfe4", "hairline": "#e6e6eb", "ok": "#248a3d", "bad": "#d70015",
         "categories": {
             "News": ("#e5f0ff", "#0060df"), "Sports": ("#e3f6e8", "#248a3d"), "Entertainment": ("#fdebf3", "#c41e6a"),
             "Tech": ("#eef0f3", "#5e5ce6"), "Science & AI": ("#fff4e0", "#b25000"),
@@ -84,7 +85,7 @@ PALETTES: dict[str, dict] = {
         "bg": "#1e1e1e", "sidebar": "#252527", "card": "#1c1c1e", "ink": "#f5f5f7", "ink2": "#d1d1d6",
         "muted": "#98989d", "accent": "#0a84ff", "link": "#4da3ff", "rule": "#38383a", "rank": "#636366",
         "field": "#2c2c2e", "button": "#2c2c2e", "button_active": "#3a3a3c", "select": "#3a3a3c",
-        "sidebar_sel": "#39393d", "ok": "#30d158", "bad": "#ff6961",
+        "sidebar_sel": "#39393d", "sidebar_hover": "#2f2f32", "hairline": "#2c2c2e", "ok": "#30d158", "bad": "#ff6961",
         "categories": {
             "News": ("#14243d", "#64a8ff"), "Sports": ("#14301d", "#4cd964"), "Entertainment": ("#3a1528", "#ff7eb6"),
             "Tech": ("#26263a", "#a5a3ff"), "Science & AI": ("#3a2a10", "#ffb340"),
@@ -201,6 +202,7 @@ class DailyWindow:
         self.f_link = f(9, underline=True)
         self.f_small_link = f(9, underline=True)
         self.f_tiny = f(4)
+        self.f_hair = f(1)
         self.f_button = f(10, weight="bold")
         self.f_brand = self.f_side_head
         self.f_chip = self.f_kicker
@@ -303,6 +305,7 @@ class DailyWindow:
         menu.add_command(label="Open logs folder", command=lambda: self._open_path(self.paths.logs_dir))
         menu.add_separator()
         menu.add_command(label="How refreshing works", command=self.show_help)
+        menu.add_command(label="Keyboard shortcuts", command=self.show_shortcuts)
         menu.add_command(label="About Agent Reach", command=self.show_about)
         menu.add_separator()
         menu.add_command(label="Quit", accelerator="Ctrl+Q", command=self._on_close)
@@ -318,10 +321,18 @@ class DailyWindow:
         self.root.bind("<Control-f>", lambda e: self.search_entry.focus_set())
         for n in range(1, 8):
             self.root.bind(f"<Control-Key-{n}>", lambda e, n=n: self._section_by_number(n))
+        for key, step in (("j", 1), ("k", -1)):
+            self.root.bind(f"<KeyPress-{key}>", lambda e, step=step: None if self._typing() else self.jump_story(step))
         self.root.bind("<Home>", lambda e: self.text.yview_moveto(0))
         self.root.bind("<End>", lambda e: self.text.yview_moveto(1))
         self.root.bind("<Prior>", lambda e: self.text.yview_scroll(-1, "pages"))
         self.root.bind("<Next>", lambda e: self.text.yview_scroll(1, "pages"))
+
+    def _typing(self) -> bool:
+        try:
+            return isinstance(self.root.focus_get(), (tk.Entry, ttk.Entry, ttk.Combobox, ttk.Spinbox))
+        except (KeyError, tk.TclError):
+            return False
 
     def _show_menu(self) -> None:
         b = self.more_btn
@@ -329,6 +340,20 @@ class DailyWindow:
             self.menu.tk_popup(b.winfo_rootx(), b.winfo_rooty() + b.winfo_height())
         finally:
             self.menu.grab_release()
+
+    def show_shortcuts(self) -> None:
+        messagebox.showinfo(APP_NAME, (
+            "Keyboard shortcuts\n\n"
+            "J / K          next / previous story\n"
+            "Ctrl+1 ... 7   Top Stories, then each category\n"
+            "Ctrl+F         search (Esc clears)\n"
+            "F5 or Ctrl+R   refresh now\n"
+            "Ctrl+D         details, sources and changes\n"
+            "Ctrl+E         export as a web page\n"
+            "Ctrl+,         settings\n"
+            "Home / End     top / bottom\n"
+            "Ctrl+Q         quit\n\n"
+            "Click a headline to open its main article; click Sources to see every report."), parent=self.root)
 
     def show_about(self) -> None:
         messagebox.showinfo(APP_NAME, f"{APP_NAME} {VERSION_LABEL}\n\nLocal daily news from public sources, summarized "
@@ -445,6 +470,12 @@ class DailyWindow:
         t.tag_configure("headline", font=self.f_title, foreground=c["ink"], lmargin1=0, lmargin2=indent,
                         tabs=(indent,), spacing1=self.px(3), spacing3=self.px(3))
         t.tag_configure("rank", font=self.f_rank, foreground=c["rank"])
+        t.tag_configure("headline_link")
+        t.tag_bind("headline_link", "<Enter>", lambda e: t.configure(cursor="hand2"))
+        t.tag_bind("headline_link", "<Leave>", lambda e: t.configure(cursor="arrow"))
+        # story divider: a spacer line, then a hairline (a tag background also fills the line's spacing)
+        t.tag_configure("gap", font=self.f_hair, spacing1=self.px(12), spacing3=0)
+        t.tag_configure("rule", font=self.f_hair, background=c["hairline"], spacing1=0, spacing3=0)
         t.tag_configure("body", font=self.f_base, foreground=c["ink2"], lmargin1=indent, lmargin2=indent,
                         spacing1=self.px(1), spacing3=self.px(2))
         t.tag_configure("why_label", font=self.f_kicker, foreground=c["accent"])
@@ -620,8 +651,12 @@ class DailyWindow:
             name.grid(row=0, column=1, sticky="w")
             count = tk.Label(row, text=str(len(stories)), bg=bg, fg=c["muted"], font=self.f_small)
             count.grid(row=0, column=2, sticky="e")
-            for w in (row, dot, name, count):
+            parts = (row, dot, name, count)
+            for w in parts:
                 w.bind("<Button-1>", lambda e, k=k: self.show_section(k))
+            if not selected:
+                row.bind("<Enter>", lambda e, ws=parts: [w.configure(bg=c["sidebar_hover"]) for w in ws])
+                row.bind("<Leave>", lambda e, ws=parts: [w.configure(bg=c["sidebar"]) for w in ws])
 
     def show_section(self, key: str) -> None:
         self.section = key
@@ -726,6 +761,8 @@ class DailyWindow:
             title, stories = sections.get(self.section, ("Top Stories", top_stories(edition)))
             d = edition.edition_date
             sub = f"{d:%A}, {format_long_date(d)}   ·   {len(stories)} {'story' if len(stories) == 1 else 'stories'}"
+            if not edition.demo:
+                sub += f"   ·   updated {format_clock(edition.generation_completed_utc)}"
         t.insert("end", title + "\n", ("h1",))
         t.insert("end", sub + "\n", ("sub",))
         if not edition.stories:
@@ -736,15 +773,43 @@ class DailyWindow:
             t.insert("end", "\n")
         now = self.ctrl.now_fn()
         show_category = self.section in (TOP, SEARCH)
+        self._story_marks = []
         for i, s in enumerate(stories, start=1):
+            if i > 1:
+                t.insert("end", "\n", ("gap",))
+                t.insert("end", "\n", ("rule",))
+            mark = f"story{i}"
+            t.mark_set(mark, "end-1c")
+            t.mark_gravity(mark, "left")
+            self._story_marks.append(mark)
             self._render_story(s, now, number=i, show_category=show_category)
         t.insert("end", "\n")
 
-    def _link_tag(self, target: str, small: bool = False) -> tuple[str, str]:
+    def _action_tag(self, target: str) -> str:
+        """A per-link tag name that runs ``target`` (URL, toggle or action) when clicked."""
         name = f"link{len(self._links)}"
         self._links[name] = target
         self.text.tag_bind(name, "<Button-1>", lambda e, n=name: self._click(n))
-        return ("small_link" if small else "link", name)
+        return name
+
+    def _link_tag(self, target: str, small: bool = False) -> tuple[str, str]:
+        return ("small_link" if small else "link", self._action_tag(target))
+
+    def jump_story(self, step: int) -> None:
+        """j / k: scroll to the next or previous story (the first press from the top goes to story 2)."""
+        marks = getattr(self, "_story_marks", [])
+        if not marks:
+            return
+        t = self.text
+        top = int(t.index("@0,0").split(".")[0])
+        lines = [int(t.index(m).split(".")[0]) for m in marks]
+        # the story being read: the last one starting at or just below the top of the view
+        current = max((i for i, ln in enumerate(lines) if ln <= top + 2), default=0)
+        if step > 0:
+            target = min(current + 1, len(marks) - 1)
+        else:
+            target = current if top > lines[current] else max(current - 1, 0)
+        t.yview(marks[target])
 
     def _click(self, name: str) -> str:
         target = self._links.get(name, "")
@@ -781,7 +846,15 @@ class DailyWindow:
         meta = [story_age(s, now), ", ".join(pubs) + (f" +{more}" if more else "")]
         t.insert("end", "  \u00b7  ".join(m for m in meta if m) + "\n", ("kicker",))
         t.insert("end", f"{number}\t", ("headline", "rank"))
-        t.insert("end", s.headline + "\n", ("headline",))
+        url = primary_url(s)
+        if url:  # the headline opens the main article (hover: accent colour)
+            name = self._action_tag(url)
+            t.insert("end", s.headline, ("headline", "headline_link", name))
+            t.tag_bind(name, "<Enter>", lambda e, n=name: t.tag_configure(n, foreground=self.c["accent"]), add="+")
+            t.tag_bind(name, "<Leave>", lambda e, n=name: t.tag_configure(n, foreground=""), add="+")
+            t.insert("end", "\n", ("headline",))
+        else:
+            t.insert("end", s.headline + "\n", ("headline",))
         t.insert("end", " ".join(s.sentences) + "\n", ("body",))
         if s.why_it_matters:
             t.insert("end", "WHY IT MATTERS   ", ("why", "why_label"))

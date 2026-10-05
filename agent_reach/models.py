@@ -55,6 +55,8 @@ class SourceName(str, Enum):
     PRODUCTHUNT = "producthunt"
     NEWS_RSS = "news_rss"
     YOUTUBE = "youtube"
+    MASTODON = "mastodon"
+    BLUESKY = "bluesky"
 
 
 class RawTrendItem(BaseModel):

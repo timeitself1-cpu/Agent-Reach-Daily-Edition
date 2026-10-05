@@ -1,4 +1,5 @@
-"""Social & viral ingesters: X (via Trends24), Reddit (JSON with RSS fallback), TikTok Creative Center."""
+"""Social & viral ingesters: X (via Trends24), Reddit (JSON with RSS fallback), TikTok Creative Center,
+Mastodon trending links and Bluesky trending topics (public APIs, no account)."""
 
 from __future__ import annotations
 
@@ -20,7 +21,7 @@ from agent_reach.ingestion.base import (
     xml_child_text,
     xml_local,
 )
-from agent_reach.models import CategoryEnum, RawTrendItem, SourceName
+from agent_reach.models import CategoryEnum, FeedStat, RawTrendItem, SourceName
 
 SUBREDDIT_CATEGORY: dict[str, CategoryEnum] = {
     "news": CategoryEnum.NEWS,
@@ -351,3 +352,131 @@ class TikTokCreativeCenterIngester(BaseIngester):
         elif isinstance(node, list):
             for v in node:
                 yield from cls._walk(v)
+
+
+# =====================================================================  Mastodon
+def _history_accounts(history: Any, days: int = 2) -> int:
+    """People who shared a link over the last ``days`` days (Mastodon history rows, newest first)."""
+    total = 0
+    for row in (history or [])[:days]:
+        try:
+            total += int((row or {}).get("accounts") or 0)
+        except (TypeError, ValueError, AttributeError):
+            continue
+    return total
+
+
+class MastodonTrendsIngester(BaseIngester):
+    """News links trending on Mastodon servers (``/api/v1/trends/links``, public, no account).
+
+    Each link is a publisher's article that many people are sharing; the score is how many accounts
+    shared it over the last two days. Every server is its own feed with its own health line.
+    """
+
+    source = SourceName.MASTODON
+    use_bot_user_agent = True
+
+    async def fetch(self) -> list[RawTrendItem]:
+        instances = self.settings.mastodon_instances
+        if not instances:
+            raise IngestionError("no mastodon_instances configured")
+        items: list[RawTrendItem] = []
+        failures: list[str] = []
+        self.feed_stats = []
+        seen: set[str] = set()
+        for host in instances:
+            url = f"https://{host}/api/v1/trends/links"
+            try:
+                data = await self.get_json(url, params={"limit": 20}, timeout=self.settings.social_timeout_s,
+                                           max_retries=1)
+            except IngestionError as exc:
+                failures.append(f"{host}: {str(exc)[:80]}")
+                self.feed_stats.append(FeedStat(name=host, url=url, ok=False, error=str(exc)[:160]))
+                continue
+            got = 0
+            for rank, card in enumerate(data if isinstance(data, list) else [], start=1):
+                link = str((card or {}).get("url") or "")
+                if not link or link in seen:
+                    continue
+                seen.add(link)
+                item = self.make_item(
+                    title=str(card.get("title") or "").strip(),
+                    raw_score=float(_history_accounts(card.get("history"))),
+                    url=link,
+                    published_at=parse_optional_datetime(card.get("published_at")),
+                    description=(str(card.get("description") or "").strip()[:500] or None),
+                    metadata={"publisher": (str(card.get("provider_name") or "").strip() or None), "rank": rank,
+                              "instance": host, "feed": url, "accounts_2d": _history_accounts(card.get("history"))},
+                )
+                if item:
+                    items.append(item)
+                    got += 1
+            self.feed_stats.append(FeedStat(name=host, url=url, ok=True, item_count=got))
+        if len(failures) == len(instances):
+            raise IngestionError("; ".join(failures)[:300])
+        if failures:
+            self.warnings.append(f"{len(failures)}/{len(instances)} servers failed ({'; '.join(failures)})")
+        items.sort(key=lambda it: it.raw_score or 0.0, reverse=True)
+        return items
+
+
+# =====================================================================  Bluesky
+BLUESKY_CATEGORY: dict[str, CategoryEnum] = {
+    "sports": CategoryEnum.SPORTS, "politics": CategoryEnum.NEWS, "news": CategoryEnum.NEWS,
+    "pop-culture": CategoryEnum.ENTERTAINMENT, "video-games": CategoryEnum.ENTERTAINMENT,
+    "entertainment": CategoryEnum.ENTERTAINMENT, "music": CategoryEnum.ENTERTAINMENT,
+    "tech": CategoryEnum.TECH, "technology": CategoryEnum.TECH, "science": CategoryEnum.SCIENCE_AI,
+}
+
+
+class BlueskyTrendsIngester(BaseIngester):
+    """Trending topics on Bluesky (public AppView API, no account).
+
+    ``app.bsky.unspecced.getTrends`` carries post counts and a category; the older
+    ``getTrendingTopics`` is the fallback. Topics are attention signals, like X trends.
+    """
+
+    source = SourceName.BLUESKY
+    use_bot_user_agent = True
+    API = "https://public.api.bsky.app/xrpc/"
+
+    async def fetch(self) -> list[RawTrendItem]:
+        errors: list[str] = []
+        for method, key in (("app.bsky.unspecced.getTrends", "trends"),
+                            ("app.bsky.unspecced.getTrendingTopics", "topics")):
+            try:
+                data = await self.get_json(self.API + method, params={"limit": 25},
+                                           timeout=self.settings.social_timeout_s, max_retries=1)
+            except IngestionError as exc:
+                errors.append(str(exc)[:140])
+                continue
+            rows = (data or {}).get(key) if isinstance(data, dict) else None
+            if rows:
+                return self._items(rows)
+            errors.append(f"{method}: no topics")
+        raise IngestionError("Bluesky trends unavailable: " + "; ".join(errors)[:260])
+
+    def _items(self, rows: list[dict[str, Any]]) -> list[RawTrendItem]:
+        n = len(rows)
+        out: list[RawTrendItem] = []
+        for rank, row in enumerate(rows, start=1):
+            if not isinstance(row, dict):
+                continue
+            name = str(row.get("displayName") or row.get("topic") or "").strip()
+            link = str(row.get("link") or "")
+            try:
+                posts = int(row.get("postCount")) if row.get("postCount") is not None else None
+            except (TypeError, ValueError):
+                posts = None
+            item = self.make_item(
+                title=name,
+                raw_score=float(posts) if posts is not None else float(n - rank + 1),
+                url=f"https://bsky.app{link}" if link.startswith("/") else (link or None),
+                category_hint=BLUESKY_CATEGORY.get(str(row.get("category") or "").lower()),
+                description=(str(row.get("description") or "").strip() or None),
+                metadata={"rank": rank, "post_count": posts, "status": row.get("status"),
+                          "category": row.get("category")},
+            )
+            if item:
+                out.append(item)
+        return out

@@ -55,6 +55,10 @@ DEFAULT_GOOGLE_NEWS_SECTIONS: tuple[str, ...] = (
     "Sports|SPORTS|Google News - Sports",
     "Entertainment|ENTERTAINMENT|Google News - Entertainment",
     "Internet Culture|tiktok OR viral OR meme|Google News - Viral & TikTok",
+    "News|site:apnews.com|AP News (via Google News)",
+    "News|site:reuters.com|Reuters (via Google News)",
+    "Science & AI|space OR NASA OR astronomy|Google News - Space",
+    "Entertainment|video games|Google News - Games",
 )
 
 
@@ -110,6 +114,10 @@ class Settings(BaseSettings):
     geo: str = "US"
     trends24_region: str = "united-states"
     wikipedia_project: str = "en.wikipedia"
+    # also read Wikipedia's curated "In the news" list (featured-content feed) with the most-read articles
+    wikipedia_in_the_news: bool = False
+    # Mastodon servers whose trending news links are read (public API, no account)
+    mastodon_instances: list[str] = Field(default_factory=lambda: ["mastodon.social"])
     reddit_subreddits: list[str] = Field(
         default_factory=lambda: ["popular", "news", "worldnews", "technology", "science", "sports", "movies"]
     )
@@ -165,6 +173,7 @@ class Settings(BaseSettings):
     tiktok_timeout_s: float = 5.0
     tiktok_request_spacing_s: float = Field(default=2.0, ge=0.0, le=10.0)
     tiktok_max_retries: int = Field(default=2, ge=0, le=5)
+    social_timeout_s: float = Field(default=8.0, ge=1.0, le=30.0)  # Mastodon and Bluesky public APIs
     hn_min_points: int = 10
     github_min_stars_today: int = 20
     min_title_chars: int = 3
@@ -238,6 +247,19 @@ class Settings(BaseSettings):
             if not sep or category.strip() not in CategoryEnum.values() or not rest.split("|", 1)[0].strip():
                 raise ValueError(f"google_news_sections entry must be 'Category|TOPIC or search words[|Name]': {entry!r}")
         return v
+
+    @field_validator("mastodon_instances")
+    @classmethod
+    def _instances(cls, v: list[str]) -> list[str]:
+        import re
+
+        out = []
+        for host in v:
+            host = host.strip().lower().removeprefix("https://").removeprefix("http://").strip("/")
+            if not re.fullmatch(r"[a-z0-9-]+(?:\.[a-z0-9-]+)+", host):
+                raise ValueError(f"mastodon_instances entries must be host names like mastodon.social: {host!r}")
+            out.append(host)
+        return out
 
     @field_validator("hdbscan_selection")
     @classmethod

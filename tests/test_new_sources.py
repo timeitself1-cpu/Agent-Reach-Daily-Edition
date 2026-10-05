@@ -10,7 +10,7 @@ import httpx
 import pytest
 
 from agent_reach.config import DEFAULT_GOOGLE_NEWS_SECTIONS, Settings
-from agent_reach.daily.feeds import ADDED_IN_V3, FeedSpec, check_feed
+from agent_reach.daily.feeds import ADDED_IN_V3, ADDED_IN_V4, FeedSpec, check_feed
 from agent_reach.daily.prefs import PREFS_VERSION, DailyPrefs, build_settings, load_prefs
 from agent_reach.ingestion import INGESTER_REGISTRY
 from agent_reach.ingestion.search import GoogleNewsIngester
@@ -226,9 +226,9 @@ def test_version_2_settings_gain_new_sources_once(daily_paths):
                feeds=[{"name": "Local Paper", "url": "https://local.test/rss", "category": "News"}])
     daily_paths.settings.write_text(json.dumps(old))
     prefs, warning = load_prefs(daily_paths)
-    assert warning is None and prefs.prefs_version == PREFS_VERSION == 3
-    assert {"youtube", "tiktok"} <= set(prefs.enabled_sources) and prefs.max_items_for_llm == 260
-    assert prefs.feeds[0].name == "Local Paper" and len(prefs.feeds) == 1 + len(ADDED_IN_V3)
+    assert warning is None and prefs.prefs_version == PREFS_VERSION == 4
+    assert {"youtube", "tiktok", "mastodon", "bluesky"} <= set(prefs.enabled_sources) and prefs.max_items_for_llm == 260
+    assert prefs.feeds[0].name == "Local Paper" and len(prefs.feeds) == 1 + len(ADDED_IN_V3) + len(ADDED_IN_V4)
 
     # a version-3 file is taken as it is: a source the user turned off stays off
     current = prefs.model_dump(mode="json")
@@ -247,3 +247,111 @@ def test_daily_settings_read_google_news_sections_and_skip_youtube_without_chann
     no_channels = prefs.model_copy(update={"feeds": [f for f in prefs.feeds if f.kind != "YouTube"]})
     s2 = build_settings(no_channels, daily_paths)
     assert "youtube" not in s2.enabled_sources and s2.youtube_channels == []
+
+
+# ------------------------------------------------------------------ Mastodon, Bluesky, Wikipedia "In the news"
+def test_mastodon_trending_links_are_publisher_articles_scored_by_sharers():
+    from agent_reach.ingestion.social import MastodonTrendsIngester
+
+    def card(title, url, provider, accounts):
+        return {"title": title, "url": url, "provider_name": provider, "description": f"{title} in detail.",
+                "history": [{"day": "1", "accounts": str(accounts), "uses": "9"}, {"day": "0", "accounts": "5"}]}
+
+    def handler(req):
+        if req.url.host == "mastodon.social":
+            assert req.url.path == "/api/v1/trends/links"
+            return httpx.Response(200, json=[card("Ferry strike halts islands", "https://wire-one.test/a", "Wire One", 40),
+                                             card("Quake hits Calder", "https://daily-two.test/b", "Daily Two", 90)])
+        return httpx.Response(503)
+
+    settings = Settings(mastodon_instances=["mastodon.social", "down.example"], http_backoff_base_s=0.01)
+    items, stat = _run(MastodonTrendsIngester, settings, handler)
+    assert stat.ok and stat.error.startswith("partial: 1/2 servers failed")
+    assert [it.title for it in items] == ["Quake hits Calder", "Ferry strike halts islands"]  # most shared first
+    assert items[0].raw_score == 95 and items[0].metadata["publisher"] == "Daily Two"
+    assert items[0].source is SourceName.MASTODON and items[0].url == "https://daily-two.test/b"
+    with pytest.raises(ValueError):
+        Settings(mastodon_instances=["not a host"])
+
+
+def test_bluesky_trends_with_fallback_to_trending_topics():
+    from agent_reach.ingestion.social import BlueskyTrendsIngester
+
+    calls: list[str] = []
+
+    def handler(req):
+        calls.append(req.url.path)
+        if req.url.path.endswith("getTrends"):
+            return httpx.Response(404)
+        return httpx.Response(200, json={"topics": [{"topic": "worldseries", "displayName": "World Series",
+                                                      "link": "/profile/trending.bsky.app/feed/1"}]})
+
+    items, stat = _run(BlueskyTrendsIngester, Settings(http_backoff_base_s=0.01), handler)
+    assert stat.ok and [it.title for it in items] == ["World Series"] and len(calls) == 2
+    assert items[0].url == "https://bsky.app/profile/trending.bsky.app/feed/1"
+
+    def handler2(req):
+        return httpx.Response(200, json={"trends": [{"topic": "f1", "displayName": "Singapore Grand Prix",
+                                                      "link": "/x", "postCount": 3200, "category": "sports"}]})
+
+    items, _ = _run(BlueskyTrendsIngester, Settings(), handler2)
+    assert items[0].raw_score == 3200 and items[0].category_hint is CategoryEnum.SPORTS
+
+
+def test_wikipedia_in_the_news_comes_first_and_never_fails_the_source():
+    from agent_reach.ingestion.search import WikipediaPageviewsIngester
+
+    def views(req):
+        return httpx.Response(200, json={"items": [{"articles": [{"article": "Jordan_Love", "views": 300000},
+                                                                  {"article": "Lizzie_Borden", "views": 100000}]}]})
+
+    def handler(req):
+        if req.url.host == "wikimedia.org":
+            return views(req)
+        story = ('<!--Oct 5--><a href="./Hurricane_Mira">Hurricane Mira</a> (<i>pictured</i>) makes landfall '
+                 'in <a href="./Norvale">Norvale</a>.')
+        return httpx.Response(200, json={"news": [{"story": story, "links": [
+            {"title": "Hurricane_Mira", "extract": "Hurricane Mira is a tropical cyclone.",
+             "content_urls": {"desktop": {"page": "https://en.wikipedia.org/wiki/Hurricane_Mira"}}}]}]})
+
+    items, stat = _run(WikipediaPageviewsIngester, Settings(wikipedia_in_the_news=True), handler)
+    assert stat.ok and stat.error is None
+    assert items[0].title == "Hurricane Mira makes landfall in Norvale."
+    assert items[0].metadata["in_the_news"] and items[0].url == "https://en.wikipedia.org/wiki/Hurricane_Mira"
+    assert [it.title for it in items[1:]] == ["Jordan Love", "Lizzie Borden"]
+
+    def no_news(req):
+        return views(req) if req.url.host == "wikimedia.org" else httpx.Response(503)
+
+    items, stat = _run(WikipediaPageviewsIngester, Settings(wikipedia_in_the_news=True, http_max_retries=0), no_news)
+    assert stat.ok and stat.error.startswith("partial: 'In the news' unavailable") and len(items) == 2
+
+
+def test_budget_floors_go_round_robin_and_leave_room_for_the_best():
+    def item(i, score, feed):
+        return CleanedTrendItem(title=f"Story {i}", source=SourceName.NEWS_RSS, item_id=i, normalized_title=f"S {i}",
+                                heuristic_score=score, metadata={"feed": feed})
+
+    items = [item(i, 0.99 - i / 1000, "big") for i in range(1, 31)]  # one prolific, strong feed
+    items += [item(100 + k, 0.30, f"small-{k}") for k in range(20)]  # twenty feeds with one weak item each
+    s = Settings(max_items_for_llm=20, min_items_per_source_for_llm=0, min_items_per_feed_for_llm=2)
+    chosen = TrendCleaner(s).select_for_llm(items)
+    ids = {it.item_id for it in chosen}
+    assert len(chosen) == 20 and 1 in ids  # the strongest item always gets in
+    small = sum(1 for i in ids if i >= 100)
+    assert 0 < small <= 15  # floors never take more than 75% of the budget
+
+
+def test_exported_headlines_link_to_the_main_article_safely():
+    from agent_reach.daily.edition import EvidenceLink
+    from agent_reach.daily.render_html import render_edition_html
+    from tests.daily_fakes import make_edition, make_story
+
+    s = make_story(headline="Linked Story")
+    s.evidence.insert(0, EvidenceLink(item_id=2, source="bluesky", source_name="Bluesky", title="Topic",
+                                      url="https://bsky.app/profile/x"))
+    bad = make_story(headline="Unsafe Only")
+    bad.evidence[0].url = "javascript:alert(1)"
+    page = render_edition_html(make_edition([s, bad, make_story(headline="Third")]))
+    assert '<a class="hl" href="https://wire-one.test/linked-story"' in page  # the article, not the social topic
+    assert "javascript:" not in page and "<h3>2. Unsafe Only</h3>" in page

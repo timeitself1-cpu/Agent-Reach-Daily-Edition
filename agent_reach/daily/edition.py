@@ -41,12 +41,13 @@ SOURCE_NAMES = {
     "x_trends24": "X (trends24)", "reddit": "Reddit", "tiktok": "TikTok", "google_trends": "Google Trends",
     "google_news": "Google News", "wikipedia": "Wikipedia", "arxiv": "arXiv", "hackernews": "Hacker News",
     "github": "GitHub", "producthunt": "Product Hunt", "news_rss": "News feeds", "youtube": "YouTube",
+    "mastodon": "Mastodon", "bluesky": "Bluesky",
 }
 MOMENTUM_LABELS = {"SURGING": "Hot", "RISING": "Rising", "NEW": "New", "STEADY": "Continuing",
                    "COOLING": "Cooling", "FADING": "Fading", "UNCERTAIN": "Uncertain trend"}
 #: Platforms whose items come from a named publisher (an article or a channel's video), not a trend list or
 #: social post.
-PUBLISHER_PLATFORMS = frozenset({"news_rss", "google_news", "hackernews", "arxiv", "youtube"})
+PUBLISHER_PLATFORMS = frozenset({"news_rss", "google_news", "hackernews", "arxiv", "youtube", "mastodon"})
 #: A lone trend/social signal with no publisher article is kept only when the model rates it this relevant.
 STRONG_RELEVANCE = 7
 META_SENTENCE_RX = re.compile(
@@ -268,6 +269,21 @@ def safe_url(url: str | None) -> str | None:
     if parts.scheme not in ("http", "https") or not parts.hostname:
         return None
     return url.strip()
+
+
+#: Hosts whose links are redirects, trend pages or social posts rather than the reporting itself.
+NON_ARTICLE_HOSTS = ("news.google.com", "trends.google.com", "google.com", "bsky.app", "x.com", "twitter.com",
+                     "reddit.com", "tiktok.com", "trends24.in", "news.ycombinator.com")
+
+
+def primary_url(story: "Story") -> str | None:
+    """The link a headline opens: the first cited publisher article, else the first safe link."""
+    links = [safe_url(e.url) for e in story.evidence]
+    for url in links:
+        host = _host(url) or ""
+        if url and not any(host == h or host.endswith("." + h) for h in NON_ARTICLE_HOSTS):
+            return url
+    return next((u for u in links if u), None)
 
 
 def _clip(text: str | None, limit: int) -> str | None:

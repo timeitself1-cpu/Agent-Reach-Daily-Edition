@@ -163,6 +163,8 @@ SOURCE_WEIGHT: dict[SourceName, float] = {
     SourceName.GOOGLE_NEWS: 0.90,
     SourceName.NEWS_RSS: 0.90,
     SourceName.YOUTUBE: 0.80,
+    SourceName.MASTODON: 0.80,
+    SourceName.BLUESKY: 0.80,
     SourceName.X_TRENDS24: 0.85,
     SourceName.WIKIPEDIA: 0.80,
     SourceName.REDDIT: 0.80,
@@ -171,12 +173,15 @@ SOURCE_WEIGHT: dict[SourceName, float] = {
     SourceName.TIKTOK: 0.60,
     SourceName.ARXIV: 0.55,
 }
-SOCIAL_SOURCES = frozenset({SourceName.REDDIT, SourceName.X_TRENDS24, SourceName.TIKTOK})
+SOCIAL_SOURCES = frozenset({SourceName.REDDIT, SourceName.X_TRENDS24, SourceName.TIKTOK, SourceName.BLUESKY,
+                            SourceName.MASTODON})
 ANECDOTE_SOURCES = frozenset({SourceName.REDDIT, SourceName.X_TRENDS24, SourceName.TIKTOK, SourceName.GOOGLE_NEWS,
-                              SourceName.YOUTUBE})
+                              SourceName.YOUTUBE, SourceName.BLUESKY})
 #: Sources made of several feeds (publisher feeds, YouTube channels, Google News sections): each feed
 #: gets its own floor in the processing budget.
 MULTI_FEED_SOURCES = frozenset({SourceName.NEWS_RSS, SourceName.YOUTUBE, SourceName.GOOGLE_NEWS})
+#: Fair floors may take at most this share of the processing budget; the rest goes to the best scores.
+FLOOR_SHARE = 0.75
 
 
 # --------------------------------------------------------------------- text utils
@@ -249,6 +254,8 @@ SOURCE_DISPLAY: dict[str, str] = {
     "producthunt": "Product Hunt",
     "news_rss": "News feeds",
     "youtube": "YouTube",
+    "mastodon": "Mastodon",
+    "bluesky": "Bluesky",
 }
 
 MD_LINK_RX = re.compile(r"\[([^\]]{1,200})\]\((?:https?://|www\.)[^)]*\)")
@@ -435,7 +442,9 @@ class TrendCleaner:
         Every platform gets ``min_items_per_source_for_llm``; inside multi-feed sources every
         publisher feed gets ``min_items_per_feed_for_llm`` and every YouTube channel or Google News
         section gets ``min_items_per_channel_feed_for_llm``, so one prolific source or feed cannot
-        crowd out the others. The rest of the budget goes to the highest scores.
+        crowd out the others. Floors are handed out in rounds (every group's best item, then every
+        group's second best, ...) and may use at most ``FLOOR_SHARE`` of the budget, so with many
+        feeds each still gets its lead item and the strongest items keep the rest of the budget.
         """
         s = self.settings
         cap = s.max_items_for_llm
@@ -444,18 +453,23 @@ class TrendCleaner:
             multi = it.source in MULTI_FEED_SOURCES and not it.metadata.get("top_stories")
             feed = str(it.metadata.get("feed") or "") if multi else ""
             by_group[(it.source, feed)].append(it)
-        chosen: dict[int, CleanedTrendItem] = {}
-        for (source, feed), lst in by_group.items():
+
+        def floor_of(source: SourceName, feed: str) -> int:
             if not feed:
-                floor = s.min_items_per_source_for_llm
-            elif source is SourceName.NEWS_RSS:
-                floor = s.min_items_per_feed_for_llm
-            else:
-                floor = s.min_items_per_channel_feed_for_llm
-            for it in lst[:floor]:
-                if len(chosen) >= cap:
+                return s.min_items_per_source_for_llm
+            if source is SourceName.NEWS_RSS:
+                return s.min_items_per_feed_for_llm
+            return s.min_items_per_channel_feed_for_llm
+
+        groups = sorted(by_group.items(), key=lambda kv: kv[1][0].heuristic_score, reverse=True)
+        floor_cap = max(1, int(cap * FLOOR_SHARE))
+        chosen: dict[int, CleanedTrendItem] = {}
+        for r in range(max((floor_of(*key) for key, _ in groups), default=0)):
+            for key, lst in groups:
+                if len(chosen) >= floor_cap:
                     break
-                chosen[it.item_id] = it
+                if r < floor_of(*key) and r < len(lst):
+                    chosen[lst[r].item_id] = lst[r]
         for it in sorted(cleaned, key=lambda x: x.heuristic_score, reverse=True):
             if len(chosen) >= cap:
                 break
@@ -494,13 +508,13 @@ class TrendCleaner:
         raw_title = item.title.strip()
 
         # --- generic hashtags (check before splitting: '#fallvibes' cannot be camel-split)
-        if src in (SourceName.TIKTOK, SourceName.X_TRENDS24):
+        if src in (SourceName.TIKTOK, SourceName.X_TRENDS24, SourceName.BLUESKY):
             bare = normalize_text(raw_title).lstrip("#").lower().replace(" ", "")
             if bare in GENERIC_HASHTAGS or GENERIC_HASHTAG_RX.fullmatch(bare):
                 return "generic_hashtag", ""
 
         title = normalize_text(raw_title)
-        if src in (SourceName.TIKTOK, SourceName.X_TRENDS24) and title.startswith("#"):
+        if src in (SourceName.TIKTOK, SourceName.X_TRENDS24, SourceName.BLUESKY) and title.startswith("#"):
             title = split_hashtag(title)
         title = CLICKBAIT_STRIP.sub(" ", title)
         title = WS_RX.sub(" ", title).strip(" -|:;,")

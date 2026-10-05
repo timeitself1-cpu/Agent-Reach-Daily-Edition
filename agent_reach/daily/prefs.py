@@ -16,7 +16,7 @@ from typing import Any, Literal
 
 from pydantic import BaseModel, ConfigDict, Field, ValidationError, field_validator, model_validator
 
-from agent_reach.daily.feeds import ADDED_IN_V2, ADDED_IN_V3, FeedSpec, default_feeds, feeds_from_entries
+from agent_reach.daily.feeds import ADDED_IN_V2, ADDED_IN_V3, ADDED_IN_V4, FeedSpec, default_feeds, feeds_from_entries
 from agent_reach.daily.fsutil import atomic_write_json, read_json
 from agent_reach.daily.paths import DataPaths
 from agent_reach.daily.timeutil import parse_hhmm
@@ -26,7 +26,7 @@ log = logging.getLogger(__name__)
 #: General-interest defaults. Tech-only feeds (GitHub, Product Hunt, arXiv) are available but
 #: off, so the number of enabled tech feeds cannot by itself dominate the edition.
 DAILY_DEFAULT_SOURCES = ["google_news", "news_rss", "youtube", "google_trends", "wikipedia", "reddit", "x_trends24",
-                         "tiktok", "hackernews"]
+                         "tiktok", "hackernews", "mastodon", "bluesky"]
 TECH_SOURCES = frozenset({"hackernews", "github", "producthunt", "arxiv"})
 GENERAL_NEWS_SOURCES = frozenset({"google_news", "news_rss"})
 SOURCE_NOTES = {
@@ -34,7 +34,9 @@ SOURCE_NOTES = {
     "news_rss": "Publisher feeds (Publisher feeds tab)",
     "youtube": "YouTube: most-watched new videos of the channels in Publisher feeds",
     "google_trends": "Google Trends daily searches (RSS)",
-    "wikipedia": "Wikipedia most-read articles (Wikimedia API)",
+    "wikipedia": "Wikipedia: most-read articles and 'In the news'",
+    "mastodon": "Mastodon: news links people are sharing (mastodon.social)",
+    "bluesky": "Bluesky trending topics",
     "reddit": "Reddit top posts (often rate-limited or blocked)",
     "x_trends24": "X trends via trends24.in (scrape; may break)",
     "tiktok": "TikTok trending hashtags (Creative Center; often blocked)",
@@ -43,7 +45,7 @@ SOURCE_NOTES = {
     "producthunt": "Product Hunt launches (tech)",
     "arxiv": "arXiv AI/ML papers (research)",
 }
-PREFS_VERSION = 3
+PREFS_VERSION = 4
 DAILY_VELOCITY_WINDOWS = [24.0, 48.0, 168.0]
 DAILY_VELOCITY_WEIGHTS = [0.5, 0.3, 0.2]
 DAILY_VELOCITY_TOLERANCE = 0.25
@@ -98,7 +100,8 @@ class DailyPrefs(BaseModel):
         * version 1 -> 2: sections of 10 instead of one 15-story list, a 200-article processing
           budget instead of 150, and the technology/AI/science feeds added in version 2;
         * version 2 -> 3: more publishers in every section, YouTube channels, the YouTube and TikTok
-          channels switched on, and a 260-article budget instead of 200.
+          channels switched on, and a 260-article budget instead of 200;
+        * version 3 -> 4: more publishers, and the Mastodon and Bluesky channels switched on.
         """
         if not isinstance(data, dict):
             return data
@@ -115,7 +118,8 @@ class DailyPrefs(BaseModel):
         except (TypeError, ValueError):
             version = 1
         steps = [(2, (("max_stories", 15, 10), ("max_per_category", 5, 4), ("max_items_for_llm", 150, 200)), ADDED_IN_V2, ()),
-                 (3, (("max_items_for_llm", 200, 260),), ADDED_IN_V3, ("youtube", "tiktok"))]
+                 (3, (("max_items_for_llm", 200, 260),), ADDED_IN_V3, ("youtube", "tiktok")),
+                 (4, (), ADDED_IN_V4, ("mastodon", "bluesky"))]
         for target, defaults, added_feeds, added_sources in steps:
             if version >= target:
                 continue
@@ -230,10 +234,11 @@ def build_settings(prefs: DailyPrefs, paths: DataPaths, **overrides: Any):
         enabled_sources=sources or list(prefs.enabled_sources),
         news_rss_feeds=[f.entry() for f in prefs.enabled_rss_feeds()],
         news_rss_items_per_feed=prefs.items_per_feed,
-        news_rss_max_total_items=800,
+        news_rss_max_total_items=900,
         youtube_channels=channels,
         youtube_items_per_channel=3,
         google_news_sections=list(DEFAULT_GOOGLE_NEWS_SECTIONS),
+        wikipedia_in_the_news=True,
         max_items_for_llm=prefs.max_items_for_llm,
         max_items_per_source=60,
         # A lone article from a real publisher is a story (most tech and science news is reported by one

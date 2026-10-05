@@ -51,6 +51,8 @@ Then **double-click "Agent Reach"** on the Desktop. The first time, choose
 | Older editions | the edition date list next to Search (30 days are kept) |
 | Top 10 overall, then the top 10 of each category | the **Sections** sidebar: Top Stories, News, Tech, Science & AI, Sports, Entertainment, Internet Culture (Ctrl+1 to Ctrl+7) |
 | Everything else (demo, data folder, model check, help) | the **...** button at the right of the toolbar |
+| Open a story's main article | click its headline |
+| Move between stories | J (next) and K (previous); every shortcut is under **...** > Keyboard shortcuts |
 | Search | **Search** box (Ctrl+F, Esc clears and returns to Top Stories) |
 | What changed since the last refresh | **Details** > Changes (kept out of the reading view) |
 | Source health, timings, run details | **Details** (Ctrl+D) |
@@ -113,26 +115,35 @@ Everything lives in `%LOCALAPPDATA%\AgentReachDaily` (for example
 - All AI work runs locally through Ollama. Nothing is sent to OpenAI, Anthropic, Google or any
   other AI service, and no API key or subscription is needed.
 - The internet is used to read public sources, with no account or API key:
-  - **75 publisher feeds from about 60 organisations**: world and US news (BBC, NPR, The Guardian,
-    PBS, CBS, NBC, ABC, Fox News, New York Times, Washington Post, Al Jazeera, Le Monde, France 24,
-    DW, Sky News, The Independent, Politico, The Hill), business (CNBC, MarketWatch), technology
-    (Ars Technica, The Verge, TechCrunch, Wired, Engadget, The Register, ZDNET, Gizmodo, 9to5Mac,
-    Tom's Hardware, Android Authority, Lobsters), science and AI (NASA, ScienceDaily, MIT Technology
-    Review, VentureBeat AI, MIT News AI, Ars Technica AI, The Decoder, Google AI, OpenAI,
-    Hugging Face, New Scientist, Space.com, Quanta, Nature), sports (ESPN, BBC Sport, CBS Sports,
-    Yahoo Sports, Sky Sports, Guardian Sport), entertainment (Variety, The Hollywood Reporter,
-    Deadline, Billboard, Rolling Stone, IGN, Polygon) and internet culture (The Daily Dot, Mashable);
+  - **114 publisher feeds from about 100 organisations**: world and US news (BBC, NPR, The
+    Guardian, PBS, CBS, NBC, ABC, Fox News, New York Times, Washington Post, Al Jazeera, Le Monde,
+    France 24, DW, Sky News, The Independent, Euronews, CBC, ABC Australia, South China Morning
+    Post, The Japan Times, Times of India, Politico, The Hill, Axios, Vox, The Atlantic,
+    ProPublica), business (CNBC, MarketWatch, Business Insider, Fortune, Yahoo Finance), technology
+    and security (Ars Technica, The Verge, TechCrunch, Wired, Engadget, The Register, ZDNET,
+    Gizmodo, 9to5Mac, MacRumors, Tom's Hardware, Android Authority, Techmeme, The Next Web, Fast
+    Company, BleepingComputer, Krebs on Security, Lobsters), science and AI (NASA, ScienceDaily,
+    Science, Nature, New Scientist, Phys.org, ScienceAlert, Space.com, Quanta, MIT Technology
+    Review, MIT News AI, VentureBeat AI, Ars Technica AI, The Decoder, MarkTechPost, Simon
+    Willison, Google AI, Google DeepMind, OpenAI, Hugging Face), sports (ESPN with NFL, NBA, MLB and
+    soccer, BBC Sport and BBC Football, CBS Sports, Yahoo Sports, Sky Sports, Guardian Sport,
+    Sporting News), entertainment and games (Variety, The Hollywood Reporter, Deadline, Billboard,
+    Rolling Stone, Pitchfork, Collider, Screen Rant, IGN, Polygon, Kotaku, Eurogamer) and internet
+    culture (The Daily Dot, Mashable, Tubefilter, Social Media Today, Boing Boing);
   - **22 YouTube channels** (BBC News, Reuters, AP, NBC, ABC, CBS, PBS, Al Jazeera, Sky News, CNBC,
     Bloomberg Technology, CNET, The Verge, Linus Tech Tips, Marques Brownlee, Fireship, NASA, ESPN,
     NFL, NBA, IGN, Entertainment Tonight) through their public channel feeds. YouTube retired its
     Trending page in 2025, so "trending" here means each channel's most-watched uploads of the
     last 72 hours, ranked by views per hour;
   - **Google News** top stories plus one section per category (World, U.S., Business, Health,
-    Technology, Science, Sports, Entertainment, an "artificial intelligence" search and a
-    "TikTok / viral" search);
-  - **TikTok** trending hashtags (Creative Center; TikTok often blocks automated readers, and the
-    edition is then built from the rest), Google Trends, Wikipedia's most-read list, Hacker News,
-    Reddit and X trends (trends24.in); GitHub Trending, Product Hunt and arXiv are available but off.
+    Technology, Science, Sports, Entertainment), searches for artificial intelligence, space, video
+    games and "TikTok / viral", and the AP and Reuters wires (which publish no RSS of their own);
+  - **What people are sharing:** news links trending on Mastodon (mastodon.social), Bluesky
+    trending topics, TikTok trending hashtags (Creative Center; TikTok often blocks automated
+    readers, and the edition is then built from the rest), Reddit and X trends (trends24.in);
+  - **Attention and curation:** Wikipedia's most-read articles and its curated "In the news"
+    list, Google Trends and Hacker News. GitHub Trending, Product Hunt and arXiv are available but
+    off.
 
   Each feed and channel has its own allowance and its own health line in Details, so adding feeds
   never squeezes the others, and you can add local outlets in Settings > Publisher feeds. Settings
@@ -150,7 +161,7 @@ Everything lives in `%LOCALAPPDATA%\AgentReachDaily` (for example
 | "No news source responded" | You are offline or a firewall blocks the feeds. The previous edition is kept; it retries automatically. |
 | A source shows PARTIAL or FAILED (Details) | Normal from time to time (Reddit and X often rate-limit automated readers). The edition is built from the rest and says what was missing. Expand "News feeds", "YouTube" or "Google News" in Details to see which feed, channel or section failed and why. |
 | A publisher feed keeps failing | Feed addresses move. Settings > Publisher feeds > select it > **Test**; then Edit the address or turn the feed off. |
-| TikTok always shows FAILED | TikTok blocks many automated readers. Nothing is lost: viral and TikTok news still arrives through the Google News "TikTok / viral" section. Turn TikTok off in Settings > Sources to hide the line. |
+| TikTok, Bluesky or Mastodon shows FAILED | TikTok blocks many automated readers; the Bluesky and Mastodon public APIs occasionally change or rate-limit. Nothing is lost: viral and TikTok news still arrives through the Google News "TikTok / viral" section. Turn TikTok off in Settings > Sources to hide the line. |
 | A refresh takes too long | Each refresh groups and summarizes up to 260 articles. On a PC without a graphics card, lower "Articles grouped and summarized per refresh" in Settings > Sources (for example to 150), or turn off feeds you do not read. |
 | "found too little news to publish" | Fewer than 3 good stories or fewer than 2 working sources. Wait for the automatic retry or press Refresh later. |
 | Wrong date or time zone | Times are US Central (CST/CDT) on purpose. If times look wrong by hours, re-run setup: it installs `tzdata`, which Windows needs. |
@@ -203,5 +214,5 @@ checks do), never sees the web, and its output is checked before it is shown. De
 
 Tests never touch the network or a real Ollama. `tests/daily_fakes.py` holds synthetic publisher
 feeds (fictional places on `.test` hosts) and a deterministic fake model; `samples/DEMO-edition.json`
-is the clearly labelled demo edition. Version: Agent Reach Daily 1.0 release candidate 4
+is the clearly labelled demo edition. Version: Agent Reach Daily 1.0 release candidate 5
 (`python -m agent_reach.daily --version`).

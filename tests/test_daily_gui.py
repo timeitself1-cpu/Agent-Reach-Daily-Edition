@@ -220,3 +220,33 @@ def test_clean_toolbar_menu_search_hint_and_reading_column(root, daily_paths):
     root.geometry("1500x800")
     root.update()
     assert int(str(w.text.cget("padx"))) > w.px(36)  # wide window: the text column stays readable and centred
+
+
+def test_headline_opens_the_main_article_and_j_k_move_between_stories(root, daily_paths, monkeypatch):
+    from agent_reach.daily import gui as G
+    from agent_reach.daily.edition import EvidenceLink, primary_url
+
+    first = make_story(headline="Story With A Redirect First")
+    first.evidence.insert(0, EvidenceLink(item_id=9, source="google_news", source_name="Google News",
+                                          title="Redirect", url="https://news.google.com/rss/articles/abc"))
+    stories = [first] + [make_story(headline=f"Another Story Number {i}") for i in range(2, 9)]
+    EditionStore(daily_paths).publish(make_edition(stories))
+    assert primary_url(first).startswith("https://wire-one.test/")  # the publisher article, not the redirect
+    opened = []
+    monkeypatch.setattr(G.webbrowser, "open", lambda url, new=0: opened.append(url))
+    w, _ = _window(root, daily_paths)
+    name = next(n for n, t in w._links.items() if t == primary_url(first))
+    w._click(name)
+    assert opened == [primary_url(first)]
+    root.deiconify()
+    root.geometry("900x500")
+    root.update()
+    w.text.yview_moveto(0)
+    root.update()
+    w.jump_story(1)
+    root.update()
+    second = int(w.text.index("story2").split(".")[0])
+    assert int(w.text.index("@0,0").split(".")[0]) == second
+    w.jump_story(-1)
+    root.update()
+    assert int(w.text.index("@0,0").split(".")[0]) == int(w.text.index("story1").split(".")[0])

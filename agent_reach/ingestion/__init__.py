@@ -15,7 +15,13 @@ from agent_reach.ingestion.search import (
     WikipediaPageviewsIngester,
 )
 from agent_reach.ingestion.news import NewsRSSIngester
-from agent_reach.ingestion.social import RedditIngester, TikTokCreativeCenterIngester, XTrends24Ingester
+from agent_reach.ingestion.social import (
+    BlueskyTrendsIngester,
+    MastodonTrendsIngester,
+    RedditIngester,
+    TikTokCreativeCenterIngester,
+    XTrends24Ingester,
+)
 from agent_reach.ingestion.tech import GitHubTrendingIngester, HackerNewsIngester, ProductHuntIngester
 from agent_reach.ingestion.video import YouTubeIngester
 
@@ -32,6 +38,8 @@ INGESTER_REGISTRY: dict[str, type[BaseIngester]] = {
     "producthunt": ProductHuntIngester,
     "news_rss": NewsRSSIngester,
     "youtube": YouTubeIngester,
+    "mastodon": MastodonTrendsIngester,
+    "bluesky": BlueskyTrendsIngester,
 }
 
 

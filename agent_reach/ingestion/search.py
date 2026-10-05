@@ -7,6 +7,8 @@ import re
 from datetime import datetime, timedelta, timezone
 from urllib.parse import quote, urlencode
 
+from bs4 import BeautifulSoup
+
 from agent_reach.ingestion.base import (
     BaseIngester,
     IngestionError,
@@ -183,7 +185,12 @@ WIKI_EXCLUDE = re.compile(
 
 
 class WikipediaPageviewsIngester(BaseIngester):
-    """Top viewed articles for the most recent complete UTC day."""
+    """Top viewed articles for the most recent complete UTC day, plus (optionally) the curated
+    "In the news" list of the featured-content feed (``wikipedia_in_the_news``).
+
+    "In the news" items come first so the source cap never drops them; when that list is
+    unavailable the source is partial, never failed, as long as the page views answered.
+    """
 
     source = SourceName.WIKIPEDIA
     use_bot_user_agent = True
@@ -192,6 +199,7 @@ class WikipediaPageviewsIngester(BaseIngester):
         project = self.settings.wikipedia_project
         today = datetime.now(timezone.utc).date()
         last_exc: Exception | None = None
+        viewed: list[RawTrendItem] | None = None
         for days_back in (1, 2):
             day = today - timedelta(days=days_back)
             url = (
@@ -204,8 +212,55 @@ class WikipediaPageviewsIngester(BaseIngester):
                 last_exc = exc
                 continue
             articles = ((data or {}).get("items") or [{}])[0].get("articles", [])
-            return self._parse(articles, day)
-        raise IngestionError(f"Wikipedia pageviews unavailable: {last_exc}")
+            viewed = self._parse(articles, day)
+            break
+        news: list[RawTrendItem] = []
+        if self.settings.wikipedia_in_the_news:
+            try:
+                news = await self._in_the_news(today, viewed or [])
+            except IngestionError as exc:
+                if viewed is None:
+                    raise IngestionError(f"Wikipedia unavailable: {last_exc}; In the news: {exc}") from exc
+                self.warnings.append(f"'In the news' unavailable ({str(exc)[:100]})")
+        if viewed is None and not news:
+            raise IngestionError(f"Wikipedia pageviews unavailable: {last_exc}")
+        return news + (viewed or [])
+
+    async def _in_the_news(self, today, viewed: list[RawTrendItem]) -> list[RawTrendItem]:
+        """Wikipedia's curated 'In the news' stories (one sentence each, linked to the main article)."""
+        lang = self.settings.wikipedia_project.split(".")[0]
+        views = sorted(it.raw_score or 0.0 for it in viewed)
+        median = views[len(views) // 2] if views else 1.0  # mid-pack attention: curated, not most-read
+        last_exc: Exception | None = None
+        for day in (today, today - timedelta(days=1)):
+            url = f"https://{lang}.wikipedia.org/api/rest_v1/feed/featured/{day.year:04d}/{day.month:02d}/{day.day:02d}"
+            try:
+                data = await self.get_json(url)
+            except IngestionError as exc:
+                last_exc = exc
+                continue
+            out: list[RawTrendItem] = []
+            for rank, story in enumerate((data or {}).get("news") or [], start=1):
+                text = BeautifulSoup(str((story or {}).get("story") or ""), "html.parser").get_text()
+                text = re.sub(r"\s*\(\s*(?:pictured|shown|featured)[^)]*\)", "", text)
+                text = re.sub(r"\s+([.,;:])", r"\1", re.sub(r"\s+", " ", text)).strip()
+                links = [link for link in (story or {}).get("links") or [] if isinstance(link, dict)]
+                lead = links[0] if links else {}
+                page = ((lead.get("content_urls") or {}).get("desktop") or {}).get("page")
+                item = self.make_item(
+                    title=text,
+                    raw_score=float(median),
+                    url=page or f"https://{lang}.wikipedia.org/wiki/Main_Page",
+                    description=(str(lead.get("extract") or "")[:400] or None),
+                    metadata={"in_the_news": True, "rank": rank, "date": day.isoformat(),
+                              "articles": [str(link.get("title") or "") for link in links[:5]]},
+                )
+                if item:
+                    out.append(item)
+            if out:
+                return out
+            last_exc = IngestionError("no 'In the news' stories")
+        raise IngestionError(str(last_exc)[:200])
 
     def _parse(self, articles: list[dict], day) -> list[RawTrendItem]:
         out: list[RawTrendItem] = []

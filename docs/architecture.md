@@ -90,9 +90,10 @@ are made of feeds, each with its own allowance, budget floor and health line (`S
 
 | Source | Feeds | Allowance per feed | Score inside the source |
 |---|---|---|---|
-| `news_rss` | publisher feeds (75 by default) | `items_per_feed` (10); total `news_rss_max_total_items` (800) | in-feed rank |
+| `news_rss` | publisher feeds (114 by default) | `items_per_feed` (10); total `news_rss_max_total_items` (900) | in-feed rank |
 | `youtube` | channels (22 by default) | 3 most-watched uploads of the last `youtube_max_age_hours` (72) | views per hour since upload |
-| `google_news` | top stories + `google_news_sections` (10) | 60 top stories, 20 per section | 1.0 for each section's lead story, falling with rank |
+| `google_news` | top stories + `google_news_sections` (14) | 60 top stories, 20 per section | 1.0 for each section's lead story, falling with rank |
+| `mastodon` | `mastodon_instances` (mastodon.social) | 20 trending links per server | accounts that shared the link in two days |
 
 YouTube retired its public Trending page in 2025 and its Data API needs a key, so the `youtube`
 source reads the public channel feeds (`/feeds/videos.xml?channel_id=`), which carry view counts.
@@ -105,12 +106,23 @@ set the item's category hint. TikTok reads the Creative Center page (pages-route
 `__NEXT_DATA__`, app-router escaped JSON, or the rendered cards); a page without data is tried
 once more without parameters, a blocked request is not repeated beyond its retries.
 
+Other channels added in settings v4: **Mastodon** trending links (`/api/v1/trends/links`, public)
+are publisher articles that many people share, so they count as the publisher's report (a shared
+copy of an article already cited is cited once). **Bluesky** trending topics
+(`app.bsky.unspecced.getTrends`, falling back to `getTrendingTopics`) are attention signals like X
+trends. **Wikipedia "In the news"** (`/api/rest_v1/feed/featured/`, `wikipedia_in_the_news`) adds
+the curated one-sentence world-news items ahead of the most-read list; when it is unavailable the
+Wikipedia channel is partial, never failed.
+
 - **Intake:** feeds are interleaved by rank, so a cap never drops a whole feed and adding feeds
   never shrinks the others.
 - **Processing budget:** `max_items_for_llm` (260) articles are grouped and labelled per refresh.
   Every channel keeps `min_items_per_source_for_llm` (6), every publisher feed keeps
   `min_items_per_feed_for_llm` (2) and every YouTube channel or Google News section keeps
   `min_items_per_channel_feed_for_llm` (1) of that budget; the rest goes to the highest scores.
+  Floors are handed out in rounds (every group's best item first, then every group's second) and
+  may use at most `FLOOR_SHARE` (75%) of the budget, so with 150+ feeds each still gets its lead
+  item and the strongest items keep a quarter of the budget.
 - **Single-report stories:** the Daily app runs the clusterer with `outlier_policy="keep_top"`:
   a density outlier stays as its own one-article story (never merged into a mixed cluster) when
   its heuristic score is >= `singleton_keep_score` (0.35, roughly the top 7 of each feed, since
@@ -193,7 +205,7 @@ sources or configuration changed too much to compare.
 | `config.py` | Pydantic Settings; every field overridable via `AGENT_REACH_*` env vars / `.env` |
 | `models.py` | `CategoryEnum`, `RawTrendItem`, `CleanedTrendItem` (+ scraped `context`), `MacroCluster`, `PipelineAccounting` (ledger with invariant checks), `PipelineReport` (schema_version 3) |
 | `ingestion/base.py` | `BaseIngester`: shared `httpx.AsyncClient`, per-call timeout, exponential backoff + jitter, `Retry-After`, extra retryable statuses, per-ingester request pacing; `run()` never raises |
-| `ingestion/social.py` | X (Trends24 scrape), Reddit (JSON with score/comments -> RSS; 5 s timeout, 403/429 retries, 2 s pacing, 30 s budget), TikTok Creative Center (5 s timeout, retries, 2 s pacing; three page shapes) |
+| `ingestion/social.py` | X (Trends24 scrape), Reddit (JSON with score/comments -> RSS; 5 s timeout, 403/429 retries, 2 s pacing, 30 s budget), TikTok Creative Center (5 s timeout, retries, 2 s pacing; three page shapes), Mastodon trending links, Bluesky trending topics (public APIs, 8 s timeout) |
 | `ingestion/search.py` | Google Trends RSS, Google News RSS (top stories + optional per-category sections), Wikipedia top pageviews, ArXiv Atom API |
 | `ingestion/video.py` | YouTube channel feeds (`youtube_channels`, `Category|CHANNEL_ID|Name`): recent uploads ranked by views per hour, per-channel health |
 | `ingestion/tech.py` | Hacker News (Algolia), GitHub Trending scrape, Product Hunt feed |
