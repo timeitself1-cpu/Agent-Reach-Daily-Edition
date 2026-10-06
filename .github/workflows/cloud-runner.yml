@@ -12,7 +12,7 @@ on:
         required: false
         default: "manual"
       entrypoint:
-        description: "Python module to run"
+        description: "Python module to run (agent_reach = classic report; agent_reach.daily = one Daily refresh + HTML export)"
         required: false
         default: "agent_reach"
       extra_args:
@@ -116,6 +116,24 @@ jobs:
       - name: Run Agent Reach
         run: |
           mkdir -p state reports
+          if [ "$ENTRYPOINT" = "agent_reach.daily" ]; then
+            # Agent Reach Daily: one real refresh through the same code path as the Windows app,
+            # then the edition as HTML plus the Daily logs. The data folder lives under state/ so
+            # the next run has history (what changed, momentum).
+            export AGENT_REACH_DAILY_HOME="$PWD/state/daily"
+            # shellcheck disable=SC2206
+            EXTRA=($EXTRA_ARGS)
+            set +e
+            python -u -m agent_reach.daily --refresh-now --trigger manual --log-level INFO "${EXTRA[@]}" \
+              2> >(tee reports/pipeline.log >&2) | tee reports/report.txt
+            rc=${PIPESTATUS[0]}
+            python -m agent_reach.daily --export-html "reports/edition-${GITHUB_RUN_ID}.html"
+            python -m agent_reach.daily --status > reports/status.json
+            cp -r "$AGENT_REACH_DAILY_HOME/logs" reports/daily-logs
+            cp -r "$AGENT_REACH_DAILY_HOME/diagnostics" reports/daily-diagnostics 2>/dev/null
+            echo "agent_reach.daily exit code: $rc"
+            exit "$rc"
+          fi
           ARGS=(--json-out "reports/report-${GITHUB_RUN_ID}.json" --log-level INFO)
           if [ "$NO_LLM" = "true" ]; then ARGS+=(--no-llm); fi
           # shellcheck disable=SC2206

@@ -1,6 +1,6 @@
 # Agent Reach: guide for Claude
 
-Agent Reach has two product surfaces: **Agent Reach Daily** (`agent_reach/daily`), a Windows desktop daily-news reader built on the pipeline, and the classic CLI report (`python -m agent_reach`). Read `README.md` (product, Windows quick start) and `docs/architecture.md` (internals).
+Agent Reach has two product surfaces: **Agent Reach Daily** (`agent_reach/daily`), a Windows desktop daily-news reader built on the pipeline, and the classic CLI report (`python -m agent_reach`). Read `README.md` (product, Windows quick start) and `docs/architecture.md` (internals). `docs/HANDOFF.md` has the current state, history and open items for a new session.
 
 The pipeline is **Module 1** of a modular trend-intelligence system. It ingests trend signals from 10 sources, filters noise, enriches items with page content, groups them by embedding density, has a local LLM (`llama3.1:8b` via Ollama) label the groups, scores relevance and velocity, and writes an ASCII executive report plus SQLite history.
 
@@ -22,7 +22,7 @@ Every change must leave `pytest` green and `pyflakes` clean. `.github/workflows/
 ## Environment limits (cloud sessions)
 
 - **No Ollama or live data here.** The cloud sandbox has no Ollama and cannot reach most source sites, so never try a live run. Verify with the offline tests.
-- **Real-data runs happen in GitHub Actions.** The `.github/workflows/cloud-runner.yml` workflow is started manually (`workflow_dispatch`). It installs Ollama with `llama3.1:8b` and `nomic-embed-text` on a CPU runner and uploads `report.txt`, the JSON report and `pipeline.log` as an artifact. When a change needs real-data validation, say so in the PR description. The user will run the workflow and share the artifact.
+- **Real-data runs happen in GitHub Actions.** The `.github/workflows/cloud-runner.yml` workflow is started manually (`workflow_dispatch`). It installs Ollama with `llama3.1:8b` and `nomic-embed-text` on a CPU runner and uploads `report.txt`, the JSON report and `pipeline.log` as an artifact. With input `entrypoint=agent_reach.daily` it runs one real Daily refresh instead and uploads the edition as HTML plus the Daily logs. When a change needs real-data validation, say so in the PR description. The user will run the workflow and share the artifact.
 - **`.ps1` scripts run on Windows PowerShell 5.1** and must stay ASCII-only with CRLF line endings (`.gitattributes`). Keep `$ErrorActionPreference = "Continue"` with explicit `$LASTEXITCODE` checks, because 5.1 turns native stderr into terminating errors. Avoid PowerShell 7-only syntax (`??`, ternary `? :`, `&&`).
 
 ## Invariants: do not break these
