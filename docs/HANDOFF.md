@@ -106,7 +106,9 @@ A cloud sandbox has no Ollama and no news access. Three ways to see real output:
    data folder is cached under `state/daily`, so later runs have history. CPU runs are slow
    (expect 30-90 min); the job timeout is 120 min. `entrypoint=agent_reach` (default) runs the
    classic CLI report instead. Run 37421270778 (rc9) failed on the 90-minute limit; rc10 runs the
-   Daily refresh with 80 articles (input `daily_articles`) and a 100-minute limit.
+   Daily refresh with 80 articles (input `daily_articles`) and a 100-minute limit. Run 37446999111
+   (rc10, commit 2625d47) published 24 stories: refresh 45 min (7 label calls of 1-11 min at ~4 tok/s,
+   brief pass 6 min), job 47 min.
 3. **A local run on the user's PC** (only when the session itself runs there, as the rc10 session
    did; Ollama with a GPU, ~6 min). Never touch their data folder: copy `settings.json`, `cache\`,
    `data\` and `state\` from `%LOCALAPPDATA%\AgentReachDaily` to a scratch folder, set
