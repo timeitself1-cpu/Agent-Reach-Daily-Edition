@@ -59,7 +59,7 @@ META_SENTENCE_RX = re.compile(
 SENTENCE_SPLIT_RX = re.compile(
     r"(?:(?<=[.!?])|(?<=[.!?][\"'\u2019\u201d]))"
     r"(?<!\bSt\.)(?<!\bMr\.)(?<!\bMs\.)(?<!\bDr\.)(?<!\bJr\.)(?<!\bSr\.)(?<!\bMrs\.)(?<!\bGen\.)"
-    r"(?<!\bSen\.)(?<!\bRep\.)(?<!\bGov\.)(?<!\bvs\.)"
+    r"(?<!\bSen\.)(?<!\bRep\.)(?<!\bGov\.)(?<!\bvs\.)(?<!\bU\.S\.)(?<!\bU\.K\.)(?<!\bU\.N\.)(?<!\bE\.U\.)(?<!\bNo\.)"
     r"\s+(?=[A-Z0-9\"'(\u2018\u201c])"
 )
 #: Sentences that say nothing about what happened (seen in real editions): dropped from summaries.
@@ -473,6 +473,10 @@ def without_self_repeat(sentence: str) -> str | None:
     return None if _repeats_itself(out) else out
 
 
+#: A sentence that opens with a pronoun needs the sentence before it.
+PRONOUN_START_RX = re.compile(r"^(?:he|she|they|it|his|her|their|its)\b", re.IGNORECASE)
+
+
 def body_sentences(summary: str, source: str | None = None, headline: str | None = None) -> list[str]:
     """Up to two summary sentences, without meta lines, empty filler, repeats of what was already said,
     sentences that repeat themselves, non-English text, the page's own voice ('you', 'our'), verbless
@@ -481,15 +485,21 @@ def body_sentences(summary: str, source: str | None = None, headline: str | None
     stems = source_stems(source) if source else None
     numbers = numbers_in(source) if source else None
     out: list[str] = []
+    restated: list[str] = []  # sound sentences left out only because they restate the headline
     for s in (p.strip() for p in SENTENCE_SPLIT_RX.split(summary or "")):
         s = LEAD_PREFIX_RX.sub("", s)
         s = without_self_repeat(s[:1].upper() + s[1:]) if s else None
         if (s and not META_SENTENCE_RX.match(s) and not WEAK_SENTENCE_RX.search(s) and not repeats(s, out)
                 and not (out and restates(s, out, NOVEL_SHARE)) and looks_english(s)
                 and not page_voice(s) and not is_fragment(s) and not ends_dangling(s)
-                and not (headline and restates(s, [headline], 1.0))
                 and (stems is None or (support(s, stems) >= SUPPORT_SHARE and numbers_in(s) <= numbers))):
-            place_sentence(out, s)
+            if headline and restates(s, [headline], 1.0):
+                restated.append(s)
+            else:
+                place_sentence(out, s)
+    # 'He was best known for playing Bo Brady' needs the sentence that says who he is
+    if out and restated and PRONOUN_START_RX.match(out[0]):
+        out.insert(0, restated[0])
     return out[:2]
 
 
@@ -507,7 +517,7 @@ def lead_sentence(cluster: MacroCluster, items: dict[int, CleanedTrendItem], hea
             for s in SENTENCE_SPLIT_RX.split(segment.strip())[:3]:
                 s = re.sub(r"\s+([.,;:!?])", r"\1", s.strip())  # page text: 'in August .'
                 if (len(s) >= 40 and s.endswith((".", "!", "?")) and looks_english(s) and not page_voice(s)
-                        and not is_fragment(s) and not ends_dangling(s)
+                        and not is_fragment(s) and not ends_dangling(s) and not PRONOUN_START_RX.match(s)
                         and not (headline and restates(s, [headline], 1.0))):
                     return s
     return None

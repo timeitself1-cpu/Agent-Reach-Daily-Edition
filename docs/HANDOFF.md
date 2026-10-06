@@ -7,7 +7,9 @@ conventions), then this file. `README.md` is the user guide; `docs/architecture.
 
 - **Branch:** `claude/loving-darwin-a7rqvs` (all work is pushed there; no PR has been opened, and
   none should be unless the user asks). Version `agent_reach/daily/__init__.py` = `1.0.0rc10`.
-- **CI:** see "rc10 in short" for the rc10 test counts (342 tests with a display on Windows).
+- **CI:** `tests.yml` is green on rc10 (Python 3.10 and 3.12; the 15 GUI tests skip there without a
+  display). On the user's Windows PC: 352 tests, 351 pass and 1 skips (SIGKILL semantics); the GUI
+  tests run against the real display, and Tk start-up there occasionally fails and skips one of them.
 - **The user** runs the app on Windows from `C:\Users\downt\Downloads\Agent Reach\src\Agent-Reach`,
   with Ollama (`llama3.1:8b`, `nomic-embed-text`) on their PC. A refresh takes about 5 minutes there.
   They receive each release as a zip (`git archive --format=zip --prefix=Agent-Reach/ HEAD`),
@@ -52,7 +54,15 @@ real October 6 morning edition, and a cloud runner that fits a Daily refresh (be
 - `daily/changes.py`: UPDATED only for new publishers or a headline change backed by new reports;
   growing/fading only against an edition of the same day; `keep_previous_categories` (called in
   `refresh.py` before selection) keeps a carried-over story's section unless a new publisher arrived.
-- Found in two real rc10 runs on the user's PC the same morning (also in `test_accuracy3.py`): a
+- Found in four real rc10 runs on the user's PC the same morning (also in `test_accuracy3.py`): the
+  medicine and physics Nobel Prizes merged (`EXCLUSIVE_QUALIFIERS` in `event_compatible`; Nobel week
+  runs to October 12); "games" + "consoles" joined two unrelated items (no shared name: shared words
+  must be in at most 1% of the run, `nameless_cap`); a purpose passed as "why it matters"
+  (`PURPOSE_RX`); "hit" + "cuts" (FBI budget cuts + SSD price cuts) and "NASA" + "space" (Crew-12 +
+  a telescope) linked unrelated items (more `COMMON_WORDS`); a model headline named the wrong game
+  ("Thursday Night Football"; `headline_supported`, 50% of its words in the reports: 2 of 227
+  headlines in five runs fell below it); "U.S." ended a sentence; a pronoun-led sentence lost the
+  sentence it refers to; a
   1-report story rated 9 took a Top Stories place from a 5-report story, so single-outlet stories now
   always come after corroborated news (rated 9+ first among them; this replaces rc9's "rated 9
   competes" rule); "ahead", "costs" and "midterm(s)" joined a diesel order to midterm items (more
@@ -111,9 +121,18 @@ A cloud sandbox has no Ollama and no news access. Three ways to see real output:
      of Midterm Elections" + "Trump announces $90 payments ... ahead of midterm elections" (the unit
      "midterm elections" counts as an event because of "elections"). `test_accuracy3` keeps only the
      diesel order apart from them.
-   - Topic nouns shared by unrelated reports still link them: "games" + "consoles" joined a PS5-on-Xbox
-     mod (Mashable) to "chipflation" prices (10News). A df floor for the event unit alone does not
-     help (both words are rare enough); it needs a rule about two single generic nouns.
+   - Topic nouns shared by unrelated reports can still link them when a name is shared too ("Trump" +
+     a moderately common word); `nameless_cap` only covers titles with no name in common. Each real
+     run so far showed one or two such pairs; `COMMON_WORDS` grew from them. Borderline and left as
+     is: "NASA's Prima space telescope would aim to see what James Webb can't" + "James Webb Space
+     Telescope investigates what happens when planets crash together" (shared "James Webb" and
+     "space telescope"). A frequency ceiling on single event words was rejected: on a big day the
+     key word is frequent ("plague" was in 1.2% of the run) and real stories would split.
+   - The model can misattribute a quoted source's own comment: "This is an incredible bargain to offer
+     humanity, according to Altman" (Boing Boing's sarcasm, not Altman). Every word is in the sources,
+     so the support check cannot see it.
+   - A "why it matters" whose only concrete element is a group noun passes ("This Nobel Prize is
+     overdue, as scientists have anticipated the recognition for years.": "scientists").
    - A "why it matters" that restates the summary in other words passes (Pentagon: "The US Department
      of Defence is no longer using Anthropic's AI tools ..." after "The Pentagon stopped using ...").
    - Publisher category hints still win outside Tech / Science & AI: "Sam Altman Calls for Regulatory

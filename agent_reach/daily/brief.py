@@ -172,11 +172,17 @@ CONSEQUENCE_RX = re.compile(
 )
 
 
+#: A purpose is not a consequence ('The move is to comply with the EU's AI Act', 'The move aims to curb
+#: fuel costs').
+PURPOSE_RX = re.compile(r"\b(?:aims?|aimed|aiming|intended|meant|designed|seeks?|sought)\s+to\b"
+                        r"|^(?:the|this|that)\s+[\w'-]+\s+(?:is|was)\s+to\b|\bin order to\b", re.IGNORECASE)
+
+
 def concrete_effect(sentence: str) -> bool:
     """A 'why it matters' sentence must state a consequence: who is affected (an ordinary group:
     'residents', 'patients') or what changes ('forces', 'no longer', 'prompted'). Vague significance
-    claims never count."""
-    if VAGUE_EFFECT_RX.search(sentence) or WEAK_SENTENCE_RX.search(sentence):
+    claims and purposes never count."""
+    if VAGUE_EFFECT_RX.search(sentence) or WEAK_SENTENCE_RX.search(sentence) or PURPOSE_RX.search(sentence):
         return False
     return bool(AFFECTED_RX.search(sentence) or CONSEQUENCE_RX.search(sentence))
 

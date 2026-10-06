@@ -59,6 +59,27 @@ MORNING = [
     # 29-30: a second rc10 run joined these to the diesel order through 'midterms'
     ("news_rss", "Jimmy Kimmel has a scathing response to Trump promising $5k if Republicans win the midterms", ""),
     ("news_rss", "Trump announces $90 payments for seniors on Medicare ahead of midterm elections for premium costs", ""),
+    # 31-36: a third rc10 run merged the medicine Nobel (October 5) and the physics Nobel (October 6)
+    ("news_rss", "Nobel medicine prize goes to 3 scientists for research into brain activity", ""),
+    ("news_rss", "Medicine Nobel awarded for brain 'switch' that controls neurons with light", ""),
+    ("news_rss", "California scientist wins a Nobel Prize, then makes school lunches for his kids", ""),
+    ("news_rss", "Nobel Prize in Physics goes to Francis Halzen for discovering neutrinos, described as 'ghost-like "
+                 "messages from space'", ""),
+    ("news_rss", "Nobel prize in physics awarded for discovery of high-energy neutrinos", ""),
+    ("news_rss", "Francis Halzen wins 2026 Nobel Prize in Physics", ""),
+    # 37-38: ... and joined these through 'games' + 'consoles' (no name in common)
+    ("google_news", "Modders discover way to play PS5 games on Xbox consoles", ""),
+    ("google_news", "'Chipflation' is driving up the cost of video games and consoles, and prices show no signs of easing",
+     ""),
+    # 39-40: a pair with no name in common that is one story (rare shared words still link it)
+    ("news_rss", "Scientists find new antibiotic in soil bacteria", ""),
+    ("news_rss", "New antibiotic discovered in soil could fight superbugs", ""),
+    # 41-44: a fourth rc10 run joined these through 'hit' + 'cuts' and 'NASA' + 'space'
+    ("news_rss", "FBI's spy hunting squads hit with deep cuts even as foreign espionage threats soar", ""),
+    ("news_rss", "Samsung 9100 Pro SSDs slashed up to 41% while supplies last - huge price cuts hit all capacities "
+                 "from 1TB to 8TB", ""),
+    ("google_news", "NASA's Prima space telescope would aim to see what James Webb can't", ""),
+    ("youtube", "NASA's SpaceX Crew-12 Farewell and International Space Station Change of Command", ""),
 ]
 
 
@@ -67,6 +88,8 @@ def _index() -> LinkIndex:
     rng = random.Random(1)
     words = ["".join(rng.choice("bcdfghklmnprstvz") + rng.choice("aeiou") for _ in range(4)) for _ in range(3000)]
     padding = [("news_rss", " ".join(rng.sample(words, 6)), "") for _ in range(1000)]
+    # 'games' was in 17 of the run's 1,352 titles (sports and gaming): as common here
+    padding += [("news_rss", " ".join(rng.sample(words, 5)) + " games", "") for _ in range(15)]
     items = []
     for i, (source, title, ctx) in enumerate(MORNING + REAL + padding, start=1):
         raw = RawTrendItem(title=title, source=SourceName(source), timestamp=NOW)
@@ -88,6 +111,17 @@ def test_an_everyday_word_does_not_link_two_stories():
     assert _groups([8, 9, 10]) == [[8, 9], [10]]
     groups = _groups([24, 25, 26, 27, 28, 29, 30])
     assert [24, 25, 26] in groups and not any({24, 25, 26} & set(g) and {27, 28, 29, 30} & set(g) for g in groups)
+    assert _groups([41, 42]) == [[41], [42]]
+    assert _groups([43, 44]) == [[43], [44]]
+
+
+def test_different_nobel_prizes_are_different_stories():
+    assert _groups([31, 32, 33, 34, 35, 36]) == [[31, 32, 33], [34, 35, 36]]
+
+
+def test_titles_with_no_name_in_common_link_only_through_rare_words():
+    assert _groups([37, 38]) == [[37], [38]]
+    assert _groups([39, 40]) == [[39, 40]]
 
 
 def test_one_shared_key_name_is_not_the_same_story():
@@ -487,6 +521,41 @@ def test_copied_page_voice_fragments_and_empty_restatements_are_dropped():
     assert lead_sentence(cluster, {1: item}, cluster.headline).startswith("example.com is a reserved domain name")
 
 
+def test_abbreviations_do_not_end_a_sentence():
+    from agent_reach.daily.edition import SENTENCE_SPLIT_RX
+    from agent_reach.pipeline.cleaner import sanitize_summary
+
+    text = ("TikTok outlined its preparation measures for the upcoming U.S. midterm elections. The app stressed its "
+            "security and reliability.")
+    assert sanitize_summary(text) == text  # was 'the upcoming U.S.' + 'Midterm elections.' (fifth rc10 run)
+    assert len(SENTENCE_SPLIT_RX.split("He could lose his No. 1 ranking. He will return in 2027.")) == 2
+
+
+def test_a_pronoun_keeps_the_sentence_it_refers_to():
+    from agent_reach.daily.edition import body_sentences
+
+    source = ("Robert Kelker-Kelly, soap drama star known for 'Days of Our Lives' turn as Bo, dies. Robert "
+              "Kelker-Kelly, Days of Our Lives' Bo Brady, Dead at 62. He was best known for playing Bo Brady on "
+              "'Days of Our Lives.'")
+    summary = ("Robert Kelker-Kelly, soap drama star, dies at 62. He was best known for playing Bo Brady on 'Days of "
+               "Our Lives'.")
+    assert body_sentences(summary, source, "Robert Kelker-Kelly, Soap Drama Star, Dies at 62") == [
+        "Robert Kelker-Kelly, soap drama star, dies at 62.", "He was best known for playing Bo Brady on 'Days of Our Lives'."]
+
+
+def test_a_model_headline_must_use_the_reports_words():
+    from agent_reach.pipeline.clusterer import headline_supported
+
+    def item(i: int, title: str) -> CleanedTrendItem:
+        raw = RawTrendItem(title=title, source=SourceName.NEWS_RSS, timestamp=NOW)
+        return CleanedTrendItem(**raw.model_dump(), item_id=i, normalized_title=title, heuristic_score=0.6)
+
+    recap = [item(1, "Falcons 45-24 Saints (Oct 5, 2026) Game Recap"), item(2, "Falcons")]
+    assert not headline_supported("Falcons Edge Saints in Thursday Night Football", recap)  # a Monday game
+    rout = [item(3, "Bijan Robinson, Falcons make NFC South statement in rout of Saints")]
+    assert headline_supported("Bijan Robinson Leads Falcons to Rout of Saints", rout)
+
+
 def test_a_sentence_cut_short_is_dropped():
     from agent_reach.daily.edition import body_sentences
 
@@ -549,6 +618,7 @@ def test_why_it_matters_must_be_a_consequence_not_a_restatement():
     assert not concrete_effect("The move is to comply with the EU's AI Act.")
     assert not concrete_effect("The 39-year-old will bid an emotional farewell.")
     assert not concrete_effect("LIV Golf hopes to continue into 2027.")
+    assert not concrete_effect("The move aims to curb fuel costs.")  # a purpose (third rc10 run)
     assert concrete_effect("The incident has prompted the US to offer assistance to Russia.")
 
     story = make_story(headline="OpenAI to Watermark ChatGPT Text in EU",

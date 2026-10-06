@@ -318,7 +318,10 @@ JSON_KEY_RX = re.compile(
 JSON_JUNK_RX = re.compile(r'\\[nrt"]|[{}\[\]`]|(?<=\s)"\s*,\s*"|^\s*"|"\s*,?\s*$')
 SPACE_BEFORE_PUNCT_RX = re.compile(r"\s+([.,;:!?])")
 REPEAT_PUNCT_RX = re.compile(r"([.,;:!?])(?:\s*[.,;:])+")
-SENTENCE_RX = re.compile(r"(?<=[.!?])\s+")  # split only where punctuation is followed by space (keeps "2.0")
+#: Split only where punctuation is followed by space (keeps "2.0"), never after an abbreviation that runs on
+#: ('the upcoming U.S. midterm elections' became 'the upcoming U.S.' + 'Midterm elections.').
+SENTENCE_RX = re.compile(r"(?<=[.!?])(?<!\bU\.S\.)(?<!\bU\.K\.)(?<!\bU\.N\.)(?<!\bE\.U\.)(?<!\bNo\.)(?<!\bSt\.)"
+                         r"(?<!\bMr\.)(?<!\bMs\.)(?<!\bDr\.)(?<!\bMrs\.)\s+")
 
 SMALL_WORDS = frozenset(
     "a an and as at but by for from in into nor of on or over per the to up via vs vs. with".split()

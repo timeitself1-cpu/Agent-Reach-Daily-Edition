@@ -259,7 +259,8 @@ def extract_json(text: str) -> dict[str, Any]:
     return data
 
 
-SENTENCE_SPLIT = re.compile(r"(?<=[.!?])\s+(?=[A-Z0-9\"'(])")
+SENTENCE_SPLIT = re.compile(r"(?<=[.!?])(?<!\bU\.S\.)(?<!\bU\.K\.)(?<!\bU\.N\.)(?<!\bE\.U\.)(?<!\bNo\.)"
+                            r"\s+(?=[A-Z0-9\"'(])")
 PROPER_NOUN_RX = re.compile(r"\b([A-Z][A-Za-z0-9&'.-]+(?:\s+(?:of|the|de|&)?\s*[A-Z][A-Za-z0-9&'.-]+){0,3})")
 ENTITY_BLOCKLIST = frozenset({"The", "A", "An", "This", "That", "New", "Why", "How", "What", "Show", "Ask", "Launch", "HN"})
 
@@ -318,6 +319,12 @@ EVENT_FAMILIES = (
     {"breach", "vulnerability", "exploit", "hacked"},
 )
 EVENT_WORDS = frozenset().union(*EVENT_FAMILIES)
+#: Qualifiers that name different events of one institution: the Nobel Prize in physics and the one in
+#: medicine are two stories although both titles say 'Nobel Prize' (a real rc10 edition merged them).
+EXCLUSIVE_QUALIFIERS = (
+    ({"physics"}, {"chemistry"}, {"medicine", "physiology"}, {"literature"}, {"peace"},
+     {"economics", "economic", "economy"}),
+)
 #: Everyday English words that two unrelated headlines share all the time ('ChatGPT is adding ...' and
 #: 'Apple accuses OpenAI of improperly adding ...'; 'national intelligence chief' and 'national TV
 #: ownership cap'; 'Trump ... ahead of midterms' and 'Trump Rallies ... Ahead of Midterm Elections').
@@ -339,7 +346,8 @@ national international global local public official officials people world state
 groups company companies firm million billion percent time times way ways thing things part life case deal
 home man men woman women child children family families country city place area number level side
 ahead behind across against among despite during through toward towards within around again already soon later
-cost costs price prices money pay pays paid midterm midterms
+cost costs price prices money pay pays paid hit hits cut cuts win wins won award awards awarded space
+midterm midterms
 """.split())
 #: Trend lists whose titles are fragments ('Packers', 'Bijan'): only these may link to a full
 #: headline through a single distinctive word. A short article title ('Web Search API') may not.
@@ -370,6 +378,9 @@ class LinkIndex:
         self.df: Counter[str] = Counter(t for ts in self.toks.values() for t in ts)
         n = max(1, len(pool))
         self.rare_cap = max(4, int(0.06 * n))
+        # two titles that share no name link only through words in at most 1% of the run ('games' is
+        # in 17 of 1,352 titles: 'PS5 games on Xbox consoles' is not 'chipflation' in games and consoles)
+        self.nameless_cap = max(3, int(0.01 * n))
         self._rx_cache: dict[str, re.Pattern[str] | None] = {}
         self._co_cache: dict[tuple[str, str], bool] = {}
         self.name_words = self._name_words(pool.values())
@@ -477,7 +488,8 @@ class LinkIndex:
         # a phrase both titles share ('Supreme Court', 'iPhone 18 Pro', 'dies aged') is one piece
         # of evidence, not one per word: two reports need two separate rare things in common
         # ...and at least one of them must be about what happened, not only who ('Apple' + 'iPhone')
-        rare_units = [u for u in self.shared_units(a, b, shared) if any(self.df[t] <= self.rare_cap for t in u)]
+        cap = self.rare_cap if shared & self.name_words else self.nameless_cap
+        rare_units = [u for u in self.shared_units(a, b, shared) if any(self.df[t] <= cap for t in u)]
         if len(rare_units) >= 2 and any(self._event_unit(u) for u in rare_units):
             return True
         # short trend fragments ('Packers', 'Bijan') link to a fuller title via one distinctive name
@@ -533,9 +545,12 @@ class LinkIndex:
     def event_compatible(self, a: int, b: int) -> bool:
         if abs((self.items[a].timestamp - self.items[b].timestamp).total_seconds()) > self.max_age_hours * 3600:
             return False
-        ka = {i for i, words in enumerate(EVENT_FAMILIES) if words & self.toks[a]}
-        kb = {i for i, words in enumerate(EVENT_FAMILIES) if words & self.toks[b]}
-        return not (ka and kb and ka.isdisjoint(kb))
+        for families in (EVENT_FAMILIES, *EXCLUSIVE_QUALIFIERS):
+            ka = {i for i, words in enumerate(families) if words & self.toks[a]}
+            kb = {i for i, words in enumerate(families) if words & self.toks[b]}
+            if ka and kb and ka.isdisjoint(kb):
+                return False
+        return True
 
     def components(self, ids: list[int], entities: list[str]) -> list[list[int]]:
         # Label entities deliberately do not define edges. Short observed fragments can
@@ -589,6 +604,21 @@ def quantities_grounded(headline: str, members: list[CleanedTrendItem]) -> bool:
         elif not re.search(r"\b" + q.rstrip("s") + r"s?\b", text):
             return False
     return True
+
+
+#: A model headline must mostly use the reports' own words: 'Falcons Edge Saints in Thursday Night Football'
+#: for a 45-24 Monday night game shares 2 of 6 words with its reports.
+HEADLINE_SUPPORT_SHARE = 0.5
+
+
+def headline_supported(headline: str, members: list[CleanedTrendItem]) -> bool:
+    """False when fewer than half of a headline's content words (5-letter stems) appear in its reports."""
+    words = [t for t in tokens(headline) if (len(t) >= 3 and t not in STOPWORDS) or any(c.isdigit() for c in t)]
+    if not words:
+        return True
+    text = " ".join(f"{m.normalized_title} {m.title} {m.context or ''} {m.description or ''}" for m in members)
+    stems = {t[:5] for t in tokens(text)}
+    return sum(1 for w in words if w[:5] in stems) >= HEADLINE_SUPPORT_SHARE * len(words)
 
 
 @dataclass
@@ -1189,8 +1219,9 @@ class SemanticClusterer:
             category = self._guard_category(coerce_category(d.category_raw, fallback), members)
 
             headline = sanitize_headline(d.headline, HEADLINE_MAX_WORDS, HEADLINE_STRETCH_WORDS)
-            if headline and not quantities_grounded(headline, members):
-                # 'Thousands in Quarantine' when the reports say nearly 200: use a real report title
+            if headline and not (quantities_grounded(headline, members) and headline_supported(headline, members)):
+                # 'Thousands in Quarantine' when the reports say nearly 200, or 'Thursday Night Football' for
+                # a Monday game: use a real report title
                 fallback = sanitize_headline(self._best_member_title(members), HEADLINE_MAX_WORDS, HEADLINE_STRETCH_WORDS)
                 headline = fallback or headline
             if not headline or is_generic_headline(headline) or is_label_headline(headline):
