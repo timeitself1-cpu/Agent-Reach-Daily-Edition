@@ -132,8 +132,9 @@ PROMO_RX = re.compile(
     r"e-degree|bundle (?:for|at) \$|deals? of the day|best [\w\s-]{0,40} deals|prime day deals?|black friday deals?|"
     r"cyber monday deals?|price drop|msrp|sponsored|affiliate commission|"
     # shopping-event roundups ('Prime Day Apple Watch deals: Series 12 all-time low, Ultra 4 $100 off')
-    r"all[- ]time lows?|\$\d[\d,.]* off|prime (?:day|big deal days?)\b.{0,60}\b(?:deals?|discounts?|sale)|"
-    r"(?:deals?|discounts?)\b.{0,60}\bprime (?:day|sale|big deal days?))\b",
+    r"all[- ]time lows?|lowest prices? (?:ever|since|of the year|for prime)|\$\d[\d,.]* off|"
+    r"prime (?:day|big deal days?)\b.{0,60}\b(?:deals?|discounts?|sale|prices?)|"
+    r"(?:deals?|discounts?|lowest prices?)\b.{0,60}\b(?:for |on |during )?prime (?:day|sale|big deal days?))\b",
     re.IGNORECASE,
 )
 #: Video clips that are not reports: highlight reels, full replays, live streams, reactions and recaps.
@@ -299,6 +300,24 @@ def is_live_blog(text: str | None) -> bool:
     return bool(text and LIVE_BLOG_RX.search(text))
 
 
+#: Newsletter digests: one title, many stories ('First Thing: deranged and dangerous Trump calls for ...').
+DIGEST_TITLE_RX = re.compile(r"^\s*(?:first thing|morning mail|the download|the morning|morning report|evening report|"
+                             r"morning briefing|evening briefing|daily briefing|news ?digest|the briefing|week in review)"
+                             r"\s*[:|-]", re.IGNORECASE)
+
+
+def is_roundup(title: str | None) -> bool:
+    """A title that covers many stories: a live blog, a newsletter digest, or two headlines joined by ' | '
+    ('Yankees staring at sweep after comedy of errors in ALDS Game 2 | Falcons run roughshod over Saints').
+    'Story | Publisher' is not one: each side must read as a headline (4+ words)."""
+    if not title:
+        return False
+    if is_live_blog(title) or DIGEST_TITLE_RX.search(title):
+        return True
+    parts = [p for p in re.split(r"\s+\|\s+", title) if p.strip()]
+    return len(parts) >= 2 and sum(len(p.split()) >= 4 for p in parts) >= 2
+
+
 def strip_bare_urls(text: str) -> str:
     """Remove URLs and bare domains, but keep a domain that is the subject ('Example.com just launched ...').
 
@@ -329,7 +348,8 @@ REPEAT_PUNCT_RX = re.compile(r"([.,;:!?])(?:\s*[.,;:])+")
 #: ('the upcoming U.S. midterm elections' became 'the upcoming U.S.' + 'Midterm elections.').
 SENTENCE_RX = re.compile(r"(?<=[.!?])(?<!\bU\.S\.)(?<!\bU\.K\.)(?<!\bU\.N\.)(?<!\bE\.U\.)(?<!\bNo\.)(?<!\bSt\.)"
                          r"(?<!\bMr\.)(?<!\bMs\.)(?<!\bDr\.)(?<!\bMrs\.)(?<!\bGov\.)(?<!\bSen\.)(?<!\bRep\.)"
-                         r"(?<!\bGen\.)(?<!\bJr\.)(?<!\bSr\.)(?<!\bvs\.)(?<!\bLt\.)(?<!\bCol\.)(?<!\bProf\.)\s+")
+                         r"(?<!\bGen\.)(?<!\bJr\.)(?<!\bSr\.)(?<!\bvs\.)(?<!\bLt\.)(?<!\bCol\.)(?<!\bProf\.)"
+                         r"(?<!\bBros\.)(?<!\bInc\.)(?<!\bCorp\.)(?<!\bCo\.)(?<!\bLtd\.)\s+")
 
 SMALL_WORDS = frozenset(
     "a an and as at but by for from in into nor of on or over per the to up via vs vs. with".split()
@@ -455,7 +475,10 @@ def sanitize_headline(text: str, max_words: int = 14, stretch_to: int | None = N
     t = _trim_quotes(WS_RX.sub(" ", t).strip(" .,;:-|")).strip(" .,;:-|")
     words = t.split()
     if len(words) > max_words:
-        clause = _sentence_cut(words, max_words) or _clause_cut(words, max_words)
+        # within the stretch a title stays whole: a clause cut can drop the main verb ('Jim Bakker, who lost
+        # his PTL Club empire in sex and money scandals, dies at 86' -> '..., Who Lost ... Scandals')
+        stretched = bool(stretch_to and len(words) <= stretch_to)
+        clause = _sentence_cut(words, max_words) or (None if stretched else _clause_cut(words, max_words))
         if clause:
             words = clause
         elif not (stretch_to and len(words) <= stretch_to):  # a few words over: whole, never cut mid-clause

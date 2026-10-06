@@ -245,7 +245,7 @@ def test_version_4_settings_turn_tiktok_off_and_fix_dead_feeds(daily_paths):
     ]
     daily_paths.settings.write_text(json.dumps(old))
     prefs, warning = load_prefs(daily_paths)
-    assert warning is None and prefs.prefs_version == PREFS_VERSION == 7
+    assert warning is None and prefs.prefs_version == PREFS_VERSION == 8
     assert "tiktok" not in prefs.enabled_sources and "youtube" in prefs.enabled_sources
     by_name = {f.name: f for f in prefs.feeds}
     assert "VentureBeat - AI" not in by_name and "Space.com" not in by_name

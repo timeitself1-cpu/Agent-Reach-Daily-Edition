@@ -8,7 +8,7 @@ conventions), then this file. `README.md` is the user guide; `docs/architecture.
 - **Branch:** `claude/loving-darwin-a7rqvs` (all work is pushed there; no PR has been opened, and
   none should be unless the user asks). Version `agent_reach/daily/__init__.py` = `1.0.0rc10`.
 - **CI:** `tests.yml` is green on rc10 (Python 3.10 and 3.12; the 15 GUI tests skip there without a
-  display). On the user's Windows PC: 361 tests, 360 pass and 1 skips (SIGKILL semantics; a Reddit
+  display). On the user's Windows PC: 371 tests, 370 pass and 1 skips (SIGKILL semantics; a Reddit
   pacing test can fail by milliseconds when the PC is busy); the GUI
   tests run against the real display, and Tk start-up there occasionally fails and skips one of them.
 - **The user** runs the app on Windows from `C:\Users\downt\Downloads\Agent Reach\src\Agent-Reach`,
@@ -83,6 +83,23 @@ real October 6 morning edition, and a cloud runner that fits a Daily refresh (be
   real editions fails it, the false one. "The author provides their picks" is not news. Also from
   the same morning's runs: shopping-event roundups are promotional, "games" is an everyday word,
   currency signs survive ASCII folding.
+- From the user's 8:03 AM edition (revision 4) and two runs after it:
+  - Roundups never link to other reports (`cleaner.is_roundup`, `LinkIndex.roundups`): live blogs,
+    newsletter digests ("First Thing: ..."), and two headlines in one title ("Yankees staring at
+    sweep ... | Falcons run roughshod over Saints"). A Guardian live blog whose title changed during
+    the day had joined a "San Diego" trend to the Trump-ads story.
+  - More everyday words: "historic", "raised", "million", "really", "night", "safety".
+  - Price drops for a shopping event ("Lowest Price Since June for Prime Day") are promotional.
+  - A summary may not open with a word that needs an earlier sentence ("It is ...", "But ...",
+    "The move ...") or end in "..." (a clipped excerpt).
+  - Titles of up to 18 words stay whole unless they contain a sentence break: a clause cut had
+    dropped the main verb ("Jim Bakker, who lost ... scandals, dies at 86").
+  - "Bros.", "Inc.", "Corp.", "Co.", "Ltd." never end a sentence ("Warner Bros. have merged").
+  - Trend fragments no longer link through an everyday word ("National Taco Day" had joined the AI
+    czar); "This model is ..." no longer opens a summary ("This year's ..." still may); summary casing
+    also checks sentence-case titles when the page text is silent ("Creators", "Mental Health").
+  - Settings v8: The Independent - World answers every automated reader with HTTP 429 (it works only
+    in a browser: a TLS-level block, not something to work around), replaced by CBS News - World.
 - Reddit health notes name the subreddits without URLs, grouped by cause. Settings v7: Yahoo
   Finance (HTTP 404) -> Bloomberg Markets (`REPLACED_IN_V7`).
 - `cloud-runner.yml`: the Daily run writes its own settings.json (80 articles via input
@@ -143,7 +160,8 @@ A cloud sandbox has no Ollama and no news access. Three ways to see real output:
      Telescope investigates what happens when planets crash together" (shared "James Webb" and
      "space telescope"). A frequency ceiling on single event words was rejected: on a big day the
      key word is frequent ("plague" was in 1.2% of the run) and real stories would split.
-   - The same event can still appear twice when one report was not grouped with the rest: "US Closely
+   - The same event can still appear twice when one report was not grouped with the rest ("WHO
+     Comments on Russian Plague Lab Death" next to the plague story, 8:20 AM run; and: "US Closely
      Monitoring Case of Lab Worker Who Possibly Died of Plague in Siberia" (Hacker News, filed under
      Tech) next to the plague story in News (user's 6:49 edition). `same_topic` compares headlines
      only.

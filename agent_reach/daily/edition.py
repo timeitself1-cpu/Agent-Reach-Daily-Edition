@@ -60,6 +60,7 @@ SENTENCE_SPLIT_RX = re.compile(
     r"(?:(?<=[.!?])|(?<=[.!?][\"'\u2019\u201d]))"
     r"(?<!\bSt\.)(?<!\bMr\.)(?<!\bMs\.)(?<!\bDr\.)(?<!\bJr\.)(?<!\bSr\.)(?<!\bMrs\.)(?<!\bGen\.)"
     r"(?<!\bSen\.)(?<!\bRep\.)(?<!\bGov\.)(?<!\bvs\.)(?<!\bU\.S\.)(?<!\bU\.K\.)(?<!\bU\.N\.)(?<!\bE\.U\.)(?<!\bNo\.)"
+    r"(?<!\bBros\.)(?<!\bInc\.)(?<!\bCorp\.)(?<!\bCo\.)(?<!\bLtd\.)"
     r"\s+(?=[A-Z0-9\"'(\u2018\u201c])"
 )
 #: Sentences that say nothing about what happened (seen in real editions): dropped from summaries.
@@ -494,6 +495,8 @@ def ends_dangling(sentence: str) -> bool:
     """A sentence cut short: fewer than three words ('Gov.', 'Midterm elections.'), or it ends on an article,
     a preposition, a possessive or 'new'."""
     words = re.findall(r"[A-Za-z0-9][A-Za-z0-9']*", sentence)
+    if sentence.rstrip().endswith(("...", "…")):  # a clipped excerpt ('in front of a fake...')
+        return True
     return len(words) < 3 or words[-1].lower() in DANGLING_END_WORDS or words[-1].lower().endswith("'s")
 
 
@@ -546,8 +549,13 @@ def without_self_repeat(sentence: str) -> str | None:
     return None if _repeats_itself(out) else out
 
 
-#: A sentence that opens with a pronoun needs the sentence before it.
-PRONOUN_START_RX = re.compile(r"^(?:he|she|they|it|his|her|their|its)\b", re.IGNORECASE)
+#: A sentence that opens with a pronoun, a connective or 'the move' needs the sentence before it ('It is an
+#: open-weight model ...', 'But tracing their journey ...', 'The move aims to ...').
+PRONOUN_START_RX = re.compile(r"^(?:he|she|they|it|his|her|their|its|but|and|yet|however|also)\b"
+                              r"|^(?:the|that) (?:move|decision|step|deal|change)\b"
+                              # 'This model is part of a new crop ...' (but 'This year's prize ...' stands alone)
+                              r"|^(?:this|these) (?!year|week|month|morning|evening|weekend|season|summer|winter|"
+                              r"spring|fall|autumn|time\b)\w+", re.IGNORECASE)
 
 
 def body_sentences(summary: str, source: str | None = None, headline: str | None = None) -> list[str]:
@@ -571,21 +579,24 @@ def body_sentences(summary: str, source: str | None = None, headline: str | None
                 restated.append(s)
             else:
                 place_sentence(out, s)
-    # 'He was best known for playing Bo Brady' needs the sentence that says who he is
+    # 'He was best known for playing Bo Brady' needs the sentence that says who he is; with none, a summary
+    # does not open with it ('It is an open-weight model available through Reflection.')
     if out and restated and PRONOUN_START_RX.match(out[0]):
         out.insert(0, restated[0])
+    while out and PRONOUN_START_RX.match(out[0]):
+        out.pop(0)
     return out[:2]
 
 
 def lead_sentence(cluster: MacroCluster, items: dict[int, CleanedTrendItem], headline: str = "") -> str | None:
     """The first sound sentence of what the reports themselves say, for a story whose model summary
     did not survive. Live blogs are never used; their pages cover many events."""
-    from agent_reach.pipeline.cleaner import is_live_blog
+    from agent_reach.pipeline.cleaner import is_live_blog, is_roundup
 
     members = sorted((items[i] for i in cluster.member_item_ids if i in items),
                      key=lambda m: m.heuristic_score, reverse=True)
     for m in members:
-        if is_live_blog(m.normalized_title) or is_live_blog(m.context):
+        if is_roundup(m.normalized_title) or is_live_blog(m.context):
             continue
         for segment in reversed((m.context or "").split(" | ")):
             for s in SENTENCE_SPLIT_RX.split(segment.strip())[:3]:
@@ -712,10 +723,11 @@ def is_weak(story: Story) -> bool:
 
 
 def is_live_blog_only(story: Story) -> bool:
-    """Every report is a live blog ('... - as it happened'): a running page of many events, not one story."""
-    from agent_reach.pipeline.cleaner import is_live_blog
+    """Every report is a live blog ('... - as it happened') or a newsletter digest ('First Thing: ...'):
+    a running page of many events, not one story."""
+    from agent_reach.pipeline.cleaner import is_live_blog, is_roundup
 
-    return all(is_live_blog(e.title) or is_live_blog(e.excerpt) for e in story.evidence)
+    return all(is_roundup(e.title) or is_live_blog(e.excerpt) for e in story.evidence)
 
 
 def _topic_tokens(story: Story) -> set[str]:

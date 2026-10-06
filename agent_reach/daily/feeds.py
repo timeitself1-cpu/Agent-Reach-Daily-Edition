@@ -146,7 +146,7 @@ ADDED_IN_V3: list[FeedSpec] = [
     _f("ABC News - Top Stories", "https://abcnews.go.com/abcnews/topstories"),
     _f("Fox News - Latest", "https://moxie.foxnews.com/google-publisher/latest.xml"),
     _f("Sky News - World", "https://feeds.skynews.com/feeds/rss/world.xml"),
-    _f("The Independent - World", "https://www.independent.co.uk/news/world/rss"),
+    _f("CBS News - World", "https://www.cbsnews.com/latest/rss/world"),
     _f("Politico - Politics", "https://rss.politico.com/politics-news.xml"),
     _f("The Hill", "https://thehill.com/feed/"),
     _f("MarketWatch - Top Stories", "https://feeds.content.dowjones.io/public/rss/mw_topstories"),
@@ -257,6 +257,12 @@ REPLACED_IN_V6: dict[str, FeedSpec | None] = {
 #: replaces it as the business wire.
 REPLACED_IN_V7: dict[str, FeedSpec | None] = {
     "https://finance.yahoo.com/news/rssindex": _f("Bloomberg - Markets", "https://feeds.bloomberg.com/markets/news.rss"),
+}
+
+#: Settings version 8: The Independent answers automated readers with HTTP 429 every time (it works only in
+#: a browser); CBS News's world feed replaces it.
+REPLACED_IN_V8: dict[str, FeedSpec | None] = {
+    "https://www.independent.co.uk/news/world/rss": _f("CBS News - World", "https://www.cbsnews.com/latest/rss/world"),
 }
 
 #: The six feeds shipped before per-feed settings existed (used to migrate untouched settings).

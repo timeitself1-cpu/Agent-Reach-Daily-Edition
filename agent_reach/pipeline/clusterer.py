@@ -50,7 +50,7 @@ from agent_reach.pipeline.cleaner import (
     display_sources,
     is_generic_headline,
     is_label_headline,
-    is_live_blog,
+    is_roundup,
     normalize_text,
     sanitize_headline,
     sanitize_summary,
@@ -261,7 +261,8 @@ def extract_json(text: str) -> dict[str, Any]:
 
 SENTENCE_SPLIT = re.compile(r"(?<=[.!?])(?<!\bU\.S\.)(?<!\bU\.K\.)(?<!\bU\.N\.)(?<!\bE\.U\.)(?<!\bNo\.)"
                             r"(?<!\bGov\.)(?<!\bSen\.)(?<!\bRep\.)(?<!\bGen\.)(?<!\bSt\.)(?<!\bMr\.)(?<!\bMs\.)"
-                            r"(?<!\bDr\.)(?<!\bMrs\.)(?<!\bJr\.)\s+(?=[A-Z0-9\"'(])")
+                            r"(?<!\bDr\.)(?<!\bMrs\.)(?<!\bJr\.)(?<!\bBros\.)(?<!\bInc\.)(?<!\bCorp\.)(?<!\bCo\.)"
+                            r"(?<!\bLtd\.)\s+(?=[A-Z0-9\"'(])")
 PROPER_NOUN_RX = re.compile(r"\b([A-Z][A-Za-z0-9&'.-]+(?:\s+(?:of|the|de|&)?\s*[A-Z][A-Za-z0-9&'.-]+){0,3})")
 ENTITY_BLOCKLIST = frozenset({"The", "A", "An", "This", "That", "New", "Why", "How", "What", "Show", "Ask", "Launch", "HN"})
 
@@ -348,6 +349,8 @@ groups company companies firm million billion percent time times way ways thing 
 home man men woman women child children family families country city place area number level side
 ahead behind across against among despite during through toward towards within around again already soon later
 cost costs price prices money pay pays paid hit hits cut cuts win wins won award awards awarded space games
+historic raise raises raised raising million millions billion billions trillion really night nights morning
+evening afternoon weekend safety
 midterm midterms
 """.split())
 #: Trend lists whose titles are fragments ('Packers', 'Bijan'): only these may link to a full
@@ -382,6 +385,8 @@ class LinkIndex:
         # two titles that share no name link only through words in at most 1% of the run ('games' is
         # in 17 of 1,352 titles: 'PS5 games on Xbox consoles' is not 'chipflation' in games and consoles)
         self.nameless_cap = max(3, int(0.01 * n))
+        self.roundups = {iid for iid, it in pool.items()
+                         if is_roundup(it.normalized_title) or any(is_roundup(o.title) for o in it.observations)}
         self._rx_cache: dict[str, re.Pattern[str] | None] = {}
         self._co_cache: dict[tuple[str, str], bool] = {}
         self.name_words = self._name_words(pool.values())
@@ -472,6 +477,10 @@ class LinkIndex:
         return self._co_cache[(k1, k2)]
 
     def linked(self, a: int, b: int) -> bool:
+        # a live blog or newsletter digest covers many stories: it is evidence for none of them, and
+        # linking through it chained a diesel order to an Iran story and the Yankees to the Saints
+        if a in self.roundups or b in self.roundups:
+            return False
         ta, tb = self.toks.get(a, set()), self.toks.get(b, set())
         shared = ta & tb
         if min(len(ta), len(tb)) > 3:
@@ -482,7 +491,8 @@ class LinkIndex:
                 return False
         if not shared:
             return False
-        rare = [t for t in shared if self.df[t] <= self.rare_cap]
+        # ('National Taco Day' is not the national intelligence chief named AI czar)
+        rare = [t for t in shared if self.df[t] <= self.rare_cap and t not in COMMON_WORDS]
         jacc = len(shared) / len(ta | tb)
         if len(shared) >= 2 and jacc >= 0.25:
             return True
@@ -1163,7 +1173,7 @@ class SemanticClusterer:
             return (m.heuristic_score + 0.04 * min(n_tok, 8) - (0.3 if n_tok < 2 else 0.0)
                     - (0.2 if words > HEADLINE_MAX_WORDS else 0.0)  # would have to be cut
                     - (0.2 if is_label_headline(m.normalized_title) else 0.0)
-                    - (1.0 if is_live_blog(m.normalized_title) else 0.0))
+                    - (1.0 if is_roundup(m.normalized_title) else 0.0))
 
         ordered = sorted(members, key=lambda m: m.heuristic_score, reverse=True)
         title = max(ordered[:6], key=rank).normalized_title
@@ -1173,9 +1183,14 @@ class SemanticClusterer:
         self, summary: str, members: list[CleanedTrendItem], headline: str, entities: list[str] | None = None
     ) -> str:
         # restore the casing of names only: an 'entity' the reports' own text writes differently ('in the
-        # brain', "Alzheimer's proteins", 'housing crisis') is an ordinary noun, not 'Brain'. Titles are left
-        # out of the comparison: many feeds write them in Title Case.
-        prose = " ".join(f"{m.context or ''} {m.description or ''}" for m in members)
+        # brain', "Alzheimer's proteins", 'housing crisis') is an ordinary noun, not 'Brain'. Titles count only
+        # when written in sentence case: many feeds write them in Title Case.
+        def sentence_case(title: str) -> bool:
+            words = [w for w in re.findall(r"[A-Za-z][\w']*", title)[1:] if w.lower() not in STOPWORDS]
+            return bool(words) and sum(w[0].isupper() for w in words) < 0.5 * len(words)
+
+        prose = " ".join([f"{m.context or ''} {m.description or ''}" for m in members]
+                         + [m.title for m in members if sentence_case(m.title)])
 
         def written_as_name(entity: str) -> bool:
             found = re.findall(r"(?<![\w'])" + re.escape(entity) + r"(?![\w'])", prose, re.IGNORECASE)

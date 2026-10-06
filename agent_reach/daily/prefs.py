@@ -23,6 +23,7 @@ from agent_reach.daily.feeds import (
     REPLACED_IN_V5,
     REPLACED_IN_V6,
     REPLACED_IN_V7,
+    REPLACED_IN_V8,
     FeedSpec,
     default_feeds,
     feeds_from_entries,
@@ -55,7 +56,7 @@ SOURCE_NOTES = {
     "producthunt": "Product Hunt launches (tech)",
     "arxiv": "arXiv AI/ML papers (research)",
 }
-PREFS_VERSION = 7
+PREFS_VERSION = 8
 DAILY_VELOCITY_WINDOWS = [24.0, 48.0, 168.0]
 DAILY_VELOCITY_WEIGHTS = [0.5, 0.3, 0.2]
 DAILY_VELOCITY_TOLERANCE = 0.25
@@ -143,7 +144,9 @@ class DailyPrefs(BaseModel):
           use fixed or removed (``REPLACED_IN_V5``);
         * version 5 -> 6: the MIT News feed, which failed at both of its addresses, removed
           (``REPLACED_IN_V6``);
-        * version 6 -> 7: Yahoo Finance (HTTP 404) replaced by Bloomberg's markets feed (``REPLACED_IN_V7``).
+        * version 6 -> 7: Yahoo Finance (HTTP 404) replaced by Bloomberg's markets feed (``REPLACED_IN_V7``);
+        * version 7 -> 8: The Independent's world feed (HTTP 429 for every automated reader) replaced by
+          CBS News's (``REPLACED_IN_V8``).
         """
         if not isinstance(data, dict):
             return data
@@ -184,6 +187,8 @@ class DailyPrefs(BaseModel):
             data["feeds"] = _replace_feeds(data["feeds"], REPLACED_IN_V6)
         if version < 7 and isinstance(data.get("feeds"), list):
             data["feeds"] = _replace_feeds(data["feeds"], REPLACED_IN_V7)
+        if version < 8 and isinstance(data.get("feeds"), list):
+            data["feeds"] = _replace_feeds(data["feeds"], REPLACED_IN_V8)
         data["prefs_version"] = PREFS_VERSION
         return data
 

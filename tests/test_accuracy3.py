@@ -83,6 +83,23 @@ MORNING = [
     # 45: a sixth rc10 run joined this to 37 (PS5 games on Xbox) through 'Xbox' + 'games'
     ("news_rss", "Gears of War: E-Day studio finds a way to get more performance from Xbox Series S - one that other "
                  "Xbox games can use", ""),
+    # 46-52: the user's 8:03 AM edition joined these through a newsletter digest, a two-headline title and
+    # 'raised ... million'
+    ("news_rss", "Trump allows cheaper, dyed diesel on highways to blunt historic fuel cost spike ahead of midterms", ""),
+    ("news_rss", "First Thing: 'deranged' and 'dangerous' Trump calls for Iran to strike US cities amid historic "
+                 "ratings low", ""),
+    ("news_rss", "Yankees bumble through 'really rough night' in Game 2 loss to Rays", ""),
+    ("news_rss", "Yankees staring at sweep after comedy of errors in ALDS Game 2 | Falcons run roughshod over Saints", ""),
+    ("news_rss", "Kellen Moore: Really disappointing how Saints played on an incredible night in New Orleans", ""),
+    ("news_rss", "AI agents don't always understand how companies work. This startup raised $5.2 million to solve that.",
+     ""),
+    ("news_rss", "Marcus Mumford & Carey Mulligan Raised $7.65 Million For Children in War Zones at Annual Wassail "
+                 "Benefit Charity Show", ""),
+    # 53-54: joined through 'Meta' + 'safety' in a later run
+    ("news_rss", "Ofcom investigates Meta over Instagram Instants safety checks", ""),
+    ("news_rss", "OpenAI, Anthropic, Meta, Google stop short of AI safety guarantee", ""),
+    # 55: a trend fragment joined to the AI czar (8) through 'national'
+    ("google_trends", "National Taco Day", ""),
 ]
 
 
@@ -615,6 +632,109 @@ def test_ordinary_nouns_are_not_capitalised_as_names():
     assert "in the brain" in out and "Alzheimer's proteins" in out
 
 
+# ---------------------------------------------------------------- the user's 8:03 AM edition (revision 4)
+def test_roundups_link_no_reports():
+    from agent_reach.pipeline.cleaner import is_roundup
+
+    assert is_roundup(MORNING[46][1]) and is_roundup(MORNING[48][1])
+    assert not is_roundup("Command-line tool quickly removes Apple Intelligence | Ars Technica")
+    assert not is_roundup("Trump Signs Executive Order to Lower Diesel Prices. What You Need To Know - October 6")
+    assert _groups([46, 47]) == [[46], [47]]
+    assert not any({48, 50} <= set(g) for g in _groups([48, 49, 50]))
+    assert _groups([51, 52]) == [[51], [52]]
+
+
+def test_a_trend_fragment_does_not_link_through_an_everyday_word():
+    taco = next(i for i, it in INDEX.items.items() if it.normalized_title == "National Taco Day")
+    czar = 8  # 'Trump names national intelligence chief Jay Clayton as new AI czar'
+    assert not INDEX.linked(taco, czar)
+
+
+def test_this_and_a_noun_does_not_open_a_summary():
+    from agent_reach.daily.edition import body_sentences
+
+    source = ("New open-weight AI models mount a comeback against China. This model is part of a new crop of powerful, "
+              "Western open-weight AI systems. This year's releases narrow China's lead.")
+    assert body_sentences("This model is part of a new crop of powerful, Western open-weight AI systems.", source) == []
+    assert body_sentences("This year's releases narrow China's lead.", source) == ["This year's releases narrow China's lead."]
+
+
+def test_casing_follows_a_sentence_case_title_when_the_page_is_silent():
+    from agent_reach.config import Settings
+    from agent_reach.pipeline.clusterer import SemanticClusterer
+
+    raw = RawTrendItem(title="There's now a monthly virtual support group for creators struggling with their mental "
+                             "health", source=SourceName.NEWS_RSS, timestamp=NOW)
+    item = CleanedTrendItem(**raw.model_dump(), item_id=1, normalized_title=raw.title, heuristic_score=0.6,
+                            context="\"Content creator\" became a widely recognized career.")
+    out = SemanticClusterer(Settings())._fix_summary(
+        "A monthly virtual support group is being launched for creators struggling with their mental health. It meets "
+        "online.", [item], "Support Group for Creators", ["Creators", "Mental Health"])
+    assert "for creators struggling with their mental health" in out
+
+
+def test_a_headline_never_loses_its_main_verb_to_a_clause_cut():
+    from agent_reach.pipeline.cleaner import sanitize_headline
+    from agent_reach.pipeline.clusterer import HEADLINE_MAX_WORDS, HEADLINE_STRETCH_WORDS
+
+    title = "Jim Bakker, who lost his 'PTL Club' televangelism empire in sex and money scandals, dies at 86"
+    assert sanitize_headline(title, HEADLINE_MAX_WORDS, HEADLINE_STRETCH_WORDS).endswith("Dies at 86")
+
+
+def test_company_abbreviations_do_not_end_a_sentence():
+    from agent_reach.pipeline.cleaner import sanitize_summary
+
+    text = ("Paramount and Warner Bros. have merged to form a new media conglomerate, Skydance. David Ellison called "
+            "it a historic day.")
+    assert sanitize_summary(text) == text  # was 'Paramount and Warner Bros.' + 'Have merged to form ...'
+
+
+def test_a_shared_safety_is_not_the_same_story():
+    raw = [("news_rss", "Ofcom investigates Meta over Instagram Instants safety checks"),
+           ("news_rss", "OpenAI, Anthropic, Meta, Google stop short of AI safety guarantee")]
+    ids = []
+    for title in (t for _, t in raw):
+        ids.append(next(i for i, it in INDEX.items.items() if it.normalized_title == title))
+    assert len(INDEX.components(ids, [])) == 2
+
+
+def test_version_7_settings_replace_the_independent():
+    from agent_reach.daily.feeds import default_feeds
+    from agent_reach.daily.prefs import DailyPrefs
+
+    indy = "https://www.independent.co.uk/news/world/rss"  # HTTP 429 for every automated reader, 5 runs in a row
+    prefs = DailyPrefs.model_validate({"prefs_version": 7, "feeds": [
+        {"name": "The Independent - World", "url": indy, "category": "News"}]})
+    assert [f.name for f in prefs.feeds] == ["CBS News - World"]
+    assert indy not in {f.url for f in default_feeds()}
+
+
+def test_price_drops_for_a_shopping_event_are_promotional():
+    from agent_reach.pipeline.cleaner import PROMO_RX
+
+    assert PROMO_RX.search("The MacBook Air Drops to Its Lowest Price Since June for Prime Day")
+    assert PROMO_RX.search("Our Go-To Over-Ear Headphones Are at Their Lowest Price for Prime Day")
+
+
+def test_a_summary_does_not_open_mid_thought_or_end_clipped():
+    from agent_reach.daily.edition import body_sentences
+
+    beam = "Beam: Reflection's 501B open-weight model. It is an open-weight model available through Reflection."
+    assert body_sentences("It is an open-weight model available through Reflection.", beam) == []
+    brain = ("Scientists find a hidden network of tiny channels the brain may use to flush out toxic Alzheimer's "
+             "proteins. But tracing their journey out of the brain has proved surprisingly difficult.")
+    assert body_sentences("But tracing their journey out of the brain has proved surprisingly difficult.", brain) == []
+    ev = ("EV charging company plans to deploy 100,000 Nvidia GPUs in pods at its roadside sites. The move aims to offer "
+          "edge inference compute using idle EV charging capacity.")
+    assert body_sentences("The move aims to offer edge inference compute using idle EV charging capacity.", ev) == []
+    comic = ("Tiffany Sloan is the name given to an AI-generated character that appears in numerous AI-slop Instagram "
+             "Reels, often featuring her telling a joke in front of a fake...")
+    assert body_sentences(comic, comic) == []
+    # a pronoun after the sentence it refers to is fine
+    assert len(body_sentences("Reflection released Beam, an open-weight model. It is available through Reflection.",
+                              beam + " Reflection released Beam.")) == 2
+
+
 # ---------------------------------------------------------------- the user's 7:24 AM edition (revision 3)
 def test_a_number_must_stand_next_to_the_same_words_as_in_the_sources():
     from agent_reach.daily.edition import body_sentences, numbers_anchored
@@ -790,7 +910,7 @@ def test_version_6_settings_replace_yahoo_finance():
     prefs = DailyPrefs.model_validate({"prefs_version": 6, "feeds": [
         {"name": "Yahoo Finance", "url": yahoo, "category": "News", "enabled": False},
         {"name": "My Paper", "url": "https://paper.test/rss", "category": "News"}]})
-    assert prefs.prefs_version == PREFS_VERSION == 7
+    assert prefs.prefs_version == PREFS_VERSION == 8
     by_name = {f.name: f for f in prefs.feeds}
     assert "Yahoo Finance" not in by_name and not by_name["Bloomberg - Markets"].enabled and by_name["My Paper"].enabled
     assert yahoo not in {f.url for f in default_feeds()}
