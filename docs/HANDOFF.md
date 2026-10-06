@@ -8,7 +8,8 @@ conventions), then this file. `README.md` is the user guide; `docs/architecture.
 - **Branch:** `claude/loving-darwin-a7rqvs` (all work is pushed there; no PR has been opened, and
   none should be unless the user asks). Version `agent_reach/daily/__init__.py` = `1.0.0rc10`.
 - **CI:** `tests.yml` is green on rc10 (Python 3.10 and 3.12; the 15 GUI tests skip there without a
-  display). On the user's Windows PC: 357 tests, 356 pass and 1 skips (SIGKILL semantics); the GUI
+  display). On the user's Windows PC: 361 tests, 360 pass and 1 skips (SIGKILL semantics; a Reddit
+  pacing test can fail by milliseconds when the PC is busy); the GUI
   tests run against the real display, and Tk start-up there occasionally fails and skips one of them.
 - **The user** runs the app on Windows from `C:\Users\downt\Downloads\Agent Reach\src\Agent-Reach`,
   with Ollama (`llama3.1:8b`, `nomic-embed-text`) on their PC. A refresh takes about 5 minutes there.
@@ -76,6 +77,12 @@ real October 6 morning edition, and a cloud runner that fits a Daily refresh (be
   required by") or repeat five words of the summary; "the '80s" gets no stray closing quote; "free...
   and" in a title becomes "free, and"; summary casing is restored only for real names (the reports'
   prose writes "the brain", not "Brain").
+- From the user's 7:24 AM edition (revision 3): a number attached to the wrong thing ("Over 67 million
+  Wikipedia hosts expose sensitive data"; the page counts articles) is dropped by
+  `edition.numbers_anchored` (also in the brief pass); 1 of 153 published number sentences in eight
+  real editions fails it, the false one. "The author provides their picks" is not news. Also from
+  the same morning's runs: shopping-event roundups are promotional, "games" is an everyday word,
+  currency signs survive ASCII folding.
 - Reddit health notes name the subreddits without URLs, grouped by cause. Settings v7: Yahoo
   Finance (HTTP 404) -> Bloomberg Markets (`REPLACED_IN_V7`).
 - `cloud-runner.yml`: the Daily run writes its own settings.json (80 articles via input

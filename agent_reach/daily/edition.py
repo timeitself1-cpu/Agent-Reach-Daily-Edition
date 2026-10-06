@@ -71,7 +71,10 @@ WEAK_SENTENCE_RX = re.compile(
     r"|\b(?:demonstrates|shows|reflects|underscores) (?:the|its|their) (?:company's |firm's )?(?:commitment|dedication)\b"
     r"|\bis notable because\b|\bin various (?:scientific )?(?:journals|outlets|publications|media)\b"
     r"|\bdue to the (?:controversy|tragedy|high-profile nature|unexpected nature|lighthearted|humorous)\b"
-    r"|\bthis (?:trend|development) is\b|\b(?:is|are) a (?:growing|major|serious) concern\b",
+    r"|\bthis (?:trend|development) is\b|\b(?:is|are) a (?:growing|major|serious) concern\b"
+    # about the article, not the news ('The author provides their NFL Week 5 picks and score predictions')
+    r"|^(?:the|this) (?:author|writer|article|piece|post|columnist|reporter) (?:provides|offers|shares|gives|"
+    r"discusses|explains|looks at|breaks down|lists|reviews)\b",
     re.IGNORECASE,
 )
 
@@ -366,6 +369,70 @@ def numbers_in(text: str) -> set[str]:
     return {n.replace(",", "").rstrip(".") for n in NUMBER_RX.findall(text or "")}
 
 
+_ANCHOR_TOKEN_RX = re.compile(r"\d+(?:[.,]\d+)*|[A-Za-z][A-Za-z'-]*")
+#: Words between a number and what it counts ('67 million articles', '$18M', '73 percent').
+_SCALE_WORDS = frozenset("m bn b k tn mn s million billion trillion thousand hundred percent per cent gbp eur jpy usd"
+                         .split())
+_MONTHS = frozenset("""jan feb mar apr may jun jul aug sep sept oct nov dec january february march april june july
+august september october november december""".split())
+#: Numbers that label rather than count ('Week 5', 'Game 2', 'No. 1').
+_LABEL_WORDS = frozenset("""week weeks game day round stage series chapter season episode part no number vol level grade
+phase gen""".split())
+
+
+def _anchor_tokens(text: str) -> list[str]:
+    return [t.lower() for t in _ANCHOR_TOKEN_RX.findall(text)]
+
+
+def _anchor_word(token: str) -> bool:
+    from agent_reach.pipeline.cleaner import STOPWORDS
+
+    t = token.strip("-'")
+    return (len(t) >= 3 and t.replace("-", "").replace("'", "").isalpha() and t not in STOPWORDS
+            and t not in _SCALE_WORDS)
+
+
+def _anchor_stems(words: list[str]) -> set[str]:
+    return {p[:4] for w in words for p in w.split("-") if len(p) >= 3}
+
+
+def _around(tokens_: list[str], i: int, window: int) -> tuple[list[str], list[str]]:
+    return ([t for t in tokens_[max(0, i - window):i] if _anchor_word(t)],
+            [t for t in tokens_[i + 1:i + 1 + window] if _anchor_word(t)])
+
+
+def numbers_anchored(sentence: str, source: str) -> bool:
+    """Every number stands next to the same words as in the sources: a word just before it matches a
+    word just before it there, or a word just after it matches one after it. 'Over 67 million Wikipedia
+    hosts expose sensitive data' (the source: 'Wikipedia hosts over 67 million articles') and '23 billion
+    weights' (the source: '23 billion active') attach a real number to the wrong thing. Years, dates and
+    labels ('Week 5') are not checked; a number the sources lack is ``numbers_in``'s business."""
+    st, so = _anchor_tokens(sentence), _anchor_tokens(source)
+    paired = {x for pair in re.findall(r"(\d+)\s*[-–]\s*(\d+)", sentence) for x in pair}  # scores, ranges
+    for i, t in enumerate(st):
+        if not t[0].isdigit():
+            continue
+        n = t.replace(",", "")
+        if (re.fullmatch(r"(?:19|20)\d\d", n) or n in paired
+                or (i and st[i - 1] in _MONTHS | _LABEL_WORDS)):
+            continue
+        before, after = _around(st, i, 5)
+        near_before: set[str] = set()
+        near_after: set[str] = set()
+        seen = False
+        for j, u in enumerate(so):
+            if u.replace(",", "") == n:
+                seen = True
+                b, a = _around(so, j, 6)
+                near_before |= _anchor_stems(b)
+                near_after |= _anchor_stems(a)
+        if not seen or not after:  # a number that ends the sentence ('dies at 62') counts nothing
+            continue
+        if not (_anchor_stems(before[-2:]) & near_before or _anchor_stems(after[:2]) & near_after):
+            return False
+    return True
+
+
 #: Quoted speech: a person quoted saying 'we' or 'you' is reporting, not the page talking to the reader.
 QUOTED_RX = re.compile(r"\"[^\"]*\"|“[^”]*”|‘[^’]*’|(?<!\w)'[^']*'(?!\w)")
 PAGE_VOICE_RX = re.compile(r"\b(?:you|your|yours|yourself|we|our|ours|ourselves)\b", re.IGNORECASE)
@@ -498,7 +565,8 @@ def body_sentences(summary: str, source: str | None = None, headline: str | None
         if (s and not META_SENTENCE_RX.match(s) and not WEAK_SENTENCE_RX.search(s) and not repeats(s, out)
                 and not (out and restates(s, out, NOVEL_SHARE)) and looks_english(s)
                 and not page_voice(s) and not is_fragment(s) and not ends_dangling(s)
-                and (stems is None or (support(s, stems) >= SUPPORT_SHARE and numbers_in(s) <= numbers))):
+                and (stems is None or (support(s, stems) >= SUPPORT_SHARE and numbers_in(s) <= numbers
+                                       and numbers_anchored(s, source or "")))):
             if headline and restates(s, [headline], 1.0):
                 restated.append(s)
             else:

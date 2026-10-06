@@ -40,6 +40,7 @@ from agent_reach.daily.edition import (
     ends_dangling,
     is_fragment,
     looks_english,
+    numbers_anchored,
     numbers_in,
     page_voice,
     place_sentence,
@@ -241,7 +242,8 @@ def apply_brief(story: Story, details: str, why: str) -> tuple[int, int]:
     stems = source_stems(" ".join([evidence, *story.sentences]))  # the summary was checked already
 
     def sound(sentence: str, share: float = SUPPORT_SHARE) -> bool:
-        return (grounded(sentence, evidence) and looks_english(sentence) and not page_voice(sentence)
+        return (grounded(sentence, evidence) and numbers_anchored(sentence, evidence) and looks_english(sentence)
+                and not page_voice(sentence)
                 and not is_fragment(sentence) and not ends_dangling(sentence) and support(sentence, stems) >= share)
 
     added = 0

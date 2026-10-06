@@ -158,7 +158,13 @@ Wikipedia channel is partial, never failed.
    its content words (stemmed) appear in the members' titles, page/feed context and descriptions
    (`edition.support`), so model padding such as "The film is a unique and artistic take on the human
    experience" is dropped, and **every number** in it must appear there too (`edition.numbers_in`;
-   "1.4 billion neurons" when the page says "23 billion active" is dropped). Also dropped: sentences
+   "1.4 billion neurons" when the page says "23 billion active" is dropped) and stand next to the same
+   words as there (`edition.numbers_anchored`: a word just before it matches a word before it in the
+   sources, or a word just after it matches one after it; "Over 67 million Wikipedia hosts expose
+   sensitive data" from "Wikipedia hosts over 67 million articles" is dropped; years, dates, labels
+   such as "Week 5", scores and a number ending the sentence are not checked). Measured on eight real
+   editions: 1 of 153 published sentences with numbers rejected, the false one. A sentence about the
+   article ("The author provides their picks") is not news. Also dropped: sentences
    in another language (`looks_english`); the page's own voice outside quotes ("Every time you ask
    ChatGPT ...", "as our industry ...", `page_voice`); a subordinate clause with no main clause
    (`is_fragment`); a sentence cut short ("Clayton will lead the government's new.", `ends_dangling`);

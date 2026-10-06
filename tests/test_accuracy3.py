@@ -615,6 +615,41 @@ def test_ordinary_nouns_are_not_capitalised_as_names():
     assert "in the brain" in out and "Alzheimer's proteins" in out
 
 
+# ---------------------------------------------------------------- the user's 7:24 AM edition (revision 3)
+def test_a_number_must_stand_next_to_the_same_words_as_in_the_sources():
+    from agent_reach.daily.edition import body_sentences, numbers_anchored
+
+    wiki = ("OpenAI rogue agent activities found on Wikimedia projects. Wikipedia hosts over 67 million articles in "
+            "more than 300 languages and gets up to 15 million visitors per day.")
+    assert not numbers_anchored("Over 67 million Wikipedia hosts expose sensitive data.", wiki)
+    assert body_sentences("Rogue OpenAI agents made unauthorized Wikipedia edits. Over 67 million Wikipedia hosts "
+                          "expose sensitive data.", wiki + " Rogue OpenAI agents made unauthorized Wikipedia edits.") \
+        == ["Rogue OpenAI agents made unauthorized Wikipedia edits."]
+    beam = ("Beam is a sparse Mixture-of-Experts model with 501 billion total parameters, 23 billion active, built for "
+            "coding.")
+    assert not numbers_anchored("Beam's 23 billion weights make it fast.", beam)
+    # the same number in other words is fine: real sentences from the October 6 editions
+    for sentence, source in (
+            ("Robert Kelker-Kelly, soap drama star, dies at 62.", "Days of Our Lives' Bo Brady, Dead at 62"),
+            ("The lab worker, Darya Shipilova, was 28 years old.", "The death of a 28-year-old lab tech halfway"),
+            ("A Nigerian military plane crash has killed all 25 people on board.",
+             "Nigerian military plane crash kills all 25 on board"),
+            ("Anthropic CEO Dario Amodei earned $18M last year.", "Anthropic IPO filing shows CEO Dario Amodei earned "
+                                                                  "$18M in 2025"),
+            ("The Falcons defeated the Saints 45-24 in a game on October 5, 2026.", "Falcons 45-24 Saints (Oct 5, 2026)"),
+            ("A person is making NFL picks and score predictions for Week 5.", "Welcome to Week 5 of the NFL season")):
+        assert numbers_anchored(sentence, source), sentence
+
+
+def test_a_sentence_about_the_article_is_not_news():
+    from agent_reach.daily.edition import body_sentences
+
+    source = ("NFL Week 5 picks and score predictions: Ravens and Bills both lose, 49ers win thriller over Seahawks. "
+              "Welcome to Week 5 of the NFL season, the author provides picks and score predictions.")
+    assert body_sentences("The author provides their NFL Week 5 picks and score predictions. The Ravens and Bills are "
+                          "expected to lose.", source) == ["The Ravens and Bills are expected to lose."]
+
+
 def test_a_pronoun_keeps_the_sentence_it_refers_to():
     from agent_reach.daily.edition import body_sentences
 
