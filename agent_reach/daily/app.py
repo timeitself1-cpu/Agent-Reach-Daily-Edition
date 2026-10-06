@@ -209,8 +209,9 @@ class AppController:
                                           f"for 3 days or more: {names}. Fix the address or turn "
                                           f"{'them' if len(failing) != 1 else 'it'} off in Settings > Publisher feeds."))
         if latest_res.corrupt:
-            banners.append(Banner("warn", f"{len(latest_res.corrupt)} saved edition file(s) are damaged and were "
-                                          "skipped; they will be set aside at the next refresh."))
+            n = len(latest_res.corrupt)
+            banners.append(Banner("warn", f"{n} saved edition {'file is' if n == 1 else 'files are'} damaged and "
+                                          f"{'was' if n == 1 else 'were'} skipped; set aside at the next refresh."))
 
         details: list[str] = []
         coverage_line = ""

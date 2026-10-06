@@ -400,10 +400,10 @@ def sanitize_headline(text: str, max_words: int = 14) -> str:
     t = HANDLE_RX.sub("", t)
     t = JSON_JUNK_RX.sub(" ", t)
     t = CATEGORY_PREFIX_RX.sub("", t)
-    t = WS_RX.sub(" ", t).strip(" .,;:-|\"'")
+    t = _trim_quotes(WS_RX.sub(" ", t).strip(" .,;:-|")).strip(" .,;:-|")
     words = t.split()
     if len(words) > max_words:
-        clause = _clause_cut(words, max_words)
+        clause = _sentence_cut(words, max_words) or _clause_cut(words, max_words)
         if clause:
             words = clause
         else:
@@ -420,14 +420,44 @@ def sanitize_headline(text: str, max_words: int = 14) -> str:
     for w in words:
         out.append(_title_word(w, after_colon or w[:1] in "\"'("))
         after_colon = w.endswith(":")
-    return " ".join(out).strip(" .,;:-")
+    return _close_quotes(" ".join(out).strip(" .,;:-"))
+
+
+def _trim_quotes(text: str) -> str:
+    """Drop an opening or closing quote only when it has no partner ("'We had a threat': Trump..." keeps both)."""
+    for q in ("'", '"'):
+        if text.startswith(q) and not re.search(r"\w[.!?]?" + q + r"(?=\s|$|[,:;])", text[1:]):
+            text = text[1:]
+        if text.endswith(q) and not re.search(r"(?:^|\s)" + q + r"\w", text[:-1]):
+            text = text[:-1]
+    return text
+
+
+def _close_quotes(text: str) -> str:
+    """Restore a closing quote the trimming removed ("... Comments: 'Nazi Bitches" gets its ')."""
+    for q in ("'", '"'):
+        m = re.search(r"(?:^|\s)" + q + r"\w", text)
+        if m and not re.search(r"\w[.!?]?" + q + r"(?=\s|$|[,:;])", text[m.end() - 1:]):
+            text += q
+    return text
 
 
 #: Words a headline must not end on ('... Would Warp', '... Shows How iPads Enable' stay whole instead).
 DANGLING_WORDS = SMALL_WORDS | frozenset(
     "how why what when where who whom whose which that would could will can may might should must is are was "
     "were be been has have had its their his her our your my this these those amid after before over than "
-    "while about against between into onto via".split())
+    "while about against between into onto via he's she's it's they're we're you're i'm that's there's "
+    "who's what's he'd she'd they'd".split())
+
+
+def _sentence_cut(words: list[str], max_words: int) -> list[str] | None:
+    """Keep a long title's first full sentence ('Is Bijan Robinson the NFL's best running back?')
+    when it fits the limit and has 5+ words, instead of cutting the second one mid-way."""
+    for k in range(5, min(len(words), max_words) + 1):
+        w = words[k - 1].rstrip("\"'\u2019\u201d")
+        if w.endswith(("?", "!")) or (w.endswith(".") and w[:-1].isalpha() and len(w) > 4):
+            return words[:k]
+    return None
 
 
 def _clause_cut(words: list[str], max_words: int) -> list[str] | None:

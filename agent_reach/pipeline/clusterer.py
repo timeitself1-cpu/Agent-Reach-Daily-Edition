@@ -54,6 +54,7 @@ from agent_reach.pipeline.cleaner import (
     sanitize_headline,
     sanitize_summary,
     significant_tokens,
+    tokens,
 )
 
 log = logging.getLogger(__name__)
@@ -338,6 +339,7 @@ class LinkIndex:
         self.items = pool
         self.text_keys = {iid: dedupe_key(_item_text(it)) for iid, it in pool.items()}
         self.toks = {iid: significant_tokens(_item_text(it)) for iid, it in pool.items()}
+        self.seqs = {iid: [t for t in tokens(_item_text(it)) if t in self.toks[iid]] for iid, it in pool.items()}
         self.df: Counter[str] = Counter(t for ts in self.toks.values() for t in ts)
         n = max(1, len(pool))
         self.rare_cap = max(4, int(0.06 * n))
@@ -372,7 +374,8 @@ class LinkIndex:
                     if w[0].isupper():
                         opening[w.lower()] += 1  # weak evidence: a sentence starts with it
                     continue
-                (cap if w[0].isupper() else low)[w.lower()] += 1
+                # 'iPhone', 'tvOS': a capital inside the word marks a name wherever it stands
+                (cap if w[0].isupper() or any(c.isupper() for c in w[1:]) else low)[w.lower()] += 1
         names = {w for w, n in cap.items() if n > 2 * low[w]}
         # a word seen only at the start of headlines ('Germany at risk...') is a name unless the run
         # also writes it in lower case somewhere
@@ -442,14 +445,58 @@ class LinkIndex:
             return False
         rare = [t for t in shared if self.df[t] <= self.rare_cap]
         jacc = len(shared) / len(ta | tb)
-        if len(shared) >= 2 and (jacc >= 0.25 or len(rare) >= 2):
+        if len(shared) >= 2 and jacc >= 0.25:
+            return True
+        # a phrase both titles share ('Supreme Court', 'iPhone 18 Pro', 'dies aged') is one piece
+        # of evidence, not one per word: two reports need two separate rare things in common
+        # ...and at least one of them must be about what happened, not only who ('Apple' + 'iPhone')
+        rare_units = [u for u in self.shared_units(a, b, shared) if any(self.df[t] <= self.rare_cap for t in u)]
+        if len(rare_units) >= 2 and any(self._event_unit(u) for u in rare_units):
             return True
         # short trend fragments ('Packers', 'Bijan') link to a fuller title via one distinctive name
         short = a if len(ta) <= len(tb) else b
         if (rare and min(len(ta), len(tb)) <= 3 and any(len(t) >= 5 for t in rare)
-                and self.items[short].source in FRAGMENT_SOURCES):
+                and self.items[short].source in FRAGMENT_SOURCES
+                and self.fragment_fits(short, b if short == a else a)):
             return True
         return False
+
+    def shared_units(self, a: int, b: int, shared: set[str]) -> list[set[str]]:
+        """Shared tokens grouped into the phrases both titles write side by side, in the same order."""
+        def pairs(seq: list[str]) -> set[tuple[str, str]]:
+            return {(x, y) for x, y in zip(seq, seq[1:]) if x in shared and y in shared and x != y}
+
+        parent = {t: t for t in shared}
+
+        def find(t: str) -> str:
+            while parent[t] != t:
+                t = parent[t]
+            return t
+
+        for x, y in pairs(self.seqs.get(a, [])) & pairs(self.seqs.get(b, [])):
+            parent[find(x)] = find(y)
+        units: dict[str, set[str]] = defaultdict(set)
+        for t in shared:
+            units[find(t)].add(t)
+        return list(units.values())
+
+    def _event_unit(self, unit: set[str]) -> bool:
+        """A shared phrase that says something beyond a name or a number ('27.2')."""
+        return any(t not in self.name_words and any(c.isalpha() for c in t) for t in unit)
+
+    def fragment_fits(self, frag: int, full: int) -> bool:
+        """A trend fragment ('Gavin Williams') must not name a different person than the article
+        ('Hayley Williams'): a fragment word the article lacks may not be replaced there by another name."""
+        missing = self.toks[frag] - self.toks[full]
+        if not missing:
+            return True
+        text = _item_text(self.items[full])
+        for t in self.toks[frag] & self.toks[full]:
+            for m in re.finditer(r"([A-Z][\w'-]+)\s+(?i:" + re.escape(t) + r")\b", text):
+                word = m.group(1).lower().strip("'")
+                if len(word) >= 3 and word not in self.toks[frag] and word not in STOPWORDS:
+                    return False
+        return True
 
     def mentions(self, item_id: int, entity: str) -> bool:
         rx = self._entity_rx(entity)
@@ -492,6 +539,28 @@ class LinkIndex:
                 ga.extend(gb)
                 groups.remove(gb)
         return sorted(groups, key=lambda g: (-len(g), sorted(g)))
+
+
+#: Numbers and amount words a model headline may use only when the story's own reports do.
+HEADLINE_QUANTITY_RX = re.compile(r"\b(?:dozens?|hundreds?|thousands?|millions?|billions?|trillions?)\b|\d+(?:[.,]\d+)*",
+                                  re.IGNORECASE)
+
+
+def quantities_grounded(headline: str, members: list[CleanedTrendItem]) -> bool:
+    """False when the headline states an amount ('Thousands', '12,000') that no member reports."""
+    found = HEADLINE_QUANTITY_RX.findall(headline)
+    if not found:
+        return True
+    text = " ".join(f"{m.normalized_title} {m.title} {m.context or ''} {m.description or ''}" for m in members).lower()
+    numbers = {n.replace(",", "") for n in re.findall(r"\d+(?:[.,]\d+)*", text)}
+    for q in found:
+        q = q.lower()
+        if q[0].isdigit():
+            if q.replace(",", "") not in numbers:
+                return False
+        elif not re.search(r"\b" + q.rstrip("s") + r"s?\b", text):
+            return False
+    return True
 
 
 @dataclass
@@ -1085,6 +1154,10 @@ class SemanticClusterer:
             category = self._guard_category(coerce_category(d.category_raw, fallback), members)
 
             headline = sanitize_headline(d.headline, HEADLINE_MAX_WORDS)
+            if headline and not quantities_grounded(headline, members):
+                # 'Thousands in Quarantine' when the reports say nearly 200: use a real report title
+                fallback = sanitize_headline(self._best_member_title(members), HEADLINE_MAX_WORDS)
+                headline = fallback or headline
             if not headline or is_generic_headline(headline) or is_label_headline(headline):
                 # a model label ('Cornell University Rape Allegations') is replaced by the best real
                 # report title, when one reads as a headline

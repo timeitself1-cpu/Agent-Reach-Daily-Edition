@@ -134,8 +134,6 @@ ADDED_IN_V2: list[FeedSpec] = [
     _f("NPR - Technology", "https://feeds.npr.org/1019/rss.xml", "Tech"),
     _f("Lobsters", "https://lobste.rs/rss", "Tech"),
     _f("MIT Technology Review", "https://www.technologyreview.com/feed/", "Science & AI"),
-    _f("MIT News - Artificial Intelligence", "https://news.mit.edu/topic/mitartificial-intelligence2-rss.xml",
-       "Science & AI"),
     _f("The Guardian - Science", "https://www.theguardian.com/science/rss", "Science & AI"),
     _f("NPR - Science", "https://feeds.npr.org/1007/rss.xml", "Science & AI"),
 ]
@@ -248,6 +246,11 @@ REPLACED_IN_V5: dict[str, FeedSpec | None] = {
         "MIT News - Artificial Intelligence", "https://news.mit.edu/topic/mitartificial-intelligence2-rss.xml",
         "Science & AI"),
     "https://www.space.com/feeds/all": _f("SpaceNews", "https://spacenews.com/feed/", "Science & AI"),
+}
+
+#: Settings version 6: MIT News answered both of its feed addresses with errors in real use; removed.
+REPLACED_IN_V6: dict[str, FeedSpec | None] = {
+    "https://news.mit.edu/topic/mitartificial-intelligence2-rss.xml": None,
 }
 
 #: The six feeds shipped before per-feed settings existed (used to migrate untouched settings).

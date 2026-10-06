@@ -190,6 +190,7 @@ account or cloud service. Each podcast is saved as `podcasts\YYYY-MM-DD.wav` wit
 | Background refresh never happens | Settings > Schedule shows the task status; **Enable / update** re-registers it. Check `logs\scheduler.log`. The task only runs while you are logged on. |
 | "saved edition files are damaged" | Nothing to do: damaged files are skipped and moved to `cache\quarantine` at the next refresh; the newest good edition is shown. |
 | The window does not open | Run `.\.venv\Scripts\python.exe -m agent_reach.daily` in PowerShell to see the error, and check `logs\gui.log`. |
+| Where are the logs? | In the app: **...** menu > **Open logs folder**. Or paste `%LOCALAPPDATA%\AgentReachDaily\logs` into the File Explorer address bar (the AppData folder is hidden by default). Refreshes write `refresh.log`; the window writes `gui.log`. |
 | Start completely fresh | Settings > Storage > **Delete all cached editions**, or `--reset-cache --yes`. |
 
 To remove the scheduled task and shortcuts (your editions and settings are kept):

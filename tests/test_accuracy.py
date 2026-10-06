@@ -245,13 +245,12 @@ def test_version_4_settings_turn_tiktok_off_and_fix_dead_feeds(daily_paths):
     ]
     daily_paths.settings.write_text(json.dumps(old))
     prefs, warning = load_prefs(daily_paths)
-    assert warning is None and prefs.prefs_version == PREFS_VERSION == 5
+    assert warning is None and prefs.prefs_version == PREFS_VERSION == 6
     assert "tiktok" not in prefs.enabled_sources and "youtube" in prefs.enabled_sources
     by_name = {f.name: f for f in prefs.feeds}
     assert "VentureBeat - AI" not in by_name and "Space.com" not in by_name
     assert by_name["SpaceNews"].url == "https://spacenews.com/feed/" and by_name["My Paper"].enabled
-    mit = by_name["MIT News - Artificial Intelligence"]
-    assert mit.url.endswith("mitartificial-intelligence2-rss.xml") and not mit.enabled  # the user's choice stays
+    assert "MIT News - Artificial Intelligence" not in by_name  # fixed in version 5, removed in version 6
     assert "tiktok" not in DailyPrefs().enabled_sources
 
 

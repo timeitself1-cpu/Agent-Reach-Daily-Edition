@@ -148,12 +148,22 @@ Wikipedia channel is partial, never failed.
    reactions and recaps as `video_clip`. Summary sentences that say nothing ("is drawing attention
    due to...", "this showcases...", "published in various journals") or repeat an earlier sentence are
    dropped; "why it matters" must also name who or what is affected and avoid vague claims
-   ("highlights concerns", "significantly impacted").
+   ("highlights concerns", "significantly impacted", "severe consequences").
+   Every summary sentence must also be **supported by the story's own sources**: at least 60% of
+   its content words (stemmed) appear in the members' titles, page/feed context and descriptions
+   (`edition.support`), so model padding such as "The film is a unique and artistic take on the human
+   experience" is dropped. Sentences in another language are dropped (`looks_english`), attribution
+   prefixes ("Sources:") are removed, and a "why it matters" that restates the headline or summary
+   (80% of its words) is left out. A model headline that states an amount ("Thousands in
+   Quarantine", "12,000") no member reports is replaced by the best real report title
+   (`clusterer.quantities_grounded`).
 3. Repeats are dropped: same entity set, a shared article URL, or near-identical headline words.
 4. **Sections.** Each category keeps its top `max_stories` (10) stories in rank order; the
    overflow is counted as held back. **Top Stories** are the `max_stories` best of those, with at
    most `max_per_category` (4) from one category (a strong story - relevance 8+ and corroborated -
    may exceed that by 2) and `max_tech_only_share` (34%) tech-only stories, so the top stays broad.
+   Corroborated stories (more than one independent report) are chosen first; a single-outlet story
+   enters Top Stories only when places are left, unless the model rated it 9 or more.
    First-person columns ("How I made...") and stories told only through video clips stay in their
    section, after the news, and never enter Top Stories. If the caps leave Top Stories short, the next best stories
    fill it. The edition stores the Top Stories as `top_ranks` (optional; older editions show their
@@ -277,7 +287,8 @@ See [the v2.1 contract and replay benchmark](reliability-v2.1.md) for membership
    - **3b label:** the LLM only names groups (headline, category, entities, two sentences, relevance). Groups whose signals can't explain what happened and why get `[INSUFFICIENT_DATA]`.
    - **3c event coherence:** groups require event evidence and compatible timestamps. Model labels never create membership edges. Ambiguous fragments remain unassigned; deterministic reassignment requires exactly one coherent home.
    - **3d merge:** combined membership must pass event coherence; entity or cluster ID equality never triggers a merge.
-   - **3d' key names:** chained links can still connect different events through generic words ('accused' + 'woman' joined a spy arrest to an unrelated murder in a real edition). Every member must therefore mention one of the story's key names: proper nouns that at least 40% of its members mention. Which words are names is learned from the run's own text (written capitalised mid-sentence far more often than lower case, or only ever seen opening a headline), never from model output. Members that fail are split off into their own coherent stories (or single-report stories that the singleton rules keep or drop). Single-word links through a short title only work for trend fragments (X, Google Trends, Wikipedia, TikTok, Bluesky), not for article titles such as "Web Search API".
+   - **3d' key names:** chained links can still connect different events through generic words ('accused' + 'woman' joined a spy arrest to an unrelated murder in a real edition). Every member must therefore mention one of the story's key names: proper nouns that at least 40% of its members mention. Which words are names is learned from the run's own text (written capitalised mid-sentence far more often than lower case, or only ever seen opening a headline), never from model output. Members that fail are split off into their own coherent stories (or single-report stories that the singleton rules keep or drop). Single-word links through a short title only work for trend fragments (X, Google Trends, Wikipedia, TikTok, Bluesky), not for article titles such as "Web Search API", and a fragment may not name someone else than the article ("Gavin Williams" does not join "Hayley Williams ...": `LinkIndex.fragment_fits`).
+   - **Shared phrases count once:** two titles that share only one phrase ("Supreme Court", "iPhone 18 Pro", "dies aged", "data centres") are not linked through it word by word. Shared tokens that both titles write side by side are one unit (`LinkIndex.shared_units`); a link through rare words needs two such units, and at least one must say what happened rather than only who ("Apple" + "iPhone" is not enough; a number such as "27.2" is not either). Words with a capital inside ("iPhone", "tvOS") count as names. This split three Supreme Court stories, five Apple stories and two obituaries that a real evening edition (October 5, 2026) had merged.
    - **3e drop:** clusters flagged `[INSUFFICIENT_DATA]`, with filler summaries ("no specific information", "details are scarce"), or with relevance <= 3 are dropped, as are weak singletons. Headlines keep up to 14 words, are cut at a clause break or before a dangling word, and a topic label from the model (a short title with no verb, e.g. "Cornell University Rape Allegations") is replaced by the best real report title when that reads as a headline.
 5. **Score and persist.** Relevance and velocity are computed, then everything is saved to SQLite.
 

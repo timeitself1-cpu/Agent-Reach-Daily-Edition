@@ -134,7 +134,7 @@ def test_too_few_stories_is_refused(daily_env):
     daily_env.net.down.add("news.google.com")
     out = _refresh(daily_env)
     assert out.code == R.EXIT_NO_UPDATE
-    assert "useful story" in out.message or "source(s) responded" in out.message
+    assert "useful stor" in out.message or "responded; at least" in out.message
     assert EditionStore(daily_env.paths).load_latest().edition is None
 
 

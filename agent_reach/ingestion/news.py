@@ -32,6 +32,10 @@ def parse_feed_entry(entry: str) -> tuple[CategoryEnum, str, str]:
     return CategoryEnum(category.strip()), url, name.strip() or (urlsplit(url).hostname or url)
 
 
+#: 'https://host/path: ' in front of an error message.
+_URL_PREFIX_RX = re.compile(r"https?://[^:\s]+(?::\d+)?\S*?:\s")
+
+
 class NewsRSSIngester(BaseIngester):
     """Top stories from public publisher RSS/Atom/RDF feeds (``news_rss_feeds``).
 
@@ -60,7 +64,9 @@ class NewsRSSIngester(BaseIngester):
         for (cat, url, name), res in zip(feeds, results):
             if isinstance(res, BaseException):
                 err = str(res)[:160] or type(res).__name__
-                failures.append(f"{name}: {err[:80]}")
+                # the feed's name already identifies it: keep the URL out of the note so the cause fits
+                cause = _URL_PREFIX_RX.sub("", err)[:80]
+                failures.append(f"{name}: {cause}")
                 self.feed_stats.append(FeedStat(name=name, url=url, category=cat.value, ok=False, error=err))
             elif not res:
                 failures.append(f"{name}: no entries")

@@ -60,8 +60,7 @@ ul.evidence li { margin:4px 0; }
 .excerpt { color:var(--muted); display:block; }
 ul.also { list-style:none; padding:0; margin:6px 0 0; }
 ul.also li { padding:8px 2px; border-top:1px solid var(--line); }
-ul.also .num { color:var(--muted); font-weight:600; margin-right:8px; }
-ul.also .count { color:var(--muted); font-size:.85rem; }
+p.also-h { color:var(--muted); font-size:.8rem; font-weight:600; text-transform:uppercase; letter-spacing:.04em; margin:18px 0 0; }
 .more { margin-top:36px; }
 .more > details { border-top:1px solid var(--line); padding:10px 0; }
 .more > details > summary { cursor:pointer; color:var(--muted); }
@@ -160,15 +159,15 @@ def _section(title: str, stories: list[Story], edition: DailyEdition, shown: set
     """One section: full story cards, or a one-line link for a story already shown above."""
     parts = []
     also = []
-    for i, s in enumerate(stories, start=1):
+    for s in stories:
         if s.rank in shown:
-            also.append(f'<li><span class="num">{i}.</span><a href="#story-{s.rank}">{_e(s.headline)}</a>'
-                        f' <span class="count">(in Top Stories)</span></li>')
+            also.append(f'<li><a href="#story-{s.rank}">{_e(s.headline)}</a></li>')
         else:
-            parts.append(_story(s, edition, number=i))
+            parts.append(_story(s, edition, number=len(parts) + 1))
             shown.add(s.rank)
     count = f"{len(stories)} {'story' if len(stories) == 1 else 'stories'}"
-    also_html = f'<ul class="also">{"".join(also)}</ul>' if also else ""
+    label = "Also in Top Stories" if parts else "In Top Stories"
+    also_html = f'<p class="also-h">{label}</p><ul class="also">{"".join(also)}</ul>' if also else ""
     return (f'<section class="sec" id="{_slug(title)}" aria-labelledby="{_slug(title)}-h">'
             f'<h2 id="{_slug(title)}-h">{_e(title)}</h2><p class="count">{count}</p>{"".join(parts)}{also_html}</section>')
 

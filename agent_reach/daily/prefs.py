@@ -21,6 +21,7 @@ from agent_reach.daily.feeds import (
     ADDED_IN_V3,
     ADDED_IN_V4,
     REPLACED_IN_V5,
+    REPLACED_IN_V6,
     FeedSpec,
     default_feeds,
     feeds_from_entries,
@@ -53,23 +54,23 @@ SOURCE_NOTES = {
     "producthunt": "Product Hunt launches (tech)",
     "arxiv": "arXiv AI/ML papers (research)",
 }
-PREFS_VERSION = 5
+PREFS_VERSION = 6
 DAILY_VELOCITY_WINDOWS = [24.0, 48.0, 168.0]
 DAILY_VELOCITY_WEIGHTS = [0.5, 0.3, 0.2]
 DAILY_VELOCITY_TOLERANCE = 0.25
 MIN_DB_RETENTION_DAYS = 10
 
 
-def _replace_feeds(feeds: list) -> list:
-    """Swap feeds listed in REPLACED_IN_V5 for their replacement (keeping on/off), or drop them."""
+def _replace_feeds(feeds: list, replaced: dict) -> list:
+    """Swap feeds listed in ``replaced`` (REPLACED_IN_V5, ...) for their replacement (keeping on/off), or drop them."""
     have = {str((f.get("url") if isinstance(f, dict) else getattr(f, "url", "")) or "").lower() for f in feeds}
     out = []
     for f in feeds:
         url = str((f.get("url") if isinstance(f, dict) else getattr(f, "url", "")) or "")
-        if url not in REPLACED_IN_V5:
+        if url not in replaced:
             out.append(f)
             continue
-        new = REPLACED_IN_V5[url]
+        new = replaced[url]
         if new is not None and new.url.lower() not in have:
             enabled = f.get("enabled", True) if isinstance(f, dict) else getattr(f, "enabled", True)
             out.append(new.model_copy(update={"enabled": bool(enabled)}))
@@ -138,7 +139,9 @@ class DailyPrefs(BaseModel):
           channels switched on, and a 260-article budget instead of 200;
         * version 3 -> 4: more publishers, and the Mastodon and Bluesky channels switched on;
         * version 4 -> 5: TikTok off (it blocks automated readers), and three feeds that failed in real
-          use fixed or removed (``REPLACED_IN_V5``).
+          use fixed or removed (``REPLACED_IN_V5``);
+        * version 5 -> 6: the MIT News feed, which failed at both of its addresses, removed
+          (``REPLACED_IN_V6``).
         """
         if not isinstance(data, dict):
             return data
@@ -174,7 +177,9 @@ class DailyPrefs(BaseModel):
             if isinstance(data.get("enabled_sources"), list):
                 data["enabled_sources"] = [x for x in data["enabled_sources"] if x != "tiktok"]
             if isinstance(data.get("feeds"), list):
-                data["feeds"] = _replace_feeds(data["feeds"])
+                data["feeds"] = _replace_feeds(data["feeds"], REPLACED_IN_V5)
+        if version < 6 and isinstance(data.get("feeds"), list):
+            data["feeds"] = _replace_feeds(data["feeds"], REPLACED_IN_V6)
         data["prefs_version"] = PREFS_VERSION
         return data
 

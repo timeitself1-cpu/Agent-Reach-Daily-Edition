@@ -265,6 +265,11 @@ class BaseIngester(abc.ABC):
                 delay = self._backoff(attempt)
             self.log.info("retry %d/%d for %s in %.1fs (%s)", attempt, attempts - 1, url.split("?")[0], delay, str(last_exc)[:80])
             await asyncio.sleep(delay)
+        if isinstance(last_exc, httpx.HTTPStatusError):
+            # 'HTTP 404 Not Found' instead of httpx's multi-line text, so feed notes show the status
+            resp = last_exc.response
+            raise IngestionError(f"{url}: HTTPStatusError: HTTP {resp.status_code} {resp.reason_phrase}".rstrip()) \
+                from last_exc
         raise IngestionError(f"{url}: {type(last_exc).__name__}: {last_exc}") from last_exc
 
     async def get_json(self, url: str, **kw: Any) -> Any:

@@ -9,6 +9,8 @@ then passes a deterministic grounding gate before it is shown:
 * every capitalised name or acronym must appear in the evidence as a whole word (ordinary
   nouns opening a sentence, such as "Patients" or "Fans", are allowed);
 * hedging words (could, might, likely...) are rejected unless the evidence uses them;
+* most of a detail sentence's content words must appear in the evidence (``edition.support``);
+  text must be English, and a 'why it matters' that restates the headline or summary is left out;
 * generic significance filler ("highlights the importance of", "only time will tell"),
   insufficient-data phrases, URLs, handles and duplicates of the summary are rejected.
 
@@ -26,7 +28,16 @@ from typing import Any
 
 from pydantic import BaseModel, Field, field_validator
 
-from agent_reach.daily.edition import SENTENCE_SPLIT_RX, WEAK_SENTENCE_RX, Story
+from agent_reach.daily.edition import (
+    SENTENCE_SPLIT_RX,
+    SUPPORT_SHARE,
+    WEAK_SENTENCE_RX,
+    Story,
+    looks_english,
+    restates,
+    source_stems,
+    support,
+)
 from agent_reach.models import _coerce_ids
 from agent_reach.pipeline.cleaner import STOPWORDS, dedupe_key, sanitize_summary, significant_tokens
 from agent_reach.pipeline.clusterer import FILLER_RX, INSUFFICIENT_RX, extract_json
@@ -131,9 +142,13 @@ VAGUE_EFFECT_RX = re.compile(
     r"\b(?:highlights|underscores|raises|raising|sparks|fuels) (?:concerns?|questions|fears|debate|the issue)\b"
     r"|\bsignificantly (?:impacted|affected|impact|affect)\b|\b(?:has|have|could have) implications\b"
     r"|\bconcerns? about\b|\bgrowing (?:concern|problem|issue|trend)\b|\bis (?:proliferating|on the rise)\b"
-    r"|\b(?:impacts?|affects?) the (?:industry|market|sector|landscape|world)\b",
+    r"|\b(?:impacts?|affects?) the (?:industry|market|sector|landscape|world)\b"
+    r"|\b(?:severe|serious|significant|major|dire|profound) (?:consequences|impacts?|effects?|implications|repercussions)\b",
     re.IGNORECASE,
 )
+#: A consequence is the model's own wording (names, numbers and hedges are still checked), but one
+#: whose words are this much the headline's and summary's says nothing new.
+WHY_RESTATE_SHARE = 0.8
 #: Who or what is affected: an ordinary group noun counts as concrete ('residents', 'patients').
 AFFECTED_RX = re.compile(r"\b(?:" + "|".join(sorted(COMMON_OPENERS)) + r")\b", re.IGNORECASE)
 
@@ -196,19 +211,26 @@ def _novel(sentence: str, existing: list[str]) -> bool:
 def apply_brief(story: Story, details: str, why: str) -> tuple[int, int]:
     """Validate and attach model output to a story. Returns (detail sentences added, why added)."""
     evidence = evidence_text(story)
+    stems = source_stems(" ".join([evidence, *story.sentences]))  # the summary was checked already
+
+    def sound(sentence: str, share: float = SUPPORT_SHARE) -> bool:
+        return grounded(sentence, evidence) and looks_english(sentence) and support(sentence, stems) >= share
+
     added = 0
     details = sanitize_summary(details or "")
     for sentence in [s.strip() for s in SENTENCE_SPLIT_RX.split(details) if s.strip()][:2]:
         if len(story.sentences) >= 4:
             break
-        if 20 <= len(sentence) <= 320 and grounded(sentence, evidence) and _novel(sentence, story.sentences):
+        if 20 <= len(sentence) <= 320 and sound(sentence) and _novel(sentence, story.sentences):
             story.sentences.append(sentence)
             added += 1
     why_added = 0
     why = sanitize_summary(why or "")
     first = SENTENCE_SPLIT_RX.split(why)[0].strip() if why else ""
-    if (30 <= len(first) <= 260 and grounded(first, evidence) and concrete_effect(first)
-            and _novel(first, story.sentences)):
+    # 'why it matters' must add something: a sentence that mostly restates the headline or the
+    # summary ('The US moved its bombers out of the UK due to a threat from Iran') is left out
+    if (30 <= len(first) <= 260 and sound(first, 0.0) and concrete_effect(first)
+            and _novel(first, story.sentences) and not restates(first, [story.headline, *story.sentences], WHY_RESTATE_SHARE)):
         story.why_it_matters = first
         why_added = 1
     return added, why_added
