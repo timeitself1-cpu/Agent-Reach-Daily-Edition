@@ -56,6 +56,10 @@ The sandbox has no Ollama and no news access. Two ways to see real output:
    (expect 30-90 min); the job timeout is 120 min. `entrypoint=agent_reach` (default) runs the
    classic CLI report instead.
 
+**Pending:** the first Daily cloud run on rc9 was started on 2026-10-06 (run 37421270778,
+https://github.com/timeitself1-cpu/Agent-Reach-Daily-Edition/actions/runs/37421270778). Check its
+conclusion and artifact first; it is the real-data check for open item 1.
+
 ## Open items, in the order I would take them
 
 1. **Check rc9 against real data** (an export from the user or a cloud-runner Daily run): did the
