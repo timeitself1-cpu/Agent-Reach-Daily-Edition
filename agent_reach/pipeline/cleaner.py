@@ -279,6 +279,36 @@ SOURCE_DISPLAY: dict[str, str] = {
 
 MD_LINK_RX = re.compile(r"\[([^\]]{1,200})\]\((?:https?://|www\.)[^)]*\)")
 BARE_URL_RX = re.compile(r"(?:https?://|www\.)\S+|\b[\w-]+\.(?:com|org|net|io|ai|dev|app|co)(?:/\S*)?", re.IGNORECASE)
+#: Words after which a bare domain is an attribution ('via techcrunch.com'), not the subject of the title.
+_ATTRIBUTION_WORDS = frozenset("via from on at by source sources visit see read more".split())
+#: A live blog ('Trump claims he's doing great ... - as it happened'): a running page of many updates.
+LIVE_BLOG_RX = re.compile(r"\bas it happened\b|\blive (?:updates?|blog|coverage)\b|\bthis live blog\b"
+                          r"|^\s*live\s*[:|]|\s[-–—|]\s*live\s*$", re.IGNORECASE)
+LIVE_BLOG_SUFFIX_RX = re.compile(r"\s*[-–—|:]\s*(?:as it happened|live(?: updates| blog| coverage)?)\s*$",
+                                 re.IGNORECASE)
+
+
+def is_live_blog(text: str | None) -> bool:
+    return bool(text and LIVE_BLOG_RX.search(text))
+
+
+def strip_bare_urls(text: str) -> str:
+    """Remove URLs and bare domains, but keep a domain that is the subject ('Example.com just launched ...').
+
+    A bare domain (no scheme, no path) stays when more words follow it in the same sentence and it is
+    not an attribution ('via example.com', 'read more at example.com')."""
+    def repl(m: re.Match[str]) -> str:
+        word = m.group(0)
+        if word.lower().startswith(("http", "www.")) or "/" in word:
+            return ""
+        before = text[:m.start()].split()
+        rest = text[m.end():]
+        follows = re.match(r"(?:'s)?\s+[A-Za-z]", rest) is not None
+        if follows and not (before and before[-1].lower().strip(":,(") in _ATTRIBUTION_WORDS):
+            return word
+        return ""
+
+    return BARE_URL_RX.sub(repl, text)
 TRAILING_URL_RX = re.compile(r"[\s(\[<:-]*(?:(?:https?://|www\.)\S+[\s)\]>.,;]*)+$", re.IGNORECASE)
 HANDLE_RX = re.compile(r"(?<![\w@])@[A-Za-z0-9_]{2,30}\b")
 JSON_KEY_RX = re.compile(
@@ -351,7 +381,7 @@ def sanitize_summary(text: str, entities: list[str] | None = None) -> str:
     t = JSON_FRAGMENT_RX.sub(" ", t)
     t = normalize_text(t)
     t = TRAILING_URL_RX.sub("", t)
-    t = BARE_URL_RX.sub("", t)
+    t = strip_bare_urls(t)
     t = HANDLE_RX.sub(lambda m: m.group(0)[1:], t)  # '@hackernews' -> 'hackernews' keeps the sentence intact
     t = JSON_JUNK_RX.sub(" ", t)
     t = re.sub(r"\(\s*\)", "", t)
@@ -393,12 +423,21 @@ def _title_word(word: str, first: bool) -> str:
     return word.replace(core, core[0].upper() + core[1:])
 
 
-def sanitize_headline(text: str, max_words: int = 14) -> str:
-    """Title Case, <= max_words, no URLs/handles/generic category prefix, no trailing punctuation."""
+def sanitize_headline(text: str, max_words: int = 14, stretch_to: int | None = None) -> str:
+    """Title Case, <= max_words, no URLs/handles/generic category prefix, no trailing punctuation.
+
+    A title longer than ``max_words`` is cut at its first sentence or last clause break; with no such
+    break, a title of at most ``stretch_to`` words is kept whole rather than cut mid-clause."""
     t = normalize_text(MD_LINK_RX.sub(r"\1", text or ""))
-    t = BARE_URL_RX.sub("", t)
+    t = strip_bare_urls(t)
+    t = LIVE_BLOG_SUFFIX_RX.sub("", t)
     t = HANDLE_RX.sub("", t)
+    # a title that opens with a quotation ('"Your Pay Is Not My Concern": Millionaire ...') keeps its
+    # opening quote; JSON leakage would otherwise strip it and leave the closing one alone
+    quoted = t.lstrip().startswith('"') and re.search(r'\w[.!?]?"(?=\s|$|[,:;])', t.lstrip()[1:]) is not None
     t = JSON_JUNK_RX.sub(" ", t)
+    if quoted:
+        t = '"' + t.lstrip()
     t = CATEGORY_PREFIX_RX.sub("", t)
     t = _trim_quotes(WS_RX.sub(" ", t).strip(" .,;:-|")).strip(" .,;:-|")
     words = t.split()
@@ -406,7 +445,7 @@ def sanitize_headline(text: str, max_words: int = 14) -> str:
         clause = _sentence_cut(words, max_words) or _clause_cut(words, max_words)
         if clause:
             words = clause
-        else:
+        elif not (stretch_to and len(words) <= stretch_to):  # a few words over: whole, never cut mid-clause
             words = words[:max_words]
             # don't end on a dangling phrase ('... Football in Green'): cut at a late small word
             for k in range(len(words) - 1, max(3, len(words) - 5), -1):

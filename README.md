@@ -237,5 +237,5 @@ checks do), never sees the web, and its output is checked before it is shown. De
 
 Tests never touch the network or a real Ollama. `tests/daily_fakes.py` holds synthetic publisher
 feeds (fictional places on `.test` hosts) and a deterministic fake model; `samples/DEMO-edition.json`
-is the clearly labelled demo edition. Version: Agent Reach Daily 1.0 release candidate 8
+is the clearly labelled demo edition. Version: Agent Reach Daily 1.0 release candidate 10
 (`python -m agent_reach.daily --version`).

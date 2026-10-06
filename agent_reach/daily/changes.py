@@ -8,11 +8,16 @@ whenever evidence is added.
 For every story of the new edition:
 
 * **new**: no match in the previous edition;
-* **updated** (materially): new independent publishers, a substantially different summary, a
-  different headline, a changed category, or a newly added "why it matters";
+* **updated** (materially): new independent publishers, or a different headline whose new words come
+  from reports the previous edition did not have. The model rewording the same evidence (a new
+  summary, a reworded headline, a new "why it matters") is not news and does not count;
 * **signals up / down**: the story's signal count (raw items) changed by at least 50% and at least 2
-  (e.g. 3 -> 9), or its independent-report count changed by 2 or more;
+  (e.g. 3 -> 9), or its independent-report count changed by 2 or more. Only against an edition of
+  the same day: a story carried over from yesterday naturally has fewer fresh signals today;
 * otherwise **unchanged**.
+
+``keep_previous_categories`` keeps a carried-over story in the section it was in yesterday unless it
+has new reporting, so the model's Tech / Science & AI choice does not flip it between runs.
 
 Stories of the previous edition with no match are **gone** (no longer in today's selection: they
 may have faded, aged out or been outranked; this is not a claim that the story ended).
@@ -79,11 +84,11 @@ def _similarity(a: str, b: str) -> float:
 
 
 def _match(story, candidates: list) -> object | None:
-    from agent_reach.daily.edition import same_topic
+    from agent_reach.daily.edition import same_entities, same_topic
 
     for test in (lambda o: o.story_id == story.story_id,
                  lambda o: bool({e.url for e in story.evidence if e.url} & {e.url for e in o.evidence if e.url}),
-                 lambda o: bool(story.entity_id) and story.entity_id == o.entity_id,
+                 lambda o: same_entities(story, o),
                  lambda o: same_topic(story, o)):
         for other in candidates:
             if test(other):
@@ -91,9 +96,32 @@ def _match(story, candidates: list) -> object | None:
     return None
 
 
+def _new_reports_text(story, old) -> str:
+    """Titles of the story's reports the previous edition did not cite."""
+    seen = {e.url for e in old.evidence if e.url} | {e.title.lower() for e in old.evidence}
+    return " ".join(e.title for e in story.evidence if e.url not in seen and e.title.lower() not in seen)
+
+
+def _stems(text: str) -> set[str]:
+    return {t[:5] for t in _tokens(text)}
+
+
+def headline_has_news(story, old) -> bool:
+    """A different headline counts only when it has words the previous edition's headline and reports
+    never used, and those words come from reports that are new since then ('Scientists Win Nobel Prize'
+    -> 'Method for Controlling Brain Cells with Light Wins Nobel', a title the previous edition already
+    cited, is rewording; so is the model rephrasing the same reports)."""
+    if _similarity(story.headline, old.headline) >= SUMMARY_MIN_SIMILARITY:
+        return False
+    said = _stems(" ".join([old.headline, *(e.title for e in old.evidence)]))
+    fresh = _stems(story.headline) - said
+    return bool(fresh & _stems(_new_reports_text(story, old)))
+
+
 def compare_editions(previous, current) -> EditionChanges:
     """Changes from ``previous`` (the last persisted edition) to ``current`` (the new one)."""
     prev_time, cur_time = previous.generation_completed_utc, current.generation_completed_utc
+    same_day = previous.edition_date == current.edition_date
     changes = EditionChanges(compared_run_id=previous.run_id, compared_edition_date=previous.edition_date.isoformat(),
                              compared_revision=previous.revision, compared_generated_utc=prev_time)
     remaining = list(previous.stories)
@@ -111,19 +139,14 @@ def compare_editions(previous, current) -> EditionChanges:
         added = sorted(set(now_s.publishers) - set(old_s.publishers))
         if added:
             reasons.append(f"new reporting from {', '.join(added[:3])}{' and others' if len(added) > 3 else ''}")
-        if _similarity(" ".join(story.sentences), " ".join(old.sentences)) < SUMMARY_MIN_SIMILARITY:
-            reasons.append("the summary changed substantially")
-        if _similarity(story.headline, old.headline) < SUMMARY_MIN_SIMILARITY:
+        if headline_has_news(story, old):
             reasons.append(f"headline was “{old.headline}”")
-        if story.category != old.category:
-            reasons.append(f"category changed from {old.category.value}")
-        if story.why_it_matters and not old.why_it_matters:
-            reasons.append("now explains why it matters")
 
         a, b = old.raw_item_count, story.raw_item_count
         report_delta = now_s.independent_reports - old_s.independent_reports
-        up = (b >= a * SIGNAL_RATIO and b - a >= SIGNAL_MIN_DELTA) or report_delta >= REPORTS_MIN_DELTA
-        down = (a >= b * SIGNAL_RATIO and a - b >= SIGNAL_MIN_DELTA) or report_delta <= -REPORTS_MIN_DELTA
+        up = same_day and ((b >= a * SIGNAL_RATIO and b - a >= SIGNAL_MIN_DELTA) or report_delta >= REPORTS_MIN_DELTA)
+        down = same_day and ((a >= b * SIGNAL_RATIO and a - b >= SIGNAL_MIN_DELTA)
+                             or report_delta <= -REPORTS_MIN_DELTA)
         signal_text = (f"signals {a} → {b}, independent reports "
                        f"{old_s.independent_reports} → {now_s.independent_reports}")
 
@@ -139,3 +162,25 @@ def compare_editions(previous, current) -> EditionChanges:
         changes.gone.append(ChangeItem(kind="gone", headline=old.headline, story_id=old.story_id,
                                        previous_rank=old.rank, detail="not in today's selection"))
     return changes
+
+
+def keep_previous_categories(stories: list, previous) -> int:
+    """A story already in the previous edition keeps that edition's category unless it has reporting
+    from a publisher the previous edition did not cite. Returns how many stories kept their category."""
+    if previous is None:
+        return 0
+    remaining = list(previous.stories)
+    kept = 0
+    for story in stories:
+        old = _match(story, remaining)
+        if old is None:
+            continue
+        remaining.remove(old)
+        if story.category == old.category:
+            continue
+        now_s = strength_of(story, previous.generation_completed_utc)
+        old_s = strength_of(old, previous.generation_completed_utc)
+        if not set(now_s.publishers) - set(old_s.publishers):
+            story.category = old.category
+            kept += 1
+    return kept

@@ -202,7 +202,7 @@ ADDED_IN_V4: list[FeedSpec] = [
     # business
     _f("Business Insider", "https://feeds.businessinsider.com/custom/all"),
     _f("Fortune", "https://fortune.com/feed/"),
-    _f("Yahoo Finance", "https://finance.yahoo.com/news/rssindex"),
+    _f("Bloomberg - Markets", "https://feeds.bloomberg.com/markets/news.rss"),
     # technology and security
     _f("Techmeme", "https://www.techmeme.com/feed.xml", "Tech"),
     _f("The Next Web", "https://thenextweb.com/feed", "Tech"),
@@ -251,6 +251,12 @@ REPLACED_IN_V5: dict[str, FeedSpec | None] = {
 #: Settings version 6: MIT News answered both of its feed addresses with errors in real use; removed.
 REPLACED_IN_V6: dict[str, FeedSpec | None] = {
     "https://news.mit.edu/topic/mitartificial-intelligence2-rss.xml": None,
+}
+
+#: Settings version 7: Yahoo Finance's feed answers HTTP 404 (October 2026); Bloomberg's markets feed
+#: replaces it as the business wire.
+REPLACED_IN_V7: dict[str, FeedSpec | None] = {
+    "https://finance.yahoo.com/news/rssindex": _f("Bloomberg - Markets", "https://feeds.bloomberg.com/markets/news.rss"),
 }
 
 #: The six feeds shipped before per-feed settings existed (used to migrate untouched settings).

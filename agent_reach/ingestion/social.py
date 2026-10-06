@@ -21,6 +21,7 @@ from agent_reach.ingestion.base import (
     xml_child_text,
     xml_local,
 )
+from agent_reach.ingestion.news import _URL_PREFIX_RX
 from agent_reach.models import CategoryEnum, FeedStat, RawTrendItem, SourceName
 
 SUBREDDIT_CATEGORY: dict[str, CategoryEnum] = {
@@ -115,6 +116,18 @@ class XTrends24Ingester(BaseIngester):
 
 
 # =====================================================================  Reddit
+def _group_by_cause(errors: list[str]) -> list[str]:
+    """'r/news: HTTP 429', 'r/worldnews: HTTP 429' -> 'r/news, r/worldnews: HTTP 429' (fits the health note)."""
+    by_cause: dict[str, list[str]] = {}
+    for err in errors:
+        name, sep, cause = err.partition(": ")
+        if sep and name.startswith("r/"):
+            by_cause.setdefault(cause, []).append(name)
+        else:
+            by_cause.setdefault(err, [])
+    return [f"{', '.join(names)}: {cause}" if names else cause for cause, names in by_cause.items()]
+
+
 class RedditIngester(BaseIngester):
     """Top posts of the day per subreddit.
 
@@ -154,7 +167,9 @@ class RedditIngester(BaseIngester):
             got, err = await self._fetch_sub(sub, per_sub)
             items.extend(got)
             if err:
-                errors.append(err)
+                # 'r/news' already names the listing: keep the URL out so the cause fits the health note
+                errors.append(_URL_PREFIX_RX.sub("", err))
+        errors = _group_by_cause(errors)
         if skipped:
             errors.append(f"{skipped} subreddit(s) skipped: {self.settings.reddit_budget_s:.0f}s budget exhausted")
         if not items and errors:

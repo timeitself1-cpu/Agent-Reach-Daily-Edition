@@ -282,15 +282,15 @@ def test_small_or_cosmetic_differences_are_not_reported():
     assert ch.total == 0 and ch.unchanged == 3 and ch.summary() == "No material changes"
 
 
-def test_substantially_rewritten_summary_counts_as_update():
+def test_a_rewritten_summary_alone_is_not_an_update():
+    # rc10: the model rewording the same evidence (new summary, new 'why it matters') is not news
     a = _story("Norvale Ferry Strike", sid="f1", sentences=["Workers began a strike over pay at the port."])
     b = _story("Norvale Ferry Strike", sid="f1", sentences=["Talks collapsed and the island ferry service stopped "
                                                            "entirely; officials announced emergency flights."],
                why="Island residents lose their ferry link.")
     ch = compare_editions(make_edition([a, make_story(headline="X1"), make_story(headline="Y2")], run_id="p"),
                           make_edition([b, make_story(headline="X1"), make_story(headline="Y2")], run_id="c"))
-    assert len(ch.updated) == 1
-    assert "summary changed substantially" in ch.updated[0].detail and "why it matters" in ch.updated[0].detail
+    assert ch.updated == [] and ch.unchanged == 3
 
 
 def test_refresh_persists_changes_against_the_previous_edition(daily_env):

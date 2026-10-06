@@ -50,6 +50,7 @@ from agent_reach.pipeline.cleaner import (
     display_sources,
     is_generic_headline,
     is_label_headline,
+    is_live_blog,
     normalize_text,
     sanitize_headline,
     sanitize_summary,
@@ -63,6 +64,9 @@ log = logging.getLogger(__name__)
 MAX_BATCH_SIZE = 25
 MIN_BATCH_SIZE = 5
 HEADLINE_MAX_WORDS = 14
+#: A headline with no sentence or clause break may run this long rather than be cut mid-clause
+#: ("'Ba's Book': How Making the Heartfelt Hybrid Film Exploring Trauma Brought").
+HEADLINE_STRETCH_WORDS = 18
 
 CATEGORY_ALIASES: dict[str, CategoryEnum] = {
     "sports": CategoryEnum.SPORTS,
@@ -314,6 +318,29 @@ EVENT_FAMILIES = (
     {"breach", "vulnerability", "exploit", "hacked"},
 )
 EVENT_WORDS = frozenset().union(*EVENT_FAMILIES)
+#: Everyday English words that two unrelated headlines share all the time ('ChatGPT is adding ...' and
+#: 'Apple accuses OpenAI of improperly adding ...'; 'national intelligence chief' and 'national TV
+#: ownership cap'; 'Trump ... ahead of midterms' and 'Trump Rallies ... Ahead of Midterm Elections').
+#: They never count as the shared 'what happened' that links two reports. 'midterm(s)' is a season word:
+#: in US news before November 2026 a diesel order, a $90 Medicare payment and a late-night joke all
+#: mention the midterms (as frequent in the run as 'diesel', so a frequency floor cannot tell them apart).
+COMMON_WORDS = frozenset("""
+add adds added adding use uses used using make made making take takes took taking taken give gives gave giving
+given come comes came coming going goes went gone see sees saw seen seeing show shows showed shown showing
+find finds found finding keep keeps kept keeping put puts putting set sets setting start starts started starting
+stop stops stopped stopping turn turns turned turning call calls called calling tell tells told telling ask asks
+asked asking want wants wanted need needs needed help helps helped helping look looks looked looking plan plans
+planned planning move moves moved moving try tries tried trying leave leaves left leaving bring brings brought
+hold holds held holding run runs ran running become becomes became change changes changed changing work works
+worked working reveal reveals revealed offer offers offered offering face faces faced facing claim claims
+claimed according reported reporting announced announces announce including include includes improperly
+back big bigger biggest small high higher low lower long major key latest early late former recent recently
+national international global local public official officials people world state states government group
+groups company companies firm million billion percent time times way ways thing things part life case deal
+home man men woman women child children family families country city place area number level side
+ahead behind across against among despite during through toward towards within around again already soon later
+cost costs price prices money pay pays paid midterm midterms
+""".split())
 #: Trend lists whose titles are fragments ('Packers', 'Bijan'): only these may link to a full
 #: headline through a single distinctive word. A short article title ('Web Search API') may not.
 FRAGMENT_SOURCES = frozenset({SourceName.X_TRENDS24, SourceName.GOOGLE_TRENDS, SourceName.WIKIPEDIA,
@@ -439,7 +466,7 @@ class LinkIndex:
             ea = set(extract_entities([self.items[a].normalized_title], limit=20))
             eb = set(extract_entities([self.items[b].normalized_title], limit=20))
             entity_tokens = {t for e in ea & eb for t in significant_tokens(e)}
-            if not shared - entity_tokens - EVENT_WORDS:
+            if not shared - entity_tokens - EVENT_WORDS - COMMON_WORDS:
                 return False
         if not shared:
             return False
@@ -481,8 +508,9 @@ class LinkIndex:
         return list(units.values())
 
     def _event_unit(self, unit: set[str]) -> bool:
-        """A shared phrase that says something beyond a name or a number ('27.2')."""
-        return any(t not in self.name_words and any(c.isalpha() for c in t) for t in unit)
+        """A shared phrase that says something beyond a name, a number ('27.2') or an everyday word
+        ('adding', 'national')."""
+        return any(t not in self.name_words and t not in COMMON_WORDS and any(c.isalpha() for c in t) for t in unit)
 
     def fragment_fits(self, frag: int, full: int) -> bool:
         """A trend fragment ('Gavin Williams') must not name a different person than the article
@@ -889,7 +917,7 @@ class SemanticClusterer:
             # headline, was written for a different/mixed set of signals: re-label it
             if d.entities and len(grounded) * 2 < len(d.entities):
                 d.needs_label = True
-            if d.headline and is_generic_headline(sanitize_headline(d.headline, HEADLINE_MAX_WORDS)):
+            if d.headline and is_generic_headline(sanitize_headline(d.headline, HEADLINE_MAX_WORDS, HEADLINE_STRETCH_WORDS)):
                 d.needs_label = True
             d.entities = grounded
         if split_count or orphans:
@@ -1082,6 +1110,11 @@ class SemanticClusterer:
                     return other[0][0]
                 non_tech_hints = [c for c, _ in hints.most_common() if c not in (CategoryEnum.TECH, CategoryEnum.SCIENCE_AI)]
                 return non_tech_hints[0] if non_tech_hints else CategoryEnum.NEWS
+            # the model swaps Tech and Science & AI between runs for the same reports; the reports'
+            # own words decide when they clearly favour one ('Apple Intelligence from macOS 27': Tech)
+            twin = CategoryEnum.SCIENCE_AI if proposed is CategoryEnum.TECH else CategoryEnum.TECH
+            if votes[twin] >= 2 and votes[twin] >= 2 * votes[proposed]:
+                return twin
         if proposed is CategoryEnum.SPORTS and votes[CategoryEnum.SPORTS] == 0 and hints[CategoryEnum.SPORTS] == 0:
             top = votes.most_common(1)
             if top and top[0][1] >= 2:
@@ -1090,14 +1123,16 @@ class SemanticClusterer:
 
     @staticmethod
     def _best_member_title(members: list[CleanedTrendItem]) -> str:
-        """Most descriptive strong title: prefers multi-word headlines over bare hashtags."""
+        """Most descriptive strong title: prefers multi-word headlines over bare hashtags, and any
+        report over a live blog ('... - as it happened' covers many events)."""
 
         def rank(m: CleanedTrendItem) -> float:
             n_tok = len(significant_tokens(m.normalized_title))
             words = len(m.normalized_title.split())
             return (m.heuristic_score + 0.04 * min(n_tok, 8) - (0.3 if n_tok < 2 else 0.0)
                     - (0.2 if words > HEADLINE_MAX_WORDS else 0.0)  # would have to be cut
-                    - (0.2 if is_label_headline(m.normalized_title) else 0.0))
+                    - (0.2 if is_label_headline(m.normalized_title) else 0.0)
+                    - (1.0 if is_live_blog(m.normalized_title) else 0.0))
 
         ordered = sorted(members, key=lambda m: m.heuristic_score, reverse=True)
         title = max(ordered[:6], key=rank).normalized_title
@@ -1153,15 +1188,15 @@ class SemanticClusterer:
             ).most_common(1)[0][0]
             category = self._guard_category(coerce_category(d.category_raw, fallback), members)
 
-            headline = sanitize_headline(d.headline, HEADLINE_MAX_WORDS)
+            headline = sanitize_headline(d.headline, HEADLINE_MAX_WORDS, HEADLINE_STRETCH_WORDS)
             if headline and not quantities_grounded(headline, members):
                 # 'Thousands in Quarantine' when the reports say nearly 200: use a real report title
-                fallback = sanitize_headline(self._best_member_title(members), HEADLINE_MAX_WORDS)
+                fallback = sanitize_headline(self._best_member_title(members), HEADLINE_MAX_WORDS, HEADLINE_STRETCH_WORDS)
                 headline = fallback or headline
             if not headline or is_generic_headline(headline) or is_label_headline(headline):
                 # a model label ('Cornell University Rape Allegations') is replaced by the best real
                 # report title, when one reads as a headline
-                fallback = sanitize_headline(self._best_member_title(members), HEADLINE_MAX_WORDS)
+                fallback = sanitize_headline(self._best_member_title(members), HEADLINE_MAX_WORDS, HEADLINE_STRETCH_WORDS)
                 if fallback and (not headline or not is_label_headline(fallback)):
                     headline = fallback
 

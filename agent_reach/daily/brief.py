@@ -10,7 +10,10 @@ then passes a deterministic grounding gate before it is shown:
   nouns opening a sentence, such as "Patients" or "Fans", are allowed);
 * hedging words (could, might, likely...) are rejected unless the evidence uses them;
 * most of a detail sentence's content words must appear in the evidence (``edition.support``);
-  text must be English, and a 'why it matters' that restates the headline or summary is left out;
+  text must be English and not in the page's own voice ('you', 'our'); a detail that mostly
+  repeats what the story already says, or repeats itself, is left out;
+* a 'why it matters' must state a consequence (who is affected or what changes) and must not
+  restate the headline or summary (70% of its words);
 * generic significance filler ("highlights the importance of", "only time will tell"),
   insufficient-data phrases, URLs, handles and duplicates of the summary are rejected.
 
@@ -29,14 +32,21 @@ from typing import Any
 from pydantic import BaseModel, Field, field_validator
 
 from agent_reach.daily.edition import (
+    NOVEL_SHARE,
     SENTENCE_SPLIT_RX,
     SUPPORT_SHARE,
     WEAK_SENTENCE_RX,
     Story,
+    ends_dangling,
+    is_fragment,
     looks_english,
+    numbers_in,
+    page_voice,
+    place_sentence,
     restates,
     source_stems,
     support,
+    without_self_repeat,
 )
 from agent_reach.models import _coerce_ids
 from agent_reach.pipeline.cleaner import STOPWORDS, dedupe_key, sanitize_summary, significant_tokens
@@ -71,7 +81,6 @@ SCHEMA: dict[str, Any] = {
 }
 
 HEDGE_RX = re.compile(r"\b(could|might|may|likely|potentially|possibly|perhaps|expected to)\b", re.IGNORECASE)
-NUMBER_RX = re.compile(r"\d+(?:[.,]\d+)*")
 #: Capitalised words of 2+ characters (names, places, acronyms such as US or EU, products like Corvid-3).
 CAP_WORD_RX = re.compile(r"\b[A-Z][A-Za-z0-9'&.-]*[A-Za-z0-9]\b")
 #: Quantities that must be stated by the evidence when the model uses them.
@@ -98,7 +107,7 @@ COMMON_OPENERS = frozenset("""patients families parents children students teache
 workers employees staff unions employers companies businesses firms customers consumers users owners shoppers buyers
 investors shareholders markets prices banks lenders borrowers travellers travelers passengers commuters drivers riders
 airlines fans players teams coaches clubs athletes viewers audiences readers listeners voters lawmakers legislators
-governments regulators councils cities towns communities neighbours neighbors tenants landlords homeowners farmers
+governments regulators councils cities towns communities residents neighbours neighbors tenants landlords homeowners farmers
 growers fishermen scientists researchers astronomers engineers developers programmers people citizens locals visitors
 tourists islanders survivors victims rescuers firefighters police prosecutors courts judges lawyers defendants
 service services supplies shipments operators""".split())
@@ -129,10 +138,6 @@ def evidence_text(story: Story) -> str:
     return " ".join(parts)
 
 
-def _numbers(text: str) -> set[str]:
-    return {n.replace(",", "").rstrip(".") for n in NUMBER_RX.findall(text)}
-
-
 def _has_word(word: str, text_lower: str) -> bool:
     return re.search(r"(?<![a-z0-9])" + re.escape(word) + r"(?![a-z0-9])", text_lower) is not None
 
@@ -147,20 +152,33 @@ VAGUE_EFFECT_RX = re.compile(
     re.IGNORECASE,
 )
 #: A consequence is the model's own wording (names, numbers and hedges are still checked), but one
-#: whose words are this much the headline's and summary's says nothing new.
-WHY_RESTATE_SHARE = 0.8
+#: whose words are this much the headline's and summary's says nothing new ('The move is to comply
+#: with the EU's AI Act' after 'OpenAI will watermark ChatGPT text in the EU to comply with the AI Act').
+WHY_RESTATE_SHARE = 0.7
 #: Who or what is affected: an ordinary group noun counts as concrete ('residents', 'patients').
 AFFECTED_RX = re.compile(r"\b(?:" + "|".join(sorted(COMMON_OPENERS)) + r")\b", re.IGNORECASE)
+#: What changes for someone: a consequence, not a purpose ('The move is to comply ...'), a hope ('hopes
+#: to continue into 2027') or a further detail of the event ('The 39-year-old will bid an emotional farewell').
+CONSEQUENCE_RX = re.compile(
+    r"\b(?:means?|meaning|forces?|forced|forcing|requires?|required|allows?|allowed|lets|enables?|prevents?|"
+    r"blocks?|bars?|bans?|stops?|ends?|delays?|halts?|suspends?|cancels?|closes?|shuts?|costs?|saves?|"
+    r"raises?|lowers?|cuts?|increases?|reduces?|affects?|affected|hits?|leaves?|puts?|exposes?|protects?|"
+    r"prompt(?:s|ed)?|led to|leads? to|triggers?|triggered|opens? the (?:way|door)|paves? the way|clears? the way|"
+    r"lose|loses|losing|lost|gains?|brings? down|bringing down|topples?|ousts?|unseats?|replaces?|replaced|"
+    r"determines?|decides? (?:who|whether|how|what)|"
+    r"can no longer|will no longer|no longer|will (?:have to|need to|face|lose|pay|get|receive|be able|be required)|"
+    r"must|have to|has to|at risk|face|faces|facing|for the first time)\b",
+    re.IGNORECASE,
+)
 
 
 def concrete_effect(sentence: str) -> bool:
-    """A 'why it matters' sentence must name who or what is affected (a group, a name or a number)
-    and must not be a vague significance claim."""
+    """A 'why it matters' sentence must state a consequence: who is affected (an ordinary group:
+    'residents', 'patients') or what changes ('forces', 'no longer', 'prompted'). Vague significance
+    claims never count."""
     if VAGUE_EFFECT_RX.search(sentence) or WEAK_SENTENCE_RX.search(sentence):
         return False
-    names = [m.group(0) for m in CAP_WORD_RX.finditer(sentence)][1:]  # the first word opens the sentence
-    return bool(AFFECTED_RX.search(sentence) or NUMBER_RX.search(sentence)
-                or any(n.lower() not in STARTERS and n.lower() not in STOPWORDS for n in names))
+    return bool(AFFECTED_RX.search(sentence) or CONSEQUENCE_RX.search(sentence))
 
 
 def grounded(sentence: str, evidence: str) -> bool:
@@ -175,7 +193,7 @@ def grounded(sentence: str, evidence: str) -> bool:
     if re.search(r"https?://|www\.|[@#]\w", sentence, re.IGNORECASE):
         return False
     ev_lower = evidence.lower()
-    if not _numbers(sentence) <= _numbers(evidence):
+    if not numbers_in(sentence) <= numbers_in(evidence):
         return False
     for q in QUANTITY_RX.findall(sentence):
         if not _has_word(q.lower(), ev_lower):
@@ -198,14 +216,13 @@ def grounded(sentence: str, evidence: str) -> bool:
 
 
 def _novel(sentence: str, existing: list[str]) -> bool:
-    toks = significant_tokens(dedupe_key(sentence))
-    if len(toks) < 3:
+    """A sentence must add something: not mostly (NOVEL_SHARE) what the story already says, taken
+    together ('The new AI task force will coordinate government engagement with AI' after 'Trump named
+    Clayton ... to lead a new federal AI task force. Clayton will coordinate government engagement with AI.'),
+    and not a sentence that repeats itself."""
+    if len(significant_tokens(dedupe_key(sentence))) < 3 or without_self_repeat(sentence) != sentence:
         return False
-    for other in existing:
-        o = significant_tokens(dedupe_key(other))
-        if o and len(toks & o) / len(toks) >= 0.8:
-            return False
-    return True
+    return not restates(sentence, existing, NOVEL_SHARE)
 
 
 def apply_brief(story: Story, details: str, why: str) -> tuple[int, int]:
@@ -214,15 +231,16 @@ def apply_brief(story: Story, details: str, why: str) -> tuple[int, int]:
     stems = source_stems(" ".join([evidence, *story.sentences]))  # the summary was checked already
 
     def sound(sentence: str, share: float = SUPPORT_SHARE) -> bool:
-        return grounded(sentence, evidence) and looks_english(sentence) and support(sentence, stems) >= share
+        return (grounded(sentence, evidence) and looks_english(sentence) and not page_voice(sentence)
+                and not is_fragment(sentence) and not ends_dangling(sentence) and support(sentence, stems) >= share)
 
     added = 0
     details = sanitize_summary(details or "")
     for sentence in [s.strip() for s in SENTENCE_SPLIT_RX.split(details) if s.strip()][:2]:
         if len(story.sentences) >= 4:
             break
-        if 20 <= len(sentence) <= 320 and sound(sentence) and _novel(sentence, story.sentences):
-            story.sentences.append(sentence)
+        if (20 <= len(sentence) <= 320 and sound(sentence) and _novel(sentence, [story.headline, *story.sentences])
+                and place_sentence(story.sentences, sentence, keep_first=True)):
             added += 1
     why_added = 0
     why = sanitize_summary(why or "")

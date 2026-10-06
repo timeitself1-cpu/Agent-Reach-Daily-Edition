@@ -271,6 +271,11 @@ async def _attempt(paths: DataPaths, prefs: DailyPrefs, store: EditionStore, *, 
         db.close()
     built = [build_story(1, c, evidence, reference=started) for c in report.macro_clusters]
     supported = [s for s in built if s is not None]
+    from agent_reach.daily.changes import keep_previous_categories
+
+    kept = keep_previous_categories(supported, store.load_latest().edition)
+    if kept:
+        log.info("%d carried-over stories kept their previous category", kept)
     selection = select_stories(supported, prefs, now=started)
     selection.dropped_unsupported = len(built) - len(supported)
     stories = selection.stories

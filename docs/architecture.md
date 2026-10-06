@@ -146,24 +146,46 @@ Wikipedia channel is partial, never failed.
    Earlier, at the clean stage: advertising dressed as news ("on sale now for just $14.97 (MSRP
    $159)") is discarded as `promotional`, and YouTube highlight reels, full replays, live streams,
    reactions and recaps as `video_clip`. Summary sentences that say nothing ("is drawing attention
-   due to...", "this showcases...", "published in various journals") or repeat an earlier sentence are
-   dropped; "why it matters" must also name who or what is affected and avoid vague claims
-   ("highlights concerns", "significantly impacted", "severe consequences").
+   due to...", "this showcases...", "published in various journals") or repeat what was already said
+   are dropped (an earlier sentence at 60%, or all earlier sentences together at 70%,
+   `edition.NOVEL_SHARE`); "why it matters" must also state a consequence - who is affected
+   ("residents", "patients") or what changes ("forces", "no longer", "prompted") - and avoid vague
+   claims ("highlights concerns", "significantly impacted", "severe consequences"); a purpose ("The
+   move is to comply with ...") or a further detail ("The 39-year-old will bid an emotional
+   farewell") is not a consequence (`brief.concrete_effect`).
    Every summary sentence must also be **supported by the story's own sources**: at least 60% of
    its content words (stemmed) appear in the members' titles, page/feed context and descriptions
    (`edition.support`), so model padding such as "The film is a unique and artistic take on the human
-   experience" is dropped. Sentences in another language are dropped (`looks_english`), attribution
-   prefixes ("Sources:") are removed, and a "why it matters" that restates the headline or summary
-   (80% of its words) is left out. A model headline that states an amount ("Thousands in
+   experience" is dropped, and **every number** in it must appear there too (`edition.numbers_in`;
+   "1.4 billion neurons" when the page says "23 billion active" is dropped). Also dropped: sentences
+   in another language (`looks_english`); the page's own voice outside quotes ("Every time you ask
+   ChatGPT ...", "as our industry ...", `page_voice`); a subordinate clause with no main clause
+   (`is_fragment`); a sentence cut short ("Clayton will lead the government's new.", `ends_dangling`);
+   a sentence that only restates the headline ("The redesign is the biggest in decades."). A clause
+   that repeats the sentence ("..., found by a team of Claude Opus 5.5 agents") is cut
+   (`without_self_repeat`); a sentence that repeats a five-word run of an earlier one replaces it when
+   it contains it and says more, and is dropped otherwise (`place_sentence`; also for brief details). Attribution prefixes ("Sources:") are removed, and a "why it
+   matters" that restates the headline or summary (70% of its words) is left out. When no summary
+   sentence survives, the first sound sentence of the reports' own text is used (`lead_sentence`;
+   never from a live blog). A model headline that states an amount ("Thousands in
    Quarantine", "12,000") no member reports is replaced by the best real report title
    (`clusterer.quantities_grounded`).
 3. Repeats are dropped: same entity set, a shared article URL, or near-identical headline words.
-4. **Sections.** Each category keeps its top `max_stories` (10) stories in rank order; the
+   The entity-set id hashes only the key names, so a single shared name ("Donald Trump") never
+   makes two stories the same, here or in "what changed" (`edition.same_entities`).
+   A story told only by live blogs ("... - as it happened": a running page of many events) is left
+   out; elsewhere a live blog is never the story's title (`clusterer._best_member_title`) and its
+   "- as it happened" suffix is removed (`cleaner.LIVE_BLOG_SUFFIX_RX`).
+4. **Sections.** Each category keeps its top `max_stories` (10) stories, corroborated stories
+   first (inside a section a single-outlet story never sits above news several outlets report); the
    overflow is counted as held back. **Top Stories** are the `max_stories` best of those, with at
    most `max_per_category` (4) from one category (a strong story - relevance 8+ and corroborated -
    may exceed that by 2) and `max_tech_only_share` (34%) tech-only stories, so the top stays broad.
-   Corroborated stories (more than one independent report) are chosen first; a single-outlet story
-   enters Top Stories only when places are left, unless the model rated it 9 or more.
+   Places are filled in passes, each in pipeline rank order: corroborated stories (more than one
+   independent report) within the caps; then corroborated stories beyond their category's cap; then
+   single-outlet stories within the caps, those the model rated 9+ first. A single outlet's story
+   never takes a place while corroborated news waits (in a real run a 1-report story rated 9 had
+   taken News's last place from a 5-report story).
    First-person columns ("How I made...") and stories told only through video clips stay in their
    section, after the news, and never enter Top Stories. If the caps leave Top Stories short, the next best stories
    fill it. The edition stores the Top Stories as `top_ranks` (optional; older editions show their
@@ -228,10 +250,16 @@ otherwise 5+ points is **strong**, else **moderate**. Every level comes with its
 Before publishing, the new edition is compared with the last persisted edition (a same-day
 revision compares with the revision it replaces) and the result is stored in the edition
 (`changes`). Stories are matched by story_id, then a shared article URL, then the entity set, then
-near-identical headline words. Reported: new; materially updated (new independent publishers, a
-substantially rewritten summary or headline, a category change, a new "why it matters"); signals
-up/down (raw signals changed by >= 50% and >= 2, or independent reports by >= 2); and stories no
-longer listed. The first edition has nothing to compare with. The window shows this only in
+near-identical headline words. Reported: new; materially updated (new independent publishers, or a
+different headline with words neither the previous headline nor its reports used, taken from reports
+the previous edition did not cite - the model
+rewording the same evidence, a new summary or a new "why it matters" is not an update); signals
+up/down (raw signals changed by >= 50% and >= 2, or independent reports by >= 2), only against an
+edition of the same day, since a story carried over from yesterday naturally has fewer fresh
+signals; and stories no longer listed. Before selection, a story already in the previous edition
+keeps that edition's category unless it has reporting from a new publisher
+(`changes.keep_previous_categories`), so the model's Tech / Science & AI choice cannot flip it
+between runs. The first edition has nothing to compare with. The window shows this only in
 Details > Changes and the HTML export keeps it in a collapsed block at the bottom, so it never
 takes reading space.
 
@@ -247,8 +275,11 @@ omitted; a failed or garbled model call leaves the story with its validated summ
 
 The Daily app compares against runs about 24 h, 48 h and 7 days earlier (+/-25%). A run serves at
 most one window, so one historical run never counts twice. The first edition is a baseline (no
-trend labels). Labels: New, Rising, Hot, Continuing, Cooling, Fading, or "Uncertain trend" when
-sources or configuration changed too much to compare.
+trend labels). Labels: New, Rising, Hot, Continuing, Cooling, Fading. When sources or configuration
+changed too much to compare (the scorer's `UNCERTAIN`; any feed-list change, such as a settings
+migration, does this for a day), cards carry no trend label, and when that holds for every story
+the edition says so once in its notes. "Uncertain trend" labels stored by older editions are
+dropped on load.
 
 ## Pipeline modules (classic Agent Reach)
 
@@ -289,7 +320,9 @@ See [the v2.1 contract and replay benchmark](reliability-v2.1.md) for membership
    - **3d merge:** combined membership must pass event coherence; entity or cluster ID equality never triggers a merge.
    - **3d' key names:** chained links can still connect different events through generic words ('accused' + 'woman' joined a spy arrest to an unrelated murder in a real edition). Every member must therefore mention one of the story's key names: proper nouns that at least 40% of its members mention. Which words are names is learned from the run's own text (written capitalised mid-sentence far more often than lower case, or only ever seen opening a headline), never from model output. Members that fail are split off into their own coherent stories (or single-report stories that the singleton rules keep or drop). Single-word links through a short title only work for trend fragments (X, Google Trends, Wikipedia, TikTok, Bluesky), not for article titles such as "Web Search API", and a fragment may not name someone else than the article ("Gavin Williams" does not join "Hayley Williams ...": `LinkIndex.fragment_fits`).
    - **Shared phrases count once:** two titles that share only one phrase ("Supreme Court", "iPhone 18 Pro", "dies aged", "data centres") are not linked through it word by word. Shared tokens that both titles write side by side are one unit (`LinkIndex.shared_units`); a link through rare words needs two such units, and at least one must say what happened rather than only who ("Apple" + "iPhone" is not enough; a number such as "27.2" is not either). Words with a capital inside ("iPhone", "tvOS") count as names. This split three Supreme Court stories, five Apple stories and two obituaries that a real evening edition (October 5, 2026) had merged.
-   - **3e drop:** clusters flagged `[INSUFFICIENT_DATA]`, with filler summaries ("no specific information", "details are scarce"), or with relevance <= 3 are dropped, as are weak singletons. Headlines keep up to 14 words, are cut at a clause break or before a dangling word, and a topic label from the model (a short title with no verb, e.g. "Cornell University Rape Allegations") is replaced by the best real report title when that reads as a headline.
+   - **Everyday words are not events:** a fixed list of common English words (`clusterer.COMMON_WORDS`: "adding", "using", "national", "officials", "case", "ahead", "costs", ...) never counts as the "what happened" unit and never alone keeps two titles linked. The list also holds "midterm(s)", a season word in US news before November 2026: it occurs in the run as often as "diesel", so a document-frequency floor cannot separate it from a real event word. In the October 6 morning edition "ChatGPT/OpenAI" + "adding" had joined the EU watermark story, a cartoon story and an Apple lawsuit ("7 independent reports" instead of 4), and "Trump" + "national" had joined the AI czar to a cable lobby lawsuit.
+   - **Tech vs Science & AI:** within this pair the model's choice stands unless the reports' own keywords favour the other side at least 2 to 1 (2+ hits; "Apple Intelligence from macOS 27" is Tech), in `_guard_category`.
+   - **3e drop:** clusters flagged `[INSUFFICIENT_DATA]`, with filler summaries ("no specific information", "details are scarce"), or with relevance <= 3 are dropped, as are weak singletons. Headlines keep up to 14 words and are cut at a sentence or clause break; a title with no such break keeps up to 18 words whole (`HEADLINE_STRETCH_WORDS`) rather than being cut mid-clause ("... Exploring Trauma Brought"), and only a longer one is cut before a dangling word. A domain that is the subject ("Example.com just launched ...") is kept; one used as attribution ("via techcrunch.com") is removed (`cleaner.strip_bare_urls`). A topic label from the model (a short title with no verb, e.g. "Cornell University Rape Allegations") is replaced by the best real report title when that reads as a headline.
 5. **Score and persist.** Relevance and velocity are computed, then everything is saved to SQLite.
 
 With no embedding model, grouping falls back to lexical union-find under the same noise rule. With no Ollama, labels are heuristic, and summaries use the scraped lead sentence or are flagged insufficient.
@@ -338,3 +371,5 @@ powershell -ExecutionPolicy Bypass -File .\run_cloud_handoff.ps1                
 ```
 
 The workflow installs Ollama on a CPU-only `ubuntu-latest` runner and caches `llama3.1:8b` after the first pull. It also pulls `nomic-embed-text`. It clusters up to 150 candidates, and because grouping is embedding-based, the LLM only labels real clusters. SQLite history is carried between runs in the Actions cache, so velocity works in the cloud as well. The report appears in the run summary and as a downloadable artifact. Optionally, set the repository variable `AGENT_REACH_CONTACT_EMAIL`.
+
+With `entrypoint=agent_reach.daily` the workflow runs one real Daily refresh. The Daily app takes its processing budget from `settings.json`, not from `AGENT_REACH_MAX_ITEMS_FOR_LLM`, so the workflow writes the runner's own settings first: `daily_articles` (input, default 80) articles instead of the Windows default 260, a 100-minute refresh limit (the job allows 120) and no podcast. The runner generates about 4 tokens/s; with 260 articles the first Daily run (37421270778) needed 14 label calls of 4-12 minutes and hit the 90-minute limit before the brief pass.

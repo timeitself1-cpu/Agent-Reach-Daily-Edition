@@ -24,7 +24,7 @@ from datetime import date, datetime, timezone
 from typing import Literal
 from urllib.parse import urlsplit
 
-from pydantic import BaseModel, ConfigDict, Field, model_validator
+from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
 from agent_reach.daily.prefs import GENERAL_NEWS_SOURCES, TECH_SOURCES, DailyPrefs
 from agent_reach.daily.timeutil import CENTRAL_TZ_NAME, central_date, parse_utc
@@ -44,7 +44,7 @@ SOURCE_NAMES = {
     "mastodon": "Mastodon", "bluesky": "Bluesky",
 }
 MOMENTUM_LABELS = {"SURGING": "Hot", "RISING": "Rising", "NEW": "New", "STEADY": "Continuing",
-                   "COOLING": "Cooling", "FADING": "Fading", "UNCERTAIN": "Uncertain trend"}
+                   "COOLING": "Cooling", "FADING": "Fading"}
 #: Platforms whose items come from a named publisher (an article or a channel's video), not a trend list or
 #: social post.
 PUBLISHER_PLATFORMS = frozenset({"news_rss", "google_news", "hackernews", "arxiv", "youtube", "mastodon"})
@@ -136,6 +136,12 @@ class Story(BaseModel):
     tech_only: bool = False
     entities: list[str] = Field(default_factory=list)  # key names (people, places, organisations); may be empty
     evidence_strength: EvidenceStrength | None = None  # deterministic; None in editions written before it existed
+
+    @field_validator("labels")
+    @classmethod
+    def _no_uncertain_label(cls, v: list[str]) -> list[str]:
+        """Editions before 1.0.0rc10 put 'Uncertain trend' on every card; it is no longer shown."""
+        return [label for label in v if label != "Uncertain trend"]
 
 
 class FeedHealth(BaseModel):
@@ -257,10 +263,15 @@ def tech_only(cluster: MacroCluster) -> bool:
     return bool(cluster.sources) and set(cluster.sources) <= TECH_SOURCES
 
 
+def momentum_uncertain(story_or_cluster) -> bool:
+    return story_or_cluster.velocity_basis == "coverage_uncertain" or story_or_cluster.momentum == "UNCERTAIN"
+
+
 def story_labels(cluster: MacroCluster) -> list[str]:
-    """Trend labels only when the scorer had comparable history; BASELINE gets none."""
-    if cluster.momentum_uncertain or cluster.velocity_basis == "coverage_uncertain" or cluster.momentum == "UNCERTAIN":
-        return ["Uncertain trend"]
+    """Trend labels only when the scorer had comparable history; BASELINE gets none. An uncertain
+    trend gets no label either (said once in the edition's notes, not on every card)."""
+    if cluster.momentum_uncertain or momentum_uncertain(cluster):
+        return []
     if cluster.velocity_basis != "historical":
         return []
     label = MOMENTUM_LABELS.get(cluster.momentum)
@@ -343,18 +354,163 @@ def restates(sentence: str, earlier: list[str], share: float = 0.6) -> bool:
     return len(toks & said) >= share * len(toks)
 
 
-def body_sentences(summary: str, source: str | None = None) -> list[str]:
-    """Up to two summary sentences, without meta lines, empty filler, repeats of an earlier sentence,
-    non-English text or (when the sources are given) claims the sources do not support."""
+#: A sentence whose content words are mostly (this share) already said by the sentences before it adds
+#: nothing ('Clayton will coordinate government engagement with AI. The new AI task force will coordinate
+#: government engagement with AI.').
+NOVEL_SHARE = 0.7
+NUMBER_RX = re.compile(r"\d+(?:[.,]\d+)*")
+
+
+def numbers_in(text: str) -> set[str]:
+    """'1,000', '23', '1.4' -> {'1000', '23', '1.4'}."""
+    return {n.replace(",", "").rstrip(".") for n in NUMBER_RX.findall(text or "")}
+
+
+#: Quoted speech: a person quoted saying 'we' or 'you' is reporting, not the page talking to the reader.
+QUOTED_RX = re.compile(r"\"[^\"]*\"|“[^”]*”|‘[^’]*’|(?<!\w)'[^']*'(?!\w)")
+PAGE_VOICE_RX = re.compile(r"\b(?:you|your|yours|yourself|we|our|ours|ourselves)\b", re.IGNORECASE)
+
+
+def page_voice(sentence: str) -> bool:
+    """True for text in the page's own voice outside quotes ('Every time you ask ChatGPT a question',
+    'as our industry stepped into'): copied page text, not a summary. Lower-case 'us' counts; 'US' does not."""
+    bare = QUOTED_RX.sub(" ", sentence)
+    return bool(PAGE_VOICE_RX.search(bare) or re.search(r"\bus\b", bare))
+
+
+SUBORDINATE_OPENER_RX = re.compile(
+    r"^(?:(?:over|in|during|for|after|within|throughout|across)\b[^,]{0,80},\s*)?"
+    r"(?:as|while|when|whereas|although|though|because|since|unless)\b", re.IGNORECASE)
+IRREGULAR_PAST = frozenset("""won lost made took gave became began fell rose left met ran told found held kept led
+paid put set sent sold spent struck saw came went got hit cut beat broke chose drew drove flew fled grew knew spoke
+stole wore woke shut quit""".split())
+
+
+def is_fragment(sentence: str) -> bool:
+    """A subordinate clause with no main clause ('Over the past five years, as our industry stepped
+    into this new era of short-form mega consumption, AI-pushing productivity platforms, and Hollywood
+    nods.'): after the clause the opener starts, no comma-separated part has a verb."""
+    from agent_reach.pipeline.cleaner import HEADLINE_VERBS
+
+    m = SUBORDINATE_OPENER_RX.match(sentence)
+    if not m:
+        return False
+    parts = sentence.rstrip(".!?").split(",")
+    start = 1 if "," in m.group(0) else 0
+    for part in parts[start + 1:]:
+        for w in re.findall(r"[a-z']+", part.lower()):
+            if w in HEADLINE_VERBS or w in IRREGULAR_PAST or (len(w) > 4 and w.endswith("ed")):
+                return False
+    return True
+
+
+_WORDS_RX = re.compile(r"[a-z0-9]+(?:[.'-][a-z0-9]+)*")
+
+
+def _four_grams(text: str) -> set[tuple[str, ...]]:
+    words = _WORDS_RX.findall(text.lower())
+    return {tuple(words[i:i + 4]) for i in range(len(words) - 3)}
+
+
+def _repeats_itself(text: str) -> bool:
+    words = _WORDS_RX.findall(text.lower())
+    grams = [tuple(words[i:i + 4]) for i in range(len(words) - 3)]
+    return len(grams) != len(set(grams))
+
+
+#: Words a finished sentence never ends on ('Clayton will lead the government's new.').
+DANGLING_END_WORDS = frozenset("""a an the and or but nor of to for with from by via vs its their his her our your
+my this these those new""".split())
+
+
+def ends_dangling(sentence: str) -> bool:
+    """A sentence cut short: it ends on an article, a preposition, a possessive or 'new'."""
+    words = re.findall(r"[A-Za-z][A-Za-z']*", sentence)
+    return bool(words) and (words[-1].lower() in DANGLING_END_WORDS or words[-1].lower().endswith("'s"))
+
+
+def _runs(text: str, n: int = 5) -> set[tuple[str, ...]]:
+    words = _WORDS_RX.findall(text.lower())
+    return {tuple(words[i:i + n]) for i in range(len(words) - n + 1)}
+
+
+def extends(sentence: str, earlier: str) -> bool:
+    """``sentence`` says ``earlier`` word for word (80% of its four-word runs) and more."""
+    grams = _four_grams(earlier)
+    return bool(grams) and len(sentence) > len(earlier) and len(grams & _four_grams(sentence)) >= 0.8 * len(grams)
+
+
+def place_sentence(sentences: list[str], new: str, keep_first: bool = False) -> bool:
+    """Add ``new`` unless it repeats a five-word run of a sentence already there ('The Yankees committed
+    four errors, including three in the first inning.' after 'The Yankees committed four errors in ...').
+    When it contains that sentence and says more ('The Houthis claimed they struck Riyadh's airport.' ->
+    '... airport, an oil refinery and military bases'), it replaces it instead (never the first sentence
+    when ``keep_first``). Returns whether ``new`` was placed."""
+    runs = _runs(new)
+    for i, old in enumerate(sentences):
+        if runs & _runs(old):
+            if extends(new, old) and not (keep_first and i == 0):
+                sentences[i] = new
+                return True
+            return False
+    sentences.append(new)
+    return True
+
+
+def without_self_repeat(sentence: str) -> str | None:
+    """'A team of Claude Opus 5.5 agents discovered two candidate magnets ..., found by a team of
+    Claude Opus 5.5 agents.' -> the sentence without the clause that says it again. None when the
+    repetition cannot be removed by dropping a clause."""
+    if not _repeats_itself(sentence):
+        return sentence
+    parts = sentence.rstrip(".!?").split(", ")
+    kept = [parts[0]]
+    for part in parts[1:]:
+        if not _four_grams(part) & _four_grams(", ".join(kept)):
+            kept.append(part)
+    end = sentence[-1] if sentence.endswith(("!", "?")) else "."
+    out = ", ".join(kept) + end
+    return None if _repeats_itself(out) else out
+
+
+def body_sentences(summary: str, source: str | None = None, headline: str | None = None) -> list[str]:
+    """Up to two summary sentences, without meta lines, empty filler, repeats of what was already said,
+    sentences that repeat themselves, non-English text, the page's own voice ('you', 'our'), verbless
+    fragments, a sentence that only restates the ``headline`` ('The redesign is the biggest in decades.')
+    or (when the sources are given) claims or numbers the sources do not support."""
     stems = source_stems(source) if source else None
+    numbers = numbers_in(source) if source else None
     out: list[str] = []
     for s in (p.strip() for p in SENTENCE_SPLIT_RX.split(summary or "")):
         s = LEAD_PREFIX_RX.sub("", s)
-        s = s[:1].upper() + s[1:]
+        s = without_self_repeat(s[:1].upper() + s[1:]) if s else None
         if (s and not META_SENTENCE_RX.match(s) and not WEAK_SENTENCE_RX.search(s) and not repeats(s, out)
-                and looks_english(s) and (stems is None or support(s, stems) >= SUPPORT_SHARE)):
-            out.append(s)
+                and not (out and restates(s, out, NOVEL_SHARE)) and looks_english(s)
+                and not page_voice(s) and not is_fragment(s) and not ends_dangling(s)
+                and not (headline and restates(s, [headline], 1.0))
+                and (stems is None or (support(s, stems) >= SUPPORT_SHARE and numbers_in(s) <= numbers))):
+            place_sentence(out, s)
     return out[:2]
+
+
+def lead_sentence(cluster: MacroCluster, items: dict[int, CleanedTrendItem], headline: str = "") -> str | None:
+    """The first sound sentence of what the reports themselves say, for a story whose model summary
+    did not survive. Live blogs are never used; their pages cover many events."""
+    from agent_reach.pipeline.cleaner import is_live_blog
+
+    members = sorted((items[i] for i in cluster.member_item_ids if i in items),
+                     key=lambda m: m.heuristic_score, reverse=True)
+    for m in members:
+        if is_live_blog(m.normalized_title) or is_live_blog(m.context):
+            continue
+        for segment in reversed((m.context or "").split(" | ")):
+            for s in SENTENCE_SPLIT_RX.split(segment.strip())[:3]:
+                s = re.sub(r"\s+([.,;:!?])", r"\1", s.strip())  # page text: 'in August .'
+                if (len(s) >= 40 and s.endswith((".", "!", "?")) and looks_english(s) and not page_voice(s)
+                        and not is_fragment(s) and not ends_dangling(s)
+                        and not (headline and restates(s, [headline], 1.0))):
+                    return s
+    return None
 
 
 def member_text(cluster: MacroCluster, items: dict[int, CleanedTrendItem]) -> str:
@@ -471,15 +627,29 @@ def is_weak(story: Story) -> bool:
     return story.raw_item_count <= 1 and not has_publisher and story.relevance_score < STRONG_RELEVANCE
 
 
+def is_live_blog_only(story: Story) -> bool:
+    """Every report is a live blog ('... - as it happened'): a running page of many events, not one story."""
+    from agent_reach.pipeline.cleaner import is_live_blog
+
+    return all(is_live_blog(e.title) or is_live_blog(e.excerpt) for e in story.evidence)
+
+
 def _topic_tokens(story: Story) -> set[str]:
     from agent_reach.pipeline.cleaner import dedupe_key, significant_tokens
 
     return significant_tokens(dedupe_key(story.headline))
 
 
+def same_entities(a: Story, b: Story) -> bool:
+    """The same entity set. The id hashes only the key names, so one shared name ('Donald Trump': a
+    diesel order and a closed live blog) is not the same story; stories without stored key names
+    (older editions, or an id made from the headline) keep the plain id comparison."""
+    return bool(a.entity_id) and a.entity_id == b.entity_id and len(a.entities) != 1 and len(b.entities) != 1
+
+
 def same_topic(a: Story, b: Story) -> bool:
     """Deterministic 'this is the same story again' test used to avoid repetitive editions."""
-    if a.entity_id and a.entity_id == b.entity_id:
+    if same_entities(a, b):
         return True
     urls_a = {e.url for e in a.evidence if e.url}
     if urls_a & {e.url for e in b.evidence if e.url}:
@@ -510,7 +680,7 @@ def is_secondary(story: Story) -> bool:
     return all(e.source == "youtube" and CLIP_TITLE_RX.search(e.title) for e in story.evidence)
 
 
-#: A single-outlet story this relevant competes with corroborated ones for Top Stories.
+#: Among single-outlet stories, those this relevant reach Top Stories first (after all corroborated news).
 TOP_SINGLE_SOURCE_RELEVANCE = 9
 
 
@@ -533,6 +703,7 @@ class Selection:
     dropped_unsupported: int = 0
     dropped_stale: int = 0
     dropped_weak: int = 0
+    dropped_live_blog: int = 0
     dropped_duplicate: int = 0
     secondary: int = 0  # first-person columns and clip-only stories moved below the news
     notes: list[str] = field(default_factory=list)
@@ -542,16 +713,18 @@ def select_stories(stories: list[Story], prefs: DailyPrefs, *, now: datetime) ->
     """Choose the edition from stories in pipeline rank order: sections of ``max_stories``.
 
     1. Drop stale stories (every stated publication time older than ``max_story_age_hours``),
-       weak single uncorroborated trend signals, and repeats of a story already chosen.
-    2. Each category keeps its top ``max_stories`` (10) stories in rank order.
+       weak single uncorroborated trend signals, stories told only by live blogs, and repeats of a
+       story already chosen.
+    2. Each category keeps its top ``max_stories`` (10) stories, corroborated ones first.
     3. Top Stories are the ``max_stories`` best of those, with at most ``max_per_category`` from one
        category (a strong story - relevance 8+ and corroborated - may exceed it by
        ``STRONG_EXTRA_PER_CATEGORY``) and at most ``max_tech_only_share`` tech-only stories, so the
        top of the edition stays broad. Corroborated stories (more than one independent report) are
-       chosen first; single-outlet stories fill the remaining places unless the model rated them 9+.
-       If the caps leave slots empty, the next best stories fill them.
-    4. First-person columns and clip-only stories stay in their section, after the news, and never
-       enter Top Stories.
+       chosen first, in pipeline rank order; then corroborated stories beyond the category cap; then
+       single-outlet stories (those the model rated 9+ first). If the caps leave slots empty, the next
+       best stories fill them.
+    4. Inside every section corroborated stories come before single-outlet ones. First-person
+       columns and clip-only stories follow the news and never enter Top Stories.
     """
     sel = Selection(stories=[])
     candidates: list[Story] = []
@@ -560,13 +733,18 @@ def select_stories(stories: list[Story], prefs: DailyPrefs, *, now: datetime) ->
             sel.dropped_stale += 1
         elif is_weak(s):
             sel.dropped_weak += 1
+        elif is_live_blog_only(s):
+            sel.dropped_live_blog += 1
         elif any(same_topic(s, c) for c in candidates):
             sel.dropped_duplicate += 1
         else:
             candidates.append(s)
+    pipeline_order = {id(s): i for i, s in enumerate(candidates)}
     secondary = {id(s) for s in candidates if is_secondary(s)}
     sel.secondary = len(secondary)
-    candidates = [s for s in candidates if id(s) not in secondary] + [s for s in candidates if id(s) in secondary]
+    news = [s for s in candidates if id(s) not in secondary]
+    candidates = ([s for s in news if is_corroborated(s)] + [s for s in news if not is_corroborated(s)]
+                  + [s for s in candidates if id(s) in secondary])
 
     per_section = prefs.max_stories
     per_cat: Counter[str] = Counter()
@@ -580,23 +758,33 @@ def select_stories(stories: list[Story], prefs: DailyPrefs, *, now: datetime) ->
 
     tech_cap = per_section if prefs.max_tech_only_share >= 1 else int(per_section * prefs.max_tech_only_share)
     top: list[Story] = []
+    in_top: set[int] = set()
     top_cat: Counter[str] = Counter()
     tech = 0
-    # corroborated stories first: a single outlet's feature does not outrank news several outlets report
-    for corroborated_pass in (True, False):
-        for s in chosen:
+    ranked = sorted(chosen, key=lambda s: pipeline_order[id(s)])
+    # 1. corroborated news within the category caps;
+    # 2. corroborated news beyond the caps: news several outlets report never waits for a single outlet
+    #    (a 1-report story the model rated 9 took a place while a 5-report story waited, October 6);
+    # 3. single-outlet stories within the caps, those rated 9+ first
+    stages = ((is_corroborated, True),
+              (is_corroborated, False),
+              (lambda s: s.relevance_score >= TOP_SINGLE_SOURCE_RELEVANCE, True),
+              (lambda s: True, True))
+    for wanted, capped in stages:
+        for s in ranked:
             if len(top) >= per_section:
                 break
-            first_pass = is_corroborated(s) or s.relevance_score >= TOP_SINGLE_SOURCE_RELEVANCE
-            if id(s) in secondary or any(s is t for t in top) or first_pass != corroborated_pass:
+            if id(s) in secondary or id(s) in in_top or not wanted(s):
                 continue
             room = prefs.max_per_category + (STRONG_EXTRA_PER_CATEGORY if is_strong(s) else 0)
-            if top_cat[s.category.value] < room and not (s.tech_only and tech >= tech_cap):
-                top.append(s)
-                top_cat[s.category.value] += 1
-                tech += s.tech_only
-    in_top = {id(s) for s in top}
-    for s in chosen:  # caps left slots empty: the next best real stories fill them
+            if (capped and top_cat[s.category.value] >= room) or (s.tech_only and tech >= tech_cap):
+                continue
+            sel.filled_from_held_back += top_cat[s.category.value] >= room  # beyond its category's cap
+            top.append(s)
+            in_top.add(id(s))
+            top_cat[s.category.value] += 1
+            tech += s.tech_only
+    for s in ranked:  # caps left slots empty: the next best real stories fill them
         if len(top) >= per_section:
             break
         if id(s) not in in_top and id(s) not in secondary:
@@ -639,15 +827,13 @@ def build_story(rank: int, cluster: MacroCluster, items: dict[int, CleanedTrendI
                 reference: datetime | None = None) -> Story | None:
     """None when the cluster has no factual sentence or no evidence to cite."""
     source = member_text(cluster, items)
-    sentences = body_sentences(cluster.summary, source or None)
+    sentences = body_sentences(cluster.summary, source or None, cluster.headline)
     all_evidence = evidence_links(cluster, items, limit=None)
     evidence = all_evidence[:MAX_EVIDENCE_PER_STORY]
     if not sentences:
-        lead = next((e.excerpt for e in evidence if e.excerpt), None)
-        if lead:
-            first = SENTENCE_SPLIT_RX.split(lead.split(" | ")[-1])[0].strip()
-            if len(first) >= 40 and first.endswith((".", "!", "?")) and looks_english(first):
-                sentences = [first]
+        lead = lead_sentence(cluster, items, cluster.headline)
+        # a summary that only restates the headline is still better than no story at all
+        sentences = [lead] if lead else body_sentences(cluster.summary, source or None)
     if not sentences or not evidence:
         return None
     return Story(
@@ -807,28 +993,8 @@ def assemble_edition(
     health = source_health(report, stories)
     coverage = build_coverage(health, stories, selection, report)
     acct = report.accounting
-    notes = list(selection.notes)
-    if stories and all(s.velocity_basis == "cold_start" for s in stories):
-        notes.append("No Hot or Rising labels yet: momentum is measured against a refresh from about a day "
-                     "earlier with the same sources, and there is none yet.")
-    if selection.dropped_unsupported:
-        notes.append(f"{plural(selection.dropped_unsupported, 'ranked group was', 'ranked groups were')} omitted "
-                     "because they had no citable factual sentence.")
-    if selection.dropped_stale:
-        notes.append(f"{plural(selection.dropped_stale, 'story was', 'stories were')} left out because every source "
-                     f"was published more than {prefs.max_story_age_hours:g} hours before this refresh.")
-    if selection.dropped_duplicate:
-        notes.append(f"{plural(selection.dropped_duplicate, 'repeat', 'repeats')} of stories already in this "
-                     "edition left out.")
-    if selection.secondary:
-        notes.append(f"{plural(selection.secondary, 'opinion column or video clip is', 'opinion columns or video clips are')} "
-                     "listed after the news in their section and kept out of Top Stories.")
-    if selection.dropped_weak:
-        notes.append(f"{plural(selection.dropped_weak, 'weak signal was', 'weak signals were')} left out (a single "
-                     "trend or social post with no article).")
     summaries = "extractive" if report.llm_mode.startswith("heuristic") else "local_model"
-    if summaries == "extractive":
-        notes.append("Summaries are extractive (lead sentences from the sources) because the local model was not used.")
+    notes = edition_notes(selection, prefs, extractive=summaries == "extractive")
     return DailyEdition(
         edition_date=central_date(started),
         revision=revision,
@@ -851,6 +1017,42 @@ def assemble_edition(
         stories=stories,
         top_ranks=[st.rank for st in selection.top],
     )
+
+
+def edition_notes(selection: Selection, prefs: DailyPrefs, *, extractive: bool = False) -> list[str]:
+    """Plain-language notes on what the edition left out or could not measure (each said once)."""
+    stories = selection.stories
+    notes = list(selection.notes)
+    if stories and all(s.velocity_basis == "cold_start" for s in stories):
+        notes.append("No Hot or Rising labels yet: momentum is measured against a refresh from about a day "
+                     "earlier with the same sources, and there is none yet.")
+    elif stories and all(momentum_uncertain(s) for s in stories):
+        notes.append("No Hot or Rising labels today: the sources or settings changed since the refresh used "
+                     "for comparison, so growth could not be measured fairly.")
+    if selection.dropped_unsupported:
+        n = selection.dropped_unsupported
+        notes.append(f"{plural(n, 'ranked group was', 'ranked groups were')} omitted because "
+                     f"{'it' if n == 1 else 'they'} had no citable factual sentence.")
+    if selection.dropped_stale:
+        notes.append(f"{plural(selection.dropped_stale, 'story was', 'stories were')} left out because every source "
+                     f"was published more than {prefs.max_story_age_hours:g} hours before this refresh.")
+    if selection.dropped_duplicate:
+        notes.append(f"{plural(selection.dropped_duplicate, 'repeat', 'repeats')} of stories already in this "
+                     "edition left out.")
+    if selection.secondary:
+        n = selection.secondary
+        notes.append(f"{plural(n, 'opinion column or video clip is', 'opinion columns or video clips are')} "
+                     f"listed after the news in {'its section' if n == 1 else 'their sections'} and kept out of "
+                     "Top Stories.")
+    if selection.dropped_weak:
+        notes.append(f"{plural(selection.dropped_weak, 'weak signal was', 'weak signals were')} left out (a single "
+                     "trend or social post with no article).")
+    if selection.dropped_live_blog:
+        notes.append(f"{plural(selection.dropped_live_blog, 'live blog was', 'live blogs were')} left out (a running "
+                     "page of many updates is not one story).")
+    if extractive:
+        notes.append("Summaries are extractive (lead sentences from the sources) because the local model was not used.")
+    return notes
 
 
 @dataclass

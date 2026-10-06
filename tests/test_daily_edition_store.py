@@ -60,7 +60,8 @@ def test_labels_only_with_comparable_history():
     assert E.story_labels(cl(momentum="RISING", velocity_basis="historical")) == ["Rising"]
     assert E.story_labels(cl(momentum="STEADY", velocity_basis="historical")) == ["Continuing"]
     assert E.story_labels(cl(momentum="NEW", velocity_basis="historical")) == ["New"]
-    assert E.story_labels(cl(momentum="RISING", velocity_basis="historical", momentum_uncertain=True)) == ["Uncertain trend"]
+    # uncertain momentum: no card label (rc10; said once in the edition notes instead)
+    assert E.story_labels(cl(momentum="RISING", velocity_basis="historical", momentum_uncertain=True)) == []
 
 
 def test_meta_sentences_are_not_story_text():

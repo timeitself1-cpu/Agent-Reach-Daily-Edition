@@ -219,12 +219,17 @@ def test_top_stories_take_corroborated_news_before_single_outlet_features():
         s.evidence_strength = _strength("limited" if i in (3, 9) else "moderate")
         stories.append(s)
     stories[5].evidence_strength = _strength("limited")
-    stories[5].relevance_score = 9  # a single-outlet story the model rated 9 still competes
+    stories[5].relevance_score = 9  # rc10: rated 9, but still a single outlet
     sel = select_stories(stories, DailyPrefs(max_stories=10, max_per_category=4), now=now)
     top = {s.rank for s in sel.top}
     assert 4 not in top and 10 not in top  # limited, relevance 8: below the corroborated news
-    assert 6 in top and {11, 12} <= top
-    assert [s.rank for s in sel.top] == sorted(top)  # still shown in rank order
+    # rc10: a single-outlet story waits for corroborated news even when the model rated it 9
+    # (October 6: a 1-report story rated 9 took a place while a 5-report story waited)
+    assert 6 not in top and {11, 12, 13} <= top
+    assert [s.rank for s in sel.top] == [1, 2, 3, 5, 7, 8, 9, 11, 12, 13]
+    # with places left after the corroborated news, the single-outlet story rated 9 comes first
+    sel = select_stories(stories[:9], DailyPrefs(max_stories=8, max_per_category=4), now=now)
+    assert {s.rank for s in sel.top} == {1, 2, 3, 5, 7, 8, 9, 6}
 
 
 def test_html_sections_number_their_own_stories_consecutively():
