@@ -8,7 +8,7 @@ conventions), then this file. `README.md` is the user guide; `docs/architecture.
 - **Branch:** `claude/loving-darwin-a7rqvs` (all work is pushed there; no PR has been opened, and
   none should be unless the user asks). Version `agent_reach/daily/__init__.py` = `1.0.0rc10`.
 - **CI:** `tests.yml` is green on rc10 (Python 3.10 and 3.12; the 15 GUI tests skip there without a
-  display). On the user's Windows PC: 352 tests, 351 pass and 1 skips (SIGKILL semantics); the GUI
+  display). On the user's Windows PC: 357 tests, 356 pass and 1 skips (SIGKILL semantics); the GUI
   tests run against the real display, and Tk start-up there occasionally fails and skips one of them.
 - **The user** runs the app on Windows from `C:\Users\downt\Downloads\Agent Reach\src\Agent-Reach`,
   with Ollama (`llama3.1:8b`, `nomic-embed-text`) on their PC. A refresh takes about 5 minutes there.
@@ -70,6 +70,12 @@ real October 6 morning edition, and a cloud runner that fits a Daily refresh (be
   key name matched unrelated stories in "what changed" and dedupe (`edition.same_entities`); brief
   details that restate a sentence and add a bit now replace it (`place_sentence`); sentences cut
   short are dropped (`ends_dangling`); a title opening with a quotation keeps its opening quote.
+- From the user's first rc10 edition (October 6, 6:49 AM): "Gov." was shown as a sentence (more
+  abbreviations in the splitters; a sentence needs 3+ words); "- US politics live" / "Ukraine war live:"
+  are live blogs too; "why it matters" may not be a cause ("is a response to"), a detail ("as
+  required by") or repeat five words of the summary; "the '80s" gets no stray closing quote; "free...
+  and" in a title becomes "free, and"; summary casing is restored only for real names (the reports'
+  prose writes "the brain", not "Brain").
 - Reddit health notes name the subreddits without URLs, grouped by cause. Settings v7: Yahoo
   Finance (HTTP 404) -> Bloomberg Markets (`REPLACED_IN_V7`).
 - `cloud-runner.yml`: the Daily run writes its own settings.json (80 articles via input
@@ -130,7 +136,11 @@ A cloud sandbox has no Ollama and no news access. Three ways to see real output:
      Telescope investigates what happens when planets crash together" (shared "James Webb" and
      "space telescope"). A frequency ceiling on single event words was rejected: on a big day the
      key word is frequent ("plague" was in 1.2% of the run) and real stories would split.
-   - The model can misattribute a quoted source's own comment: "This is an incredible bargain to offer
+   - The same event can still appear twice when one report was not grouped with the rest: "US Closely
+     Monitoring Case of Lab Worker Who Possibly Died of Plague in Siberia" (Hacker News, filed under
+     Tech) next to the plague story in News (user's 6:49 edition). `same_topic` compares headlines
+     only.
+   - The model can misattribute a quoted source's own comment (seen twice, Altman/Boing Boing): "This is an incredible bargain to offer
      humanity, according to Altman" (Boing Boing's sarcasm, not Altman). Every word is in the sources,
      so the support check cannot see it.
    - A "why it matters" whose only concrete element is a group noun passes ("This Nobel Prize is

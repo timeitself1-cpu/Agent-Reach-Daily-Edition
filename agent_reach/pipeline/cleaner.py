@@ -130,7 +130,10 @@ BOX_SCORE_RX = re.compile(
 PROMO_RX = re.compile(
     r"\b(?:on sale|for just \$|save \$\d|\d+% off|percent off|promo code|coupon code|lifetime (?:subscription|license|access)|"
     r"e-degree|bundle (?:for|at) \$|deals? of the day|best [\w\s-]{0,40} deals|prime day deals?|black friday deals?|"
-    r"cyber monday deals?|price drop|msrp|sponsored|affiliate commission)\b",
+    r"cyber monday deals?|price drop|msrp|sponsored|affiliate commission|"
+    # shopping-event roundups ('Prime Day Apple Watch deals: Series 12 all-time low, Ultra 4 $100 off')
+    r"all[- ]time lows?|\$\d[\d,.]* off|prime (?:day|big deal days?)\b.{0,60}\b(?:deals?|discounts?|sale)|"
+    r"(?:deals?|discounts?)\b.{0,60}\bprime (?:day|sale|big deal days?))\b",
     re.IGNORECASE,
 )
 #: Video clips that are not reports: highlight reels, full replays, live streams, reactions and recaps.
@@ -211,6 +214,8 @@ def normalize_text(text: str) -> str:
     t = t.translate(TRANSLITERATION)  # letters NFKD cannot decompose: 'hændelse' -> 'haendelse', 'Straße' -> 'Strasse'
     t = t.replace("’", "'").replace("‘", "'").replace("“", '"').replace("”", '"')
     t = t.replace("–", "-").replace("—", " - ").replace("…", "...")
+    # currency signs have no ASCII form: '$1.9tn (£1.4tn)' must not become '$1.9tn (1.4tn)'
+    t = t.replace("£", "GBP ").replace("€", "EUR ").replace("¥", "JPY ")
     t = unicodedata.normalize("NFKD", t).encode("ascii", "ignore").decode("ascii")
     t = URL_RX.sub(" ", t)
     t = "".join(ch if ch.isprintable() else " " for ch in t)
@@ -282,10 +287,12 @@ BARE_URL_RX = re.compile(r"(?:https?://|www\.)\S+|\b[\w-]+\.(?:com|org|net|io|ai
 #: Words after which a bare domain is an attribution ('via techcrunch.com'), not the subject of the title.
 _ATTRIBUTION_WORDS = frozenset("via from on at by source sources visit see read more".split())
 #: A live blog ('Trump claims he's doing great ... - as it happened'): a running page of many updates.
+#: ('... - US politics live', 'Ukraine war live: ...', 'Live: ...' are the same running pages.)
 LIVE_BLOG_RX = re.compile(r"\bas it happened\b|\blive (?:updates?|blog|coverage)\b|\bthis live blog\b"
-                          r"|^\s*live\s*[:|]|\s[-–—|]\s*live\s*$", re.IGNORECASE)
-LIVE_BLOG_SUFFIX_RX = re.compile(r"\s*[-–—|:]\s*(?:as it happened|live(?: updates| blog| coverage)?)\s*$",
-                                 re.IGNORECASE)
+                          r"|^\s*(?:[A-Za-z']+\s+){0,3}live\s*[:|]|\s[-–—|]\s*(?:[A-Za-z']+\s+){0,3}live\s*$",
+                          re.IGNORECASE)
+LIVE_BLOG_SUFFIX_RX = re.compile(r"\s*[-–—|:]\s*(?:as it happened|(?:[A-Za-z']+\s+){0,3}live"
+                                 r"(?: updates| blog| coverage)?)\s*$", re.IGNORECASE)
 
 
 def is_live_blog(text: str | None) -> bool:
@@ -321,7 +328,8 @@ REPEAT_PUNCT_RX = re.compile(r"([.,;:!?])(?:\s*[.,;:])+")
 #: Split only where punctuation is followed by space (keeps "2.0"), never after an abbreviation that runs on
 #: ('the upcoming U.S. midterm elections' became 'the upcoming U.S.' + 'Midterm elections.').
 SENTENCE_RX = re.compile(r"(?<=[.!?])(?<!\bU\.S\.)(?<!\bU\.K\.)(?<!\bU\.N\.)(?<!\bE\.U\.)(?<!\bNo\.)(?<!\bSt\.)"
-                         r"(?<!\bMr\.)(?<!\bMs\.)(?<!\bDr\.)(?<!\bMrs\.)\s+")
+                         r"(?<!\bMr\.)(?<!\bMs\.)(?<!\bDr\.)(?<!\bMrs\.)(?<!\bGov\.)(?<!\bSen\.)(?<!\bRep\.)"
+                         r"(?<!\bGen\.)(?<!\bJr\.)(?<!\bSr\.)(?<!\bvs\.)(?<!\bLt\.)(?<!\bCol\.)(?<!\bProf\.)\s+")
 
 SMALL_WORDS = frozenset(
     "a an and as at but by for from in into nor of on or over per the to up via vs vs. with".split()
@@ -431,7 +439,9 @@ def sanitize_headline(text: str, max_words: int = 14, stretch_to: int | None = N
 
     A title longer than ``max_words`` is cut at its first sentence or last clause break; with no such
     break, a title of at most ``stretch_to`` words is kept whole rather than cut mid-clause."""
-    t = normalize_text(MD_LINK_RX.sub(r"\1", text or ""))
+    # 'PewDiePie is setting AI free... and OpenAI is furious': an ellipsis joins two clauses
+    t = re.sub(r"\s*(?:\.{3}|…)\s+(?=[a-z])", ", ", text or "")
+    t = normalize_text(MD_LINK_RX.sub(r"\1", t))
     t = strip_bare_urls(t)
     t = LIVE_BLOG_SUFFIX_RX.sub("", t)
     t = HANDLE_RX.sub("", t)
@@ -478,7 +488,8 @@ def _trim_quotes(text: str) -> str:
 def _close_quotes(text: str) -> str:
     """Restore a closing quote the trimming removed ("... Comments: 'Nazi Bitches" gets its ')."""
     for q in ("'", '"'):
-        m = re.search(r"(?:^|\s)" + q + r"\w", text)
+        # an apostrophe before a decade ("the '80s") opens no quotation
+        m = re.search(r"(?:^|\s)" + q + r"(?!\d0s\b)\w", text)
         if m and not re.search(r"\w[.!?]?" + q + r"(?=\s|$|[,:;])", text[m.end() - 1:]):
             text += q
     return text

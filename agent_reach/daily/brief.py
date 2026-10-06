@@ -44,6 +44,7 @@ from agent_reach.daily.edition import (
     page_voice,
     place_sentence,
     restates,
+    shares_run,
     source_stems,
     support,
     without_self_repeat,
@@ -160,7 +161,7 @@ AFFECTED_RX = re.compile(r"\b(?:" + "|".join(sorted(COMMON_OPENERS)) + r")\b", r
 #: What changes for someone: a consequence, not a purpose ('The move is to comply ...'), a hope ('hopes
 #: to continue into 2027') or a further detail of the event ('The 39-year-old will bid an emotional farewell').
 CONSEQUENCE_RX = re.compile(
-    r"\b(?:means?|meaning|forces?|forced|forcing|requires?|required|allows?|allowed|lets|enables?|prevents?|"
+    r"\b(?:means?|meaning|forces?|forced|forcing|requires?|allows?|allowed|lets|enables?|prevents?|"
     r"blocks?|bars?|bans?|stops?|ends?|delays?|halts?|suspends?|cancels?|closes?|shuts?|costs?|saves?|"
     r"raises?|lowers?|cuts?|increases?|reduces?|affects?|affected|hits?|leaves?|puts?|exposes?|protects?|"
     r"prompt(?:s|ed)?|led to|leads? to|triggers?|triggered|opens? the (?:way|door)|paves? the way|clears? the way|"
@@ -175,7 +176,10 @@ CONSEQUENCE_RX = re.compile(
 #: A purpose is not a consequence ('The move is to comply with the EU's AI Act', 'The move aims to curb
 #: fuel costs').
 PURPOSE_RX = re.compile(r"\b(?:aims?|aimed|aiming|intended|meant|designed|seeks?|sought)\s+to\b"
-                        r"|^(?:the|this|that)\s+[\w'-]+\s+(?:is|was)\s+to\b|\bin order to\b", re.IGNORECASE)
+                        r"|^(?:the|this|that)\s+[\w'-]+\s+(?:is|was)\s+to\b|\bin order to\b"
+                        # nor is a cause ('The decision ... is a response to intense criticism')
+                        r"|\b(?:is|was|are|were)\s+(?:a\s+|an\s+)?(?:response|reaction)\s+to\b|\bin (?:response|reaction) to\b"
+                        r"|\bcomes? (?:after|amid)\b|\bcame (?:after|amid)\b", re.IGNORECASE)
 
 
 def concrete_effect(sentence: str) -> bool:
@@ -254,7 +258,8 @@ def apply_brief(story: Story, details: str, why: str) -> tuple[int, int]:
     # 'why it matters' must add something: a sentence that mostly restates the headline or the
     # summary ('The US moved its bombers out of the UK due to a threat from Iran') is left out
     if (30 <= len(first) <= 260 and sound(first, 0.0) and concrete_effect(first)
-            and _novel(first, story.sentences) and not restates(first, [story.headline, *story.sentences], WHY_RESTATE_SHARE)):
+            and _novel(first, story.sentences) and not restates(first, [story.headline, *story.sentences], WHY_RESTATE_SHARE)
+            and not any(shares_run(first, s) for s in story.sentences)):
         story.why_it_matters = first
         why_added = 1
     return added, why_added

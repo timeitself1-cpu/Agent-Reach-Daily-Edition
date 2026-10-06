@@ -80,6 +80,9 @@ MORNING = [
                  "from 1TB to 8TB", ""),
     ("google_news", "NASA's Prima space telescope would aim to see what James Webb can't", ""),
     ("youtube", "NASA's SpaceX Crew-12 Farewell and International Space Station Change of Command", ""),
+    # 45: a sixth rc10 run joined this to 37 (PS5 games on Xbox) through 'Xbox' + 'games'
+    ("news_rss", "Gears of War: E-Day studio finds a way to get more performance from Xbox Series S - one that other "
+                 "Xbox games can use", ""),
 ]
 
 
@@ -113,6 +116,23 @@ def test_an_everyday_word_does_not_link_two_stories():
     assert [24, 25, 26] in groups and not any({24, 25, 26} & set(g) and {27, 28, 29, 30} & set(g) for g in groups)
     assert _groups([41, 42]) == [[41], [42]]
     assert _groups([43, 44]) == [[43], [44]]
+    assert _groups([37, 45]) == [[37], [45]]
+
+
+def test_shopping_event_roundups_are_not_news():
+    from agent_reach.pipeline.cleaner import PROMO_RX
+
+    for title in ("Prime Day Apple Watch deals: Series 12 all-time low, Ultra 4 $100 off, ceramic, more",
+                  "Samsung Frame TVs are hitting all-time lows on October Prime Day - save up $600",
+                  "2026's Biggest Blockbuster Games Just Received Their First Major Discounts in Amazon's Prime Sale"):
+        assert PROMO_RX.search(title), title
+    assert not PROMO_RX.search("Amazon shares fall after Prime Day sales disappoint investors")
+
+
+def test_currency_signs_keep_their_meaning_in_ascii():
+    from agent_reach.pipeline.cleaner import normalize_text
+
+    assert normalize_text("the $1.9tn (£1.4tn) company") == "the $1.9tn (GBP 1.4tn) company"
 
 
 def test_different_nobel_prizes_are_different_stories():
@@ -529,6 +549,70 @@ def test_abbreviations_do_not_end_a_sentence():
             "security and reliability.")
     assert sanitize_summary(text) == text  # was 'the upcoming U.S.' + 'Midterm elections.' (fifth rc10 run)
     assert len(SENTENCE_SPLIT_RX.split("He could lose his No. 1 ranking. He will return in 2027.")) == 2
+
+
+# ---------------------------------------------------------------- the user's first rc10 edition (6:49 AM)
+def test_a_title_like_gov_never_becomes_a_sentence():
+    from agent_reach.daily.edition import body_sentences
+    from agent_reach.pipeline.cleaner import sanitize_summary
+
+    text = ("President Trump suggested during a campaign rally that Iran could 'take out' Los Angeles and San Diego. "
+            "Gov. Gavin Newsom called the remarks deranged and dangerous.")
+    assert sanitize_summary(text) == text  # was '... San Diego.' + 'Gov.' + 'Gavin Newsom ...'
+    source = ("Trump suggests Iran could 'take out' Los Angeles and San Diego during a campaign rally. Gov.")
+    assert body_sentences("President Trump suggested during a campaign rally that Iran could 'take out' Los Angeles "
+                          "and San Diego. Gov.", source) == [
+        "President Trump suggested during a campaign rally that Iran could 'take out' Los Angeles and San Diego."]
+
+
+def test_live_blogs_named_after_their_section_are_live_blogs():
+    from agent_reach.pipeline.cleaner import is_live_blog, sanitize_headline
+
+    guardian = "Trump says he will stop using taxpayer funds for self-promoting ads after backlash – US politics live"
+    assert is_live_blog(guardian) and is_live_blog("Ukraine war live: Kyiv hit by drones overnight")
+    assert sanitize_headline(guardian) == "Trump Says He Will Stop Using Taxpayer Funds for Self-promoting Ads After Backlash"
+    assert not is_live_blog("Where to watch Arsenal against Chelsea live")
+
+
+def test_why_it_matters_is_not_a_cause_a_detail_or_a_repeat():
+    from agent_reach.daily.brief import apply_brief, concrete_effect
+    from tests.daily_fakes import make_story
+
+    assert not concrete_effect("The decision to stop using taxpayer funds for the ads is a response to intense criticism.")
+    assert not concrete_effect("The investigation is examining whether Meta carried out adequate risk assessment as "
+                               "required by the Online Safety Act.")
+    wiki = make_story(headline="OpenAI 'Rogue' Agents Found on Wikimedia Projects",
+                      sentences=["Rogue OpenAI agents made unauthorized Wikipedia edits.",
+                                 "These types of successful intrusions can expose sensitive data and compromise online "
+                                 "services."])
+    wiki.evidence[0].excerpt = ("These types of successful intrusions can expose sensitive data or disrupt website "
+                                "services that users rely on. Wikipedia gets up to 15 million visitors per day.")
+    assert apply_brief(wiki, "", "These types of successful intrusions can expose sensitive data or disrupt website "
+                                 "services that users rely on.") == (0, 0)
+
+
+def test_titles_keep_decades_and_ellipses_readable():
+    from agent_reach.pipeline.cleaner import sanitize_headline
+
+    assert sanitize_headline("The 10 Greatest Stephen King Books of the '80s, Ranked") == \
+        "The 10 Greatest Stephen King Books of the '80s, Ranked"
+    assert sanitize_headline("PewDiePie is setting AI free... and OpenAI is furious") == \
+        "PewDiePie Is Setting AI Free, and OpenAI Is Furious"
+
+
+def test_ordinary_nouns_are_not_capitalised_as_names():
+    from agent_reach.config import Settings
+    from agent_reach.pipeline.clusterer import SemanticClusterer
+
+    raw = RawTrendItem(title="Scientists Find a Hidden Network of Tiny Channels The Brain May Use to Flush Out Toxic "
+                             "Alzheimer's Proteins", source=SourceName.NEWS_RSS, timestamp=NOW)
+    item = CleanedTrendItem(**raw.model_dump(), item_id=1, normalized_title=raw.title, heuristic_score=0.6,
+                            context="Tiny channels in the brain may help clear toxic Alzheimer's proteins, a study in "
+                                    "mice suggests.")
+    out = SemanticClusterer(Settings())._fix_summary(
+        "Researchers have discovered a network of channels in the brain that may help remove toxic Alzheimer's "
+        "proteins. The channels were seen in mice.", [item], "Hidden Brain Channels", ["Brain", "Alzheimer's Proteins"])
+    assert "in the brain" in out and "Alzheimer's proteins" in out
 
 
 def test_a_pronoun_keeps_the_sentence_it_refers_to():

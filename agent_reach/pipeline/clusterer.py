@@ -260,7 +260,8 @@ def extract_json(text: str) -> dict[str, Any]:
 
 
 SENTENCE_SPLIT = re.compile(r"(?<=[.!?])(?<!\bU\.S\.)(?<!\bU\.K\.)(?<!\bU\.N\.)(?<!\bE\.U\.)(?<!\bNo\.)"
-                            r"\s+(?=[A-Z0-9\"'(])")
+                            r"(?<!\bGov\.)(?<!\bSen\.)(?<!\bRep\.)(?<!\bGen\.)(?<!\bSt\.)(?<!\bMr\.)(?<!\bMs\.)"
+                            r"(?<!\bDr\.)(?<!\bMrs\.)(?<!\bJr\.)\s+(?=[A-Z0-9\"'(])")
 PROPER_NOUN_RX = re.compile(r"\b([A-Z][A-Za-z0-9&'.-]+(?:\s+(?:of|the|de|&)?\s*[A-Z][A-Za-z0-9&'.-]+){0,3})")
 ENTITY_BLOCKLIST = frozenset({"The", "A", "An", "This", "That", "New", "Why", "How", "What", "Show", "Ask", "Launch", "HN"})
 
@@ -346,7 +347,7 @@ national international global local public official officials people world state
 groups company companies firm million billion percent time times way ways thing things part life case deal
 home man men woman women child children family families country city place area number level side
 ahead behind across against among despite during through toward towards within around again already soon later
-cost costs price prices money pay pays paid hit hits cut cuts win wins won award awards awarded space
+cost costs price prices money pay pays paid hit hits cut cuts win wins won award awards awarded space games
 midterm midterms
 """.split())
 #: Trend lists whose titles are fragments ('Packers', 'Bijan'): only these may link to a full
@@ -1171,6 +1172,16 @@ class SemanticClusterer:
     def _fix_summary(
         self, summary: str, members: list[CleanedTrendItem], headline: str, entities: list[str] | None = None
     ) -> str:
+        # restore the casing of names only: an 'entity' the reports' own text writes differently ('in the
+        # brain', "Alzheimer's proteins", 'housing crisis') is an ordinary noun, not 'Brain'. Titles are left
+        # out of the comparison: many feeds write them in Title Case.
+        prose = " ".join(f"{m.context or ''} {m.description or ''}" for m in members)
+
+        def written_as_name(entity: str) -> bool:
+            found = re.findall(r"(?<![\w'])" + re.escape(entity) + r"(?![\w'])", prose, re.IGNORECASE)
+            return all(f == entity for f in found)
+
+        entities = [e for e in entities or [] if written_as_name(e)]
         text = sanitize_summary(summary, entities)
         sentences = [s.strip() for s in SENTENCE_SPLIT.split(text) if len(s.strip()) > 3] if text else []
         sources = platforms(members)

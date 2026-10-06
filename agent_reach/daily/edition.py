@@ -424,14 +424,20 @@ my this these those new""".split())
 
 
 def ends_dangling(sentence: str) -> bool:
-    """A sentence cut short: it ends on an article, a preposition, a possessive or 'new'."""
-    words = re.findall(r"[A-Za-z][A-Za-z']*", sentence)
-    return bool(words) and (words[-1].lower() in DANGLING_END_WORDS or words[-1].lower().endswith("'s"))
+    """A sentence cut short: fewer than three words ('Gov.', 'Midterm elections.'), or it ends on an article,
+    a preposition, a possessive or 'new'."""
+    words = re.findall(r"[A-Za-z0-9][A-Za-z0-9']*", sentence)
+    return len(words) < 3 or words[-1].lower() in DANGLING_END_WORDS or words[-1].lower().endswith("'s")
 
 
 def _runs(text: str, n: int = 5) -> set[tuple[str, ...]]:
     words = _WORDS_RX.findall(text.lower())
     return {tuple(words[i:i + n]) for i in range(len(words) - n + 1)}
+
+
+def shares_run(a: str, b: str) -> bool:
+    """The two texts say five words in a row the same."""
+    return bool(_runs(a) & _runs(b))
 
 
 def extends(sentence: str, earlier: str) -> bool:

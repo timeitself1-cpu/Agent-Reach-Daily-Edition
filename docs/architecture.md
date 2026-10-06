@@ -151,7 +151,8 @@ Wikipedia channel is partial, never failed.
    `edition.NOVEL_SHARE`); "why it matters" must also state a consequence - who is affected
    ("residents", "patients") or what changes ("forces", "no longer", "prompted") - and avoid vague
    claims ("highlights concerns", "significantly impacted", "severe consequences"); a purpose ("The
-   move is to comply with ...", "aims to curb fuel costs", `brief.PURPOSE_RX`) or a further detail
+   move is to comply with ...", "aims to curb fuel costs", `brief.PURPOSE_RX`), a cause ("is a
+   response to intense criticism"), a line repeating five words of the summary, or a further detail
    ("The 39-year-old will bid an emotional farewell") is not a consequence (`brief.concrete_effect`).
    Every summary sentence must also be **supported by the story's own sources**: at least 60% of
    its content words (stemmed) appear in the members' titles, page/feed context and descriptions
@@ -163,7 +164,9 @@ Wikipedia channel is partial, never failed.
    (`is_fragment`); a sentence cut short ("Clayton will lead the government's new.", `ends_dangling`);
    a sentence that only restates the headline ("The redesign is the biggest in decades."; kept when
    the next sentence opens with a pronoun that needs it: "He was best known for ..."). Sentences never
-   end after "U.S.", "U.K.", "No." and similar abbreviations. A clause
+   end after "U.S.", "U.K.", "No.", "Gov." and similar abbreviations, and a "sentence" of fewer than
+   three words is dropped. Model "entities" restore their casing in a summary only when the reports'
+   own prose writes them that way ("in the brain" stays lower case). A clause
    that repeats the sentence ("..., found by a team of Claude Opus 5.5 agents") is cut
    (`without_self_repeat`); a sentence that repeats a five-word run of an earlier one replaces it when
    it contains it and says more, and is dropped otherwise (`place_sentence`; also for brief details). Attribution prefixes ("Sources:") are removed, and a "why it
