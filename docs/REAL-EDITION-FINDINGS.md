@@ -117,6 +117,40 @@ Text:
   headline itself still comes from the model and can stay stale: open.
 - The same story was "Strong evidence" partly because a Google Trends query added a channel. Fixed (rc12 D).
 
+## October 7, 2026, 4:29 PM: rc12d self-test on the user's PC (round 3)
+
+Self-test `AgentReach-selftest-20261007-1629.zip`: 29 PASS, 1 FAIL, 11 INFO in 21 min. The two real editions
+(`2026-10-07-rc12d-r1.json` 16:42, 51 stories; `-r2.json` 16:50, 42 stories) are fixtures with gold events: the
+labelled corpus now has 11 editions.
+
+- **The one FAIL** is the stray `tests/test_event_contract.py` and `tests/test_event_identity.py` (they import
+  `agent_reach/daily/events.py` and `agent_reach/pipeline/identity.py`, other work in the user's folder that does
+  not load against this release). The user says they are no longer needed and deletes them.
+- **Windows suite:** 476 passed, 1 skipped, 6 xfailed; the `progress.json` retry from rc12d passes on Windows. The
+  grouping row is INFO for the expected fallback, as intended. Real refresh 432 s, 51 stories, 28 label batches
+  (0 failed); 0 'why it matters' of 19 (16 rejected), 3 in the second edition. Model drop ends in 10 s.
+- **Live rc12d editions: 12 false merges in 5 stories** (r1 5 in 2, r2 7 in 3):
+  - r1 #8 / r2 #9 "Trump's Retreat": the golf club's "presidential retreat" with US forces pulling back, again. The
+    gate kept the pair NEUTRAL as rc12d intended ('a common name and one distinctive phrase', cosine 0.70 and 0.76),
+    but the lone-report attach rule still counted 'Trump' as a rare name (6% of the run, 1,323 reports) and attached
+    it through 'Trump' + 'retreat'. Fix: that clause needs a scarce name (2%, `name_cap`), as the pair rule does.
+    In the 72-report r2 replay 'Trump' is genuinely scarce and replayed cosines are 0.96, so the pair stays merged
+    there (`SMALL_RUN_MERGES`); `test_a_common_name_and_one_word_never_attach_a_lone_report` rebuilds the real run.
+  - r2 #1 "Israelis Mourn Oct. 7 Attack" carried "Gaza child's autoimmune condition triggered amid Israel's war":
+    'Gaza' + 'war' were two distinctive phrases (a shared name lifts the word cap to 6%, and 'war' is in about 4% of
+    titles). A war is a topic that runs for years, not one event. Fix: 'war' is an everyday word. Traced from the
+    replay only: the self-test kept the first refresh's gate decisions alone; it now keeps the second's too.
+  - r1 #5 / r2 #5 the chemistry Nobel carried Nature's "Nobel Prizes 2026: brain switches, 'ghost' particle hunter,
+    and 'the chemistry of life'" (its lead names the medicine and physics prizes). Fix: a report whose title and lead
+    name three prize fields of one kind is a multi-story round-up.
+  - Labelled related, not counted: Texas's next execution and lawyers trying to block it, in Christa Pike's story.
+  - Looked at and left alone: Kirby Smart's Georgia preparations and an 'escambia county school district' trend in the
+    Isaias story (the same storm); the French mayor's clash with student protesters in the French PM's protest story.
+  - The two RTX Spark devices were two stories this time (Surface Laptop Ultra, Surface RTX Spark Dev Box).
+  Offline after the fixes: replayed neighbourhoods 1 false merge on 11 editions outside the small-run pair (the open
+  laptops), no edition lost recall; real nomic vectors replayed: 0 false merges, R 0.679 (unchanged). Tests:
+  `test_rc12d_refresh_cases_stay_apart`, `test_a_common_name_and_one_word_never_attach_a_lone_report`.
+
 ## October 7, 2026, 1:36 PM: rc12c self-test and benchmark on the user's PC (round 2)
 
 Self-test `AgentReach-selftest-20261007-1336.zip` (28 PASS, 3 FAIL, 10 INFO) and

@@ -76,6 +76,10 @@ EmbeddingGemma 2 neighbours + an explicit same-event gate (below).
   two-word phrase is one piece of evidence); laptops open as a strict xfail. Corpus 9 editions (`RC12C_EDITIONS`):
   1 false merge, R 0.620; real nomic vectors replayed: 0 false merges, R 0.679. Also the Windows-only
   `progress.json` delete race (retried now) and the self-test FAIL for the expected fallback.
+- **rc12e (round 3, 16:29):** 29 PASS, 1 FAIL (stray test files, which the user deletes: no longer needed). Live editions
+  12 false merges in 5 stories: the golf 'retreat' again (the lone-report attach rule still called 'Trump' rare at
+  6%; now 2% as in the pair rule), 'Gaza' + 'war' (now an everyday word), Nature's three-prize Nobel round-up (now
+  a round-up). Corpus 11 editions (`RC12D_EDITIONS`), no recall lost; the self-test keeps both grouping files.
 
 ## rc11 stabilization pass (bugs found by reading the Daily code, no new features)
 

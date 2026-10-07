@@ -5,6 +5,22 @@ Each release candidate is delivered as a zip of the repository. Extract it over 
 Your editions, settings and history (`%LOCALAPPDATA%\AgentReachDaily`) are kept. Earlier releases are
 summarised in `docs/HANDOFF.md` ("Release history").
 
+## 1.0.0rc12 (zip rc12e): fewer mixed stories, from your third test
+
+Your test at 4:29 PM passed everything except the two leftover test files. Its two editions still put different
+events into one story in 5 places: Trump's golf-club "presidential retreat" with US forces pulling back (again),
+a Gaza child's illness inside the story of Israelis mourning the October 7 attack, and Nature's round-up of all
+the Nobel prizes inside the chemistry prize story.
+
+1. **All three are fixed** (checked on the two saved editions; your next test checks a live run). The golf club
+   joined through a second rule that still treated "Trump" as a rare name; that rule now agrees with the first.
+   "War" no longer counts as proof of one event, because a war runs for years. An article that covers three
+   different prizes is now treated as a round-up and joins no story.
+2. **The self-test keeps the grouping details of its second refresh too**, so a mixed story in the second
+   edition can be traced.
+3. **The two leftover test files** (`tests\test_event_contract.py`, `tests\test_event_identity.py`) are not
+   part of Agent Reach. Delete them and the self-test has no failure left.
+
 ## 1.0.0rc12 (zip rc12d): fewer mixed stories, from your second test
 
 Your test at 1:36 PM showed that the two editions it made still put different events into one story 8 times:

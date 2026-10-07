@@ -186,8 +186,8 @@ AgentReachDaily.cmd/.pyw
 
 ## Known open items (details and order: docs/PLAN.md)
 
-- **Within a run, one story = one event since rc12** (rc12d: 1 false merge on the 9-edition labelled corpus offline,
-  two RTX Spark laptops, strict xfail; each PC round's live editions had 26, fixed in rc12b and rc12d). The corpus
+- **Within a run, one story = one event since rc12** (rc12e: 1 false merge on the 11-edition labelled corpus offline,
+  two RTX Spark laptops, strict xfail; live editions had 26, 26, then 12 false merges, fixed in rc12b, rc12d, rc12e). The corpus
   runs are small (~90 reports): rarity caps behave differently in a real run of ~1,300, so rebuild real proportions
   in a test when a live false merge does not reproduce offline (`test_a_common_name_and_one_word_need_the_embedding_too`). EmbeddingGemma 2 cannot run on the PC yet:
   Ollama publishes it for Apple's MLX only (newest Ollama on Windows: "this model requires MLX support"). The
@@ -195,9 +195,9 @@ AgentReachDaily.cmd/.pyw
   Windows; it joins the fallback chain only if its numbers beat nomic. Real numbers so far are nomic only; thresholds `identity_candidate_cosine` /
   `identity_strong_cosine` stay untuned until gemma's cosines are measured (`--replay` the saved vectors here).
 - **Story identity across refreshes** is the biggest quality gap: editions minutes apart disagree (the #1
-  story can vanish), NEW/"what changed" is mostly noise, one event can appear in two sections. The user's
-  PC has `agent_reach/daily/events.py`, `agent_reach/pipeline/identity.py` and `tests/test_event_*.py` that
-  are NOT in this repository (other work on exactly this); ask where it lives before building it.
+  story can vanish), NEW/"what changed" is mostly noise, one event can appear in two sections. Other work on
+  this left `agent_reach/daily/events.py`, `agent_reach/pipeline/identity.py` and `tests/test_event_*.py` in the
+  user's folder (not in this repository); the user said on Oct 7 the tests are no longer needed and deletes them.
 - Thin single-outlet and promotional/evergreen items fill the category sections; some leads do not say what
   happened; "why it matters" is accepted for 0-2 of ~18 stories.
 - Momentum is uncertain for a day after any feed-list change (the scorer compares the whole configuration).
