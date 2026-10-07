@@ -116,3 +116,49 @@ Text:
   sentence leads, card labelled "Developing" (`test_the_newest_report_controls_the_current_state`). The
   headline itself still comes from the model and can stay stale: open.
 - The same story was "Strong evidence" partly because a Google Trends query added a channel. Fixed (rc12 D).
+
+## October 7, 2026, 12:07 PM: rc12 self-test and embedding benchmark on the user's PC
+
+Self-test `AgentReach-selftest-20261007-1207.zip` (28 PASS, 3 FAIL) and `AgentReach-embedding-benchmark-20261007-1207.zip`.
+Two real rc12 editions (`2026-10-07-rc12-r1.json` 12:13, 53 stories; `-r2.json` 12:23, 44 stories) are fixtures with
+gold events; the labelled corpus now has 7 editions.
+
+- **EmbeddingGemma 2 was never used.** Ollama 0.40.0 answered 404 "model not found" for `embeddinggemma-2:270m` and
+  `embeddinggemma-2`; `ollama list` shows neither. The library lists the tags (270m, 440m, 570m, 740m/latest),
+  but Ollama 0.40.0's release notes mention embeddinggemma-2 only for MLX (Apple Silicon); the multimodal-embedding
+  support for the other runners was merged on October 6 (ollama/ollama PR 18820), after 0.40.0. Not verified on the
+  PC: rc12b's setup/benchmark record Ollama's own error text (`pull-log.txt`). Every number below is nomic-embed-text.
+- **Benchmark (nomic, real vectors, 5 rc11 editions):** identity gate 2 false merges (Asos hacked notification + the
+  Wikimedia/OpenAI rogue-agents reports: 'confirms' in both titles, 'sent' and 'third-party' in both leads), P 0.993,
+  R 0.740. nomic cosines: same-event p5 0.781 / p50 0.897; different-event p95 0.668 / p99 0.734 / max 0.863; kNN
+  candidates hold every same-event pair; 22 different-event pairs reach 0.8. Thresholds unchanged (not enough data).
+  Fixed in rc12b (`test_hacked_shop_notification_is_not_wikimedias_rogue_agents`).
+- **Live rc12 editions: 26 false merges in 6 stories** (all fixed in rc12b; `test_first_rc12_refresh_cases_stay_apart`,
+  `test_merge_pass_never_grows_a_story_one_lone_report_at_a_time`, replay/identical tests over all 7 editions):
+  - r1 #2 "Paxton Privately Blames Campaign Woes on Iran War, Gas Prices" carried "Hegseth's handling of Iran war"
+    (Bluesky), NPR's DIY-fertilizer story and Politico's Mike Rogers on Canada. Cause: the merge pass after labelling
+    tried every story with every single report and accepted any lone report that 'fitted' that one story, bypassing
+    the grouping rule that exactly one story must qualify; the pair log showed every one of those pairs as undecided
+    with weak support (cosine 0.63-0.72).
+  - r1/r2 #1 "France Halts Use of Stun Grenades" carried Reuters' "Belgian students rally ... in protests echoing
+    France" ('France' + 'protests' counted as two distinctive phrases).
+  - r1 #24 / r2 #20 "OpenAI Agents Tried to Hack Wikipedia Tools" carried Reuters' "South Korea says AI agents appear
+    to have been used to hack the country's banks" ('agents' + 'hack').
+  - r1 #9 "Tropical Storm Isaias" carried Space.com's "G2 geomagnetic storm watch" ('storm' + 'possible').
+  - Offline only: Michigan's Mike Rogers + a trade group on US-made tech ('trade' + a Trump named only in one lead;
+    'trump' looked rare because titles write "Trump's").
+- **Labelling cut off:** 218 groups (19 multi-report) -> 14 + 3 label batches of up to 20 stories; three answers hit
+  the 2,048-token output limit (invalid JSON, retried identically, 25 s each); one relabel batch fell back to report
+  titles. Grouping + labelling took 421 s of a 494 s refresh. Fixed: at most 12 stories per call, a cut-off answer is
+  split in two (`test_a_cut_off_label_answer_is_split_not_retried`).
+- **Diagnostics:** the semantic pair log (4,000 pairs) contained no accepted pair (accepted sorted last), and the gate
+  counts included the coherence re-checks ('33670 candidate pairs', 18,573 merges for 2,116 candidates). Fixed.
+- **Self-test said PASS for '1 failed'** (Reddit pacing 0.282 s < 0.29 s on Windows: asyncio.sleep wakes up to one
+  16 ms tick early). Fixed: pacing re-checks after sleeping; pytest runs with -rfEs and the count line is checked.
+- One window test was skipped inside pytest ("Can't find a usable tk.tcl") while every other window test and all
+  launchers worked: treated as a file briefly held by another program; the fixture retries once.
+- Still on the PC: `tests/test_event_contract.py`, `tests/test_event_identity.py` (import `story_from_event`,
+  `ABBREVIATION_GUARD`, which this repository does not have): PLAN 0.5.
+- Read-through: possible duplicates #37/#48 (Google's AI game platform, two stories: a false split, acceptable) and
+  #41/#44 (Cam Jurgens trade vs concussion: two events). 0 of 20 'why it matters' accepted (23 rejected): Phase 4.
+

@@ -19,10 +19,10 @@ unchecked sub-task, do it, then update this file.
 
 ## Where we are (October 7, 2026)
 
-- Version **1.0.0rc12** (zip rc12a) on branch `claude/affectionate-galileo-isxik1`: EmbeddingGemma 2 + event
-  identity done in the sandbox (0 false merges on the labelled corpus, CI green). **Next:** the user's
-  `Benchmark-Embeddings.ps1 -PullModels` results (270M vs full model, real cosines; tune
-  `identity_*_cosine` only from them), then Phase 1. rc11 was zip rc11d, commit `0f246d6`.
+- Version **1.0.0rc12** (zip rc12b) on branch `claude/affectionate-galileo-isxik1`: EmbeddingGemma 2 + event
+  identity; first PC round (Oct 7 12:07) fixed in rc12b (H1-H6 below; 0 false merges on the 7-edition labelled
+  corpus offline). EmbeddingGemma 2 has NOT run yet: Ollama 0.40.0 on the PC could not pull it. **Next:** the
+  user updates Ollama and reruns `Benchmark-Embeddings.ps1 -PullModels` (H7), then Phase 1. rc11 was zip rc11d.
 - Reliability is proven on the user's Windows PC (self-test round 2): offline suite 404 passed on Windows,
   launchers (shortcuts, .cmd), real Ollama checks, cancel at once/halfway, full real refresh (~6 min, 46-51
   stories, podcast), model drop ends in 9 s, repeated use coherent.
@@ -88,9 +88,21 @@ recall >= 0.6; fallback tested; evaluation artifact; real benchmark command for 
       identical), `tests/embedding_benchmark.py` + `Benchmark-Embeddings.ps1` for the user's PC (nomic vs
       gemma 270m vs full model; old density vs identity), compact semantic diagnostics in the HTML + full
       pair log in diagnostics, prefs migration to the Gemma model, setup pulls it, rc12 release + zip.
-- [~] H. Real-model benchmark on the user's PC (`Benchmark-Embeddings.ps1 -PullModels`). NEEDS: the two zips.
-      Then: compare false merges/recall for nomic, 270M and full; set `identity_strong_cosine` from the
-      different-event p99 only if the numbers say so; record in this file and REAL-EDITION-FINDINGS.
+- [~] H. Real-model benchmark on the user's PC (`Benchmark-Embeddings.ps1 -PullModels`). Round 1 (Oct 7 12:07,
+      zips in REAL-EDITION-FINDINGS): only nomic ran (gemma 404 on Ollama 0.40.0); 2 false merges in the
+      benchmark, 26 in the two live editions. Split into:
+  - [x] H1. Asos/Wikimedia merge: reporting verbs everyday words; page-text support needs page-text rarity.
+  - [x] H2. Diagnostics: pair log keeps accepted pairs first; gate counts snapshot after stage 3a; benchmark
+        saves real vectors (`vectors-<model>.json.gz`) and replays them offline (`--replay`).
+  - [x] H3. Label calls: <= 12 stories, a cut-off answer (done_reason length) is split, not retried.
+  - [x] H4. Missing grouping model is optional and explained (`prereqs.check_prefs`); setup/benchmark show
+        Ollama's own pull error + version, `pull-log.txt`, UTF-8 output; Windows pacing; self-test FAIL rule.
+  - [x] H6. Live merges: merge pass merges drafts only through accepted pairs (no attach); 'agents',
+        'possible' everyday words; protest/hack kind-of-event words; strong-path names in both titles and rare
+        in any written form. Both live editions are fixtures (`RC12_EDITIONS`) with gold events.
+  - [ ] H7. Round 2 on the PC after updating Ollama: gemma 270M vs full vs nomic (real vectors; replay them here
+        with `python -m tests.embedding_benchmark --replay <vectors-*.json.gz>`), set `identity_strong_cosine`
+        only if the different-event p99 says so; check the live editions for mixed stories.
 
 ## Phase 1: "Report a problem with this story" (the feedback loop)
 
@@ -225,3 +237,4 @@ Each rule starts from quotes in `docs/REAL-EDITION-FINDINGS.md`; each gets a fix
 - 2026-10-07 | rc12 G (eval) | (this commit) | tests/embedding_benchmark.py + docs/eval/identity-eval.{md,json}: rc11 52 false merges; gate 0 with no embeddings (R 0.635), replayed neighbourhoods (R 0.762) and all-identical vectors | Windows benchmark script, HTML diagnostics, prefs migration, release
 - 2026-10-07 | rc12 G (app) | (this commit) | prefs v9 (EmbeddingGemma 2 default, nomic fallback), model actually used + compact 'How stories were grouped' in the HTML/details, pair log in diagnostics\semantic, setup checks the model, Benchmark-Embeddings.ps1, self-test checks the grouping model | docs + release
 - 2026-10-07 | rc12 G (release) | (this commit) | 1.0.0rc12: docs (README, RELEASE-NOTES, HANDOFF, CLAUDE.md, architecture, findings) | H (user's PC benchmark), then Phase 1
+- 2026-10-07 | rc12 H1-H6 | 9b76d41..d20c8de | first PC round fixed: Asos/Wikimedia (verbs, page-text rarity), pair log + counts, label calls split when cut off, grouping model optional + pull errors explained, self-test FAIL rule + Windows pacing, merge pass no longer grows stories one report at a time + 4 gate word rules; 7-edition corpus: 0 false merges offline (R 0.620 lexical, 0.688 replay) | H7: user updates Ollama, reruns the benchmark

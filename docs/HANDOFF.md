@@ -58,6 +58,13 @@ EmbeddingGemma 2 neighbours + an explicit same-event gate (below).
 - Also: summary gates (quote-truncated copies, intro-only phrases, month abbreviations), newest report
   sets the current state ("Developing"), attention signals never raise strength, what-changed by best
   URL overlap with split-aware continuity, prefs v9.
+- **rc12b (first PC round, Oct 7 12:07):** EmbeddingGemma 2 could not be pulled on Ollama 0.40.0 (404), so
+  everything ran on nomic. The benchmark had 2 false merges, the two live editions 26 (the merge pass after
+  labelling grew stories one lone report at a time; 'agents'+'hack', 'France'+'protests', 'storm'+'possible').
+  All fixed; both live editions are fixtures (`RC12_EDITIONS`, 7 labelled editions, 0 false merges offline,
+  recall 0.620 lexical / 0.688 replay). Also: label calls of <= 12 stories with cut-off answers split, pair log
+  keeps accepted pairs, grouping model optional in the model check, pull errors shown, self-test FAIL rule.
+  Details: `docs/REAL-EDITION-FINDINGS.md`. Next: the user updates Ollama and reruns the benchmark (PLAN H7).
 
 ## rc11 stabilization pass (bugs found by reading the Daily code, no new features)
 

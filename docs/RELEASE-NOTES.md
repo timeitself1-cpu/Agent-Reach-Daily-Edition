@@ -5,6 +5,35 @@ Each release candidate is delivered as a zip of the repository. Extract it over 
 Your editions, settings and history (`%LOCALAPPDATA%\AgentReachDaily`) are kept. Earlier releases are
 summarised in `docs/HANDOFF.md` ("Release history").
 
+## 1.0.0rc12 (zip rc12b): fixes from the first test on your PC
+
+Your self-test and benchmark (October 7, 12:07) showed these problems; each is fixed and has a test.
+
+1. **Fewer mixed stories.** Two real editions from that test still put different events together 6 times:
+   the leaked Paxton audio carried a Hegseth post, a fertilizer-price story and Michigan's Mike Rogers on
+   Canada; France's stun-grenade ban carried Belgian student protests; OpenAI's agents at Wikipedia
+   carried AI agents hacking South Korea's banks; Tropical Storm Isaias carried a geomagnetic storm watch;
+   an Asos hacking notice joined the Wikimedia story in the benchmark. A clean-up step after labelling
+   could add single reports to a story one by one; it no longer can. Broad words ("agents",
+   "possible", "confirms", "sent") and kinds of event ("protests", "hack") alone no longer count as a
+   shared fact. Both editions are now part of the test material (0 mixed stories in every offline check).
+2. **AI headlines no longer cut off.** With many one-report stories, the model was asked to label up to 20
+   at once, ran out of room, and the answer was cut off three times in a row (about 75 seconds lost, and
+   some stories fell back to plain report titles). At most 12 stories go into one request now, and a
+   cut-off answer is split into two smaller requests instead of being repeated.
+3. **EmbeddingGemma 2 did not download on your PC.** Your Ollama (0.40.0) answered "not found" for
+   `embeddinggemma-2:270m`. The model is in the Ollama library, but Ollama 0.40.0 appears to support it only
+   on Apple computers; support for other computers was added to Ollama's code on October 6, after 0.40.0
+   (likely, not yet confirmed on your PC). Refreshes kept working with nomic-embed-text. Setup and the
+   benchmark now show the reason Ollama gives when a download fails and suggest updating Ollama; the
+   app's model check names a missing grouping model separately and never treats it as blocking.
+4. **The self-test is stricter.** It said PASS for the offline tests although one test had failed (a
+   timing test that Windows' coarse timer could trip: fixed too). Failed tests are now a FAIL, and window
+   tests that could not start are reported.
+5. **Better troubleshooting files.** The list of same-event decisions now keeps the accepted pairs (it
+   had cut all of them), its counts describe the grouping itself, and the benchmark saves each model's
+   results so a fix can be re-checked without your PC.
+
 ## 1.0.0rc12
 
 ### One story = one event (story grouping rebuilt)

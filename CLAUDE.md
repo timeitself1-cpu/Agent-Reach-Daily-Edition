@@ -33,7 +33,8 @@ category sections), a grounded "why it matters" pass, an HTML export and a spoke
 
 - Runs the app on **Windows 11** (RTX 4070 Super, 2560x1440 at 100%) from
   `C:\Users\downt\Downloads\Agent Reach\src\Agent-Reach`, Python 3.12 venv in `.venv`, Ollama 0.40 with
-  `llama3.1:8b` and `nomic-embed-text` (rc12 asks for `embeddinggemma-2:270m` too; nomic is its fallback). Data folder: `%LOCALAPPDATA%\AgentReachDaily` (never touch it from
+  `llama3.1:8b` and `nomic-embed-text` (rc12 asks for `embeddinggemma-2:270m` too; nomic is its fallback; 0.40.0
+  could not pull it on Oct 7). Data folder: `%LOCALAPPDATA%\AgentReachDaily` (never touch it from
   tests; the self-test only reads it). A real refresh takes about 6 minutes there.
 - **Constraints:** local-model-first; no paid APIs, cloud LLMs, hosted services, telemetry, accounts,
   Docker or new frameworks. "Finish the application we already have, do not turn it into a research
@@ -184,9 +185,11 @@ AgentReachDaily.cmd/.pyw
 
 ## Known open items (details and order: docs/PLAN.md)
 
-- **Within a run, one story = one event since rc12** (0 false merges on the labelled corpus). Real-model
-  numbers for EmbeddingGemma 2 (270M vs full) need the user's PC (`Benchmark-Embeddings.ps1`); thresholds
-  `identity_candidate_cosine` / `identity_strong_cosine` are untuned until then.
+- **Within a run, one story = one event since rc12** (rc12b: 0 false merges on the 7-edition labelled corpus
+  offline; the first live rc12 editions on the PC had 26, all fixed). EmbeddingGemma 2 has NOT run on the PC:
+  Ollama 0.40.0 answered 404 for `embeddinggemma-2:270m` (most likely too old; the benchmark zip's
+  `pull-log.txt` will say). Real numbers so far are nomic only; thresholds `identity_candidate_cosine` /
+  `identity_strong_cosine` stay untuned until gemma's cosines are measured (`--replay` the saved vectors here).
 - **Story identity across refreshes** is the biggest quality gap: editions minutes apart disagree (the #1
   story can vanish), NEW/"what changed" is mostly noise, one event can appear in two sections. The user's
   PC has `agent_reach/daily/events.py`, `agent_reach/pipeline/identity.py` and `tests/test_event_*.py` that
