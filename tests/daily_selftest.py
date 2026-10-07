@@ -788,6 +788,9 @@ def part_repeat(report: Report, args, paths: DataPaths) -> None:
     if ed is not None:
         (report.out / "edition-2.txt").write_text(edition_text(ed), encoding="utf-8")
         (report.out / "edition-2.json").write_text(ed.model_dump_json(indent=2), encoding="utf-8")
+        # every gate decision of this refresh too: a mixed story seen only here could not be traced (rc12d, Gaza)
+        for f in (paths.diagnostics_dir / "semantic").glob(f"semantic-{ed.run_id}.json"):
+            shutil.copy2(f, report.out / f"edition-2-{f.name}")
         snap = AppController(paths).snapshot()
         from agent_reach.daily.reading import followed
 
