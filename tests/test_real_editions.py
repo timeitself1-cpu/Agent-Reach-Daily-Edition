@@ -175,3 +175,50 @@ def test_the_lead_story_survives_the_next_refresh(s2r1, s2r2):
     Stories) is not in the edition made 6 minutes later at all."""
     lead = next(s for s in s2r1.stories if s.rank == s2r1.top_ranks[0])
     assert any("Pike" in " ".join([s.headline, *s.sentences, *s.entities]) for s in s2r2.stories), lead.headline
+
+
+@pytest.fixture(scope="module")
+def export0935() -> dict:
+    return json.loads((FIXTURES / "2026-10-07-0935-export.json").read_text(encoding="utf-8"))
+
+
+def test_a_summary_cut_at_a_quotation_mark_is_not_published(export0935):
+    """Export of October 7 (9:35), Science #3 'James Webb Space Telescope Investigates Planetary Collisions':
+    the whole summary was 'By studying 21 rare.' The source says 'By studying 21 rare "extreme debris disks"
+    around young stars, ...': the model's JSON text ended at the unescaped inner quote. Rejected now, and the
+    story falls back to the reports' own lead sentence instead."""
+    from agent_reach.daily.edition import INTRO_ONLY_RX, body_sentences, build_story, truncated_copy
+    from agent_reach.models import MacroCluster
+    from tests.event_corpus import load_edition
+
+    published = next(s for s in export0935["stories"] if s["headline"].startswith("James Webb Space Telescope"))
+    assert published["summary"] == "By studying 21 rare."  # as rc11 published it
+    corpus = load_edition("2026-10-07-0935-export.json")
+    items = {c.item.item_id: c.item for c in corpus if c.gold == published["headline"]}
+    source = " ".join(it.context or "" for it in items.values())
+    assert truncated_copy("By studying 21 rare.", source) and INTRO_ONLY_RX.match("By studying 21 rare.")
+    assert not truncated_copy("Researchers studied 21 rare debris disks around young stars.", source)
+    assert body_sentences("By studying 21 rare.", source) == []
+    cluster = MacroCluster(cluster_id="webb", headline=published["headline"], category="Science & AI",
+                           relevance_score=7, velocity_score=10.0, summary="By studying 21 rare.",
+                           raw_item_count=len(items), member_item_ids=list(items))
+    story = build_story(3, cluster, items)
+    assert story is not None and story.sentences[0].startswith("NASA's James Webb Space Telescope is giving astronomers")
+
+
+def test_a_month_abbreviation_does_not_end_a_sentence(s2r2):
+    """Selftest2 r2 #9 'Netanyahu Faces Reckoning over Oct. 7 Terror Attacks in Israeli Election': the summary
+    was published as 'Prime Minister Benjamin Netanyahu faces a reckoning over the Oct.': the splitter ended
+    the sentence after 'Oct.' and the rest ('7 terror attacks ...', not a sentence) was dropped."""
+    from agent_reach.daily.edition import SENTENCE_SPLIT_RX, body_sentences
+    from agent_reach.pipeline.cleaner import SENTENCE_RX, sanitize_summary
+
+    s = _story(s2r2, "Netanyahu Faces Reckoning")
+    assert s.sentences == ["Prime Minister Benjamin Netanyahu faces a reckoning over the Oct."]  # as rc11 published it
+    for rx in (SENTENCE_SPLIT_RX, SENTENCE_RX):
+        assert len(rx.split("Netanyahu faces a reckoning over the Oct. 7 attacks. Voters go to the polls.")) == 2
+        assert len(rx.split("The deal closed on Sept. 30 after a vote. It took a year.")) == 2
+    full = "Prime Minister Benjamin Netanyahu faces a reckoning over the Oct. 7 terror attacks in the Israeli election."
+    assert sanitize_summary(full) == full
+    source = " ".join(e.title + " " + (e.excerpt or "") for e in s.evidence) + " " + s.headline
+    assert body_sentences(full, source) == [full]

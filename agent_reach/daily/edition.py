@@ -30,6 +30,7 @@ from agent_reach.daily.prefs import GENERAL_NEWS_SOURCES, TECH_SOURCES, DailyPre
 from agent_reach.daily.timeutil import CENTRAL_TZ_NAME, central_date, parse_utc
 from agent_reach.daily.changes import EditionChanges
 from agent_reach.daily.strength import EvidenceStrength, assess
+from agent_reach.pipeline.cleaner import MONTH_DAY_GUARD
 from agent_reach.models import PUBLISHED_FUTURE_TOLERANCE, CategoryEnum, CleanedTrendItem, MacroCluster, PipelineReport, RawTrendItem
 
 EDITION_SCHEMA = "agent_reach.daily_edition"
@@ -57,7 +58,7 @@ META_SENTENCE_RX = re.compile(
 )
 #: A sentence ends at . ! ? (also when a closing quote follows), never after a title such as 'St.' or 'Dr.'.
 SENTENCE_SPLIT_RX = re.compile(
-    r"(?:(?<=[.!?])|(?<=[.!?][\"'\u2019\u201d]))"
+    r"(?:(?<=[.!?])|(?<=[.!?][\"'\u2019\u201d]))" + MONTH_DAY_GUARD +
     r"(?<!\bSt\.)(?<!\bMr\.)(?<!\bMs\.)(?<!\bDr\.)(?<!\bJr\.)(?<!\bSr\.)(?<!\bMrs\.)(?<!\bGen\.)"
     r"(?<!\bSen\.)(?<!\bRep\.)(?<!\bGov\.)(?<!\bvs\.)(?<!\bU\.S\.)(?<!\bU\.K\.)(?<!\bU\.N\.)(?<!\bE\.U\.)(?<!\bNo\.)"
     r"(?<!\bBros\.)(?<!\bInc\.)(?<!\bCorp\.)(?<!\bCo\.)(?<!\bLtd\.)"
@@ -451,18 +452,26 @@ def numbers_anchored(sentence: str, source: str) -> bool:
 #: Quoted speech: a person quoted saying 'we' or 'you' is reporting, not the page talking to the reader.
 QUOTED_RX = re.compile(r"\"[^\"]*\"|“[^”]*”|‘[^’]*’|(?<!\w)'[^']*'(?!\w)")
 PAGE_VOICE_RX = re.compile(r"\b(?:you|your|yours|yourself|we|our|ours|ourselves)\b", re.IGNORECASE)
+#: 'our own solar system', 'our galaxy': how science reports name the place everyone shares, not the page talking
+#: to its reader (October 7 export, story #3: the Webb debris-disk lead was refused, so no fallback was left).
+SHARED_PLACE_RX = re.compile(r"\bour\s+(?:own\s+)?(?:solar\s+system|galaxy|planet|moon|sun|universe|species|"
+                             r"home\s+galaxy|cosmic\s+neighbou?rhood)\b", re.IGNORECASE)
 
 
 def page_voice(sentence: str) -> bool:
     """True for text in the page's own voice outside quotes ('Every time you ask ChatGPT a question',
     'as our industry stepped into'): copied page text, not a summary. Lower-case 'us' counts; 'US' does not."""
-    bare = QUOTED_RX.sub(" ", sentence)
+    bare = SHARED_PLACE_RX.sub(" ", QUOTED_RX.sub(" ", sentence))
     return bool(PAGE_VOICE_RX.search(bare) or re.search(r"\bus\b", bare))
 
 
 SUBORDINATE_OPENER_RX = re.compile(
     r"^(?:(?:over|in|during|for|after|within|throughout|across)\b[^,]{0,80},\s*)?"
     r"(?:as|while|when|whereas|although|though|because|since|unless)\b", re.IGNORECASE)
+#: An introductory phrase with no main clause after it: 'By studying 21 rare.' (the export of October 7, story #3:
+#: the model's summary was cut at a quotation mark), 'After the vote.', 'Following months of talks.'.
+INTRO_ONLY_RX = re.compile(r"^(?:by|after|before|following|despite|amid|with|without|while|when|in order to|"
+                           r"according to|thanks to|due to)\b[^,;:]*[.!?]?$", re.IGNORECASE)
 IRREGULAR_PAST = frozenset("""won lost made took gave became began fell rose left met ran told found held kept led
 paid put set sent sold spent struck saw came went got hit cut beat broke chose drew drove flew fled grew knew spoke
 stole wore woke shut quit""".split())
@@ -503,6 +512,22 @@ def _repeats_itself(text: str) -> bool:
 #: Words a finished sentence never ends on ('Clayton will lead the government's new.').
 DANGLING_END_WORDS = frozenset("""a an the and or but nor of to for with from by via vs its their his her our your
 my this these those new""".split())
+
+
+def truncated_copy(sentence: str, source: str | None) -> bool:
+    """The sentence is a source sentence cut off just before a quotation mark: 'By studying 21 rare.' where the
+    report says 'By studying 21 rare "extreme debris disks" around young stars, researchers found ...' (a model
+    writing JSON ends its text at an unescaped double quote). Copying a whole clause is fine."""
+    if not source:
+        return False
+    body = re.sub(r"[.!?]+$", "", sentence.strip()).strip()
+    if len(body.split()) < 2:
+        return False
+    for m in re.finditer(re.escape(body), source, flags=re.IGNORECASE):
+        rest = source[m.end():].lstrip()
+        if rest[:1] in ('"', "\u201c", "\u201d") or rest[:2] == "''":
+            return True
+    return False
 
 
 def ends_dangling(sentence: str) -> bool:
@@ -613,6 +638,7 @@ def body_sentences(summary: str, source: str | None = None, headline: str | None
         if (s and not META_SENTENCE_RX.match(s) and not WEAK_SENTENCE_RX.search(s) and not repeats(s, out)
                 and not (out and restates(s, out, NOVEL_SHARE)) and looks_english(s)
                 and not page_voice(s) and not is_fragment(s) and not ends_dangling(s)
+                and not INTRO_ONLY_RX.match(s) and not truncated_copy(s, source)
                 and (stems is None or (support(s, stems) >= SUPPORT_SHARE and numbers_in(s) <= numbers
                                        and numbers_anchored(s, source or "")))):
             if headline and restates(s, [headline], 1.0):

@@ -78,7 +78,7 @@ recall >= 0.6; fallback tested; evaluation artifact; real benchmark command for 
       syndication logic kept.
 - [ ] E. Continuity: NEW/UPDATED only for continuing events matched by identity; the newest reliable evidence
       controls current-state wording (stock market: Tuesday record high -> Wednesday decline).
-- [ ] F. Summary quality: malformed/truncated sentences rejected ("By studying 21 rare." = JSON string cut at an
+- [x] F. Summary quality: malformed/truncated sentences rejected ("By studying 21 rare." = JSON string cut at an
       inner double quote), month abbreviations never end a sentence ("Oct. 7"), deterministic extractive
       fallback.
 - [ ] G. Evaluation + release: `docs/eval/rc12-identity-eval.{json,md}` (rc11 recorded vs lexical vs replay vs
@@ -213,3 +213,4 @@ Each rule starts from quotes in `docs/REAL-EDITION-FINDINGS.md`; each gets a fix
 - 2026-10-07 | 0.3 | afc82a9, d1792e3, 0f246d6 | rounds 1-2 on Windows: 404 tests pass there; 8 more fixes; 4 real editions as fixtures | 0.4-0.6 (user), then Phase 1
 - 2026-10-07 | rc12 A | (this commit) | labelled corpus of the 5 real Oct 7 editions: rc11 published 52 false merges in 13 stories | B + C
 - 2026-10-07 | rc12 B+C | (this commit) | EmbeddingGemma 2 backend + model-aware cache + fallback; identity gate + cohesive groups: 0 false merges on the corpus under replayed rc11 neighbourhoods and identical vectors, replay recall 0.73 | F (summary gate), then D, E
+- 2026-10-07 | rc12 F | (this commit) | 'By studying 21 rare.' rejected (truncated copy + intro-only gates) with the real lead as fallback; 'Oct. 7' no longer ends a sentence | D, E
