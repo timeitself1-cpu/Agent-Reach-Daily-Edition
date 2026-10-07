@@ -250,6 +250,35 @@ def test_interrupted_write_keeps_the_old_file_and_no_temp_files(daily_paths, mon
     assert store.load_latest().edition.run_id == "good"
 
 
+def test_progress_file_is_deleted_even_while_the_window_reads_it(daily_paths, monkeypatch):
+    """October 7, PC: Windows refused to delete progress.json while the window read it, so the file outlived
+    its refresh. The delete is retried; a file that stays locked is given up on without an error."""
+    from datetime import datetime, timezone
+    from pathlib import Path
+
+    from agent_reach.daily.refresh import ProgressWriter
+
+    writer = ProgressWriter(daily_paths, "manual", datetime(2026, 10, 7, tzinfo=timezone.utc))
+    writer("start", "Starting refresh")
+    real_unlink, refusals = Path.unlink, [3]
+
+    def busy_unlink(self, *a, **k):
+        if self.name == "progress.json" and refusals[0] > 0:
+            refusals[0] -= 1
+            raise PermissionError(32, "The process cannot access the file because it is being used")
+        return real_unlink(self, *a, **k)
+
+    monkeypatch.setattr(fsutil.Path, "unlink", busy_unlink)
+    writer.clear()
+    assert refusals == [0] and not daily_paths.progress_file.exists()
+    writer("start", "Starting refresh")
+    refusals[0] = 10**6
+    assert not fsutil.unlink_with_retry(daily_paths.progress_file, attempts=3, delay_s=0)
+    assert daily_paths.progress_file.exists()
+    refusals[0] = 0
+    assert fsutil.unlink_with_retry(daily_paths.progress_file) and fsutil.unlink_with_retry(daily_paths.progress_file)
+
+
 def test_stale_temp_files_are_cleaned(daily_paths):
     tmp = daily_paths.editions_dir / ".2026-10-01.json.abc.tmp"
     tmp.write_text("partial")

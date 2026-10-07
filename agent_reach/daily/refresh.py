@@ -28,7 +28,7 @@ from datetime import datetime
 from pathlib import Path
 
 from agent_reach.daily.edition import DailyEdition
-from agent_reach.daily.fsutil import FileUnavailable, atomic_write_json
+from agent_reach.daily.fsutil import FileUnavailable, atomic_write_json, unlink_with_retry
 from agent_reach.daily.lock import LockBusy, RefreshLock
 from agent_reach.daily.paths import DataPaths
 from agent_reach.daily.prefs import DailyPrefs, load_prefs
@@ -91,10 +91,7 @@ class ProgressWriter:
             pass
 
     def clear(self) -> None:
-        try:
-            self.paths.progress_file.unlink()
-        except OSError:
-            pass
+        unlink_with_retry(self.paths.progress_file)
 
 
 def watchdog_limit_s(prefs: DailyPrefs) -> float:
@@ -154,10 +151,7 @@ class Watchdog:
                                             "started_utc": iso_utc(self.started), "finished_utc": iso_utc(self.now_fn()),
                                             "limit_minutes": round(minutes, 1), "threads": stacks})
             for f in (self.paths.progress_file, self.paths.lock_info):
-                try:
-                    f.unlink()
-                except OSError:
-                    pass
+                unlink_with_retry(f)
             for h in logging.getLogger().handlers:
                 try:
                     h.flush()
@@ -468,10 +462,7 @@ def finalize_cancelled(paths: DataPaths, now_fn: Callable[[], datetime] = utcnow
             return True  # stopped before it began (or it had already finished): nothing to record
         mark_cancelled(state, now=now_fn())
         save_state(paths, state)
-        try:
-            paths.progress_file.unlink()
-        except OSError:
-            pass
+        unlink_with_retry(paths.progress_file)
         return True
     finally:
         lock.release()

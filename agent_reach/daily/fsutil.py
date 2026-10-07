@@ -29,6 +29,24 @@ def replace_with_retry(src: str | Path, dst: str | Path, attempts: int = 40, del
             time.sleep(delay_s)
 
 
+def unlink_with_retry(path: Path, attempts: int = 40, delay_s: float = 0.05) -> bool:
+    """Delete ``path``; False when it cannot be deleted. Windows refuses to delete a file another process has
+    open for a moment (the window reading progress.json; October 7, PC: the file outlived its refresh)."""
+    for attempt in range(attempts):
+        try:
+            path.unlink()
+            return True
+        except FileNotFoundError:
+            return True
+        except PermissionError:
+            if attempt == attempts - 1:
+                return False
+            time.sleep(delay_s)
+        except OSError:
+            return False
+    return False
+
+
 def atomic_write_bytes(path: Path, data: bytes) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     fd, tmp = tempfile.mkstemp(prefix=f".{path.name}.", suffix=TMP_SUFFIX, dir=str(path.parent))

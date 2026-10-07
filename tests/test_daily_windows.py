@@ -56,6 +56,32 @@ def _worker(paths):
                           capture_output=True, text=True, timeout=180)
 
 
+def test_progress_file_held_briefly_is_still_deleted(world):
+    """October 7, PC: the window read progress.json while the refresh deleted it; Windows refused the delete
+    and the file outlived the refresh (test_repeated_daily_use_stays_coherent failed)."""
+    import threading
+    from datetime import datetime, timezone
+
+    from agent_reach.daily.refresh import ProgressWriter
+
+    writer = ProgressWriter(world, "manual", datetime(2026, 10, 7, tzinfo=timezone.utc))
+    writer("start", "Starting refresh")
+    held, release = threading.Event(), threading.Event()
+
+    def hold():
+        with held_exclusively(world.progress_file):
+            held.set()
+            release.wait(0.5)
+
+    t = threading.Thread(target=hold)
+    t.start()
+    held.wait(5)
+    threading.Timer(0.3, release.set).start()
+    writer.clear()
+    t.join()
+    assert not world.progress_file.exists()
+
+
 def test_settings_held_open_are_left_alone(world):
     assert _worker(world).returncode == 0
     before = world.settings.read_bytes()
