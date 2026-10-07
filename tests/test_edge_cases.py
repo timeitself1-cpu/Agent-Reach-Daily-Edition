@@ -187,6 +187,7 @@ def test_missing_grouping_model_is_named_but_never_blocks(monkeypatch):
     but the 'model missing' message listed the grouping model beside the chat model as if it stopped refreshes."""
     from agent_reach.daily import prereqs
     from agent_reach.daily.prefs import DailyPrefs
+    from tests.daily_selftest import expected_fallback
 
     real_client = httpx.Client
     answers = {"/api/tags": {"models": [{"name": "llama3.1:8b"}, {"name": "nomic-embed-text:latest"}]},
@@ -208,6 +209,11 @@ def test_missing_grouping_model_is_named_but_never_blocks(monkeypatch):
     status.grouping_missing = "some-embedder:1b"
     monkeypatch.setattr(prereqs.sys, "platform", "win32")
     assert "update Ollama" in status.describe() and "Mac" not in status.describe()
+    # the self-test's real-refresh row: INFO, not FAIL
+    assert expected_fallback(prefs, "nomic-embed-text", "win32")
+    assert expected_fallback(prefs, "nomic-embed-text:latest", "win32")
+    assert not expected_fallback(prefs, "nomic-embed-text", "darwin") and not expected_fallback(prefs, None, "win32")
+    assert not expected_fallback(prefs, prefs.embed_model, "win32")
     answers["/api/tags"] = {"models": [{"name": "nomic-embed-text:latest"}]}  # the chat model is what blocks
     status = prereqs.check_prefs(prefs)
     assert not status.ready and status.missing == [prefs.ollama_model]

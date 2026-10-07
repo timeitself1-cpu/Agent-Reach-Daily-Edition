@@ -238,6 +238,19 @@ def test_benchmark_runs_real_model_rows_and_reports_a_missing_model(tmp_path):
     assert (tmp_path / "identity-eval.json").exists() and (tmp_path / "identity-eval.md").exists()
 
 
+def test_benchmark_explains_why_a_model_cannot_be_used():
+    """October 7, PC: embeddinggemma:300m downloaded, then Ollama 0.40.0 failed to open it with a raw Windows
+    error ('CreateFile ... manifests-v2 ... untrusted mount point'); the advice 'Pull it' was wrong for that."""
+    from tests.embedding_benchmark import unavailable_advice
+
+    err = ("ResponseError: CreateFile C:\\Users\\x\\.ollama\\models\\manifests-v2\\ollama.com\\library\\"
+           "embeddinggemma\\300m: The path cannot be traversed because it contains an untrusted mount point")
+    assert "known bug in Ollama 0.40" in unavailable_advice("embeddinggemma:300m", err)
+    assert "Pull it" not in unavailable_advice("embeddinggemma:300m", err)
+    assert "Mac" in unavailable_advice("embeddinggemma-2:270m", "this model requires MLX support")
+    assert unavailable_advice("x:1b", 'model "x:1b" not found') == "Pull it: ollama pull x:1b"
+
+
 def test_benchmark_saves_real_vectors_and_replays_them_offline(tmp_path, monkeypatch):
     """The PC run saves each model's vectors; the same rows come back offline from that file (``--replay``)."""
     import tests.embedding_benchmark as bench

@@ -499,6 +499,16 @@ def part_launchers(report: Report, args, base: Path) -> None:
         shutil.copytree(home / "logs", report.out / "launcher-logs", dirs_exist_ok=True)
 
 
+def expected_fallback(prefs: DailyPrefs, used: str | None, platform: str | None = None) -> bool:
+    """The refresh grouped stories with a fallback model because Ollama cannot run the configured one on this
+    computer (EmbeddingGemma 2 on Windows): information, not a failure the user could fix."""
+    from agent_reach.daily.prereqs import mac_only_in_ollama
+
+    base = (used or "").split(":")[0]
+    return (bool(used) and used != prefs.embed_model and mac_only_in_ollama(prefs.embed_model, platform)
+            and base in {m.split(":")[0] for m in prefs.embed_fallback_models})
+
+
 def part_ollama(report: Report, args, base: Path, prefs: DailyPrefs) -> bool:
     """Returns whether the real Ollama is ready (the real-refresh parts need it)."""
     from agent_reach.daily.prereqs import check_ollama, check_prefs, mac_only_in_ollama
@@ -677,11 +687,16 @@ def part_full_refresh(report: Report, args, base: Path, prefs: DailyPrefs) -> Da
                f"{sum(1 for s in ed.stories if s.why_it_matters)} 'why it matters'; label batches "
                f"{ed.model.label_calls} (failed {ed.model.label_calls_failed})\nnotes: " + " | ".join(ed.notes))
     g = ed.model.grouping
-    report.check(P, f"stories grouped by the configured embedding model ({prefs.embed_model})",
-                 ed.model.embed_model_used == prefs.embed_model,
-                 f"used: {ed.model.embed_model_used or 'none'}; {g.get('fallback') or 'no fallback'}; "
-                 f"{g.get('candidate_pairs', 0)} candidate pairs, {g.get('accepted_pairs', 0)} accepted, "
-                 f"{g.get('refused_pairs', 0)} refused, {g.get('roundups', 0)} roundups")
+    grouping_detail = (f"used: {ed.model.embed_model_used or 'none'}; {g.get('fallback') or 'no fallback'}; "
+                       f"{g.get('candidate_pairs', 0)} candidate pairs, {g.get('accepted_pairs', 0)} accepted, "
+                       f"{g.get('refused_pairs', 0)} refused, {g.get('roundups', 0)} roundups")
+    if expected_fallback(prefs, ed.model.embed_model_used):
+        # October 7 (PC, rc12c): the Mac-only grouping model was named INFO in part 3 but FAIL here
+        report.add(P, f"stories grouped by the fallback model ({ed.model.embed_model_used})", "INFO",
+                   f"{prefs.embed_model} runs only on Macs in Ollama so far; " + grouping_detail)
+    else:
+        report.check(P, f"stories grouped by the configured embedding model ({prefs.embed_model})",
+                     ed.model.embed_model_used == prefs.embed_model, grouping_detail)
     findings = review_edition(ed, prefs)
     report.add(P, "automatic read-through (for a human to confirm)", "INFO",
                "\n".join(findings) if findings else "nothing noticed")
