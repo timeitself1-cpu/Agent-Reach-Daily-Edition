@@ -226,7 +226,7 @@ def test_version_2_settings_gain_new_sources_once(daily_paths):
                feeds=[{"name": "Local Paper", "url": "https://local.test/rss", "category": "News"}])
     daily_paths.settings.write_text(json.dumps(old))
     prefs, warning = load_prefs(daily_paths)
-    assert warning is None and prefs.prefs_version == PREFS_VERSION == 8
+    assert warning is None and prefs.prefs_version == PREFS_VERSION == 9
     assert {"youtube", "mastodon", "bluesky"} <= set(prefs.enabled_sources) and prefs.max_items_for_llm == 260
     assert "tiktok" not in prefs.enabled_sources  # switched on in v3, off again from v5 (TikTok blocks readers)
     assert prefs.feeds[0].name == "Local Paper" and len(prefs.feeds) == 1 + len(ADDED_IN_V3) + len(ADDED_IN_V4)

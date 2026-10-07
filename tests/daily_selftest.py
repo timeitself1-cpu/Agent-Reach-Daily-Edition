@@ -507,6 +507,13 @@ def part_ollama(report: Report, args, base: Path, prefs: DailyPrefs) -> bool:
     models = [prefs.ollama_model, prefs.embed_model]
     st = check_ollama(args.ollama_host, models)
     ready = st.ready
+    if not ready and st.reachable and st.missing == [prefs.embed_model]:
+        # rc12: without EmbeddingGemma the refresh still works on the fallback model; say so, then test on
+        st_fb = check_ollama(args.ollama_host, [prefs.ollama_model, *prefs.embed_fallback_models[:1]])
+        report.add(P, f"grouping model {prefs.embed_model}", "FAIL",
+                   f"missing: run 'ollama pull {prefs.embed_model}'. Refreshes fall back to "
+                   f"{', '.join(prefs.embed_fallback_models) or 'word matching'} until then.")
+        st, ready = st_fb, st_fb.ready
     report.check(P, "Ollama running with both models", ready,
                  f"{st.describe()}\nversion {st.version}; models: {', '.join(st.models) or 'none'}")
     st2 = check_ollama(args.ollama_host, ["agent-reach-selftest-missing-model"])
@@ -630,6 +637,8 @@ def part_full_refresh(report: Report, args, base: Path, prefs: DailyPrefs) -> Da
     if paths.diagnostics_dir.exists():
         for f in paths.diagnostics_dir.glob("*.json"):
             shutil.copy2(f, report.out / f"real-refresh-diagnostics-{f.name}")
+        for f in (paths.diagnostics_dir / "semantic").glob("semantic-*.json"):  # rc12: every gate decision
+            shutil.copy2(f, report.out / f"real-refresh-{f.name}")
     ed = EditionStore(paths).load_latest().edition
     if ed is None:
         report.add(P, "edition", "FAIL", snapshot_text(paths))
@@ -651,6 +660,12 @@ def part_full_refresh(report: Report, args, base: Path, prefs: DailyPrefs) -> Da
                f"{len(ed.stories)} stories, {len(ed.top_ranks)} in Top Stories; summaries {ed.model.summaries}; "
                f"{sum(1 for s in ed.stories if s.why_it_matters)} 'why it matters'; label batches "
                f"{ed.model.label_calls} (failed {ed.model.label_calls_failed})\nnotes: " + " | ".join(ed.notes))
+    g = ed.model.grouping
+    report.check(P, f"stories grouped by the configured embedding model ({prefs.embed_model})",
+                 ed.model.embed_model_used == prefs.embed_model,
+                 f"used: {ed.model.embed_model_used or 'none'}; {g.get('fallback') or 'no fallback'}; "
+                 f"{g.get('candidate_pairs', 0)} candidate pairs, {g.get('accepted_pairs', 0)} accepted, "
+                 f"{g.get('refused_pairs', 0)} refused, {g.get('roundups', 0)} roundups")
     findings = review_edition(ed, prefs)
     report.add(P, "automatic read-through (for a human to confirm)", "INFO",
                "\n".join(findings) if findings else "nothing noticed")

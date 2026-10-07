@@ -161,6 +161,31 @@ def test_each_story_has_one_accessible_collapsible_evidence_section():
     assert "<details open" not in page  # collapsed by default; native disclosure, no script needed
 
 
+def test_html_says_which_model_grouped_the_stories_and_keeps_details_compact():
+    """rc12: the footer names the embedding model that actually grouped the stories; a collapsed section gives a
+    few plain numbers (the full pair log stays in the diagnostics folder, never in the page)."""
+    from agent_reach.daily.edition import grouping_summary
+
+    semantic = {"model_used": "nomic-embed-text", "fallback": "embeddinggemma-2:270m was not used: "
+                "embeddinggemma-2:270m: model \"embeddinggemma-2:270m\" not found <b>", "roundups_in_run": 2,
+                "embedding": {"dims": 768, "cache_hits": 40, "items": 260},
+                "gate": {"candidate_pairs": 900, "accepted_pairs": 120, "rejected_pairs": 75,
+                         "merges_blocked_conflict": 3, "merges_blocked_cohesion": 4}}
+    ed = make_edition([make_story(headline="One"), make_story(headline="Two"), make_story(headline="Three")])
+    ed.model.embed_model, ed.model.embed_model_used = "embeddinggemma-2:270m", "nomic-embed-text"
+    ed.model.grouping = grouping_summary(semantic)
+    page = render_edition_html(ed)
+    assert "llama3.1:8b / nomic-embed-text" in page  # the model actually used, not the one asked for
+    section = re.search(r"<details><summary>How stories were grouped</summary>.*?</details>", page, re.S).group(0)
+    assert "Grouping model: nomic-embed-text (768 dimensions)" in section
+    assert "900 candidate pairs, 120 accepted, 75 refused" in section and "7 merges blocked" in section
+    assert "2 multi-story roundups" in section and "40 of 260 reports" in section
+    assert "&lt;b&gt;" in section  # model text is escaped
+    assert "shared_evidence" not in page and "<b>" not in section
+    legacy = make_edition([make_story(headline="One")])  # editions before rc12: no section, the asked-for model
+    assert "How stories were grouped" not in render_edition_html(legacy)
+
+
 # ====================================================================== 3. evidence strength
 def _ev(publisher, title, *, source="news_rss", hours=3.0, url=None):
     return EvidenceLink(item_id=1, source=source, source_name=source, title=title, publisher=publisher,

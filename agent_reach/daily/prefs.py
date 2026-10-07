@@ -56,7 +56,7 @@ SOURCE_NOTES = {
     "producthunt": "Product Hunt launches (tech)",
     "arxiv": "arXiv AI/ML papers (research)",
 }
-PREFS_VERSION = 8
+PREFS_VERSION = 9
 DAILY_VELOCITY_WINDOWS = [24.0, 48.0, 168.0]
 DAILY_VELOCITY_WEIGHTS = [0.5, 0.3, 0.2]
 DAILY_VELOCITY_TOLERANCE = 0.25
@@ -90,7 +90,8 @@ class DailyPrefs(BaseModel):
 
     ollama_host: str = "http://localhost:11434"
     ollama_model: str = "llama3.1:8b"
-    embed_model: str = "nomic-embed-text"
+    embed_model: str = "embeddinggemma-2:270m"
+    embed_fallback_models: list[str] = Field(default_factory=lambda: ["nomic-embed-text"])
     require_llm: bool = True  # no edition from heuristic labels unless the user explicitly allows it
     why_it_matters: bool = True
     start_ollama_if_down: bool = True
@@ -146,7 +147,10 @@ class DailyPrefs(BaseModel):
           (``REPLACED_IN_V6``);
         * version 6 -> 7: Yahoo Finance (HTTP 404) replaced by Bloomberg's markets feed (``REPLACED_IN_V7``);
         * version 7 -> 8: The Independent's world feed (HTTP 429 for every automated reader) replaced by
-          CBS News's (``REPLACED_IN_V8``).
+          CBS News's (``REPLACED_IN_V8``);
+        * version 8 -> 9: story grouping uses EmbeddingGemma 2 (``embeddinggemma-2:270m``) instead of
+          nomic-embed-text, which stays as the fallback when the new model is not installed. A model the
+          user chose themselves is kept.
         """
         if not isinstance(data, dict):
             return data
@@ -189,6 +193,9 @@ class DailyPrefs(BaseModel):
             data["feeds"] = _replace_feeds(data["feeds"], REPLACED_IN_V7)
         if version < 8 and isinstance(data.get("feeds"), list):
             data["feeds"] = _replace_feeds(data["feeds"], REPLACED_IN_V8)
+        if version < 9 and data.get("embed_model", "nomic-embed-text") in ("nomic-embed-text", "nomic-embed-text:latest"):
+            data["embed_model"] = "embeddinggemma-2:270m"
+            data.setdefault("embed_fallback_models", ["nomic-embed-text"])
         data["prefs_version"] = PREFS_VERSION
         return data
 
@@ -328,6 +335,9 @@ def build_settings(prefs: DailyPrefs, paths: DataPaths, **overrides: Any):
         ollama_host=prefs.ollama_host,
         ollama_model=prefs.ollama_model,
         embed_model=prefs.embed_model,
+        embed_fallback_models=list(prefs.embed_fallback_models),
+        # developer artifact: every candidate pair of the run with the identity gate's verdict and reasons
+        semantic_log_dir=paths.diagnostics_dir / "semantic" if hasattr(paths, "diagnostics_dir") else None,
         velocity_windows_hours=list(DAILY_VELOCITY_WINDOWS),
         velocity_window_weights=list(DAILY_VELOCITY_WEIGHTS),
         velocity_window_tolerance=DAILY_VELOCITY_TOLERANCE,

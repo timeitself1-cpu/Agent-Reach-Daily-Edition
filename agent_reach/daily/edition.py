@@ -186,10 +186,27 @@ class Coverage(BaseModel):
     warnings: list[str] = Field(default_factory=list)
 
 
+def grouping_summary(semantic: dict) -> dict:
+    """The few numbers a reader can use to judge how stories were grouped (the full pair log stays in the
+    diagnostics folder): which embedding model grouped them, why another was not used, and how many
+    candidate pairs the identity check accepted or refused."""
+    if not semantic:
+        return {}
+    gate = semantic.get("gate") or {}
+    emb = semantic.get("embedding") or {}
+    return {"model_used": semantic.get("model_used", ""), "fallback": semantic.get("fallback", ""),
+            "dims": emb.get("dims") or None, "cache_hits": emb.get("cache_hits", 0), "reports": emb.get("items", 0),
+            "candidate_pairs": gate.get("candidate_pairs", 0), "accepted_pairs": gate.get("accepted_pairs", 0),
+            "refused_pairs": gate.get("rejected_pairs", 0), "roundups": semantic.get("roundups_in_run", 0),
+            "merges_blocked": gate.get("merges_blocked_conflict", 0) + gate.get("merges_blocked_cohesion", 0)}
+
+
 class ModelInfo(BaseModel):
     llm_model: str
-    embed_model: str
+    embed_model: str  # the model the settings asked for
     pipeline_mode: str
+    embed_model_used: str = ""  # the model that actually grouped the stories ("" in editions before rc12)
+    grouping: dict = Field(default_factory=dict)  # compact semantic diagnostics (``grouping_summary``)
     summaries: Literal["local_model", "extractive"]
     label_calls: int = 0  # model labelling batches; failed ones used the reports' own titles
     label_calls_failed: int = 0
@@ -1228,7 +1245,9 @@ def assemble_edition(
     mostly_fallback = bool(labels) and labels_failed >= MAX_LABEL_FALLBACK_SHARE * labels
     summaries = "extractive" if report.llm_mode.startswith("heuristic") or mostly_fallback else "local_model"
     brief = brief_stats or {}
+    semantic = report.semantic or {}
     model = ModelInfo(llm_model=prefs.ollama_model, embed_model=prefs.embed_model, pipeline_mode=report.llm_mode,
+                      embed_model_used=str(semantic.get("model_used") or ""), grouping=grouping_summary(semantic),
                       summaries=summaries, label_calls=labels, label_calls_failed=labels_failed,
                       brief_calls=brief.get("calls", 0), brief_calls_failed=brief.get("failed_calls", 0))
     notes = edition_notes(selection, prefs, extractive=summaries == "extractive", model=model)

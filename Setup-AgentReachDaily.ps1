@@ -6,7 +6,8 @@
     1. Finds Python 3.10+ with tkinter (the py launcher or python on PATH).
     2. Creates or reuses the project environment .venv in this folder and installs requirements.txt.
     3. Checks the Daily app imports and its command line.
-    4. Checks Ollama and the two local models (llama3.1:8b, nomic-embed-text).
+    4. Checks Ollama and the local models (llama3.1:8b; embeddinggemma-2:270m groups the stories,
+       nomic-embed-text is its fallback).
        Missing models are only downloaded with -PullModels (several GB; you are told first).
     5. Creates the data folder %LOCALAPPDATA%\AgentReachDaily with default settings.
     6. Creates "Agent Reach" shortcuts on the Desktop and in the Start menu (skip with -NoShortcut).
@@ -191,7 +192,7 @@ else {
     $warnings.Add("Install Ollama from https://ollama.com/download")
 }
 
-$models = @("llama3.1:8b", "nomic-embed-text")
+$models = @("llama3.1:8b", "embeddinggemma-2:270m", "nomic-embed-text")
 $names = @()
 $reachable = $false
 try {
@@ -213,7 +214,7 @@ function Test-ModelPresent([string]$wanted, [string[]]$have) {
 if ($reachable) {
     foreach ($m in $models) {
         if (Test-ModelPresent $m $names) { Write-Ok "Model $m is available"; continue }
-        $size = if ($m -like "llama3.1*") { "about 4.9 GB" } else { "about 274 MB" }
+        $size = if ($m -like "llama3.1*") { "about 4.9 GB" } elseif ($m -like "embeddinggemma*") { "a few hundred MB" } else { "about 274 MB" }
         if ($PullModels -and $ollamaExe) {
             if ($DryRun) { Write-Dry "download model $m ($size): ollama pull $m" }
             else {
