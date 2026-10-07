@@ -40,6 +40,8 @@ from typing import Protocol
 ACCEPT, REJECT, NEUTRAL = "accept", "reject", "neutral"
 #: pair decisions kept in the developer artifact (the closest rejected/neutral candidates come first)
 MAX_LOGGED_PAIRS = 4000
+#: LinkIndex.link_evidence: a name many reports write plus one specific word, accepted only with strong embedding
+COMMON_NAME_AND_PHRASE = "a common name and one distinctive phrase"
 
 
 class _Index(Protocol):
@@ -141,12 +143,13 @@ class IdentityGate:
                 d = PairDecision(*key, ACCEPT, [why], cos, shared, support=True)
             elif cos is not None and cos >= self.strong_cosine and specific and (
                     len(self.index.shared_units(*key, set(specific))) >= 2
-                    or self.index.shares_name(*key, rare=True, titles=True)):
+                    or self.index.shares_name(*key, rare=True, titles=True) or why == COMMON_NAME_AND_PHRASE):
                 # the embedding sees one event AND the reports share two specific words that are not part of
                 # a name, or one and a name both titles write ('Siberian' + 'plague'): never a name or one broad
                 # word alone ('app' joined a smart-glasses privacy probe to a profile of Meta's AI-app billionaire;
                 # 'trade' + a Trump only one page's lead names joined Michigan's Mike Rogers on Canada to a trade
-                # group on US-made tech, October 7, PC)
+                # group on US-made tech, October 7, PC); a common name and one specific word ('Russia' + 'plague')
+                # need this agreement (October 7, rc12c: 'Trump' + 'retreat' at cosine 0.69 were two events)
                 d = PairDecision(*key, ACCEPT, [f"embedding agrees (cosine {cos:.2f}) and shares specific words"],
                                  cos, specific, support=True)
             else:
@@ -246,10 +249,17 @@ def _attach_supported(groups: list[list[int]], gate: IdentityGate) -> list[list[
         words = set().union(*(d.shared for d in decisions))
         # one everyday-ish word shared with everyone ('chief') is not enough: two phrases, or a shared name few
         # reports carry, and in both cases a specific word the TITLES share: page-text words alone ('Paramount'
-        # + 'effort', 'television') attached a Taylor Sheridan western on Paramount+ to the Warner merger
+        # + 'effort', 'television') attached a Taylor Sheridan western on Paramount+ to the Warner merger.
+        # The titles must link the report to EVERY member (a specific word or a rare name both write), and the
+        # name must be in both titles: 'president' with one member and 'hosts' in another's page put Kimmel's
+        # monologue in the Trump Accounts story; 'dies' + a name only the pages wrote put Eva Marie Saint in Frank
+        # Mancuso's obituary (October 7, rc12c on the PC)
+        def title_link(m: int) -> bool:
+            return bool(gate.index.specific_overlap(x, m)) or gate.index.shares_name(x, m, rare=True, titles=True)
+
         return (len(gate.index.shared_units(x, g[0], words, context=True)) >= 2 and len(words) >= 2
-                and any(gate.index.specific_overlap(x, m) for m in g)
-                or any(gate.index.shares_name(x, m, rare=True) and gate.index.specific_overlap(x, m) for m in g))
+                and any(gate.index.specific_overlap(x, m) for m in g) and all(title_link(m) for m in g)
+                or any(gate.index.shares_name(x, m, rare=True, titles=True) and gate.index.specific_overlap(x, m) for m in g))
 
     for x in lone:
         homes = [g for g in stories if fits(x, g)]

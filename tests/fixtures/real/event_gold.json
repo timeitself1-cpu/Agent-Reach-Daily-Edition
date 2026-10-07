@@ -77,6 +77,39 @@
    },
    "related": [["Gears of War: E-Day Studio Boss", "xbox-gears-feature"],
                ["Andrew Garfield Stopped Using ChatGPT", "garfield-oscar-profile"]]
+  },
+  "2026-10-07-rc12c-r1.json": {
+   "split": {
+    "Trump's Retreat: From the Gulf": {"Trump wants to turn": "trump-golf-retreat"},
+    "France Suspends Use of Stun Grenades": {
+     "France summons Iranian ambassador": "france-iran-ambassador",
+     "🔴 Live: France summons": "france-iran-ambassador",
+     "Over 100 arrested in Belgium": "belgian-student-protests"
+    },
+    "Trump Announces Automatic Enrollment": {"Jimmy Kimmel on Trump": "kimmel-trump-iran-joke"},
+    "Nvidia RTX Spark for $2,999.99": {"Microsoft and Nvidia launch Surface": "surface-laptop-ultra"},
+    "Eva Marie Saint and Frank": {"Oscar-winning actress Eva Marie Saint": "eva-marie-saint-dies"},
+    "US Voters Concerned About AI Risks": {
+     "As voters weigh incumbents": "term-limits-research",
+     "Americans don't want taxpayer": "campaign-ads-poll"
+    }
+   },
+   "same_event": [["France Suspends Use of Stun Grenades", "French Riot Police Fire Tear Gas"]],
+   "related": [["France Suspends Use of Stun Grenades", "france-iran-ambassador"]]
+  },
+  "2026-10-07-rc12c-r2.json": {
+   "split": {
+    "Trump's Military Retreats Globally": {"Trump wants to turn": "trump-golf-retreat"},
+    "France Suspends Use of Stun Grenades": {
+     "France summons Iranian ambassador": "france-iran-ambassador",
+     "🔴 Live: France summons": "france-iran-ambassador"
+    },
+    "Trump Announces Automatic Enrollment": {"Jimmy Kimmel on Trump": "kimmel-trump-iran-joke"},
+    "Jon Rahm Quits LIV Golf": {"LIV Golf Gets Potential Lifeline": "liv-golf-financing"}
+   },
+   "same_event": [["France Suspends Use of Stun Grenades", "French Riot Police Fire Tear Gas"]],
+   "related": [["France Suspends Use of Stun Grenades", "france-iran-ambassador"],
+               ["Jon Rahm Quits LIV Golf", "liv-golf-financing"]]
   }
  }
 }

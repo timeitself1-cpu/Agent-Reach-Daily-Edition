@@ -1,14 +1,15 @@
 # Event identity evaluation (rc12)
 
-Generated 2026-10-07T18:21:57+00:00 on the labelled October 7 corpus (593 reports, 332 gold events, 7 real editions). Pairwise scores over all reports; **false merges** = report pairs from different events published in one story.
+Generated 2026-10-07T21:19:51+00:00 on the labelled October 7 corpus (776 reports, 430 gold events, 9 real editions). Pairwise scores over all reports; **false merges** = report pairs from different events published in one story.
 
 | Grouping | False merges | Mixed stories | Precision | Recall | F1 |
 |---|---:|---:|---:|---:|---:|
 | rc11 published (nomic + HDBSCAN + single-link; 5 rc11 editions) | 52 | 13 | 0.885 | 0.976 | 0.928 |
 | rc12 published on the PC (nomic + identity gate before rc12b; 2 rc12 editions) | 26 | 6 | 0.816 | 1.000 | 0.898 |
-| identity gate, no embeddings (fallback) | 0 | 0 | 1.000 | 0.620 | 0.765 |
-| identity gate, replayed rc11 neighbourhoods | 0 | 0 | 1.000 | 0.688 | 0.815 |
-| identity gate, every pair cosine 1 | 0 | 0 | 1.000 | 0.167 | 0.287 |
+| rc12c published on the PC (nomic + rc12b identity gate; 2 rc12c editions) | 26 | 8 | 0.872 | 0.917 | 0.894 |
+| identity gate, no embeddings (fallback) | 1 | 1 | 0.998 | 0.572 | 0.727 |
+| identity gate, replayed rc11 neighbourhoods | 1 | 1 | 0.998 | 0.629 | 0.771 |
+| identity gate, every pair cosine 1 | 0 | 0 | 1.000 | 0.154 | 0.267 |
 
 Settings: identity_neighbors=12, identity_candidate_cosine=0.45, identity_strong_cosine=0.8, event_max_age_hours=72.0
 
@@ -51,3 +52,21 @@ Real embedding models were not run here (no Ollama). On a PC with Ollama:
 - 2026-10-07-rc12-r2.json: "Photos: The Student Protests in France" + "Belgian students rally over education costs in protests echoing France"
 - 2026-10-07-rc12-r2.json: "French government defends handling of high school protests as controversies grow" + "Belgian students rally over education costs in protests echoing France"
 - 2026-10-07-rc12-r2.json: "What France's student protesters want - and what the government is offering" + "Belgian students rally over education costs in protests echoing France"
+
+**rc12c published on the PC (nomic + rc12b identity gate; 2 rc12c editions)**
+- 2026-10-07-rc12c-r1.json: "From Iran to the U.K., Trump Is Being Forced Into Retreat" + "Trump wants to turn Florida golf course into presidential retreat"
+- 2026-10-07-rc12c-r1.json: "From Iran to the U.K., Trump Is Being Forced Into Retreat" + "Trump wants to turn his private golf club into a presidential retreat"
+- 2026-10-07-rc12c-r1.json: "Trump wants to turn Florida golf course into presidential retreat" + "Trump's Retreat: From the Gulf to Britain, American Forces Pull Back"
+- 2026-10-07-rc12c-r1.json: "Trump's Retreat: From the Gulf to Britain, American Forces Pull Back" + "Trump wants to turn his private golf club into a presidential retreat"
+- 2026-10-07-rc12c-r1.json: "France suspends use of stun grenades to police student protests" + "Over 100 arrested in Belgium student protests over education costs"
+- 2026-10-07-rc12c-r2.json: "From Iran to the U.K., Trump Is Being Forced Into Retreat" + "Trump wants to turn Florida golf course into presidential retreat"
+- 2026-10-07-rc12c-r2.json: "From Iran to the U.K., Trump Is Being Forced Into Retreat" + "Trump wants to turn his private golf club into a presidential retreat"
+- 2026-10-07-rc12c-r2.json: "Trump wants to turn Florida golf course into presidential retreat" + "Trump's Retreat: From the Gulf to Britain, American Forces Pull Back"
+- 2026-10-07-rc12c-r2.json: "Trump's Retreat: From the Gulf to Britain, American Forces Pull Back" + "Trump wants to turn his private golf club into a presidential retreat"
+- 2026-10-07-rc12c-r2.json: "WATCH: Trump announces eligible U.S. children automatically enrolled in Trump ac" + "Jimmy Kimmel on Trump's joke about Iran bombing LA: 'Our own president wishing d"
+
+**identity gate, no embeddings (fallback)**
+- 2026-10-07-rc12c-r1.json: "Microsoft and Nvidia launch Surface Laptop Ultra with RTX Spark" + "Nvidia RTX Spark for $2,999.99: HP leak reveals RTX Spark laptop pricing ahead o"
+
+**identity gate, replayed rc11 neighbourhoods**
+- 2026-10-07-rc12c-r1.json: "Microsoft and Nvidia launch Surface Laptop Ultra with RTX Spark" + "Nvidia RTX Spark for $2,999.99: HP leak reveals RTX Spark laptop pricing ahead o"

@@ -47,7 +47,8 @@ from agent_reach.models import (
 )
 from agent_reach.pipeline.density import density_cluster
 from agent_reach.pipeline.embeddings import EmbeddingRun, EmbeddingUnavailable, embed_reports
-from agent_reach.pipeline.event_identity import cohesive_groups, lexical_candidates, nearest_candidates
+from agent_reach.pipeline.event_identity import (COMMON_NAME_AND_PHRASE, cohesive_groups, lexical_candidates,
+                                                 nearest_candidates)
 from agent_reach.pipeline.cleaner import (
     MONTH_DAY_GUARD,
     STOPWORDS,
@@ -359,6 +360,10 @@ protest protests protester protesters protesting rally rallies demonstration dem
 hack hacks hacking hacker hackers
 """.split())
 EVENT_WORDS = frozenset().union(*EVENT_FAMILIES) | EVENT_KIND_WORDS
+#: Legislatures name where something happened, not what: 'Congress' in both titles joined a Reuters/Ipsos poll on
+#: AI risks to research on congressional term limits (October 7, rc12c on the PC). Not a shared name.
+INSTITUTION_NAMES = frozenset({"congress", "congressional", "senate", "parliament", "parliamentary"})
+
 #: Qualifiers that name different events of one institution: the Nobel Prize in physics and the one in
 #: medicine are two stories although both titles say 'Nobel Prize' (a real rc10 edition merged them).
 EXCLUSIVE_QUALIFIERS = (
@@ -374,6 +379,8 @@ EXCLUSIVE_QUALIFIERS = (
 #: Broad technology concepts are the same (October 7: 'app', 'AI', 'privacy' and 'smart glasses' joined a
 #: privacy probe of a smart-glasses app maker to a profile of Meta's AI-app billionaire; 'multimodal' +
 #: 'model' joined Mistral Large 4 to EmbeddingGemma 2; 'agents' joined Sierra's protocol to Wikimedia's report).
+#: A negation is no subject: "don't" + 'poll' joined a Reuters/Ipsos poll on AI risks to a poll on taxpayer-funded
+#: campaign ads (October 7, rc12c on the PC).
 COMMON_WORDS = frozenset("""
 add adds added adding use uses used using make made making take takes took taking taken give gives gave giving
 given come comes came coming going goes went gone see sees saw seen seeing show shows showed shown showing
@@ -397,6 +404,7 @@ federal
 technology technologies tech app apps ai model models platform platforms device devices smart privacy data online
 digital software tool tools feature features agent agents possible possibly likely
 confirm confirms confirmed confirming warn warns warned warning send sends sent sending
+don't doesn't didn't can't won't isn't aren't wasn't weren't hasn't haven't wouldn't shouldn't couldn't
 """.split())
 #: Calendar words are when, not what: 'October 7' joined NASA's picture of the day ('APOD: 2026 October 7'),
 #: a Fauda review ('Fauda's October 7 Episodes'), the '#October7' hashtag and 'October 2026 Satellite Puzzler'
@@ -444,6 +452,7 @@ class LinkIndex:
         # two titles that share no name link only through words in at most 1% of the run ('games' is
         # in 17 of 1,352 titles: 'PS5 games on Xbox consoles' is not 'chipflation' in games and consoles)
         self.nameless_cap = max(3, int(0.01 * n))
+        self.name_cap = max(4, int(0.02 * n))  # a name alone as one of two pieces of evidence (link_evidence)
         self.roundups = {iid for iid, it in pool.items()
                          if is_roundup(it.normalized_title) or any(is_roundup(o.title) for o in it.observations)}
         self._rx_cache: dict[str, re.Pattern[str] | None] = {}
@@ -604,13 +613,20 @@ class LinkIndex:
         # ('National Taco Day' is not the national intelligence chief named AI czar)
         rare = [t for t in shared if self.df[t] <= self.rare_cap and t not in COMMON_WORDS]
         jacc = len(shared) / len(ta | tb)
-        if len(shared) >= 2 and jacc >= 0.25:
+        # two shared words that both titles write as one phrase are one piece of evidence: 'student protests'
+        # joined 'Photos: The Student Protests in France' to Belgium's (October 7, rc12c on the PC), unless they
+        # are the whole of one title (the trend 'Christa Pike' names its story)
+        if len(shared) >= 2 and jacc >= 0.25 and (len(shared) >= 3 or shared in (ta, tb)
+                                                  or not all(self._adjacent(i, shared) for i in (a, b))):
             return True, sorted(shared), f"shared wording ({len(shared)} words, overlap {jacc:.2f})"
         # a phrase both titles share ('Supreme Court', 'iPhone 18 Pro', 'dies aged') is one piece
         # of evidence, not one per word: two reports need two separate rare things in common
         # ...and at least one of them must be about what happened, not only who ('Apple' + 'iPhone')
         # ...and an everyday word ('behind', 'app' + 'behind' joined a privacy probe to a WSJ profile) is none
         cap = self.rare_cap if shared & self.name_words else self.nameless_cap
+        # ...and a name alone is one of the two only when few titles of the run write it: at 6% of a real run
+        # (79 of 1,329 reports) 'Trump' was rare, and 'Trump' + 'retreat' joined US forces pulling back from the
+        # Gulf to Trump's golf-club 'presidential retreat' (October 7, rc12c on the PC)
         rare_units = [u for u in self.shared_units(a, b, shared)
                       if any(self.df[t] <= cap and t not in COMMON_WORDS for t in u)]
         # an action word alone ('releases') is not one of the two: 'Mistral AI Releases Mistral Large 4 ...
@@ -618,6 +634,13 @@ class LinkIndex:
         # Embedding Model' are two launches (October 7, selftest r2)
         what = [u for u in rare_units if not u <= EVENT_WORDS]
         if len(what) >= 2 and any(self._event_unit(u) for u in rare_units):
+            # ...and a name in more than 2% of the run's reports is one of the two only when the embedding agrees
+            # strongly too (IdentityGate): at 6% of a real run (79 of 1,329) 'Trump' was rare, and 'Trump' +
+            # 'retreat' joined US forces pulling back from the Gulf to Trump's golf-club 'presidential retreat'
+            # (October 7, rc12c on the PC; cosine 0.69), while 'Russia' + 'plague' is one event
+            common = [u for u in what if u <= self.name_words and min(self.df[t] for t in u) > self.name_cap]
+            if len(what) - len(common) < 2:
+                return False, [" ".join(sorted(u)) for u in rare_units], COMMON_NAME_AND_PHRASE
             return True, [" ".join(sorted(u)) for u in rare_units], "two distinctive phrases in common"
         # short trend fragments ('Packers', 'Bijan') link to a fuller title via one distinctive name
         short = a if len(ta) <= len(tb) else b
@@ -710,7 +733,7 @@ class LinkIndex:
         """Both reports write the same name. With ``rare``, only a name few reports of the run carry: a
         name in six reports ('Google') says who, not what (October 7: Google's gaming platform and Google's
         investment in a 'virtual cell' shared 'Google' + 'create')."""
-        na, nb = self.written_names(a), self.written_names(b)
+        na, nb = self.written_names(a) - INSTITUTION_NAMES, self.written_names(b) - INSTITUTION_NAMES
         if titles:  # only names both TITLES write (in any form): a name in one page's lead is context, not the subject
             na, nb = self._title_names(a, na), self._title_names(b, nb)
         return any(self.same_name(x, y) and (not rare or self.name_df(x) <= self.rare_cap) for x in na for y in nb)
@@ -741,6 +764,11 @@ class LinkIndex:
                    and self.mentions(c, self.items[a].normalized_title)
                    and self.mentions(c, self.items[b].normalized_title)
                    for c in self.items if c not in (a, b))
+
+    def _adjacent(self, item_id: int, words: set[str]) -> bool:
+        """The report's title writes these two words side by side (stop words between them do not count)."""
+        seq = [t for t in tokens(self.items[item_id].normalized_title) if t in self.toks[item_id]]
+        return any({x, y} == words for x, y in zip(seq, seq[1:]))
 
     def shared_units(self, a: int, b: int, shared: set[str], context: bool = False) -> list[set[str]]:
         """Shared tokens grouped into phrases: words either title (with ``context``, either event text)

@@ -30,7 +30,10 @@ RC11_EDITIONS = ("2026-10-07-selftest-r1.json", "2026-10-07-selftest-r2.json", "
 #: the Paxton leak with three Iran-war reports, Belgian protests in France's stun-grenade story, AI agents
 #: hacking South Korea's banks with OpenAI's agents at Wikipedia.
 RC12_EDITIONS = ("2026-10-07-rc12-r1.json", "2026-10-07-rc12-r2.json")
-EDITIONS = RC11_EDITIONS + RC12_EDITIONS
+#: ... and the rc12c editions (13:41 and 13:50, rc12b gate on nomic-embed-text): two "retreats" (Trump's forces
+#: pulling back, his golf club), two obituaries, three polls, Kimmel's monologue in the Trump Accounts story.
+RC12C_EDITIONS = ("2026-10-07-rc12c-r1.json", "2026-10-07-rc12c-r2.json")
+EDITIONS = RC11_EDITIONS + RC12_EDITIONS + RC12C_EDITIONS
 _SOURCE_BY_NAME = {"News feeds": SourceName.NEWS_RSS, "Google News": SourceName.GOOGLE_NEWS,
                    "Google Trends": SourceName.GOOGLE_TRENDS, "Hacker News": SourceName.HACKERNEWS,
                    "YouTube": SourceName.YOUTUBE, "X (trends24)": SourceName.X_TRENDS24, "Bluesky": SourceName.BLUESKY,

@@ -54,8 +54,8 @@ from agent_reach.pipeline.clusterer import LinkIndex
 from agent_reach.pipeline.density import density_cluster
 from agent_reach.pipeline.embeddings import EmbeddingUnavailable, embed_reports
 from agent_reach.pipeline.event_identity import cohesive_groups, lexical_candidates, nearest_candidates
-from tests.event_corpus import (EDITIONS, RC11_EDITIONS, RC12_EDITIONS, CorpusItem, load_edition, recorded_groups,
-                                related_pairs, score)
+from tests.event_corpus import (EDITIONS, RC11_EDITIONS, RC12_EDITIONS, RC12C_EDITIONS, CorpusItem, load_edition,
+                                recorded_groups, related_pairs, score)
 
 # embeddinggemma:300m (the first EmbeddingGemma): October 7, Ollama could run EmbeddingGemma 2 on Macs only, so the
 # Windows PC compares nomic with the EmbeddingGemma it can run; EmbeddingGemma 2 is benchmarked once it pulls.
@@ -200,11 +200,14 @@ async def embed_corpora(client, model: str, corpora: dict[str, list[CorpusItem]]
 
 
 def load_vectors(path: Path, corpora: dict[str, list[CorpusItem]]) -> tuple[str, dict[str, dict[int, list[float]]]]:
-    """Real vectors a benchmark run on the user's PC saved (``vectors-<model>.json.gz``), checked title by title."""
+    """Real vectors a benchmark run on the user's PC saved (``vectors-<model>.json.gz``), checked title by title.
+    Editions labelled after that run are not in the file and are left out."""
     with gzip.open(path, "rt", encoding="utf-8") as fh:
         data = json.load(fh)
     out: dict[str, dict[int, list[float]]] = {}
     for name, corpus in corpora.items():
+        if name not in data["editions"]:
+            continue
         saved = data["editions"][name]
         out[name] = {}
         for c in corpus:
@@ -229,6 +232,8 @@ async def run(models: list[str], use_ollama: bool, host: str, client=None, repla
         only=RC11_EDITIONS)
     add("rc12 published on the PC (nomic + identity gate before rc12b; 2 rc12 editions)",
         lambda n, c: recorded_groups(c), only=RC12_EDITIONS)
+    add("rc12c published on the PC (nomic + rc12b identity gate; 2 rc12c editions)",
+        lambda n, c: recorded_groups(c), only=RC12C_EDITIONS)
     add("identity gate, no embeddings (fallback)", lambda n, c: identity_groups(c, settings, None)[0])
     add("identity gate, replayed rc11 neighbourhoods", lambda n, c: identity_groups(c, settings, replay_vectors(c))[0])
     add("identity gate, every pair cosine 1",
@@ -238,18 +243,22 @@ async def run(models: list[str], use_ollama: bool, host: str, client=None, repla
 
     def add_model(label: str, vecs: dict[str, dict[int, list[float]]]) -> float:
         clock = time.perf_counter()
+        only = tuple(vecs)
+        if len(only) < len(corpora):
+            label += f" ({len(only)} of {len(corpora)} editions)"
         add(f"{label} + HDBSCAN + single-link (rc11 structure)",
-            lambda n, c: density_groups(c, settings, vecs[n], single_link=True))
+            lambda n, c: density_groups(c, settings, vecs[n], single_link=True), only=only)
         add(f"{label} + HDBSCAN + identity gate (cluster_method=density)",
-            lambda n, c: density_groups(c, settings, vecs[n], single_link=False))
+            lambda n, c: density_groups(c, settings, vecs[n], single_link=False), only=only)
         add(f"{label} + identity gate (cluster_method=identity, default)",
-            lambda n, c: identity_groups(c, settings, vecs[n])[0])
+            lambda n, c: identity_groups(c, settings, vecs[n])[0], only=only)
         return round(time.perf_counter() - clock, 2)
 
     for path in replay or []:
         model, vecs = load_vectors(path, corpora)
         add_model(f"{model} (replayed from {path.name})", vecs)
-        models_out.append({"model": model, "replayed_from": path.name, "cosines": cosine_report(corpora, vecs, settings)})
+        models_out.append({"model": model, "replayed_from": path.name,
+                           "cosines": cosine_report({n: corpora[n] for n in vecs}, vecs, settings)})
     if use_ollama:
         if client is None:
             from ollama import AsyncClient
@@ -261,7 +270,8 @@ async def run(models: list[str], use_ollama: bool, host: str, client=None, repla
                     emb = await embed_corpora(client, model, corpora, Path(tmp))
                 except EmbeddingUnavailable as exc:
                     models_out.append({"model": model, "error": str(exc)[:300]})
-                    print(f"  {model}: not available ({str(exc)[:160]}). Pull it: ollama pull {model}", file=sys.stderr)
+                    print(f"  {model}: not available ({str(exc)[:160]}). {unavailable_advice(model, str(exc))}",
+                          file=sys.stderr)
                     continue
                 vecs = emb.pop("vectors")
                 dumps[model] = {name: {str(c.item.item_id): {"title": c.title, "vector": [round(x, 5) for x in vecs[name][c.item.item_id]]}
@@ -276,6 +286,18 @@ async def run(models: list[str], use_ollama: bool, host: str, client=None, repla
                                                             "identity_strong_cosine", "event_max_age_hours")},
             "ollama": use_ollama, "rows": rows, "models": models_out, "false_merge_examples": examples,
             "vectors": dumps}
+
+
+def unavailable_advice(model: str, error: str) -> str:
+    """What to do about a model the benchmark could not use, in plain words."""
+    if "untrusted mount point" in error:
+        # October 7, PC: Ollama 0.40.0 downloaded embeddinggemma:300m, then could not open it (ollama/ollama#18847)
+        return ("Ollama downloaded it but cannot open it: a known bug in Ollama 0.40 on Windows saves the model's "
+                "index file as a link that Windows refuses to follow. Pulling again does not help; a later Ollama "
+                "should fix it.")
+    if "MLX" in error:
+        return "Ollama can run it only on Mac computers so far."
+    return f"Pull it: ollama pull {model}"
 
 
 def markdown(result: dict) -> str:

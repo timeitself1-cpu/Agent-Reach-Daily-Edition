@@ -22,8 +22,10 @@ from agent_reach.config import Settings
 from agent_reach.models import CleanedTrendItem, RawTrendItem, SourceName
 from agent_reach.pipeline.clusterer import LinkIndex, SemanticClusterer
 from agent_reach.pipeline.embeddings import event_representation
-from agent_reach.pipeline.event_identity import ACCEPT, NEUTRAL, REJECT, IdentityGate, PairDecision, cohesive_groups
-from tests.event_corpus import EDITIONS, RC11_EDITIONS, RC12_EDITIONS, load_edition, recorded_groups, related_pairs, score
+from agent_reach.pipeline.event_identity import (ACCEPT, COMMON_NAME_AND_PHRASE, NEUTRAL, REJECT, IdentityGate, PairDecision,
+                                                 cohesive_groups)
+from tests.event_corpus import (EDITIONS, RC11_EDITIONS, RC12_EDITIONS, RC12C_EDITIONS, load_edition, recorded_groups,
+                                related_pairs, score)
 
 
 def _unit(v: list[float]) -> list[float]:
@@ -98,12 +100,29 @@ def test_rc12_published_these_false_merges_on_the_pc(name):
     assert len(s.false_merges) == {"2026-10-07-rc12-r1.json": 19, "2026-10-07-rc12-r2.json": 7}[name]
 
 
+@pytest.mark.parametrize("name", RC12C_EDITIONS)
+def test_rc12c_published_these_false_merges_on_the_pc(name):
+    """The rc12c refreshes on the user's PC (13:41, 13:50; rc12b gate on nomic-embed-text): Kimmel's monologue in
+    the Trump Accounts story, Eva Marie Saint in Frank Mancuso's obituary, three polls, two 'retreats', Belgium in
+    France's protests, two RTX Spark laptops. The fixes are below and in the replay test."""
+    corpus = load_edition(name)
+    s = score(corpus, recorded_groups(corpus), related_pairs(name))
+    assert len(s.false_merges) == {"2026-10-07-rc12c-r1.json": 19, "2026-10-07-rc12c-r2.json": 7}[name]
+
+
+#: False merges still open, by edition (each has a strict xfail test of its own below)
+OPEN_FALSE_MERGES = {"2026-10-07-rc12c-r1.json": {frozenset((
+    "Microsoft and Nvidia launch Surface Laptop Ultra with RTX Spark",
+    "Nvidia RTX Spark for $2,999.99: HP leak reveals RTX Spark laptop pricing ahead of launch"))}}
+
+
 @pytest.mark.parametrize("name", EDITIONS)
 def test_no_false_merges_when_rc11_neighbourhoods_are_replayed(name, tmp_path):
     corpus = load_edition(name)
     outcome, groups = run_clusterer(corpus, replay_vectors(corpus), tmp_path)
     s = score(corpus, groups, related_pairs(name))
-    assert s.false_merges == [], s.false_merges
+    unexpected = [m for m in s.false_merges if frozenset(m) not in OPEN_FALSE_MERGES.get(name, set())]
+    assert unexpected == [], unexpected
     assert outcome.semantic["model_used"] == "embeddinggemma-2:270m"
 
 
@@ -362,3 +381,68 @@ def test_first_rc12_refresh_cases_stay_apart(tmp_path):
     assert d.verdict != ACCEPT  # 'agents' is a broad concept and 'hack' a kind of event: neither says which event
     d = index.gate.decide(_id(corpus, "France halts use of stun grenades"), _id(corpus, "Belgian students rally"))
     assert d.verdict != ACCEPT  # 'France' + 'protests': who and what kind, not what happened
+
+
+def test_rc12c_refresh_cases_stay_apart(tmp_path):
+    """Case H (rc12c on the user's PC, October 7, 13:41): a lone report joined a story through one everyday title
+    word ('dies', 'president') plus a name or word only the PAGES share; "don't" + 'poll' counted as two
+    distinctive phrases; 'Congress' in both titles counted as a rare shared name; 'student protests' counted as two
+    shared words (Belgium's protests joined France's)."""
+    corpus, groups = _replayed_groups("2026-10-07-rc12c-r1.json", tmp_path)
+    mancuso = [_id(corpus, "Frank G. Mancuso Sr. Dies"), _id(corpus, "Frank Mancuso Sr., Former Chief")]
+    assert _together(groups, *mancuso)
+    assert not any(_together(groups, _id(corpus, "Oscar-winning actress Eva Marie Saint"), m) for m in mancuso)
+    accounts = [_id(corpus, "WATCH: Trump announces eligible"), _id(corpus, "President Trump announces automatic")]
+    assert not any(_together(groups, _id(corpus, "Jimmy Kimmel on Trump"), a) for a in accounts)
+    polls = [_id(corpus, p) for p in ("Most US voters say", "As voters weigh incumbents", "Americans don't want")]
+    for a, b in combinations(polls, 2):
+        assert not _together(groups, a, b)
+    corpus, index = _index("2026-10-07-rc12c-r1.json")
+    d = index.gate.decide(_id(corpus, "Most US voters say"), _id(corpus, "Americans don't want"))
+    assert d.verdict != ACCEPT and "don't" not in d.shared  # a negation is no subject
+    assert not index.shares_name(_id(corpus, "Most US voters say"), _id(corpus, "As voters weigh incumbents"),
+                                 rare=True, titles=True)  # 'Congress' says where, not what
+    photos, belgium = _id(corpus, "Photos: The Student Protests in France"), _id(corpus, "Over 100 arrested in Belgium")
+    assert not index.link_evidence(photos, belgium)[0]  # 'student protests' is one phrase, one piece of evidence
+    pike = [c.item.item_id for c in corpus if c.title == "Christa Pike"]
+    assert pike and index.link_evidence(pike[0], _id(corpus, "Christa Pike 'conscious and speaking'"))[0]
+
+
+def test_a_common_name_and_one_word_need_the_embedding_too():
+    """Case H: in a real run (1,329 reports) a name counted as rare up to 6% of the run, so 'Trump' + 'retreat'
+    were two distinctive phrases and US forces pulling back joined Trump's golf-club 'presidential retreat'
+    (cosine 0.69). A name in more than 2% of the run plus one specific word now needs strong embedding agreement:
+    'Russia' + 'plague' stays one event."""
+    import random
+
+    now = RawTrendItem(title="x", source=SourceName.NEWS_RSS).timestamp
+    rnd = random.Random(3)
+
+    def word() -> str:
+        return "".join(rnd.choice("bcdfghklmnprstvz") + rnd.choice("aeiou") for _ in range(4))
+
+    titles = ["From Iran to the U.K., Trump is being forced into retreat",
+              "Trump wants to turn Florida golf course into presidential retreat",
+              "Trump's retreat: from the Gulf to Britain, American forces pull back",
+              "Trump wants to turn his private golf club into a presidential retreat"]
+    titles += [f"Officials say Trump weighs {word()} plan for {word()}" for _ in range(30)]
+    titles += [f"Regulators review {word()} rules for {word()} growers" for _ in range(600)]
+    items = [CleanedTrendItem(item_id=i, title=t, normalized_title=t, source=SourceName.NEWS_RSS, heuristic_score=0.5,
+                              timestamp=now) for i, t in enumerate(titles, 1)]
+    index = LinkIndex(items, items)
+    assert index.name_cap < index.df["trump"] <= index.rare_cap  # as on the PC: 'Trump' is 'rare' at 6%
+    assert index.link_evidence(1, 2)[2] == COMMON_NAME_AND_PHRASE and not index.link_evidence(1, 2)[0]
+    assert index.link_evidence(2, 4)[0]  # the two golf-club reports share their whole wording
+    far = [0.69, (1 - 0.69 ** 2) ** 0.5]
+    index.attach_vectors({**{i: [1.0, 0.0] for i in index.items}, 2: far, 4: far}, 0.45, 0.8)
+    assert index.gate.decide(1, 2).verdict == NEUTRAL and index.gate.decide(2, 4).verdict == ACCEPT
+    index.attach_vectors({i: [1.0, 0.0] for i in index.items}, 0.45, 0.8)  # the embedding sees one event
+    assert index.gate.decide(1, 2).verdict == ACCEPT
+
+
+@pytest.mark.xfail(strict=True, reason="open: two RTX Spark laptop stories share five title words (October 7, rc12c)")
+def test_two_laptops_with_one_chip_are_two_stories(tmp_path):
+    """Microsoft's Surface Laptop Ultra launch and an HP price leak share 'Nvidia RTX Spark laptop launch': the
+    words say which chip, not which event. No rule yet tells a product name from what happened."""
+    corpus, groups = _replayed_groups("2026-10-07-rc12c-r1.json", tmp_path)
+    assert not _together(groups, _id(corpus, "Microsoft and Nvidia launch Surface"), _id(corpus, "Nvidia RTX Spark for"))

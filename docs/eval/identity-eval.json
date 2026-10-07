@@ -1,5 +1,5 @@
 {
- "generated_utc": "2026-10-07T18:21:57+00:00",
+ "generated_utc": "2026-10-07T21:19:51+00:00",
  "corpus": {
   "editions": [
    "2026-10-07-selftest-r1.json",
@@ -8,10 +8,12 @@
    "2026-10-07-selftest2-r2.json",
    "2026-10-07-0935-export.json",
    "2026-10-07-rc12-r1.json",
-   "2026-10-07-rc12-r2.json"
+   "2026-10-07-rc12-r2.json",
+   "2026-10-07-rc12c-r1.json",
+   "2026-10-07-rc12c-r2.json"
   ],
-  "reports": 593,
-  "gold_events": 332
+  "reports": 776,
+  "gold_events": 430
  },
  "settings": {
   "identity_neighbors": 12,
@@ -125,15 +127,50 @@
    }
   },
   {
+   "name": "rc12c published on the PC (nomic + rc12b identity gate; 2 rc12c editions)",
+   "precision": 0.872,
+   "recall": 0.917,
+   "f1": 0.894,
+   "false_merges": 26,
+   "missed_merges": 16,
+   "mixed_stories": 8,
+   "true_pairs": 193,
+   "predicted_pairs": 203,
+   "editions": {
+    "2026-10-07-rc12c-r1.json": {
+     "precision": 0.816,
+     "recall": 0.913,
+     "f1": 0.862,
+     "false_merges": 19,
+     "missed_merges": 8,
+     "mixed_stories": 6,
+     "multi_report_stories": 19,
+     "true_pairs": 92,
+     "predicted_pairs": 103
+    },
+    "2026-10-07-rc12c-r2.json": {
+     "precision": 0.93,
+     "recall": 0.921,
+     "f1": 0.925,
+     "false_merges": 7,
+     "missed_merges": 8,
+     "mixed_stories": 2,
+     "multi_report_stories": 20,
+     "true_pairs": 101,
+     "predicted_pairs": 100
+    }
+   }
+  },
+  {
    "name": "identity gate, no embeddings (fallback)",
-   "precision": 1.0,
-   "recall": 0.62,
-   "f1": 0.765,
-   "false_merges": 0,
-   "missed_merges": 200,
-   "mixed_stories": 0,
-   "true_pairs": 526,
-   "predicted_pairs": 326,
+   "precision": 0.998,
+   "recall": 0.572,
+   "f1": 0.727,
+   "false_merges": 1,
+   "missed_merges": 308,
+   "mixed_stories": 1,
+   "true_pairs": 719,
+   "predicted_pairs": 412,
    "editions": {
     "2026-10-07-selftest-r1.json": {
      "precision": 1.0,
@@ -181,14 +218,14 @@
     },
     "2026-10-07-0935-export.json": {
      "precision": 1.0,
-     "recall": 0.852,
-     "f1": 0.92,
+     "recall": 0.787,
+     "f1": 0.881,
      "false_merges": 0,
-     "missed_merges": 9,
+     "missed_merges": 13,
      "mixed_stories": 0,
      "multi_report_stories": 17,
      "true_pairs": 61,
-     "predicted_pairs": 52
+     "predicted_pairs": 48
     },
     "2026-10-07-rc12-r1.json": {
      "precision": 1.0,
@@ -211,41 +248,63 @@
      "multi_report_stories": 18,
      "true_pairs": 62,
      "predicted_pairs": 31
+    },
+    "2026-10-07-rc12c-r1.json": {
+     "precision": 0.974,
+     "recall": 0.413,
+     "f1": 0.58,
+     "false_merges": 1,
+     "missed_merges": 54,
+     "mixed_stories": 1,
+     "multi_report_stories": 19,
+     "true_pairs": 92,
+     "predicted_pairs": 39
+    },
+    "2026-10-07-rc12c-r2.json": {
+     "precision": 1.0,
+     "recall": 0.505,
+     "f1": 0.671,
+     "false_merges": 0,
+     "missed_merges": 50,
+     "mixed_stories": 0,
+     "multi_report_stories": 20,
+     "true_pairs": 101,
+     "predicted_pairs": 51
     }
    }
   },
   {
    "name": "identity gate, replayed rc11 neighbourhoods",
-   "precision": 1.0,
-   "recall": 0.688,
-   "f1": 0.815,
-   "false_merges": 0,
-   "missed_merges": 164,
-   "mixed_stories": 0,
-   "true_pairs": 526,
-   "predicted_pairs": 362,
+   "precision": 0.998,
+   "recall": 0.629,
+   "f1": 0.771,
+   "false_merges": 1,
+   "missed_merges": 267,
+   "mixed_stories": 1,
+   "true_pairs": 719,
+   "predicted_pairs": 453,
    "editions": {
     "2026-10-07-selftest-r1.json": {
      "precision": 1.0,
-     "recall": 0.624,
-     "f1": 0.768,
+     "recall": 0.607,
+     "f1": 0.755,
      "false_merges": 0,
-     "missed_merges": 44,
+     "missed_merges": 46,
      "mixed_stories": 0,
      "multi_report_stories": 19,
      "true_pairs": 117,
-     "predicted_pairs": 73
+     "predicted_pairs": 71
     },
     "2026-10-07-selftest-r2.json": {
      "precision": 1.0,
-     "recall": 0.472,
-     "f1": 0.642,
+     "recall": 0.454,
+     "f1": 0.624,
      "false_merges": 0,
-     "missed_merges": 57,
+     "missed_merges": 59,
      "mixed_stories": 0,
      "multi_report_stories": 19,
      "true_pairs": 108,
-     "predicted_pairs": 51
+     "predicted_pairs": 49
     },
     "2026-10-07-selftest2-r1.json": {
      "precision": 1.0,
@@ -293,27 +352,49 @@
     },
     "2026-10-07-rc12-r2.json": {
      "precision": 1.0,
-     "recall": 0.613,
-     "f1": 0.76,
+     "recall": 0.548,
+     "f1": 0.708,
      "false_merges": 0,
-     "missed_merges": 24,
+     "missed_merges": 28,
      "mixed_stories": 0,
      "multi_report_stories": 20,
      "true_pairs": 62,
-     "predicted_pairs": 38
+     "predicted_pairs": 34
+    },
+    "2026-10-07-rc12c-r1.json": {
+     "precision": 0.977,
+     "recall": 0.457,
+     "f1": 0.622,
+     "false_merges": 1,
+     "missed_merges": 50,
+     "mixed_stories": 1,
+     "multi_report_stories": 19,
+     "true_pairs": 92,
+     "predicted_pairs": 43
+    },
+    "2026-10-07-rc12c-r2.json": {
+     "precision": 1.0,
+     "recall": 0.554,
+     "f1": 0.713,
+     "false_merges": 0,
+     "missed_merges": 45,
+     "mixed_stories": 0,
+     "multi_report_stories": 22,
+     "true_pairs": 101,
+     "predicted_pairs": 56
     }
    }
   },
   {
    "name": "identity gate, every pair cosine 1",
    "precision": 1.0,
-   "recall": 0.167,
-   "f1": 0.287,
+   "recall": 0.154,
+   "f1": 0.267,
    "false_merges": 0,
-   "missed_merges": 438,
+   "missed_merges": 608,
    "mixed_stories": 0,
-   "true_pairs": 526,
-   "predicted_pairs": 88,
+   "true_pairs": 719,
+   "predicted_pairs": 111,
    "editions": {
     "2026-10-07-selftest-r1.json": {
      "precision": 1.0,
@@ -383,14 +464,36 @@
     },
     "2026-10-07-rc12-r2.json": {
      "precision": 1.0,
-     "recall": 0.113,
-     "f1": 0.203,
+     "recall": 0.081,
+     "f1": 0.149,
      "false_merges": 0,
-     "missed_merges": 55,
+     "missed_merges": 57,
      "mixed_stories": 0,
      "multi_report_stories": 3,
      "true_pairs": 62,
-     "predicted_pairs": 7
+     "predicted_pairs": 5
+    },
+    "2026-10-07-rc12c-r1.json": {
+     "precision": 1.0,
+     "recall": 0.12,
+     "f1": 0.214,
+     "false_merges": 0,
+     "missed_merges": 81,
+     "mixed_stories": 0,
+     "multi_report_stories": 4,
+     "true_pairs": 92,
+     "predicted_pairs": 11
+    },
+    "2026-10-07-rc12c-r2.json": {
+     "precision": 1.0,
+     "recall": 0.139,
+     "f1": 0.243,
+     "false_merges": 0,
+     "missed_merges": 87,
+     "mixed_stories": 0,
+     "multi_report_stories": 4,
+     "true_pairs": 101,
+     "predicted_pairs": 14
     }
    }
   }
@@ -534,6 +637,52 @@
     ]
    ]
   },
+  "rc12c published on the PC (nomic + rc12b identity gate; 2 rc12c editions)": {
+   "2026-10-07-rc12c-r1.json": [
+    [
+     "From Iran to the U.K., Trump Is Being Forced Into Retreat",
+     "Trump wants to turn Florida golf course into presidential retreat"
+    ],
+    [
+     "From Iran to the U.K., Trump Is Being Forced Into Retreat",
+     "Trump wants to turn his private golf club into a presidential retreat"
+    ],
+    [
+     "Trump wants to turn Florida golf course into presidential retreat",
+     "Trump's Retreat: From the Gulf to Britain, American Forces Pull Back"
+    ],
+    [
+     "Trump's Retreat: From the Gulf to Britain, American Forces Pull Back",
+     "Trump wants to turn his private golf club into a presidential retreat"
+    ],
+    [
+     "France suspends use of stun grenades to police student protests",
+     "Over 100 arrested in Belgium student protests over education costs"
+    ]
+   ],
+   "2026-10-07-rc12c-r2.json": [
+    [
+     "From Iran to the U.K., Trump Is Being Forced Into Retreat",
+     "Trump wants to turn Florida golf course into presidential retreat"
+    ],
+    [
+     "From Iran to the U.K., Trump Is Being Forced Into Retreat",
+     "Trump wants to turn his private golf club into a presidential retreat"
+    ],
+    [
+     "Trump wants to turn Florida golf course into presidential retreat",
+     "Trump's Retreat: From the Gulf to Britain, American Forces Pull Back"
+    ],
+    [
+     "Trump's Retreat: From the Gulf to Britain, American Forces Pull Back",
+     "Trump wants to turn his private golf club into a presidential retreat"
+    ],
+    [
+     "WATCH: Trump announces eligible U.S. children automatically enrolled in Trump accounts",
+     "Jimmy Kimmel on Trump's joke about Iran bombing LA: 'Our own president wishing death to America'"
+    ]
+   ]
+  },
   "identity gate, no embeddings (fallback)": {
    "2026-10-07-selftest-r1.json": [],
    "2026-10-07-selftest-r2.json": [],
@@ -541,7 +690,14 @@
    "2026-10-07-selftest2-r2.json": [],
    "2026-10-07-0935-export.json": [],
    "2026-10-07-rc12-r1.json": [],
-   "2026-10-07-rc12-r2.json": []
+   "2026-10-07-rc12-r2.json": [],
+   "2026-10-07-rc12c-r1.json": [
+    [
+     "Microsoft and Nvidia launch Surface Laptop Ultra with RTX Spark",
+     "Nvidia RTX Spark for $2,999.99: HP leak reveals RTX Spark laptop pricing ahead of launch"
+    ]
+   ],
+   "2026-10-07-rc12c-r2.json": []
   },
   "identity gate, replayed rc11 neighbourhoods": {
    "2026-10-07-selftest-r1.json": [],
@@ -550,7 +706,14 @@
    "2026-10-07-selftest2-r2.json": [],
    "2026-10-07-0935-export.json": [],
    "2026-10-07-rc12-r1.json": [],
-   "2026-10-07-rc12-r2.json": []
+   "2026-10-07-rc12-r2.json": [],
+   "2026-10-07-rc12c-r1.json": [
+    [
+     "Microsoft and Nvidia launch Surface Laptop Ultra with RTX Spark",
+     "Nvidia RTX Spark for $2,999.99: HP leak reveals RTX Spark laptop pricing ahead of launch"
+    ]
+   ],
+   "2026-10-07-rc12c-r2.json": []
   },
   "identity gate, every pair cosine 1": {
    "2026-10-07-selftest-r1.json": [],
@@ -559,7 +722,9 @@
    "2026-10-07-selftest2-r2.json": [],
    "2026-10-07-0935-export.json": [],
    "2026-10-07-rc12-r1.json": [],
-   "2026-10-07-rc12-r2.json": []
+   "2026-10-07-rc12-r2.json": [],
+   "2026-10-07-rc12c-r1.json": [],
+   "2026-10-07-rc12c-r2.json": []
   }
  }
 }
