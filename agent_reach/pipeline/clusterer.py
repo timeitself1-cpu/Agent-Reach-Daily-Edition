@@ -650,6 +650,8 @@ class ClusterOutcome:
     clusters: list[MacroCluster]
     discards: dict[str, list[int]]
     mode: str
+    label_calls: int = 0  # model labelling calls (batches) made
+    label_calls_failed: int = 0  # of those, batches that fell back to heuristic labels (model gone, bad output)
 
     @property
     def discarded_count(self) -> int:
@@ -673,6 +675,8 @@ class SemanticClusterer:
         self.settings = settings
         self._client = None
         self._use_schema = True
+        self.label_calls = 0
+        self.label_calls_failed = 0
 
     @property
     def batch_size(self) -> int:
@@ -854,7 +858,8 @@ class SemanticClusterer:
         for r, ids in final_discards.items():
             discards[r].extend(ids)
 
-        outcome = ClusterOutcome(clusters=clusters, discards={k: v for k, v in discards.items() if v}, mode=mode)
+        outcome = ClusterOutcome(clusters=clusters, discards={k: v for k, v in discards.items() if v}, mode=mode,
+                                 label_calls=self.label_calls, label_calls_failed=self.label_calls_failed)
         outcome.assert_partition(items)
         return outcome
 
@@ -1065,11 +1070,13 @@ class SemanticClusterer:
                 for m in d.item_ids[:10]:
                     lines.append(f"  - {self._render_item(by_id[m])}")
             lines.append(f"Label groups 1..{len(group_chunk)}. Return labels only.")
+            self.label_calls += 1
             try:
                 data = await self._chat_json(CLUSTER_SYSTEM_PROMPT, "\n".join(lines), _relabel_schema(), f"label {ci}/{len(chunks)}")
                 parsed = _RelabelResponse.model_validate(data)
             except (ClusteringError, ValueError) as exc:
                 log.warning("relabel pass failed (%s); using heuristic labels", exc)
+                self.label_calls_failed += 1
                 parsed = _RelabelResponse()
             labels = {g.group_id: g for g in parsed.groups}
             for gi, d in enumerate(group_chunk, start=1):

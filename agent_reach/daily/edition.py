@@ -189,6 +189,19 @@ class ModelInfo(BaseModel):
     embed_model: str
     pipeline_mode: str
     summaries: Literal["local_model", "extractive"]
+    label_calls: int = 0  # model labelling batches; failed ones used the reports' own titles
+    label_calls_failed: int = 0
+    brief_calls: int = 0  # 'why it matters' batches; failed ones added nothing
+    brief_calls_failed: int = 0
+
+    @property
+    def model_stopped(self) -> bool:
+        """The model answered at first and then stopped (or never answered the labelling calls)."""
+        return bool(self.label_calls_failed or self.brief_calls_failed) or "unreachable" in self.pipeline_mode
+
+
+#: Labelling batches that may fall back to the reports' own titles before the edition counts as extractive.
+MAX_LABEL_FALLBACK_SHARE = 0.5
 
 
 class AccountingSummary(BaseModel):
@@ -1080,6 +1093,7 @@ def assemble_edition(
     config_fingerprint: str,
     revision: int = 1,
     previous_revisions: list[Revision] | None = None,
+    brief_stats: dict[str, int] | None = None,
 ) -> DailyEdition:
     if not report.valid or report.accounting is None:
         raise ValueError("only a valid report can become an edition")
@@ -1089,8 +1103,14 @@ def assemble_edition(
     health = source_health(report, stories)
     coverage = build_coverage(health, stories, selection, report)
     acct = report.accounting
-    summaries = "extractive" if report.llm_mode.startswith("heuristic") else "local_model"
-    notes = edition_notes(selection, prefs, extractive=summaries == "extractive")
+    labels, labels_failed = report.label_calls, report.label_calls_failed
+    mostly_fallback = bool(labels) and labels_failed >= MAX_LABEL_FALLBACK_SHARE * labels
+    summaries = "extractive" if report.llm_mode.startswith("heuristic") or mostly_fallback else "local_model"
+    brief = brief_stats or {}
+    model = ModelInfo(llm_model=prefs.ollama_model, embed_model=prefs.embed_model, pipeline_mode=report.llm_mode,
+                      summaries=summaries, label_calls=labels, label_calls_failed=labels_failed,
+                      brief_calls=brief.get("calls", 0), brief_calls_failed=brief.get("failed_calls", 0))
+    notes = edition_notes(selection, prefs, extractive=summaries == "extractive", model=model)
     return DailyEdition(
         edition_date=central_date(started),
         revision=revision,
@@ -1099,8 +1119,7 @@ def assemble_edition(
         trigger=trigger,
         generation_started_utc=started.astimezone(timezone.utc),
         generation_completed_utc=completed.astimezone(timezone.utc),
-        model=ModelInfo(llm_model=prefs.ollama_model, embed_model=prefs.embed_model,
-                        pipeline_mode=report.llm_mode, summaries=summaries),
+        model=model,
         config_fingerprint=config_fingerprint,
         pipeline_schema_version=report.schema_version,
         accounting=AccountingSummary(ingested=acct.ingested, passed_filters=acct.passed_filters,
@@ -1115,7 +1134,8 @@ def assemble_edition(
     )
 
 
-def edition_notes(selection: Selection, prefs: DailyPrefs, *, extractive: bool = False) -> list[str]:
+def edition_notes(selection: Selection, prefs: DailyPrefs, *, extractive: bool = False,
+                  model: ModelInfo | None = None) -> list[str]:
     """Plain-language notes on what the edition left out or could not measure (each said once)."""
     stories = selection.stories
     notes = list(selection.notes)
@@ -1146,8 +1166,17 @@ def edition_notes(selection: Selection, prefs: DailyPrefs, *, extractive: bool =
     if selection.dropped_live_blog:
         notes.append(f"{plural(selection.dropped_live_blog, 'live blog was', 'live blogs were')} left out (a running "
                      "page of many updates is not one story).")
-    if extractive:
+    if extractive and model is not None and model.model_stopped:
+        notes.append("The local model stopped answering during this refresh, so summaries are lead sentences from "
+                     "the sources.")
+    elif extractive:
         notes.append("Summaries are extractive (lead sentences from the sources) because the local model was not used.")
+    elif model is not None and model.label_calls_failed:
+        notes.append(f"The local model stopped answering partway through: "
+                     f"{plural(model.label_calls_failed, 'group of stories was', 'groups of stories were')} titled "
+                     "from the reports themselves.")
+    if model is not None and model.brief_calls and model.brief_calls_failed == model.brief_calls and not extractive:
+        notes.append("No 'why it matters' notes this time: the local model stopped answering before writing them.")
     return notes
 
 
@@ -1170,7 +1199,11 @@ def evaluate_publication(edition: DailyEdition, prefs: DailyPrefs, *, allow_extr
         reasons.append(f"Only {plural(len(edition.stories), 'useful story was', 'useful stories were')} found; at least "
                        f"{prefs.min_useful_stories} are required for a daily edition.")
     if edition.model.summaries == "extractive" and prefs.require_llm and not allow_extractive:
-        reasons.append("The local model was not used, and AI summaries are required by your settings.")
+        if edition.model.model_stopped:
+            reasons.append("The local model (Ollama) stopped answering during the refresh, and AI summaries are "
+                           "required by your settings.")
+        else:
+            reasons.append("The local model was not used, and AI summaries are required by your settings.")
     return PublishDecision(publishable=not reasons, reasons=reasons)
 
 

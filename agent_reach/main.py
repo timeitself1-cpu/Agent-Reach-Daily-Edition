@@ -180,6 +180,8 @@ async def run_once(
             accounting=accounting,
             enrichment=enrichment,
             effective_config=effective_config,
+            label_calls=outcome.label_calls,
+            label_calls_failed=outcome.label_calls_failed,
         )
 
         log.info("stage 4/5 score: done")

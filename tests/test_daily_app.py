@@ -115,7 +115,7 @@ def test_refreshing_state_and_no_double_workers(daily_paths):
                                                   "started_utc": "2026-10-01T13:00:00Z"})
     snap = ctrl.snapshot()
     assert snap.status_kind == "refreshing"
-    assert snap.status == "Refreshing (started 8:00 AM CDT): Grouping and summarizing stories"
+    assert snap.status == "Refreshing (started 8:00 AM CDT), step 4 of 7: Grouping and summarizing stories"
     spawner.children[0].running = False
     daily_paths.progress_file.unlink()
     assert ctrl.snapshot().status_kind == "empty"

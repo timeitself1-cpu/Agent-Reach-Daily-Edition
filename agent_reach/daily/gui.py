@@ -155,6 +155,7 @@ class DailyWindow:
         self._prereq_text: str | None = None  # None until a check starts
         self._poll_job: str | None = None
         self._cancelling = False
+        self._cancel_thread: threading.Thread | None = None
         self._generated_at = None
         self.section = TOP
         self._read: set[str] = set(RD.load_reading(paths).read)
@@ -637,6 +638,10 @@ class DailyWindow:
             labels = [format_short_date(d) for d in dates]
             self.date_box.configure(values=labels)
         shown = snap.shown
+        # nothing to choose or hear before the first edition (an empty box and a dead button only confuse)
+        self.date_box.configure(state="readonly" if dates else "disabled")
+        if not self._podcast_busy:
+            self.listen_btn.state(["!disabled"] if shown is not None and not shown.demo else ["disabled"])
         if shown is not None and not shown.demo and shown.edition_date in dates:
             self.date_box.current(dates.index(shown.edition_date))
         elif shown is not None and shown.demo:
@@ -822,7 +827,7 @@ class DailyWindow:
             t.insert("end", "\nThis edition has no stories.\n", ("plain",))
         elif not stories:
             t.insert("end", "\nNothing matches your search. ", ("plain",))
-            t.insert("end", "Clear search", ("plain",) + self._link_tag("action:clear"))
+            t.insert("end", "Clear search", self._link_tag("action:clear"))
             t.insert("end", "\n")
         now = self.ctrl.now_fn()
         show_category = self.section in (TOP, SEARCH, FOLLOWING)
@@ -971,7 +976,12 @@ class DailyWindow:
         if on:
             topics.append(topic)
         setattr(prefs, key, topics)  # validated (whitespace, length, duplicates) like the Topics tab
-        save_prefs(self.paths, prefs)
+        try:
+            save_prefs(self.paths, prefs)
+        except OSError as exc:
+            messagebox.showerror(APP_NAME, f"Could not save your topics: {exc}\n\nIs the settings file read-only "
+                                           f"or open in another program?\n{self.paths.settings}", parent=self.root)
+            return
         self._sidebar_key = None
         self.refresh_view(force=True)
 
@@ -1190,12 +1200,18 @@ class DailyWindow:
                 self.ctrl.cancel_refresh()
             except Exception:  # noqa: BLE001
                 log.exception("cancel failed")
-            finally:
-                self.root.after(0, self._cancel_done)
 
-        threading.Thread(target=work, name="cancel-refresh", daemon=True).start()
+        # the Tk thread notices the end of this thread itself (poll_cancel): Tk calls from another thread
+        # are not reliable, and a lost call would leave the window on 'Refreshing...' for good
+        self._cancel_thread = threading.Thread(target=work, name="cancel-refresh", daemon=True)
+        self._cancel_thread.start()
+        self.root.after(250, self._poll_cancel)
 
-    def _cancel_done(self) -> None:
+    def _poll_cancel(self) -> None:
+        if self._cancel_thread is not None and self._cancel_thread.is_alive():
+            self.root.after(250, self._poll_cancel)
+            return
+        self._cancel_thread = None
         self._cancelling = False
         self.refresh_view(force=True)
 
@@ -1929,7 +1945,12 @@ class SettingsDialog:
         except (ValueError, TypeError) as exc:
             messagebox.showerror(APP_NAME, f"Please check the settings:\n\n{exc}", parent=self.top)
             return
-        save_prefs(self.window.paths, prefs)
+        try:
+            save_prefs(self.window.paths, prefs)
+        except OSError as exc:
+            messagebox.showerror(APP_NAME, f"Could not save the settings: {exc}\n\nIs the settings file read-only "
+                                           f"or open in another program?\n{self.window.paths.settings}", parent=self.top)
+            return
         self.top.destroy()
         new_mode = resolve_appearance(prefs.appearance)
         if new_mode != self.window.mode:

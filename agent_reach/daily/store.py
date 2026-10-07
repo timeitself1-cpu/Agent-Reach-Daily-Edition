@@ -117,7 +117,8 @@ class EditionStore:
         for d in self.list_dates():
             edition, problem, _ = self._read(self.edition_path(d))
             if problem:
-                corrupt.append(problem)
+                if problem not in corrupt:  # the pointer's file may already be reported
+                    corrupt.append(problem)
                 continue
             if edition is not None:
                 return LoadResult(edition, self.edition_path(d), pointer_ok=False, corrupt=corrupt)

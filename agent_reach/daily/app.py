@@ -41,6 +41,11 @@ log = logging.getLogger(__name__)
 CREATE_NO_WINDOW = 0x08000000
 
 
+#: The worker's progress stages as the steps a reader sees ('Refreshing, step 4 of 7: Grouping ...').
+REFRESH_STEPS = {"prereq": 1, "ingest": 2, "clean": 3, "enrich": 3, "cluster": 4, "score": 5, "persist": 5,
+                 "edition": 5, "brief": 6, "publish": 7, "podcast": 7}
+
+
 @dataclass
 class Banner:
     kind: str  # info | warn | error | demo
@@ -183,6 +188,13 @@ class AppController:
             state.last_success_utc = latest.generation_completed_utc
         due = check_due(state, prefs, now)
         activity = self.activity()
+        if state.last_attempt_outcome == "running" and not activity.running:
+            # the worker ended without recording an outcome (killed, crashed, PC turned off); the next
+            # refresh records it as interrupted, the window says so now
+            state = state.model_copy(update={
+                "last_attempt_outcome": "interrupted",
+                "last_attempt_finished_utc": state.last_attempt_started_utc,
+                "last_attempt_message": "It was closed, crashed, or the PC turned off. Choose Refresh to try again."})
 
         shown, viewing_latest = latest, True
         if self.demo is not None:
@@ -226,8 +238,10 @@ class AppController:
                                           f"{'them' if len(failing) != 1 else 'it'} off in Settings > Publisher feeds."))
         if latest_res.corrupt:
             n = len(latest_res.corrupt)
-            banners.append(Banner("warn", f"{n} saved edition {'file is' if n == 1 else 'files are'} damaged and "
-                                          f"{'was' if n == 1 else 'were'} skipped; set aside at the next refresh."))
+            banners.append(Banner("warn", f"{n} saved edition {'file' if n == 1 else 'files'} could not be read "
+                                          "(damaged, or open in another program) and "
+                                          f"{'was' if n == 1 else 'were'} skipped. A damaged file is set aside "
+                                          "at the next refresh."))
 
         details: list[str] = []
         coverage_line = ""
@@ -274,7 +288,9 @@ class AppController:
             who = {"scheduled": "Scheduled refresh", "gui_launch": "Automatic refresh",
                    "manual": "Refreshing"}.get(activity.trigger, "Refreshing")
             since = f" (started {format_clock(activity.started)})" if activity.started else ""
-            return f"{who}{since}: {activity.message}"
+            step = REFRESH_STEPS.get(activity.stage)
+            where = f", step {step} of {max(REFRESH_STEPS.values())}" if step else ""
+            return f"{who}{since}{where}: {activity.message}"
         if failed_since_success:
             label = {"failed": "Last refresh failed", "no_update": "Last refresh found too little news to publish",
                      "interrupted": "Last refresh was interrupted"}[state.last_attempt_outcome or "failed"]

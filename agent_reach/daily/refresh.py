@@ -19,6 +19,8 @@ import asyncio
 import json
 import logging
 import os
+import sys
+import threading
 import traceback
 from collections.abc import Callable
 from dataclasses import dataclass
@@ -55,6 +57,10 @@ EXIT_NO_UPDATE = 20
 EXIT_FAILED = 30
 EXIT_PREREQ = 31
 MAX_DIAGNOSTICS = 30
+#: Beyond the refresh time limit: the brief pass ends with the time limit, the podcast has its own 15-minute
+#: limit and publishing takes seconds. A worker still alive after this is stuck in a call that ignores
+#: cancellation (a hung driver, DNS or disk call); the watchdog records that and ends the process.
+WATCHDOG_GRACE_S = 25 * 60
 BRIEF_PER_CATEGORY = 3  # besides Top Stories, the local model writes notes for each category's top 3
 
 
@@ -89,6 +95,78 @@ class ProgressWriter:
             self.paths.progress_file.unlink()
         except OSError:
             pass
+
+
+def watchdog_limit_s(prefs: DailyPrefs) -> float:
+    return prefs.max_run_minutes * 60 + WATCHDOG_GRACE_S
+
+
+class Watchdog:
+    """Ends a worker that stopped responding, so no refresh can hold the lock (and the window's
+    'Refreshing') forever. Whoever finishes first records the outcome: the worker itself, or the watchdog,
+    which saves the state, writes the stack of every thread to diagnostics and exits the process (the
+    operating system then frees the lock)."""
+
+    def __init__(self, paths: DataPaths, prefs: DailyPrefs, *, trigger: str, started: datetime, now_fn,
+                 limit_s: float, exit_fn: Callable[[int], object] = os._exit) -> None:
+        self.paths, self.prefs, self.trigger, self.started, self.now_fn = paths, prefs, trigger, started, now_fn
+        self.limit_s, self.exit_fn = limit_s, exit_fn
+        self.published: DailyEdition | None = None  # set as soon as the edition is published
+        self._owner = threading.Lock()
+        self._timer = threading.Timer(limit_s, self._fire)
+        self._timer.daemon = True
+
+    def start(self) -> "Watchdog":
+        self._timer.start()
+        return self
+
+    def finish(self) -> bool:
+        """The worker claims the right to record the outcome; False when the watchdog already has it."""
+        if self._owner.acquire(blocking=False):
+            self._timer.cancel()
+            return True
+        return False
+
+    def cancel(self) -> None:
+        self._timer.cancel()
+
+    def _fire(self) -> None:
+        if not self._owner.acquire(blocking=False):
+            return  # the worker is already recording its outcome
+        try:
+            minutes = self.limit_s / 60
+            frames = sys._current_frames()
+            stacks = {t.name: "".join(traceback.format_stack(frames[t.ident])) for t in threading.enumerate()
+                      if t.ident in frames and t is not threading.current_thread()}
+            log.error("refresh stopped responding; ended by the watchdog after %.0f minutes", minutes)
+            state, _ = load_state(self.paths)
+            if self.published is not None:
+                ed = self.published
+                mark_success(state, started=self.started, finished=ed.generation_completed_utc,
+                             edition_date=ed.edition_date.isoformat(), run_id=ed.run_id,
+                             message=f"Published {len(ed.stories)} stories; a later step stopped responding.")
+            else:
+                mark_failure(state, outcome="failed", now=self.now_fn(), prefs=self.prefs,
+                             message=f"The refresh stopped responding and was ended after {minutes:.0f} minutes. "
+                                     "The previous edition is kept.")
+            save_state(self.paths, state)
+            _write_diagnostics(self.paths, {"outcome": "watchdog", "trigger": self.trigger,
+                                            "started_utc": iso_utc(self.started), "finished_utc": iso_utc(self.now_fn()),
+                                            "limit_minutes": round(minutes, 1), "threads": stacks})
+            for f in (self.paths.progress_file, self.paths.lock_info):
+                try:
+                    f.unlink()
+                except OSError:
+                    pass
+            for h in logging.getLogger().handlers:
+                try:
+                    h.flush()
+                except Exception:  # noqa: BLE001
+                    pass
+        except Exception:  # noqa: BLE001 - the process ends either way
+            log.exception("watchdog could not record the stopped refresh")
+        finally:
+            self.exit_fn(EXIT_FAILED)
 
 
 def default_ollama_probe(prefs: DailyPrefs):
@@ -163,6 +241,7 @@ def refresh(
     except LockBusy:
         return RefreshOutcome(EXIT_BUSY, "busy", "Another refresh is already running.")
     progress: ProgressWriter | None = None
+    guard: Watchdog | None = None
     try:
         store = EditionStore(paths)
         try:
@@ -183,15 +262,19 @@ def refresh(
         mark_running(state, trigger=trigger, now=started, pid=os.getpid())
         save_state(paths, state)
         progress = ProgressWriter(paths, trigger, started)
+        guard = Watchdog(paths, prefs, trigger=trigger, started=started, now_fn=now_fn,
+                         limit_s=watchdog_limit_s(prefs)).start()
         progress("start", "Starting refresh")
         try:
             outcome = asyncio.run(_attempt(paths, prefs, store, trigger=trigger, started=started,
-                                           allow_extractive=allow_extractive, now_fn=now_fn,
-                                           progress=progress, ollama_probe=ollama_probe or default_ollama_probe))
+                                           allow_extractive=allow_extractive, now_fn=now_fn, progress=progress,
+                                           ollama_probe=ollama_probe or default_ollama_probe, guard=guard))
         except Exception as exc:  # noqa: BLE001 - any unexpected error is a failed attempt, never a crash loop
             log.exception("refresh failed unexpectedly")
             outcome = _failed(paths, prefs, trigger, started, now_fn, "failed", EXIT_FAILED,
                               f"Unexpected error: {type(exc).__name__}: {exc}", tb=traceback.format_exc())
+        if not guard.finish():
+            threading.Event().wait()  # the watchdog is recording the outcome and ends the process
         state, _ = load_state(paths)
         if outcome.outcome == "published" and outcome.edition is not None:
             mark_success(state, started=started, finished=outcome.edition.generation_completed_utc,
@@ -205,6 +288,8 @@ def refresh(
         log.info("refresh finished: %s (%s)", outcome.outcome, outcome.message)
         return outcome
     finally:
+        if guard is not None:
+            guard.cancel()
         if progress is not None:
             progress.clear()
         lock.release()
@@ -230,7 +315,8 @@ def _failed(paths: DataPaths, prefs: DailyPrefs, trigger: str, started: datetime
 
 
 async def _attempt(paths: DataPaths, prefs: DailyPrefs, store: EditionStore, *, trigger: str, started: datetime,
-                   allow_extractive: bool, now_fn, progress: ProgressWriter, ollama_probe) -> RefreshOutcome:
+                   allow_extractive: bool, now_fn, progress: ProgressWriter, ollama_probe,
+                   guard: Watchdog | None = None) -> RefreshOutcome:
     from agent_reach.daily.prereqs import model_present
 
     progress("prereq", "Checking the local model (Ollama)")
@@ -283,6 +369,7 @@ async def _attempt(paths: DataPaths, prefs: DailyPrefs, store: EditionStore, *, 
     selection.dropped_unsupported = len(built) - len(supported)
     stories = selection.stories
 
+    brief_stats: dict[str, int] = {}
     if chat_ok and prefs.why_it_matters and stories:
         # On a CPU every model call is slow: notes go to Top Stories and each category's top 3.
         brief_ids = {id(s) for s in selection.top}
@@ -299,14 +386,16 @@ async def _attempt(paths: DataPaths, prefs: DailyPrefs, store: EditionStore, *, 
         remaining = max(30.0, budget - (now_fn() - started).total_seconds())
         try:
             client = SemanticClusterer(settings)._get_client()
-            await asyncio.wait_for(enrich_stories(brief_stories, settings, client=client, budget_s=min(600.0, remaining)),
-                                   timeout=min(900.0, remaining))
+            brief_stats = await asyncio.wait_for(
+                enrich_stories(brief_stories, settings, client=client, budget_s=min(600.0, remaining)),
+                timeout=min(900.0, remaining))
         except (asyncio.TimeoutError, ImportError) as exc:
             log.warning("brief pass skipped: %s", type(exc).__name__)
 
     completed = now_fn()
     edition = assemble_edition(report, selection, prefs, started=started, completed=completed,
-                               trigger=trigger, config_fingerprint=config_fingerprint(report.effective_config))
+                               trigger=trigger, config_fingerprint=config_fingerprint(report.effective_config),
+                               brief_stats=brief_stats)
     decision = evaluate_publication(edition, prefs, allow_extractive=allow_extractive)
     if not decision.publishable:
         return _failed(paths, prefs, trigger, started, now_fn, "no_update", EXIT_NO_UPDATE,
@@ -320,6 +409,8 @@ async def _attempt(paths: DataPaths, prefs: DailyPrefs, store: EditionStore, *, 
 
         edition.changes = compare_editions(previous, edition)
     final = store.publish(edition)
+    if guard is not None:
+        guard.published = final
     store.purge(prefs.retention_days, central_date(completed))
     msg = f"Published {len(final.stories)} stories for {final.edition_date.isoformat()}"
     if final.revision > 1:
@@ -339,7 +430,8 @@ async def _attempt(paths: DataPaths, prefs: DailyPrefs, store: EditionStore, *, 
 
 
 def finalize_cancelled(paths: DataPaths, now_fn: Callable[[], datetime] = utcnow) -> bool:
-    """After the GUI stops a worker: record a user cancellation (no backoff) if the lock is free."""
+    """After the GUI stops a worker: once the lock is free (the worker is gone) record a user cancellation
+    (no backoff) if the worker had started its attempt. False while the worker still holds the lock."""
     lock = RefreshLock(paths.lock_file, None)
     try:
         lock.acquire()
@@ -348,7 +440,7 @@ def finalize_cancelled(paths: DataPaths, now_fn: Callable[[], datetime] = utcnow
     try:
         state, _ = load_state(paths)
         if state.last_attempt_outcome != "running":
-            return False
+            return True  # stopped before it began (or it had already finished): nothing to record
         mark_cancelled(state, now=now_fn())
         save_state(paths, state)
         try:

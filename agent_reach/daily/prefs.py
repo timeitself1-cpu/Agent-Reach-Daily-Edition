@@ -43,7 +43,7 @@ GENERAL_NEWS_SOURCES = frozenset({"google_news", "news_rss"})
 SOURCE_NOTES = {
     "google_news": "Google News: top stories and one section per category (RSS)",
     "news_rss": "Publisher feeds (Publisher feeds tab)",
-    "youtube": "YouTube: most-watched new videos of the channels in Publisher feeds",
+    "youtube": "YouTube: popular new videos (channels on the next tab)",
     "google_trends": "Google Trends daily searches (RSS)",
     "wikipedia": "Wikipedia: most-read articles and 'In the news'",
     "mastodon": "Mastodon: news links people are sharing (mastodon.social)",
