@@ -501,13 +501,18 @@ def part_launchers(report: Report, args, base: Path) -> None:
 
 def part_ollama(report: Report, args, base: Path, prefs: DailyPrefs) -> bool:
     """Returns whether the real Ollama is ready (the real-refresh parts need it)."""
-    from agent_reach.daily.prereqs import check_ollama, check_prefs
+    from agent_reach.daily.prereqs import check_ollama, check_prefs, mac_only_in_ollama
 
     P = "3. ollama"
     st = check_ollama(args.ollama_host, [prefs.ollama_model],
                       grouping=[prefs.embed_model, *prefs.embed_fallback_models])
     ready = st.ready
-    if st.reachable and st.grouping_missing:
+    if st.reachable and st.grouping_missing and st.grouping_fallback and mac_only_in_ollama(prefs.embed_model):
+        # October 7: Ollama runs EmbeddingGemma 2 on Macs only so far; nothing the user can fix, so not a FAIL
+        report.add(P, f"grouping model {prefs.embed_model}", "INFO",
+                   f"not installed: Ollama {st.version or '(version unknown)'} can run it only on Macs so far. "
+                   f"Refreshes group stories with {st.grouping_fallback}.")
+    elif st.reachable and st.grouping_missing:
         # rc12: without EmbeddingGemma the refresh still works on the fallback model; say so, then test on
         report.add(P, f"grouping model {prefs.embed_model}", "FAIL",
                    f"missing (Ollama {st.version or 'version unknown'}): run 'ollama pull {prefs.embed_model}'; if "

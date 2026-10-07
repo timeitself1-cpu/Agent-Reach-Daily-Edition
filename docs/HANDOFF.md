@@ -65,6 +65,9 @@ EmbeddingGemma 2 neighbours + an explicit same-event gate (below).
   recall 0.620 lexical / 0.688 replay). Also: label calls of <= 12 stories with cut-off answers split, pair log
   keeps accepted pairs, grouping model optional in the model check, pull errors shown, self-test FAIL rule.
   Details: `docs/REAL-EDITION-FINDINGS.md`. Next: the user updates Ollama and reruns the benchmark (PLAN H7).
+- **rc12c (same afternoon):** with the newest Ollama, the pull says "this model requires MLX support, but the MLX
+  runtime is not available": EmbeddingGemma 2 is Mac-only in Ollama for now. Messages say so (no "update Ollama"),
+  the self-test reports it as INFO, and the benchmark compares `embeddinggemma:300m` (runs on Windows) with nomic.
 
 ## rc11 stabilization pass (bugs found by reading the Daily code, no new features)
 

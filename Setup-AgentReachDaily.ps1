@@ -247,6 +247,10 @@ if ($reachable) {
                 else {
                     $why = Get-PullError $m
                     if ($null -eq $why) { Write-Ok "Model $m downloaded (second try)" }
+                    elseif ($m -like "embeddinggemma-2*" -and $why -match "MLX") {
+                        # Oct 7 on Windows, newest Ollama: "this model requires MLX support, but the MLX runtime is not available"
+                        Write-Note "Ollama can run $m only on Mac computers so far (it needs Apple's MLX). Nothing to do: the app groups stories with nomic-embed-text, and this script tries again each time you run it with -PullModels."
+                    }
                     elseif ($m -like "embeddinggemma*") {
                         Write-Warn2 "Downloading $m failed: $why"
                         Write-Warn2 "EmbeddingGemma 2 is new (October 2026) and may need a newer Ollama than this one ($ollamaVersion). Update Ollama from https://ollama.com/download (or choose 'Restart to update' in the Ollama tray menu), then run this again. Until then the app groups stories with nomic-embed-text."

@@ -3,9 +3,10 @@
     Compares the embedding models for story grouping on this PC, then runs the Daily self-test.
 
 .DESCRIPTION
-    1. Checks Ollama and the models to compare (default: nomic-embed-text, embeddinggemma-2:270m and the
-       full EmbeddingGemma 2 model, tag embeddinggemma-2). Missing models are only downloaded with
-       -PullModels; otherwise the benchmark lists them as "not available".
+    1. Checks Ollama and the models to compare (default: nomic-embed-text, the first EmbeddingGemma
+       (embeddinggemma:300m, runs on Windows), embeddinggemma-2:270m and the full EmbeddingGemma 2 model, tag
+       embeddinggemma-2; Ollama runs EmbeddingGemma 2 on Macs only so far). Missing models are only downloaded
+       with -PullModels; otherwise, or when a download fails, the benchmark lists them as "not available".
     2. Runs tests\embedding_benchmark.py on the labelled October 7 editions with every model: rc11-style
        grouping, the new same-event check, cosine ranges, cache reuse and timings. Nothing in your data
        folder is read or changed.
@@ -20,7 +21,7 @@
 #>
 [CmdletBinding()]
 param(
-    [string]$Models = "nomic-embed-text,embeddinggemma-2:270m,embeddinggemma-2",
+    [string]$Models = "nomic-embed-text,embeddinggemma:300m,embeddinggemma-2:270m,embeddinggemma-2",
     [switch]$PullModels,
     [switch]$SkipSelfTest,
     [switch]$NoPause,
@@ -117,7 +118,11 @@ foreach ($m in $wanted) {
         }
         "$($m): download failed (exit $pullCode): $why" | Out-File -FilePath $pullLog -Encoding utf8 -Append
         Write-Host "Downloading $m failed: $why" -ForegroundColor Yellow
-        if ($m -like "embeddinggemma*") {
+        if ($m -like "embeddinggemma-2*" -and $why -match "MLX") {
+            # Oct 7 on Windows, newest Ollama: "this model requires MLX support, but the MLX runtime is not available"
+            Write-Host "Ollama can run $m only on Mac computers so far (it needs Apple's MLX); updating Ollama does not help yet." -ForegroundColor Yellow
+        }
+        elseif ($m -like "embeddinggemma*") {
             Write-Host "EmbeddingGemma 2 is new (October 2026) and may need a newer Ollama than this one ($ollamaVersion). Update Ollama from https://ollama.com/download (or choose 'Restart to update' in the Ollama tray menu), then run this again. Until then the app groups stories with nomic-embed-text." -ForegroundColor Yellow
         }
         Write-Host "The comparison continues; $m is reported as not available." -ForegroundColor Yellow

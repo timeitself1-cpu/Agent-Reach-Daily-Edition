@@ -199,7 +199,15 @@ def test_missing_grouping_model_is_named_but_never_blocks(monkeypatch):
     assert status.grouping_missing == prefs.embed_model and status.grouping_fallback == "nomic-embed-text"
     text = status.describe()
     assert text.startswith("Ollama 0.40.0 is running.") and f"'ollama pull {prefs.embed_model}'" in text
-    assert "grouped with nomic-embed-text" in text and "update Ollama" in text
+    assert "grouped with nomic-embed-text" in text
+    # EmbeddingGemma 2 is Mac-only in Ollama so far: updating Ollama is no advice on Windows (October 7)
+    monkeypatch.setattr(prereqs.sys, "platform", "win32")
+    assert "only on Mac computers" in status.describe() and "update Ollama" not in status.describe()
+    monkeypatch.setattr(prereqs.sys, "platform", "darwin")
+    assert "update Ollama" in status.describe()
+    status.grouping_missing = "some-embedder:1b"
+    monkeypatch.setattr(prereqs.sys, "platform", "win32")
+    assert "update Ollama" in status.describe() and "Mac" not in status.describe()
     answers["/api/tags"] = {"models": [{"name": "nomic-embed-text:latest"}]}  # the chat model is what blocks
     status = prereqs.check_prefs(prefs)
     assert not status.ready and status.missing == [prefs.ollama_model]

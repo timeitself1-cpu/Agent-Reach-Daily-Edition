@@ -5,6 +5,19 @@ Each release candidate is delivered as a zip of the repository. Extract it over 
 Your editions, settings and history (`%LOCALAPPDATA%\AgentReachDaily`) are kept. Earlier releases are
 summarised in `docs/HANDOFF.md` ("Release history").
 
+## 1.0.0rc12 (zip rc12c): EmbeddingGemma 2 is Mac-only in Ollama for now
+
+With the newest Ollama, `ollama pull embeddinggemma-2:270m` on your PC answered "this model requires MLX
+support, but the MLX runtime is not available". MLX is Apple's engine: Ollama can run EmbeddingGemma 2 only
+on Mac computers so far, and updating Ollama does not change that on Windows yet. Nothing is broken: the
+app keeps grouping stories with nomic-embed-text, as it did in your test.
+
+1. Setup, the benchmark, the app's model check and the self-test now say this plainly, instead of advising
+   you to update Ollama. The self-test reports it as information, not as a failure.
+2. The benchmark now also compares the first EmbeddingGemma (`embeddinggemma:300m`), which Ollama does run
+   on Windows, against nomic-embed-text. If it groups stories better on your PC, a later version uses it.
+3. The Ollama app's chat window lists chat models only; embedding models never appear there.
+
 ## 1.0.0rc12 (zip rc12b): fixes from the first test on your PC
 
 Your self-test and benchmark (October 7, 12:07) showed these problems; each is fixed and has a test.

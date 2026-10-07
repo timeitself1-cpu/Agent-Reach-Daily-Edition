@@ -117,6 +117,25 @@ Text:
   headline itself still comes from the model and can stay stale: open.
 - The same story was "Strong evidence" partly because a Google Trends query added a channel. Fixed (rc12 D).
 
+## October 7, 2026, afternoon: EmbeddingGemma 2 cannot run in Ollama on Windows (yet)
+
+After updating Ollama to the newest release, the user ran `ollama pull embeddinggemma-2:270m` in PowerShell:
+
+    pulling manifest
+    Error: this model requires MLX support, but the MLX runtime is not available
+
+So the earlier 404 was not only an old Ollama: Ollama publishes EmbeddingGemma 2 for Apple's MLX runtime only,
+and the standard Windows build has no MLX (the same error on Linux: ollama/ollama issue 18825, open, no reply yet).
+Ollama's experimental `ollama-windows-amd64-mlx` zip build exists, but its catalog access is gated by OS
+(issue 16265); not something to ask the user to install. llama.cpp added the architecture on October 6 (PR 30054,
+GGUF files at ggml-org/embeddinggemma-2-GGUF), so a GGML build of Ollama may follow; nothing to do until then.
+Also seen: the Ollama app's model picker lists chat models only, so embedding models never appear there.
+
+rc12c: setup, benchmark, the app's model check and the self-test say this in plain words ("only on Mac computers
+so far", no "update Ollama" advice, an INFO row instead of a FAIL); the benchmark compares the first EmbeddingGemma
+(`embeddinggemma:300m`, GGML, runs on Windows, same task prompts) with nomic instead. The app's default stays
+`embeddinggemma-2:270m` -> nomic fallback; whether `embeddinggemma:300m` joins the chain is decided by its numbers.
+
 ## October 7, 2026, 12:07 PM: rc12 self-test and embedding benchmark on the user's PC
 
 Self-test `AgentReach-selftest-20261007-1207.zip` (28 PASS, 3 FAIL) and `AgentReach-embedding-benchmark-20261007-1207.zip`.

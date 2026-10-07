@@ -21,6 +21,16 @@ import httpx
 CREATE_NO_WINDOW = 0x08000000
 DETACHED_PROCESS = 0x00000008
 
+#: Models Ollama publishes for Apple's MLX runtime only. October 7 on the user's Windows PC, with the newest
+#: Ollama: 'ollama pull embeddinggemma-2:270m' -> "this model requires MLX support, but the MLX runtime is not
+#: available" (Linux the same: ollama/ollama#18825). Updating Ollama does not help there yet, so the advice differs.
+MAC_ONLY_IN_OLLAMA = ("embeddinggemma-2",)
+
+
+def mac_only_in_ollama(model: str, platform: str | None = None) -> bool:
+    platform = sys.platform if platform is None else platform
+    return platform != "darwin" and model.split(":")[0].lower() in MAC_ONLY_IN_OLLAMA
+
 
 @dataclass
 class OllamaStatus:
@@ -44,6 +54,10 @@ class OllamaStatus:
         if not g:
             return ""
         instead = f"with {self.grouping_fallback}" if self.grouping_fallback else "by shared words"
+        if mac_only_in_ollama(g):
+            return (f" The story-grouping model {g} is not installed, so stories are grouped {instead}. Ollama can "
+                    "run it only on Mac computers so far; nothing to do here. When a later Ollama can run it on "
+                    f"this PC, run 'ollama pull {g}' in a terminal.")
         return (f" The story-grouping model {g} is not installed, so stories are grouped {instead} until it is. "
                 f"To add it, run 'ollama pull {g}' in a terminal (if that fails, update Ollama from "
                 "https://ollama.com/download first).")

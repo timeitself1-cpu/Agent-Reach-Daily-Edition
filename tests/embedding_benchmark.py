@@ -2,7 +2,7 @@
 
     python -m tests.embedding_benchmark                       # offline: no Ollama needed (runs anywhere)
     python -m tests.embedding_benchmark --ollama              # + real models through the local Ollama
-    python -m tests.embedding_benchmark --ollama --models nomic-embed-text,embeddinggemma-2:270m,embeddinggemma-2:latest
+    python -m tests.embedding_benchmark --ollama --models nomic-embed-text,embeddinggemma:300m,embeddinggemma-2:270m
     python -m tests.embedding_benchmark --replay vectors-nomic-embed-text.json.gz   # real vectors saved on the PC
 
 Every grouping is scored against the gold events of ``tests/fixtures/real/event_gold.json`` with pairwise
@@ -57,7 +57,9 @@ from agent_reach.pipeline.event_identity import cohesive_groups, lexical_candida
 from tests.event_corpus import (EDITIONS, RC11_EDITIONS, RC12_EDITIONS, CorpusItem, load_edition, recorded_groups,
                                 related_pairs, score)
 
-DEFAULT_MODELS = "nomic-embed-text,embeddinggemma-2:270m"
+# embeddinggemma:300m (the first EmbeddingGemma): October 7, Ollama could run EmbeddingGemma 2 on Macs only, so the
+# Windows PC compares nomic with the EmbeddingGemma it can run; EmbeddingGemma 2 is benchmarked once it pulls.
+DEFAULT_MODELS = "nomic-embed-text,embeddinggemma:300m,embeddinggemma-2:270m"
 
 
 def _unit(v: list[float]) -> list[float]:
@@ -290,7 +292,7 @@ def markdown(result: dict) -> str:
     if not result["ollama"]:
         lines += ["Real embedding models were not run here (no Ollama). On a PC with Ollama:", "",
                   "    python -m tests.embedding_benchmark --ollama --models "
-                  "nomic-embed-text,embeddinggemma-2:270m,embeddinggemma-2:latest", ""]
+                  "nomic-embed-text,embeddinggemma:300m,embeddinggemma-2:270m,embeddinggemma-2:latest", ""]
     for m in result["models"]:
         if "error" in m:
             lines += [f"## {m['model']}", "", f"Not available: {m['error']}", ""]

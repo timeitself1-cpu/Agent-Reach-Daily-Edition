@@ -38,9 +38,11 @@ registers the background refresh task. It never deletes anything. Add `-DryRun` 
 first. Leave out `-PullModels` if you already ran `ollama pull llama3.1:8b`,
 `ollama pull embeddinggemma-2:270m` and `ollama pull nomic-embed-text`. Without EmbeddingGemma the app
 still works: it groups stories with `nomic-embed-text` and says so under "How stories were grouped".
-EmbeddingGemma 2 is new (October 2026): if its download fails, your Ollama is probably too old for it.
-Update Ollama (https://ollama.com/download, or "Restart to update" in the Ollama tray menu), then run
-setup with `-PullModels` again. Setup shows the reason Ollama gave.
+EmbeddingGemma 2 is new (October 2026): if its download fails, setup shows the reason Ollama gave. As of
+October 7, Ollama runs EmbeddingGemma 2 only on Mac computers ("this model requires MLX support"), so on
+Windows the download fails and the app uses nomic-embed-text; nothing to do. If another reason is shown,
+update Ollama (https://ollama.com/download, or "Restart to update" in the Ollama tray menu) and run setup
+with `-PullModels` again. Embedding models never appear in the Ollama app's chat model list.
 
 Then **double-click "Agent Reach"** on the Desktop. The first time, choose
 **Collect today's news now**; on a PC without a graphics card the first edition takes roughly
@@ -184,7 +186,7 @@ account or cloud service. Each podcast is saved as `podcasts\YYYY-MM-DD.wav` wit
 |---|---|
 | "Ollama is not running" | Start **Ollama** from the Start menu (the app also tries to start it). Check with `--check`. |
 | "model(s) ... are missing" | `ollama pull llama3.1:8b`, `ollama pull embeddinggemma-2:270m` and `ollama pull nomic-embed-text`, or re-run setup with `-PullModels`. |
-| "The story-grouping model embeddinggemma-2:270m is not installed" | Refreshes still work (stories are grouped with nomic-embed-text). To add it: `ollama pull embeddinggemma-2:270m`; if that fails, update Ollama first. |
+| "The story-grouping model embeddinggemma-2:270m is not installed" | Refreshes still work (stories are grouped with nomic-embed-text). On Windows, Ollama cannot run it yet ("requires MLX support"): nothing to do. On a Mac: `ollama pull embeddinggemma-2:270m`; if that fails, update Ollama first. |
 | "No news source responded" | You are offline or a firewall blocks the feeds. The previous edition is kept; it retries automatically. |
 | A source shows PARTIAL or FAILED (Details) | Normal from time to time (Reddit and X often rate-limit automated readers). The edition is built from the rest and says what was missing. Expand "News feeds", "YouTube" or "Google News" in Details to see which feed, channel or section failed and why. |
 | A publisher feed keeps failing | Feed addresses move. Settings > Publisher feeds > select it > **Test**; then Edit the address or turn the feed off. |

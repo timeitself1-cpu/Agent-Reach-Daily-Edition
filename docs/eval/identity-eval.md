@@ -1,6 +1,6 @@
 # Event identity evaluation (rc12)
 
-Generated 2026-10-07T17:59:39+00:00 on the labelled October 7 corpus (593 reports, 332 gold events, 7 real editions). Pairwise scores over all reports; **false merges** = report pairs from different events published in one story.
+Generated 2026-10-07T18:21:57+00:00 on the labelled October 7 corpus (593 reports, 332 gold events, 7 real editions). Pairwise scores over all reports; **false merges** = report pairs from different events published in one story.
 
 | Grouping | False merges | Mixed stories | Precision | Recall | F1 |
 |---|---:|---:|---:|---:|---:|
@@ -14,7 +14,7 @@ Settings: identity_neighbors=12, identity_candidate_cosine=0.45, identity_strong
 
 Real embedding models were not run here (no Ollama). On a PC with Ollama:
 
-    python -m tests.embedding_benchmark --ollama --models nomic-embed-text,embeddinggemma-2:270m,embeddinggemma-2:latest
+    python -m tests.embedding_benchmark --ollama --models nomic-embed-text,embeddinggemma:300m,embeddinggemma-2:270m,embeddinggemma-2:latest
 
 ## False merges left (first 5 per edition)
 
