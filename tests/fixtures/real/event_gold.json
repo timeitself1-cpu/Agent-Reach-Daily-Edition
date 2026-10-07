@@ -52,6 +52,31 @@
     "Susan Collins Distances Herself": {"News Wrap: Cornell says Sally Yates": "cornell-yates-review"}
    },
    "unassigned": ["Battleground candidates clash over Trump and Cornell"]
+  },
+  "2026-10-07-rc12-r1.json": {
+   "split": {
+    "France Halts Use of Stun Grenades": {"Belgian students rally": "belgian-student-protests"},
+    "Paxton Privately Blames": {
+     "Michigan": "rogers-canada-trade",
+     "Hegseth's handling": "hegseth-iran-war",
+     "DIY fertilizer": "fertilizer-prices-iran-war"
+    },
+    "Tropical Storm Isaias Forms": {"G2 geomagnetic storm": "g2-geomagnetic-storm"},
+    "OpenAI Agents Attempted to Hack": {"South Korea says AI agents": "south-korea-bank-hacks"},
+    "Gears of War: E-Day Studio Boss": {"Xbox bets on Gears of War": "xbox-gears-feature"}
+   },
+   "unassigned": ["cam jurgens", "cam.jurgens"],
+   "related": [["Gears of War: E-Day Studio Boss", "xbox-gears-feature"]]
+  },
+  "2026-10-07-rc12-r2.json": {
+   "split": {
+    "France Halts Use of Stun Grenades": {"Belgian students rally": "belgian-student-protests"},
+    "OpenAI Agents Tried to Hack": {"South Korea says AI agents": "south-korea-bank-hacks"},
+    "Gears of War: E-Day Studio Boss": {"Xbox bets on Gears of War": "xbox-gears-feature"},
+    "Andrew Garfield Stopped Using ChatGPT": {"Andrew Garfield Could Win an Oscar": "garfield-oscar-profile"}
+   },
+   "related": [["Gears of War: E-Day Studio Boss", "xbox-gears-feature"],
+               ["Andrew Garfield Stopped Using ChatGPT", "garfield-oscar-profile"]]
   }
  }
 }

@@ -350,7 +350,15 @@ EVENT_FAMILIES = (
     {"earnings", "revenue", "quarterly", "profits"},
     {"breach", "vulnerability", "exploit", "hacked"},
 )
-EVENT_WORDS = frozenset().union(*EVENT_FAMILIES)
+#: Kinds of event that are not 'what happened' on their own either, but never make two reports different
+#: events (they are not in EVENT_FAMILIES, whose families refuse each other): 'France' + 'protests' joined
+#: Belgian student protests 'echoing France' to France's stun-grenade ban, and 'agents' + 'hack' joined
+#: OpenAI's agents at Wikipedia to AI agents used against South Korea's banks (October 7, PC, rc12 refresh).
+EVENT_KIND_WORDS = frozenset("""
+protest protests protester protesters protesting rally rallies demonstration demonstrations strike strikes
+hack hacks hacking hacker hackers
+""".split())
+EVENT_WORDS = frozenset().union(*EVENT_FAMILIES) | EVENT_KIND_WORDS
 #: Qualifiers that name different events of one institution: the Nobel Prize in physics and the one in
 #: medicine are two stories although both titles say 'Nobel Prize' (a real rc10 edition merged them).
 EXCLUSIVE_QUALIFIERS = (
@@ -365,7 +373,7 @@ EXCLUSIVE_QUALIFIERS = (
 #: mention the midterms (as frequent in the run as 'diesel', so a frequency floor cannot tell them apart).
 #: Broad technology concepts are the same (October 7: 'app', 'AI', 'privacy' and 'smart glasses' joined a
 #: privacy probe of a smart-glasses app maker to a profile of Meta's AI-app billionaire; 'multimodal' +
-#: 'model' joined Mistral Large 4 to EmbeddingGemma 2).
+#: 'model' joined Mistral Large 4 to EmbeddingGemma 2; 'agents' joined Sierra's protocol to Wikimedia's report).
 COMMON_WORDS = frozenset("""
 add adds added adding use uses used using make made making take takes took taking taken give gives gave giving
 given come comes came coming going goes went gone see sees saw seen seeing show shows showed shown showing
@@ -387,7 +395,7 @@ evening afternoon weekend safety
 midterm midterms
 federal
 technology technologies tech app apps ai model models platform platforms device devices smart privacy data online
-digital software tool tools feature features
+digital software tool tools feature features agent agents possible possibly likely
 confirm confirms confirmed confirming warn warns warned warning send sends sent sending
 """.split())
 #: Calendar words are when, not what: 'October 7' joined NASA's picture of the day ('APOD: 2026 October 7'),
@@ -446,6 +454,8 @@ class LinkIndex:
         self._written: dict[int, frozenset[str]] = {}
         self._repr: dict[int, set[str]] = {}
         self._repr_df: Counter[str] | None = None
+        self._name_df: dict[str, int] = {}
+        self._titles: dict[int, frozenset[str]] = {}
         self._sc_names: frozenset[str] | None = None
         self._gate = None
 
@@ -696,12 +706,34 @@ class LinkIndex:
             self._sc_names = frozenset(found)
         return self._sc_names
 
-    def shares_name(self, a: int, b: int, rare: bool = False) -> bool:
+    def shares_name(self, a: int, b: int, rare: bool = False, titles: bool = False) -> bool:
         """Both reports write the same name. With ``rare``, only a name few reports of the run carry: a
         name in six reports ('Google') says who, not what (October 7: Google's gaming platform and Google's
         investment in a 'virtual cell' shared 'Google' + 'create')."""
-        return any(self.same_name(x, y) and (not rare or self.df.get(x, 0) <= self.rare_cap)
-                   for x in self.written_names(a) for y in self.written_names(b))
+        na, nb = self.written_names(a), self.written_names(b)
+        if titles:  # only names both TITLES write (in any form): a name in one page's lead is context, not the subject
+            na, nb = self._title_names(a, na), self._title_names(b, nb)
+        return any(self.same_name(x, y) and (not rare or self.name_df(x) <= self.rare_cap) for x in na for y in nb)
+
+    def _title_words(self, item_id: int) -> frozenset[str]:
+        if item_id not in self._titles:
+            words = {m.group(0).strip("'-").lower() for m in _WORD_RX.finditer(self.items[item_id].normalized_title)}
+            self._titles[item_id] = frozenset(words | {w[:-2] for w in words if w.endswith("'s")})
+        return self._titles[item_id]
+
+    def _title_names(self, item_id: int, written: frozenset[str]) -> set[str]:
+        """Written names the title itself contains, in any form ("France's"). A run-level name that only opens a
+        title is not added: 'Dead star likely birthed a new planet' would then share 'Dead' with the band
+        signing to Dead Oceans."""
+        title = self._title_words(item_id)
+        return {x for x in written if any(self.same_name(x, w) for w in title)}
+
+    def name_df(self, name: str) -> int:
+        """Titles of the run that write ``name`` in any form. Title tokens alone undercount a name written with a
+        possessive: 'trump' was in one title of 85 because the others say "Trump's" (October 7, PC)."""
+        if name not in self._name_df:
+            self._name_df[name] = sum(1 for i in self.items if any(self.same_name(name, w) for w in self._title_words(i)))
+        return self._name_df[name]
 
     def _cooccur_link(self, a: int, b: int) -> bool:
         """Two short fragments ('Packers', 'Falcons') link when a report of the run names both."""
@@ -793,15 +825,16 @@ class LinkIndex:
 
         self._gate = IdentityGate(self, vectors, min_cosine, strong_cosine)
 
-    def components(self, ids: list[int], entities: list[str]) -> list[list[int]]:
+    def components(self, ids: list[int], entities: list[str], attach: bool = True) -> list[list[int]]:
         """Cohesive event groups of ``ids`` (``event_identity.cohesive_groups``): never single-link chains.
 
         Label entities deliberately do not define edges. Short trend fragments join a story only when they
-        name it, and a fragment that names two different stories joins neither."""
+        name it, and a fragment that names two different stories joins neither. ``attach=False``: a lone
+        report joins only through an accepted pair (for merging two drafts, see ``_deterministic_merge``)."""
         fragments = {i for i in ids if len(self.toks[i]) <= 3}
         from agent_reach.pipeline.event_identity import cohesive_groups
 
-        return cohesive_groups(list(ids), self.gate, fragments=fragments)
+        return cohesive_groups(list(ids), self.gate, fragments=fragments, attach=attach)
 
 
 #: Numbers and amount words a model headline may use only when the story's own reports do.
@@ -1424,8 +1457,12 @@ class SemanticClusterer:
                 for j in range(i + 1, len(drafts)):
                     a, b = drafts[i], drafts[j]
                     merged = self._merge_drafts([a, b])
-                    # Model headlines, entities and relevance never decide membership.
-                    if len(index.components(merged.item_ids, [])) != 1:
+                    # Model headlines, entities and relevance never decide membership. Two drafts merge only
+                    # through accepted pairs: the lone-report attachment would bypass its own rule that exactly
+                    # one story of the run qualifies (October 7, PC: one report at a time, 'Hegseth's handling of
+                    # Iran war', a DIY-fertilizer story and Michigan's Mike Rogers on Canada joined the Paxton
+                    # leak; Belgian student protests joined France's stun-grenade story)
+                    if len(index.components(merged.item_ids, [], attach=False)) != 1:
                         continue
                     merged.needs_label = True
                     drafts = [d for k, d in enumerate(drafts) if k not in (i, j)] + [merged]

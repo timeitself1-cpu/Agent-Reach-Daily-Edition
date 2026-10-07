@@ -23,7 +23,7 @@ from agent_reach.models import CleanedTrendItem, RawTrendItem, SourceName
 from agent_reach.pipeline.clusterer import LinkIndex, SemanticClusterer
 from agent_reach.pipeline.embeddings import event_representation
 from agent_reach.pipeline.event_identity import ACCEPT, NEUTRAL, REJECT, IdentityGate, PairDecision, cohesive_groups
-from tests.event_corpus import EDITIONS, load_edition, recorded_groups, related_pairs, score
+from tests.event_corpus import EDITIONS, RC11_EDITIONS, RC12_EDITIONS, load_edition, recorded_groups, related_pairs, score
 
 
 def _unit(v: list[float]) -> list[float]:
@@ -78,7 +78,7 @@ def run_clusterer(corpus, vectors, tmp_path, **settings):
     return outcome, [list(cl.member_item_ids) for cl in outcome.clusters]
 
 
-@pytest.mark.parametrize("name", EDITIONS)
+@pytest.mark.parametrize("name", RC11_EDITIONS)
 def test_rc11_published_these_false_merges(name):
     """The baseline: what the rc11 pipeline (nomic-embed-text + HDBSCAN + single-link LinkIndex) published."""
     corpus = load_edition(name)
@@ -86,6 +86,16 @@ def test_rc11_published_these_false_merges(name):
     expected = {"2026-10-07-selftest-r1.json": 0, "2026-10-07-selftest-r2.json": 6, "2026-10-07-selftest2-r1.json": 11,
                 "2026-10-07-selftest2-r2.json": 15, "2026-10-07-0935-export.json": 20}
     assert len(s.false_merges) == expected[name]
+
+
+@pytest.mark.parametrize("name", RC12_EDITIONS)
+def test_rc12_published_these_false_merges_on_the_pc(name):
+    """What the first rc12 refreshes published on the user's PC (nomic-embed-text + identity gate, before rc12b):
+    the merge pass grew stories one lone report at a time, and 'agents' + 'hack', 'France' + 'protests' counted as
+    two distinctive phrases. The replay and identical-vector tests below cover these editions too."""
+    corpus = load_edition(name)
+    s = score(corpus, recorded_groups(corpus), related_pairs(name))
+    assert len(s.false_merges) == {"2026-10-07-rc12-r1.json": 19, "2026-10-07-rc12-r2.json": 7}[name]
 
 
 @pytest.mark.parametrize("name", EDITIONS)
@@ -299,3 +309,56 @@ def test_rejected_candidates_are_explained():
     assert ranks == sorted(ranks) and ranks[0] == 0
     accepted = sum(d.verdict == ACCEPT for d in index.gate.decisions())
     assert ranks.count(0) == min(accepted, 60)
+
+
+def test_merge_pass_never_grows_a_story_one_lone_report_at_a_time(monkeypatch):
+    """Case F (the first rc12 refresh on the user's PC, October 7): after grouping, the merge pass tried every
+    story with every single report and accepted the union when the lone report 'fitted' that one story, which
+    skips the grouping step's rule that exactly one story of the run must qualify. One report at a time,
+    'Hegseth's handling of Iran war', a DIY-fertilizer story and Michigan's Mike Rogers on Canada joined the
+    leaked Paxton audio. Merging two drafts needs accepted pairs; lone reports are attached once, by grouping."""
+    import agent_reach.pipeline.event_identity as ei
+    from agent_reach.config import Settings
+    from agent_reach.pipeline.clusterer import DraftCluster
+
+    now = RawTrendItem(title="x", source=SourceName.NEWS_RSS).timestamp
+    titles = ["Paxton privately blames campaign woes on Iran war, gas prices",
+              "Paxton admits Trump's Iran war and US gas prices are plaguing Republicans in leaked audio",
+              "Hegseth's handling of Iran war",
+              "DIY fertilizer is a blessing as farmers face steep prices due to the Iran war"]
+    items = [CleanedTrendItem(item_id=i, title=t, normalized_title=t, source=SourceName.NEWS_RSS, heuristic_score=0.5,
+                              timestamp=now) for i, t in enumerate(titles, 1)]
+    index = LinkIndex(items, items)
+    index._gate = TableGate(index, {(1, 2): ACCEPT})
+    index._gate.vectors = {i: [1.0] for i in range(1, 5)}  # with embeddings: the attach pass runs
+
+    def attach_everything(groups, gate):  # every lone report 'fits' the story it is offered
+        stories = [g for g in groups if len(g) >= 2]
+        lone = [x for g in groups if len(g) == 1 for x in g]
+        return [stories[0] + lone] if stories else groups
+    monkeypatch.setattr(ei, "_attach_supported", attach_everything)
+    assert index.components([1, 2, 3], []) == [[1, 2, 3]]  # what the old merge pass asked
+    clusterer = SemanticClusterer(Settings())
+    drafts = [DraftCluster([1, 2], "Paxton", "News"), DraftCluster([3], "Hegseth", "News"),
+              DraftCluster([4], "Fertilizer", "News")]
+    merged = clusterer._deterministic_merge(drafts, index)
+    assert sorted(sorted(d.item_ids) for d in merged) == [[1, 2], [3], [4]]
+
+
+def test_first_rc12_refresh_cases_stay_apart(tmp_path):
+    """Case G (rc12 on the user's PC, October 7, 12:13): with the edition's own neighbourhoods replayed as embeddings,
+    the Paxton leak, France's stun-grenade ban and OpenAI's agents at Wikipedia keep only their own reports."""
+    corpus, groups = _replayed_groups("2026-10-07-rc12-r1.json", tmp_path)
+    paxton = [_id(corpus, "Exclusive: Paxton privately blames"), _id(corpus, "Paxton admits Trump's Iran war")]
+    assert _together(groups, *paxton)
+    for other in ("Michigan's Mike Rogers", "Hegseth's handling of Iran war", "DIY fertilizer"):
+        assert not any(_together(groups, _id(corpus, other), p) for p in paxton)
+    france = _id(corpus, "France halts use of stun grenades")
+    assert not _together(groups, france, _id(corpus, "Belgian students rally"))
+    assert not _together(groups, _id(corpus, "OpenAI agents tried to hack"), _id(corpus, "South Korea says AI agents"))
+    assert not _together(groups, _id(corpus, "Tropical Storm Isaias forms"), _id(corpus, "G2 geomagnetic storm"))
+    corpus, index = _index("2026-10-07-rc12-r1.json")
+    d = index.gate.decide(_id(corpus, "OpenAI agents tried to hack"), _id(corpus, "South Korea says AI agents"))
+    assert d.verdict != ACCEPT  # 'agents' is a broad concept and 'hack' a kind of event: neither says which event
+    d = index.gate.decide(_id(corpus, "France halts use of stun grenades"), _id(corpus, "Belgian students rally"))
+    assert d.verdict != ACCEPT  # 'France' + 'protests': who and what kind, not what happened

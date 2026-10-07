@@ -23,8 +23,14 @@ from agent_reach.models import CleanedTrendItem, RawTrendItem, SourceName
 from agent_reach.pipeline.cleaner import dedupe_key, normalize_text
 
 FIXTURES = Path(__file__).parent / "fixtures" / "real"
-EDITIONS = ("2026-10-07-selftest-r1.json", "2026-10-07-selftest-r2.json", "2026-10-07-selftest2-r1.json",
-            "2026-10-07-selftest2-r2.json", "2026-10-07-0935-export.json")
+#: Editions the rc11 pipeline published (nomic-embed-text + HDBSCAN + single-link) ...
+RC11_EDITIONS = ("2026-10-07-selftest-r1.json", "2026-10-07-selftest-r2.json", "2026-10-07-selftest2-r1.json",
+                 "2026-10-07-selftest2-r2.json", "2026-10-07-0935-export.json")
+#: ... and the first two rc12 editions from the user's PC (nomic-embed-text + identity gate, 12:13 and 12:23):
+#: the Paxton leak with three Iran-war reports, Belgian protests in France's stun-grenade story, AI agents
+#: hacking South Korea's banks with OpenAI's agents at Wikipedia.
+RC12_EDITIONS = ("2026-10-07-rc12-r1.json", "2026-10-07-rc12-r2.json")
+EDITIONS = RC11_EDITIONS + RC12_EDITIONS
 _SOURCE_BY_NAME = {"News feeds": SourceName.NEWS_RSS, "Google News": SourceName.GOOGLE_NEWS,
                    "Google Trends": SourceName.GOOGLE_TRENDS, "Hacker News": SourceName.HACKERNEWS,
                    "YouTube": SourceName.YOUTUBE, "X (trends24)": SourceName.X_TRENDS24, "Bluesky": SourceName.BLUESKY,
@@ -50,9 +56,13 @@ def _when(ev: dict) -> datetime:
 
 def _raw(ev: dict) -> RawTrendItem:
     source = SourceName(ev["source"]) if ev.get("source") else _SOURCE_BY_NAME.get(ev.get("source_name", ""), SourceName.NEWS_RSS)
+    metadata = {"publisher": ev.get("publisher") or "", "published_at": ev.get("published_at_utc")}
+    if source is SourceName.GOOGLE_TRENDS and ev.get("excerpt"):
+        # a trend's excerpt is its news headlines joined by ' | ' (ingestion/search.py): give them back, as a
+        # real run has them ('cam jurgens' is the concussion-protocol trend, not the Ravens trade article)
+        metadata["news_titles"] = [t.strip() for t in ev["excerpt"].split(" | ") if t.strip()][:3]
     return RawTrendItem(title=ev["title"], source=source, url=ev.get("url"), timestamp=_when(ev),
-                        description=ev.get("excerpt"), metadata={"publisher": ev.get("publisher") or "",
-                                                                     "published_at": ev.get("published_at_utc")})
+                        description=ev.get("excerpt"), metadata=metadata)
 
 
 def _stories(name: str) -> list[dict]:

@@ -140,10 +140,13 @@ class IdentityGate:
             elif ok:
                 d = PairDecision(*key, ACCEPT, [why], cos, shared, support=True)
             elif cos is not None and cos >= self.strong_cosine and specific and (
-                    len(self.index.shared_units(*key, set(specific))) >= 2 or self.index.shares_name(*key, rare=True)):
+                    len(self.index.shared_units(*key, set(specific))) >= 2
+                    or self.index.shares_name(*key, rare=True, titles=True)):
                 # the embedding sees one event AND the reports share two specific words that are not part of
-                # a name, or one and a name ('Siberian' + 'plague'): never a name or one broad word alone
-                # ('app' joined a smart-glasses privacy probe to a profile of Meta's AI-app billionaire)
+                # a name, or one and a name both titles write ('Siberian' + 'plague'): never a name or one broad
+                # word alone ('app' joined a smart-glasses privacy probe to a profile of Meta's AI-app billionaire;
+                # 'trade' + a Trump only one page's lead names joined Michigan's Mike Rogers on Canada to a trade
+                # group on US-made tech, October 7, PC)
                 d = PairDecision(*key, ACCEPT, [f"embedding agrees (cosine {cos:.2f}) and shares specific words"],
                                  cos, specific, support=True)
             else:
@@ -183,12 +186,13 @@ class IdentityGate:
 
 
 def cohesive_groups(ids: list[int], gate: IdentityGate, edges: list[tuple[int, int]] | None = None,
-                    fragments: set[int] | None = None) -> list[list[int]]:
+                    fragments: set[int] | None = None, attach: bool = True) -> list[list[int]]:
     """Group ``ids`` into events: no rejected pair inside a group, and a strict majority of accepted pairs
     between any two groups that merge (so a single bridge never joins two events).
 
     ``edges`` are the candidate pairs (all pairs when None: small sets only). ``fragments`` are trend
     fragments ('Messi', 'Packers'): one that is accepted by members of two different stories joins neither.
+    ``attach=False`` leaves lone reports alone: attaching is decided once, over every story of the run.
     """
     owner = {i: i for i in ids}
     groups: dict[int, list[int]] = {i: [i] for i in ids}
@@ -218,7 +222,7 @@ def cohesive_groups(ids: list[int], gate: IdentityGate, edges: list[tuple[int, i
         for x in groups[keep]:
             owner[x] = keep
         gate.stats.merges_accepted += 1
-    out = _attach_supported(list(groups.values()), gate)
+    out = _attach_supported(list(groups.values()), gate) if attach else list(groups.values())
     if fragments:
         out = _drop_ambiguous_fragments(out, gate, fragments)
     return sorted((sorted(g) for g in out), key=lambda g: (-len(g), g))

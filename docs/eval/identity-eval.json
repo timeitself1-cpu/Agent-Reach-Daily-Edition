@@ -1,15 +1,17 @@
 {
- "generated_utc": "2026-10-07T16:15:04+00:00",
+ "generated_utc": "2026-10-07T17:59:39+00:00",
  "corpus": {
   "editions": [
    "2026-10-07-selftest-r1.json",
    "2026-10-07-selftest-r2.json",
    "2026-10-07-selftest2-r1.json",
    "2026-10-07-selftest2-r2.json",
-   "2026-10-07-0935-export.json"
+   "2026-10-07-0935-export.json",
+   "2026-10-07-rc12-r1.json",
+   "2026-10-07-rc12-r2.json"
   ],
-  "reports": 427,
-  "gold_events": 225
+  "reports": 593,
+  "gold_events": 332
  },
  "settings": {
   "identity_neighbors": 12,
@@ -20,7 +22,7 @@
  "ollama": false,
  "rows": [
   {
-   "name": "rc11 published (nomic + HDBSCAN + single-link)",
+   "name": "rc11 published (nomic + HDBSCAN + single-link; 5 rc11 editions)",
    "precision": 0.885,
    "recall": 0.976,
    "f1": 0.928,
@@ -88,37 +90,72 @@
    }
   },
   {
+   "name": "rc12 published on the PC (nomic + identity gate before rc12b; 2 rc12 editions)",
+   "precision": 0.816,
+   "recall": 1.0,
+   "f1": 0.898,
+   "false_merges": 26,
+   "missed_merges": 0,
+   "mixed_stories": 6,
+   "true_pairs": 115,
+   "predicted_pairs": 141,
+   "editions": {
+    "2026-10-07-rc12-r1.json": {
+     "precision": 0.736,
+     "recall": 1.0,
+     "f1": 0.848,
+     "false_merges": 19,
+     "missed_merges": 0,
+     "mixed_stories": 4,
+     "multi_report_stories": 15,
+     "true_pairs": 53,
+     "predicted_pairs": 72
+    },
+    "2026-10-07-rc12-r2.json": {
+     "precision": 0.899,
+     "recall": 1.0,
+     "f1": 0.947,
+     "false_merges": 7,
+     "missed_merges": 0,
+     "mixed_stories": 2,
+     "multi_report_stories": 21,
+     "true_pairs": 62,
+     "predicted_pairs": 69
+    }
+   }
+  },
+  {
    "name": "identity gate, no embeddings (fallback)",
    "precision": 1.0,
-   "recall": 0.635,
-   "f1": 0.777,
+   "recall": 0.62,
+   "f1": 0.765,
    "false_merges": 0,
-   "missed_merges": 150,
+   "missed_merges": 200,
    "mixed_stories": 0,
-   "true_pairs": 411,
-   "predicted_pairs": 261,
+   "true_pairs": 526,
+   "predicted_pairs": 326,
    "editions": {
     "2026-10-07-selftest-r1.json": {
      "precision": 1.0,
-     "recall": 0.427,
-     "f1": 0.599,
+     "recall": 0.436,
+     "f1": 0.607,
      "false_merges": 0,
-     "missed_merges": 67,
+     "missed_merges": 66,
      "mixed_stories": 0,
-     "multi_report_stories": 19,
+     "multi_report_stories": 20,
      "true_pairs": 117,
-     "predicted_pairs": 50
+     "predicted_pairs": 51
     },
     "2026-10-07-selftest-r2.json": {
      "precision": 1.0,
-     "recall": 0.426,
-     "f1": 0.597,
+     "recall": 0.435,
+     "f1": 0.606,
      "false_merges": 0,
-     "missed_merges": 62,
+     "missed_merges": 61,
      "mixed_stories": 0,
-     "multi_report_stories": 18,
+     "multi_report_stories": 19,
      "true_pairs": 108,
-     "predicted_pairs": 46
+     "predicted_pairs": 47
     },
     "2026-10-07-selftest2-r1.json": {
      "precision": 1.0,
@@ -133,60 +170,82 @@
     },
     "2026-10-07-selftest2-r2.json": {
      "precision": 1.0,
-     "recall": 0.836,
-     "f1": 0.911,
+     "recall": 0.891,
+     "f1": 0.942,
      "false_merges": 0,
-     "missed_merges": 9,
+     "missed_merges": 6,
      "mixed_stories": 0,
      "multi_report_stories": 19,
      "true_pairs": 55,
-     "predicted_pairs": 46
+     "predicted_pairs": 49
     },
     "2026-10-07-0935-export.json": {
      "precision": 1.0,
-     "recall": 0.836,
-     "f1": 0.911,
+     "recall": 0.852,
+     "f1": 0.92,
      "false_merges": 0,
-     "missed_merges": 10,
+     "missed_merges": 9,
      "mixed_stories": 0,
-     "multi_report_stories": 16,
+     "multi_report_stories": 17,
      "true_pairs": 61,
-     "predicted_pairs": 51
+     "predicted_pairs": 52
+    },
+    "2026-10-07-rc12-r1.json": {
+     "precision": 1.0,
+     "recall": 0.528,
+     "f1": 0.691,
+     "false_merges": 0,
+     "missed_merges": 25,
+     "mixed_stories": 0,
+     "multi_report_stories": 13,
+     "true_pairs": 53,
+     "predicted_pairs": 28
+    },
+    "2026-10-07-rc12-r2.json": {
+     "precision": 1.0,
+     "recall": 0.5,
+     "f1": 0.667,
+     "false_merges": 0,
+     "missed_merges": 31,
+     "mixed_stories": 0,
+     "multi_report_stories": 18,
+     "true_pairs": 62,
+     "predicted_pairs": 31
     }
    }
   },
   {
    "name": "identity gate, replayed rc11 neighbourhoods",
    "precision": 1.0,
-   "recall": 0.762,
-   "f1": 0.865,
+   "recall": 0.688,
+   "f1": 0.815,
    "false_merges": 0,
-   "missed_merges": 98,
+   "missed_merges": 164,
    "mixed_stories": 0,
-   "true_pairs": 411,
-   "predicted_pairs": 313,
+   "true_pairs": 526,
+   "predicted_pairs": 362,
    "editions": {
     "2026-10-07-selftest-r1.json": {
      "precision": 1.0,
-     "recall": 0.684,
-     "f1": 0.812,
+     "recall": 0.624,
+     "f1": 0.768,
      "false_merges": 0,
-     "missed_merges": 37,
+     "missed_merges": 44,
      "mixed_stories": 0,
      "multi_report_stories": 19,
      "true_pairs": 117,
-     "predicted_pairs": 80
+     "predicted_pairs": 73
     },
     "2026-10-07-selftest-r2.json": {
      "precision": 1.0,
-     "recall": 0.583,
-     "f1": 0.737,
+     "recall": 0.472,
+     "f1": 0.642,
      "false_merges": 0,
-     "missed_merges": 45,
+     "missed_merges": 57,
      "mixed_stories": 0,
-     "multi_report_stories": 17,
+     "multi_report_stories": 19,
      "true_pairs": 108,
-     "predicted_pairs": 63
+     "predicted_pairs": 51
     },
     "2026-10-07-selftest2-r1.json": {
      "precision": 1.0,
@@ -201,38 +260,60 @@
     },
     "2026-10-07-selftest2-r2.json": {
      "precision": 1.0,
-     "recall": 0.909,
-     "f1": 0.952,
+     "recall": 0.891,
+     "f1": 0.942,
      "false_merges": 0,
-     "missed_merges": 5,
+     "missed_merges": 6,
      "mixed_stories": 0,
-     "multi_report_stories": 18,
+     "multi_report_stories": 19,
      "true_pairs": 55,
-     "predicted_pairs": 50
+     "predicted_pairs": 49
     },
     "2026-10-07-0935-export.json": {
      "precision": 1.0,
-     "recall": 0.836,
-     "f1": 0.911,
+     "recall": 0.852,
+     "f1": 0.92,
      "false_merges": 0,
-     "missed_merges": 10,
+     "missed_merges": 9,
      "mixed_stories": 0,
-     "multi_report_stories": 16,
+     "multi_report_stories": 17,
      "true_pairs": 61,
-     "predicted_pairs": 51
+     "predicted_pairs": 52
+    },
+    "2026-10-07-rc12-r1.json": {
+     "precision": 1.0,
+     "recall": 0.566,
+     "f1": 0.723,
+     "false_merges": 0,
+     "missed_merges": 23,
+     "mixed_stories": 0,
+     "multi_report_stories": 13,
+     "true_pairs": 53,
+     "predicted_pairs": 30
+    },
+    "2026-10-07-rc12-r2.json": {
+     "precision": 1.0,
+     "recall": 0.613,
+     "f1": 0.76,
+     "false_merges": 0,
+     "missed_merges": 24,
+     "mixed_stories": 0,
+     "multi_report_stories": 20,
+     "true_pairs": 62,
+     "predicted_pairs": 38
     }
    }
   },
   {
    "name": "identity gate, every pair cosine 1",
    "precision": 1.0,
-   "recall": 0.187,
-   "f1": 0.316,
+   "recall": 0.167,
+   "f1": 0.287,
    "false_merges": 0,
-   "missed_merges": 334,
+   "missed_merges": 438,
    "mixed_stories": 0,
-   "true_pairs": 411,
-   "predicted_pairs": 77,
+   "true_pairs": 526,
+   "predicted_pairs": 88,
    "editions": {
     "2026-10-07-selftest-r1.json": {
      "precision": 1.0,
@@ -269,32 +350,54 @@
     },
     "2026-10-07-selftest2-r2.json": {
      "precision": 1.0,
-     "recall": 0.236,
-     "f1": 0.382,
+     "recall": 0.218,
+     "f1": 0.358,
      "false_merges": 0,
-     "missed_merges": 42,
+     "missed_merges": 43,
      "mixed_stories": 0,
-     "multi_report_stories": 4,
+     "multi_report_stories": 5,
      "true_pairs": 55,
-     "predicted_pairs": 13
+     "predicted_pairs": 12
     },
     "2026-10-07-0935-export.json": {
      "precision": 1.0,
-     "recall": 0.197,
-     "f1": 0.329,
+     "recall": 0.213,
+     "f1": 0.351,
+     "false_merges": 0,
+     "missed_merges": 48,
+     "mixed_stories": 0,
+     "multi_report_stories": 4,
+     "true_pairs": 61,
+     "predicted_pairs": 13
+    },
+    "2026-10-07-rc12-r1.json": {
+     "precision": 1.0,
+     "recall": 0.075,
+     "f1": 0.14,
      "false_merges": 0,
      "missed_merges": 49,
      "mixed_stories": 0,
+     "multi_report_stories": 2,
+     "true_pairs": 53,
+     "predicted_pairs": 4
+    },
+    "2026-10-07-rc12-r2.json": {
+     "precision": 1.0,
+     "recall": 0.113,
+     "f1": 0.203,
+     "false_merges": 0,
+     "missed_merges": 55,
+     "mixed_stories": 0,
      "multi_report_stories": 3,
-     "true_pairs": 61,
-     "predicted_pairs": 12
+     "true_pairs": 62,
+     "predicted_pairs": 7
     }
    }
   }
  ],
  "models": [],
  "false_merge_examples": {
-  "rc11 published (nomic + HDBSCAN + single-link)": {
+  "rc11 published (nomic + HDBSCAN + single-link; 5 rc11 editions)": {
    "2026-10-07-selftest-r1.json": [],
    "2026-10-07-selftest-r2.json": [
     [
@@ -385,26 +488,78 @@
     ]
    ]
   },
+  "rc12 published on the PC (nomic + identity gate before rc12b; 2 rc12 editions)": {
+   "2026-10-07-rc12-r1.json": [
+    [
+     "France halts use of stun grenades after boy's hand blown off in student protests",
+     "Belgian students rally over education costs in protests echoing France"
+    ],
+    [
+     "France suspends the use of stun grenades after student protester loses hand",
+     "Belgian students rally over education costs in protests echoing France"
+    ],
+    [
+     "Photos: The Student Protests in France",
+     "Belgian students rally over education costs in protests echoing France"
+    ],
+    [
+     "Belgian students rally over education costs in protests echoing France",
+     "French government defends handling of high school protests as controversies grow"
+    ],
+    [
+     "Belgian students rally over education costs in protests echoing France",
+     "What France's student protesters want - and what the government is offering"
+    ]
+   ],
+   "2026-10-07-rc12-r2.json": [
+    [
+     "France halts use of stun grenades after boy's hand blown off in student protests",
+     "Belgian students rally over education costs in protests echoing France"
+    ],
+    [
+     "France suspends the use of stun grenades after student protester loses hand",
+     "Belgian students rally over education costs in protests echoing France"
+    ],
+    [
+     "Photos: The Student Protests in France",
+     "Belgian students rally over education costs in protests echoing France"
+    ],
+    [
+     "French government defends handling of high school protests as controversies grow",
+     "Belgian students rally over education costs in protests echoing France"
+    ],
+    [
+     "What France's student protesters want - and what the government is offering",
+     "Belgian students rally over education costs in protests echoing France"
+    ]
+   ]
+  },
   "identity gate, no embeddings (fallback)": {
    "2026-10-07-selftest-r1.json": [],
    "2026-10-07-selftest-r2.json": [],
    "2026-10-07-selftest2-r1.json": [],
    "2026-10-07-selftest2-r2.json": [],
-   "2026-10-07-0935-export.json": []
+   "2026-10-07-0935-export.json": [],
+   "2026-10-07-rc12-r1.json": [],
+   "2026-10-07-rc12-r2.json": []
   },
   "identity gate, replayed rc11 neighbourhoods": {
    "2026-10-07-selftest-r1.json": [],
    "2026-10-07-selftest-r2.json": [],
    "2026-10-07-selftest2-r1.json": [],
    "2026-10-07-selftest2-r2.json": [],
-   "2026-10-07-0935-export.json": []
+   "2026-10-07-0935-export.json": [],
+   "2026-10-07-rc12-r1.json": [],
+   "2026-10-07-rc12-r2.json": []
   },
   "identity gate, every pair cosine 1": {
    "2026-10-07-selftest-r1.json": [],
    "2026-10-07-selftest-r2.json": [],
    "2026-10-07-selftest2-r1.json": [],
    "2026-10-07-selftest2-r2.json": [],
-   "2026-10-07-0935-export.json": []
+   "2026-10-07-0935-export.json": [],
+   "2026-10-07-rc12-r1.json": [],
+   "2026-10-07-rc12-r2.json": []
   }
  }
 }

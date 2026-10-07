@@ -12,10 +12,12 @@ the error that matters most. Each edition is clustered on its own, as a real ref
 Offline rows (always):
 
 * ``rc11 published``: what the rc11 pipeline (nomic-embed-text + HDBSCAN + single-link LinkIndex) actually
-  published on the user's PC that day: the baseline.
+  published on the user's PC that day (the five rc11 editions): the baseline.
+* ``rc12 published on the PC``: what the first rc12 refreshes published there (nomic-embed-text + identity gate,
+  before the rc12b fixes; the two rc12 editions). Every other row covers all editions.
 * ``identity, no embeddings``: the rc12 identity gate on lexical candidates (the fallback when no embedding
   model answers).
-* ``identity, replayed rc11 neighbourhoods``: reports rc11 put in one story get near-identical vectors; the
+* ``identity, replayed rc11 neighbourhoods``: reports published in one story get near-identical vectors; the
   worst case for the gate (every published false merge arrives as a confident embedding match).
 * ``identity, every pair cosine 1``: the embedding says nothing; only the gate's evidence separates events.
 
@@ -52,7 +54,8 @@ from agent_reach.pipeline.clusterer import LinkIndex
 from agent_reach.pipeline.density import density_cluster
 from agent_reach.pipeline.embeddings import EmbeddingUnavailable, embed_reports
 from agent_reach.pipeline.event_identity import cohesive_groups, lexical_candidates, nearest_candidates
-from tests.event_corpus import EDITIONS, CorpusItem, load_edition, recorded_groups, related_pairs, score
+from tests.event_corpus import (EDITIONS, RC11_EDITIONS, RC12_EDITIONS, CorpusItem, load_edition, recorded_groups,
+                                related_pairs, score)
 
 DEFAULT_MODELS = "nomic-embed-text,embeddinggemma-2:270m"
 
@@ -215,12 +218,15 @@ async def run(models: list[str], use_ollama: bool, host: str, client=None, repla
     settings = Settings(db_path=Path(tempfile.gettempdir()) / "agent-reach-bench.db")
     rows, examples = [], {}
 
-    def add(name: str, grouper) -> None:
-        per, ex = _scored(corpora, grouper)
+    def add(name: str, grouper, only: tuple[str, ...] | None = None) -> None:
+        per, ex = _scored({n: c for n, c in corpora.items() if only is None or n in only}, grouper)
         rows.append(_row(name, per))
         examples[name] = ex
 
-    add("rc11 published (nomic + HDBSCAN + single-link)", lambda n, c: recorded_groups(c))
+    add("rc11 published (nomic + HDBSCAN + single-link; 5 rc11 editions)", lambda n, c: recorded_groups(c),
+        only=RC11_EDITIONS)
+    add("rc12 published on the PC (nomic + identity gate before rc12b; 2 rc12 editions)",
+        lambda n, c: recorded_groups(c), only=RC12_EDITIONS)
     add("identity gate, no embeddings (fallback)", lambda n, c: identity_groups(c, settings, None)[0])
     add("identity gate, replayed rc11 neighbourhoods", lambda n, c: identity_groups(c, settings, replay_vectors(c))[0])
     add("identity gate, every pair cosine 1",
