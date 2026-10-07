@@ -204,6 +204,29 @@ try {
     Write-Warn2 "Ollama is not answering at $OllamaHost. Start the Ollama app (Start menu > Ollama)."
     $warnings.Add("Start Ollama before refreshing (the app also tries to start it automatically)")
 }
+$ollamaVersion = "version unknown"
+if ($reachable) {
+    try { $ollamaVersion = "version " + (Invoke-RestMethod -Uri "$OllamaHost/api/version" -TimeoutSec 5 -ErrorAction Stop).version }
+    catch { $ollamaVersion = "version unknown" }
+    Write-Ok "Ollama $ollamaVersion"
+}
+
+function Get-PullError([string]$model) {
+    # Ask the Ollama server itself why: its answer names the reason ('ollama pull' prints it only on screen).
+    # Returns $null when this second try downloads the model after all.
+    try {
+        $body = @{ model = $model; stream = $false } | ConvertTo-Json -Compress
+        Invoke-RestMethod -Method Post -Uri "$OllamaHost/api/pull" -Body $body -ContentType "application/json" -TimeoutSec 600 -ErrorAction Stop | Out-Null
+        return $null
+    } catch {
+        if ($_.ErrorDetails -and $_.ErrorDetails.Message) {
+            $msg = $_.ErrorDetails.Message
+            try { $j = $msg | ConvertFrom-Json -ErrorAction Stop; if ($j.error) { return [string]$j.error } } catch { }
+            return $msg
+        }
+        return $_.Exception.Message
+    }
+}
 
 function Test-ModelPresent([string]$wanted, [string[]]$have) {
     if ($have -contains $wanted -or $have -contains "$($wanted):latest") { return $true }
@@ -220,8 +243,19 @@ if ($reachable) {
             else {
                 Write-Note "Downloading model $m ($size). This can take a while..."
                 & $ollamaExe pull $m
-                if ($LASTEXITCODE -ne 0) { Write-Warn2 "Downloading $m failed."; $warnings.Add("Run: ollama pull $m") }
-                else { Write-Ok "Model $m downloaded" }
+                if ($LASTEXITCODE -eq 0) { Write-Ok "Model $m downloaded" }
+                else {
+                    $why = Get-PullError $m
+                    if ($null -eq $why) { Write-Ok "Model $m downloaded (second try)" }
+                    elseif ($m -like "embeddinggemma*") {
+                        Write-Warn2 "Downloading $m failed: $why"
+                        Write-Warn2 "EmbeddingGemma 2 is new (October 2026) and may need a newer Ollama than this one ($ollamaVersion). Update Ollama from https://ollama.com/download (or choose 'Restart to update' in the Ollama tray menu), then run this again. Until then the app groups stories with nomic-embed-text."
+                        $warnings.Add("Optional (better story grouping): update Ollama, then run: ollama pull $m")
+                    } else {
+                        Write-Warn2 "Downloading $m failed: $why"
+                        $warnings.Add("Run: ollama pull $m")
+                    }
+                }
             }
         } else {
             Write-Warn2 "Model $m is missing ($size). Download it with:  ollama pull $m   (or re-run with -PullModels)"

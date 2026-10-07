@@ -181,3 +181,31 @@ def test_ollama_check_survives_a_server_that_is_not_ollama(monkeypatch):
     status = prereqs.check_ollama("http://localhost:11434", ["llama3.1:8b"])
     assert status.ready and status.version is None
 
+
+def test_missing_grouping_model_is_named_but_never_blocks(monkeypatch):
+    """October 7 on the user's PC: Ollama 0.40.0 had no embeddinggemma-2:270m. Refreshes worked on nomic-embed-text,
+    but the 'model missing' message listed the grouping model beside the chat model as if it stopped refreshes."""
+    from agent_reach.daily import prereqs
+    from agent_reach.daily.prefs import DailyPrefs
+
+    real_client = httpx.Client
+    answers = {"/api/tags": {"models": [{"name": "llama3.1:8b"}, {"name": "nomic-embed-text:latest"}]},
+               "/api/version": {"version": "0.40.0"}}
+    monkeypatch.setattr(prereqs.httpx, "Client", lambda **kw: real_client(
+        transport=httpx.MockTransport(lambda req: httpx.Response(200, json=answers[req.url.path])), **kw))
+    prefs = DailyPrefs()
+    status = prereqs.check_prefs(prefs)
+    assert status.ready and status.missing == []
+    assert status.grouping_missing == prefs.embed_model and status.grouping_fallback == "nomic-embed-text"
+    text = status.describe()
+    assert text.startswith("Ollama 0.40.0 is running.") and f"'ollama pull {prefs.embed_model}'" in text
+    assert "grouped with nomic-embed-text" in text and "update Ollama" in text
+    answers["/api/tags"] = {"models": [{"name": "nomic-embed-text:latest"}]}  # the chat model is what blocks
+    status = prereqs.check_prefs(prefs)
+    assert not status.ready and status.missing == [prefs.ollama_model]
+    assert status.describe().startswith(f"Ollama is running but model(s) {prefs.ollama_model} are missing.")
+    answers["/api/tags"] = {"models": [{"name": "llama3.1:8b"}, {"name": f"{prefs.embed_model}"}]}
+    status = prereqs.check_prefs(prefs)
+    assert status.ready and status.grouping_missing is None and "required models" in status.describe()
+    answers["/api/tags"] = {"models": [{"name": "llama3.1:8b"}]}
+    assert "grouped by shared words" in prereqs.check_prefs(prefs).describe()

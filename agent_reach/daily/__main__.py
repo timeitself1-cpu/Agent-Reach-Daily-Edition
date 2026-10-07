@@ -107,12 +107,13 @@ def main(argv: list[str] | None = None) -> int:
 
     if args.check:
         from agent_reach.daily.prefs import load_prefs
-        from agent_reach.daily.prereqs import check_ollama
+        from agent_reach.daily.prereqs import check_prefs
 
         prefs, warn = load_prefs(paths)
-        status = check_ollama(prefs.ollama_host, [prefs.ollama_model, prefs.embed_model])
+        status = check_prefs(prefs)
         print(json.dumps({"ready": status.ready, "reachable": status.reachable, "version": status.version,
-                          "missing_models": status.missing, "message": status.describe(),
+                          "missing_models": status.missing, "grouping_model_missing": status.grouping_missing,
+                          "grouping_fallback": status.grouping_fallback, "message": status.describe(),
                           "settings_warning": warn, "python": sys.version.split()[0]}, indent=2))
         return 0 if status.ready else 1
 

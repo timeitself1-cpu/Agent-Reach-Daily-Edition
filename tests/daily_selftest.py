@@ -501,32 +501,33 @@ def part_launchers(report: Report, args, base: Path) -> None:
 
 def part_ollama(report: Report, args, base: Path, prefs: DailyPrefs) -> bool:
     """Returns whether the real Ollama is ready (the real-refresh parts need it)."""
-    from agent_reach.daily.prereqs import check_ollama
+    from agent_reach.daily.prereqs import check_ollama, check_prefs
 
     P = "3. ollama"
-    models = [prefs.ollama_model, prefs.embed_model]
-    st = check_ollama(args.ollama_host, models)
+    st = check_ollama(args.ollama_host, [prefs.ollama_model],
+                      grouping=[prefs.embed_model, *prefs.embed_fallback_models])
     ready = st.ready
-    if not ready and st.reachable and st.missing == [prefs.embed_model]:
+    if st.reachable and st.grouping_missing:
         # rc12: without EmbeddingGemma the refresh still works on the fallback model; say so, then test on
-        st_fb = check_ollama(args.ollama_host, [prefs.ollama_model, *prefs.embed_fallback_models[:1]])
         report.add(P, f"grouping model {prefs.embed_model}", "FAIL",
-                   f"missing: run 'ollama pull {prefs.embed_model}'. Refreshes fall back to "
-                   f"{', '.join(prefs.embed_fallback_models) or 'word matching'} until then.")
-        st, ready = st_fb, st_fb.ready
-    report.check(P, "Ollama running with both models", ready,
+                   f"missing (Ollama {st.version or 'version unknown'}): run 'ollama pull {prefs.embed_model}'; if "
+                   f"that fails, update Ollama first. Refreshes group stories with "
+                   f"{st.grouping_fallback or 'shared words'} until then.")
+    report.check(P, "Ollama running with the chat model", ready,
                  f"{st.describe()}\nversion {st.version}; models: {', '.join(st.models) or 'none'}")
+    st_prefs = check_prefs(prefs)
+    report.check(P, "a missing grouping model never blocks a refresh", st_prefs.ready == st.ready, st_prefs.describe())
     st2 = check_ollama(args.ollama_host, ["agent-reach-selftest-missing-model"])
     report.check(P, "a missing model is named in plain words", st2.reachable and bool(st2.missing)
                  and "ollama pull agent-reach-selftest-missing-model" in st2.describe(), st2.describe())
     closed = f"http://127.0.0.1:{free_port()}"
-    st3 = check_ollama(closed, models)
+    st3 = check_ollama(closed, [prefs.ollama_model])
     report.check(P, "nothing listening: 'not running' (simulated on a free port; your Ollama keeps running)",
                  not st3.reachable and "is not running" in st3.describe(), st3.describe())
     junk = HttpJunk()
     junk.start()
     try:
-        st4 = check_ollama(f"http://127.0.0.1:{junk.port}", models)
+        st4 = check_ollama(f"http://127.0.0.1:{junk.port}", [prefs.ollama_model])
         report.check(P, "another program on the port: no crash, not treated as Ollama",
                      not st4.reachable and "Another program answers" in st4.describe(), st4.describe())
         # the whole refresh against it: fails fast before fetching any news, with a plain message

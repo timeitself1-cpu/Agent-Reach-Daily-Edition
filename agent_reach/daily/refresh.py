@@ -170,13 +170,13 @@ class Watchdog:
 
 
 def default_ollama_probe(prefs: DailyPrefs):
-    from agent_reach.daily.prereqs import check_ollama, start_ollama
+    from agent_reach.daily.prereqs import check_prefs, start_ollama
 
-    models = [prefs.ollama_model, prefs.embed_model]
-    status = check_ollama(prefs.ollama_host, models)
+    status = check_prefs(prefs)
     if not status.reachable and prefs.start_ollama_if_down:
         log.info("Ollama not reachable; trying to start it")
-        status = start_ollama(prefs.ollama_host, models)
+        status = start_ollama(prefs.ollama_host, [prefs.ollama_model],
+                              grouping=[prefs.embed_model, *prefs.embed_fallback_models])
     return status
 
 

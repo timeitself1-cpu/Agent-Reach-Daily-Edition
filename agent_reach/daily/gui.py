@@ -1280,9 +1280,9 @@ class DailyWindow:
         prefs = (self.snap.prefs if self.snap else DailyPrefs())
 
         def work() -> None:
-            from agent_reach.daily.prereqs import check_ollama
+            from agent_reach.daily.prereqs import check_prefs
 
-            status = check_ollama(prefs.ollama_host, [prefs.ollama_model, prefs.embed_model])
+            status = check_prefs(prefs)
             prefix = "ready - " if status.ready else "NOT ready - "
             self._prereq_q.put(prefix + status.describe())
 

@@ -1,4 +1,4 @@
-"""Local prerequisite checks: Ollama reachability and the two models.
+"""Local prerequisite checks: Ollama reachability, the chat model and the story-grouping model.
 
 Only localhost-style calls to the configured Ollama host; never pulls models (that belongs to
 the interactive setup script, so unattended refreshes never start multi-GB downloads).
@@ -30,10 +30,23 @@ class OllamaStatus:
     models: list[str] = field(default_factory=list)
     missing: list[str] = field(default_factory=list)
     error: str | None = None
+    #: The story-grouping (embedding) model when it is not installed, and the installed model used instead
+    #: (None: none of the fallbacks either; stories are then grouped by shared words). Never blocks a refresh.
+    grouping_missing: str | None = None
+    grouping_fallback: str | None = None
 
     @property
     def ready(self) -> bool:
         return self.reachable and not self.missing
+
+    def _grouping_note(self) -> str:
+        g = self.grouping_missing
+        if not g:
+            return ""
+        instead = f"with {self.grouping_fallback}" if self.grouping_fallback else "by shared words"
+        return (f" The story-grouping model {g} is not installed, so stories are grouped {instead} until it is. "
+                f"To add it, run 'ollama pull {g}' in a terminal (if that fails, update Ollama from "
+                "https://ollama.com/download first).")
 
     def describe(self) -> str:
         if not self.reachable and "not like an Ollama server" in (self.error or ""):
@@ -44,7 +57,10 @@ class OllamaStatus:
                     "or install it from https://ollama.com/download.")
         if self.missing:
             pulls = " and ".join(f"'ollama pull {m}'" for m in self.missing)
-            return f"Ollama is running but model(s) {', '.join(self.missing)} are missing. Run {pulls} in a terminal."
+            return (f"Ollama is running but model(s) {', '.join(self.missing)} are missing. Run {pulls} in a terminal."
+                    + self._grouping_note())
+        if self.grouping_missing:
+            return f"Ollama {self.version or ''} is running.".replace("  ", " ") + self._grouping_note()
         return f"Ollama {self.version or ''} is running with the required models.".replace("  ", " ")
 
 
@@ -54,7 +70,17 @@ def model_present(wanted: str, names: list[str]) -> bool:
     return ":" not in wanted and any(n.split(":")[0] == wanted for n in names)
 
 
-def check_ollama(host: str, required_models: list[str], timeout_s: float = 3.0) -> OllamaStatus:
+def check_prefs(prefs, timeout_s: float = 3.0) -> OllamaStatus:
+    """The models a refresh needs: the chat model is required; the grouping model is optional (its fallbacks or
+    word matching stand in), so a missing grouping model is reported, never blocking (October 7: the selftest's
+    'model missing' message listed embeddinggemma-2:270m beside the chat model as if it stopped refreshes)."""
+    return check_ollama(prefs.ollama_host, [prefs.ollama_model], timeout_s,
+                        grouping=[prefs.embed_model, *getattr(prefs, "embed_fallback_models", [])])
+
+
+def check_ollama(host: str, required_models: list[str], timeout_s: float = 3.0,
+                 grouping: list[str] | None = None) -> OllamaStatus:
+    """``grouping``: the embedding model, then its fallbacks in order (optional models)."""
     host = host.rstrip("/")
     try:
         with httpx.Client(timeout=timeout_s, trust_env=False) as client:
@@ -77,7 +103,11 @@ def check_ollama(host: str, required_models: list[str], timeout_s: float = 3.0) 
     except (httpx.HTTPError, ValueError) as exc:
         return OllamaStatus(False, host, error=f"{type(exc).__name__}: {str(exc)[:160]}")
     missing = [m for m in required_models if not model_present(m, names)]
-    return OllamaStatus(True, host, version=version, models=sorted(names), missing=missing)
+    status = OllamaStatus(True, host, version=version, models=sorted(names), missing=missing)
+    if grouping and not model_present(grouping[0], names):
+        status.grouping_missing = grouping[0]
+        status.grouping_fallback = next((m for m in grouping[1:] if model_present(m, names)), None)
+    return status
 
 
 def find_ollama_executables() -> list[Path]:
@@ -99,9 +129,10 @@ def find_ollama_executables() -> list[Path]:
     return out
 
 
-def start_ollama(host: str, required_models: list[str], wait_s: float = 45.0) -> OllamaStatus:
+def start_ollama(host: str, required_models: list[str], wait_s: float = 45.0,
+                 grouping: list[str] | None = None) -> OllamaStatus:
     """Start the local Ollama server hidden if it is down and the host is local. Never pulls models."""
-    status = check_ollama(host, required_models)
+    status = check_ollama(host, required_models, grouping=grouping)
     if status.reachable:
         return status
     if not any(h in host for h in ("localhost", "127.0.0.1", "[::1]")):
@@ -123,7 +154,7 @@ def start_ollama(host: str, required_models: list[str], wait_s: float = 45.0) ->
     deadline = time.monotonic() + wait_s
     while time.monotonic() < deadline:
         time.sleep(1.5)
-        status = check_ollama(host, required_models)
+        status = check_ollama(host, required_models, grouping=grouping)
         if status.reachable:
             return status
     status.error = f"started {exe.name} but the server did not answer within {wait_s:.0f} s"
