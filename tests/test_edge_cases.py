@@ -13,6 +13,9 @@ from agent_reach.pipeline import density as D
 from agent_reach.pipeline import enricher as EN
 from tests.fakes import PAGES, FakeOllama, RealAsyncClient, fake_vec
 
+#: Resolution of time.monotonic() at worst (Windows, Python 3.12: GetTickCount64, 15.6 ms).
+MONOTONIC_TICK = 0.016
+
 
 def test_bs4_fallback_extracts_lead_and_skips_boilerplate(monkeypatch):
     monkeypatch.setattr(EN, "trafilatura", None)
@@ -114,7 +117,9 @@ def test_reddit_retries_pacing_and_budget():
 
     items, stat, dt = asyncio.run(go())
     assert stat.ok and items
-    assert min(b - a for a, b in zip(stamps, stamps[1:])) >= 0.29
+    # 0.3 s spacing; the stamps are taken in the handler, after pacing, and time.monotonic() on Windows with
+    # Python 3.12 ticks every ~16 ms, so one tick of slack (October 7, PC: 0.282 s measured before pacing re-checked)
+    assert min(b - a for a, b in zip(stamps, stamps[1:])) >= 0.3 - MONOTONIC_TICK
     assert dt < 4.5
 
 
@@ -133,7 +138,7 @@ def test_tiktok_paced_retries_then_clean_fail():
 
     items, stat = asyncio.run(go())
     assert not stat.ok and items == [] and len(stamps) == 3
-    assert min(b - a for a, b in zip(stamps, stamps[1:])) >= 0.29
+    assert min(b - a for a, b in zip(stamps, stamps[1:])) >= 0.3 - MONOTONIC_TICK
 
 
 def test_retry_after_is_never_negative_or_nan():
@@ -175,3 +180,4 @@ def test_ollama_check_survives_a_server_that_is_not_ollama(monkeypatch):
     answers["/api/tags"] = {"models": [{"name": "llama3.1:8b"}, "junk"]}
     status = prereqs.check_ollama("http://localhost:11434", ["llama3.1:8b"])
     assert status.ready and status.version is None
+
