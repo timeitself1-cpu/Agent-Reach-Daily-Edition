@@ -65,10 +65,10 @@ recall >= 0.6; fallback tested; evaluation artifact; real benchmark command for 
 - [x] A. Baseline + regression corpus: `tests/html_fixture.py` (HTML export -> fixture), the 9:35 export as
       `tests/fixtures/real/2026-10-07-0935-export.json`, gold events (`event_gold.json`), `tests/event_corpus.py`
       (pairwise P/R/F1 + raw false merges). Baseline: rc11 published 52 false merges.
-- [ ] B. Embeddings: `pipeline/embeddings.py` (deterministic event representation `event_repr_v2`, model task
+- [x] B. Embeddings: `pipeline/embeddings.py` (deterministic event representation `event_repr_v2`, model task
       prefix, L2 normalisation, SQLite cache keyed by provider|model@digest|dims|norm|repr|text hash, never
       mixes dimensions or models, fallback chain `embed_model` -> `embed_fallback_models` -> lexical).
-- [ ] C. Identity layer: `pipeline/event_identity.py` (kNN candidates, `IdentityGate` ACCEPT/REJECT/NEUTRAL with
+- [x] C. Identity layer: `pipeline/event_identity.py` (kNN candidates, `IdentityGate` ACCEPT/REJECT/NEUTRAL with
       reasons: roundup, date-only, names/everyday words only, event family, time apart, exclusive qualifiers;
       `cohesive_groups`: merge only through an accepted edge with no rejected cross pair and a strict majority
       of supporting cross pairs; ambiguous fragments join nothing). `LinkIndex.components` uses it (no
@@ -212,3 +212,4 @@ Each rule starts from quotes in `docs/REAL-EDITION-FINDINGS.md`; each gets a fix
 - 2026-10-07 | 0.2 | 97b3578, 87acfa2 | watchdog, honest model drop, lock-file durability, self-test kit | self-test on Windows
 - 2026-10-07 | 0.3 | afc82a9, d1792e3, 0f246d6 | rounds 1-2 on Windows: 404 tests pass there; 8 more fixes; 4 real editions as fixtures | 0.4-0.6 (user), then Phase 1
 - 2026-10-07 | rc12 A | (this commit) | labelled corpus of the 5 real Oct 7 editions: rc11 published 52 false merges in 13 stories | B + C
+- 2026-10-07 | rc12 B+C | (this commit) | EmbeddingGemma 2 backend + model-aware cache + fallback; identity gate + cohesive groups: 0 false merges on the corpus under replayed rc11 neighbourhoods and identical vectors, replay recall 0.73 | F (summary gate), then D, E

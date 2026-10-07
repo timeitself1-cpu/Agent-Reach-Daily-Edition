@@ -10,6 +10,7 @@ from __future__ import annotations
 
 import argparse
 import asyncio
+import json
 import logging
 import signal
 import sys
@@ -90,6 +91,27 @@ def build_accounting(
         duplicates_folded=breakdown.get("duplicates_merged", 0),
     )
     return PipelineAccounting(**fields)
+
+
+#: developer artifacts kept (one per run): ``semantic-<run_id>.json``
+MAX_PAIR_LOGS = 10
+
+
+def write_pair_log(folder: Path, run_id: str, outcome) -> Path | None:
+    """Every candidate pair of the run with the identity gate's decision and reasons (never shown in the app)."""
+    try:
+        folder.mkdir(parents=True, exist_ok=True)
+        path = folder / f"semantic-{run_id}.json"
+        tmp = path.with_suffix(".tmp")
+        tmp.write_text(json.dumps({"run_id": run_id, "semantic": outcome.semantic, "pairs": outcome.pair_log},
+                                  indent=1), encoding="utf-8")
+        tmp.replace(path)
+        for old in sorted(folder.glob("semantic-*.json"))[:-MAX_PAIR_LOGS]:
+            old.unlink(missing_ok=True)
+        return path
+    except OSError as exc:
+        log.warning("semantic pair log not written: %s", exc)
+        return None
 
 
 async def run_once(
@@ -182,7 +204,10 @@ async def run_once(
             effective_config=effective_config,
             label_calls=outcome.label_calls,
             label_calls_failed=outcome.label_calls_failed,
+            semantic=outcome.semantic,
         )
+        if settings.semantic_log_dir is not None:
+            await asyncio.to_thread(write_pair_log, settings.semantic_log_dir, run_id, outcome)
 
         log.info("stage 4/5 score: done")
 

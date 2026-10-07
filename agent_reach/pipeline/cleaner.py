@@ -300,10 +300,14 @@ def is_live_blog(text: str | None) -> bool:
     return bool(text and LIVE_BLOG_RX.search(text))
 
 
-#: Newsletter digests: one title, many stories ('First Thing: deranged and dangerous Trump calls for ...').
-DIGEST_TITLE_RX = re.compile(r"^\s*(?:first thing|morning mail|the download|the morning|morning report|evening report|"
-                             r"morning briefing|evening briefing|daily briefing|news ?digest|the briefing|week in review)"
-                             r"\s*[:|-]", re.IGNORECASE)
+#: Newsletter digests and news wraps: one title, many stories ('First Thing: deranged and dangerous Trump calls
+#: for ...'). On October 7, 2026 NBC's '... clash over Trump and Cornell allegations reignite debate over campus
+#: assault: Morning Rundown' and PBS's 'News Wrap: Cornell says Sally Yates will review ...' (whose text also
+#: covers Christa Pike and Trump) chained the Maine Senate debate to Cornell's sexual-assault review.
+_DIGEST_NAMES = (r"first thing|morning mail|the download|the morning|morning report|evening report|morning briefing|"
+                 r"evening briefing|daily briefing|news ?digest|the briefing|week in review|news wrap|morning rundown|"
+                 r"evening rundown|the rundown|morning edition|news roundup|headlines roundup|what we're watching")
+DIGEST_TITLE_RX = re.compile(r"^\s*(?:%s)\s*[:|-]|[:|-]\s*(?:%s)\s*$" % (_DIGEST_NAMES, _DIGEST_NAMES), re.IGNORECASE)
 
 
 def is_roundup(title: str | None) -> bool:
@@ -346,7 +350,12 @@ SPACE_BEFORE_PUNCT_RX = re.compile(r"\s+([.,;:!?])")
 REPEAT_PUNCT_RX = re.compile(r"([.,;:!?])(?:\s*[.,;:])+")
 #: Split only where punctuation is followed by space (keeps "2.0"), never after an abbreviation that runs on
 #: ('the upcoming U.S. midterm elections' became 'the upcoming U.S.' + 'Midterm elections.').
-SENTENCE_RX = re.compile(r"(?<=[.!?])(?<!\bU\.S\.)(?<!\bU\.K\.)(?<!\bU\.N\.)(?<!\bE\.U\.)(?<!\bNo\.)(?<!\bSt\.)"
+#: 'Oct. 7' is a date, not the end of a sentence: rc11 published "Prime Minister Benjamin Netanyahu faces a reckoning
+#: over the Oct." and "7 attack fuel deep divisions in the Israeli election" (October 7, 2026 editions).
+MONTH_DAY_GUARD = (r"(?!(?:" + "|".join(r"(?<=\b%s\.)" % m for m in
+                                        ("Jan", "Feb", "Mar", "Apr", "Jun", "Jul", "Aug", "Sep", "Sept", "Oct", "Nov", "Dec"))
+                   + r")\s+\d)")
+SENTENCE_RX = re.compile(r"(?<=[.!?])" + MONTH_DAY_GUARD + r"(?<!\bU\.S\.)(?<!\bU\.K\.)(?<!\bU\.N\.)(?<!\bE\.U\.)(?<!\bNo\.)(?<!\bSt\.)"
                          r"(?<!\bMr\.)(?<!\bMs\.)(?<!\bDr\.)(?<!\bMrs\.)(?<!\bGov\.)(?<!\bSen\.)(?<!\bRep\.)"
                          r"(?<!\bGen\.)(?<!\bJr\.)(?<!\bSr\.)(?<!\bvs\.)(?<!\bLt\.)(?<!\bCol\.)(?<!\bProf\.)"
                          r"(?<!\bBros\.)(?<!\bInc\.)(?<!\bCorp\.)(?<!\bCo\.)(?<!\bLtd\.)"

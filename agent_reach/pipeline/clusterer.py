@@ -2,9 +2,12 @@
 
 Flow
 ----
-3a  Density grouping: embed title + enriched context (nomic-embed-text), cluster with HDBSCAN,
-    gate every member by cosine-to-centroid. Outliers are NOISE and are dropped, never forced
-    into a mixed bucket. (No embeddings available -> lexical union-find groups, same rule.)
+3a  Event grouping: embed each report's event representation (EmbeddingGemma 2 by default, cached per
+    exact model; ``pipeline/embeddings.py``), take each report's nearest neighbours as CANDIDATES, and let
+    the event-identity gate decide (``pipeline/event_identity.py``): stories are cohesive (no rejected
+    pair, a majority of supported pairs), so no chain of links joins two events, and roundups join none.
+    Reports in no story are NOISE and are dropped, never forced into a mixed bucket. (No embedding model
+    answers -> the same gate over lexical candidates. ``cluster_method="density"`` = the rc11 HDBSCAN path.)
 3b  LLM labelling: the model only NAMES groups (headline, category, entities, 2-sentence
     summary, relevance); it never decides grouping. Groups whose signals cannot explain what
     happened and why are flagged [INSUFFICIENT_DATA].
@@ -42,8 +45,11 @@ from agent_reach.models import (
     SourceName,
     _coerce_ids,
 )
-from agent_reach.pipeline.density import EmbeddingUnavailable, density_cluster, embed_items
+from agent_reach.pipeline.density import density_cluster
+from agent_reach.pipeline.embeddings import EmbeddingRun, EmbeddingUnavailable, embed_reports
+from agent_reach.pipeline.event_identity import cohesive_groups, lexical_candidates, nearest_candidates
 from agent_reach.pipeline.cleaner import (
+    MONTH_DAY_GUARD,
     STOPWORDS,
     category_votes,
     dedupe_key,
@@ -119,7 +125,7 @@ CATEGORY_ALIASES: dict[str, CategoryEnum] = {
 }
 
 _WRITING_RULES = """HEADLINE rules: a news headline of at most 14 words with a subject and a verb that says what happened (e.g. "Packers Edge Falcons on Thursday Night Football", "OpenAI Releases GPT-6 With Native Agents", "FBI Arrests Woman Accused of Spying on Taiwan Leader's Family"). Never a topic label such as "Cornell University Rape Allegations" or "Big Tech's Military-Industrial Complex", and never generic umbrella titles such as "Entertainment: Music and Film". Do not prefix the headline with the category name.
-SUMMARY rules: exactly TWO complete, grammatically correct sentences in active voice. Sentence 1 states what happened and who did it. Sentence 2 adds the most important concrete detail from the context: a number, who is affected, or what happens next. Use ONLY facts present in the titles and context; never invent numbers, dates, scores or quotes. Never include URLs, @handles, hashtags, emoji, markdown or JSON fragments. Never write filler such as "this is drawing attention", "this showcases", "this highlights", "this has significant implications", "worth monitoring", "no specific information is available" or "details are scarce", and never repeat sentence 1.
+SUMMARY rules: exactly TWO complete, grammatically correct sentences in active voice. Sentence 1 states what happened and who did it. Sentence 2 adds the most important concrete detail from the context: a number, who is affected, or what happens next. Use ONLY facts present in the titles and context; never invent numbers, dates, scores or quotes. Never include URLs, @handles, hashtags, emoji, markdown or JSON fragments, and never use double quotation marks inside a text value (write 'single quotes' instead). Never write filler such as "this is drawing attention", "this showcases", "this highlights", "this has significant implications", "worth monitoring", "no specific information is available" or "details are scarce", and never repeat sentence 1.
 CATEGORY rules: exactly one of Sports, Entertainment, Tech, News, Internet Culture, Science & AI. Tech = software, hardware, developer tools, startups, tech companies, cybersecurity. Science & AI = AI models and research, scientific discoveries, space, research papers. Never label sports, celebrities, politics, pets or memes as Tech.
 PRIMARY_ENTITIES: 1-5 proper nouns (people, teams, organizations, products) that appear in the group's own signals.
 RELEVANCE_SCORE: integer 1-10 for significance and breadth of interest (10 = major global story, 1 = trivial)."""
@@ -273,7 +279,7 @@ def extract_json(text: str) -> dict[str, Any]:
     return data
 
 
-SENTENCE_SPLIT = re.compile(r"(?<=[.!?])(?<!\bU\.S\.)(?<!\bU\.K\.)(?<!\bU\.N\.)(?<!\bE\.U\.)(?<!\bNo\.)"
+SENTENCE_SPLIT = re.compile(r"(?<=[.!?])" + MONTH_DAY_GUARD + r"(?<!\bU\.S\.)(?<!\bU\.K\.)(?<!\bU\.N\.)(?<!\bE\.U\.)(?<!\bNo\.)"
                             r"(?<!\bGov\.)(?<!\bSen\.)(?<!\bRep\.)(?<!\bGen\.)(?<!\bSt\.)(?<!\bMr\.)(?<!\bMs\.)"
                             r"(?<!\bDr\.)(?<!\bMrs\.)(?<!\bJr\.)(?<!\bBros\.)(?<!\bInc\.)(?<!\bCorp\.)(?<!\bCo\.)"
                             r"(?<!\bLtd\.)(?<![\s(\"][A-Z]\.)\s+(?=[A-Z0-9\"'(])")
@@ -366,7 +372,22 @@ cost costs price prices money pay pays paid hit hits cut cuts win wins won award
 historic raise raises raised raising million millions billion billions trillion really night nights morning
 evening afternoon weekend safety
 midterm midterms
+federal
 """.split())
+#: Calendar words are when, not what: 'October 7' joined NASA's picture of the day ('APOD: 2026 October 7'),
+#: a Fauda review ('Fauda's October 7 Episodes'), the '#October7' hashtag and 'October 2026 Satellite Puzzler'
+#: into one story (October 7, 2026 edition). They never count as shared evidence.
+DATE_WORDS = frozenset("""
+january february march april may june july august september october november december
+jan feb mar apr jun jul aug sep sept oct nov dec
+monday tuesday wednesday thursday friday saturday sunday today tonight yesterday tomorrow weekend week
+""".split())
+_DATE_TOKEN_RX = re.compile(r"^(?:%s)\d{1,4}$" % "|".join(sorted({w for w in DATE_WORDS if len(w) >= 3})))
+
+
+def is_date_token(t: str) -> bool:
+    """'october', 'tuesday', and hashtag forms like 'october7' are dates, not evidence."""
+    return t in DATE_WORDS or bool(_DATE_TOKEN_RX.match(t))
 #: Trend lists whose titles are fragments ('Packers', 'Bijan'): only these may link to a full
 #: headline through a single distinctive word. A short article title ('Web Search API') may not.
 FRAGMENT_SOURCES = frozenset({SourceName.X_TRENDS24, SourceName.GOOGLE_TRENDS, SourceName.WIKIPEDIA,
@@ -405,6 +426,11 @@ class LinkIndex:
         self._co_cache: dict[tuple[str, str], bool] = {}
         self.name_words = self._name_words(pool.values())
         self._names: dict[int, frozenset[str]] = {}
+        self._entity_toks: dict[int, tuple[list[set[str]], set[str]] | None] = {}
+        self._written: dict[int, frozenset[str]] = {}
+        self._repr: dict[int, set[str]] = {}
+        self._sc_names: frozenset[str] | None = None
+        self._gate = None
 
     # ............................................................ names
     @staticmethod
@@ -491,42 +517,171 @@ class LinkIndex:
         return self._co_cache[(k1, k2)]
 
     def linked(self, a: int, b: int) -> bool:
+        return self.link_evidence(a, b)[0]
+
+    def _case_phrases(self, item_id: int) -> tuple[list[set[str]], set[str]] | None:
+        """(capitalised multi-word phrases that contain a name word, words written in lower case) of a title
+        written in sentence case; None for a Title Case headline, whose capitals say nothing."""
+        if item_id in self._entity_toks:
+            return self._entity_toks[item_id]
+        title = self.items[item_id].normalized_title
+        words = [w for w in _WORD_RX.findall(title) if len(w) >= 4 and w.lower() not in STOPWORDS]
+        out: tuple[list[set[str]], set[str]] | None = None
+        if words and sum(w[0].isupper() for w in words) / len(words) < 0.6:
+            phrases = [significant_tokens(m.group(1)) for m in PROPER_NOUN_RX.finditer(title)
+                       if len(m.group(1).split()) >= 2]
+            lower = {w.lower() for w in _WORD_RX.findall(title) if w[0].islower()}
+            # the name must be one the run writes in two or more reports ('Webb'), not a one-off capital
+            # ("'Patriotic Ads'")
+            out = ([p for p in phrases if any(t in self.name_words and self.df[t] >= 2 for t in p)], lower)
+        self._entity_toks[item_id] = out
+        return out
+
+    def _case_entity_tokens(self, item_id: int) -> set[str]:
+        got = self._case_phrases(item_id)
+        return set().union(*got[0]) if got and got[0] else set()
+
+    def _name_part_tokens(self, a: int, b: int, shared: set[str]) -> set[str]:
+        """Shared words that are part of a name rather than of what happened: words both sentence-case titles
+        capitalise in a name, and words one title writes inside a name ('James Webb Space Telescope') while
+        the other writes them in lower case ('NASA's Prima space telescope would aim to see what James Webb
+        can't': October 7, not the Webb study of colliding planets)."""
+        pa, pb = self._case_phrases(a), self._case_phrases(b)
+        out: set[str] = set()
+        if pa and pb:
+            out |= set().union(*pa[0], set()) & set().union(*pb[0], set())
+        for one, other in ((pa, pb), (pb, pa)):
+            if one and other:
+                out |= set().union(*one[0], set()) & other[1]
+        return out & shared
+
+    def link_evidence(self, a: int, b: int) -> tuple[bool, list[str], str]:
+        """Do two reports share specific evidence about what happened? -> (linked, shared evidence, reason)."""
         # a live blog or newsletter digest covers many stories: it is evidence for none of them, and
         # linking through it chained a diesel order to an Iran story and the Yankees to the Saints
         if a in self.roundups or b in self.roundups:
-            return False
+            return False, [], "multi-story roundup"
         ta, tb = self.toks.get(a, set()), self.toks.get(b, set())
-        shared = ta & tb
+        shared = {t for t in ta & tb if not is_date_token(t)}
+        if not shared and max(len(ta), len(tb)) <= 3 and self._cooccur_link(a, b):
+            return True, [], "fragments named together in one report"
+        if not shared:
+            dates = sorted(t for t in ta & tb if is_date_token(t))
+            return False, [], "shares only a date (" + ", ".join(dates) + ")" if dates else "no shared words"
         if min(len(ta), len(tb)) > 3:
             ea = set(extract_entities([self.items[a].normalized_title], limit=20))
             eb = set(extract_entities([self.items[b].normalized_title], limit=20))
-            entity_tokens = {t for e in ea & eb for t in significant_tokens(e)}
+            entity_tokens = {t for e in ea & eb for t in significant_tokens(e)} | self._name_part_tokens(a, b, shared)
             if not shared - entity_tokens - EVENT_WORDS - COMMON_WORDS:
-                return False
-        if not shared:
-            return False
+                return False, sorted(shared), "names or everyday words only"
         # ('National Taco Day' is not the national intelligence chief named AI czar)
         rare = [t for t in shared if self.df[t] <= self.rare_cap and t not in COMMON_WORDS]
         jacc = len(shared) / len(ta | tb)
         if len(shared) >= 2 and jacc >= 0.25:
-            return True
+            return True, sorted(shared), f"shared wording ({len(shared)} words, overlap {jacc:.2f})"
         # a phrase both titles share ('Supreme Court', 'iPhone 18 Pro', 'dies aged') is one piece
         # of evidence, not one per word: two reports need two separate rare things in common
         # ...and at least one of them must be about what happened, not only who ('Apple' + 'iPhone')
+        # ...and an everyday word ('behind', 'app' + 'behind' joined a privacy probe to a WSJ profile) is none
         cap = self.rare_cap if shared & self.name_words else self.nameless_cap
-        rare_units = [u for u in self.shared_units(a, b, shared) if any(self.df[t] <= cap for t in u)]
+        rare_units = [u for u in self.shared_units(a, b, shared)
+                      if any(self.df[t] <= cap and t not in COMMON_WORDS for t in u)]
         if len(rare_units) >= 2 and any(self._event_unit(u) for u in rare_units):
-            return True
+            return True, [" ".join(sorted(u)) for u in rare_units], "two distinctive phrases in common"
         # short trend fragments ('Packers', 'Bijan') link to a fuller title via one distinctive name
         short = a if len(ta) <= len(tb) else b
         if (rare and min(len(ta), len(tb)) <= 3 and any(len(t) >= 5 for t in rare)
                 and self.items[short].source in FRAGMENT_SOURCES
                 and self.fragment_fits(short, b if short == a else a)):
-            return True
-        return False
+            return True, sorted(rare), "trend fragment names the story"
+        if max(len(ta), len(tb)) <= 3 and self._cooccur_link(a, b):
+            return True, sorted(shared), "fragments named together in one report"
+        return False, sorted(shared), ("one distinctive phrase only" if rare_units else "no distinctive shared words")
 
-    def shared_units(self, a: int, b: int, shared: set[str]) -> list[set[str]]:
-        """Shared tokens grouped into the phrases both titles write side by side, in the same order."""
+    def specific_overlap(self, a: int, b: int) -> list[str]:
+        """Shared words that say what happened: rare in the run, not a date, not an everyday word, not a
+        name word, and not part of a name phrase either title writes ('Space Telescope')."""
+        if a in self.roundups or b in self.roundups:
+            return []
+        shared = self.toks.get(a, set()) & self.toks.get(b, set())
+        names = self._name_part_tokens(a, b, shared)
+        return sorted(t for t in shared if not is_date_token(t) and t not in COMMON_WORDS and t not in EVENT_WORDS
+                      and t not in self.name_words and t not in names and self.df[t] <= self.rare_cap
+                      and any(c.isalpha() for c in t))
+
+    def written_names(self, item_id: int) -> frozenset[str]:
+        """Name words this report itself writes capitalised mid-sentence ('Dead star likely birthed ...' does
+        not write 'dead' as a name; 'Star Moles Signs to Dead Oceans' does)."""
+        if item_id not in self._written:
+            text = self._name_text(self.items[item_id])
+            out = set()
+            for m in _WORD_RX.finditer(text):
+                w = m.group(0).strip("'")
+                before = text[max(0, m.start() - 4): m.start()].rstrip()
+                if not (w[0].isupper() or any(c.isupper() for c in w[1:])):
+                    continue
+                # a capital that opens the title counts when sentence-case text of the run also writes the word
+                # as a name ('Spain's housing crisis ...'), not when only Title Case headlines do ('Dead Oceans')
+                if (before and before[-1] not in _SENTENCE_OPENERS) or w.lower() in self._sentence_case_names():
+                    out.add(w.lower())
+            # a weekday is capitalised but names no one ('Tuesday' joined an FCC court fight to Messi's farewell)
+            self._written[item_id] = frozenset(t for t in out if not is_date_token(t)) & self.names(item_id)
+        return self._written[item_id]
+
+    def context_support(self, a: int, b: int) -> list[str]:
+        """Specific words two reports' event texts (title + lead of the page) share: support for cohesion
+        only, never a reason to start a story ('Wanying Zhang surveilled Taiwanese president's son' and 'FBI
+        says California woman spied for China on Taiwanese president's son')."""
+        if a in self.roundups or b in self.roundups:
+            return []
+        ra, rb = self._repr_toks(a), self._repr_toks(b)
+        names = self._name_part_tokens(a, b, ra & rb)
+        shared = {t for t in ra & rb if not is_date_token(t) and t not in COMMON_WORDS and t not in EVENT_WORDS
+                  and t not in self.name_words and t not in names and self.df.get(t, 0) <= self.rare_cap
+                  and any(c.isalpha() for c in t)}
+        if not shared:
+            return []
+        units = self.shared_units(a, b, shared, context=True)
+        return sorted(shared) if len(units) >= 2 or self.shares_name(a, b, rare=True) else []
+
+    def _repr_toks(self, item_id: int) -> set[str]:
+        if item_id not in self._repr:
+            it = self.items[item_id]
+            self._repr[item_id] = significant_tokens(f"{_item_text(it)}. {clip_words(it.context or '', 300)}")
+        return self._repr[item_id]
+
+    def _sentence_case_names(self) -> frozenset[str]:
+        if self._sc_names is None:
+            found: set[str] = set()
+            for iid in self.items:
+                if self._case_phrases(iid) is None:
+                    continue  # a Title Case headline
+                text = self.items[iid].normalized_title
+                for m in _WORD_RX.finditer(text):
+                    w = m.group(0).strip("'")
+                    before = text[max(0, m.start() - 4): m.start()].rstrip()
+                    if before and before[-1] not in _SENTENCE_OPENERS and w[0].isupper():
+                        found.add(w.lower())
+            self._sc_names = frozenset(found)
+        return self._sc_names
+
+    def shares_name(self, a: int, b: int, rare: bool = False) -> bool:
+        """Both reports write the same name. With ``rare``, only a name few reports of the run carry: a
+        name in six reports ('Google') says who, not what (October 7: Google's gaming platform and Google's
+        investment in a 'virtual cell' shared 'Google' + 'create')."""
+        return any(self.same_name(x, y) and (not rare or self.df.get(x, 0) <= self.rare_cap)
+                   for x in self.written_names(a) for y in self.written_names(b))
+
+    def _cooccur_link(self, a: int, b: int) -> bool:
+        """Two short fragments ('Packers', 'Falcons') link when a report of the run names both."""
+        return any(self.event_compatible(a, c) and self.event_compatible(b, c)
+                   and self.mentions(c, self.items[a].normalized_title)
+                   and self.mentions(c, self.items[b].normalized_title)
+                   for c in self.items if c not in (a, b))
+
+    def shared_units(self, a: int, b: int, shared: set[str], context: bool = False) -> list[set[str]]:
+        """Shared tokens grouped into phrases: words either title (with ``context``, either event text)
+        writes side by side count once."""
         def pairs(seq: list[str]) -> set[tuple[str, str]]:
             return {(x, y) for x, y in zip(seq, seq[1:]) if x in shared and y in shared and x != y}
 
@@ -537,7 +692,13 @@ class LinkIndex:
                 t = parent[t]
             return t
 
-        for x, y in pairs(self.seqs.get(a, [])) & pairs(self.seqs.get(b, [])):
+        # adjacency in EITHER title: 'dead star' in one title is one thing, not 'Star' (Moles) + 'Dead'
+        # (Oceans) of a record-deal headline (October 7: a band signing joined a planet-formation story)
+        seq_a, seq_b = self.seqs.get(a, []), self.seqs.get(b, [])
+        if context:
+            seq_a, seq_b = (tokens(f"{_item_text(self.items[i])}. {clip_words(self.items[i].context or '', 300)}")
+                            for i in (a, b))
+        for x, y in pairs(seq_a) | pairs(seq_b):
             parent[find(x)] = find(y)
         units: dict[str, set[str]] = defaultdict(set)
         for t in shared:
@@ -568,45 +729,48 @@ class LinkIndex:
         return rx is not None and rx.search(self.text_keys.get(item_id, "")) is not None
 
     def event_compatible(self, a: int, b: int) -> bool:
-        if abs((self.items[a].timestamp - self.items[b].timestamp).total_seconds()) > self.max_age_hours * 3600:
-            return False
-        for families in (EVENT_FAMILIES, *EXCLUSIVE_QUALIFIERS):
+        return self.conflict(a, b) is None or self.conflict(a, b) == "multi-story roundup"
+
+    def conflict(self, a: int, b: int) -> str | None:
+        """A reason the two reports cannot be one event, or None."""
+        if a in self.roundups or b in self.roundups:
+            return "multi-story roundup"
+        hours = abs((self.items[a].timestamp - self.items[b].timestamp).total_seconds()) / 3600
+        if hours > self.max_age_hours:
+            return f"reports {hours:.0f} h apart"
+        for kind, families in (("different kinds of event", EVENT_FAMILIES),
+                               *(("different prize or field", f) for f in EXCLUSIVE_QUALIFIERS)):
             ka = {i for i, words in enumerate(families) if words & self.toks[a]}
             kb = {i for i, words in enumerate(families) if words & self.toks[b]}
             if ka and kb and ka.isdisjoint(kb):
-                return False
-        return True
+                wa = sorted(set().union(*(families[i] for i in ka)) & self.toks[a])
+                wb = sorted(set().union(*(families[i] for i in kb)) & self.toks[b])
+                return f"{kind} ({'/'.join(wa)} vs {'/'.join(wb)})"
+        return None
+
+    @property
+    def gate(self):
+        """The run's identity gate (``event_identity.IdentityGate``); lexical until vectors are attached."""
+        if self._gate is None:
+            from agent_reach.pipeline.event_identity import IdentityGate
+
+            self._gate = IdentityGate(self)
+        return self._gate
+
+    def attach_vectors(self, vectors: dict[int, list[float]], min_cosine: float, strong_cosine: float) -> None:
+        from agent_reach.pipeline.event_identity import IdentityGate
+
+        self._gate = IdentityGate(self, vectors, min_cosine, strong_cosine)
 
     def components(self, ids: list[int], entities: list[str]) -> list[list[int]]:
-        # Label entities deliberately do not define edges. Short observed fragments can
-        # link through a contemporaneous title naming both; full stories need lexical evidence.
-        groups = [[i] for i in ids]
-        ambiguous = set()
-        for i in ids:
-            if len(self.toks[i]) <= 3:
-                anchors = [j for j in ids if len(self.toks[j]) > 3 and self.linked(i, j)]
-                if any(not self.linked(a, b) or not self.event_compatible(a, b)
-                       for a in anchors for b in anchors if a != b):
-                    ambiguous.add(i)
-        for a in ids:
-            for b in ids:
-                if a >= b or a in ambiguous or b in ambiguous:
-                    continue
-                linked = self.linked(a, b)
-                if not linked and max(len(self.toks[a]), len(self.toks[b])) <= 3:
-                    linked = any(self.event_compatible(a, c) and self.event_compatible(b, c)
-                                 and self.mentions(c, self.items[a].normalized_title)
-                                 and self.mentions(c, self.items[b].normalized_title)
-                                 for c in self.items)
-                if not linked:
-                    continue
-                ga = next(g for g in groups if a in g)
-                gb = next(g for g in groups if b in g)
-                if ga is gb or not all(self.event_compatible(x, y) for x in ga for y in gb):
-                    continue
-                ga.extend(gb)
-                groups.remove(gb)
-        return sorted(groups, key=lambda g: (-len(g), sorted(g)))
+        """Cohesive event groups of ``ids`` (``event_identity.cohesive_groups``): never single-link chains.
+
+        Label entities deliberately do not define edges. Short trend fragments join a story only when they
+        name it, and a fragment that names two different stories joins neither."""
+        fragments = {i for i in ids if len(self.toks[i]) <= 3}
+        from agent_reach.pipeline.event_identity import cohesive_groups
+
+        return cohesive_groups(list(ids), self.gate, fragments=fragments)
 
 
 #: Numbers and amount words a model headline may use only when the story's own reports do.
@@ -666,6 +830,8 @@ class ClusterOutcome:
     mode: str
     label_calls: int = 0  # model labelling calls (batches) made
     label_calls_failed: int = 0  # of those, batches that fell back to heuristic labels (model gone, bad output)
+    semantic: dict = field(default_factory=dict)  # compact semantic-pipeline diagnostics (embedding, gate counts)
+    pair_log: list = field(default_factory=list)  # developer artifact: candidate pairs and the gate's decisions
 
     @property
     def discarded_count(self) -> int:
@@ -692,6 +858,7 @@ class SemanticClusterer:
         self.label_calls = 0
         self.label_calls_failed = 0
         self.model_gone = False  # the model refused a connection: no more calls this run
+        self.embedding_run = EmbeddingRun(requested_model=settings.embed_model)
 
     @property
     def batch_size(self) -> int:
@@ -836,7 +1003,7 @@ class SemanticClusterer:
 
         # ---- 3a density grouping
         started = time.perf_counter()
-        groups, noise, method = await self._group(items, try_embeddings=use_llm)
+        groups, noise, method = await self._group(items, try_embeddings=use_llm, index=index)
         if self.settings.outlier_policy == "keep_top":
             keep = {i for i in noise if by_id[i].heuristic_score >= self.settings.singleton_keep_score}
             groups.extend([i] for i in noise if i in keep)
@@ -881,28 +1048,64 @@ class SemanticClusterer:
             discards[r].extend(ids)
 
         outcome = ClusterOutcome(clusters=clusters, discards={k: v for k, v in discards.items() if v}, mode=mode,
-                                 label_calls=self.label_calls, label_calls_failed=self.label_calls_failed)
+                                 label_calls=self.label_calls, label_calls_failed=self.label_calls_failed,
+                                 semantic=self._semantic(index, method, clusters, time.perf_counter() - started),
+                                 pair_log=index.gate.pair_log())
         outcome.assert_partition(items)
         return outcome
 
-    async def _group(self, items: list[CleanedTrendItem], try_embeddings: bool) -> tuple[list[list[int]], list[int], str]:
+    async def _group(self, items: list[CleanedTrendItem], try_embeddings: bool,
+                     index: LinkIndex | None = None) -> tuple[list[list[int]], list[int], str]:
+        index = index or LinkIndex(items, None, self.settings.event_max_age_hours)
+        ids = [it.item_id for it in items]
+        fragments = {i for i in ids if len(index.toks[i]) <= 3}
+        self.embedding_run = EmbeddingRun(requested_model=self.settings.embed_model, items=len(items))
         if try_embeddings:
             try:
                 client = self._get_client()
-                vectors = await embed_items(client, self.settings, items)
-                res = density_cluster(items, vectors, self.settings)
-                return res.groups, res.noise, res.method
+                vectors, self.embedding_run = await embed_reports(client, self.settings, items)
+                if self.settings.cluster_method == "density":
+                    res = density_cluster(items, vectors, self.settings)
+                    return res.groups, res.noise, f"{res.method} on {self.embedding_run.model}"
+                vecs = dict(zip(ids, vectors))
+                index.attach_vectors(vecs, self.settings.identity_candidate_cosine, self.settings.identity_strong_cosine)
+                edges = nearest_candidates(ids, vecs, self.settings.identity_neighbors, self.settings.identity_candidate_cosine)
+                groups = cohesive_groups(ids, index.gate, edges, fragments)
+                method = (f"identity gate on {self.embedding_run.model} neighbours "
+                          f"(k={self.settings.identity_neighbors}, cosine>={self.settings.identity_candidate_cosine:.2f})")
+                return self._split_noise(groups, method, len(edges))
             except ImportError:
                 log.warning("ollama package missing -> lexical grouping")
+                self.embedding_run.error = "python package 'ollama' not installed"
             except EmbeddingUnavailable as exc:
-                log.warning(
-                    "embeddings unavailable (%s) -> lexical grouping. Fix: ollama pull %s",
-                    str(exc)[:160], self.settings.embed_model,
-                )
-        groups = self._lexical_groups(items)
+                self.embedding_run = getattr(exc, "run", None) or self.embedding_run
+                self.embedding_run.error = self.embedding_run.error or str(exc)[:200]
+                log.warning("embeddings unavailable (%s) -> lexical grouping. Fix: ollama pull %s",
+                            str(exc)[:160], self.settings.embed_model)
+        edges = lexical_candidates(ids, index.toks, max(6, int(0.1 * len(ids))))
+        groups = cohesive_groups(ids, index.gate, edges, fragments)
+        return self._split_noise(groups, "identity gate on lexical candidates (no embeddings)", len(edges))
+
+    def _semantic(self, index: LinkIndex, method: str, clusters: list[MacroCluster], seconds: float) -> dict:
+        run = self.embedding_run
+        used = run.model or "none (lexical grouping)"
+        fallback = "" if run.model == run.requested_model else (
+            f"{run.requested_model} was not used: " + ("; ".join(run.fallbacks) or run.error or "embeddings off"))
+        return {"embedding": run.as_dict(), "model_used": used, "fallback": fallback[:400], "method": method,
+                "cluster_method": self.settings.cluster_method,
+                "candidate_cosine": self.settings.identity_candidate_cosine,
+                "strong_cosine": self.settings.identity_strong_cosine, "gate": index.gate.stats.as_dict(),
+                "roundups_in_run": len(index.roundups & {i for i in index.items}), "stories": len(clusters),
+                "multi_report_stories": sum(1 for c in clusters if len(c.member_item_ids) > 1),
+                "seconds": round(seconds, 2)}
+
+    @staticmethod
+    def _split_noise(groups: list[list[int]], method: str, candidates: int) -> tuple[list[list[int]], list[int], str]:
         clusters = [g for g in groups if len(g) >= 2]
         noise = [g[0] for g in groups if len(g) == 1]
-        return clusters, noise, "lexical (no embeddings)"
+        log.info("stage 3a identity: %d candidate pairs -> %d stories covering %d reports, %d noise (%s)",
+                 candidates, len(clusters), sum(len(g) for g in clusters), len(noise), method)
+        return clusters, noise, method
 
     def _heuristic_labels(self, drafts: list[DraftCluster], by_id: dict[int, CleanedTrendItem]) -> None:
         for d in drafts:
@@ -1316,53 +1519,6 @@ class SemanticClusterer:
         return clusters, dict(discards)
 
     # ....................................................... heuristic path
-    def _lexical_groups(self, items: list[CleanedTrendItem]) -> list[list[int]]:
-        """Union-find over distinctive shared tokens (inverted index, ~O(n * k))."""
-        toks = {it.item_id: significant_tokens(it.normalized_title) for it in items}
-        df: Counter[str] = Counter(t for ts in toks.values() for t in ts)
-        n = max(1, len(items))
-        rare_cap = max(4, int(0.06 * n))
-        short_cap = max(6, int(0.10 * n))
-        parent = {it.item_id: it.item_id for it in items}
-
-        def find(x: int) -> int:
-            while parent[x] != x:
-                parent[x] = parent[parent[x]]
-                x = parent[x]
-            return x
-
-        def union(a: int, b: int) -> None:
-            ra, rb = find(a), find(b)
-            if ra != rb:
-                parent[rb] = ra
-
-        index: dict[str, list[int]] = defaultdict(list)
-        for iid, ts in toks.items():
-            for t in ts:
-                if df[t] <= max(short_cap, 12):
-                    index[t].append(iid)
-        checked: set[tuple[int, int]] = set()
-        for ids in index.values():
-            for x in range(len(ids)):
-                for y in range(x + 1, len(ids)):
-                    a, b = ids[x], ids[y]
-                    key = (a, b) if a < b else (b, a)
-                    if key in checked:
-                        continue
-                    checked.add(key)
-                    ta, tb = toks[a], toks[b]
-                    shared = ta & tb
-                    rare_shared = {s for s in shared if df[s] <= rare_cap}
-                    jacc = len(shared) / len(ta | tb) if ta | tb else 0.0
-                    short = min(len(ta), len(tb)) <= 2
-                    short_shared = short and any(df[s] <= short_cap for s in shared)
-                    if jacc >= 0.34 or len(rare_shared) >= 2 or (rare_shared and short) or short_shared:
-                        union(a, b)
-        groups: dict[int, list[int]] = defaultdict(list)
-        for it in items:
-            groups[find(it.item_id)].append(it.item_id)
-        return list(groups.values())
-
     def _heuristic_draft(self, members: list[CleanedTrendItem]) -> DraftCluster:
         members = sorted(members, key=lambda m: m.heuristic_score, reverse=True)
         lead = members[0]

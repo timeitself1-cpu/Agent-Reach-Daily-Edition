@@ -113,8 +113,12 @@ def test_a_trend_fragment_must_not_name_someone_else():
 
 
 def test_real_stories_stay_together():
-    for ids in ([21, 22], [23, 24], [25, 26, 27], [28, 29, 30], [31, 32]):
+    for ids in ([21, 22], [23, 24], [26, 27], [28, 29, 30], [31, 32]):
         assert _groups(ids) == [ids]
+    # rc12: 'Trump approval ratings plummet to new low' shares 'approval ... new low' with the Hispanic-voters
+    # poll but nothing with 'Trump's gains among Latino voters slip': a report linked to one member of a story
+    # only is not chained in (no single-link bridges); it stands alone.
+    assert _groups([25, 26, 27]) == [[26, 27], [25]]
 
 
 # ---------------------------------------------------------------- story text
