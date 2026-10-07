@@ -44,3 +44,32 @@ Not fixed (next phase; `xfail` tests):
 6. **Evergreen and promotional items in Entertainment.** #44 "13 Record Store Day Releases Actually Worth
    Getting on Black Friday", #46 "The 10 Greatest Sci-Fi Cyberpunk Movies of All Time, Ranked", #47 "This One
    Crucial Narnia Detail ..." fill the section on a quiet day.
+
+## October 7, 2026, 5:30 AM CDT: the user's real morning edition (HTML export)
+
+Refresh 5:30-5:36 AM. 51 stories in 7 sections. Better than the night before: one event per story (Messi once,
+under Sports), the Paramount merger and Eva Marie Saint filed under Entertainment, a 9-report chemistry Nobel
+on top, and YouTube answered again (the October 7 night outage was transient).
+
+1. **"What changed" says 43 new, 41 no longer listed, 1 unchanged** against the October 6, 8:03 AM edition, and
+   nearly every card carries NEW. Stories that were in yesterday's edition (the Siberian plague death, the
+   physics Nobel) come back as "new" because their reports, ids and headline words changed overnight. The
+   NEW tag is only useful once stories have an identity across editions (event layer).
+2. **No Hot or Rising labels** ("the sources or settings changed since the refresh used for comparison"): the
+   settings v8 feed change after the 8:03 AM refresh. Momentum is lost for a day after any feed change because
+   the scorer compares the whole configuration (HANDOFF open item).
+3. **Thin single-outlet filler in the category sections**: 8 of 9 Tech stories, 5 of 6 Science & AI and 6 of 7
+   Entertainment stories are one outlet each, including a shopping deal ("LG Evo B6 4K 120Hz OLED TV Drops to
+   Under $1,000 for Prime Day" passed the promotional filter), a TV listing ("MLB Playoff Games on TV Today:
+   Schedule, Times, TV Channels, Live Streams"), a survey page ("State of Devs 2026"), a library changelog
+   ("Tapo (Rust/Python Library) Now Speaks TP-Link's TPAP Protocol"), an anniversary piece ("9 Years Later,
+   Margot Robbie's Cult Classic ...") and a listicle ("Five Ways New NBA Lottery Rules Could Impact ...").
+4. **Leads that do not say what happened**: "Drones Used to Seed Clouds in Cloud Seeding Experiment" -> "On 23
+   August, Cooper Freeman had no idea clouds above his head were being filled with a silver compound." (a
+   feature's opening line); "PS5 Modders Using AI Tools ..." -> "Recent games requiring newer firmware are
+   inaccessible."; "'Chipflation' Drives up Cost of Video Games and Consoles" -> "Prices show no signs of easing."
+5. **A claim to verify against its source**: "Trump Worries Iran Could Target U.S. Cities" -> "... and as a
+   result, some places are getting extra nuclear protection." (Axios, CNBC, The Hill).
+6. **Headline names**: "Claire, Ex-Dodgers GM, Dies at 91" (Fred Claire).
+7. **Category by keyword**: "PS5 Modders Using AI Tools ..." and "Billions Pour into OpenAI, DeepSeek Ahead of
+   IPOs" under Science & AI.

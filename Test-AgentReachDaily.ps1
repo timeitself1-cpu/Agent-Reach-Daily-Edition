@@ -78,7 +78,18 @@ if ($zip) {
     Write-Host "Send this file back: $($zip.FullName)" -ForegroundColor Green
     Start-Process explorer.exe -ArgumentList "/select,`"$($zip.FullName)`""
 } else {
-    Write-Host "No result zip was found on the Desktop; see the messages above." -ForegroundColor Yellow
+    $folder = $null
+    if ($desktop) {
+        $folder = Get-ChildItem -LiteralPath $desktop -Directory -Filter "AgentReach-selftest-*" -ErrorAction SilentlyContinue |
+            Sort-Object LastWriteTime -Descending | Select-Object -First 1
+    }
+    if ($folder) {
+        Write-Host "The self-test stopped early. Send this file back: $(Join-Path $folder.FullName 'report.txt')" -ForegroundColor Yellow
+        Write-Host "(it says which part was running), plus a screenshot of this window." -ForegroundColor Yellow
+        Start-Process explorer.exe -ArgumentList "`"$($folder.FullName)`""
+    } else {
+        Write-Host "No results were found on the Desktop; send a screenshot of this window." -ForegroundColor Yellow
+    }
 }
 Wait-IfInteractive
 exit $code

@@ -88,12 +88,15 @@ class Report:
     out: Path
     checks: list[Check] = field(default_factory=list)
     started: float = field(default_factory=time.time)
+    running: str = ""  # the part in progress: a run that stops early still says where (report.txt is rewritten)
+    finished: bool = False
 
     def add(self, part: str, name: str, status: str, detail: str = "", seconds: float = 0.0) -> None:
         self.checks.append(Check(part, name, status, detail.strip(), round(seconds, 1)))
         mark = {"PASS": "ok  ", "FAIL": "FAIL", "SKIP": "skip", "INFO": "info"}[status]
         first = detail.strip().splitlines()[0][:110] if detail.strip() else ""
         print(f"  [{mark}] {name}" + (f": {first}" if first else ""), flush=True)
+        self.write()
 
     def check(self, part: str, name: str, ok: bool, detail: str = "", seconds: float = 0.0) -> bool:
         self.add(part, name, "PASS" if ok else "FAIL", detail, seconds)
@@ -104,6 +107,8 @@ class Report:
         lines = [f"Agent Reach Daily {__version__} self-test", f"Finished {datetime.now():%Y-%m-%d %H:%M}",
                  f"Total time {(time.time() - self.started) / 60:.0f} min", "Result: " + ", ".join(
                      f"{n} {s}" for s, n in counts.items()), ""]
+        if not self.finished:
+            lines[1] = f"NOT FINISHED - last written {datetime.now():%Y-%m-%d %H:%M}, during part: {self.running or '-'}"
         part = None
         for c in self.checks:
             if c.part != part:
@@ -120,6 +125,8 @@ def guarded(report: Report, part: str):
     def wrap(fn):
         def run(*a, **k):
             print(f"\n== {part}", flush=True)
+            report.running = part
+            report.write()
             started = time.monotonic()
             try:
                 return fn(*a, **k)
@@ -785,6 +792,16 @@ def main(argv: list[str] | None = None) -> int:
     print(f"Agent Reach Daily {__version__} self-test\nresults: {out}\nscratch data: {base}\n"
           f"(your real data folder {real.root} is only read)", flush=True)
 
+    try:
+        return _run_parts(report, args, base, prefs, out)
+    except KeyboardInterrupt:  # Ctrl+C or a closed window: keep what was found so far
+        report.add(report.running or "self-test", "stopped by the user (Ctrl+C)", "FAIL")
+        zipped = collect_zip(out)
+        print(f"\nStopped. Send this file back anyway: {zipped}", flush=True)
+        return 1
+
+
+def _run_parts(report: Report, args, base: Path, prefs: DailyPrefs, out: Path) -> int:
     guarded(report, "1. environment")(part_environment)(report, args)
     guarded(report, "2. launchers")(part_launchers)(report, args, base)
     ready = False
@@ -805,6 +822,7 @@ def main(argv: list[str] | None = None) -> int:
             guarded(report, "8. by hand: Ollama quit")(part_interactive)(report, args, base, prefs)
     elif not args.offline:
         report.add("5. real refresh", "real refresh parts", "SKIP", "Ollama is not ready (see part 3)")
+    report.finished = True
     report.write()
     if not args.keep_scratch:
         shutil.rmtree(base, ignore_errors=True)
