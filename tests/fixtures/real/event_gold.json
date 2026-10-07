@@ -1,0 +1,57 @@
+{
+ "about": "Gold event labels for the real October 7, 2026 editions (tests/event_corpus.py). By default every report of a published story belongs to that story's event. 'split' moves reports (matched by the start of their title) to another event; 'unassigned' reports cover several stories (newsletter roundups, a bare hashtag) and belong to no event; 'same_event' joins two published stories that are one event; 'related' pairs are different occurrences of one ongoing topic: merging them is neither counted as right nor as a false merge. Every split is a false merge a reader saw in that edition.",
+ "editions": {
+  "2026-10-07-0935-export.json": {
+   "split": {
+    "James Webb Space Telescope Investigates": {"NASA's Prima space telescope": "prima-telescope"},
+    "Collins Distances Herself": {
+     "Reports of sexual violence are up": "cornell-campus-data",
+     "News Wrap: Cornell says Sally Yates": "cornell-yates-review"
+    },
+    "NASA Features Supernova Remnant": {
+     "Why You Should Watch": "fauda-october-7-episodes",
+     "October 2026 Satellite Puzzler": "nasa-satellite-puzzler"
+    },
+    "Privacy Watchdog Launches Investigation": {"The Mulleted, Meme-Loving Billionaire": "wsj-meta-ai-app-billionaire"}
+   },
+   "unassigned": ["Battleground candidates clash over Trump and Cornell", "#October7"],
+   "related": [["cornell-campus-data", "cornell-yates-review"]]
+  },
+  "2026-10-07-selftest-r1.json": {
+   "split": {
+    "Paramount Completes $111B": {"Skydance To Make Paramount": "skydance-studio-lots"}
+   },
+   "same_event": [["Lionel Messi Bids Farewell", "Messi Signs Off in Tears"]],
+   "related": [["Paramount Completes $111B", "skydance-studio-lots"]]
+  },
+  "2026-10-07-selftest-r2.json": {
+   "split": {
+    "More Than 500 U.S. Citizens Detained": {"ABC and Trump's FCC battle": "abc-fcc-court", "Disney, ABC battle Trump's FCC": "abc-fcc-court"},
+    "Google Releases EmbeddingGemma 2": {"Claude launches Google Docs": "claude-google-docs"},
+    "Skydance to Make Paramount": {"From films to streaming prices": "warner-deal-explainer"}
+   },
+   "related": [["Skydance to Make Paramount", "warner-deal-explainer"]]
+  },
+  "2026-10-07-selftest2-r1.json": {
+   "split": {
+    "Dead Star Likely Birthed": {"Star Moles Signs to Dead Oceans": "star-moles-record-deal"},
+    "James Webb Space Telescope Investigates": {"NASA's Prima space telescope": "prima-telescope"},
+    "Collins and Jackson Clash": {"News Wrap: Cornell says Sally Yates": "cornell-yates-review"},
+    "Privacy Watchdog Launches Investigation": {"The Mulleted, Meme-Loving Billionaire": "wsj-meta-ai-app-billionaire"}
+   },
+   "unassigned": ["Battleground candidates clash over Trump and Cornell"],
+   "related": [["Azerbaijan Denies Link", "Germany's Former Foreign Intelligence Chief"]]
+  },
+  "2026-10-07-selftest2-r2.json": {
+   "split": {
+    "NASA's James Webb Space Telescope Investigates": {"NASA's Prima space telescope": "prima-telescope"},
+    "Google Launches AI-Powered Gaming Platform": {
+     "Google invests millions in Mark Zuckerberg": "virtual-cell",
+     "\"The beginning of a new scientific paradigm\"": "virtual-cell"
+    },
+    "Susan Collins Distances Herself": {"News Wrap: Cornell says Sally Yates": "cornell-yates-review"}
+   },
+   "unassigned": ["Battleground candidates clash over Trump and Cornell"]
+  }
+ }
+}

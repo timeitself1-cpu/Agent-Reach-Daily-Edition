@@ -25,7 +25,9 @@ unchecked sub-task, do it, then update this file.
   stories, podcast), model drop ends in 9 s, repeated use coherent.
 - The remaining problems are editorial quality: story churn between refreshes, NEW/"what changed" noise,
   thin single-outlet section filler, weak leads, rare "why it matters".
-- **Phase 0 is almost closed; Phase 1 + 2 are next.**
+- **Re-prioritised by the user on October 7 (rc12):** EmbeddingGemma 2 + story/event identity comes BEFORE
+  Phase 1 (Report a problem). Scope: Agent Reach Daily only (no Research/Connections agents, no Project Scout).
+  Work the **rc12 phase** below first; Phase 1 follows it.
 
 ---
 
@@ -48,10 +50,46 @@ unchecked sub-task, do it, then update this file.
 - [~] 0.6 By-hand checklist (`docs/WINDOWS-TEST-RC11.md` section 2) and one real morning with the scheduled
       task. NEEDS: the user's answers. Fix anything they report before Phase 2.
 
+## Phase rc12: EmbeddingGemma 2 + event identity (priority, before Phase 1)
+
+Goal: one story = one real-world event. The October 7 editions published 52 false merges (13 mixed stories,
+e.g. the smart-glasses privacy probe with WSJ's Meta-AI-app billionaire profile, the Maine Senate debate with
+Cornell, the Webb planetary collisions with NASA's PRIMA, "October 7" as a date joining four stories). The
+cause is structural: HDBSCAN + single-link `LinkIndex.components` chain A~B, B~C into A=C. Embeddings must only
+propose candidate neighbours; an explicit event-identity layer decides membership; a false split is better
+than a false merge. Model: `embeddinggemma-2:270m` first (768 dims, no 256d), the full model benchmarked on the
+user's PC; every exact model id (+ digest) is its own embedding space in the cache. Acceptance: zero false
+merges on the labelled corpus under replayed rc11 neighbourhoods AND under "every pair looks identical";
+recall >= 0.6; fallback tested; evaluation artifact; real benchmark command for the user's PC.
+
+- [x] A. Baseline + regression corpus: `tests/html_fixture.py` (HTML export -> fixture), the 9:35 export as
+      `tests/fixtures/real/2026-10-07-0935-export.json`, gold events (`event_gold.json`), `tests/event_corpus.py`
+      (pairwise P/R/F1 + raw false merges). Baseline: rc11 published 52 false merges.
+- [ ] B. Embeddings: `pipeline/embeddings.py` (deterministic event representation `event_repr_v2`, model task
+      prefix, L2 normalisation, SQLite cache keyed by provider|model@digest|dims|norm|repr|text hash, never
+      mixes dimensions or models, fallback chain `embed_model` -> `embed_fallback_models` -> lexical).
+- [ ] C. Identity layer: `pipeline/event_identity.py` (kNN candidates, `IdentityGate` ACCEPT/REJECT/NEUTRAL with
+      reasons: roundup, date-only, names/everyday words only, event family, time apart, exclusive qualifiers;
+      `cohesive_groups`: merge only through an accepted edge with no rejected cross pair and a strict majority
+      of supporting cross pairs; ambiguous fragments join nothing). `LinkIndex.components` uses it (no
+      single-link chaining). Roundups by digest names (Morning Rundown, News Wrap). Date words never link.
+- [ ] D. Evidence vs attention: trend/social signals (Google Trends, X, Bluesky, fragments) never count as
+      factual corroboration; strength (Strong/Moderate/Limited) recomputed from the cleaned membership;
+      syndication logic kept.
+- [ ] E. Continuity: NEW/UPDATED only for continuing events matched by identity; the newest reliable evidence
+      controls current-state wording (stock market: Tuesday record high -> Wednesday decline).
+- [ ] F. Summary quality: malformed/truncated sentences rejected ("By studying 21 rare." = JSON string cut at an
+      inner double quote), month abbreviations never end a sentence ("Oct. 7"), deterministic extractive
+      fallback.
+- [ ] G. Evaluation + release: `docs/eval/rc12-identity-eval.{json,md}` (rc11 recorded vs lexical vs replay vs
+      identical), `tests/embedding_benchmark.py` + `Benchmark-Embeddings.ps1` for the user's PC (nomic vs
+      gemma 270m vs full model; old density vs identity), compact semantic diagnostics in the HTML + full
+      pair log in diagnostics, prefs migration to the Gemma model, setup pulls it, rc12 release + zip.
+
 ## Phase 1: "Report a problem with this story" (the feedback loop)
 
 Goal: every morning can produce precise test material with one click, so Phases 2-4 are driven by real
-cases. Small, local, no network.
+cases. Small, local, no network. (After the rc12 phase, by the user's decision of October 7.)
 
 - [ ] 1.1 Design (write it into this file first): right-click menu item "Report a problem..." on a story ->
       a small dialog: problem type (Wrong/merged stories, Duplicate, Wrong headline, Summary does not say
@@ -173,3 +211,4 @@ Each rule starts from quotes in `docs/REAL-EDITION-FINDINGS.md`; each gets a fix
 - 2026-10-07 | 0.1 | 4082efd | six stabilization fixes, tests | real-process scenarios
 - 2026-10-07 | 0.2 | 97b3578, 87acfa2 | watchdog, honest model drop, lock-file durability, self-test kit | self-test on Windows
 - 2026-10-07 | 0.3 | afc82a9, d1792e3, 0f246d6 | rounds 1-2 on Windows: 404 tests pass there; 8 more fixes; 4 real editions as fixtures | 0.4-0.6 (user), then Phase 1
+- 2026-10-07 | rc12 A | (this commit) | labelled corpus of the 5 real Oct 7 editions: rc11 published 52 false merges in 13 stories | B + C
