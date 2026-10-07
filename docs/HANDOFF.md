@@ -1,19 +1,21 @@
 # Handoff: Agent Reach Daily (state after 1.0.0rc11)
 
 For a new Claude session picking up this project. Read `CLAUDE.md` first (commands, invariants,
-conventions), then this file. `README.md` is the user guide; `docs/architecture.md` the internals.
+conventions, workflow), then **`docs/PLAN.md` (the live roadmap: continue at its first unchecked
+sub-task)**. This file is the history and background. `README.md` is the user guide;
+`docs/architecture.md` the internals.
 
 ## Where things stand
 
 - **Branch:** rc10 was developed on `claude/loving-darwin-a7rqvs`; rc11 is on
   `claude/affectionate-galileo-isxik1` (no PR has been opened, and none should be unless the user asks).
   Version `agent_reach/daily/__init__.py` = `1.0.0rc11`. Release notes: `docs/RELEASE-NOTES.md`.
-- **CI:** `tests.yml` is green on rc10 (Python 3.10 and 3.12). Up to rc10 the GUI tests silently skipped
-  in CI (no display); rc11 runs pytest under `xvfb-run` and adds a dry run of the self-test harness.
-  rc11 itself has NOT run on Windows or a real Ollama yet: the user runs `Test-AgentReachDaily.ps1` and
-  sends back its zip (`docs/WINDOWS-TEST-RC11.md`). On the user's Windows PC (rc10): 371 tests, 370 pass and 1 skips (SIGKILL semantics; a Reddit
-  pacing test can fail by milliseconds when the PC is busy); the GUI
-  tests run against the real display, and Tk start-up there occasionally fails and skips one of them.
+- **CI:** `tests.yml` is green on rc11 (Python 3.10 and 3.12, pytest under `xvfb-run` so the GUI tests
+  really run, plus a dry run of the self-test harness). Up to rc10 the GUI tests silently skipped in CI.
+- **Windows:** rc11 has been validated on the user's PC with two self-test rounds (October 7): the offline
+  suite passes there (404 passed, 1 skipped, 4 xfailed), shortcuts and `.cmd` open the window, real Ollama
+  checks, cancel, a full real refresh (~6 min), the model drop (ends in 9 s) and repeated use all pass.
+  Details: "Open items" item 0 below and `docs/RELEASE-NOTES.md`.
 - **The user** runs the app on Windows from `C:\Users\downt\Downloads\Agent Reach\src\Agent-Reach`,
   with Ollama (`llama3.1:8b`, `nomic-embed-text`) on their PC. A refresh takes about 5 minutes there.
   They receive each release as a zip (`git archive --format=zip --prefix=Agent-Reach/ HEAD`),
