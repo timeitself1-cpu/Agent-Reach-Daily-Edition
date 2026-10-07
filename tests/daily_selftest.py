@@ -316,7 +316,10 @@ def review_edition(ed, prefs: DailyPrefs) -> list[str]:
         for b in stories[i + 1:]:
             shared = toks[a.rank] & toks[b.rank]
             jac = len(shared) / max(1, len(toks[a.rank] | toks[b.rank]))
-            if same_topic(a, b) or jac >= 0.4:
+            # 'Lionel Messi Bids Farewell to Argentina Fans ...' / 'Messi Signs Off in Tears After One Last Argentina
+            # Master Class' (October 7) shared two names and nothing else
+            names = {w for w in shared if any(w.capitalize() in x for x in (a.headline, b.headline))}
+            if same_topic(a, b) or jac >= 0.4 or len(names) >= 2:
                 found.append(f"possible duplicate: #{a.rank} '{a.headline}' / #{b.rank} '{b.headline}'")
     seen_sentences: dict[str, int] = {}
     for s in stories:
@@ -326,7 +329,14 @@ def review_edition(ed, prefs: DailyPrefs) -> list[str]:
         for text in [h, *s.sentences, s.why_it_matters or ""]:
             if re.search(r"https?://|\bwww\.|\[|INSUFFICIENT|�|â€|Ã", text):
                 found.append(f"#{s.rank} odd characters or link in text: '{text[:120]}'")
+            if re.search(r"\bnot (?:specified|mentioned|provided|stated)\b|\bthe (?:provided |given )?(?:text|"
+                         r"excerpts?|evidence)\b", text, re.IGNORECASE):
+                found.append(f"#{s.rank} the model talks about its input: '{text[:140]}'")
+        evidence = " ".join(e.title + " " + (e.excerpt or "") for e in s.evidence).lower()
         for x in s.sentences:
+            last = re.findall(r"[A-Za-z]+", x)[-1:] or [""]
+            if last[0][:1].isupper() and len(last[0]) <= 5 and not re.search(rf"\b{last[0].lower()}\b", evidence):
+                found.append(f"#{s.rank} sentence may end inside a word ('{last[0]}'): '{x[-80:]}'")
             if len(x.split()) < 4 or not x.rstrip().endswith((".", "!", "?", "\"", "”", "'")):
                 found.append(f"#{s.rank} short or unfinished sentence: '{x}'")
             if not looks_english(x):
@@ -424,11 +434,20 @@ def part_launchers(report: Report, args, base: Path) -> None:
             report.add(P, name, "SKIP", f"not found: {target} (Setup creates the shortcuts)")
             continue
         result = base / f"smoke-{name.split()[0].replace('.', '-')}.json"
-        env = dict(os.environ, AGENT_REACH_DAILY_SMOKE_FILE=str(result), AGENT_REACH_DAILY_HOME=str(home))
         started = time.monotonic()
-        # started from another folder, like a double-click in Explorer (ShellExecute, the file's own handler)
-        subprocess.run(["cmd.exe", "/c", "start", "", str(target)], cwd=tempfile.gettempdir(), env=env,
-                       capture_output=True, timeout=60)
+        # a double-click in Explorer: ShellExecute with the file's own handler, from another folder. (rc11's
+        # first harness ran 'cmd /c start' with captured output: the window inherited the pipe and the
+        # harness waited on it for 60 s.) The launched program inherits this process's environment.
+        saved = {k: os.environ.get(k) for k in ("AGENT_REACH_DAILY_SMOKE_FILE", "AGENT_REACH_DAILY_HOME")}
+        os.environ.update(AGENT_REACH_DAILY_SMOKE_FILE=str(result), AGENT_REACH_DAILY_HOME=str(home))
+        try:
+            os.startfile(str(target), cwd=tempfile.gettempdir())  # type: ignore[attr-defined]
+        finally:
+            for k, v in saved.items():
+                if v is None:
+                    os.environ.pop(k, None)
+                else:
+                    os.environ[k] = v
         while not result.exists() and time.monotonic() - started < 90:
             time.sleep(0.5)
         if not result.exists():
@@ -507,12 +526,22 @@ def part_pytest(report: Report, args) -> None:
                                         "requirements-dev.txt (Test-AgentReachDaily.ps1 does this)")
         return
     started = time.monotonic()
-    out = subprocess.run([sys.executable, "-m", "pytest", "-q", "-p", "no:cacheprovider", "-o", "addopts=", "-rs"],
+    # a test file that does not load (e.g. a file of another version left in the folder) must not stop the rest
+    out = subprocess.run([sys.executable, "-m", "pytest", "-q", "-p", "no:cacheprovider", "-o", "addopts=", "-rs",
+                          "--continue-on-collection-errors"],
                          cwd=str(PROJECT_ROOT), capture_output=True, text=True, timeout=3600)
     (report.out / "pytest-output.txt").write_text(out.stdout + "\n" + out.stderr, encoding="utf-8")
+    import re
+
+    broken = sorted(set(re.findall(r"ERROR collecting (\S+)", out.stdout)))
+    if broken:
+        report.add(P, "test files that do not load (not part of this release?)", "FAIL",
+                   "\n".join(broken) + "\nThese files import code this release does not have. If they come from other "
+                   "work in this folder, keep that work safe before deleting them.")
     tail = "\n".join(line for line in out.stdout.splitlines()[-25:] if line.strip())
-    report.check(P, "full offline suite (window, Windows locks, process kill/cancel, pipeline)", out.returncode == 0,
-                 tail, time.monotonic() - started)
+    failed = [line for line in out.stdout.splitlines() if line.startswith("FAILED ")]
+    report.check(P, "full offline suite (window, Windows locks, process kill/cancel, pipeline)",
+                 out.returncode == 0 or (bool(broken) and not failed), tail, time.monotonic() - started)
 
 
 def part_refresh_ux(report: Report, args, base: Path, prefs: DailyPrefs) -> None:

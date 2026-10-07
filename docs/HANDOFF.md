@@ -174,12 +174,19 @@ A cloud sandbox has no Ollama and no news access. Four ways to see real output:
 
 ## Open items, in the order I would take them
 
-0. **rc11 Windows validation** (before anything else): read the user's self-test zip and their answers to
-   the by-hand checklist in `docs/WINDOWS-TEST-RC11.md`; fix what fails there. Known residual risks: the
-   window's lock probe can, in a millisecond window, make a scheduled worker that starts at that instant
-   exit as "busy" (it retries at the next hourly check; only when a stale progress file exists); a worker
-   killed while publishing can leave a newer edition with an older pointer (repaired at the next refresh);
-   Windows display scaling and the Windows voice have not been seen.
+0. **rc11 Windows validation.** Round 1 (October 7, self-test zip on the user's PC: Windows 11, Python 3.12,
+   Ollama 0.35.1, 2560x1440 at 100%): 24 pass, 3 fail; all three fixed (`docs/RELEASE-NOTES.md` items 17-22).
+   Still to see: the `.cmd` / `.pyw` launcher checks and the offline suite on Windows (both blocked in round
+   1: a harness hang, and stray files), the by-hand checklist answers, a morning with the scheduled task.
+   The user's project folder holds `agent_reach/daily/events.py`, `agent_reach/pipeline/identity.py`,
+   `tests/test_event_contract.py` and `tests/test_event_identity.py`, which are NOT in this repository (an
+   event-registry / story-identity layer from other work; they import `edition.story_from_event` and
+   `cleaner.ABBREVIATION_GUARD`, which rc11 does not have). Ask the user where that work lives before the
+   event-layer phase. Real-edition findings for that phase: `docs/REAL-EDITION-FINDINGS.md`.
+   Known residual risks: the window's lock probe can, in a millisecond window, make a scheduled worker that
+   starts at that instant exit as "busy" (it retries at the next hourly check; only when a stale progress
+   file exists); a worker killed while publishing can leave a newer edition with an older pointer (repaired
+   at the next refresh).
 
 1. **Seen in the rc10 real runs, not fixed yet:**
    - A shared phrase that is itself generic still links two items: "Trump Rallies for Republicans Ahead

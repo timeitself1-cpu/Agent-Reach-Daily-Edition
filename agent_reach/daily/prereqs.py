@@ -59,8 +59,13 @@ def check_ollama(host: str, required_models: list[str], timeout_s: float = 3.0) 
     try:
         with httpx.Client(timeout=timeout_s, trust_env=False) as client:
             tags = client.get(f"{host}/api/tags")
-            tags.raise_for_status()
-            listing = tags.json()
+            # something answered: anything but Ollama's model list (an error page, a web page, other JSON) is
+            # another program on that port (seen on Windows: a web page; earlier it read as 'not running')
+            try:
+                tags.raise_for_status()
+                listing = tags.json()
+            except (httpx.HTTPStatusError, ValueError) as exc:
+                raise ValueError(f"{host} answered, but not like an Ollama server ({type(exc).__name__})") from exc
             if not isinstance(listing, dict) or not isinstance(listing.get("models", []), list):
                 raise ValueError(f"{host} answered, but not like an Ollama server")
             names = [str(m.get("name") or m.get("model")) for m in listing.get("models", []) if isinstance(m, dict)]

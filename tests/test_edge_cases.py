@@ -162,6 +162,16 @@ def test_ollama_check_survives_a_server_that_is_not_ollama(monkeypatch):
     status = prereqs.check_ollama("http://localhost:11434", ["llama3.1:8b"])
     assert not status.reachable and "not like an Ollama server" in status.error
     assert status.describe().startswith("Another program answers at http://localhost:11434, not Ollama")
+    real_client2 = real_client
+    monkeypatch.setattr(prereqs.httpx, "Client", lambda **kw: real_client2(transport=httpx.MockTransport(
+        lambda req: httpx.Response(200, text="<html>Router admin page</html>")), **kw))
+    page = prereqs.check_ollama("http://localhost:11434", ["llama3.1:8b"])  # a web page (as seen on Windows)
+    assert not page.reachable and page.describe().startswith("Another program answers")
+    monkeypatch.setattr(prereqs.httpx, "Client", lambda **kw: real_client2(transport=httpx.MockTransport(
+        lambda req: httpx.Response(404, text="Not Found")), **kw))
+    assert prereqs.check_ollama("http://localhost:11434", ["x"]).describe().startswith("Another program answers")
+    monkeypatch.setattr(prereqs.httpx, "Client", lambda **kw: real_client(
+        transport=httpx.MockTransport(lambda req: httpx.Response(200, json=answers[req.url.path])), **kw))
     answers["/api/tags"] = {"models": [{"name": "llama3.1:8b"}, "junk"]}
     status = prereqs.check_ollama("http://localhost:11434", ["llama3.1:8b"])
     assert status.ready and status.version is None

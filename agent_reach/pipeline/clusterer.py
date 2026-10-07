@@ -206,6 +206,20 @@ class _RelabelResponse(BaseModel):
     groups: list[_RelabelGroup] = Field(default_factory=list)
 
 
+def clip_words(text: str, limit: int) -> str:
+    """At most ``limit`` characters, cut at a word and marked '...'. A context cut inside a word was copied
+    by the model into a summary ('It was trained on 3,800 NVIDIA Grac.', a real edition of October 7)."""
+    if len(text) <= limit:
+        return text
+    return text[:limit].rsplit(" ", 1)[0].rstrip(" ,;:-") + " ..."
+
+
+def connection_lost(exc: BaseException) -> bool:
+    """The model server refused or dropped the connection (stopped, crashed, quit from the tray). Unlike a
+    slow answer or bad JSON, retrying cannot help: on Windows every refused connect also costs ~2 s."""
+    return isinstance(exc, (httpx.ConnectError, ConnectionError)) or "failed to connect" in str(exc).lower()
+
+
 class ClusteringError(Exception):
     pass
 
@@ -677,6 +691,7 @@ class SemanticClusterer:
         self._use_schema = True
         self.label_calls = 0
         self.label_calls_failed = 0
+        self.model_gone = False  # the model refused a connection: no more calls this run
 
     @property
     def batch_size(self) -> int:
@@ -722,6 +737,8 @@ class SemanticClusterer:
         * a timeout is NOT retried: re-sending the same prompt to an overloaded CPU would only
           burn another full timeout window; the caller falls back to heuristics instead
         """
+        if self.model_gone:
+            raise ClusteringError(f"{label} skipped: the model stopped answering earlier in this run")
         client = self._get_client()
         last_exc: Exception | None = None
         for attempt in range(self.settings.llm_max_retries + 1):
@@ -756,6 +773,11 @@ class SemanticClusterer:
                     self._use_schema = False
                     continue
                 elapsed = time.perf_counter() - started
+                if connection_lost(exc):
+                    self.model_gone = True
+                    log.warning("%s: the model is not answering (%s); the rest of this run uses heuristic labels",
+                                label, str(exc)[:120])
+                    raise ClusteringError(f"{label}: the model stopped answering") from exc
                 if isinstance(exc, (httpx.TimeoutException, asyncio.TimeoutError)) or "timed out" in msg:
                     log.warning("%s: timed out after %.0f s - not retrying (falls back to heuristics)", label, elapsed)
                     raise ClusteringError(f"{label} timed out after {elapsed:.0f}s") from exc
@@ -899,11 +921,11 @@ class SemanticClusterer:
         hint = it.category_hint.value if it.category_hint else "-"
         ctx = ""
         if it.context:
-            ctx = normalize_text(it.context)[:260]
+            ctx = clip_words(normalize_text(it.context), 260)
         elif it.source is SourceName.GOOGLE_TRENDS and it.metadata.get("news_titles"):
-            ctx = normalize_text(" / ".join(it.metadata["news_titles"][:2]))[:160]
+            ctx = clip_words(normalize_text(" / ".join(it.metadata["news_titles"][:2])), 160)
         elif it.description:
-            ctx = normalize_text(it.description)[:160]
+            ctx = clip_words(normalize_text(it.description), 160)
         return f"{src} | {hint} | {it.normalized_title[:200]} | " + (ctx if ctx else "(no context)")
 
     # ....................................................... coherence

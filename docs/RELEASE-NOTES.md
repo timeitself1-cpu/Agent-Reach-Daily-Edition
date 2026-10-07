@@ -74,3 +74,35 @@ Testing:
 - `tests/test_daily_processes.py` (real worker processes).
 - `tests/test_daily_windows.py` (real Windows file locks).
 - The window tests now run in CI on a virtual display. Before this they were silently skipped there.
+
+### First Windows test round (self-test on the reader's PC, October 7)
+
+The self-test ran on Windows 11 with Ollama 0.35.1 (llama3.1:8b, RTX 4070 Super): 24 checks passed and 3
+failed. These passed:
+- the Desktop and Start-menu shortcuts started from another folder;
+- `python -m agent_reach.daily` started from another folder;
+- the Ollama checks (running, missing model, nothing listening);
+- cancel right after starting and cancel halfway;
+- a full real refresh: 330 s, 48 stories, HTML export, a 5.4-minute podcast in the Windows voice;
+- Ollama cut off halfway: no edition, explained in plain words;
+- a second refresh after changing settings.
+
+Fixed from that run:
+
+17. **Another program on Ollama's port answering with a web page** (not JSON) still read as "Ollama is not
+    running". Any answer that is not Ollama's model list now says another program answers there.
+18. **After Ollama went away mid-refresh, every remaining model step retried three times.** Each refused
+    connection costs about 2 s on Windows, so the refresh ended 112 s after Ollama stopped. The first refused
+    connection now ends the model calls for that refresh.
+19. **A YouTube outage (1 of 22 channels answered) was listed as 21 broken feeds** named like the
+    publishers' working article feeds, and the feed checker would have blamed those addresses after three
+    days. A channel where fewer than 1 in 5 feeds answer now counts as one outage, said once.
+20. **The model's remarks about its input reached summaries** ("..., but the reason is not specified").
+    They are removed.
+21. **A summary ended inside a word** ("trained on 3,800 NVIDIA Grac."). The article text the model reads is
+    now cut at a word.
+22. **Self-test:** the `.cmd` launcher check hung (fixed in the harness), and a test file that does not
+    load no longer stops the whole test suite.
+
+The two real editions are now regression fixtures (`tests/fixtures/real/`). What they show for the next
+phase is in `docs/REAL-EDITION-FINDINGS.md`.

@@ -571,6 +571,32 @@ PRONOUN_START_RX = re.compile(r"^(?:he|she|they|it|his|her|their|its|but|and|yet
                               r"spring|fall|autumn|time\b)\w+", re.IGNORECASE)
 
 
+#: The model talking about its input instead of the news ('Meta's Muse is a privacy and security dumpster fire,
+#: but the context is not specified.', 'NASA is bringing 7,500 contractors back ..., but the reason is not
+#: specified.': a real edition of October 7). Reporters write 'not disclosed' or 'not known'; those are facts.
+UNSTATED_RX = re.compile(
+    r"(?:,?\s*(?:but|although|though|and|while|however,?)\s+)?(?:the\s+|its\s+|their\s+|any\s+)?"
+    r"(?:exact\s+|specific\s+|further\s+|additional\s+|more\s+)?"
+    r"(?:context|reasons?|details?|cause|specifics|motive|purpose|nature|information|outcome|explanation)\s+"
+    r"(?:is|are|was|were|has|have|remains?)\s+(?:been\s+)?(?:not|un)\s*"
+    r"(?:specified|mentioned|provided|given|stated|included|available)\b"
+    r"(?:\s+(?:in|from|by)\s+the\s+(?:provided\s+|given\s+)?(?:text|sources?|evidence|articles?|excerpts?|reports?))?"
+    r"(?=\s*[.!?]?\s*$)",  # only a remark that ends the sentence ('Details were not provided by police' is news)
+    re.IGNORECASE)
+
+
+def without_unstated(sentence: str, source: str | None) -> str:
+    """The sentence without the model's remark that something is 'not specified' (unless the sources say it)."""
+    m = UNSTATED_RX.search(sentence)
+    if not m or (source and m.group(0).strip(" ,").lower() in source.lower()):
+        return sentence
+    out = (sentence[:m.start()] + sentence[m.end():]).strip()
+    out = re.sub(r"\s+([.,;:!?])", r"\1", out).rstrip(" ,;:")
+    if out and out[-1] not in ".!?":
+        out += "."
+    return out if len(out.split()) >= 3 else ""
+
+
 def body_sentences(summary: str, source: str | None = None, headline: str | None = None) -> list[str]:
     """Up to two summary sentences, without meta lines, empty filler, repeats of what was already said,
     sentences that repeat themselves, non-English text, the page's own voice ('you', 'our'), verbless
@@ -581,7 +607,7 @@ def body_sentences(summary: str, source: str | None = None, headline: str | None
     out: list[str] = []
     restated: list[str] = []  # sound sentences left out only because they restate the headline
     for s in (p.strip() for p in SENTENCE_SPLIT_RX.split(summary or "")):
-        s = LEAD_PREFIX_RX.sub("", s)
+        s = without_unstated(LEAD_PREFIX_RX.sub("", s), source)
         s = without_self_repeat(s[:1].upper() + s[1:]) if s else None
         if (s and not META_SENTENCE_RX.match(s) and not WEAK_SENTENCE_RX.search(s) and not repeats(s, out)
                 and not (out and restates(s, out, NOVEL_SHARE)) and looks_english(s)
@@ -1049,9 +1075,22 @@ def build_coverage(health: list[SourceHealth], stories: list[Story], selection: 
     if partial:
         warnings.append(f"Partial or empty coverage: {', '.join(partial)}.")
     # A YouTube channel with no new upload answered normally; only failures and empty article feeds count.
-    all_feeds = [(h, f) for h in health for f in h.feeds]
-    bad_feeds = [f.name for h, f in all_feeds
-                 if f.status == "failed" or (f.status == "empty" and h.source != "youtube")]
+    # A channel that (nearly) all failed at once is one outage, said once ('YouTube did not answer for 21 of
+    # 22 channels'), not 21 broken feeds named like the publishers' working article feeds.
+    from agent_reach.daily.feedhealth import OUTAGE_OK_SHARE
+
+    unit = {"youtube": "channels", "google_news": "sections"}
+    all_feeds, bad_feeds = [], []
+    for h in health:
+        down = [f for f in h.feeds if f.status == "failed"]
+        if len(h.feeds) >= 5 and len(h.feeds) - len(down) < OUTAGE_OK_SHARE * len(h.feeds):
+            warnings.append(f"{h.name} did not answer for {len(down)} of {len(h.feeds)} "
+                            f"{unit.get(h.source, 'feeds')} (an outage or a block on that site; it usually passes).")
+            continue
+        all_feeds += h.feeds
+        suffix = f" ({h.name})" if h.source == "youtube" else ""
+        bad_feeds += [f.name + suffix for f in h.feeds
+                      if f.status == "failed" or (f.status == "empty" and h.source != "youtube")]
     if bad_feeds:
         shown = ", ".join(bad_feeds[:6]) + (f" and {len(bad_feeds) - 6} more" if len(bad_feeds) > 6 else "")
         warnings.append(f"{len(bad_feeds)} of {len(all_feeds)} feeds returned nothing: {shown}.")
