@@ -1,8 +1,9 @@
 """What changed since the last refresh: compare a new edition with the previously persisted one.
 
 Deterministic, evidence-based comparison (no model). Stories are matched across editions in this
-order: identical story_id; a shared article URL; the same entity set (entity_id); near-identical
-headline words. ``story_id`` alone is not enough because it fingerprints the evidence and changes
+order: identical story_id; the most shared article URLs (a previous story can continue into two
+stories when an earlier edition had merged two events, rc12); the same entity set (entity_id);
+near-identical headline words. ``story_id`` alone is not enough because it fingerprints the evidence and changes
 whenever evidence is added.
 
 For every story of the new edition:
@@ -83,13 +84,25 @@ def _similarity(a: str, b: str) -> float:
     return len(ta & tb) / max(1, len(ta | tb))
 
 
-def _match(story, candidates: list) -> object | None:
+def _urls(story) -> set[str]:
+    return {e.url for e in story.evidence if e.url}
+
+
+def _match(story, candidates: list, matched: list | tuple = ()) -> object | None:
+    """The previous story that is the same event: identical story_id; else the most shared article URLs
+    (also with a story already matched, so the two halves of a story an earlier edition merged by mistake
+    both continue it instead of one being 'new'); else the same entity set or topic among the unmatched."""
     from agent_reach.daily.edition import same_entities, same_topic
 
-    for test in (lambda o: o.story_id == story.story_id,
-                 lambda o: bool({e.url for e in story.evidence if e.url} & {e.url for e in o.evidence if e.url}),
-                 lambda o: same_entities(story, o),
-                 lambda o: same_topic(story, o)):
+    for other in candidates:
+        if other.story_id == story.story_id:
+            return other
+    urls = _urls(story)
+    best = max(((len(urls & _urls(o)), -k, o) for k, o in enumerate([*candidates, *matched])), default=None,
+               key=lambda t: t[:2])
+    if best is not None and best[0] > 0:
+        return best[2]
+    for test in (lambda o: same_entities(story, o), lambda o: same_topic(story, o)):
         for other in candidates:
             if test(other):
                 return other
@@ -125,13 +138,21 @@ def compare_editions(previous, current) -> EditionChanges:
     changes = EditionChanges(compared_run_id=previous.run_id, compared_edition_date=previous.edition_date.isoformat(),
                              compared_revision=previous.revision, compared_generated_utc=prev_time)
     remaining = list(previous.stories)
+    matched: list = []
+    pairs: list[tuple] = []
     for story in current.stories:
-        old = _match(story, remaining)
+        old = _match(story, remaining, matched)
+        if old is not None and old in remaining:
+            remaining.remove(old)
+            matched.append(old)
+        pairs.append((story, old))
+    # a previous story that continues into two stories was two events: signal counts are not comparable
+    split = {id(o) for o in matched if sum(old is o for _, old in pairs) > 1}
+    for story, old in pairs:
         if old is None:
             changes.new.append(ChangeItem(kind="new", headline=story.headline, story_id=story.story_id,
                                           rank=story.rank, detail="not in the previous edition"))
             continue
-        remaining.remove(old)
         base = dict(headline=story.headline, story_id=story.story_id, rank=story.rank, previous_rank=old.rank)
         now_s, old_s = strength_of(story, cur_time), strength_of(old, prev_time)
 
@@ -144,8 +165,8 @@ def compare_editions(previous, current) -> EditionChanges:
 
         a, b = old.raw_item_count, story.raw_item_count
         report_delta = now_s.independent_reports - old_s.independent_reports
-        up = same_day and ((b >= a * SIGNAL_RATIO and b - a >= SIGNAL_MIN_DELTA) or report_delta >= REPORTS_MIN_DELTA)
-        down = same_day and ((a >= b * SIGNAL_RATIO and a - b >= SIGNAL_MIN_DELTA)
+        up = same_day and id(old) not in split and ((b >= a * SIGNAL_RATIO and b - a >= SIGNAL_MIN_DELTA) or report_delta >= REPORTS_MIN_DELTA)
+        down = same_day and id(old) not in split and ((a >= b * SIGNAL_RATIO and a - b >= SIGNAL_MIN_DELTA)
                              or report_delta <= -REPORTS_MIN_DELTA)
         signal_text = (f"signals {a} → {b}, independent reports "
                        f"{old_s.independent_reports} → {now_s.independent_reports}")

@@ -76,7 +76,7 @@ recall >= 0.6; fallback tested; evaluation artifact; real benchmark command for 
 - [x] D. Evidence vs attention: trend/social signals (Google Trends, X, Bluesky, fragments) never count as
       factual corroboration; strength (Strong/Moderate/Limited) recomputed from the cleaned membership;
       syndication logic kept.
-- [ ] E. Continuity: NEW/UPDATED only for continuing events matched by identity; the newest reliable evidence
+- [x] E. Continuity: NEW/UPDATED only for continuing events matched by identity; the newest reliable evidence
       controls current-state wording (stock market: Tuesday record high -> Wednesday decline).
 - [x] F. Summary quality: malformed/truncated sentences rejected ("By studying 21 rare." = JSON string cut at an
       inner double quote), month abbreviations never end a sentence ("Oct. 7"), deterministic extractive
@@ -215,3 +215,4 @@ Each rule starts from quotes in `docs/REAL-EDITION-FINDINGS.md`; each gets a fix
 - 2026-10-07 | rc12 B+C | (this commit) | EmbeddingGemma 2 backend + model-aware cache + fallback; identity gate + cohesive groups: 0 false merges on the corpus under replayed rc11 neighbourhoods and identical vectors, replay recall 0.73 | F (summary gate), then D, E
 - 2026-10-07 | rc12 F | (this commit) | 'By studying 21 rare.' rejected (truncated copy + intro-only gates) with the real lead as fallback; 'Oct. 7' no longer ends a sentence | D, E
 - 2026-10-07 | rc12 D | (this commit) | trend/social signals no longer add channel diversity or recency; strength comes from the gated membership (evidence is never changed after build_story); syndication unchanged | E
+- 2026-10-07 | rc12 E | (this commit) | newest dated report leads when the summary only describes an earlier day (stock market: Wednesday fall before Tuesday record, 'Developing'); what-changed matches by the most shared URLs and a story split from an old false merge is neither new nor fading | G

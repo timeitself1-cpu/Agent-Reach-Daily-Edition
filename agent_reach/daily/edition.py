@@ -30,7 +30,7 @@ from agent_reach.daily.prefs import GENERAL_NEWS_SOURCES, TECH_SOURCES, DailyPre
 from agent_reach.daily.timeutil import CENTRAL_TZ_NAME, central_date, parse_utc
 from agent_reach.daily.changes import EditionChanges
 from agent_reach.daily.strength import EvidenceStrength, assess
-from agent_reach.pipeline.cleaner import MONTH_DAY_GUARD
+from agent_reach.pipeline.cleaner import MONTH_DAY_GUARD, significant_tokens
 from agent_reach.models import PUBLISHED_FUTURE_TOLERANCE, CategoryEnum, CleanedTrendItem, MacroCluster, PipelineReport, RawTrendItem
 
 EDITION_SCHEMA = "agent_reach.daily_edition"
@@ -674,6 +674,56 @@ def lead_sentence(cluster: MacroCluster, items: dict[int, CleanedTrendItem], hea
     return None
 
 
+_WEEKDAYS = ("monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday")
+_WEEKDAY_RX = re.compile(r"\b(" + "|".join(_WEEKDAYS) + r"|yesterday|today)\b", re.IGNORECASE)
+DEVELOPING_LABEL = "Developing"
+
+
+def stated_day(sentence: str, today: int) -> int | None:
+    """The weekday (0 = Monday) a sentence says it is about, when it names exactly one ('yesterday' and
+    'today' count relative to ``today``)."""
+    days = set()
+    for m in _WEEKDAY_RX.finditer(sentence):
+        word = m.group(1).lower()
+        days.add(today if word == "today" else (today - 1) % 7 if word == "yesterday" else _WEEKDAYS.index(word))
+    return days.pop() if len(days) == 1 else None
+
+
+def newest_state(sentences: list[str], cluster: MacroCluster, items: dict[int, CleanedTrendItem],
+                 reference: datetime) -> str | None:
+    """A source sentence about TODAY for a summary that only says what happened on an earlier day.
+
+    The export of October 7 (a Wednesday), story #2 'Stock Markets Hit Record High Despite Inflation, High
+    Fuel Prices': the summary said 'US stock markets hit a record high Tuesday', while the story's newest
+    report said 'Stocks fell on Wednesday as pressure continued to build in the bond market'. The newest
+    reliable evidence controls the current state: that sentence leads, the earlier one stays as what came
+    before. Only page text of the story's own reports is used, newest stated publication first, with the
+    same sentence checks as ``lead_sentence`` and at least two words in common with the story."""
+    today = central_date(reference).weekday()
+    days = [stated_day(x, today) for x in sentences]
+    if not any(d is not None and (today - d) % 7 in (1, 2) for d in days) or today in days:
+        return None
+    topic = {t[:5] for t in significant_tokens(" ".join([cluster.headline, *sentences]))}
+    epoch = datetime.min.replace(tzinfo=timezone.utc)
+
+    def stated(m: CleanedTrendItem) -> datetime:  # newest publication time a source stated; unknown sorts last
+        times = [parse_utc(o.metadata.get("published_at")) for o in [m, *m.observations]]
+        return max((t for t in times if t is not None and t <= reference), default=epoch)
+
+    members = sorted((items[i] for i in cluster.member_item_ids if i in items and items[i].context_source == "page"),
+                     key=stated, reverse=True)
+    for m in members:
+        for segment in (m.context or "").split(" | "):
+            for x in SENTENCE_SPLIT_RX.split(segment.strip()):
+                x = re.sub(r"\s+([.,;:!?])", r"\1", x.strip())
+                if (stated_day(x, today) == today and len(x) >= 40 and x.endswith((".", "!", "?"))
+                        and looks_english(x) and not page_voice(x) and not is_fragment(x) and not ends_dangling(x)
+                        and not PRONOUN_START_RX.match(x)
+                        and len({t[:5] for t in significant_tokens(x)} & topic) >= 2):
+                    return x
+    return None
+
+
 def member_text(cluster: MacroCluster, items: dict[int, CleanedTrendItem]) -> str:
     """Everything the pipeline read for a story: titles, page or feed context, descriptions."""
     parts: list[str] = []
@@ -998,6 +1048,11 @@ def build_story(rank: int, cluster: MacroCluster, items: dict[int, CleanedTrendI
         sentences = [lead] if lead else body_sentences(cluster.summary, source or None)
     if not sentences or not evidence:
         return None
+    labels = story_labels(cluster)
+    latest = newest_state(sentences, cluster, items, reference or datetime.now(timezone.utc))
+    if latest:
+        sentences = [latest, *sentences[:3]]
+        labels.append(DEVELOPING_LABEL)
     return Story(
         rank=rank,
         story_id=cluster.event_id or cluster.cluster_id,
@@ -1005,7 +1060,7 @@ def build_story(rank: int, cluster: MacroCluster, items: dict[int, CleanedTrendI
         headline=cluster.headline,
         category=cluster.category,
         sentences=sentences,
-        labels=story_labels(cluster),
+        labels=labels,
         momentum=cluster.momentum,
         velocity_basis=cluster.velocity_basis,
         momentum_note=cluster.momentum_note,

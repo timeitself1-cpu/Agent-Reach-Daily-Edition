@@ -222,3 +222,33 @@ def test_a_month_abbreviation_does_not_end_a_sentence(s2r2):
     assert sanitize_summary(full) == full
     source = " ".join(e.title + " " + (e.excerpt or "") for e in s.evidence) + " " + s.headline
     assert body_sentences(full, source) == [full]
+
+
+def test_the_newest_report_controls_the_current_state():
+    """Export of October 7 (9:35, a Wednesday), #2 'Stock Markets Hit Record High Despite Inflation, High Fuel
+    Prices': the summary said 'U.S. stock markets hit a record high Tuesday ...' while the story's newest report
+    (CNBC live updates, 9:00 a.m.) said stocks fell on Wednesday. The current state now leads, the
+    Tuesday record stays as what came before, and the card says the story is developing."""
+    from datetime import datetime, timezone
+
+    from agent_reach.daily.edition import DEVELOPING_LABEL, build_story, newest_state
+    from agent_reach.models import MacroCluster
+    from tests.event_corpus import load_edition
+
+    corpus = load_edition("2026-10-07-0935-export.json")
+    head = "Stock Markets Hit Record High Despite Inflation, High Fuel Prices"
+    items = {c.item.item_id: c.item for c in corpus if c.gold == head}
+    tuesday = ("U.S. stock markets hit a record high Tuesday amid major inflation and skyrocketing fuel prices. "
+               "The S&P 500 reached a new high Tuesday as tech stocks rallied.")
+    cluster = MacroCluster(cluster_id="stocks", headline=head, category="News", relevance_score=9, velocity_score=78.0,
+                           summary=tuesday, raw_item_count=len(items), member_item_ids=list(items))
+    at = datetime(2026, 10, 7, 14, 35, tzinfo=timezone.utc)
+    story = build_story(2, cluster, items, at)
+    assert story.sentences[0] == ("U.S. equities fell on Wednesday, a day after the S&P 500 reached a fresh all-time "
+                                  "high, as oil prices moved higher alongside Treasury yields.")
+    assert story.sentences[1].startswith("U.S. stock markets hit a record high Tuesday")
+    assert DEVELOPING_LABEL in story.labels
+    # the same summary written on Tuesday evening is the current state: nothing changes
+    tue = datetime(2026, 10, 6, 23, 0, tzinfo=timezone.utc)
+    assert newest_state(story.sentences[1:], cluster, items, tue) is None
+    assert newest_state(["Stocks fell on Wednesday as yields rose."], cluster, items, at) is None

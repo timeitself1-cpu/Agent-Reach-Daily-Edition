@@ -51,7 +51,8 @@ def _when(ev: dict) -> datetime:
 def _raw(ev: dict) -> RawTrendItem:
     source = SourceName(ev["source"]) if ev.get("source") else _SOURCE_BY_NAME.get(ev.get("source_name", ""), SourceName.NEWS_RSS)
     return RawTrendItem(title=ev["title"], source=source, url=ev.get("url"), timestamp=_when(ev),
-                        description=ev.get("excerpt"), metadata={"publisher": ev.get("publisher") or ""})
+                        description=ev.get("excerpt"), metadata={"publisher": ev.get("publisher") or "",
+                                                                     "published_at": ev.get("published_at_utc")})
 
 
 def _stories(name: str) -> list[dict]:

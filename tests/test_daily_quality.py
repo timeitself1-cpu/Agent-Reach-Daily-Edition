@@ -286,6 +286,26 @@ def test_new_updated_signal_and_gone_stories_are_identified():
     assert ch.summary() == "1 new, 1 updated, 1 growing, 1 fading, 1 no longer listed"
 
 
+def test_a_story_split_from_an_earlier_false_merge_is_not_new():
+    """rc12: an earlier edition merged two events into one card (the smart-glasses privacy probe carried WSJ's
+    profile of Meta's AI-app billionaire). When the next edition shows them apart, both continue that card:
+    neither is 'new', the half with fewer reports is not 'fading', and the best URL overlap wins."""
+    mixed = _story("Privacy Watchdog Launches Investigation into China-Based Company", sid="mixed",
+                   url="https://w.test/oaic", pubs=("Reuters", "WSJ", "ABC"), items=6)
+    mixed.evidence[1] = mixed.evidence[1].model_copy(update={"url": "https://w.test/wsj-meta"})
+    other = _story("Lumen Summit Agrees Methane Pledge", sid="lumen", url="https://w.test/lumen")
+    other.evidence.append(mixed.evidence[0].model_copy(update={"url": "https://w.test/oaic?p=2"}))
+    probe = _story("Privacy Watchdog Launches Investigation into China-Based Company", sid="probe",
+                   url="https://w.test/oaic", pubs=("Reuters", "ABC"), items=4)
+    probe.evidence[1] = probe.evidence[1].model_copy(update={"url": "https://w.test/oaic?p=2"})
+    wsj = _story("The Mulleted, Meme-Loving Billionaire Behind Meta's Hit AI App", sid="wsj",
+                 url="https://w.test/wsj-meta", pubs=("WSJ",), items=1)
+    ch = compare_editions(make_edition([mixed, other], run_id="p"),
+                          make_edition([probe, wsj, other.model_copy(deep=True)], run_id="c"))
+    assert ch.new == [] and ch.gone == [] and ch.signals_down == []
+    assert ch.unchanged == 3
+
+
 def test_small_or_cosmetic_differences_are_not_reported():
     a = _story("Port Calder Earthquake Damages Roads", sid="q1", items=4,
                sentences=["A magnitude 6.8 earthquake struck near Port Calder early on Wednesday."])
