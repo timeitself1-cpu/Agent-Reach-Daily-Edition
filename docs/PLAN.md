@@ -19,11 +19,13 @@ unchecked sub-task, do it, then update this file.
 
 ## Where we are (October 7, 2026)
 
-- Version **1.0.0rc12** (zip rc12b) on branch `claude/affectionate-galileo-isxik1`: EmbeddingGemma 2 + event
-  identity; first PC round (Oct 7 12:07) fixed in rc12b (H1-H6 below; 0 false merges on the 7-edition labelled
-  corpus offline). EmbeddingGemma 2 has NOT run and cannot yet: Ollama ships it for Apple's MLX only ("requires MLX
-  support" on the PC with the newest Ollama). **Next:** the user reruns `Benchmark-Embeddings.ps1 -PullModels`
-  (H7: nomic vs the first EmbeddingGemma, `embeddinggemma:300m`), then Phase 1. rc11 was zip rc11d.
+- Version **1.0.0rc12** (zip rc12d) on branch `claude/affectionate-galileo-isxik1`: EmbeddingGemma 2 + event
+  identity. PC round 1 (Oct 7 12:07) fixed in rc12b (H1-H6), round 2 (13:36) in rc12d (H7b): the live editions still
+  had 26 false merges from rules the corpus did not exercise; now 1 open (two RTX Spark laptops) on the 9-edition
+  labelled corpus offline. No Gemma model has run on the PC: EmbeddingGemma 2 is MLX-only in Ollama, and Ollama
+  0.40.0 cannot open `embeddinggemma:300m` after downloading it (Windows symlink bug, ollama/ollama#18847).
+  **Next:** the user runs the self-test on rc12d (H7c), then Phase 1; H7 waits for an Ollama that can run a Gemma
+  embedding model on Windows. rc11 was zip rc11d.
 - Reliability is proven on the user's Windows PC (self-test round 2): offline suite 404 passed on Windows,
   launchers (shortcuts, .cmd), real Ollama checks, cancel at once/halfway, full real refresh (~6 min, 46-51
   stories, podcast), model drop ends in 9 s, repeated use coherent.
@@ -103,10 +105,18 @@ recall >= 0.6; fallback tested; evaluation artifact; real benchmark command for 
         in any written form. Both live editions are fixtures (`RC12_EDITIONS`) with gold events.
   - [x] H7a. EmbeddingGemma 2 is MLX-only in Ollama (newest Ollama on the PC: "requires MLX support"): setup,
         benchmark, model check and self-test say so plainly; benchmark adds `embeddinggemma:300m` (rc12c).
-  - [ ] H7. Round 2 on the PC: nomic vs `embeddinggemma:300m` (EmbeddingGemma 2 too if a later Ollama pulls it;
-        real vectors; replay them here with `python -m tests.embedding_benchmark --replay <vectors-*.json.gz>`).
-        Put `embeddinggemma:300m` in the fallback chain only if it beats nomic on false merges/recall; set
-        `identity_strong_cosine` only if the different-event p99 says so; check the live editions for mixed stories.
+  - [x] H7b. Round 2 on the PC (13:36, rc12c): live editions 26 false merges in 8 stories (Saint/Mancuso, Kimmel/Trump
+        Accounts, three polls, two 'retreats', Belgium/France, two laptops). Fixed: lone reports need a title link
+        to EVERY member; "don't" is an everyday word; legislature names are not shared names; a common name + one
+        word needs strong embedding agreement; a two-word phrase is one piece of evidence. Laptops open (strict
+        xfail). Also: progress.json delete retried on Windows; self-test INFO for the expected fallback; benchmark
+        explains Ollama's Windows symlink error. Corpus 9 editions, 1 false merge, R 0.620; real nomic replay 0/0.679.
+  - [ ] H7c. The user runs `Test-AgentReachDaily.ps1` on rc12d: expect 0 FAIL besides the stray test files, and
+        check the live editions for mixed stories again.
+  - [ ] H7. **Blocked on Ollama:** nomic vs a Gemma embedding model on the PC (`embeddinggemma:300m` downloads but
+        Ollama 0.40.0 cannot open it, ollama/ollama#18847; EmbeddingGemma 2 is MLX-only). When a later Ollama runs
+        one: `Benchmark-Embeddings.ps1 -PullModels`, replay here with `--replay <vectors-*.json.gz>`, put it in the
+        fallback chain only if it beats nomic; set `identity_strong_cosine` only if the different-event p99 says so.
 
 ## Phase 1: "Report a problem with this story" (the feedback loop)
 
@@ -242,4 +252,5 @@ Each rule starts from quotes in `docs/REAL-EDITION-FINDINGS.md`; each gets a fix
 - 2026-10-07 | rc12 G (app) | (this commit) | prefs v9 (EmbeddingGemma 2 default, nomic fallback), model actually used + compact 'How stories were grouped' in the HTML/details, pair log in diagnostics\semantic, setup checks the model, Benchmark-Embeddings.ps1, self-test checks the grouping model | docs + release
 - 2026-10-07 | rc12 G (release) | (this commit) | 1.0.0rc12: docs (README, RELEASE-NOTES, HANDOFF, CLAUDE.md, architecture, findings) | H (user's PC benchmark), then Phase 1
 - 2026-10-07 | rc12 H1-H6 | 9b76d41..d20c8de | first PC round fixed: Asos/Wikimedia (verbs, page-text rarity), pair log + counts, label calls split when cut off, grouping model optional + pull errors explained, self-test FAIL rule + Windows pacing, merge pass no longer grows stories one report at a time + 4 gate word rules; 7-edition corpus: 0 false merges offline (R 0.620 lexical, 0.688 replay) | H7: user updates Ollama, reruns the benchmark
-- 2026-10-07 | rc12 H7a | (this commit) | newest Ollama on the PC: embeddinggemma-2 "requires MLX support" (Mac only); plain messages in setup/benchmark/model check/self-test, benchmark adds embeddinggemma:300m | H7: user reruns the benchmark (rc12c)
+- 2026-10-07 | rc12 H7a | 413785a | newest Ollama on the PC: embeddinggemma-2 "requires MLX support" (Mac only); plain messages in setup/benchmark/model check/self-test, benchmark adds embeddinggemma:300m | H7: user reruns the benchmark (rc12c)
+- 2026-10-07 | rc12 H7b | (this commit) | round 2 (13:36): 26 false merges in the live rc12c editions; five gate rules fixed, laptops open (xfail); progress.json delete retry; self-test INFO for fallback; Ollama symlink bug explained; corpus 9 editions, 1 false merge, R 0.620 | H7c: user runs the self-test on rc12d

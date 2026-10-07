@@ -117,6 +117,57 @@ Text:
   headline itself still comes from the model and can stay stale: open.
 - The same story was "Strong evidence" partly because a Google Trends query added a channel. Fixed (rc12 D).
 
+## October 7, 2026, 1:36 PM: rc12c self-test and benchmark on the user's PC (round 2)
+
+Self-test `AgentReach-selftest-20261007-1336.zip` (28 PASS, 3 FAIL, 10 INFO) and
+`AgentReach-embedding-benchmark-20261007-1336.zip`, Ollama 0.40.0. The two real editions
+(`2026-10-07-rc12c-r1.json` 13:41, 46 stories; `-r2.json` 13:50, 42 stories) are fixtures with gold events: the
+labelled corpus now has 9 editions.
+
+- **No Gemma numbers yet.** EmbeddingGemma 2: "requires MLX support" (as expected since rc12c). `embeddinggemma:300m`
+  downloaded (`pull-log.txt`: downloaded) but every embed call failed: "CreateFile ...\.ollama\models\manifests-v2\
+  ollama.com\library\embeddinggemma\300m: The path cannot be traversed because it contains an untrusted mount
+  point", and `ollama list` does not show it. This is an Ollama 0.40.0 bug on Windows (ollama/ollama issue 18847,
+  open: the 0.40 manifest is written as a symbolic link that Windows refuses to follow; the reporter suspects
+  Windows Developer Mode, not verified). Nothing to fix in Agent Reach; the benchmark now says so in plain words
+  instead of "Pull it". All numbers below are nomic-embed-text.
+- **Benchmark (nomic, real vectors, 7 editions):** identity gate 0 false merges, P 1.000, R 0.694 (rc12b fixed the
+  two from round 1). Replayed here with the rc12d gate: 0 false merges, R 0.679.
+- **Live rc12c editions: 26 false merges, 8 mixed stories** (r1 19 in 6 stories, r2 7 in 2), all from rules the
+  offline corpus did not exercise:
+  - r1 #12 "Eva Marie Saint and Frank G. Mancuso Sr. Die": Saint's obituary joined Mancuso's through 'dies' in the
+    titles plus a name only the pages write. r1/r2 "Trump Announces Automatic Enrollment for Trump Accounts" carried
+    Jimmy Kimmel's monologue on Trump's Iran joke ('president' with one member, 'hosts' in another's page). Cause:
+    a lone report attached to a story when it shared one specific word with ANY member. Fix: every member must be
+    linked by a specific title word or a rare name both TITLES write (`_attach_supported`).
+  - r1 #19 "US Voters Concerned About AI Risks": a Reuters/Ipsos AI poll, research on congressional term limits and
+    a poll on taxpayer-funded campaign ads. "don't" + 'poll' counted as two distinctive phrases; 'Congress' counted
+    as a rare shared name. Fix: negation contractions are everyday words; legislature names are not shared names.
+  - r1/r2 "Trump's Retreat": US forces pulling back from the Gulf and Trump's golf club as a "presidential retreat"
+    ('Trump' + 'retreat', cosine 0.69). At 6% of a real run (79 of 1,329 reports) 'Trump' was a rare name. Fix: a name
+    in more than 2% of the run plus one specific word is accepted only when the embedding agrees strongly (0.8); the
+    corpus runs are too small to show it, so a 634-report test rebuilds the real proportions.
+  - r1 #3 France's stun-grenade ban carried Belgium's student protests again, this time through "Photos: The Student
+    Protests in France" ('student protests' as two shared words). Fix: two shared words that both titles write as
+    one phrase are one piece of evidence, unless they are the whole title (the trend 'Christa Pike').
+  - r1 #11 Microsoft's Surface Laptop Ultra launch with an HP price leak (five shared words: 'Nvidia RTX Spark laptop
+    launch'). **Open** (`test_two_laptops_with_one_chip_are_two_stories`, strict xfail): no rule yet tells a product
+    name from what happened.
+  - Not counted: the France summons of Iran's ambassador over protest "disinformation" (related), LIV Golf's
+    financing with Rahm quitting (related), the Nobel overview in the chemistry story.
+  Offline after the fixes: 1 false merge on 9 editions (the laptops) with replayed neighbourhoods and lexically, recall
+  0.620 (was 0.627 with the false merges). Tests: `test_rc12c_refresh_cases_stay_apart`,
+  `test_a_common_name_and_one_word_need_the_embedding_too`, replay/identical tests over all 9 editions.
+- **Windows test failure:** `test_repeated_daily_use_stays_coherent` found `progress.json` after the refresh ended.
+  The window reads that file every 100 ms; Windows refuses to delete a file another process has open, and the delete
+  was tried once. Harmless in the app (the window trusts the OS lock, not the file), but the file outlived its
+  refresh. Fix: the delete is retried for up to 2 s (`fsutil.unlink_with_retry`; Windows-only test holds the file).
+- **Self-test:** "stories grouped by the configured embedding model" was a FAIL for the Mac-only model even though
+  part 3 called the same situation INFO. Now INFO when the fallback was used for that reason.
+- Real refresh 365 s, 46 stories, 24 label batches (0 failed), 1 'why it matters' of 20; podcast 5.2 min; model drop
+  ends in 13 s; cancel works; all four launchers open the window (the `.pyw` double-click too, for the first time).
+- The stray `tests/test_event_contract.py` and `tests/test_event_identity.py` are still in the user's folder.
+
 ## October 7, 2026, afternoon: EmbeddingGemma 2 cannot run in Ollama on Windows (yet)
 
 After updating Ollama to the newest release, the user ran `ollama pull embeddinggemma-2:270m` in PowerShell:

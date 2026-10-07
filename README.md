@@ -42,7 +42,9 @@ EmbeddingGemma 2 is new (October 2026): if its download fails, setup shows the r
 October 7, Ollama runs EmbeddingGemma 2 only on Mac computers ("this model requires MLX support"), so on
 Windows the download fails and the app uses nomic-embed-text; nothing to do. If another reason is shown,
 update Ollama (https://ollama.com/download, or "Restart to update" in the Ollama tray menu) and run setup
-with `-PullModels` again. Embedding models never appear in the Ollama app's chat model list.
+with `-PullModels` again. Embedding models never appear in the Ollama app's chat model list. (Ollama 0.40.0 on
+Windows can also download a model and then fail to open it, "The path cannot be traversed because it contains an
+untrusted mount point": an Ollama bug, ollama/ollama issue 18847. The app is not affected; it uses nomic-embed-text.)
 
 Then **double-click "Agent Reach"** on the Desktop. The first time, choose
 **Collect today's news now**; on a PC without a graphics card the first edition takes roughly

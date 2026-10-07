@@ -5,6 +5,27 @@ Each release candidate is delivered as a zip of the repository. Extract it over 
 Your editions, settings and history (`%LOCALAPPDATA%\AgentReachDaily`) are kept. Earlier releases are
 summarised in `docs/HANDOFF.md` ("Release history").
 
+## 1.0.0rc12 (zip rc12d): fewer mixed stories, from your second test
+
+Your test at 1:36 PM showed that the two editions it made still put different events into one story 8 times:
+Eva Marie Saint's obituary inside Frank Mancuso's, Jimmy Kimmel's monologue inside the Trump Accounts story,
+three different polls as one, US forces "retreating" with Trump's golf-club "presidential retreat", Belgian
+student protests inside France's, and two different laptops with the same Nvidia chip.
+
+1. **Five of these six mix-ups are fixed** (checked on the two saved editions; your next test checks a live
+   run). A single report now joins a story only when its headline links it to every report already in it.
+   Words like "don't", names like "Congress" and a very common name such as "Trump" with one shared word
+   no longer count as proof of the same event. The two laptops are still grouped together; that case is
+   recorded as open.
+2. **The self-test failure on Windows is fixed.** A small progress file sometimes stayed behind after a
+   refresh, because Windows will not delete a file while the window is reading it. The refresh now tries
+   again for a moment. It never affected what the window showed.
+3. **The self-test no longer reports "grouped by the configured model" as a failure** when the app used
+   nomic-embed-text because Ollama cannot run EmbeddingGemma 2 on Windows.
+4. **About embeddinggemma:300m:** it downloaded, but Ollama 0.40.0 could not open it ("The path cannot be
+   traversed because it contains an untrusted mount point"). That is a bug in Ollama on Windows, not in
+   Agent Reach; the benchmark now says so in plain words. Nothing to do; the app keeps using nomic-embed-text.
+
 ## 1.0.0rc12 (zip rc12c): EmbeddingGemma 2 is Mac-only in Ollama for now
 
 With the newest Ollama, `ollama pull embeddinggemma-2:270m` on your PC answered "this model requires MLX

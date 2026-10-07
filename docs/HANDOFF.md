@@ -68,6 +68,14 @@ EmbeddingGemma 2 neighbours + an explicit same-event gate (below).
 - **rc12c (same afternoon):** with the newest Ollama, the pull says "this model requires MLX support, but the MLX
   runtime is not available": EmbeddingGemma 2 is Mac-only in Ollama for now. Messages say so (no "update Ollama"),
   the self-test reports it as INFO, and the benchmark compares `embeddinggemma:300m` (runs on Windows) with nomic.
+- **rc12d (round 2, 13:36):** `embeddinggemma:300m` downloads but Ollama 0.40.0 cannot open it on Windows (manifest
+  written as a symlink, "untrusted mount point", ollama/ollama#18847), so still no Gemma numbers. The two live
+  editions had 26 false merges in 8 stories (Saint/Mancuso obituaries, Kimmel in Trump Accounts, three polls, two
+  'retreats', Belgium/France, two RTX Spark laptops). Five gate rules tightened (lone-report attachment needs a title
+  link to every member; "don't"; legislature names; a common name + one word needs strong embedding agreement; a
+  two-word phrase is one piece of evidence); laptops open as a strict xfail. Corpus 9 editions (`RC12C_EDITIONS`):
+  1 false merge, R 0.620; real nomic vectors replayed: 0 false merges, R 0.679. Also the Windows-only
+  `progress.json` delete race (retried now) and the self-test FAIL for the expected fallback.
 
 ## rc11 stabilization pass (bugs found by reading the Daily code, no new features)
 

@@ -34,7 +34,8 @@ category sections), a grounded "why it matters" pass, an HTML export and a spoke
 - Runs the app on **Windows 11** (RTX 4070 Super, 2560x1440 at 100%) from
   `C:\Users\downt\Downloads\Agent Reach\src\Agent-Reach`, Python 3.12 venv in `.venv`, Ollama 0.40 with
   `llama3.1:8b` and `nomic-embed-text` (rc12 asks for `embeddinggemma-2:270m` too; nomic is its fallback; Ollama
-  runs EmbeddingGemma 2 on Macs only so far: "requires MLX support" on Windows, Oct 7). Data folder: `%LOCALAPPDATA%\AgentReachDaily` (never touch it from
+  runs EmbeddingGemma 2 on Macs only so far: "requires MLX support" on Windows, Oct 7; `embeddinggemma:300m`
+  downloads but Ollama 0.40.0 cannot open it there, symlink bug ollama/ollama#18847). Data folder: `%LOCALAPPDATA%\AgentReachDaily` (never touch it from
   tests; the self-test only reads it). A real refresh takes about 6 minutes there.
 - **Constraints:** local-model-first; no paid APIs, cloud LLMs, hosted services, telemetry, accounts,
   Docker or new frameworks. "Finish the application we already have, do not turn it into a research
@@ -185,11 +186,13 @@ AgentReachDaily.cmd/.pyw
 
 ## Known open items (details and order: docs/PLAN.md)
 
-- **Within a run, one story = one event since rc12** (rc12b: 0 false merges on the 7-edition labelled corpus
-  offline; the first live rc12 editions on the PC had 26, all fixed). EmbeddingGemma 2 cannot run on the PC yet:
+- **Within a run, one story = one event since rc12** (rc12d: 1 false merge on the 9-edition labelled corpus offline,
+  two RTX Spark laptops, strict xfail; each PC round's live editions had 26, fixed in rc12b and rc12d). The corpus
+  runs are small (~90 reports): rarity caps behave differently in a real run of ~1,300, so rebuild real proportions
+  in a test when a live false merge does not reproduce offline (`test_a_common_name_and_one_word_need_the_embedding_too`). EmbeddingGemma 2 cannot run on the PC yet:
   Ollama publishes it for Apple's MLX only (newest Ollama on Windows: "this model requires MLX support"). The
-  benchmark compares nomic with `embeddinggemma:300m` (first EmbeddingGemma, runs on Windows) instead; it joins
-  the fallback chain only if its numbers beat nomic. Real numbers so far are nomic only; thresholds `identity_candidate_cosine` /
+  benchmark compares nomic with `embeddinggemma:300m` (first EmbeddingGemma) instead, once Ollama can open it on
+  Windows; it joins the fallback chain only if its numbers beat nomic. Real numbers so far are nomic only; thresholds `identity_candidate_cosine` /
   `identity_strong_cosine` stay untuned until gemma's cosines are measured (`--replay` the saved vectors here).
 - **Story identity across refreshes** is the biggest quality gap: editions minutes apart disagree (the #1
   story can vanish), NEW/"what changed" is mostly noise, one event can appear in two sections. The user's
