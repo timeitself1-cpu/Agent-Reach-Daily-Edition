@@ -349,7 +349,8 @@ REPEAT_PUNCT_RX = re.compile(r"([.,;:!?])(?:\s*[.,;:])+")
 SENTENCE_RX = re.compile(r"(?<=[.!?])(?<!\bU\.S\.)(?<!\bU\.K\.)(?<!\bU\.N\.)(?<!\bE\.U\.)(?<!\bNo\.)(?<!\bSt\.)"
                          r"(?<!\bMr\.)(?<!\bMs\.)(?<!\bDr\.)(?<!\bMrs\.)(?<!\bGov\.)(?<!\bSen\.)(?<!\bRep\.)"
                          r"(?<!\bGen\.)(?<!\bJr\.)(?<!\bSr\.)(?<!\bvs\.)(?<!\bLt\.)(?<!\bCol\.)(?<!\bProf\.)"
-                         r"(?<!\bBros\.)(?<!\bInc\.)(?<!\bCorp\.)(?<!\bCo\.)(?<!\bLtd\.)\s+")
+                         r"(?<!\bBros\.)(?<!\bInc\.)(?<!\bCorp\.)(?<!\bCo\.)(?<!\bLtd\.)"
+                         r"(?<![\s(\"][A-Z]\.)\s+")  # an initial: 'James D. Watson' (October 7)
 
 SMALL_WORDS = frozenset(
     "a an and as at but by for from in into nor of on or over per the to up via vs vs. with".split()

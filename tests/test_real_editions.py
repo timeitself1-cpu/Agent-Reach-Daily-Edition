@@ -144,3 +144,34 @@ def test_why_it_matters_for_most_top_stories(r1):
 def test_fixture_files_are_valid_json():
     for p in FIXTURES.glob("*.json"):
         json.loads(p.read_text(encoding="utf-8"))
+
+
+# ---------------------------------------------------------------- second self-test run, October 7 (9:29 AM)
+@pytest.fixture(scope="module")
+def s2r1() -> DailyEdition:
+    return _edition("2026-10-07-selftest2-r1.json")
+
+
+@pytest.fixture(scope="module")
+def s2r2() -> DailyEdition:
+    return _edition("2026-10-07-selftest2-r2.json")
+
+
+def test_a_middle_initial_does_not_end_a_sentence(s2r1):
+    """#30 James Watson: the summary was split into 'Biologist James D.' and 'Watson appears to have ...'."""
+    from agent_reach.daily.edition import SENTENCE_SPLIT_RX, body_sentences
+
+    s = _story(s2r1, "James Watson Underplayed")
+    assert s.sentences[0] == "Biologist James D."  # as published by rc11
+    joined = " ".join(s.sentences)
+    assert SENTENCE_SPLIT_RX.split(joined) == [joined]
+    source = " ".join(e.title + " " + (e.excerpt or "") for e in s.evidence) + " " + joined
+    assert body_sentences(joined, source)[0].startswith("Biologist James D. Watson appears")
+
+
+@pytest.mark.xfail(strict=True, reason="next phase (event layer): the #1 story of an edition must not vanish")
+def test_the_lead_story_survives_the_next_refresh(s2r1, s2r2):
+    """'US Woman Who Survived Botched Execution Is Conscious, Speaking' (Christa Pike, 3 reports, #1 in Top
+    Stories) is not in the edition made 6 minutes later at all."""
+    lead = next(s for s in s2r1.stories if s.rank == s2r1.top_ranks[0])
+    assert any("Pike" in " ".join([s.headline, *s.sentences, *s.entities]) for s in s2r2.stories), lead.headline

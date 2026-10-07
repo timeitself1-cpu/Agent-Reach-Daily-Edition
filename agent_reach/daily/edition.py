@@ -61,6 +61,7 @@ SENTENCE_SPLIT_RX = re.compile(
     r"(?<!\bSt\.)(?<!\bMr\.)(?<!\bMs\.)(?<!\bDr\.)(?<!\bJr\.)(?<!\bSr\.)(?<!\bMrs\.)(?<!\bGen\.)"
     r"(?<!\bSen\.)(?<!\bRep\.)(?<!\bGov\.)(?<!\bvs\.)(?<!\bU\.S\.)(?<!\bU\.K\.)(?<!\bU\.N\.)(?<!\bE\.U\.)(?<!\bNo\.)"
     r"(?<!\bBros\.)(?<!\bInc\.)(?<!\bCorp\.)(?<!\bCo\.)(?<!\bLtd\.)"
+    r"(?<![\s(\"][A-Z]\.)"  # a middle initial: 'Biologist James D. Watson' (a real edition, October 7)
     r"\s+(?=[A-Z0-9\"'(\u2018\u201c])"
 )
 #: Sentences that say nothing about what happened (seen in real editions): dropped from summaries.

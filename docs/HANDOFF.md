@@ -176,8 +176,10 @@ A cloud sandbox has no Ollama and no news access. Four ways to see real output:
 
 0. **rc11 Windows validation.** Round 1 (October 7, self-test zip on the user's PC: Windows 11, Python 3.12,
    Ollama 0.35.1, 2560x1440 at 100%): 24 pass, 3 fail; all three fixed (`docs/RELEASE-NOTES.md` items 17-22).
-   Still to see: the `.cmd` / `.pyw` launcher checks and the offline suite on Windows (both blocked in round
-   1: a harness hang, and stray files), the by-hand checklist answers, a morning with the scheduled task.
+   Round 2 (Ollama 0.40.0): the offline suite runs on Windows (404 passed, 1 skipped, 4 xfailed; real file
+   locks, TerminateProcess), shortcuts and `.cmd` open the window, the model drop ends in 9 s. Still open:
+   the `.pyw` double-click (the harness now records the `.pyw` association), the by-hand checklist answers,
+   a morning with the scheduled task.
    The user's project folder holds `agent_reach/daily/events.py`, `agent_reach/pipeline/identity.py`,
    `tests/test_event_contract.py` and `tests/test_event_identity.py`, which are NOT in this repository (an
    event-registry / story-identity layer from other work; they import `edition.story_from_event` and

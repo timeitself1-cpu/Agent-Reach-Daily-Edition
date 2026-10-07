@@ -415,6 +415,31 @@ def part_environment(report: Report, args) -> None:
                    f"damaged files {len(status['corrupt_files'])}")
 
 
+def file_association(ext: str) -> str:
+    """What Explorer runs for a file type (assoc + ftype, and the user's own choice in the registry)."""
+    out = []
+    for cmd in (["cmd.exe", "/c", "assoc", ext],):
+        try:
+            res = subprocess.run(cmd, capture_output=True, text=True, timeout=20, stdin=subprocess.DEVNULL)
+            line = (res.stdout or res.stderr).strip()
+            out.append(line)
+            if "=" in line:
+                res = subprocess.run(["cmd.exe", "/c", "ftype", line.split("=", 1)[1]], capture_output=True,
+                                     text=True, timeout=20, stdin=subprocess.DEVNULL)
+                out.append((res.stdout or res.stderr).strip())
+        except (OSError, subprocess.SubprocessError) as exc:
+            out.append(f"{type(exc).__name__}: {exc}")
+    try:
+        import winreg
+
+        key = rf"Software\Microsoft\Windows\CurrentVersion\Explorer\FileExts\{ext}\UserChoice"
+        with winreg.OpenKey(winreg.HKEY_CURRENT_USER, key) as k:
+            out.append("your choice: " + str(winreg.QueryValueEx(k, "ProgId")[0]))
+    except (ImportError, OSError):
+        pass
+    return "; ".join(x for x in out if x) or "unknown"
+
+
 def part_launchers(report: Report, args, base: Path) -> None:
     P = "2. launchers"
     if not WIN:
@@ -458,8 +483,10 @@ def part_launchers(report: Report, args, base: Path) -> None:
         while not result.exists() and time.monotonic() - started < 90:
             time.sleep(0.5)
         if not result.exists():
-            report.check(P, name, False, "the window did not report within 90 s (see launcher data\\logs\\gui.log)",
-                         time.monotonic() - started)
+            detail = "the window did not report within 90 s"
+            if target.suffix.lower() == ".pyw":
+                detail += "\n.pyw files open with: " + file_association(".pyw")
+            report.check(P, name, False, detail, time.monotonic() - started)
             continue
         time.sleep(0.5)
         info = json.loads(result.read_text(encoding="utf-8"))
@@ -694,7 +721,11 @@ def part_repeat(report: Report, args, paths: DataPaths) -> None:
     P = "7. repeated use"
     prefs, _ = load_prefs(paths)
     first = EditionStore(paths).load_latest().edition
-    follow = (first.stories[0].entities or [first.stories[0].headline.split()[0]])[:1] if first else []
+    # follow a name from the best-corroborated story: the most likely to still be there (a 3-report #1 story
+    # vanished from the next refresh on October 7, which is the event-layer problem, not Following)
+    lead = max(first.stories, key=lambda s: (s.evidence_strength.independent_reports if s.evidence_strength else 0,
+                                             -s.rank)) if first and first.stories else None
+    follow = (lead.entities or [lead.headline.split()[0]])[:1] if lead else []
     save_prefs(paths, prefs.model_copy(update={"max_stories": 8, "follow_topics": follow, "podcast_auto": False}))
     ctrl = controller(paths)
     started = time.monotonic()
@@ -714,8 +745,17 @@ def part_repeat(report: Report, args, paths: DataPaths) -> None:
         snap = AppController(paths).snapshot()
         from agent_reach.daily.reading import followed
 
-        report.check(P, "Following section from the changed settings", not follow or bool(
-            followed(ed.stories, snap.prefs.follow_topics)), f"follow {follow}")
+        if not follow or followed(ed.stories, snap.prefs.follow_topics):
+            report.check(P, "Following section from the changed settings", True, f"follow {follow}")
+        else:
+            gone = lead is not None and not any(s.story_id == lead.story_id or s.headline == lead.headline
+                                                for s in ed.stories)
+            if gone:
+                report.add(P, "Following section from the changed settings", "INFO",
+                           f"follow {follow}: that story ('{lead.headline}') is not in the next edition at all "
+                           "(refresh-to-refresh churn, a known next-phase problem), so there was nothing to follow")
+            else:
+                report.check(P, "Following section from the changed settings", False, f"follow {follow}")
 
 
 def part_interactive(report: Report, args, base: Path, prefs: DailyPrefs) -> None:

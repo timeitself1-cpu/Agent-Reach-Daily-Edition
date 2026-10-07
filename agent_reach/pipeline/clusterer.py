@@ -276,7 +276,7 @@ def extract_json(text: str) -> dict[str, Any]:
 SENTENCE_SPLIT = re.compile(r"(?<=[.!?])(?<!\bU\.S\.)(?<!\bU\.K\.)(?<!\bU\.N\.)(?<!\bE\.U\.)(?<!\bNo\.)"
                             r"(?<!\bGov\.)(?<!\bSen\.)(?<!\bRep\.)(?<!\bGen\.)(?<!\bSt\.)(?<!\bMr\.)(?<!\bMs\.)"
                             r"(?<!\bDr\.)(?<!\bMrs\.)(?<!\bJr\.)(?<!\bBros\.)(?<!\bInc\.)(?<!\bCorp\.)(?<!\bCo\.)"
-                            r"(?<!\bLtd\.)\s+(?=[A-Z0-9\"'(])")
+                            r"(?<!\bLtd\.)(?<![\s(\"][A-Z]\.)\s+(?=[A-Z0-9\"'(])")
 PROPER_NOUN_RX = re.compile(r"\b([A-Z][A-Za-z0-9&'.-]+(?:\s+(?:of|the|de|&)?\s*[A-Z][A-Za-z0-9&'.-]+){0,3})")
 ENTITY_BLOCKLIST = frozenset({"The", "A", "An", "This", "That", "New", "Why", "How", "What", "Show", "Ask", "Launch", "HN"})
 

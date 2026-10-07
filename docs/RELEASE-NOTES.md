@@ -106,3 +106,24 @@ Fixed from that run:
 
 The two real editions are now regression fixtures (`tests/fixtures/real/`). What they show for the next
 phase is in `docs/REAL-EDITION-FINDINGS.md`.
+
+### Second Windows test round (October 7, 9:29 AM)
+
+The self-test ran with 31 checks passing and 3 failing. Highlights from that run:
+- **Offline suite on Windows:** 404 passed, 1 skipped, 4 expected failures. That includes the real Windows
+  file-lock tests and the process kill/cancel tests.
+- **Launchers:** the Desktop and Start-menu shortcuts and `AgentReachDaily.cmd` all opened the window.
+- **Model drop:** the refresh now ends 9 s after Ollama goes away (it took 112 s before).
+
+The three failures:
+1. **`AgentReachDaily.pyw` (double-click) did not open the window.** The self-test now records what `.pyw`
+   files open with on the PC. The Desktop shortcut is the supported launcher.
+2. **Two test files in the reader's folder are not part of this release** (other work); see the handoff.
+3. **The "Following" check followed the #1 story, and the next refresh no longer had that story.** That is
+   the refresh-to-refresh churn the event layer must fix. The check now follows the best-corroborated story
+   and reports churn as churn.
+
+Fixed:
+
+23. **A middle initial ended a sentence.** A summary read "Biologist James D." followed by "Watson appears to
+    have ...". The sentence splitters no longer split after a single capital initial.

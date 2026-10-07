@@ -73,3 +73,12 @@ on top, and YouTube answered again (the October 7 night outage was transient).
 6. **Headline names**: "Claire, Ex-Dodgers GM, Dies at 91" (Fred Claire).
 7. **Category by keyword**: "PS5 Modders Using AI Tools ..." and "Billions Pour into OpenAI, DeepSeek Ahead of
    IPOs" under Science & AI.
+
+## October 7, 2026, 9:29 AM: second self-test run (`2026-10-07-selftest2-r1.json`, `-r2.json`)
+
+46 stories; the two Nobel prizes (physics, chemistry) correctly separate; 0 'why it matters' (17 rejected).
+
+- Fixed: "Biologist James D." / "Watson appears to have ..." (#30): a middle initial ended the sentence.
+- Not fixed (xfail): the #1 Top Story "US Woman Who Survived Botched Execution Is Conscious, Speaking"
+  (Christa Pike, 3 reports) is absent from the edition made 6 minutes later; 21 of 46 stories "no longer
+  listed" again.
