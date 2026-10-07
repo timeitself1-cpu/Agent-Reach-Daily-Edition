@@ -185,10 +185,12 @@ account or cloud service. Each podcast is saved as `podcasts\YYYY-MM-DD.wav` wit
 | TikTok, Bluesky or Mastodon shows FAILED | TikTok blocks many automated readers (it is off by default; turn it on in Settings > Sources to try); the Bluesky and Mastodon public APIs occasionally change or rate-limit. Nothing is lost: viral and TikTok news still arrives through the Google News "TikTok / viral" section. |
 | "N feeds have not worked for 3 days or more" | The feed doctor noticed feeds that failed in every refresh for 3+ days. Open Settings > Publisher feeds: failing feeds say "Failing since ..."; **Test** one, Edit its address, or press **Turn off failing feeds**. |
 | A refresh takes too long | Each refresh groups and summarizes up to 260 articles. On a PC without a graphics card, lower "Articles grouped and summarized per refresh" in Settings > Sources (for example to 150), or turn off feeds you do not read. |
-| "found too little news to publish" | Fewer than 3 good stories or fewer than 2 working sources. Wait for the automatic retry or press Refresh later. |
+| "did not publish a new edition" | The banner says why: fewer than 3 good stories, fewer than 2 working sources, or the local model stopped answering partway. The previous edition is kept; wait for the automatic retry or press Refresh later. |
+| "stopped responding and was ended" | A refresh hung (for example a stuck network or disk call) and was ended after the time limit plus 25 minutes. `diagnostics\*-watchdog.json` shows where it hung; send it with `logs\refresh.log`. |
 | Wrong date or time zone | Times are US Central (CST/CDT) on purpose. If times look wrong by hours, re-run setup: it installs `tzdata`, which Windows needs. |
 | Background refresh never happens | Settings > Schedule shows the task status; **Enable / update** re-registers it. Check `logs\scheduler.log`. The task only runs while you are logged on. |
-| "saved edition files are damaged" | Nothing to do: damaged files are skipped and moved to `cache\quarantine` at the next refresh; the newest good edition is shown. |
+| "saved edition files could not be read" | Usually nothing to do: damaged files are skipped and moved to `cache\quarantine` at the next refresh, and the newest good edition is shown. A file that is only open in another program (a backup or sync tool) is left alone and read again later. |
+| "settings could not be read just now" | Another program (OneDrive, a backup tool, an editor) holds `settings.json`. Nothing was changed; close that program or wait a minute. Refreshes wait until the file can be read. |
 | The window does not open | Run `.\.venv\Scripts\python.exe -m agent_reach.daily` in PowerShell to see the error, and check `logs\gui.log`. |
 | Where are the logs? | In the app: **...** menu > **Open logs folder**. Or paste `%LOCALAPPDATA%\AgentReachDaily\logs` into the File Explorer address bar (the AppData folder is hidden by default). Refreshes write `refresh.log`; the window writes `gui.log`. |
 | Start completely fresh | Settings > Storage > **Delete all cached editions**, or `--reset-cache --yes`. |
@@ -234,6 +236,10 @@ checks do), never sees the web, and its output is checked before it is shown. De
 .\.venv\Scripts\python.exe -m pyflakes agent_reach tests
 .\.venv\Scripts\python.exe -m tests.replay_benchmark
 ```
+
+On your own PC, `powershell -ExecutionPolicy Bypass -File .\Test-AgentReachDaily.ps1` runs the self-test
+with the real Ollama and real news in a scratch folder (your data folder is only read) and leaves a zip of
+the results on the Desktop; see [docs/WINDOWS-TEST-RC11.md](docs/WINDOWS-TEST-RC11.md).
 
 Tests never touch the network or a real Ollama. `tests/daily_fakes.py` holds synthetic publisher
 feeds (fictional places on `.test` hosts) and a deterministic fake model; `samples/DEMO-edition.json`

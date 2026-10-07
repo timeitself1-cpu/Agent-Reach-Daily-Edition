@@ -54,10 +54,19 @@ def atomic_write_json(path: Path, obj: Any) -> None:
     atomic_write_text(path, json.dumps(obj, indent=2, sort_keys=False, ensure_ascii=False) + "\n")
 
 
+class FileUnavailable(OSError):
+    """A file exists but cannot be read right now (open in another program, no permission). It is NOT
+    damaged: callers must not reset or move it."""
+
+
+#: How long a read waits for another program (a virus scanner, OneDrive, a backup tool) to let go of a file.
+READ_RETRY_S = 3.0
+
+
 def read_json(path: Path) -> Any:
     """Read JSON with a short retry for transient Windows sharing violations."""
     last: Exception | None = None
-    for _ in range(20):
+    for _ in range(int(READ_RETRY_S / 0.05)):
         try:
             return json.loads(path.read_text(encoding="utf-8"))
         except PermissionError as exc:

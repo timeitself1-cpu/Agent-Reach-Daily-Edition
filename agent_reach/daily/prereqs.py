@@ -36,6 +36,9 @@ class OllamaStatus:
         return self.reachable and not self.missing
 
     def describe(self) -> str:
+        if not self.reachable and "not like an Ollama server" in (self.error or ""):
+            return (f"Another program answers at {self.host}, not Ollama. Check the Ollama address in Settings > "
+                    "Model, or close the program that uses that port and start the Ollama app.")
         if not self.reachable:
             return (f"Ollama is not running at {self.host}. Start the Ollama app (Start menu -> Ollama), "
                     "or install it from https://ollama.com/download.")

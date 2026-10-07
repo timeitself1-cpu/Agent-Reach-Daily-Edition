@@ -143,6 +143,21 @@ if (-not $installed) {
     }
 }
 
+# The project folder on the environment's import path, so "python -m agent_reach.daily" also works
+# when started from another folder (a shortcut, Task Scheduler or a terminal elsewhere).
+if ((Test-Path -LiteralPath $VenvPython) -and -not $DryRun) {
+    $sitePackages = & $VenvPython -c "import sysconfig; print(sysconfig.get_paths()['purelib'])" 2>$null
+    if ($LASTEXITCODE -eq 0 -and $sitePackages) {
+        $pth = Join-Path ($sitePackages | Select-Object -First 1).Trim() "agent_reach_project.pth"
+        [IO.File]::WriteAllText($pth, $Root + "`r`n", (New-Object System.Text.UTF8Encoding $false))
+        Write-Ok "Agent Reach can be started from any folder (project path registered in .venv)"
+    } else {
+        Write-Warn2 "Could not find the environment's site-packages; start the app from this folder or its shortcuts."
+    }
+} elseif ($DryRun) {
+    Write-Dry "register $Root in .venv (agent_reach_project.pth) so the app starts from any folder"
+}
+
 # ------------------------------------------------------------------ 4. validate the app
 Write-Step "Checking Agent Reach Daily"
 $haveVenv = Test-Path -LiteralPath $VenvPython

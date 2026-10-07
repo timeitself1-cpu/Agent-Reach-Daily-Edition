@@ -28,7 +28,7 @@ from agent_reach.daily.feeds import (
     default_feeds,
     feeds_from_entries,
 )
-from agent_reach.daily.fsutil import atomic_write_json, read_json
+from agent_reach.daily.fsutil import FileUnavailable, atomic_write_json, read_json
 from agent_reach.daily.paths import DataPaths
 from agent_reach.daily.timeutil import parse_hhmm
 
@@ -43,7 +43,7 @@ GENERAL_NEWS_SOURCES = frozenset({"google_news", "news_rss"})
 SOURCE_NOTES = {
     "google_news": "Google News: top stories and one section per category (RSS)",
     "news_rss": "Publisher feeds (Publisher feeds tab)",
-    "youtube": "YouTube: popular new videos (channels on the next tab)",
+    "youtube": "YouTube: popular new videos",
     "google_trends": "Google Trends daily searches (RSS)",
     "wikipedia": "Wikipedia: most-read articles and 'In the news'",
     "mastodon": "Mastodon: news links people are sharing (mastodon.social)",
@@ -249,11 +249,13 @@ class DailyPrefs(BaseModel):
         return v
 
 
-def load_prefs(paths: DataPaths) -> tuple[DailyPrefs, str | None]:
-    """Load preferences; never fails. Returns (prefs, warning for the UI or None).
+def load_prefs(paths: DataPaths, *, strict: bool = False) -> tuple[DailyPrefs, str | None]:
+    """Load preferences. Returns (prefs, warning for the UI or None).
 
     A corrupt file is kept as ``settings.json.corrupt-<time>``. Invalid individual values are
-    reset to defaults while the remaining valid values are kept.
+    reset to defaults while the remaining valid values are kept. A file that cannot be read right now
+    (another program holds it) is left exactly as it is: the window shows defaults with a warning, and
+    with ``strict`` (the refresh worker) ``FileUnavailable`` is raised so no refresh runs on defaults.
     """
     path = paths.settings
     if not path.exists():
@@ -262,7 +264,13 @@ def load_prefs(paths: DataPaths) -> tuple[DailyPrefs, str | None]:
         raw = read_json(path)
         if not isinstance(raw, dict):
             raise ValueError("settings file is not a JSON object")
-    except (OSError, ValueError) as exc:
+    except OSError as exc:
+        log.warning("settings cannot be read right now (%s); the file is left unchanged", exc)
+        if strict:
+            raise FileUnavailable(f"settings file cannot be read: {exc}") from exc
+        return DailyPrefs(), ("Your settings could not be read just now (the file is open in another program "
+                              "or not readable), so defaults are shown. The file was not changed.")
+    except ValueError as exc:
         backup = path.with_name(f"{path.name}.corrupt-{int(time.time())}")
         try:
             path.replace(backup)

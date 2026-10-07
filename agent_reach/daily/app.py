@@ -257,7 +257,7 @@ class AppController:
         last_success = (f"Last successful refresh {format_brief(state.last_success_utc, now)}"
                         if state.last_success_utc else "No successful refresh yet")
         next_refresh = self._next_refresh_text(due, now, prefs)
-        status = self._status_text(state, activity, latest, today, failed_since_success)
+        status = self._status_text(state, activity, latest, today, failed_since_success, now)
         if not activity.running and shown is not None and shown.demo:
             status = "Showing the DEMO edition (sample content, not real news)"
         elif not activity.running and shown is not None and not viewing_latest:
@@ -283,16 +283,20 @@ class AppController:
 
     @staticmethod
     def _status_text(state: RefreshState, activity: RefreshActivity, latest: DailyEdition | None, today: date,
-                     failed_since_success: bool) -> str:
+                     failed_since_success: bool, now: datetime | None = None) -> str:
         if activity.running:
             who = {"scheduled": "Scheduled refresh", "gui_launch": "Automatic refresh",
                    "manual": "Refreshing"}.get(activity.trigger, "Refreshing")
-            since = f" (started {format_clock(activity.started)})" if activity.started else ""
+            since = ""
+            if activity.started:
+                minutes = int((now - activity.started).total_seconds() // 60) if now else -1
+                so_far = f", {minutes} min so far" if 0 < minutes < 24 * 60 else ""
+                since = f" (started {format_clock(activity.started)}{so_far})"
             step = REFRESH_STEPS.get(activity.stage)
             where = f", step {step} of {max(REFRESH_STEPS.values())}" if step else ""
             return f"{who}{since}{where}: {activity.message}"
         if failed_since_success:
-            label = {"failed": "Last refresh failed", "no_update": "Last refresh found too little news to publish",
+            label = {"failed": "Last refresh failed", "no_update": "Last refresh did not publish a new edition",
                      "interrupted": "Last refresh was interrupted"}[state.last_attempt_outcome or "failed"]
             return f"{label}; showing the last good edition" if latest else label
         if state.last_attempt_outcome == "cancelled" and latest is None:
@@ -430,7 +434,7 @@ def failure_text(state: RefreshState, *, has_edition: bool) -> str:
         if reason.startswith(prefix):
             reason = reason[len(prefix):].strip()
     reason = reason.replace(" The previous edition is kept.", "")
-    head = {"no_update": "The refresh at {when} found too little news to publish.",
+    head = {"no_update": "The refresh at {when} did not publish a new edition.",
             "interrupted": "The refresh at {when} stopped before finishing."}.get(
         state.last_attempt_outcome or "", "The refresh at {when} did not finish.").format(when=when)
     keep = " Your last good edition is still shown." if has_edition else ""

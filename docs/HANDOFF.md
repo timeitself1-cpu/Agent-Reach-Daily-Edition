@@ -8,8 +8,10 @@ conventions), then this file. `README.md` is the user guide; `docs/architecture.
 - **Branch:** rc10 was developed on `claude/loving-darwin-a7rqvs`; rc11 is on
   `claude/affectionate-galileo-isxik1` (no PR has been opened, and none should be unless the user asks).
   Version `agent_reach/daily/__init__.py` = `1.0.0rc11`. Release notes: `docs/RELEASE-NOTES.md`.
-- **CI:** `tests.yml` is green on rc10 (Python 3.10 and 3.12; the 15 GUI tests skip there without a
-  display). On the user's Windows PC: 371 tests, 370 pass and 1 skips (SIGKILL semantics; a Reddit
+- **CI:** `tests.yml` is green on rc10 (Python 3.10 and 3.12). Up to rc10 the GUI tests silently skipped
+  in CI (no display); rc11 runs pytest under `xvfb-run` and adds a dry run of the self-test harness.
+  rc11 itself has NOT run on Windows or a real Ollama yet: the user runs `Test-AgentReachDaily.ps1` and
+  sends back its zip (`docs/WINDOWS-TEST-RC11.md`). On the user's Windows PC (rc10): 371 tests, 370 pass and 1 skips (SIGKILL semantics; a Reddit
   pacing test can fail by milliseconds when the PC is busy); the GUI
   tests run against the real display, and Tk start-up there occasionally fails and skips one of them.
 - **The user** runs the app on Windows from `C:\Users\downt\Downloads\Agent Reach\src\Agent-Reach`,
@@ -142,7 +144,13 @@ rc11 stabilization pass (six robustness fixes from a code review; see below).
 
 ## Validating with real data
 
-A cloud sandbox has no Ollama and no news access. Three ways to see real output:
+A cloud sandbox has no Ollama and no news access. Four ways to see real output:
+
+0. **The self-test zip (rc11+).** `Test-AgentReachDaily.ps1` on the user's PC writes
+   `AgentReach-selftest-<time>.zip`: `report.txt` (PASS/FAIL per check), the real editions
+   (`edition.json`, `edition.txt`, `edition-2.*`), an automatic read-through of them (candidate
+   duplicates, odd text, old reports: regression-fixture material), the scratch `refresh.log`s, the
+   model-drop run, `pytest-output.txt` from Windows, and the launcher checks. Read `report.txt` first.
 
 1. **The user's export.** They send `AgentReachDaily-YYYY-MM-DD.html` (the ... menu > Export) and
    `logs\refresh.log`. Convert the HTML to text (strip tags) and read it story by story: mixed
@@ -165,6 +173,13 @@ A cloud sandbox has no Ollama and no news access. Three ways to see real output:
    stability and the settings migration (their settings.json is still version 1) are exercised too.
 
 ## Open items, in the order I would take them
+
+0. **rc11 Windows validation** (before anything else): read the user's self-test zip and their answers to
+   the by-hand checklist in `docs/WINDOWS-TEST-RC11.md`; fix what fails there. Known residual risks: the
+   window's lock probe can, in a millisecond window, make a scheduled worker that starts at that instant
+   exit as "busy" (it retries at the next hourly check; only when a stale progress file exists); a worker
+   killed while publishing can leave a newer edition with an older pointer (repaired at the next refresh);
+   Windows display scaling and the Windows voice have not been seen.
 
 1. **Seen in the rc10 real runs, not fixed yet:**
    - A shared phrase that is itself generic still links two items: "Trump Rallies for Republicans Ahead
@@ -210,8 +225,12 @@ A cloud sandbox has no Ollama and no news access. Three ways to see real output:
 
 - Run tests quietly: `python -m pytest -o addopts="" -q 2>&1 | tail -2` (pytest.ini adds `-q`;
   the refresh tests print INFO logs on failure, so always `tail`/`grep` the output).
-- GUI tests need Xvfb: `Xvfb :99 &` then `DISPLAY=:99 python -m pytest ...` (restart Xvfb if GUI tests
-  suddenly skip). `/opt/pwsh/pwsh` can parse-check `.ps1` files.
+- GUI tests need Tk AND a display: the cloud image's default Python 3.13 has no tkinter, so the GUI file is
+  skipped as a whole ("1 skipped"). `apt-get install -y python3-tk`, then a venv from `/usr/bin/python3.12`
+  (or `uv python install 3.10`, which has Tk) and `xvfb-run -a <venv>/bin/python -m pytest -rs`.
+  Screenshots: `xvfb-run -a -s "-screen 0 1366x768x24"` and ImageMagick `import -window root shot.png`.
+  `.ps1` files can be parse-checked with PowerShell 7 (download the linux-x64 tarball from the PowerShell
+  GitHub releases into /opt/pwsh) and `[System.Management.Automation.Language.Parser]::ParseFile`.
 - On the user's Windows PC: Python 3.9/3.11/3.12 only (no 3.10; CI covers 3.10). PowerShell 5.1:
   `[IO.File]` calls resolve relative paths against the process folder (the user's install), not the
   shell location, so always pass absolute paths.

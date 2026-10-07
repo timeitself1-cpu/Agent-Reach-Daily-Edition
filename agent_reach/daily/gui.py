@@ -415,7 +415,6 @@ class DailyWindow:
         self.date_box = ttk.Combobox(right, textvariable=self.date_var, state="readonly", width=15)
         self.date_box.pack(side="left", padx=(0, self.px(8)))
         self.date_box.bind("<<ComboboxSelected>>", self._on_date)
-        self.progress = ttk.Progressbar(right, mode="indeterminate", length=self.px(90))
         self.cancel_btn = ttk.Button(right, text="Stop", style="Small.TButton", command=self.cancel_refresh)
         self.more_btn = ttk.Button(right, text="\u2026", width=3, style="Small.TButton", command=self._show_menu)
         self.more_btn.pack(side="right", padx=(self.px(6), 0))
@@ -567,10 +566,8 @@ class DailyWindow:
         if snap.activity.running or self._cancelling:
             self.refresh_btn.state(["disabled"])
             self.refresh_btn.configure(text="Refreshing...")
-            if not self.progress.winfo_ismapped():
+            if not self.cancel_btn.winfo_ismapped():  # progress is told in words in the sidebar (step, minutes)
                 self.cancel_btn.pack(side="right", padx=(self.px(6), 0))
-                self.progress.pack(side="right", padx=(self.px(8), 0))
-            self.progress.start(12)
             if self._cancelling:
                 self.cancel_btn.state(["disabled"])
             if not was_running:
@@ -579,8 +576,6 @@ class DailyWindow:
             self.refresh_btn.state(["!disabled"])
             self.refresh_btn.configure(text="Refresh")
             self.cancel_btn.state(["!disabled"])
-            self.progress.stop()
-            self.progress.pack_forget()
             self.cancel_btn.pack_forget()
         self._render_banners(snap)
         self._update_dates(snap)
@@ -2035,20 +2030,53 @@ class FeedDialog:
         self.top.destroy()
 
 
+#: Launcher check (tests/daily_selftest.py): with this set to a file path, the window opens without an
+#: automatic refresh, writes what it shows to that file after a few seconds and closes.
+SMOKE_ENV = "AGENT_REACH_DAILY_SMOKE_FILE"
+
+
+def _smoke_report(root: tk.Tk | None, window: "DailyWindow | None", target: Path, error: str | None = None) -> None:
+    import json
+
+    from agent_reach.daily import __version__
+    from agent_reach.daily.paths import PROJECT_ROOT
+
+    info = {"ok": error is None, "error": error, "version": __version__, "python": sys.executable,
+            "cwd": os.getcwd(), "project_root": str(PROJECT_ROOT)}
+    if window is not None:
+        try:
+            root.update()
+            info.update(data_dir=str(window.paths.root), title=root.title(), heading=window.heading_var.get(),
+                        status=window.status_var.get(), geometry=root.geometry(), scale=window.scale,
+                        mode=window.mode, body=window.text.get("1.0", "end")[:400])
+        except tk.TclError as exc:
+            info.update(ok=False, error=f"window: {exc}")
+    try:
+        target.write_text(json.dumps(info, indent=2), encoding="utf-8")
+    finally:
+        if root is not None:
+            root.destroy()
+
+
 def run_gui(paths: DataPaths | None = None) -> int:
     from agent_reach.daily.logs import setup_logging
 
     paths = (paths or DataPaths.resolve()).ensure()
     setup_logging(paths, "gui")
     _enable_dpi_awareness()
+    smoke = os.environ.get(SMOKE_ENV)
     try:
         root = tk.Tk()
     except tk.TclError as exc:
         log.error("cannot open a window: %s", exc)
         print(f"Agent Reach cannot open a window: {exc}", file=sys.stderr)
+        if smoke:
+            _smoke_report(None, None, Path(smoke), error=f"cannot open a window: {exc}")
         return 1
     try:
-        DailyWindow(root, paths)
+        window = DailyWindow(root, paths, auto_refresh=not smoke)
+        if smoke:
+            root.after(3000, lambda: _smoke_report(root, window, Path(smoke)))
         root.mainloop()
     except Exception:  # noqa: BLE001
         log.exception("GUI crashed")

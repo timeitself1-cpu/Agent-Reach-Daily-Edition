@@ -28,7 +28,7 @@ from datetime import datetime
 from pathlib import Path
 
 from agent_reach.daily.edition import DailyEdition
-from agent_reach.daily.fsutil import atomic_write_json
+from agent_reach.daily.fsutil import FileUnavailable, atomic_write_json
 from agent_reach.daily.lock import LockBusy, RefreshLock
 from agent_reach.daily.paths import DataPaths
 from agent_reach.daily.prefs import DailyPrefs, load_prefs
@@ -209,6 +209,15 @@ def _reconcile_with_cache(state: RefreshState, store: EditionStore) -> bool:
     return True
 
 
+def _files_unavailable(exc: OSError) -> RefreshOutcome:
+    """Settings or refresh history exist but another program holds them: never refresh on defaults or
+    overwrite the history. Nothing is recorded; the next attempt (the next hourly check) tries again."""
+    log.warning("refresh skipped: %s", exc)
+    return RefreshOutcome(EXIT_FAILED, "failed", "No refresh: your settings or refresh history could not be read "
+                                                 "(the file is open in another program). Nothing was changed; "
+                                                 "try again in a minute.")
+
+
 def _not_due_outcome(due) -> RefreshOutcome:
     if due.reason == "backoff":
         return RefreshOutcome(EXIT_BACKOFF, "backoff",
@@ -228,8 +237,11 @@ def refresh(
 ) -> RefreshOutcome:
     """Run one refresh attempt if allowed. Never raises for operational failures."""
     paths.ensure()
-    prefs, _ = load_prefs(paths)
-    state, _ = load_state(paths)
+    try:
+        prefs, _ = load_prefs(paths, strict=True)
+        state, _ = load_state(paths, strict=True)
+    except FileUnavailable as exc:
+        return _files_unavailable(exc)
     if not force:
         due = check_due(state, prefs, now_fn())
         if not due.due and state.last_attempt_outcome != "running":
@@ -248,7 +260,10 @@ def refresh(
             store.repair()
         except OSError:  # e.g. a damaged file held open by a virus scanner: the refresh can still run
             log.exception("cache repair failed; continuing with the cache as it is")
-        state, _ = load_state(paths)
+        try:
+            state, _ = load_state(paths, strict=True)
+        except FileUnavailable as exc:
+            return _files_unavailable(exc)
         changed = _reconcile_with_cache(state, store)
         changed |= recover_interrupted(state, now=now_fn(), prefs=prefs)
         if changed:
@@ -275,7 +290,10 @@ def refresh(
                               f"Unexpected error: {type(exc).__name__}: {exc}", tb=traceback.format_exc())
         if not guard.finish():
             threading.Event().wait()  # the watchdog is recording the outcome and ends the process
-        state, _ = load_state(paths)
+        try:
+            state, _ = load_state(paths, strict=True)
+        except FileUnavailable:
+            pass  # only the lock holder writes the file: the copy in memory is current
         if outcome.outcome == "published" and outcome.edition is not None:
             mark_success(state, started=started, finished=outcome.edition.generation_completed_utc,
                          edition_date=outcome.edition.edition_date.isoformat(), run_id=outcome.edition.run_id,
@@ -408,7 +426,14 @@ async def _attempt(paths: DataPaths, prefs: DailyPrefs, store: EditionStore, *, 
         from agent_reach.daily.changes import compare_editions
 
         edition.changes = compare_editions(previous, edition)
-    final = store.publish(edition)
+    try:
+        final = store.publish(edition)
+    except OSError as exc:
+        # the dated file or the pointer is open in another program (or the disk is full / read-only)
+        return _failed(paths, prefs, trigger, started, now_fn, "failed", EXIT_FAILED,
+                       f"The new edition could not be saved ({type(exc).__name__}: {exc}). It may be open in another "
+                       "program, or the disk is full. The previous edition is kept.",
+                       report=report, tb=traceback.format_exc())
     if guard is not None:
         guard.published = final
     store.purge(prefs.retention_days, central_date(completed))

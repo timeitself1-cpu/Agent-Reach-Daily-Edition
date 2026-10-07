@@ -13,9 +13,10 @@ python -m pyflakes agent_reach tests    # must be clean
 python -m agent_reach --no-llm --help   # CLI smoke test
 python -m agent_reach.daily --help      # Daily CLI smoke test
 python -m tests.replay_benchmark        # offline reliability replay
+python -m tests.daily_selftest --world --skip-pytest  # dry run of the Windows self-test harness (fake world)
 ```
 
-GUI tests (`tests/test_daily_gui.py`) need a display and skip without one; run them with `xvfb-run -a python -m pytest` on Linux. Daily end-to-end tests use `tests/daily_fakes.py` (synthetic feeds on `.test` hosts + a deterministic fake model) through the real pipeline.
+GUI tests (`tests/test_daily_gui.py`) need Tk and a display and skip without them; run them with `xvfb-run -a python -m pytest` on Linux. **Check that they ran** (`-rs`): a Python without tkinter skips the whole file silently (the cloud image's default Python 3.13 has none; `apt-get install python3-tk` gives `/usr/bin/python3.12` Tk). Daily end-to-end tests use `tests/daily_fakes.py` (synthetic feeds on `.test` hosts + a deterministic fake model) through the real pipeline. `tests/test_daily_processes.py` runs the REAL worker command as its own process in that fake world (`tests/daily_world.py`) and cancels, kills, hangs and starves it; `tests/test_daily_windows.py` (Windows only) holds files with real Windows locks. `tests/daily_selftest.py` (`Test-AgentReachDaily.ps1`) is the self-test the user runs on their PC with real Ollama and real news; never claim Windows or real-Ollama results without its report.
 
 Every change must leave `pytest` green and `pyflakes` clean. `.github/workflows/tests.yml` runs both (plus the CLI smoke test) on every push and pull request. Add or extend tests in `tests/` for any behaviour you change. `tests/fakes.py` holds the mock sources and the fake Ollama.
 

@@ -161,6 +161,7 @@ def test_ollama_check_survives_a_server_that_is_not_ollama(monkeypatch):
         transport=httpx.MockTransport(lambda req: httpx.Response(200, json=answers[req.url.path])), **kw))
     status = prereqs.check_ollama("http://localhost:11434", ["llama3.1:8b"])
     assert not status.reachable and "not like an Ollama server" in status.error
+    assert status.describe().startswith("Another program answers at http://localhost:11434, not Ollama")
     answers["/api/tags"] = {"models": [{"name": "llama3.1:8b"}, "junk"]}
     status = prereqs.check_ollama("http://localhost:11434", ["llama3.1:8b"])
     assert status.ready and status.version is None

@@ -83,8 +83,8 @@ def install() -> None:
     if limit:
         real_load = R.load_prefs
 
-        def load_prefs(paths):
-            prefs, warn = real_load(paths)
+        def load_prefs(paths, **kw):
+            prefs, warn = real_load(paths, **kw)
             return prefs.model_copy(update={"max_run_minutes": limit / 60}), warn
 
         R.load_prefs = load_prefs
