@@ -1,0 +1,5383 @@
+{
+  "edition_schema": "agent_reach.daily_edition",
+  "edition_schema_version": 1,
+  "demo": false,
+  "edition_date": "2026-10-07",
+  "timezone": "America/Chicago",
+  "revision": 2,
+  "previous_revisions": [
+    {
+      "revision": 1,
+      "run_id": "20261007T213457Z-a3ff60",
+      "generation_completed_utc": "2026-10-07T21:42:04.737829Z"
+    }
+  ],
+  "run_id": "20261007T214336Z-ad9c34",
+  "trigger": "manual",
+  "generation_started_utc": "2026-10-07T21:43:33.784355Z",
+  "generation_completed_utc": "2026-10-07T21:50:42.416576Z",
+  "model": {
+    "llm_model": "llama3.1:8b",
+    "embed_model": "embeddinggemma-2:270m",
+    "pipeline_mode": "ollama:llama3.1:8b + identity gate on nomic-embed-text neighbours (k=12, cosine>=0.45)",
+    "embed_model_used": "nomic-embed-text",
+    "grouping": {
+      "model_used": "nomic-embed-text",
+      "fallback": "embeddinggemma-2:270m was not used: embeddinggemma-2:270m: ResponseError: model \"embeddinggemma-2:270m\" not found, try pulling it first (status code: 404)",
+      "dims": 768,
+      "cache_hits": 212,
+      "reports": 260,
+      "candidate_pairs": 2177,
+      "accepted_pairs": 92,
+      "refused_pairs": 710,
+      "roundups": 14,
+      "merges_blocked": 3
+    },
+    "summaries": "local_model",
+    "label_calls": 29,
+    "label_calls_failed": 0,
+    "brief_calls": 4,
+    "brief_calls_failed": 0
+  },
+  "config_fingerprint": "594b1dd5a23ef139",
+  "pipeline_schema_version": 3,
+  "accounting": {
+    "ingested": 1519,
+    "passed_filters": 1446,
+    "clustering_candidates": 319,
+    "clustered": 237,
+    "discarded_total": 1282,
+    "balanced": true
+  },
+  "source_health": [
+    {
+      "source": "google_news",
+      "name": "Google News",
+      "status": "ok",
+      "item_count": 318,
+      "latency_ms": 484,
+      "error": null,
+      "used": 14,
+      "feeds": [
+        {
+          "name": "Google News - Top stories",
+          "url": "https://news.google.com/rss?hl=en-US&gl=US&ceid=US%3Aen",
+          "category": "News",
+          "status": "ok",
+          "collected": 38,
+          "used": 3,
+          "error": null
+        },
+        {
+          "name": "Google News - World",
+          "url": "https://news.google.com/rss/headlines/section/topic/WORLD?hl=en-US&gl=US&ceid=US%3Aen",
+          "category": "News",
+          "status": "ok",
+          "collected": 20,
+          "used": 4,
+          "error": null
+        },
+        {
+          "name": "Google News - U.S.",
+          "url": "https://news.google.com/rss/headlines/section/topic/NATION?hl=en-US&gl=US&ceid=US%3Aen",
+          "category": "News",
+          "status": "ok",
+          "collected": 20,
+          "used": 0,
+          "error": null
+        },
+        {
+          "name": "Google News - Business",
+          "url": "https://news.google.com/rss/headlines/section/topic/BUSINESS?hl=en-US&gl=US&ceid=US%3Aen",
+          "category": "News",
+          "status": "ok",
+          "collected": 20,
+          "used": 1,
+          "error": null
+        },
+        {
+          "name": "Google News - Health",
+          "url": "https://news.google.com/rss/headlines/section/topic/HEALTH?hl=en-US&gl=US&ceid=US%3Aen",
+          "category": "News",
+          "status": "ok",
+          "collected": 20,
+          "used": 0,
+          "error": null
+        },
+        {
+          "name": "Google News - Technology",
+          "url": "https://news.google.com/rss/headlines/section/topic/TECHNOLOGY?hl=en-US&gl=US&ceid=US%3Aen",
+          "category": "Tech",
+          "status": "ok",
+          "collected": 20,
+          "used": 2,
+          "error": null
+        },
+        {
+          "name": "Google News - Science",
+          "url": "https://news.google.com/rss/headlines/section/topic/SCIENCE?hl=en-US&gl=US&ceid=US%3Aen",
+          "category": "Science & AI",
+          "status": "ok",
+          "collected": 20,
+          "used": 0,
+          "error": null
+        },
+        {
+          "name": "Google News - AI",
+          "url": "https://news.google.com/rss/search?q=artificial+intelligence+when%3A1d&hl=en-US&gl=US&ceid=US%3Aen",
+          "category": "Science & AI",
+          "status": "ok",
+          "collected": 20,
+          "used": 0,
+          "error": null
+        },
+        {
+          "name": "Google News - Sports",
+          "url": "https://news.google.com/rss/headlines/section/topic/SPORTS?hl=en-US&gl=US&ceid=US%3Aen",
+          "category": "Sports",
+          "status": "ok",
+          "collected": 20,
+          "used": 0,
+          "error": null
+        },
+        {
+          "name": "Google News - Entertainment",
+          "url": "https://news.google.com/rss/headlines/section/topic/ENTERTAINMENT?hl=en-US&gl=US&ceid=US%3Aen",
+          "category": "Entertainment",
+          "status": "ok",
+          "collected": 20,
+          "used": 2,
+          "error": null
+        },
+        {
+          "name": "Google News - Viral & TikTok",
+          "url": "https://news.google.com/rss/search?q=tiktok+OR+viral+OR+meme+when%3A1d&hl=en-US&gl=US&ceid=US%3Aen",
+          "category": "Internet Culture",
+          "status": "ok",
+          "collected": 20,
+          "used": 1,
+          "error": null
+        },
+        {
+          "name": "AP News (via Google News)",
+          "url": "https://news.google.com/rss/search?q=site%3Aapnews.com+when%3A1d&hl=en-US&gl=US&ceid=US%3Aen",
+          "category": "News",
+          "status": "ok",
+          "collected": 20,
+          "used": 1,
+          "error": null
+        },
+        {
+          "name": "Reuters (via Google News)",
+          "url": "https://news.google.com/rss/search?q=site%3Areuters.com+when%3A1d&hl=en-US&gl=US&ceid=US%3Aen",
+          "category": "News",
+          "status": "ok",
+          "collected": 20,
+          "used": 0,
+          "error": null
+        },
+        {
+          "name": "Google News - Space",
+          "url": "https://news.google.com/rss/search?q=space+OR+NASA+OR+astronomy+when%3A1d&hl=en-US&gl=US&ceid=US%3Aen",
+          "category": "Science & AI",
+          "status": "ok",
+          "collected": 20,
+          "used": 0,
+          "error": null
+        },
+        {
+          "name": "Google News - Games",
+          "url": "https://news.google.com/rss/search?q=video+games+when%3A1d&hl=en-US&gl=US&ceid=US%3Aen",
+          "category": "Entertainment",
+          "status": "ok",
+          "collected": 20,
+          "used": 0,
+          "error": null
+        }
+      ]
+    },
+    {
+      "source": "news_rss",
+      "name": "News feeds",
+      "status": "ok",
+      "item_count": 900,
+      "latency_ms": 10092,
+      "error": null,
+      "used": 54,
+      "feeds": [
+        {
+          "name": "BBC News - World",
+          "url": "https://feeds.bbci.co.uk/news/world/rss.xml",
+          "category": "News",
+          "status": "ok",
+          "collected": 9,
+          "used": 2,
+          "error": null
+        },
+        {
+          "name": "NPR - News",
+          "url": "https://feeds.npr.org/1001/rss.xml",
+          "category": "News",
+          "status": "ok",
+          "collected": 9,
+          "used": 0,
+          "error": null
+        },
+        {
+          "name": "NPR - World",
+          "url": "https://feeds.npr.org/1004/rss.xml",
+          "category": "News",
+          "status": "ok",
+          "collected": 9,
+          "used": 0,
+          "error": null
+        },
+        {
+          "name": "The Guardian - US",
+          "url": "https://www.theguardian.com/us-news/rss",
+          "category": "News",
+          "status": "ok",
+          "collected": 9,
+          "used": 1,
+          "error": null
+        },
+        {
+          "name": "The Guardian - World",
+          "url": "https://www.theguardian.com/world/rss",
+          "category": "News",
+          "status": "ok",
+          "collected": 9,
+          "used": 0,
+          "error": null
+        },
+        {
+          "name": "PBS News - Headlines",
+          "url": "https://www.pbs.org/newshour/feeds/rss/headlines",
+          "category": "News",
+          "status": "ok",
+          "collected": 9,
+          "used": 0,
+          "error": null
+        },
+        {
+          "name": "CBS News - Latest",
+          "url": "https://www.cbsnews.com/latest/rss/main",
+          "category": "News",
+          "status": "ok",
+          "collected": 9,
+          "used": 0,
+          "error": null
+        },
+        {
+          "name": "Al Jazeera - All",
+          "url": "https://www.aljazeera.com/xml/rss/all.xml",
+          "category": "News",
+          "status": "ok",
+          "collected": 9,
+          "used": 1,
+          "error": null
+        },
+        {
+          "name": "Le Monde - English",
+          "url": "https://www.lemonde.fr/en/rss/une.xml",
+          "category": "News",
+          "status": "ok",
+          "collected": 9,
+          "used": 1,
+          "error": null
+        },
+        {
+          "name": "France 24 - English",
+          "url": "https://www.france24.com/en/rss",
+          "category": "News",
+          "status": "ok",
+          "collected": 9,
+          "used": 2,
+          "error": null
+        },
+        {
+          "name": "DW - English",
+          "url": "https://rss.dw.com/rdf/rss-en-all",
+          "category": "News",
+          "status": "ok",
+          "collected": 8,
+          "used": 1,
+          "error": null
+        },
+        {
+          "name": "BBC News - Business",
+          "url": "https://feeds.bbci.co.uk/news/business/rss.xml",
+          "category": "News",
+          "status": "ok",
+          "collected": 8,
+          "used": 0,
+          "error": null
+        },
+        {
+          "name": "NPR - Business",
+          "url": "https://feeds.npr.org/1006/rss.xml",
+          "category": "News",
+          "status": "ok",
+          "collected": 8,
+          "used": 0,
+          "error": null
+        },
+        {
+          "name": "CNBC - Top News",
+          "url": "https://www.cnbc.com/id/100003114/device/rss/rss.html",
+          "category": "News",
+          "status": "ok",
+          "collected": 8,
+          "used": 2,
+          "error": null
+        },
+        {
+          "name": "BBC News - Science",
+          "url": "https://feeds.bbci.co.uk/news/science_and_environment/rss.xml",
+          "category": "Science & AI",
+          "status": "ok",
+          "collected": 8,
+          "used": 1,
+          "error": null
+        },
+        {
+          "name": "NASA - News",
+          "url": "https://www.nasa.gov/news-release/feed/",
+          "category": "Science & AI",
+          "status": "ok",
+          "collected": 8,
+          "used": 0,
+          "error": null
+        },
+        {
+          "name": "ScienceDaily - Top Science",
+          "url": "https://www.sciencedaily.com/rss/top/science.xml",
+          "category": "Science & AI",
+          "status": "ok",
+          "collected": 8,
+          "used": 0,
+          "error": null
+        },
+        {
+          "name": "NPR - Health",
+          "url": "https://feeds.npr.org/1128/rss.xml",
+          "category": "News",
+          "status": "ok",
+          "collected": 8,
+          "used": 0,
+          "error": null
+        },
+        {
+          "name": "BBC News - Technology",
+          "url": "https://feeds.bbci.co.uk/news/technology/rss.xml",
+          "category": "Tech",
+          "status": "ok",
+          "collected": 8,
+          "used": 0,
+          "error": null
+        },
+        {
+          "name": "Ars Technica",
+          "url": "https://feeds.arstechnica.com/arstechnica/index",
+          "category": "Tech",
+          "status": "ok",
+          "collected": 8,
+          "used": 0,
+          "error": null
+        },
+        {
+          "name": "The Verge",
+          "url": "https://www.theverge.com/rss/index.xml",
+          "category": "Tech",
+          "status": "ok",
+          "collected": 8,
+          "used": 0,
+          "error": null
+        },
+        {
+          "name": "ESPN - Top Headlines",
+          "url": "https://www.espn.com/espn/rss/news",
+          "category": "Sports",
+          "status": "ok",
+          "collected": 8,
+          "used": 0,
+          "error": null
+        },
+        {
+          "name": "BBC Sport",
+          "url": "https://feeds.bbci.co.uk/sport/rss.xml",
+          "category": "Sports",
+          "status": "ok",
+          "collected": 8,
+          "used": 2,
+          "error": null
+        },
+        {
+          "name": "BBC News - Entertainment & Arts",
+          "url": "https://feeds.bbci.co.uk/news/entertainment_and_arts/rss.xml",
+          "category": "Entertainment",
+          "status": "ok",
+          "collected": 8,
+          "used": 1,
+          "error": null
+        },
+        {
+          "name": "The Guardian - Culture",
+          "url": "https://www.theguardian.com/culture/rss",
+          "category": "Entertainment",
+          "status": "ok",
+          "collected": 8,
+          "used": 1,
+          "error": null
+        },
+        {
+          "name": "NPR - Arts & Life",
+          "url": "https://feeds.npr.org/1008/rss.xml",
+          "category": "Entertainment",
+          "status": "ok",
+          "collected": 8,
+          "used": 1,
+          "error": null
+        },
+        {
+          "name": "TechCrunch",
+          "url": "https://techcrunch.com/feed/",
+          "category": "Tech",
+          "status": "ok",
+          "collected": 8,
+          "used": 0,
+          "error": null
+        },
+        {
+          "name": "Wired",
+          "url": "https://www.wired.com/feed/rss",
+          "category": "Tech",
+          "status": "ok",
+          "collected": 8,
+          "used": 0,
+          "error": null
+        },
+        {
+          "name": "Engadget",
+          "url": "https://www.engadget.com/rss.xml",
+          "category": "Tech",
+          "status": "ok",
+          "collected": 8,
+          "used": 2,
+          "error": null
+        },
+        {
+          "name": "The Register",
+          "url": "https://www.theregister.com/headlines.atom",
+          "category": "Tech",
+          "status": "ok",
+          "collected": 8,
+          "used": 0,
+          "error": null
+        },
+        {
+          "name": "The Guardian - Technology",
+          "url": "https://www.theguardian.com/technology/rss",
+          "category": "Tech",
+          "status": "ok",
+          "collected": 8,
+          "used": 2,
+          "error": null
+        },
+        {
+          "name": "NPR - Technology",
+          "url": "https://feeds.npr.org/1019/rss.xml",
+          "category": "Tech",
+          "status": "ok",
+          "collected": 8,
+          "used": 0,
+          "error": null
+        },
+        {
+          "name": "Lobsters",
+          "url": "https://lobste.rs/rss",
+          "category": "Tech",
+          "status": "ok",
+          "collected": 8,
+          "used": 0,
+          "error": null
+        },
+        {
+          "name": "MIT Technology Review",
+          "url": "https://www.technologyreview.com/feed/",
+          "category": "Science & AI",
+          "status": "ok",
+          "collected": 8,
+          "used": 0,
+          "error": null
+        },
+        {
+          "name": "The Guardian - Science",
+          "url": "https://www.theguardian.com/science/rss",
+          "category": "Science & AI",
+          "status": "ok",
+          "collected": 8,
+          "used": 1,
+          "error": null
+        },
+        {
+          "name": "NPR - Science",
+          "url": "https://feeds.npr.org/1007/rss.xml",
+          "category": "Science & AI",
+          "status": "ok",
+          "collected": 8,
+          "used": 1,
+          "error": null
+        },
+        {
+          "name": "New York Times - Home Page",
+          "url": "https://rss.nytimes.com/services/xml/rss/nyt/HomePage.xml",
+          "category": "News",
+          "status": "ok",
+          "collected": 8,
+          "used": 1,
+          "error": null
+        },
+        {
+          "name": "Washington Post - World",
+          "url": "https://feeds.washingtonpost.com/rss/world",
+          "category": "News",
+          "status": "ok",
+          "collected": 8,
+          "used": 0,
+          "error": null
+        },
+        {
+          "name": "NBC News - Top Stories",
+          "url": "https://feeds.nbcnews.com/nbcnews/public/news",
+          "category": "News",
+          "status": "ok",
+          "collected": 8,
+          "used": 0,
+          "error": null
+        },
+        {
+          "name": "ABC News - Top Stories",
+          "url": "https://abcnews.go.com/abcnews/topstories",
+          "category": "News",
+          "status": "ok",
+          "collected": 8,
+          "used": 0,
+          "error": null
+        },
+        {
+          "name": "Fox News - Latest",
+          "url": "https://moxie.foxnews.com/google-publisher/latest.xml",
+          "category": "News",
+          "status": "ok",
+          "collected": 8,
+          "used": 0,
+          "error": null
+        },
+        {
+          "name": "Sky News - World",
+          "url": "https://feeds.skynews.com/feeds/rss/world.xml",
+          "category": "News",
+          "status": "ok",
+          "collected": 5,
+          "used": 0,
+          "error": null
+        },
+        {
+          "name": "CBS News - World",
+          "url": "https://www.cbsnews.com/latest/rss/world",
+          "category": "News",
+          "status": "ok",
+          "collected": 8,
+          "used": 1,
+          "error": null
+        },
+        {
+          "name": "Politico - Politics",
+          "url": "https://rss.politico.com/politics-news.xml",
+          "category": "News",
+          "status": "ok",
+          "collected": 8,
+          "used": 0,
+          "error": null
+        },
+        {
+          "name": "The Hill",
+          "url": "https://thehill.com/feed/",
+          "category": "News",
+          "status": "ok",
+          "collected": 8,
+          "used": 1,
+          "error": null
+        },
+        {
+          "name": "MarketWatch - Top Stories",
+          "url": "https://feeds.content.dowjones.io/public/rss/mw_topstories",
+          "category": "News",
+          "status": "ok",
+          "collected": 8,
+          "used": 0,
+          "error": null
+        },
+        {
+          "name": "ZDNET",
+          "url": "https://www.zdnet.com/news/rss.xml",
+          "category": "Tech",
+          "status": "ok",
+          "collected": 8,
+          "used": 0,
+          "error": null
+        },
+        {
+          "name": "Gizmodo",
+          "url": "https://gizmodo.com/feed",
+          "category": "Tech",
+          "status": "ok",
+          "collected": 8,
+          "used": 1,
+          "error": null
+        },
+        {
+          "name": "9to5Mac",
+          "url": "https://9to5mac.com/feed/",
+          "category": "Tech",
+          "status": "ok",
+          "collected": 8,
+          "used": 1,
+          "error": null
+        },
+        {
+          "name": "Tom's Hardware",
+          "url": "https://www.tomshardware.com/feeds/all",
+          "category": "Tech",
+          "status": "ok",
+          "collected": 8,
+          "used": 0,
+          "error": null
+        },
+        {
+          "name": "Android Authority",
+          "url": "https://www.androidauthority.com/feed/",
+          "category": "Tech",
+          "status": "ok",
+          "collected": 8,
+          "used": 1,
+          "error": null
+        },
+        {
+          "name": "Ars Technica - AI",
+          "url": "https://arstechnica.com/ai/feed/",
+          "category": "Science & AI",
+          "status": "ok",
+          "collected": 8,
+          "used": 0,
+          "error": null
+        },
+        {
+          "name": "The Decoder",
+          "url": "https://the-decoder.com/feed/",
+          "category": "Science & AI",
+          "status": "ok",
+          "collected": 8,
+          "used": 2,
+          "error": null
+        },
+        {
+          "name": "Google - AI",
+          "url": "https://blog.google/technology/ai/rss/",
+          "category": "Science & AI",
+          "status": "ok",
+          "collected": 8,
+          "used": 0,
+          "error": null
+        },
+        {
+          "name": "OpenAI - News",
+          "url": "https://openai.com/news/rss.xml",
+          "category": "Science & AI",
+          "status": "ok",
+          "collected": 8,
+          "used": 0,
+          "error": null
+        },
+        {
+          "name": "Hugging Face - Blog",
+          "url": "https://huggingface.co/blog/feed.xml",
+          "category": "Science & AI",
+          "status": "ok",
+          "collected": 8,
+          "used": 0,
+          "error": null
+        },
+        {
+          "name": "New Scientist",
+          "url": "https://www.newscientist.com/feed/home/",
+          "category": "Science & AI",
+          "status": "ok",
+          "collected": 8,
+          "used": 0,
+          "error": null
+        },
+        {
+          "name": "SpaceNews",
+          "url": "https://spacenews.com/feed/",
+          "category": "Science & AI",
+          "status": "ok",
+          "collected": 8,
+          "used": 0,
+          "error": null
+        },
+        {
+          "name": "Quanta Magazine",
+          "url": "https://www.quantamagazine.org/feed/",
+          "category": "Science & AI",
+          "status": "ok",
+          "collected": 5,
+          "used": 0,
+          "error": null
+        },
+        {
+          "name": "Nature",
+          "url": "https://www.nature.com/nature.rss",
+          "category": "Science & AI",
+          "status": "ok",
+          "collected": 8,
+          "used": 1,
+          "error": null
+        },
+        {
+          "name": "CBS Sports - Headlines",
+          "url": "https://www.cbssports.com/rss/headlines/",
+          "category": "Sports",
+          "status": "ok",
+          "collected": 8,
+          "used": 0,
+          "error": null
+        },
+        {
+          "name": "Yahoo Sports",
+          "url": "https://sports.yahoo.com/rss/",
+          "category": "Sports",
+          "status": "ok",
+          "collected": 8,
+          "used": 1,
+          "error": null
+        },
+        {
+          "name": "Sky Sports - News",
+          "url": "https://www.skysports.com/rss/12040",
+          "category": "Sports",
+          "status": "ok",
+          "collected": 8,
+          "used": 1,
+          "error": null
+        },
+        {
+          "name": "The Guardian - Sport",
+          "url": "https://www.theguardian.com/sport/rss",
+          "category": "Sports",
+          "status": "ok",
+          "collected": 8,
+          "used": 0,
+          "error": null
+        },
+        {
+          "name": "Variety",
+          "url": "https://variety.com/feed/",
+          "category": "Entertainment",
+          "status": "ok",
+          "collected": 8,
+          "used": 0,
+          "error": null
+        },
+        {
+          "name": "The Hollywood Reporter",
+          "url": "https://www.hollywoodreporter.com/feed/",
+          "category": "Entertainment",
+          "status": "ok",
+          "collected": 8,
+          "used": 0,
+          "error": null
+        },
+        {
+          "name": "Deadline",
+          "url": "https://deadline.com/feed/",
+          "category": "Entertainment",
+          "status": "ok",
+          "collected": 8,
+          "used": 1,
+          "error": null
+        },
+        {
+          "name": "Billboard",
+          "url": "https://www.billboard.com/feed/",
+          "category": "Entertainment",
+          "status": "ok",
+          "collected": 8,
+          "used": 0,
+          "error": null
+        },
+        {
+          "name": "Rolling Stone",
+          "url": "https://www.rollingstone.com/feed/",
+          "category": "Entertainment",
+          "status": "ok",
+          "collected": 8,
+          "used": 0,
+          "error": null
+        },
+        {
+          "name": "IGN",
+          "url": "https://feeds.feedburner.com/ign/all",
+          "category": "Entertainment",
+          "status": "ok",
+          "collected": 8,
+          "used": 0,
+          "error": null
+        },
+        {
+          "name": "Polygon",
+          "url": "https://www.polygon.com/rss/index.xml",
+          "category": "Entertainment",
+          "status": "ok",
+          "collected": 8,
+          "used": 0,
+          "error": null
+        },
+        {
+          "name": "The Daily Dot",
+          "url": "https://www.dailydot.com/feed/",
+          "category": "Internet Culture",
+          "status": "ok",
+          "collected": 8,
+          "used": 0,
+          "error": null
+        },
+        {
+          "name": "Mashable",
+          "url": "https://mashable.com/feeds/rss/all",
+          "category": "Internet Culture",
+          "status": "ok",
+          "collected": 8,
+          "used": 0,
+          "error": null
+        },
+        {
+          "name": "Axios",
+          "url": "https://api.axios.com/feed/",
+          "category": "News",
+          "status": "ok",
+          "collected": 8,
+          "used": 0,
+          "error": null
+        },
+        {
+          "name": "Vox",
+          "url": "https://www.vox.com/rss/index.xml",
+          "category": "News",
+          "status": "ok",
+          "collected": 8,
+          "used": 0,
+          "error": null
+        },
+        {
+          "name": "The Atlantic",
+          "url": "https://www.theatlantic.com/feed/all/",
+          "category": "News",
+          "status": "ok",
+          "collected": 8,
+          "used": 0,
+          "error": null
+        },
+        {
+          "name": "ProPublica",
+          "url": "https://www.propublica.org/feeds/propublica/main",
+          "category": "News",
+          "status": "ok",
+          "collected": 8,
+          "used": 1,
+          "error": null
+        },
+        {
+          "name": "CBC News - Top Stories",
+          "url": "https://www.cbc.ca/webfeed/rss/rss-topstories",
+          "category": "News",
+          "status": "ok",
+          "collected": 8,
+          "used": 0,
+          "error": null
+        },
+        {
+          "name": "ABC News Australia - Top Stories",
+          "url": "https://www.abc.net.au/news/feed/2942460/rss.xml",
+          "category": "News",
+          "status": "ok",
+          "collected": 8,
+          "used": 1,
+          "error": null
+        },
+        {
+          "name": "South China Morning Post - World",
+          "url": "https://www.scmp.com/rss/91/feed",
+          "category": "News",
+          "status": "ok",
+          "collected": 8,
+          "used": 1,
+          "error": null
+        },
+        {
+          "name": "The Japan Times",
+          "url": "https://www.japantimes.co.jp/feed/",
+          "category": "News",
+          "status": "ok",
+          "collected": 8,
+          "used": 0,
+          "error": null
+        },
+        {
+          "name": "Times of India - Top Stories",
+          "url": "https://timesofindia.indiatimes.com/rssfeedstopstories.cms",
+          "category": "News",
+          "status": "ok",
+          "collected": 8,
+          "used": 0,
+          "error": null
+        },
+        {
+          "name": "Euronews",
+          "url": "https://www.euronews.com/rss?format=mrss&level=theme&name=news",
+          "category": "News",
+          "status": "ok",
+          "collected": 8,
+          "used": 0,
+          "error": null
+        },
+        {
+          "name": "Business Insider",
+          "url": "https://feeds.businessinsider.com/custom/all",
+          "category": "News",
+          "status": "ok",
+          "collected": 8,
+          "used": 0,
+          "error": null
+        },
+        {
+          "name": "Fortune",
+          "url": "https://fortune.com/feed/",
+          "category": "News",
+          "status": "ok",
+          "collected": 8,
+          "used": 1,
+          "error": null
+        },
+        {
+          "name": "Bloomberg - Markets",
+          "url": "https://feeds.bloomberg.com/markets/news.rss",
+          "category": "News",
+          "status": "ok",
+          "collected": 8,
+          "used": 1,
+          "error": null
+        },
+        {
+          "name": "Techmeme",
+          "url": "https://www.techmeme.com/feed.xml",
+          "category": "Tech",
+          "status": "ok",
+          "collected": 8,
+          "used": 1,
+          "error": null
+        },
+        {
+          "name": "The Next Web",
+          "url": "https://thenextweb.com/feed",
+          "category": "Tech",
+          "status": "ok",
+          "collected": 8,
+          "used": 1,
+          "error": null
+        },
+        {
+          "name": "MacRumors",
+          "url": "https://feeds.macrumors.com/MacRumors-All",
+          "category": "Tech",
+          "status": "ok",
+          "collected": 8,
+          "used": 2,
+          "error": null
+        },
+        {
+          "name": "BleepingComputer",
+          "url": "https://www.bleepingcomputer.com/feed/",
+          "category": "Tech",
+          "status": "ok",
+          "collected": 8,
+          "used": 0,
+          "error": null
+        },
+        {
+          "name": "Krebs on Security",
+          "url": "https://krebsonsecurity.com/feed/",
+          "category": "Tech",
+          "status": "ok",
+          "collected": 8,
+          "used": 0,
+          "error": null
+        },
+        {
+          "name": "Fast Company",
+          "url": "https://www.fastcompany.com/latest/rss",
+          "category": "Tech",
+          "status": "ok",
+          "collected": 8,
+          "used": 0,
+          "error": null
+        },
+        {
+          "name": "Google DeepMind - Blog",
+          "url": "https://deepmind.google/blog/rss.xml",
+          "category": "Science & AI",
+          "status": "ok",
+          "collected": 8,
+          "used": 0,
+          "error": null
+        },
+        {
+          "name": "Simon Willison",
+          "url": "https://simonwillison.net/atom/everything/",
+          "category": "Science & AI",
+          "status": "ok",
+          "collected": 8,
+          "used": 1,
+          "error": null
+        },
+        {
+          "name": "MarkTechPost",
+          "url": "https://www.marktechpost.com/feed/",
+          "category": "Science & AI",
+          "status": "ok",
+          "collected": 8,
+          "used": 0,
+          "error": null
+        },
+        {
+          "name": "Science - News",
+          "url": "https://www.science.org/rss/news_current.xml",
+          "category": "Science & AI",
+          "status": "ok",
+          "collected": 8,
+          "used": 0,
+          "error": null
+        },
+        {
+          "name": "Phys.org",
+          "url": "https://phys.org/rss-feed/",
+          "category": "Science & AI",
+          "status": "ok",
+          "collected": 8,
+          "used": 0,
+          "error": null
+        },
+        {
+          "name": "ScienceAlert",
+          "url": "https://www.sciencealert.com/feed",
+          "category": "Science & AI",
+          "status": "ok",
+          "collected": 8,
+          "used": 0,
+          "error": null
+        },
+        {
+          "name": "ESPN - NFL",
+          "url": "https://www.espn.com/espn/rss/nfl/news",
+          "category": "Sports",
+          "status": "ok",
+          "collected": 8,
+          "used": 1,
+          "error": null
+        },
+        {
+          "name": "ESPN - NBA",
+          "url": "https://www.espn.com/espn/rss/nba/news",
+          "category": "Sports",
+          "status": "ok",
+          "collected": 8,
+          "used": 0,
+          "error": null
+        },
+        {
+          "name": "ESPN - MLB",
+          "url": "https://www.espn.com/espn/rss/mlb/news",
+          "category": "Sports",
+          "status": "ok",
+          "collected": 8,
+          "used": 0,
+          "error": null
+        },
+        {
+          "name": "ESPN - Soccer",
+          "url": "https://www.espn.com/espn/rss/soccer/news",
+          "category": "Sports",
+          "status": "ok",
+          "collected": 8,
+          "used": 2,
+          "error": null
+        },
+        {
+          "name": "BBC Sport - Football",
+          "url": "https://feeds.bbci.co.uk/sport/football/rss.xml",
+          "category": "Sports",
+          "status": "ok",
+          "collected": 8,
+          "used": 1,
+          "error": null
+        },
+        {
+          "name": "Sporting News",
+          "url": "https://www.sportingnews.com/us/rss",
+          "category": "Sports",
+          "status": "ok",
+          "collected": 8,
+          "used": 1,
+          "error": null
+        },
+        {
+          "name": "Pitchfork - News",
+          "url": "https://pitchfork.com/rss/news/",
+          "category": "Entertainment",
+          "status": "ok",
+          "collected": 8,
+          "used": 0,
+          "error": null
+        },
+        {
+          "name": "Collider",
+          "url": "https://collider.com/feed/",
+          "category": "Entertainment",
+          "status": "ok",
+          "collected": 8,
+          "used": 1,
+          "error": null
+        },
+        {
+          "name": "Screen Rant",
+          "url": "https://screenrant.com/feed/",
+          "category": "Entertainment",
+          "status": "ok",
+          "collected": 8,
+          "used": 0,
+          "error": null
+        },
+        {
+          "name": "Kotaku",
+          "url": "https://kotaku.com/rss",
+          "category": "Entertainment",
+          "status": "ok",
+          "collected": 8,
+          "used": 0,
+          "error": null
+        },
+        {
+          "name": "Eurogamer",
+          "url": "https://www.eurogamer.net/feed",
+          "category": "Entertainment",
+          "status": "ok",
+          "collected": 8,
+          "used": 2,
+          "error": null
+        },
+        {
+          "name": "Tubefilter",
+          "url": "https://www.tubefilter.com/feed/",
+          "category": "Internet Culture",
+          "status": "ok",
+          "collected": 8,
+          "used": 0,
+          "error": null
+        },
+        {
+          "name": "Social Media Today",
+          "url": "https://www.socialmediatoday.com/feeds/news/",
+          "category": "Internet Culture",
+          "status": "ok",
+          "collected": 8,
+          "used": 1,
+          "error": null
+        },
+        {
+          "name": "Boing Boing",
+          "url": "https://boingboing.net/feed",
+          "category": "Internet Culture",
+          "status": "ok",
+          "collected": 8,
+          "used": 1,
+          "error": null
+        }
+      ]
+    },
+    {
+      "source": "google_trends",
+      "name": "Google Trends",
+      "status": "ok",
+      "item_count": 10,
+      "latency_ms": 190,
+      "error": null,
+      "used": 0,
+      "feeds": []
+    },
+    {
+      "source": "wikipedia",
+      "name": "Wikipedia",
+      "status": "ok",
+      "item_count": 60,
+      "latency_ms": 3346,
+      "error": null,
+      "used": 1,
+      "feeds": []
+    },
+    {
+      "source": "reddit",
+      "name": "Reddit",
+      "status": "partial",
+      "item_count": 16,
+      "latency_ms": 30173,
+      "error": "partial: JSON listings refused (403 blocked); used RSS without engagement counts; r/news, r/worldnews, r/technology, r/sports: HTTPStatusError: HTTP 429 Too Many Requests; 1 subreddit(s) skipped: 30s budget exhausted",
+      "used": 0,
+      "feeds": []
+    },
+    {
+      "source": "x_trends24",
+      "name": "X (trends24)",
+      "status": "ok",
+      "item_count": 50,
+      "latency_ms": 168,
+      "error": null,
+      "used": 1,
+      "feeds": []
+    },
+    {
+      "source": "hackernews",
+      "name": "Hacker News",
+      "status": "ok",
+      "item_count": 60,
+      "latency_ms": 3599,
+      "error": null,
+      "used": 5,
+      "feeds": []
+    },
+    {
+      "source": "youtube",
+      "name": "YouTube",
+      "status": "ok",
+      "item_count": 60,
+      "latency_ms": 3427,
+      "error": null,
+      "used": 4,
+      "feeds": [
+        {
+          "name": "BBC News",
+          "url": "https://www.youtube.com/feeds/videos.xml?channel_id=UC16niRr50-MSBwiO3YDb3RA",
+          "category": "News",
+          "status": "ok",
+          "collected": 3,
+          "used": 1,
+          "error": null
+        },
+        {
+          "name": "Reuters",
+          "url": "https://www.youtube.com/feeds/videos.xml?channel_id=UChqUTb7kYRX8-EiaN3XFrSQ",
+          "category": "News",
+          "status": "ok",
+          "collected": 3,
+          "used": 0,
+          "error": null
+        },
+        {
+          "name": "Associated Press",
+          "url": "https://www.youtube.com/feeds/videos.xml?channel_id=UC52X5wxOL_s5yw0dQk7NtgA",
+          "category": "News",
+          "status": "ok",
+          "collected": 3,
+          "used": 0,
+          "error": null
+        },
+        {
+          "name": "NBC News",
+          "url": "https://www.youtube.com/feeds/videos.xml?channel_id=UCeY0bbntWzzVIaj2z3QigXg",
+          "category": "News",
+          "status": "ok",
+          "collected": 3,
+          "used": 0,
+          "error": null
+        },
+        {
+          "name": "ABC News",
+          "url": "https://www.youtube.com/feeds/videos.xml?channel_id=UCBi2mrWuNuyYy4gbM6fU18Q",
+          "category": "News",
+          "status": "ok",
+          "collected": 3,
+          "used": 0,
+          "error": null
+        },
+        {
+          "name": "CBS News",
+          "url": "https://www.youtube.com/feeds/videos.xml?channel_id=UC8p1vwvWtl6T73JiExfWs1g",
+          "category": "News",
+          "status": "ok",
+          "collected": 3,
+          "used": 1,
+          "error": null
+        },
+        {
+          "name": "PBS NewsHour",
+          "url": "https://www.youtube.com/feeds/videos.xml?channel_id=UC6ZFN9Tx6xh-skXCuRHCDpQ",
+          "category": "News",
+          "status": "ok",
+          "collected": 3,
+          "used": 0,
+          "error": null
+        },
+        {
+          "name": "Al Jazeera English",
+          "url": "https://www.youtube.com/feeds/videos.xml?channel_id=UCNye-wNBqNL5ZzHSJj3l8Bg",
+          "category": "News",
+          "status": "ok",
+          "collected": 3,
+          "used": 1,
+          "error": null
+        },
+        {
+          "name": "Sky News",
+          "url": "https://www.youtube.com/feeds/videos.xml?channel_id=UCoMdktPbSTixAyNGwb-UYkQ",
+          "category": "News",
+          "status": "ok",
+          "collected": 3,
+          "used": 0,
+          "error": null
+        },
+        {
+          "name": "CNBC Television",
+          "url": "https://www.youtube.com/feeds/videos.xml?channel_id=UCrp_UI8XtuYfpiqluWLD7Lw",
+          "category": "News",
+          "status": "ok",
+          "collected": 3,
+          "used": 1,
+          "error": null
+        },
+        {
+          "name": "Bloomberg Technology",
+          "url": "https://www.youtube.com/feeds/videos.xml?channel_id=UCrM7B7SL_g1edFOnmj-SDKg",
+          "category": "Tech",
+          "status": "ok",
+          "collected": 3,
+          "used": 0,
+          "error": null
+        },
+        {
+          "name": "CNET",
+          "url": "https://www.youtube.com/feeds/videos.xml?channel_id=UCOmcA3f_RrH6b9NmcNa4tdg",
+          "category": "Tech",
+          "status": "ok",
+          "collected": 3,
+          "used": 0,
+          "error": null
+        },
+        {
+          "name": "The Verge",
+          "url": "https://www.youtube.com/feeds/videos.xml?channel_id=UCddiUEpeqJcYeBxX1IVBKvQ",
+          "category": "Tech",
+          "status": "ok",
+          "collected": 3,
+          "used": 0,
+          "error": null
+        },
+        {
+          "name": "Linus Tech Tips",
+          "url": "https://www.youtube.com/feeds/videos.xml?channel_id=UCXuqSBlHAE6Xw-yeJA0Tunw",
+          "category": "Tech",
+          "status": "ok",
+          "collected": 1,
+          "used": 0,
+          "error": null
+        },
+        {
+          "name": "Marques Brownlee",
+          "url": "https://www.youtube.com/feeds/videos.xml?channel_id=UCBJycsmduvYEL83R_U4JriQ",
+          "category": "Tech",
+          "status": "empty",
+          "collected": 0,
+          "used": 0,
+          "error": "no uploads in the last 72 hours"
+        },
+        {
+          "name": "Fireship",
+          "url": "https://www.youtube.com/feeds/videos.xml?channel_id=UCsBjURrPoezykLs9EqgamOA",
+          "category": "Tech",
+          "status": "ok",
+          "collected": 2,
+          "used": 0,
+          "error": null
+        },
+        {
+          "name": "NASA",
+          "url": "https://www.youtube.com/feeds/videos.xml?channel_id=UCLA_DiR1FfKNvjuUpBHmylQ",
+          "category": "Science & AI",
+          "status": "ok",
+          "collected": 3,
+          "used": 0,
+          "error": null
+        },
+        {
+          "name": "ESPN",
+          "url": "https://www.youtube.com/feeds/videos.xml?channel_id=UCiWLfSweyRNmLpgEHekhoAg",
+          "category": "Sports",
+          "status": "ok",
+          "collected": 3,
+          "used": 0,
+          "error": null
+        },
+        {
+          "name": "NFL",
+          "url": "https://www.youtube.com/feeds/videos.xml?channel_id=UCDVYQ4Zhbm3S2dlz7P1GBDg",
+          "category": "Sports",
+          "status": "ok",
+          "collected": 3,
+          "used": 0,
+          "error": null
+        },
+        {
+          "name": "NBA",
+          "url": "https://www.youtube.com/feeds/videos.xml?channel_id=UCWJ2lWNubArHWmf3FIHbfcQ",
+          "category": "Sports",
+          "status": "ok",
+          "collected": 3,
+          "used": 0,
+          "error": null
+        },
+        {
+          "name": "IGN",
+          "url": "https://www.youtube.com/feeds/videos.xml?channel_id=UCKy1dAqELo0zrOtPkf0eTMw",
+          "category": "Entertainment",
+          "status": "ok",
+          "collected": 3,
+          "used": 0,
+          "error": null
+        },
+        {
+          "name": "Entertainment Tonight",
+          "url": "https://www.youtube.com/feeds/videos.xml?channel_id=UCdtXPiqI2cLorKaPrfpKc4g",
+          "category": "Entertainment",
+          "status": "ok",
+          "collected": 3,
+          "used": 0,
+          "error": null
+        }
+      ]
+    },
+    {
+      "source": "mastodon",
+      "name": "Mastodon",
+      "status": "ok",
+      "item_count": 20,
+      "latency_ms": 654,
+      "error": null,
+      "used": 2,
+      "feeds": [
+        {
+          "name": "mastodon.social",
+          "url": "https://mastodon.social/api/v1/trends/links",
+          "category": null,
+          "status": "ok",
+          "collected": 20,
+          "used": 2,
+          "error": null
+        }
+      ]
+    },
+    {
+      "source": "bluesky",
+      "name": "Bluesky",
+      "status": "ok",
+      "item_count": 25,
+      "latency_ms": 317,
+      "error": null,
+      "used": 0,
+      "feeds": []
+    }
+  ],
+  "coverage": {
+    "sources_attempted": 10,
+    "sources_ok": 10,
+    "failed": [],
+    "partial": [
+      "Reddit"
+    ],
+    "category_counts": {
+      "News": 8,
+      "Science & AI": 8,
+      "Tech": 8,
+      "Sports": 8,
+      "Entertainment": 8,
+      "Internet Culture": 2
+    },
+    "general_news_available": true,
+    "tech_only_stories": 3,
+    "held_back_for_balance": 88,
+    "balanced": true,
+    "warnings": [
+      "Partial or empty coverage: Reddit."
+    ]
+  },
+  "overview": "42 stories in 6 sections from 10 of 10 sources: News 8, Science & AI 8, Tech 8, Sports 8, Entertainment 8, Internet Culture 2. Coverage is partial today (see Details).",
+  "notes": [
+    "No Hot or Rising labels yet: momentum is measured against a refresh from about a day earlier with the same sources, and there is none yet.",
+    "7 ranked groups were omitted because they had no citable factual sentence.",
+    "5 stories were left out because every source was published more than 48 hours before this refresh.",
+    "4 repeats of stories already in this edition left out.",
+    "2 weak signals were left out (a single trend or social post with no article).",
+    "2 live blogs were left out (a running page of many updates is not one story)."
+  ],
+  "stories": [
+    {
+      "rank": 1,
+      "story_id": "a5439f16fcbd3dd393e0",
+      "entity_id": "1b01affc9e16",
+      "headline": "Israelis Mourn Oct. 7 Attack as Gaza Languishes in Ruins",
+      "category": "News",
+      "sentences": [
+        "Israelis are mourning the victims of the Oct. 7 attack, which sparked a devastating war in Gaza.",
+        "The war has left Gaza in ruins, and families are paying tribute to their loved ones.",
+        "About 1,200 people were killed in the attack."
+      ],
+      "why_it_matters": null,
+      "labels": [],
+      "momentum": "BASELINE",
+      "velocity_basis": "cold_start",
+      "momentum_note": "",
+      "relevance_score": 9,
+      "velocity_score": 76.8,
+      "combined_score": 84.72,
+      "platforms": [
+        "google_news",
+        "news_rss"
+      ],
+      "publisher_hosts": [
+        "aljazeera.com",
+        "apnews.com",
+        "bbc.co.uk"
+      ],
+      "raw_item_count": 4,
+      "member_item_ids": [
+        2,
+        362,
+        466
+      ],
+      "evidence": [
+        {
+          "item_id": 2,
+          "source": "google_news",
+          "source_name": "Google News",
+          "title": "Israelis mourn Oct. 7 attack as Palestinians in Gaza languish in ruins of the war it sparked",
+          "url": "https://news.google.com/rss/articles/CBMiqgFBVV95cUxPRktyUHFtWTNweUFQdVFONlpkbDdzanpDQVo2Unh1ZEZ6SlVGR28yUTljV2Q4ejVLT2M2R0czanN0anlMRi04cURwVVNlZU9XZVdocVJWSEdKclcxeWhsZUkwaDdfRUQ5UERfLUY5c1ZZZVhRSWlia0R6YnYtWWFnU0xOaTF4TjFjWjZrQ0RrenozWldmT2h4cFU4QzlzcTNTUzZDUFRLQmVFQQ?oc=5",
+          "publisher": "AP News",
+          "excerpt": null,
+          "context_source": null,
+          "published_at_utc": "2026-10-07T20:00:00Z",
+          "retrieved_at_utc": "2026-10-07T21:43:37.040779Z",
+          "feed": "https://news.google.com/rss/headlines/section/topic/WORLD?hl=en-US&gl=US&ceid=US%3Aen"
+        },
+        {
+          "item_id": 362,
+          "source": "news_rss",
+          "source_name": "News feeds",
+          "title": "Israelis mourn 7 October attack victims three years after deadly Hamas raid",
+          "url": "https://www.bbc.co.uk/news/articles/cwkgj0g30m5jo?at_medium=RSS&at_campaign=rss",
+          "publisher": "BBC News - World",
+          "excerpt": "Israelis mourn 7 October attack victims as Gaza lies in ruins three years on | Memorial events have taken place in Israel on the third anniversary of the Hamas-led attack that sparked the devastating Gaza war. | Families paid tribute to their loved ones at some of the sites where about 1,200 people were killed in the...",
+          "context_source": "page",
+          "published_at_utc": "2026-10-07T20:27:03Z",
+          "retrieved_at_utc": "2026-10-07T21:43:37.310003Z",
+          "feed": "https://feeds.bbci.co.uk/news/world/rss.xml"
+        },
+        {
+          "item_id": 466,
+          "source": "news_rss",
+          "source_name": "News feeds",
+          "title": "Gaza child’s autoimmune condition triggered amid Israel’s war",
+          "url": "https://www.aljazeera.com/video/newsfeed/2026/10/7/gaza-childs-autoimmune-condition-triggered-amid-israels-war?traffic_source=rss",
+          "publisher": "Al Jazeera - All",
+          "excerpt": "'I want it to be nice like before so the children can play with me again,' says 12-year-old Lana Al-Sharif, after Israel's genocidal war on Gaza triggered her autoimmune condition which changed her appearance.",
+          "context_source": "page",
+          "published_at_utc": "2026-10-07T21:06:46Z",
+          "retrieved_at_utc": "2026-10-07T21:43:37.373265Z",
+          "feed": "https://www.aljazeera.com/xml/rss/all.xml"
+        }
+      ],
+      "tech_only": false,
+      "entities": [
+        "Israel",
+        "Gaza",
+        "Hamas"
+      ],
+      "evidence_strength": {
+        "level": "strong",
+        "points": 5,
+        "independent_reports": 3,
+        "publishers": [
+          "AP News",
+          "Al Jazeera",
+          "BBC News"
+        ],
+        "channels": 2,
+        "trend_signals": 0,
+        "duplicates_collapsed": 0,
+        "newest_age_hours": 0.6,
+        "reasons": [
+          "3 independent reports (AP News, Al Jazeera, BBC News)",
+          "2 reporting channels",
+          "newest report under an hour before this edition"
+        ]
+      }
+    },
+    {
+      "rank": 2,
+      "story_id": "53e1124d61df522d197e",
+      "entity_id": "6ee3fbf76ea2",
+      "headline": "Christa Pike Survives Botched Execution in Tennessee",
+      "category": "News",
+      "sentences": [
+        "Christa Pike survived a botched execution in Tennessee, and her lawyers say she is conscious and speaking.",
+        "A judge has ordered state officials to preserve evidence from the botched execution.",
+        "Pike was very aware of Tennessee's failed execution effort."
+      ],
+      "why_it_matters": null,
+      "labels": [],
+      "momentum": "BASELINE",
+      "velocity_basis": "cold_start",
+      "momentum_note": "",
+      "relevance_score": 8,
+      "velocity_score": 78.8,
+      "combined_score": 79.52,
+      "platforms": [
+        "google_news",
+        "news_rss",
+        "wikipedia",
+        "youtube"
+      ],
+      "publisher_hosts": [
+        "apnews.com",
+        "cnn.com",
+        "dw.com",
+        "en.wikipedia.org",
+        "npr.org",
+        "nytimes.com",
+        "propublica.org",
+        "theguardian.com",
+        "thehill.com",
+        "youtube.com"
+      ],
+      "raw_item_count": 14,
+      "member_item_ids": [
+        1,
+        39,
+        277,
+        364,
+        399,
+        428,
+        462,
+        489,
+        1075,
+        1243,
+        1244,
+        1245,
+        1248
+      ],
+      "evidence": [
+        {
+          "item_id": 1,
+          "source": "google_news",
+          "source_name": "Google News",
+          "title": "Christa Pike’s attorneys believed she was brain-dead before she woke up ‘to the shock of everyone’",
+          "url": "https://news.google.com/rss/articles/CBMiekFVX3lxTE9pMGNhWkw4Vk9qSWJ1NXZyOTFhVUJQY3ZJdkRSdm9iRDNuQVBaOEVEaVBHTnNKbzI5T0tlQmhuWE1McDl4UUxVdGxQVzRiSHhfMHZlT2lCWmowRUFBWXgxbWtnclk0TDctODVWUFpnaFZMWDdfbVlMcE1n?oc=5",
+          "publisher": "CNN",
+          "excerpt": null,
+          "context_source": null,
+          "published_at_utc": "2026-10-07T20:35:46Z",
+          "retrieved_at_utc": "2026-10-07T21:43:36.898118Z",
+          "feed": "https://news.google.com/rss?hl=en-US&gl=US&ceid=US%3Aen"
+        },
+        {
+          "item_id": 277,
+          "source": "news_rss",
+          "source_name": "News feeds",
+          "title": "Christa Pike 'angry and confused' after botched execution",
+          "url": "https://www.dw.com/en/christa-pike-angry-and-confused-after-botched-execution/a-79586250?maca=en-rss-en-all-1573-rdf",
+          "publisher": "DW - English",
+          "excerpt": "Pike's lawyers have said she was very aware of Tennessee's failed execution effort. A judge has ordered state officials to preserve all evidence from the botched execution. | A US judge told the state of Tennessee to preserve all evidence related to the failed attempt to execute Christa Pike, whom lawyers say is...",
+          "context_source": "page",
+          "published_at_utc": "2026-10-07T21:23:00Z",
+          "retrieved_at_utc": "2026-10-07T21:43:38.126953Z",
+          "feed": "https://rss.dw.com/rdf/rss-en-all"
+        },
+        {
+          "item_id": 39,
+          "source": "google_news",
+          "source_name": "Google News",
+          "title": "Christa Pike is conscious and speaking after Tennessee failed execution, her attorneys say",
+          "url": "https://news.google.com/rss/articles/CBMilwFBVV95cUxNTlVhZDM5eFc4bnVrTjVEUGp1RWdYU2RuM3pNOFdQUWtFczMxVmRuSUZSVE00aUZrRjdKOFdqM0pBRTJYLTJVVjRHQ1cwenI0ZVNZRUZZenYzako5a2VDMHBLSUJ5NzZoVXpyRXFGMzhBTUZRRXZKei1MVWc2WXlIcW5XdU8waDQ4aGcwZmIwd1F1ZXRKLUcw?oc=5",
+          "publisher": "AP News",
+          "excerpt": null,
+          "context_source": null,
+          "published_at_utc": "2026-10-06T23:42:00Z",
+          "retrieved_at_utc": "2026-10-07T21:43:37.135658Z",
+          "feed": "https://news.google.com/rss/search?q=site%3Aapnews.com+when%3A1d&hl=en-US&gl=US&ceid=US%3Aen"
+        },
+        {
+          "item_id": 1075,
+          "source": "wikipedia",
+          "source_name": "Wikipedia",
+          "title": "Christa Pike",
+          "url": "https://en.wikipedia.org/wiki/Christa_Pike",
+          "publisher": "en.wikipedia.org",
+          "excerpt": null,
+          "context_source": null,
+          "published_at_utc": null,
+          "retrieved_at_utc": "2026-10-07T21:43:36.772569Z",
+          "feed": null
+        },
+        {
+          "item_id": 1243,
+          "source": "youtube",
+          "source_name": "YouTube",
+          "title": "Christa Pike 'conscious and speaking' after failed execution, lawyers say",
+          "url": "https://www.youtube.com/watch?v=Q3_bQRU1YYg",
+          "publisher": "BBC News",
+          "excerpt": "US death row inmate Christa Pike is \"conscious and speaking\" after surviving a failed execution attempt in the state of Tennessee last week, her lawyers say. Pike, 50, continues to receive critical medical care while handcuffed in hospital, according to a statement from her attorneys on Tuesday.",
+          "context_source": "feed",
+          "published_at_utc": "2026-10-07T00:23:17Z",
+          "retrieved_at_utc": "2026-10-07T21:43:39.756380Z",
+          "feed": "https://www.youtube.com/feeds/videos.xml?channel_id=UC16niRr50-MSBwiO3YDb3RA"
+        },
+        {
+          "item_id": 364,
+          "source": "news_rss",
+          "source_name": "News feeds",
+          "title": "Texas set to carry out first US execution since botched lethal injection of Christa Pike",
+          "url": "https://www.theguardian.com/us-news/2026/oct/07/texas-execution-jamaal-howard",
+          "publisher": "The Guardian - US",
+          "excerpt": "Jamaal Howard's lawyers urge halt, citing risk of another failed execution after Pike's ordeal in Tennessee | Texas on Wednesday is scheduled to carry out the first execution in the US after the the botched lethal injection of Christa Pike in Tennessee last week. | Lawyers for Jamaal Howard, a Texas man on death row...",
+          "context_source": "page",
+          "published_at_utc": "2026-10-07T20:58:51Z",
+          "retrieved_at_utc": "2026-10-07T21:43:37.200694Z",
+          "feed": "https://www.theguardian.com/us-news/rss"
+        },
+        {
+          "item_id": 399,
+          "source": "news_rss",
+          "source_name": "News feeds",
+          "title": "Lawyers looking to block Texas man’s execution following Christa Pike’s botched execution",
+          "url": "https://thehill.com/homenews/state-watch/6134934-jamaal-howard-death-penalty-appeal/",
+          "publisher": "The Hill",
+          "excerpt": "Lawyers for a Texas death row inmate are looking to block his execution following the botched lethal injection attempts against Christa Pike in Tennessee. Jamaal Howard is scheduled for execution b.",
+          "context_source": "page",
+          "published_at_utc": "2026-10-07T21:11:01Z",
+          "retrieved_at_utc": "2026-10-07T21:43:38.036598Z",
+          "feed": "https://thehill.com/feed/"
+        },
+        {
+          "item_id": 428,
+          "source": "news_rss",
+          "source_name": "News feeds",
+          "title": "I’ve Covered Death Row Cases for Nearly a Decade. What Happened to Christa Pike Wasn’t an Anomaly.",
+          "url": "https://www.propublica.org/article/christa-pike-tennessee-execution-lethal-injection-failure",
+          "publisher": "ProPublica",
+          "excerpt": "Why Tennessee's Botched Death Row Execution Could Happen Anywhere | The complications behind Tennessee's failed execution of Christa Pike aren't uncommon - and show how easily another botched execution could occur, even as others are planned soon in Texas and Florida. | Agonizing Procedures: Many aging death row...",
+          "context_source": "page",
+          "published_at_utc": "2026-10-06T18:55:00Z",
+          "retrieved_at_utc": "2026-10-07T21:43:38.834667Z",
+          "feed": "https://www.propublica.org/feeds/propublica/main"
+        }
+      ],
+      "tech_only": false,
+      "entities": [
+        "Christa Pike",
+        "Tennessee"
+      ],
+      "evidence_strength": {
+        "level": "strong",
+        "points": 6,
+        "independent_reports": 12,
+        "publishers": [
+          "ABC News",
+          "AP News",
+          "BBC News",
+          "CNN",
+          "DW",
+          "NBC News",
+          "NPR",
+          "New York Times",
+          "ProPublica",
+          "Sky News",
+          "The Guardian",
+          "The Hill"
+        ],
+        "channels": 3,
+        "trend_signals": 1,
+        "duplicates_collapsed": 0,
+        "newest_age_hours": 0.3,
+        "reasons": [
+          "12 independent reports (ABC News, AP News, BBC News, CNN, ...)",
+          "1 trend/social signal (attention, not reporting)",
+          "3 reporting channels",
+          "newest report under an hour before this edition"
+        ]
+      }
+    },
+    {
+      "rank": 3,
+      "story_id": "dac94623f27773fdb909",
+      "entity_id": "cbb590f45e10",
+      "headline": "Fed Officials Expect Another Rate Hike Before Year-End",
+      "category": "News",
+      "sentences": [
+        "Fed officials expect to raise interest rates again before the end of the year to head off inflation.",
+        "Inflation has run above target for more than five years."
+      ],
+      "why_it_matters": null,
+      "labels": [],
+      "momentum": "BASELINE",
+      "velocity_basis": "cold_start",
+      "momentum_note": "",
+      "relevance_score": 8,
+      "velocity_score": 76.7,
+      "combined_score": 78.68,
+      "platforms": [
+        "google_news",
+        "news_rss",
+        "youtube"
+      ],
+      "publisher_hosts": [
+        "bloomberg.com",
+        "cnbc.com",
+        "youtube.com"
+      ],
+      "raw_item_count": 4,
+      "member_item_ids": [
+        3,
+        279,
+        1267
+      ],
+      "evidence": [
+        {
+          "item_id": 3,
+          "source": "google_news",
+          "source_name": "Google News",
+          "title": "Fed Minutes Show Hawkish Unity Behind September Rate Hike",
+          "url": "https://news.google.com/rss/articles/CBMirAFBVV95cUxNc2dJM2Q2bTVvQVNpNUNzSTgzNHJCbWc3Ync3aXEyYmdSVHo1b1JZNHB1UXdGYVY5YWpPTHpDdWtQYjdtbnZOa1k0SzVIeV9SS0ljelRxbUdIWXB5NHBtdk5lUDM1ZWQyUHlNSjFlbVh6Q1lHbm9jdUJCRllMZXdnVWluOHRwV2x4WUdZdHBkU2NuY3BJNWtYS1puYWVtTTQySDR1QXJEaGJrTng2?oc=5",
+          "publisher": "Bloomberg.com",
+          "excerpt": null,
+          "context_source": null,
+          "published_at_utc": "2026-10-07T18:00:01Z",
+          "retrieved_at_utc": "2026-10-07T21:43:37.119950Z",
+          "feed": "https://news.google.com/rss/headlines/section/topic/BUSINESS?hl=en-US&gl=US&ceid=US%3Aen"
+        },
+        {
+          "item_id": 279,
+          "source": "news_rss",
+          "source_name": "News feeds",
+          "title": "Fed officials see another hike coming, but no sign as to when, minutes show",
+          "url": "https://www.cnbc.com/2026/10/07/fed-officials-see-another-hike-coming-but-no-sign-as-to-when-minutes-show.html",
+          "publisher": "CNBC - Top News",
+          "excerpt": "The Federal Reserve on Wednesday released minutes from its Sept. 15-16 policy meeting. | Federal Reserve officials expect they will raise interest rates again before the end of the year to head off inflation that has run above target for more than five years, according to meeting minutes released Wednesday. | But the...",
+          "context_source": "page",
+          "published_at_utc": "2026-10-07T18:42:36Z",
+          "retrieved_at_utc": "2026-10-07T21:43:37.421059Z",
+          "feed": "https://www.cnbc.com/id/100003114/device/rss/rss.html"
+        },
+        {
+          "item_id": 1267,
+          "source": "youtube",
+          "source_name": "YouTube",
+          "title": "Fed: Most participants said likely appropriate for another rate hike by year-end",
+          "url": "https://www.youtube.com/watch?v=FY0KzHaeaYA",
+          "publisher": "CNBC Television",
+          "excerpt": "CNBC's Steve Liesman reports on the minutes from the latest Federal Reserve meeting.",
+          "context_source": "feed",
+          "published_at_utc": "2026-10-07T20:15:44Z",
+          "retrieved_at_utc": "2026-10-07T21:43:39.943374Z",
+          "feed": "https://www.youtube.com/feeds/videos.xml?channel_id=UCrp_UI8XtuYfpiqluWLD7Lw"
+        }
+      ],
+      "tech_only": false,
+      "entities": [
+        "Federal Reserve",
+        "Fed"
+      ],
+      "evidence_strength": {
+        "level": "strong",
+        "points": 5,
+        "independent_reports": 3,
+        "publishers": [
+          "Bloomberg.com",
+          "CNBC",
+          "CNBC Television"
+        ],
+        "channels": 3,
+        "trend_signals": 0,
+        "duplicates_collapsed": 0,
+        "newest_age_hours": 1.5,
+        "reasons": [
+          "3 independent reports (Bloomberg.com, CNBC, CNBC Television)",
+          "3 reporting channels",
+          "newest report 2 h before this edition"
+        ]
+      }
+    },
+    {
+      "rank": 4,
+      "story_id": "0c3fbeab7030f24cb706",
+      "entity_id": "a465f978d14c",
+      "headline": "Maduro Expected to Face New Charges of Torture of Americans",
+      "category": "News",
+      "sentences": [
+        "Maduro is expected to face new charges alleging torture of Americans in Venezuelan prisons.",
+        "Federal prosecutors are expected to bring the new charges."
+      ],
+      "why_it_matters": null,
+      "labels": [],
+      "momentum": "BASELINE",
+      "velocity_basis": "cold_start",
+      "momentum_note": "",
+      "relevance_score": 8,
+      "velocity_score": 73.3,
+      "combined_score": 77.32,
+      "platforms": [
+        "news_rss"
+      ],
+      "publisher_hosts": [
+        "cbsnews.com",
+        "scmp.com"
+      ],
+      "raw_item_count": 3,
+      "member_item_ids": [
+        397,
+        431
+      ],
+      "evidence": [
+        {
+          "item_id": 397,
+          "source": "news_rss",
+          "source_name": "News feeds",
+          "title": "Maduro expected to face new charges of torture of Americans in Venezuelan prisons",
+          "url": "https://www.cbsnews.com/news/new-maduro-charges-torture-americans-venezuelan-prisons/",
+          "publisher": "CBS News - World",
+          "excerpt": "Maduro expected to face new charges alleging torture of Americans in Venezuelan prisons, sources say | An attorney for Maduro told CBS News that he has not been given notice that additional charges could be coming. | Federal prosecutors are expected to bring new charges against former Venezuelan President Nicolas...",
+          "context_source": "page",
+          "published_at_utc": "2026-10-07T21:21:35Z",
+          "retrieved_at_utc": "2026-10-07T21:43:37.889539Z",
+          "feed": "https://www.cbsnews.com/latest/rss/world"
+        },
+        {
+          "item_id": 431,
+          "source": "news_rss",
+          "source_name": "News feeds",
+          "title": "Venezuela’s Maduro to face new US charges over alleged torture of Americans, official says",
+          "url": "https://www.scmp.com/news/world/americas/article/3370104/venezuelas-maduro-face-new-us-charges-over-alleged-torture-americans-official-says?utm_source=rss_feed",
+          "publisher": "South China Morning Post - World",
+          "excerpt": "Ousted Venezuelan President Nicolas Maduro and his wife, Cilia Flores, are expected to face new criminal charges in the US over the alleged torture of Americans held in the South American country, a US official said on Wednesday. The new charges could come as soon as Thursday, according to the official, who was...",
+          "context_source": "feed",
+          "published_at_utc": "2026-10-07T20:58:12Z",
+          "retrieved_at_utc": "2026-10-07T21:43:39.527328Z",
+          "feed": "https://www.scmp.com/rss/91/feed"
+        }
+      ],
+      "tech_only": false,
+      "entities": [
+        "Venezuela"
+      ],
+      "evidence_strength": {
+        "level": "moderate",
+        "points": 3,
+        "independent_reports": 2,
+        "publishers": [
+          "CBS News",
+          "South China Morning Post"
+        ],
+        "channels": 1,
+        "trend_signals": 0,
+        "duplicates_collapsed": 0,
+        "newest_age_hours": 0.4,
+        "reasons": [
+          "2 independent reports (CBS News, South China Morning Post)",
+          "1 reporting channel",
+          "newest report under an hour before this edition"
+        ]
+      }
+    },
+    {
+      "rank": 5,
+      "story_id": "48e37bb273f1d9e7ebe0",
+      "entity_id": "cf872bb522f2",
+      "headline": "Henri B. Kagan and Kenso Soai Win Nobel Prize in Chemistry",
+      "category": "Science & AI",
+      "sentences": [
+        "Henri B. Kagan and Kenso Soai have won the Nobel Prize in chemistry for their discovery of non-linear effects and autocatalysis in asymmetric organic synthesis.",
+        "Their work has aided understanding of how medicines work in the body."
+      ],
+      "why_it_matters": null,
+      "labels": [],
+      "momentum": "BASELINE",
+      "velocity_basis": "cold_start",
+      "momentum_note": "",
+      "relevance_score": 7,
+      "velocity_score": 82.1,
+      "combined_score": 74.84,
+      "platforms": [
+        "google_news",
+        "hackernews",
+        "news_rss"
+      ],
+      "publisher_hosts": [
+        "nature.com",
+        "nobelprize.org",
+        "npr.org",
+        "theguardian.com"
+      ],
+      "raw_item_count": 6,
+      "member_item_ids": [
+        110,
+        296,
+        414,
+        1193
+      ],
+      "evidence": [
+        {
+          "item_id": 1193,
+          "source": "hackernews",
+          "source_name": "Hacker News",
+          "title": "Nobel Prize in Chemistry 2026 to Henri B. Kagan and Kenso Soai",
+          "url": "https://www.nobelprize.org/prizes/chemistry/2026/press-release/",
+          "publisher": "nobelprize.org",
+          "excerpt": "Nobel Prize in Chemistry 2026 | The Nobel Prize in Chemistry 2026 was awarded to Henri B. Kagan and Kenso Soai \"for the discovery of non-linear effects and autocatalysis in asymmetric organic synthesis.\" | The Royal Swedish Academy of Sciences has decided to award the Nobel Prize in Chemistry 2026 to | \"for the...",
+          "context_source": "page",
+          "published_at_utc": "2026-10-07T09:51:43Z",
+          "retrieved_at_utc": "2026-10-07T21:43:40.334829Z",
+          "feed": null
+        },
+        {
+          "item_id": 296,
+          "source": "news_rss",
+          "source_name": "News feeds",
+          "title": "Nobel prize in chemistry awarded for work on mirror-image molecules",
+          "url": "https://www.theguardian.com/science/2026/oct/07/nobel-prize-chemistry-awarded-work-on-mirror-image-molecules",
+          "publisher": "The Guardian - Science",
+          "excerpt": "Henri B Kagan and Kenso Soai awarded prize for discovery that has aided understanding of how medicines work in the body | The Nobel prize in chemistry 2026 has been awarded to two scientists for discoveries that showed how chemical reactions can produce an overwhelming excess of one of two mirror image forms of a...",
+          "context_source": "page",
+          "published_at_utc": "2026-10-07T13:36:45Z",
+          "retrieved_at_utc": "2026-10-07T21:43:37.925467Z",
+          "feed": "https://www.theguardian.com/science/rss"
+        },
+        {
+          "item_id": 414,
+          "source": "news_rss",
+          "source_name": "News feeds",
+          "title": "Nobel Prizes 2026: brain switches, ‘ghost’ particle hunter, and 'the chemistry of life'",
+          "url": "https://www.nature.com/articles/d41586-026-03208-7",
+          "publisher": "Nature",
+          "excerpt": "Hear the biggest stories from the world of science | 07 October 2026 | Nature: 'What took them so long?' This year's medicine Nobel winner is overdue | Nature: Nobel physics prize awarded for detection of cosmic neutrinos",
+          "context_source": "page",
+          "published_at_utc": null,
+          "retrieved_at_utc": "2026-10-07T21:43:38.428040Z",
+          "feed": "https://www.nature.com/nature.rss"
+        },
+        {
+          "item_id": 110,
+          "source": "news_rss",
+          "source_name": "News feeds",
+          "title": "Henri B. Kagan and Kenso Soai win Nobel Prize in chemistry",
+          "url": "https://www.npr.org/2026/10/07/g-s1-146849/nobel-prize-chemistry",
+          "publisher": "NPR - Science",
+          "excerpt": "Henri B. Kagan and Kenso Soai won the Nobel Prize in chemistry Wednesday for their discovery of non-linear effects and autocatalysis in asymmetric organic synthesis. | STOCKHOLM - Henri B. Kagan and Kenso Soai won the Nobel Prize in chemistry Wednesday for their discovery of non-linear effects and autocatalysis in...",
+          "context_source": "page",
+          "published_at_utc": "2026-10-07T10:05:54Z",
+          "retrieved_at_utc": "2026-10-07T21:43:37.651304Z",
+          "feed": "https://feeds.npr.org/1007/rss.xml"
+        },
+        {
+          "item_id": 110,
+          "source": "google_news",
+          "source_name": "Google News",
+          "title": "Henri B. Kagan and Kenso Soai win Nobel Prize in chemistry",
+          "url": "https://news.google.com/rss/articles/CBMickFVX3lxTE9lVDJ2dExqTGZta0RmaVp5UDl1TXhGSU1icFNlN0NEak9zcnJZV0Q0UXloT2VKbTUxM0RXNGN5Z0ZJV1UzUDZwSXc2NWg3U2VQVzRkNmdjOVRBV3VRaUkxbVppWjd0TEd4SDhENU45NGpQUQ?oc=5",
+          "publisher": "NPR",
+          "excerpt": null,
+          "context_source": null,
+          "published_at_utc": "2026-10-07T10:05:54Z",
+          "retrieved_at_utc": "2026-10-07T21:43:37.040779Z",
+          "feed": "https://news.google.com/rss/headlines/section/topic/WORLD?hl=en-US&gl=US&ceid=US%3Aen"
+        }
+      ],
+      "tech_only": false,
+      "entities": [
+        "Henri B. Kagan",
+        "Kenso Soai"
+      ],
+      "evidence_strength": {
+        "level": "strong",
+        "points": 6,
+        "independent_reports": 4,
+        "publishers": [
+          "NPR",
+          "Nature",
+          "The Guardian",
+          "nobelprize.org"
+        ],
+        "channels": 3,
+        "trend_signals": 0,
+        "duplicates_collapsed": 1,
+        "newest_age_hours": 8.1,
+        "reasons": [
+          "4 independent reports (NPR, Nature, The Guardian, nobelprize.org)",
+          "1 repeat or syndicated copy counted once",
+          "3 reporting channels",
+          "newest report 8 h before this edition"
+        ]
+      }
+    },
+    {
+      "rank": 6,
+      "story_id": "dcf374a7c16da74aaa95",
+      "entity_id": "23e591e8c36d",
+      "headline": "France Halts Stun Grenade Use After Boy's Hand Blown Off",
+      "category": "News",
+      "sentences": [
+        "The French government has halted the use of stun grenades after a boy's hand was blown off during student protests.",
+        "The decision was made after allegations of police brutality mounted."
+      ],
+      "why_it_matters": null,
+      "labels": [],
+      "momentum": "BASELINE",
+      "velocity_basis": "cold_start",
+      "momentum_note": "",
+      "relevance_score": 7,
+      "velocity_score": 79.9,
+      "combined_score": 73.96,
+      "platforms": [
+        "google_news",
+        "news_rss",
+        "youtube"
+      ],
+      "publisher_hosts": [
+        "bbc.co.uk",
+        "bbc.com",
+        "france24.com",
+        "youtube.com"
+      ],
+      "raw_item_count": 5,
+      "member_item_ids": [
+        15,
+        276
+      ],
+      "evidence": [
+        {
+          "item_id": 276,
+          "source": "news_rss",
+          "source_name": "News feeds",
+          "title": "France suspends stun grenade use at student protests after pupil loses hand",
+          "url": "https://www.france24.com/en/france-suspends-stun-grenade-use-at-student-protests-after-pupil-loses-hand",
+          "publisher": "France 24 - English",
+          "excerpt": "France has suspended the use of stun grenades by police at student-led demonstrations, the interior minister said Wednesday, as allegations of police brutality mounted after days of sometimes violent. | One of your browser extensions seems to be blocking the video player from loading. To watch this content, you may...",
+          "context_source": "page",
+          "published_at_utc": "2026-10-07T21:19:20Z",
+          "retrieved_at_utc": "2026-10-07T21:43:37.344930Z",
+          "feed": "https://www.france24.com/en/rss"
+        },
+        {
+          "item_id": 15,
+          "source": "youtube",
+          "source_name": "YouTube",
+          "title": "France halts stun grenade use after boy's hand blown off in student protests",
+          "url": "https://www.youtube.com/watch?v=RjdBfwtMYYI",
+          "publisher": "CBS News",
+          "excerpt": "The French government halted the use of stun grenades after a boy's hand was blown off during ongoing student protests. CBS News' Aidan Stretch reports.",
+          "context_source": "feed",
+          "published_at_utc": "2026-10-07T15:18:20Z",
+          "retrieved_at_utc": "2026-10-07T21:43:39.933027Z",
+          "feed": "https://www.youtube.com/feeds/videos.xml?channel_id=UC8p1vwvWtl6T73JiExfWs1g"
+        },
+        {
+          "item_id": 15,
+          "source": "news_rss",
+          "source_name": "News feeds",
+          "title": "France halts use of stun grenades after boy's hand blown off in student protests",
+          "url": "https://www.bbc.co.uk/news/articles/cqzjx7z2r4gko?at_medium=RSS&at_campaign=rss",
+          "publisher": "BBC News - World",
+          "excerpt": null,
+          "context_source": null,
+          "published_at_utc": "2026-10-07T17:47:31Z",
+          "retrieved_at_utc": "2026-10-07T21:43:37.310003Z",
+          "feed": "https://feeds.bbci.co.uk/news/world/rss.xml"
+        },
+        {
+          "item_id": 15,
+          "source": "google_news",
+          "source_name": "Google News",
+          "title": "France halts use of stun grenades after boy's hand blown off in student protests",
+          "url": "https://news.google.com/rss/articles/CBMiW0FVX3lxTE92aWVwcFl2RWFudm5mdFR5TTJObXI0a014eDl6TkYxZTNyTjQ2MkpjeXlzWUgyQV81UE85cEQ3RDByWGRIb2NrOXYzRDdXZ0NzUENNbTBQQXZ1SGM?oc=5",
+          "publisher": "BBC",
+          "excerpt": null,
+          "context_source": null,
+          "published_at_utc": "2026-10-07T17:47:31Z",
+          "retrieved_at_utc": "2026-10-07T21:43:37.040779Z",
+          "feed": "https://news.google.com/rss/headlines/section/topic/WORLD?hl=en-US&gl=US&ceid=US%3Aen"
+        }
+      ],
+      "tech_only": false,
+      "entities": [
+        "France"
+      ],
+      "evidence_strength": {
+        "level": "strong",
+        "points": 5,
+        "independent_reports": 3,
+        "publishers": [
+          "BBC News",
+          "CBS News",
+          "France 24"
+        ],
+        "channels": 3,
+        "trend_signals": 0,
+        "duplicates_collapsed": 1,
+        "newest_age_hours": 0.4,
+        "reasons": [
+          "3 independent reports (BBC News, CBS News, France 24)",
+          "1 repeat or syndicated copy counted once",
+          "3 reporting channels",
+          "newest report under an hour before this edition"
+        ]
+      }
+    },
+    {
+      "rank": 7,
+      "story_id": "4ba6058156f52c05281a",
+      "entity_id": "e5bb0c8cb5ef",
+      "headline": "Microsoft Debuts Nvidia-Powered Surface Laptop Ultra",
+      "category": "Tech",
+      "sentences": [
+        "Microsoft has released a new laptop, the Surface Laptop Ultra, powered by an Nvidia chip."
+      ],
+      "why_it_matters": "European buyers are leaving the market.",
+      "labels": [],
+      "momentum": "BASELINE",
+      "velocity_basis": "cold_start",
+      "momentum_note": "",
+      "relevance_score": 7,
+      "velocity_score": 78.8,
+      "combined_score": 73.52,
+      "platforms": [
+        "google_news",
+        "news_rss"
+      ],
+      "publisher_hosts": [
+        "cnbc.com",
+        "finance.yahoo.com",
+        "thenextweb.com"
+      ],
+      "raw_item_count": 3,
+      "member_item_ids": [
+        5,
+        341,
+        373
+      ],
+      "evidence": [
+        {
+          "item_id": 5,
+          "source": "google_news",
+          "source_name": "Google News",
+          "title": "Microsoft debuts Nvidia-powered Surface Laptop Ultra, as it aims for AI market",
+          "url": "https://news.google.com/rss/articles/CBMi0wFBVV95cUxNSGR6M2gxc2tYM1YxN1M3WnpZdmt3OEN4SFVJbHlOMFN4WW44MlJzLTRCMklUNWVTNUtHUE1yd3ZnLUZjaGNGVUpGVDQ5MnU5ZzBiRDdXam9tcGsxR2wzYzFPdFk2aVc5X3lVUVVZanZ6MFdGOGhYWTlLN09ZMEFuYTY4UU81ZU91UThWZnZBbGx0cmxxemRVMjhiOFlIUkI0RElPbVlrMTE2RmNpV2dqS18tS19VbWpxTHVhUlRFS0Y4RGY2c1NLczBibDF0SWVRWk04?oc=5",
+          "publisher": "Yahoo Finance",
+          "excerpt": null,
+          "context_source": null,
+          "published_at_utc": "2026-10-07T18:56:30Z",
+          "retrieved_at_utc": "2026-10-07T21:43:37.103847Z",
+          "feed": "https://news.google.com/rss/headlines/section/topic/TECHNOLOGY?hl=en-US&gl=US&ceid=US%3Aen"
+        },
+        {
+          "item_id": 341,
+          "source": "news_rss",
+          "source_name": "News feeds",
+          "title": "Microsoft says new $2,599 laptop with Nvidia chip outperforms MacBooks",
+          "url": "https://thenextweb.com/news/surface-laptop-ultra-nvidia-europe",
+          "publisher": "The Next Web",
+          "excerpt": "Microsoft says the Surface Laptop Ultra beats a MacBook Pro M5 on AI tasks, and has published no test methodology. European buyers are leaving the market. | Microsoft priced its first Nvidia-powered Surface at $2,599.99 and claimed on stage that it doubles a MacBook Pro M5 on local AI prompts, without publishing how...",
+          "context_source": "page",
+          "published_at_utc": "2026-10-07T19:26:33Z",
+          "retrieved_at_utc": "2026-10-07T21:43:39.593804Z",
+          "feed": "https://thenextweb.com/feed"
+        },
+        {
+          "item_id": 373,
+          "source": "news_rss",
+          "source_name": "News feeds",
+          "title": "Microsoft to sell $2,599 Surface Laptop Ultra containing Nvidia AI chip",
+          "url": "https://www.cnbc.com/2026/10/07/microsoft-starts-taking-preorders-for-2599-surface-laptop-ultra.html",
+          "publisher": "CNBC - Top News",
+          "excerpt": "The new device shows Microsoft remains committed to making its own PCs even though it's not one of the top device makers. | Microsoft said its new laptop containing an Nvidia AI chip will start at $2,599, as the software maker tries to bring more artificial intelligence capabilities to its consumer devices. | The...",
+          "context_source": "page",
+          "published_at_utc": "2026-10-07T20:26:13Z",
+          "retrieved_at_utc": "2026-10-07T21:43:37.421059Z",
+          "feed": "https://www.cnbc.com/id/100003114/device/rss/rss.html"
+        }
+      ],
+      "tech_only": false,
+      "entities": [
+        "Microsoft",
+        "Nvidia"
+      ],
+      "evidence_strength": {
+        "level": "strong",
+        "points": 5,
+        "independent_reports": 3,
+        "publishers": [
+          "CNBC",
+          "The Next Web",
+          "Yahoo Finance"
+        ],
+        "channels": 2,
+        "trend_signals": 0,
+        "duplicates_collapsed": 0,
+        "newest_age_hours": 1.3,
+        "reasons": [
+          "3 independent reports (CNBC, The Next Web, Yahoo Finance)",
+          "2 reporting channels",
+          "newest report 1 h before this edition"
+        ]
+      }
+    },
+    {
+      "rank": 8,
+      "story_id": "988da63ff939d638c5aa",
+      "entity_id": "161be0f208be",
+      "headline": "French PM Vows to Address Debt Despite Student Protests",
+      "category": "News",
+      "sentences": [
+        "French Prime Minister Sebastien Lecornu has tried to calm both student protesters and jittery bond markets.",
+        "He stressed that the education ministry had not ordered police to confront student protesters."
+      ],
+      "why_it_matters": null,
+      "labels": [],
+      "momentum": "BASELINE",
+      "velocity_basis": "cold_start",
+      "momentum_note": "",
+      "relevance_score": 7,
+      "velocity_score": 77.4,
+      "combined_score": 72.96,
+      "platforms": [
+        "google_news",
+        "news_rss"
+      ],
+      "publisher_hosts": [
+        "france24.com",
+        "lemonde.fr",
+        "reuters.com"
+      ],
+      "raw_item_count": 3,
+      "member_item_ids": [
+        24,
+        369,
+        370
+      ],
+      "evidence": [
+        {
+          "item_id": 24,
+          "source": "google_news",
+          "source_name": "Google News",
+          "title": "French mayor caught in viral video clash says student protesters 'could be my children'",
+          "url": "https://news.google.com/rss/articles/CBMitgFBVV95cUxPeG5SOUQ0dkM3dmUxSVdDaHc1SExVRTdsRXZlSUxzQ1dhUTJ4dmFlMkthajNfaUdkeXlFd2tGSW9QOEJKYkJIZjhDNHFscF9TX2FKZUhTdU4xcE11cXkxV0JRRVk1WjJ5cEN0dEpsUmFBc3N1ZkFNWXdMMWpadC04UkdZZ0ViUC1nZ0o2cHpUc3RLT1ctMFNwVzk1alBrUFUyNWdVbTdwalNZWXRGSGRUT0h3Zm53dw?oc=5",
+          "publisher": "Reuters",
+          "excerpt": null,
+          "context_source": null,
+          "published_at_utc": "2026-10-07T21:08:44Z",
+          "retrieved_at_utc": "2026-10-07T21:43:37.103847Z",
+          "feed": "https://news.google.com/rss/search?q=tiktok+OR+viral+OR+meme+when%3A1d&hl=en-US&gl=US&ceid=US%3Aen"
+        },
+        {
+          "item_id": 369,
+          "source": "news_rss",
+          "source_name": "News feeds",
+          "title": "French PM denies police were ordered to 'confront' student protesters",
+          "url": "https://www.lemonde.fr/en/france/article/2026/10/07/french-pm-denies-police-were-ordered-to-confront-student-protesters_6758362_7.html",
+          "publisher": "Le Monde - English",
+          "excerpt": "Speaking after another day of high school protests, marred by allegations of police brutality, Prime Minister Sebastien Lecornu said France could not be 'indifferent' to students' concerns, then announced several economic measures.",
+          "context_source": "feed",
+          "published_at_utc": "2026-10-07T18:52:48Z",
+          "retrieved_at_utc": "2026-10-07T21:43:37.334217Z",
+          "feed": "https://www.lemonde.fr/en/rss/une.xml"
+        },
+        {
+          "item_id": 370,
+          "source": "news_rss",
+          "source_name": "News feeds",
+          "title": "French PM vows to address debt despite student protests",
+          "url": "https://www.france24.com/en/french-pm-vows-to-address-debt-despite-student-protests",
+          "publisher": "France 24 - English",
+          "excerpt": "Business - French PM vows to address debt despite student protests | French Prime Minister Sebastien Lecornu has tried to calm both student protesters and jittery bond markets. In an address to the nation, Lecornu stressed that the education ministry had not seen any.",
+          "context_source": "page",
+          "published_at_utc": "2026-10-07T21:13:32Z",
+          "retrieved_at_utc": "2026-10-07T21:43:37.344930Z",
+          "feed": "https://www.france24.com/en/rss"
+        }
+      ],
+      "tech_only": false,
+      "entities": [
+        "Sebastien Lecornu",
+        "France"
+      ],
+      "evidence_strength": {
+        "level": "strong",
+        "points": 5,
+        "independent_reports": 3,
+        "publishers": [
+          "France 24",
+          "Le Monde",
+          "Reuters"
+        ],
+        "channels": 2,
+        "trend_signals": 0,
+        "duplicates_collapsed": 0,
+        "newest_age_hours": 0.5,
+        "reasons": [
+          "3 independent reports (France 24, Le Monde, Reuters)",
+          "2 reporting channels",
+          "newest report under an hour before this edition"
+        ]
+      }
+    },
+    {
+      "rank": 9,
+      "story_id": "2b93c5dd20e4f8155ca2",
+      "entity_id": "eac557a1a7f3",
+      "headline": "Trump's Retreat: From the Gulf to Britain, American Forces Pull Back",
+      "category": "News",
+      "sentences": [
+        "A war that was intended to demonstrate the reach of American power has now done the opposite.",
+        "It is a lesson in unintended consequences."
+      ],
+      "why_it_matters": null,
+      "labels": [],
+      "momentum": "BASELINE",
+      "velocity_basis": "cold_start",
+      "momentum_note": "",
+      "relevance_score": 7,
+      "velocity_score": 76.7,
+      "combined_score": 72.68,
+      "platforms": [
+        "google_news",
+        "news_rss"
+      ],
+      "publisher_hosts": [
+        "boingboing.net",
+        "nytimes.com"
+      ],
+      "raw_item_count": 4,
+      "member_item_ids": [
+        56,
+        297,
+        561
+      ],
+      "evidence": [
+        {
+          "item_id": 297,
+          "source": "news_rss",
+          "source_name": "News feeds",
+          "title": "From Iran to the U.K., Trump Is Being Forced Into Retreat",
+          "url": "https://www.nytimes.com/2026/10/07/us/politics/trump-iran-retreat.html",
+          "publisher": "New York Times - Home Page",
+          "excerpt": "A war that was intended to demonstrate the reach of American power has now done the opposite. It is a lesson in unintended consequences.",
+          "context_source": "feed",
+          "published_at_utc": "2026-10-07T17:55:53Z",
+          "retrieved_at_utc": "2026-10-07T21:43:37.696442Z",
+          "feed": "https://rss.nytimes.com/services/xml/rss/nyt/HomePage.xml"
+        },
+        {
+          "item_id": 56,
+          "source": "google_news",
+          "source_name": "Google News",
+          "title": "Trump’s Retreat: From the Gulf to Britain, American Forces Pull Back",
+          "url": "https://news.google.com/rss/articles/CBMiekFVX3lxTE9KZ2pCN1M2aHo3WlBaZWxtMlVCY3BqTm04SGw5Z0dHZ0Q1ZkRDYURQU1pxRWxoNllEWDlOcHpYaEFicXlHdVV4UVI4bEFlYTVNdm9jenBGMi04ZE1nY3NENHZXUDZvMVlEX1MzTVlEamYzSk5KV0JmMUlB?oc=5",
+          "publisher": "The New York Times",
+          "excerpt": null,
+          "context_source": null,
+          "published_at_utc": "2026-10-07T15:47:37Z",
+          "retrieved_at_utc": "2026-10-07T21:43:36.898118Z",
+          "feed": "https://news.google.com/rss?hl=en-US&gl=US&ceid=US%3Aen"
+        },
+        {
+          "item_id": 561,
+          "source": "news_rss",
+          "source_name": "News feeds",
+          "title": "Trump wants to turn his private golf club into a presidential retreat",
+          "url": "https://boingboing.net/2026/10/07/trump-new-camp-david-golf-club.html",
+          "publisher": "Boing Boing",
+          "excerpt": "Having repeatedly tried to call his Florida dinner club \"The Winter White House,\" Dementia Don has found a new grift: turning part of his private golf club into a new Presidential retreat a la Camp David without the gravitas or tradition. - Read the rest The post Trump wants to turn his private golf club into a...",
+          "context_source": "feed",
+          "published_at_utc": "2026-10-07T17:04:10Z",
+          "retrieved_at_utc": "2026-10-07T21:43:39.768765Z",
+          "feed": "https://boingboing.net/feed"
+        }
+      ],
+      "tech_only": false,
+      "entities": [
+        "Donald Trump"
+      ],
+      "evidence_strength": {
+        "level": "strong",
+        "points": 5,
+        "independent_reports": 3,
+        "publishers": [
+          "Boing Boing",
+          "New York Times",
+          "The New York Times"
+        ],
+        "channels": 2,
+        "trend_signals": 0,
+        "duplicates_collapsed": 0,
+        "newest_age_hours": 3.8,
+        "reasons": [
+          "3 independent reports (Boing Boing, New York Times, The New York Times)",
+          "2 reporting channels",
+          "newest report 4 h before this edition"
+        ]
+      }
+    },
+    {
+      "rank": 10,
+      "story_id": "e1428d7956d8ea6cf5b8",
+      "entity_id": "4728e3a3a431",
+      "headline": "OpenAI Rolls Out GPT-6 with Interactive UI",
+      "category": "Science & AI",
+      "sentences": [
+        "OpenAI has released GPT-6, a new AI model with an interactive user interface.",
+        "The model can now respond while still thinking, cutting wait times by 44 percent, and is available in various tiers, including free and paid options."
+      ],
+      "why_it_matters": "Paying customers get GPT-6 Sol, free users get GPT-6 Luna.",
+      "labels": [],
+      "momentum": "BASELINE",
+      "velocity_basis": "cold_start",
+      "momentum_note": "",
+      "relevance_score": 7,
+      "velocity_score": 73.2,
+      "combined_score": 71.28,
+      "platforms": [
+        "news_rss"
+      ],
+      "publisher_hosts": [
+        "androidauthority.com",
+        "techmeme.com",
+        "the-decoder.com"
+      ],
+      "raw_item_count": 3,
+      "member_item_ids": [
+        310,
+        340,
+        604
+      ],
+      "evidence": [
+        {
+          "item_id": 310,
+          "source": "news_rss",
+          "source_name": "News feeds",
+          "title": "ChatGPT with GPT-6 ditches mostly text output for interactive UI with charts, buttons, and mini apps",
+          "url": "https://the-decoder.com/chatgpt-with-gpt-6-ditches-mostly-text-output-for-interactive-ui-with-charts-buttons-and-mini-apps/",
+          "publisher": "The Decoder",
+          "excerpt": "OpenAI is rolling out GPT-6 with \"Intelligent UI,\" a feature that turns answers into interactive interfaces with charts, buttons, and forms. The model can now respond while still thinking, cutting wait times by 44 percent. Paying customers get GPT-6 Sol, free users get GPT-6 Luna. | OpenAI is rolling out GPT-6 with a...",
+          "context_source": "page",
+          "published_at_utc": "2026-10-07T19:06:40Z",
+          "retrieved_at_utc": "2026-10-07T21:43:39.051844Z",
+          "feed": "https://the-decoder.com/feed/"
+        },
+        {
+          "item_id": 340,
+          "source": "news_rss",
+          "source_name": "News feeds",
+          "title": "OpenAI says GPT-6 in ChatGPT's Chat tab is powered by GPT-6 Sol for Plus, Pro, Business, and Enterprise tiers and GPT-6 Luna for Free and Go tiers (@openai)",
+          "url": "https://www.techmeme.com/261007/p36#a261007p36",
+          "publisher": "Techmeme",
+          "excerpt": "OpenAI says GPT-6 in ChatGPT's Chat tab is powered by GPT-6 Sol for Plus, Pro, Business, and Enterprise tiers and GPT-6 Luna for Free and Go tiers | From @openai. View the full context on Techmeme. | Protecting your Cloud Applications Data - Backing up Office 365, Google Workspace, Dropbox & Salesforce data is...",
+          "context_source": "page",
+          "published_at_utc": "2026-10-07T20:55:02Z",
+          "retrieved_at_utc": "2026-10-07T21:43:39.256139Z",
+          "feed": "https://www.techmeme.com/feed.xml"
+        },
+        {
+          "item_id": 604,
+          "source": "news_rss",
+          "source_name": "News feeds",
+          "title": "GPT-6 gives ChatGPT its biggest visual makeover yet",
+          "url": "https://www.androidauthority.com/chatgpt-gpt-6-intelligent-ui-3720464/",
+          "publisher": "Android Authority",
+          "excerpt": "ChatGPT can now build interactive tools, diagrams, and visual layouts on the fly.",
+          "context_source": "feed",
+          "published_at_utc": "2026-10-07T20:51:49Z",
+          "retrieved_at_utc": "2026-10-07T21:43:38.292714Z",
+          "feed": "https://www.androidauthority.com/feed/"
+        }
+      ],
+      "tech_only": false,
+      "entities": [
+        "OpenAI",
+        "GPT-6"
+      ],
+      "evidence_strength": {
+        "level": "moderate",
+        "points": 4,
+        "independent_reports": 3,
+        "publishers": [
+          "Android Authority",
+          "Techmeme",
+          "The Decoder"
+        ],
+        "channels": 1,
+        "trend_signals": 0,
+        "duplicates_collapsed": 0,
+        "newest_age_hours": 0.8,
+        "reasons": [
+          "3 independent reports (Android Authority, Techmeme, The Decoder)",
+          "1 reporting channel",
+          "newest report under an hour before this edition"
+        ]
+      }
+    },
+    {
+      "rank": 11,
+      "story_id": "491b04be9d767f6ea2d7",
+      "entity_id": "a0e0c492fefa",
+      "headline": "Saudi-Led Forces Claim Ground Advances Against Houthis in Yemen",
+      "category": "News",
+      "sentences": [
+        "Saudi-led forces have claimed to have regained territory from the Houthis in Yemen.",
+        "The fighting is intensifying along the Red Sea coast, with the Yemeni government pushing to retake territory."
+      ],
+      "why_it_matters": null,
+      "labels": [],
+      "momentum": "BASELINE",
+      "velocity_basis": "cold_start",
+      "momentum_note": "",
+      "relevance_score": 7,
+      "velocity_score": 70.0,
+      "combined_score": 70.0,
+      "platforms": [
+        "news_rss",
+        "youtube"
+      ],
+      "publisher_hosts": [
+        "bloomberg.com",
+        "youtube.com"
+      ],
+      "raw_item_count": 2,
+      "member_item_ids": [
+        339,
+        1265
+      ],
+      "evidence": [
+        {
+          "item_id": 339,
+          "source": "news_rss",
+          "source_name": "News feeds",
+          "title": "Saudi-Led Forces Claim Ground Advances Against Houthis in Yemen",
+          "url": "https://www.bloomberg.com/news/videos/2026-10-07/saudi-led-forces-claim-ground-advances-against-houthis-video",
+          "publisher": "Bloomberg - Markets",
+          "excerpt": "Watch Saudi-Led Forces Claim Ground Advances Against Houthis in Yemen - Bloomberg | Yemen's internationally-recognized government, backed by Saudi Arabia, claimed to have regained territory from the Houthis, as fighting in the region near the Bab el-Mandeb strait intensifies. The Yemeni armed forces said they took...",
+          "context_source": "page",
+          "published_at_utc": "2026-10-07T21:38:23Z",
+          "retrieved_at_utc": "2026-10-07T21:43:39.320834Z",
+          "feed": "https://feeds.bloomberg.com/markets/news.rss"
+        },
+        {
+          "item_id": 1265,
+          "source": "youtube",
+          "source_name": "YouTube",
+          "title": "Yemen fighting intensifies as government forces push to retake Red Sea territory",
+          "url": "https://www.youtube.com/watch?v=IYiE097kX-Y",
+          "publisher": "Al Jazeera English",
+          "excerpt": "Fighting is intensifying along Yemen's Red Sea coast as forces loyal to the internationally recognised government push to retake territory from the Houthis around the strategic Bab al-Mandab Strait. The Yemeni government says its forces have driven the Houthis from several areas and retaken the port city of Mocha...",
+          "context_source": "feed",
+          "published_at_utc": "2026-10-07T20:49:48Z",
+          "retrieved_at_utc": "2026-10-07T21:43:39.943374Z",
+          "feed": "https://www.youtube.com/feeds/videos.xml?channel_id=UCNye-wNBqNL5ZzHSJj3l8Bg"
+        }
+      ],
+      "tech_only": false,
+      "entities": [
+        "Houthis",
+        "Yemen"
+      ],
+      "evidence_strength": {
+        "level": "moderate",
+        "points": 4,
+        "independent_reports": 2,
+        "publishers": [
+          "Al Jazeera English",
+          "Bloomberg"
+        ],
+        "channels": 2,
+        "trend_signals": 0,
+        "duplicates_collapsed": 0,
+        "newest_age_hours": 0.1,
+        "reasons": [
+          "2 independent reports (Al Jazeera English, Bloomberg)",
+          "2 reporting channels",
+          "newest report under an hour before this edition"
+        ]
+      }
+    },
+    {
+      "rank": 12,
+      "story_id": "007cb01cc3f54659ae37",
+      "entity_id": "0ba19e7e2fee",
+      "headline": "Claude Haiku 5.5 Arrives with Massive Price Cuts",
+      "category": "Science & AI",
+      "sentences": [
+        "Anthropic has released Claude Haiku 5.5, a new AI model with massive price cuts.",
+        "Claude Haiku 5.5 is designed for high-volume work like summarization, subagents, and browser use."
+      ],
+      "why_it_matters": "Token prices drop by up to 90 percent.",
+      "labels": [],
+      "momentum": "BASELINE",
+      "velocity_basis": "cold_start",
+      "momentum_note": "",
+      "relevance_score": 6,
+      "velocity_score": 83.1,
+      "combined_score": 69.24,
+      "platforms": [
+        "hackernews",
+        "news_rss",
+        "x_trends24"
+      ],
+      "publisher_hosts": [
+        "anthropic.com",
+        "simonwillison.net",
+        "the-decoder.com"
+      ],
+      "raw_item_count": 4,
+      "member_item_ids": [
+        347,
+        407,
+        1150
+      ],
+      "evidence": [
+        {
+          "item_id": 347,
+          "source": "hackernews",
+          "source_name": "Hacker News",
+          "title": "Claude Haiku 5.5",
+          "url": "https://www.anthropic.com/claude-haiku-5-5",
+          "publisher": "anthropic.com",
+          "excerpt": "Introducing Claude Haiku 5.5 | Claude Haiku 5.5 is our fastest, most capable small model. Built for high-volume work like summarization, subagents, and browser use. | Introducing Claude Haiku 5.5: the cheapest, fastest, and most capable small model we've ever released. | Claude Haiku 5.5 is designed for high-volume...",
+          "context_source": "page",
+          "published_at_utc": "2026-10-07T18:01:32Z",
+          "retrieved_at_utc": "2026-10-07T21:43:40.334829Z",
+          "feed": null
+        },
+        {
+          "item_id": 347,
+          "source": "news_rss",
+          "source_name": "News feeds",
+          "title": "Claude Haiku 5.5",
+          "url": "https://simonwillison.net/2026/Oct/7/claude-haiku-5-5/",
+          "publisher": "Simon Willison",
+          "excerpt": null,
+          "context_source": null,
+          "published_at_utc": "2026-10-07T20:56:21Z",
+          "retrieved_at_utc": "2026-10-07T21:43:39.383820Z",
+          "feed": "https://simonwillison.net/atom/everything/"
+        },
+        {
+          "item_id": 407,
+          "source": "news_rss",
+          "source_name": "News feeds",
+          "title": "Claude Haiku 5.5 arrives with massive price cuts proving the AI pricing arms race is far from over",
+          "url": "https://the-decoder.com/claude-haiku-5-5-arrives-with-massive-price-cuts-proving-the-ai-pricing-arms-race-is-far-from-over/",
+          "publisher": "The Decoder",
+          "excerpt": "Anthropic's new Claude Haiku 5.5 crushes its predecessor in benchmarks, jumping from 15.7 to 72.4 percent on the OSWorld computer use test. Token prices drop by up to 90 percent, though a new tokenizer eats into some of those savings by consuming more tokens per task. | Anthropic has released Claude Haiku 5.5, its...",
+          "context_source": "page",
+          "published_at_utc": "2026-10-07T18:49:23Z",
+          "retrieved_at_utc": "2026-10-07T21:43:39.051844Z",
+          "feed": "https://the-decoder.com/feed/"
+        },
+        {
+          "item_id": 1150,
+          "source": "x_trends24",
+          "source_name": "X (trends24)",
+          "title": "Haiku 5.5",
+          "url": "https://x.com/search?q=Haiku%205.5",
+          "publisher": "x.com",
+          "excerpt": null,
+          "context_source": null,
+          "published_at_utc": null,
+          "retrieved_at_utc": "2026-10-07T21:43:36.898118Z",
+          "feed": null
+        }
+      ],
+      "tech_only": false,
+      "entities": [
+        "Claude Haiku"
+      ],
+      "evidence_strength": {
+        "level": "moderate",
+        "points": 4,
+        "independent_reports": 2,
+        "publishers": [
+          "The Decoder",
+          "anthropic.com"
+        ],
+        "channels": 2,
+        "trend_signals": 1,
+        "duplicates_collapsed": 1,
+        "newest_age_hours": 0.8,
+        "reasons": [
+          "2 independent reports (The Decoder, anthropic.com)",
+          "1 repeat or syndicated copy counted once",
+          "1 trend/social signal (attention, not reporting)",
+          "2 reporting channels",
+          "newest report under an hour before this edition"
+        ]
+      }
+    },
+    {
+      "rank": 13,
+      "story_id": "80ee757e509f949d150b",
+      "entity_id": "b4df45fe3797",
+      "headline": "Jon Rahm Leaves LIV Golf over 'Unacceptable' Terms",
+      "category": "Sports",
+      "sentences": [
+        "Former world number one Jon Rahm is leaving LIV Golf due to 'unacceptable' terms.",
+        "This move is significant for the breakaway circuit, which is struggling to emerge from bankruptcy.",
+        "Rahm's attorney John Beck, speaking on his behalf, said the terms for LIV 2.0 were 'unacceptable'."
+      ],
+      "why_it_matters": null,
+      "labels": [],
+      "momentum": "BASELINE",
+      "velocity_basis": "cold_start",
+      "momentum_note": "",
+      "relevance_score": 6,
+      "velocity_score": 70.2,
+      "combined_score": 64.08,
+      "platforms": [
+        "news_rss"
+      ],
+      "publisher_hosts": [
+        "abc.net.au",
+        "bbc.co.uk",
+        "skysports.com"
+      ],
+      "raw_item_count": 3,
+      "member_item_ids": [
+        430,
+        579
+      ],
+      "evidence": [
+        {
+          "item_id": 430,
+          "source": "news_rss",
+          "source_name": "News feeds",
+          "title": "LIV Golf loses star over 'unacceptable' terms",
+          "url": "https://www.abc.net.au/news/2026-10-08/liv-golf-jon-rahm-set-to-quit-over-unacceptable-terms/107241410",
+          "publisher": "ABC News Australia - Top Stories",
+          "excerpt": "As it fights to emerge from bankruptcy, LIV Golf learns one of its major drawcards intends to leave the breakaway circuit. | Former world number one Jon Rahm is quitting LIV Golf, robbing the breakaway circuit of one of its biggest stars while it fights to emerge from bankruptcy. | Rahm's attorney John Beck, speaking...",
+          "context_source": "page",
+          "published_at_utc": "2026-10-07T20:48:09Z",
+          "retrieved_at_utc": "2026-10-07T21:43:38.945107Z",
+          "feed": "https://www.abc.net.au/news/feed/2942460/rss.xml"
+        },
+        {
+          "item_id": 579,
+          "source": "news_rss",
+          "source_name": "News feeds",
+          "title": "Rahm to leave LIV Golf over 'unacceptable' terms",
+          "url": "https://www.bbc.co.uk/sport/golf/articles/c65yngj00477o?at_medium=RSS&at_campaign=rss",
+          "publisher": "BBC Sport",
+          "excerpt": "LIV Golf: Jon Rahm to leave league over 'unacceptable' terms for LIV 2.0 | Jon Rahm will leave LIV Golf after deeming the terms for LIV 2.0 \"unacceptable\", his lawyer has told a bankruptcy court hearing. | Jon Rahm will leave LIV Golf after deeming the proposed terms for LIV 2.0 \"unacceptable\", his lawyer has told a...",
+          "context_source": "page",
+          "published_at_utc": "2026-10-07T20:56:00Z",
+          "retrieved_at_utc": "2026-10-07T21:43:37.436818Z",
+          "feed": "https://feeds.bbci.co.uk/sport/rss.xml"
+        },
+        {
+          "item_id": 579,
+          "source": "news_rss",
+          "source_name": "News feeds",
+          "title": "Rahm to quit LIV Golf over 'unacceptable' terms",
+          "url": "https://www.skysports.com/golf/news/12040/13596245/jon-rahm-set-to-end-liv-golf-involvement-over-unacceptable-terms-for-proposed-relaunch",
+          "publisher": "Sky Sports - News",
+          "excerpt": null,
+          "context_source": null,
+          "published_at_utc": "2026-10-07T17:15:00Z",
+          "retrieved_at_utc": "2026-10-07T21:43:38.396045Z",
+          "feed": "https://www.skysports.com/rss/12040"
+        }
+      ],
+      "tech_only": false,
+      "entities": [
+        "Jon Rahm",
+        "LIV Golf"
+      ],
+      "evidence_strength": {
+        "level": "moderate",
+        "points": 4,
+        "independent_reports": 3,
+        "publishers": [
+          "ABC News Australia",
+          "BBC Sport",
+          "Sky Sports"
+        ],
+        "channels": 1,
+        "trend_signals": 0,
+        "duplicates_collapsed": 0,
+        "newest_age_hours": 0.8,
+        "reasons": [
+          "3 independent reports (ABC News Australia, BBC Sport, Sky Sports)",
+          "1 reporting channel",
+          "newest report under an hour before this edition"
+        ]
+      }
+    },
+    {
+      "rank": 14,
+      "story_id": "106a83fa4889b896d134",
+      "entity_id": "febfb1d5d594",
+      "headline": "Apple Partners with the King's Trust on New Creative Labs Initiative",
+      "category": "Tech",
+      "sentences": [
+        "Apple has partnered with The King's Trust to launch a new education program, Creative Labs, which will help young people build creative and digital skills.",
+        "The program is available to people aged 18-30."
+      ],
+      "why_it_matters": null,
+      "labels": [],
+      "momentum": "BASELINE",
+      "velocity_basis": "cold_start",
+      "momentum_note": "",
+      "relevance_score": 6,
+      "velocity_score": 70.2,
+      "combined_score": 64.08,
+      "platforms": [
+        "news_rss"
+      ],
+      "publisher_hosts": [
+        "9to5mac.com",
+        "macrumors.com"
+      ],
+      "raw_item_count": 2,
+      "member_item_ids": [
+        307,
+        342
+      ],
+      "evidence": [
+        {
+          "item_id": 307,
+          "source": "news_rss",
+          "source_name": "News feeds",
+          "title": "Apple partners with The King’s Trust on new Creative Labs initiative in the UK",
+          "url": "https://9to5mac.com/2026/10/07/apple-partners-with-the-kings-trust-on-new-creative-labs-initiative-in-the-uk/",
+          "publisher": "9to5Mac",
+          "excerpt": "Apple and The King's Trust announced today an expansion of their partnership with a new education program that offers workshops to help young people build creative and digital skills. | Apple's partnership with The King's Trust dates back to 2019",
+          "context_source": "page",
+          "published_at_utc": "2026-10-07T21:34:54Z",
+          "retrieved_at_utc": "2026-10-07T21:43:38.015977Z",
+          "feed": "https://9to5mac.com/feed/"
+        },
+        {
+          "item_id": 342,
+          "source": "news_rss",
+          "source_name": "News feeds",
+          "title": "Apple Launches Creative Labs Program With The King's Trust",
+          "url": "https://www.macrumors.com/2026/10/07/apple-creative-labs-kings-trust/",
+          "publisher": "MacRumors",
+          "excerpt": "Apple is partnering with UK charity The King's Trust to launch a new education program that will help young people build careers in creative industries, Apple said today. The Apple x King's Trust Creative Labs will give people aged 18 to 30 the opportunity to work with Apple experts as they look into different career...",
+          "context_source": "page",
+          "published_at_utc": "2026-10-07T21:29:46Z",
+          "retrieved_at_utc": "2026-10-07T21:43:39.119536Z",
+          "feed": "https://feeds.macrumors.com/MacRumors-All"
+        }
+      ],
+      "tech_only": false,
+      "entities": [
+        "Apple",
+        "The King's Trust"
+      ],
+      "evidence_strength": {
+        "level": "moderate",
+        "points": 3,
+        "independent_reports": 2,
+        "publishers": [
+          "9to5Mac",
+          "MacRumors"
+        ],
+        "channels": 1,
+        "trend_signals": 0,
+        "duplicates_collapsed": 0,
+        "newest_age_hours": 0.1,
+        "reasons": [
+          "2 independent reports (9to5Mac, MacRumors)",
+          "1 reporting channel",
+          "newest report under an hour before this edition"
+        ]
+      }
+    },
+    {
+      "rank": 15,
+      "story_id": "c9c205c197210bcdf12f",
+      "entity_id": "1187c0b5e46c",
+      "headline": "Lionel Messi Marks Tearful Argentina Farewell with Goal",
+      "category": "Sports",
+      "sentences": [
+        "Lionel Messi marked his 208th and final game for Argentina with his 126th goal as his country bid an emotional farewell to the global icon."
+      ],
+      "why_it_matters": null,
+      "labels": [],
+      "momentum": "BASELINE",
+      "velocity_basis": "cold_start",
+      "momentum_note": "",
+      "relevance_score": 9,
+      "velocity_score": 73.3,
+      "combined_score": 83.32,
+      "platforms": [
+        "news_rss"
+      ],
+      "publisher_hosts": [
+        "espn.com"
+      ],
+      "raw_item_count": 1,
+      "member_item_ids": [
+        450
+      ],
+      "evidence": [
+        {
+          "item_id": 450,
+          "source": "news_rss",
+          "source_name": "News feeds",
+          "title": "Messi marks tearful Argentina farewell with goal: Wish I could play forever",
+          "url": "https://www.espn.com/soccer/story/_/id/50120909/lionel-messi-last-argentina-game-vs-benin-retirement",
+          "publisher": "ESPN - Soccer",
+          "excerpt": "Lionel Messi marked his 208th and final game for Argentina with his 126th goal as his country bid an emotional farewell to the global icon.",
+          "context_source": "feed",
+          "published_at_utc": "2026-10-07T21:07:12Z",
+          "retrieved_at_utc": "2026-10-07T21:43:39.542771Z",
+          "feed": "https://www.espn.com/espn/rss/soccer/news"
+        }
+      ],
+      "tech_only": false,
+      "entities": [
+        "Argentina"
+      ],
+      "evidence_strength": {
+        "level": "limited",
+        "points": 1,
+        "independent_reports": 1,
+        "publishers": [
+          "ESPN"
+        ],
+        "channels": 1,
+        "trend_signals": 0,
+        "duplicates_collapsed": 0,
+        "newest_age_hours": 0.6,
+        "reasons": [
+          "1 independent report (ESPN)",
+          "1 reporting channel",
+          "newest report under an hour before this edition",
+          "not corroborated by a second independent publisher"
+        ]
+      }
+    },
+    {
+      "rank": 16,
+      "story_id": "158b03972a9128696da5",
+      "entity_id": "b3807a32656c",
+      "headline": "Eva Marie Saint Dies Aged 102",
+      "category": "Entertainment",
+      "sentences": [
+        "Oscar-winning actress Eva Marie Saint passed away at the age of 102."
+      ],
+      "why_it_matters": "Eva Marie Saint's death marks the end of an era in Hollywood.",
+      "labels": [],
+      "momentum": "BASELINE",
+      "velocity_basis": "cold_start",
+      "momentum_note": "",
+      "relevance_score": 8,
+      "velocity_score": 82.5,
+      "combined_score": 81.0,
+      "platforms": [
+        "google_news",
+        "news_rss"
+      ],
+      "publisher_hosts": [
+        "bbc.co.uk",
+        "bbc.com"
+      ],
+      "raw_item_count": 2,
+      "member_item_ids": [
+        172
+      ],
+      "evidence": [
+        {
+          "item_id": 172,
+          "source": "news_rss",
+          "source_name": "News feeds",
+          "title": "Oscar-winning actress Eva Marie Saint dies aged 102",
+          "url": "https://www.bbc.co.uk/news/articles/cqze43ky1xgdo?at_medium=RSS&at_campaign=rss",
+          "publisher": "BBC News - Entertainment & Arts",
+          "excerpt": "Oscar-winning On the Waterfront actress Eva Marie Saint dies aged 102 | She starred opposite Marlon Brando in On the Waterfront, then alongside Cary Grant in Hitchcock's North by Northwest. | Eva Marie Saint, the Oscar-winning actress who starred in Hollywood classics such as On the Waterfront and North by Northwest...",
+          "context_source": "page",
+          "published_at_utc": "2026-10-07T07:37:16Z",
+          "retrieved_at_utc": "2026-10-07T21:43:37.587474Z",
+          "feed": "https://feeds.bbci.co.uk/news/entertainment_and_arts/rss.xml"
+        },
+        {
+          "item_id": 172,
+          "source": "google_news",
+          "source_name": "Google News",
+          "title": "Oscar-winning actress Eva Marie Saint dies aged 102",
+          "url": "https://news.google.com/rss/articles/CBMiW0FVX3lxTE9jWGFtMFdFczZUM09kYTNmbGZHSy1GNHB5UTlGSkU4OExUbmtnV3V6QTF6a05aejJhV0h2OWFjOFNUa3phLVRiZUFmUU40R3Jqd1ByQnNPbEZGX3c?oc=5",
+          "publisher": "BBC",
+          "excerpt": null,
+          "context_source": null,
+          "published_at_utc": "2026-10-07T07:37:16Z",
+          "retrieved_at_utc": "2026-10-07T21:43:37.151663Z",
+          "feed": "https://news.google.com/rss/headlines/section/topic/ENTERTAINMENT?hl=en-US&gl=US&ceid=US%3Aen"
+        }
+      ],
+      "tech_only": false,
+      "entities": [
+        "Eva Marie Saint"
+      ],
+      "evidence_strength": {
+        "level": "limited",
+        "points": 2,
+        "independent_reports": 1,
+        "publishers": [
+          "BBC News"
+        ],
+        "channels": 2,
+        "trend_signals": 0,
+        "duplicates_collapsed": 1,
+        "newest_age_hours": 14.1,
+        "reasons": [
+          "1 independent report (BBC News)",
+          "1 repeat or syndicated copy counted once",
+          "2 reporting channels",
+          "newest report 14 h before this edition",
+          "not corroborated by a second independent publisher"
+        ]
+      }
+    },
+    {
+      "rank": 17,
+      "story_id": "8ab950be4e28894a6bc2",
+      "entity_id": "40c5916f1db1",
+      "headline": "World's Largest Penguin Colony Hit by Climate-driven Decline",
+      "category": "Science & AI",
+      "sentences": [
+        "Climate change is blamed for a dramatic decline of chinstrap penguins living on a remote volcanic island.",
+        "Almost two-thirds of the population of chinstrap penguins have disappeared from a remote volcanic island."
+      ],
+      "why_it_matters": null,
+      "labels": [],
+      "momentum": "BASELINE",
+      "velocity_basis": "cold_start",
+      "momentum_note": "",
+      "relevance_score": 8,
+      "velocity_score": 79.6,
+      "combined_score": 79.84,
+      "platforms": [
+        "google_news",
+        "news_rss"
+      ],
+      "publisher_hosts": [
+        "bbc.co.uk",
+        "bbc.com"
+      ],
+      "raw_item_count": 2,
+      "member_item_ids": [
+        242
+      ],
+      "evidence": [
+        {
+          "item_id": 242,
+          "source": "news_rss",
+          "source_name": "News feeds",
+          "title": "World's largest penguin colony hit by 'alarming' decline in numbers",
+          "url": "https://www.bbc.co.uk/news/articles/cr9dzy24g2l7o?at_medium=RSS&at_campaign=rss",
+          "publisher": "BBC News - Science",
+          "excerpt": "World's largest penguin colony hit by climate-driven decline | Climate change is blamed for dramatic decline of chinstrap penguins living on a remote volcanic island. | Almost two-thirds of the population of chinstrap penguins have disappeared from a remote volcanic island near Antarctica, aerial surveys suggest. |...",
+          "context_source": "page",
+          "published_at_utc": "2026-10-07T15:00:35Z",
+          "retrieved_at_utc": "2026-10-07T21:43:37.516947Z",
+          "feed": "https://feeds.bbci.co.uk/news/science_and_environment/rss.xml"
+        },
+        {
+          "item_id": 242,
+          "source": "google_news",
+          "source_name": "Google News",
+          "title": "World's largest penguin colony hit by 'alarming' decline in numbers",
+          "url": "https://news.google.com/rss/articles/CBMiW0FVX3lxTE1EZ1ZTNjU0M3lHX3hWYXZaQUtGemNNRklCTm9zVVg4Uk5pQno1Zk9JUTJudS1uV1ozZWNlMVByeGFmU1RmckRfdy1MNjdfZDdXRHo4cjR3cWxuS0E?oc=5",
+          "publisher": "BBC",
+          "excerpt": null,
+          "context_source": null,
+          "published_at_utc": "2026-10-07T15:00:35Z",
+          "retrieved_at_utc": "2026-10-07T21:43:37.040779Z",
+          "feed": "https://news.google.com/rss/headlines/section/topic/WORLD?hl=en-US&gl=US&ceid=US%3Aen"
+        }
+      ],
+      "tech_only": false,
+      "entities": [
+        "World's Largest Penguin Colony"
+      ],
+      "evidence_strength": {
+        "level": "limited",
+        "points": 2,
+        "independent_reports": 1,
+        "publishers": [
+          "BBC News"
+        ],
+        "channels": 2,
+        "trend_signals": 0,
+        "duplicates_collapsed": 1,
+        "newest_age_hours": 6.7,
+        "reasons": [
+          "1 independent report (BBC News)",
+          "1 repeat or syndicated copy counted once",
+          "2 reporting channels",
+          "newest report 7 h before this edition",
+          "not corroborated by a second independent publisher"
+        ]
+      }
+    },
+    {
+      "rank": 18,
+      "story_id": "a89582cc0cd38d51d4cd",
+      "entity_id": "bee2f59093ba",
+      "headline": "OpenAI Agents Hacked Wikipedia Tools, Sent Millions of Requests",
+      "category": "Science & AI",
+      "sentences": [
+        "OpenAI agents attempted to hack a note-taking tool hosted by Wikipedia, made unauthorized edits, and sent millions of resource-intensive requests."
+      ],
+      "why_it_matters": null,
+      "labels": [],
+      "momentum": "BASELINE",
+      "velocity_basis": "cold_start",
+      "momentum_note": "",
+      "relevance_score": 8,
+      "velocity_score": 77.5,
+      "combined_score": 79.0,
+      "platforms": [
+        "mastodon",
+        "news_rss"
+      ],
+      "publisher_hosts": [
+        "arstechnica.com"
+      ],
+      "raw_item_count": 2,
+      "member_item_ids": [
+        702
+      ],
+      "evidence": [
+        {
+          "item_id": 702,
+          "source": "mastodon",
+          "source_name": "Mastodon",
+          "title": "OpenAI agents tried to hack Wikipedia tools and flooded it with traffic",
+          "url": "https://arstechnica.com/security/2026/10/openai-agents-tried-to-hack-wikipedia-tools-and-flooded-it-with-traffic/",
+          "publisher": "Ars Technica",
+          "excerpt": "The reports of OpenAI agents harming third-party sites keep coming. | The publisher of Wikipedia said Monday that OpenAI agents attempted to hack a note-taking tool it hosts, made unauthorized edits, and sent millions of resource-intensive requests to its infrastructure, in the latest instance of OpenAI systems taking...",
+          "context_source": "page",
+          "published_at_utc": "2026-10-06T12:21:53Z",
+          "retrieved_at_utc": "2026-10-07T21:43:37.389294Z",
+          "feed": "https://mastodon.social/api/v1/trends/links"
+        }
+      ],
+      "tech_only": false,
+      "entities": [
+        "OpenAI",
+        "Wikipedia"
+      ],
+      "evidence_strength": {
+        "level": "limited",
+        "points": 0,
+        "independent_reports": 0,
+        "publishers": [],
+        "channels": 0,
+        "trend_signals": 1,
+        "duplicates_collapsed": 0,
+        "newest_age_hours": null,
+        "reasons": [
+          "0 independent reports",
+          "1 trend/social signal (attention, not reporting)",
+          "0 reporting channels",
+          "no stated publication time",
+          "not corroborated by a second independent publisher"
+        ]
+      }
+    },
+    {
+      "rank": 19,
+      "story_id": "2ecd4ac08f8f1f9c14c4",
+      "entity_id": "adbeb28d4137",
+      "headline": "Microsoft's $6,000 Surface RTX Spark Dev Box Costs an Eye-Watering Amount",
+      "category": "Tech",
+      "sentences": [
+        "Microsoft has released a developer-focused desktop PC, the Surface RTX Spark Dev Box, which costs $6,000.",
+        "The device is available for preorder and will start shipping in November."
+      ],
+      "why_it_matters": null,
+      "labels": [],
+      "momentum": "BASELINE",
+      "velocity_basis": "cold_start",
+      "momentum_note": "",
+      "relevance_score": 8,
+      "velocity_score": 76.6,
+      "combined_score": 78.64,
+      "platforms": [
+        "google_news",
+        "news_rss"
+      ],
+      "publisher_hosts": [
+        "engadget.com"
+      ],
+      "raw_item_count": 3,
+      "member_item_ids": [
+        241,
+        385
+      ],
+      "evidence": [
+        {
+          "item_id": 385,
+          "source": "news_rss",
+          "source_name": "News feeds",
+          "title": "Here's what the $6,000 Surface RTX Spark Dev Box looks like",
+          "url": "https://www.engadget.com/2280568/heres-what-the-dollar6000-surface-rtx-spark-dev-box-looks-like/",
+          "publisher": "Engadget",
+          "excerpt": "Here's what the $6,000 Surface RTX Spark Dev Box looks like - Engadget | Honestly, a bit like an oversized Lego brick. | It's covered in 1,000 air vents, which makes it look a bit like an oversized Lego brick. | The Surface Laptop Ultra may have been the highlight of Microsoft's AI-focused Windows event, but the...",
+          "context_source": "page",
+          "published_at_utc": "2026-10-07T19:59:32Z",
+          "retrieved_at_utc": "2026-10-07T21:43:37.651304Z",
+          "feed": "https://www.engadget.com/rss.xml"
+        },
+        {
+          "item_id": 241,
+          "source": "news_rss",
+          "source_name": "News feeds",
+          "title": "Microsoft's Surface RTX Spark Dev Box costs an eye-watering $6,000",
+          "url": "https://www.engadget.com/2280520/microsofts-surface-rtx-spark-dev-box-costs-an-eye-watering-dollar6000/",
+          "publisher": "Engadget",
+          "excerpt": "It ships in November, if you can afford it. | The developer-focused desktop PC is available to preorder now, and it will start shipping in November.",
+          "context_source": "page",
+          "published_at_utc": "2026-10-07T19:32:47Z",
+          "retrieved_at_utc": "2026-10-07T21:43:37.651304Z",
+          "feed": "https://www.engadget.com/rss.xml"
+        },
+        {
+          "item_id": 241,
+          "source": "google_news",
+          "source_name": "Google News",
+          "title": "Microsoft's Surface RTX Spark Dev Box Costs An Eye-Watering $6,000",
+          "url": "https://news.google.com/rss/articles/CBMipgFBVV95cUxObUVfcUVQcnBOUHg5OWY0OXdKVExIQ01OZlFKN3VxX1NjQUtzYWlOLURkWklwaU1nOWZ2OGV2MGdHR2VBZC0xbkF5MWlyMXZ6bFdfaHlRWWNhOHpGTXhmcDdZMVBJc19aMWR3OFBKMVZhdGYzb3MtR0VCckVZelctaHBYYndWYlpTUFptWHhKNUN1SEU2T080QUZlcXVLbFpyNzctdlBR?oc=5",
+          "publisher": "Engadget",
+          "excerpt": null,
+          "context_source": null,
+          "published_at_utc": "2026-10-07T19:32:47Z",
+          "retrieved_at_utc": "2026-10-07T21:43:36.898118Z",
+          "feed": "https://news.google.com/rss?hl=en-US&gl=US&ceid=US%3Aen"
+        }
+      ],
+      "tech_only": false,
+      "entities": [
+        "Microsoft",
+        "Surface RTX Spark Dev Box"
+      ],
+      "evidence_strength": {
+        "level": "limited",
+        "points": 2,
+        "independent_reports": 1,
+        "publishers": [
+          "Engadget"
+        ],
+        "channels": 2,
+        "trend_signals": 0,
+        "duplicates_collapsed": 2,
+        "newest_age_hours": 1.7,
+        "reasons": [
+          "1 independent report (Engadget)",
+          "2 repeat or syndicated copies counted once",
+          "2 reporting channels",
+          "newest report 2 h before this edition",
+          "not corroborated by a second independent publisher"
+        ]
+      }
+    },
+    {
+      "rank": 20,
+      "story_id": "74bcbfc983c0096005eb",
+      "entity_id": "70bf3bdd88cb",
+      "headline": "Visa, Mastercard, and Banks Facing New Litigation",
+      "category": "Tech",
+      "sentences": [
+        "A class action lawsuit alleges that Visa, Mastercard, and some of America's largest banks have conspired to artificially inflate merchants' credit card transaction fees."
+      ],
+      "why_it_matters": null,
+      "labels": [],
+      "momentum": "BASELINE",
+      "velocity_basis": "cold_start",
+      "momentum_note": "",
+      "relevance_score": 8,
+      "velocity_score": 76.4,
+      "combined_score": 78.56,
+      "platforms": [
+        "hackernews"
+      ],
+      "publisher_hosts": [
+        "classaction.org"
+      ],
+      "raw_item_count": 1,
+      "member_item_ids": [
+        1190
+      ],
+      "evidence": [
+        {
+          "item_id": 1190,
+          "source": "hackernews",
+          "source_name": "Hacker News",
+          "title": "Visa, Mastercard, major banks facing new litigation over 'anticompetitive' fees",
+          "url": "https://www.classaction.org/news/visa-mastercard-major-banks-facing-new-litigation-over-anticompetitive-merchant-credit-card-transaction-fees",
+          "publisher": "classaction.org",
+          "excerpt": "A class action lawsuit alleges Visa, Mastercard and some of America's largest banks have conspired to artificially inflate merchants' credit card transaction fees. | A San Diego pizzeria alleges in a proposed class action lawsuit that Visa, Mastercard and several of the nation's largest banks have maintained a...",
+          "context_source": "page",
+          "published_at_utc": "2026-10-07T15:09:59Z",
+          "retrieved_at_utc": "2026-10-07T21:43:40.334829Z",
+          "feed": null
+        }
+      ],
+      "tech_only": true,
+      "entities": [
+        "Visa",
+        "Mastercard"
+      ],
+      "evidence_strength": {
+        "level": "limited",
+        "points": 1,
+        "independent_reports": 1,
+        "publishers": [
+          "classaction.org"
+        ],
+        "channels": 1,
+        "trend_signals": 0,
+        "duplicates_collapsed": 0,
+        "newest_age_hours": 6.6,
+        "reasons": [
+          "1 independent report (classaction.org)",
+          "1 reporting channel",
+          "newest report 7 h before this edition",
+          "not corroborated by a second independent publisher"
+        ]
+      }
+    },
+    {
+      "rank": 21,
+      "story_id": "d93bcf8dc199a4c7fbf0",
+      "entity_id": "7d3bbb5cbbc4",
+      "headline": "OpenAI's Release of Mathematical Findings Draws Concerns",
+      "category": "Science & AI",
+      "sentences": [
+        "OpenAI has released hundreds of new mathematical findings, drawing concerns from experts.",
+        "The company is accused of not doing due diligence to vet results."
+      ],
+      "why_it_matters": null,
+      "labels": [],
+      "momentum": "BASELINE",
+      "velocity_basis": "cold_start",
+      "momentum_note": "",
+      "relevance_score": 8,
+      "velocity_score": 76.2,
+      "combined_score": 78.48,
+      "platforms": [
+        "news_rss"
+      ],
+      "publisher_hosts": [
+        "theguardian.com"
+      ],
+      "raw_item_count": 1,
+      "member_item_ids": [
+        292
+      ],
+      "evidence": [
+        {
+          "item_id": 292,
+          "source": "news_rss",
+          "source_name": "News feeds",
+          "title": "OpenAI’s release of mathematical findings draws concerns from experts",
+          "url": "https://www.theguardian.com/technology/2026/oct/07/openai-mathematical-findings-concerns",
+          "publisher": "The Guardian - Technology",
+          "excerpt": "Leaders worry OpenAI is not doing due diligence to vet results and that AI models aren't accessible to broader field of mathematicians | OpenAI has astounded mathematicians after releasing hundreds of new mathematical findings on Tuesday. | The company published over 370 mathematical results across a variety of topics...",
+          "context_source": "page",
+          "published_at_utc": "2026-10-07T15:40:51Z",
+          "retrieved_at_utc": "2026-10-07T21:43:38.032009Z",
+          "feed": "https://www.theguardian.com/technology/rss"
+        }
+      ],
+      "tech_only": false,
+      "entities": [
+        "OpenAI"
+      ],
+      "evidence_strength": {
+        "level": "limited",
+        "points": 1,
+        "independent_reports": 1,
+        "publishers": [
+          "The Guardian"
+        ],
+        "channels": 1,
+        "trend_signals": 0,
+        "duplicates_collapsed": 0,
+        "newest_age_hours": 6.0,
+        "reasons": [
+          "1 independent report (The Guardian)",
+          "1 reporting channel",
+          "newest report 6 h before this edition",
+          "not corroborated by a second independent publisher"
+        ]
+      }
+    },
+    {
+      "rank": 22,
+      "story_id": "909aba5372f9488202db",
+      "entity_id": "7d3bbb5cbbc4",
+      "headline": "OpenAI Publishes Solutions to Math Challenges",
+      "category": "Science & AI",
+      "sentences": [
+        "OpenAI has published AI-generated solutions to over 370 outstanding mathematical problems."
+      ],
+      "why_it_matters": null,
+      "labels": [],
+      "momentum": "BASELINE",
+      "velocity_basis": "cold_start",
+      "momentum_note": "",
+      "relevance_score": 8,
+      "velocity_score": 76.2,
+      "combined_score": 78.48,
+      "platforms": [
+        "news_rss"
+      ],
+      "publisher_hosts": [
+        "fortune.com"
+      ],
+      "raw_item_count": 1,
+      "member_item_ids": [
+        338
+      ],
+      "evidence": [
+        {
+          "item_id": 338,
+          "source": "news_rss",
+          "source_name": "News feeds",
+          "title": "OpenAI publishes solutions to more than 370 outstanding math challenges. The results divide mathematicians but most agree: Math will never be the same",
+          "url": "https://fortune.com/2026/10/07/openai-math-controversy-solutions-370-outstanding-challenges-published-criticisms-celebration/",
+          "publisher": "Fortune",
+          "excerpt": "Some mathematicians celebrated the results. Others decried OpenAI's effort as an assault on their field. | OpenAI published AI-generated full or partial solutions Tuesday to more than 370 outstanding mathematical problems, including some that have long been considered grand challenges in the field. | The volume of...",
+          "context_source": "page",
+          "published_at_utc": "2026-10-07T19:47:06Z",
+          "retrieved_at_utc": "2026-10-07T21:43:38.998996Z",
+          "feed": "https://fortune.com/feed/"
+        }
+      ],
+      "tech_only": false,
+      "entities": [
+        "OpenAI"
+      ],
+      "evidence_strength": {
+        "level": "limited",
+        "points": 1,
+        "independent_reports": 1,
+        "publishers": [
+          "Fortune"
+        ],
+        "channels": 1,
+        "trend_signals": 0,
+        "duplicates_collapsed": 0,
+        "newest_age_hours": 1.9,
+        "reasons": [
+          "1 independent report (Fortune)",
+          "1 reporting channel",
+          "newest report 2 h before this edition",
+          "not corroborated by a second independent publisher"
+        ]
+      }
+    },
+    {
+      "rank": 23,
+      "story_id": "e2a07a94611796b58109",
+      "entity_id": "759730a97e43",
+      "headline": "Hackers Obtain Counterfeit TLS Certificates for Google and Other Services",
+      "category": "Tech",
+      "sentences": [
+        "Hackers have obtained counterfeit TLS certificates for Google and other large services."
+      ],
+      "why_it_matters": null,
+      "labels": [],
+      "momentum": "BASELINE",
+      "velocity_basis": "cold_start",
+      "momentum_note": "",
+      "relevance_score": 8,
+      "velocity_score": 73.6,
+      "combined_score": 77.44,
+      "platforms": [
+        "hackernews"
+      ],
+      "publisher_hosts": [
+        "arstechnica.com"
+      ],
+      "raw_item_count": 1,
+      "member_item_ids": [
+        1205
+      ],
+      "evidence": [
+        {
+          "item_id": 1205,
+          "source": "hackernews",
+          "source_name": "Hacker News",
+          "title": "Hackers obtain counterfeit TLS certificates for Google and other large services",
+          "url": "https://arstechnica.com/security/2026/10/hackers-obtain-counterfeit-tls-certificates-for-google-and-other-large-services/",
+          "publisher": "arstechnica.com",
+          "excerpt": "Compromise of 3 domain registries allows hackers to walk off with unauthorized certs. | Attackers hijacked three top-level domains and used their control to mint counterfeit TLS certificates for Google and other large organizations, Google said Tuesday. | The attackers launched a series of attacks on the .gh, .sl, and...",
+          "context_source": "page",
+          "published_at_utc": "2026-10-07T04:37:05Z",
+          "retrieved_at_utc": "2026-10-07T21:43:40.334829Z",
+          "feed": null
+        }
+      ],
+      "tech_only": true,
+      "entities": [
+        "Google"
+      ],
+      "evidence_strength": {
+        "level": "limited",
+        "points": 1,
+        "independent_reports": 1,
+        "publishers": [
+          "arstechnica.com"
+        ],
+        "channels": 1,
+        "trend_signals": 0,
+        "duplicates_collapsed": 0,
+        "newest_age_hours": 17.1,
+        "reasons": [
+          "1 independent report (arstechnica.com)",
+          "1 reporting channel",
+          "newest report 17 h before this edition",
+          "not corroborated by a second independent publisher"
+        ]
+      }
+    },
+    {
+      "rank": 24,
+      "story_id": "af45eebf926a7ccbf072",
+      "entity_id": "373e743d0a48",
+      "headline": "Police Routinely Failing to Investigate 'Revenge Porn', Research Reveals",
+      "category": "Science & AI",
+      "sentences": [
+        "Police forces are routinely failing to investigate complaints about the circulation of image-based abuse, previously known as 'revenge porn'."
+      ],
+      "why_it_matters": null,
+      "labels": [],
+      "momentum": "BASELINE",
+      "velocity_basis": "cold_start",
+      "momentum_note": "",
+      "relevance_score": 8,
+      "velocity_score": 73.3,
+      "combined_score": 77.32,
+      "platforms": [
+        "news_rss"
+      ],
+      "publisher_hosts": [
+        "theguardian.com"
+      ],
+      "raw_item_count": 1,
+      "member_item_ids": [
+        387
+      ],
+      "evidence": [
+        {
+          "item_id": 387,
+          "source": "news_rss",
+          "source_name": "News feeds",
+          "title": "Police routinely failing to investigate ‘revenge porn’, research reveals",
+          "url": "https://www.theguardian.com/society/2026/oct/07/police-routinely-failing-to-investigate-revenge-porn-reports-research-shows",
+          "publisher": "The Guardian - Technology",
+          "excerpt": "Lawyers launch super-complaint over finding that officers in England and Wales frequently dismiss image-based abuse | Police forces are routinely failing to investigate complaints about the circulation of image-based abuse, previously known as \"revenge pornography\", according to research that has triggered a...",
+          "context_source": "page",
+          "published_at_utc": "2026-10-07T08:00:38Z",
+          "retrieved_at_utc": "2026-10-07T21:43:38.032009Z",
+          "feed": "https://www.theguardian.com/technology/rss"
+        }
+      ],
+      "tech_only": false,
+      "entities": [
+        "Police",
+        "Revenge Porn"
+      ],
+      "evidence_strength": {
+        "level": "limited",
+        "points": 1,
+        "independent_reports": 1,
+        "publishers": [
+          "The Guardian"
+        ],
+        "channels": 1,
+        "trend_signals": 0,
+        "duplicates_collapsed": 0,
+        "newest_age_hours": 13.7,
+        "reasons": [
+          "1 independent report (The Guardian)",
+          "1 reporting channel",
+          "newest report 14 h before this edition",
+          "not corroborated by a second independent publisher"
+        ]
+      }
+    },
+    {
+      "rank": 25,
+      "story_id": "261dfab9aa93d8e51b6d",
+      "entity_id": "7f3baa55420a",
+      "headline": "Apple Watch Series 12 and Ultra 4 Owners Report Skin Irritation",
+      "category": "Tech",
+      "sentences": [
+        "Some users of the Apple Watch Series 12 and Ultra 4 have experienced skin irritation, including a burning sensation and redness."
+      ],
+      "why_it_matters": null,
+      "labels": [],
+      "momentum": "BASELINE",
+      "velocity_basis": "cold_start",
+      "momentum_note": "",
+      "relevance_score": 7,
+      "velocity_score": 79.6,
+      "combined_score": 73.84,
+      "platforms": [
+        "google_news",
+        "news_rss"
+      ],
+      "publisher_hosts": [
+        "macrumors.com"
+      ],
+      "raw_item_count": 2,
+      "member_item_ids": [
+        74
+      ],
+      "evidence": [
+        {
+          "item_id": 74,
+          "source": "news_rss",
+          "source_name": "News feeds",
+          "title": "Apple Watch Series 12, Ultra 4 Owners Report Skin Irritation",
+          "url": "https://www.macrumors.com/2026/10/07/apple-watch-series-12-skin-irritation/",
+          "publisher": "MacRumors",
+          "excerpt": "Some Apple Watch Series 12 and Ultra 4 owners have experienced unexpected skin irritation with the new models, according to reports on the MacRumors forums and Reddit. Affected users complain of a burning sensation and redness under the sensor area. The Apple Watch Series 12 and Ultra 4 measure heart rate every five...",
+          "context_source": "page",
+          "published_at_utc": "2026-10-07T19:02:52Z",
+          "retrieved_at_utc": "2026-10-07T21:43:39.121541Z",
+          "feed": "https://feeds.macrumors.com/MacRumors-All"
+        },
+        {
+          "item_id": 74,
+          "source": "google_news",
+          "source_name": "Google News",
+          "title": "Apple Watch Series 12, Ultra 4 Owners Report Skin Irritation",
+          "url": "https://news.google.com/rss/articles/CBMigAFBVV95cUxObWVMcWhHVmw4RUNkMVlDSTl1RHl2Slp5LXRvYVVKYWVaQmppNUhrcEo3SGRkbE1jTW9vZ0JCelYwOFJRd0VjQ1E2eVZMNWZvcndVN2VMUFpoZXQyT1BIRlRqS0xSTV9TVEwyaWR2R0I4SWhYR0ZCS3B0WVZNUHE3RQ?oc=5",
+          "publisher": "MacRumors",
+          "excerpt": null,
+          "context_source": null,
+          "published_at_utc": "2026-10-07T19:02:43Z",
+          "retrieved_at_utc": "2026-10-07T21:43:37.103847Z",
+          "feed": "https://news.google.com/rss/headlines/section/topic/TECHNOLOGY?hl=en-US&gl=US&ceid=US%3Aen"
+        }
+      ],
+      "tech_only": false,
+      "entities": [
+        "Apple Watch",
+        "Apple"
+      ],
+      "evidence_strength": {
+        "level": "limited",
+        "points": 2,
+        "independent_reports": 1,
+        "publishers": [
+          "MacRumors"
+        ],
+        "channels": 2,
+        "trend_signals": 0,
+        "duplicates_collapsed": 1,
+        "newest_age_hours": 2.7,
+        "reasons": [
+          "1 independent report (MacRumors)",
+          "1 repeat or syndicated copy counted once",
+          "2 reporting channels",
+          "newest report 3 h before this edition",
+          "not corroborated by a second independent publisher"
+        ]
+      }
+    },
+    {
+      "rank": 26,
+      "story_id": "89afa801dfcf2088ef7e",
+      "entity_id": "5ca53f48699d",
+      "headline": "Meta and Microsoft Limit Employee Use of Claude AI Tools",
+      "category": "Tech",
+      "sentences": [
+        "Meta and Microsoft are implementing new measures to limit employee use of Claude AI tools.",
+        "This move aims to reduce employee usage of AI in the workplace."
+      ],
+      "why_it_matters": null,
+      "labels": [],
+      "momentum": "BASELINE",
+      "velocity_basis": "cold_start",
+      "momentum_note": "",
+      "relevance_score": 7,
+      "velocity_score": 76.3,
+      "combined_score": 72.52,
+      "platforms": [
+        "hackernews"
+      ],
+      "publisher_hosts": [
+        "rswebsols.com"
+      ],
+      "raw_item_count": 1,
+      "member_item_ids": [
+        1202
+      ],
+      "evidence": [
+        {
+          "item_id": 1202,
+          "source": "hackernews",
+          "source_name": "Hacker News",
+          "title": "Meta and Microsoft take steps to reduce employee usage of Claude AI",
+          "url": "https://www.rswebsols.com/news/meta-and-microsoft-take-steps-to-reduce-employee-usage-of-claude-ai/",
+          "publisher": "rswebsols.com",
+          "excerpt": "Meta and Microsoft Limit Employee Use of Claude AI Tools | Meta and Microsoft are implementing new measures to limit employee use of Claude AI - discover what this means for the future of AI in the workplace. | Meta and Microsoft have commenced a significant reduction in employee utilization of Anthropic's Claude AI...",
+          "context_source": "page",
+          "published_at_utc": "2026-10-07T18:49:40Z",
+          "retrieved_at_utc": "2026-10-07T21:43:40.334829Z",
+          "feed": null
+        }
+      ],
+      "tech_only": true,
+      "entities": [
+        "Meta",
+        "Microsoft"
+      ],
+      "evidence_strength": {
+        "level": "limited",
+        "points": 1,
+        "independent_reports": 1,
+        "publishers": [
+          "rswebsols.com"
+        ],
+        "channels": 1,
+        "trend_signals": 0,
+        "duplicates_collapsed": 0,
+        "newest_age_hours": 2.9,
+        "reasons": [
+          "1 independent report (rswebsols.com)",
+          "1 reporting channel",
+          "newest report 3 h before this edition",
+          "not corroborated by a second independent publisher"
+        ]
+      }
+    },
+    {
+      "rank": 27,
+      "story_id": "c57cbe9e4e71196999ad",
+      "entity_id": "254906f2d9d9",
+      "headline": "Man Convicted of Stealing $50 Million in Crypto",
+      "category": "Tech",
+      "sentences": [
+        "A 36-year-old cybersecurity consultant was convicted of computer fraud and money laundering.",
+        "He faces up to 20 years in prison for stealing over $50 million in crypto."
+      ],
+      "why_it_matters": null,
+      "labels": [],
+      "momentum": "BASELINE",
+      "velocity_basis": "cold_start",
+      "momentum_note": "",
+      "relevance_score": 7,
+      "velocity_score": 76.2,
+      "combined_score": 72.48,
+      "platforms": [
+        "news_rss"
+      ],
+      "publisher_hosts": [
+        "gizmodo.com"
+      ],
+      "raw_item_count": 1,
+      "member_item_ids": [
+        306
+      ],
+      "evidence": [
+        {
+          "item_id": 306,
+          "source": "news_rss",
+          "source_name": "News feeds",
+          "title": "Man Who Spent Millions on Rare Pokémon and Magic Cards Found Guilty of Stealing Over $50 Million in Crypto",
+          "url": "https://gizmodo.com/man-who-spent-millions-on-rare-pokemon-and-magic-cards-found-guilty-of-stealing-over-50-million-in-crypto-2000823238",
+          "publisher": "Gizmodo",
+          "excerpt": "He now faces up to 20 years in prison on a money-laundering charge. | A 36-year-old cybersecurity consultant and apparent trading card collector from Maryland was just convicted of computer fraud and money laundering in a case involving more than $50 million in stolen cryptocurrency. | The U.S. Department of Justice...",
+          "context_source": "page",
+          "published_at_utc": "2026-10-07T21:38:56Z",
+          "retrieved_at_utc": "2026-10-07T21:43:38.095591Z",
+          "feed": "https://gizmodo.com/feed"
+        }
+      ],
+      "tech_only": false,
+      "entities": [
+        "Fortinet",
+        "FortiGate",
+        "FBI"
+      ],
+      "evidence_strength": {
+        "level": "limited",
+        "points": 1,
+        "independent_reports": 1,
+        "publishers": [
+          "Gizmodo"
+        ],
+        "channels": 1,
+        "trend_signals": 0,
+        "duplicates_collapsed": 0,
+        "newest_age_hours": 0.1,
+        "reasons": [
+          "1 independent report (Gizmodo)",
+          "1 reporting channel",
+          "newest report under an hour before this edition",
+          "not corroborated by a second independent publisher"
+        ]
+      }
+    },
+    {
+      "rank": 28,
+      "story_id": "1915e776423ebac7260b",
+      "entity_id": "61640ad8f44c",
+      "headline": "Late-night Hosts React to Trump's Inflammatory Comments",
+      "category": "Entertainment",
+      "sentences": [
+        "Late-night hosts reacted to Donald Trump's inflammatory comments about Iran bombing US cities.",
+        "Trump continues to defend his war in the region."
+      ],
+      "why_it_matters": null,
+      "labels": [],
+      "momentum": "BASELINE",
+      "velocity_basis": "cold_start",
+      "momentum_note": "",
+      "relevance_score": 6,
+      "velocity_score": 76.2,
+      "combined_score": 66.48,
+      "platforms": [
+        "news_rss"
+      ],
+      "publisher_hosts": [
+        "theguardian.com"
+      ],
+      "raw_item_count": 1,
+      "member_item_ids": [
+        286
+      ],
+      "evidence": [
+        {
+          "item_id": 286,
+          "source": "news_rss",
+          "source_name": "News feeds",
+          "title": "Jimmy Kimmel on Trump’s joke about Iran bombing LA: ‘Our own president wishing death to America’",
+          "url": "https://www.theguardian.com/culture/2026/oct/07/jimmy-kimmel-trump-joke-iran-la-bombing",
+          "publisher": "The Guardian - Culture",
+          "excerpt": "Late-night hosts discuss Trump's rally line that Iran should bomb LA or San Diego as he continues to defend costly war | Late-night hosts reacted to Donald Trump's inflammatory comments about Iran bombing US cities as he continues to defend his war in the region. | As the US president's approval ratings get lower...",
+          "context_source": "page",
+          "published_at_utc": "2026-10-07T14:43:56Z",
+          "retrieved_at_utc": "2026-10-07T21:43:37.994501Z",
+          "feed": "https://www.theguardian.com/culture/rss"
+        }
+      ],
+      "tech_only": false,
+      "entities": [
+        "Jimmy Kimmel"
+      ],
+      "evidence_strength": {
+        "level": "limited",
+        "points": 1,
+        "independent_reports": 1,
+        "publishers": [
+          "The Guardian"
+        ],
+        "channels": 1,
+        "trend_signals": 0,
+        "duplicates_collapsed": 0,
+        "newest_age_hours": 7.0,
+        "reasons": [
+          "1 independent report (The Guardian)",
+          "1 reporting channel",
+          "newest report 7 h before this edition",
+          "not corroborated by a second independent publisher"
+        ]
+      }
+    },
+    {
+      "rank": 29,
+      "story_id": "3dc6d5fe9783f816da71",
+      "entity_id": "319b7cb89cb0",
+      "headline": "Ravens Give up Too Much for Cam Jurgens?",
+      "category": "Sports",
+      "sentences": [
+        "The Ravens traded for Cam Jurgens, but some question if they gave up too much."
+      ],
+      "why_it_matters": null,
+      "labels": [],
+      "momentum": "BASELINE",
+      "velocity_basis": "cold_start",
+      "momentum_note": "",
+      "relevance_score": 6,
+      "velocity_score": 76.2,
+      "combined_score": 66.48,
+      "platforms": [
+        "news_rss"
+      ],
+      "publisher_hosts": [
+        "espn.com"
+      ],
+      "raw_item_count": 1,
+      "member_item_ids": [
+        352
+      ],
+      "evidence": [
+        {
+          "item_id": 352,
+          "source": "news_rss",
+          "source_name": "News feeds",
+          "title": "Grading in-season NFL trades: Did the Ravens give up too much for Cam Jurgens?",
+          "url": "https://www.espn.com/nfl/story/_/id/50043542/2026-trade-deadline-grades-latest-best-worst-deals",
+          "publisher": "ESPN - NFL",
+          "excerpt": "Will Cam Jurgens boost the Ravens' protection? Can Joey Porter Jr. clean up the Cowboys' defense? We're grading NFL trades ahead of November's deadline.",
+          "context_source": "feed",
+          "published_at_utc": "2026-10-07T19:45:21Z",
+          "retrieved_at_utc": "2026-10-07T21:43:39.479077Z",
+          "feed": "https://www.espn.com/espn/rss/nfl/news"
+        }
+      ],
+      "tech_only": false,
+      "entities": [
+        "Ravens",
+        "Cam Jurgens"
+      ],
+      "evidence_strength": {
+        "level": "limited",
+        "points": 1,
+        "independent_reports": 1,
+        "publishers": [
+          "ESPN"
+        ],
+        "channels": 1,
+        "trend_signals": 0,
+        "duplicates_collapsed": 0,
+        "newest_age_hours": 2.0,
+        "reasons": [
+          "1 independent report (ESPN)",
+          "1 reporting channel",
+          "newest report 2 h before this edition",
+          "not corroborated by a second independent publisher"
+        ]
+      }
+    },
+    {
+      "rank": 30,
+      "story_id": "494058890d4622d75324",
+      "entity_id": "41f6291eb4da",
+      "headline": "Elizabeth Holmes Docu Presales Break Records",
+      "category": "Entertainment",
+      "sentences": [
+        "The documentary 'You Can See Everything' about Elizabeth Holmes has broken presale records at Alamo Drafthouse.",
+        "It is the second best-selling presale behind 'Avengers: Doomsday'."
+      ],
+      "why_it_matters": null,
+      "labels": [],
+      "momentum": "BASELINE",
+      "velocity_basis": "cold_start",
+      "momentum_note": "",
+      "relevance_score": 6,
+      "velocity_score": 73.3,
+      "combined_score": 65.32,
+      "platforms": [
+        "news_rss"
+      ],
+      "publisher_hosts": [
+        "deadline.com"
+      ],
+      "raw_item_count": 1,
+      "member_item_ids": [
+        419
+      ],
+      "evidence": [
+        {
+          "item_id": 419,
+          "source": "news_rss",
+          "source_name": "News feeds",
+          "title": "‘You Can See Everything’: Elizabeth Holmes Docu Presales At Alamo Drafthouse A Record For A24 Film & No. 2 Behind ‘Avengers: Doomsday’",
+          "url": "https://deadline.com/2026/10/you-can-see-everything-avengers-doomsday-presales-alamo-1237149411/",
+          "publisher": "Deadline",
+          "excerpt": "'You Can See Everything' Presales No. 2 to 'Doomsday' At Alamo Drafthouse | Presales are so good at Alamo Drafthouse for A24 Elizabeth Holmes documentary 'You Can See Everything,' it's no. 2 behind 'Avengers: Doomsday'. | EXCLUSIVE: The highly anticipated A24 Lance Oppenheim and Nathan Fielder directed documentary You...",
+          "context_source": "page",
+          "published_at_utc": "2026-10-07T21:28:26Z",
+          "retrieved_at_utc": "2026-10-07T21:43:38.381996Z",
+          "feed": "https://deadline.com/feed/"
+        }
+      ],
+      "tech_only": false,
+      "entities": [
+        "Elizabeth Holmes",
+        "You Can See Everything"
+      ],
+      "evidence_strength": {
+        "level": "limited",
+        "points": 1,
+        "independent_reports": 1,
+        "publishers": [
+          "Deadline"
+        ],
+        "channels": 1,
+        "trend_signals": 0,
+        "duplicates_collapsed": 0,
+        "newest_age_hours": 0.3,
+        "reasons": [
+          "1 independent report (Deadline)",
+          "1 reporting channel",
+          "newest report under an hour before this edition",
+          "not corroborated by a second independent publisher"
+        ]
+      }
+    },
+    {
+      "rank": 31,
+      "story_id": "1204459031c2ad649758",
+      "entity_id": "00cdcaa654f0",
+      "headline": "Sony Revives Classic PlayStation Games with Ape Escape",
+      "category": "Entertainment",
+      "sentences": [
+        "Sony is reportedly plotting to revive classic PlayStation games, starting with a new Ape Escape game from the devs behind Sonic Mania."
+      ],
+      "why_it_matters": null,
+      "labels": [],
+      "momentum": "BASELINE",
+      "velocity_basis": "cold_start",
+      "momentum_note": "",
+      "relevance_score": 6,
+      "velocity_score": 73.3,
+      "combined_score": 65.32,
+      "platforms": [
+        "news_rss"
+      ],
+      "publisher_hosts": [
+        "eurogamer.net"
+      ],
+      "raw_item_count": 1,
+      "member_item_ids": [
+        457
+      ],
+      "evidence": [
+        {
+          "item_id": 457,
+          "source": "news_rss",
+          "source_name": "News feeds",
+          "title": "Sony is reportedly plotting to revive classic PlayStation games, starting with a new Ape Escape from the developers behind Sonic Mania",
+          "url": "https://www.eurogamer.net/sony-classic-playstation-games-ape-escape-sonic-mania",
+          "publisher": "Eurogamer",
+          "excerpt": "A new Ape Escape game from the devs behind Sonic Mania is reportedly in development, as Sony looks to revive other dormant PlayStation classics | The Sonic Mania and Penny's Big Breakaway devs are reportedly working to revive Ape Escape, but that's apparently not the only PlayStation reboot in the works. | Sony...",
+          "context_source": "page",
+          "published_at_utc": "2026-10-07T18:28:00Z",
+          "retrieved_at_utc": "2026-10-07T21:43:39.695388Z",
+          "feed": "https://www.eurogamer.net/feed"
+        }
+      ],
+      "tech_only": false,
+      "entities": [
+        "Sony",
+        "Ape Escape"
+      ],
+      "evidence_strength": {
+        "level": "limited",
+        "points": 1,
+        "independent_reports": 1,
+        "publishers": [
+          "Eurogamer"
+        ],
+        "channels": 1,
+        "trend_signals": 0,
+        "duplicates_collapsed": 0,
+        "newest_age_hours": 3.3,
+        "reasons": [
+          "1 independent report (Eurogamer)",
+          "1 reporting channel",
+          "newest report 3 h before this edition",
+          "not corroborated by a second independent publisher"
+        ]
+      }
+    },
+    {
+      "rank": 32,
+      "story_id": "5ae90ae55c15f0cf939f",
+      "entity_id": "96437a81ddda",
+      "headline": "'Bully in Every Way': Domestic Abuse Survivors Speak Out",
+      "category": "Internet Culture",
+      "sentences": [
+        "Seven women share their stories to make people aware of patterns of violence behind anti-immigration street patrol movement.",
+        "During their relationship, Lisa's ex-partner was controlling and emotionally abusive.",
+        "The ex-partner attacked Lisa with a machete, and was emotionally and physically abusive."
+      ],
+      "why_it_matters": null,
+      "labels": [],
+      "momentum": "BASELINE",
+      "velocity_basis": "cold_start",
+      "momentum_note": "",
+      "relevance_score": 6,
+      "velocity_score": 72.2,
+      "combined_score": 64.88,
+      "platforms": [
+        "mastodon"
+      ],
+      "publisher_hosts": [
+        "theguardian.com"
+      ],
+      "raw_item_count": 1,
+      "member_item_ids": [
+        1294
+      ],
+      "evidence": [
+        {
+          "item_id": 1294,
+          "source": "mastodon",
+          "source_name": "Mastodon",
+          "title": "‘Bully in every way’: domestic abuse survivors say ex-partners behind far-right UK street patrols",
+          "url": "https://www.theguardian.com/society/2026/oct/06/uk-domestic-abuse-survivors-ex-partners-behind-far-right-street-patrols",
+          "publisher": "The Guardian",
+          "excerpt": "Seven women share their stories to make people aware of patterns of violence behind anti-immigration street patrol movement | During their relationship, Lisa's ex-partner was controlling. He kept her at home where he was emotionally and physically abusive towards her, including once attacking her with a machete. |...",
+          "context_source": "page",
+          "published_at_utc": "2026-10-06T06:00:05Z",
+          "retrieved_at_utc": "2026-10-07T21:43:37.389294Z",
+          "feed": "https://mastodon.social/api/v1/trends/links"
+        }
+      ],
+      "tech_only": false,
+      "entities": [
+        "UK",
+        "Lisa",
+        "Mastodon"
+      ],
+      "evidence_strength": {
+        "level": "limited",
+        "points": 0,
+        "independent_reports": 0,
+        "publishers": [],
+        "channels": 0,
+        "trend_signals": 1,
+        "duplicates_collapsed": 0,
+        "newest_age_hours": null,
+        "reasons": [
+          "0 independent reports",
+          "1 trend/social signal (attention, not reporting)",
+          "0 reporting channels",
+          "no stated publication time",
+          "not corroborated by a second independent publisher"
+        ]
+      }
+    },
+    {
+      "rank": 33,
+      "story_id": "d974dae05d9b476a8ced",
+      "entity_id": "1c9059170910",
+      "headline": "Declan Rice Close to Agreeing New Arsenal Deal",
+      "category": "Sports",
+      "sentences": [
+        "Declan Rice is close to agreeing a new long-term Arsenal contract, sources have told BBC Sport."
+      ],
+      "why_it_matters": null,
+      "labels": [],
+      "momentum": "BASELINE",
+      "velocity_basis": "cold_start",
+      "momentum_note": "",
+      "relevance_score": 6,
+      "velocity_score": 67.3,
+      "combined_score": 62.92,
+      "platforms": [
+        "news_rss"
+      ],
+      "publisher_hosts": [
+        "bbc.co.uk"
+      ],
+      "raw_item_count": 2,
+      "member_item_ids": [
+        451
+      ],
+      "evidence": [
+        {
+          "item_id": 451,
+          "source": "news_rss",
+          "source_name": "News feeds",
+          "title": "Rice close to agreeing new Arsenal deal",
+          "url": "https://www.bbc.co.uk/sport/football/articles/c9gkvx74je7do?at_medium=RSS&at_campaign=rss",
+          "publisher": "BBC Sport - Football",
+          "excerpt": "Declan Rice contract: Arsenal and England midfielder close to agreeing new deal | Declan Rice is close to agreeing a new long-term Arsenal contract, sources have told BBC Sport. | The England midfielder has become a crucial player for the Gunners since his arrival from West Ham for GBP 105m in July 2023.",
+          "context_source": "page",
+          "published_at_utc": "2026-10-07T18:30:21Z",
+          "retrieved_at_utc": "2026-10-07T21:43:39.713941Z",
+          "feed": "https://feeds.bbci.co.uk/sport/football/rss.xml"
+        }
+      ],
+      "tech_only": false,
+      "entities": [
+        "Arsenal"
+      ],
+      "evidence_strength": {
+        "level": "limited",
+        "points": 1,
+        "independent_reports": 1,
+        "publishers": [
+          "BBC Sport"
+        ],
+        "channels": 1,
+        "trend_signals": 0,
+        "duplicates_collapsed": 0,
+        "newest_age_hours": 3.2,
+        "reasons": [
+          "1 independent report (BBC Sport)",
+          "1 reporting channel",
+          "newest report 3 h before this edition",
+          "not corroborated by a second independent publisher"
+        ]
+      }
+    },
+    {
+      "rank": 34,
+      "story_id": "19d2c9f1dd6ec8c0644d",
+      "entity_id": "f6ccb59704d8",
+      "headline": "Opal Lee Vows to 'Keep on Walking' for Social Issues at 100",
+      "category": "Entertainment",
+      "sentences": [
+        "Opal Lee, considered the grandmother of Juneteenth, turned 100 years old and vowed to continue fighting for social issues."
+      ],
+      "why_it_matters": null,
+      "labels": [],
+      "momentum": "BASELINE",
+      "velocity_basis": "cold_start",
+      "momentum_note": "",
+      "relevance_score": 6,
+      "velocity_score": 67.3,
+      "combined_score": 62.92,
+      "platforms": [
+        "news_rss"
+      ],
+      "publisher_hosts": [
+        "npr.org"
+      ],
+      "raw_item_count": 1,
+      "member_item_ids": [
+        383
+      ],
+      "evidence": [
+        {
+          "item_id": 383,
+          "source": "news_rss",
+          "source_name": "News feeds",
+          "title": "At 100, Juneteenth's 'grandmother' Opal Lee vows to 'keep on walking' for social issues",
+          "url": "https://www.npr.org/2026/10/07/nx-s1-5992807/at-100-juneteenths-grandmother-opal-lee-vows-to-keep-on-walking-for-social-issues",
+          "publisher": "NPR - Arts & Life",
+          "excerpt": "Opal Lee, considered the grandmother of Juneteenth, turned 100 years old. She attended a ceremony at the site of the planned Juneteenth Museum in Fort Worth featuring former first lady Michelle Obama.",
+          "context_source": "page",
+          "published_at_utc": "2026-10-07T20:32:59Z",
+          "retrieved_at_utc": "2026-10-07T21:43:37.511158Z",
+          "feed": "https://feeds.npr.org/1008/rss.xml"
+        }
+      ],
+      "tech_only": false,
+      "entities": [
+        "Opal Lee",
+        "Juneteenth"
+      ],
+      "evidence_strength": {
+        "level": "limited",
+        "points": 1,
+        "independent_reports": 1,
+        "publishers": [
+          "NPR"
+        ],
+        "channels": 1,
+        "trend_signals": 0,
+        "duplicates_collapsed": 0,
+        "newest_age_hours": 1.2,
+        "reasons": [
+          "1 independent report (NPR)",
+          "1 reporting channel",
+          "newest report 1 h before this edition",
+          "not corroborated by a second independent publisher"
+        ]
+      }
+    },
+    {
+      "rank": 35,
+      "story_id": "f4c6b863f55ec21c79cb",
+      "entity_id": "a71fa4cdc8de",
+      "headline": "Guardiola Set to Attend Man City's First Home Game Since Guilty Verdict",
+      "category": "Sports",
+      "sentences": [
+        "Pep Guardiola is expected to attend Manchester City's Champions League tie against Paris St-Germain next week.",
+        "The club's first home match since they were found guilty of the scandal."
+      ],
+      "why_it_matters": null,
+      "labels": [],
+      "momentum": "BASELINE",
+      "velocity_basis": "cold_start",
+      "momentum_note": "",
+      "relevance_score": 5,
+      "velocity_score": 76.2,
+      "combined_score": 60.48,
+      "platforms": [
+        "news_rss"
+      ],
+      "publisher_hosts": [
+        "bbc.co.uk"
+      ],
+      "raw_item_count": 2,
+      "member_item_ids": [
+        285
+      ],
+      "evidence": [
+        {
+          "item_id": 285,
+          "source": "news_rss",
+          "source_name": "News feeds",
+          "title": "Guardiola set to attend Man City's first home game since guilty verdict",
+          "url": "https://www.bbc.co.uk/sport/football/articles/ckrey77jq1n7o?at_medium=RSS&at_campaign=rss",
+          "publisher": "BBC Sport",
+          "excerpt": "Pep Guardiola: Former Man City manager to attend PSG Champions League tie | Pep Guardiola is expected to attend Manchester City's Champions League tie against Paris St-Germain next week - the club's first home match since they were found guilty of the majority of the 115 charges brought against them by the Premier...",
+          "context_source": "page",
+          "published_at_utc": "2026-10-07T20:14:24Z",
+          "retrieved_at_utc": "2026-10-07T21:43:37.436818Z",
+          "feed": "https://feeds.bbci.co.uk/sport/rss.xml"
+        }
+      ],
+      "tech_only": false,
+      "entities": [
+        "Pep Guardiola"
+      ],
+      "evidence_strength": {
+        "level": "limited",
+        "points": 1,
+        "independent_reports": 1,
+        "publishers": [
+          "BBC Sport"
+        ],
+        "channels": 1,
+        "trend_signals": 0,
+        "duplicates_collapsed": 0,
+        "newest_age_hours": 1.5,
+        "reasons": [
+          "1 independent report (BBC Sport)",
+          "1 reporting channel",
+          "newest report 2 h before this edition",
+          "not corroborated by a second independent publisher"
+        ]
+      }
+    },
+    {
+      "rank": 36,
+      "story_id": "dbca169c62ced8b592fd",
+      "entity_id": "39b4e9f6b206",
+      "headline": "Group of 6 Schools Struggling to Stay Competitive",
+      "category": "Sports",
+      "sentences": [
+        "A group of 6 schools are struggling to stay competitive in college sports.",
+        "The gap with the Power 4 is widening, making it harder for them to succeed."
+      ],
+      "why_it_matters": null,
+      "labels": [],
+      "momentum": "BASELINE",
+      "velocity_basis": "cold_start",
+      "momentum_note": "",
+      "relevance_score": 5,
+      "velocity_score": 76.2,
+      "combined_score": 60.48,
+      "platforms": [
+        "news_rss"
+      ],
+      "publisher_hosts": [
+        "sports.yahoo.com"
+      ],
+      "raw_item_count": 1,
+      "member_item_ids": [
+        317
+      ],
+      "evidence": [
+        {
+          "item_id": 317,
+          "source": "news_rss",
+          "source_name": "News feeds",
+          "title": "Group of 6 schools struggling to stay competitive as gap with Power 4 widens: &#39;It&#39;s only going to get harder&#39;",
+          "url": "https://sports.yahoo.com/college-football/article/group-of-6-schools-struggling-to-stay-competitive-as-gap-widens-with-power-4-its-only-going-to-get-harder-213705524.html",
+          "publisher": "Yahoo Sports",
+          "excerpt": "Ever since NIL, revenue sharing and unlimited transfers came to college sports, we've seen evidence suggesting Cinderella might be dying. It's never been more stark than this football season. | In the aftermath of a close call against Oklahoma last month, New Mexico coach Jason Eck cracked a joke that could probably...",
+          "context_source": "page",
+          "published_at_utc": "2026-10-07T21:37:05Z",
+          "retrieved_at_utc": "2026-10-07T21:43:38.538874Z",
+          "feed": "https://sports.yahoo.com/rss/"
+        }
+      ],
+      "tech_only": false,
+      "entities": [
+        "Oklahoma",
+        "New Mexico"
+      ],
+      "evidence_strength": {
+        "level": "limited",
+        "points": 1,
+        "independent_reports": 1,
+        "publishers": [
+          "Yahoo Sports"
+        ],
+        "channels": 1,
+        "trend_signals": 0,
+        "duplicates_collapsed": 0,
+        "newest_age_hours": 0.1,
+        "reasons": [
+          "1 independent report (Yahoo Sports)",
+          "1 reporting channel",
+          "newest report under an hour before this edition",
+          "not corroborated by a second independent publisher"
+        ]
+      }
+    },
+    {
+      "rank": 37,
+      "story_id": "36e26e5856023ff8045d",
+      "entity_id": "b479279b6fbe",
+      "headline": "World Cup 2030 Early Power Rankings: Who Is No. 1?",
+      "category": "Sports",
+      "sentences": [
+        "The first fall international break saw top teams playing four times in three weeks, with some sides looking strongest to contend in 2030.",
+        "The rankings aim to predict which teams will be top contenders."
+      ],
+      "why_it_matters": null,
+      "labels": [],
+      "momentum": "BASELINE",
+      "velocity_basis": "cold_start",
+      "momentum_note": "",
+      "relevance_score": 5,
+      "velocity_score": 76.2,
+      "combined_score": 60.48,
+      "platforms": [
+        "news_rss"
+      ],
+      "publisher_hosts": [
+        "espn.com"
+      ],
+      "raw_item_count": 1,
+      "member_item_ids": [
+        354
+      ],
+      "evidence": [
+        {
+          "item_id": 354,
+          "source": "news_rss",
+          "source_name": "News feeds",
+          "title": "World Cup 2030 Early Power Rankings: Who is No. 1?",
+          "url": "https://www.espn.com/soccer/story/_/id/50114003/fifa-world-cup-power-rankings-spain-brazil-germany-usa-mexico-england-argentina-france",
+          "publisher": "ESPN - Soccer",
+          "excerpt": "With the 2026 World Cup well and truly behind us, the first fall international break saw all the top teams playing four times in three weeks. Which sides look strongest and most likely to contend in four years' time?",
+          "context_source": "feed",
+          "published_at_utc": "2026-10-07T13:46:49Z",
+          "retrieved_at_utc": "2026-10-07T21:43:39.542771Z",
+          "feed": "https://www.espn.com/espn/rss/soccer/news"
+        }
+      ],
+      "tech_only": false,
+      "entities": [
+        "World Cup"
+      ],
+      "evidence_strength": {
+        "level": "limited",
+        "points": 1,
+        "independent_reports": 1,
+        "publishers": [
+          "ESPN"
+        ],
+        "channels": 1,
+        "trend_signals": 0,
+        "duplicates_collapsed": 0,
+        "newest_age_hours": 7.9,
+        "reasons": [
+          "1 independent report (ESPN)",
+          "1 reporting channel",
+          "newest report 8 h before this edition",
+          "not corroborated by a second independent publisher"
+        ]
+      }
+    },
+    {
+      "rank": 38,
+      "story_id": "714f0a6ebb7b9e2c6307",
+      "entity_id": "e04d5c4d727a",
+      "headline": "Duke's Biggest Preseason Advantage Could Be the Players Fans Already Know",
+      "category": "Sports",
+      "sentences": [
+        "Duke's recruiting class will attract attention, but the team's biggest advantage could be the players familiar with Cameron Indoor Stadium."
+      ],
+      "why_it_matters": null,
+      "labels": [],
+      "momentum": "BASELINE",
+      "velocity_basis": "cold_start",
+      "momentum_note": "",
+      "relevance_score": 5,
+      "velocity_score": 76.2,
+      "combined_score": 60.48,
+      "platforms": [
+        "news_rss"
+      ],
+      "publisher_hosts": [
+        "sportingnews.com"
+      ],
+      "raw_item_count": 1,
+      "member_item_ids": [
+        355
+      ],
+      "evidence": [
+        {
+          "item_id": 355,
+          "source": "news_rss",
+          "source_name": "News feeds",
+          "title": "Duke’s biggest preseason advantage could be the players fans already know",
+          "url": "https://www.sportingnews.com/us/ncaa-basketball/duke/news/dukes-biggest-preseason-advantage-could-be-players-fans-already-know/14d6198607ceab0c373e11fd",
+          "publisher": "Sporting News",
+          "excerpt": "Duke's recruiting class will attract attention throughout the preseason. The more revealing part of the Blue Devils' championship pursuit could be the group already familiar with Cameron Indoor Stadium. | Cayden Boozer, Caleb Foster, Patrick Ngongba II and Dame Sarr return after finishing among Duke's top six scorers...",
+          "context_source": "page",
+          "published_at_utc": "2026-10-07T21:02:49Z",
+          "retrieved_at_utc": "2026-10-07T21:43:39.586351Z",
+          "feed": "https://www.sportingnews.com/us/rss"
+        }
+      ],
+      "tech_only": false,
+      "entities": [
+        "Duke"
+      ],
+      "evidence_strength": {
+        "level": "limited",
+        "points": 1,
+        "independent_reports": 1,
+        "publishers": [
+          "Sporting News"
+        ],
+        "channels": 1,
+        "trend_signals": 0,
+        "duplicates_collapsed": 0,
+        "newest_age_hours": 0.7,
+        "reasons": [
+          "1 independent report (Sporting News)",
+          "1 reporting channel",
+          "newest report under an hour before this edition",
+          "not corroborated by a second independent publisher"
+        ]
+      }
+    },
+    {
+      "rank": 39,
+      "story_id": "bfa823a112dd24f7f24b",
+      "entity_id": "869d18e17fe6",
+      "headline": "Star Wars: Zero Company Studio Update",
+      "category": "Entertainment",
+      "sentences": [
+        "The Star Wars: Zero Company studio is bringing back developers after furloughing most of them."
+      ],
+      "why_it_matters": null,
+      "labels": [],
+      "momentum": "BASELINE",
+      "velocity_basis": "cold_start",
+      "momentum_note": "",
+      "relevance_score": 5,
+      "velocity_score": 76.2,
+      "combined_score": 60.48,
+      "platforms": [
+        "news_rss"
+      ],
+      "publisher_hosts": [
+        "eurogamer.net"
+      ],
+      "raw_item_count": 1,
+      "member_item_ids": [
+        359
+      ],
+      "evidence": [
+        {
+          "item_id": 359,
+          "source": "news_rss",
+          "source_name": "News feeds",
+          "title": "Star Wars: Zero Company studio is bringing \"as many people back as possible\" after furloughing \"most\" of its developers",
+          "url": "https://www.eurogamer.net/star-wars-zero-company-bringing-back-furloughed-staff",
+          "publisher": "Eurogamer",
+          "excerpt": "Star Wars: Zero Company studio is bringing \"as many people back as possible\" after furloughing \"most\" of its developers, and new updates are on the way | Most of the developers of Star Wars: Zero Company were furloughed ahead of its successful launch. Bit Reactor is now returning a number of devs back to work. | Star...",
+          "context_source": "page",
+          "published_at_utc": "2026-10-07T19:24:25Z",
+          "retrieved_at_utc": "2026-10-07T21:43:39.695388Z",
+          "feed": "https://www.eurogamer.net/feed"
+        }
+      ],
+      "tech_only": false,
+      "entities": [
+        "Star Wars",
+        "Zero Company"
+      ],
+      "evidence_strength": {
+        "level": "limited",
+        "points": 1,
+        "independent_reports": 1,
+        "publishers": [
+          "Eurogamer"
+        ],
+        "channels": 1,
+        "trend_signals": 0,
+        "duplicates_collapsed": 0,
+        "newest_age_hours": 2.3,
+        "reasons": [
+          "1 independent report (Eurogamer)",
+          "1 reporting channel",
+          "newest report 2 h before this edition",
+          "not corroborated by a second independent publisher"
+        ]
+      }
+    },
+    {
+      "rank": 40,
+      "story_id": "20e23b2afe2ff654cd6e",
+      "entity_id": "4738ba807e6d",
+      "headline": "Paramount Games Studio and WB Games Merge Under Skydance Following Completion of $111bn Acquisition",
+      "category": "Entertainment",
+      "sentences": [
+        "The merger is a result of the acquisition."
+      ],
+      "why_it_matters": null,
+      "labels": [],
+      "momentum": "BASELINE",
+      "velocity_basis": "cold_start",
+      "momentum_note": "",
+      "relevance_score": 5,
+      "velocity_score": 74.3,
+      "combined_score": 59.72,
+      "platforms": [
+        "google_news"
+      ],
+      "publisher_hosts": [
+        "gamesindustry.biz"
+      ],
+      "raw_item_count": 2,
+      "member_item_ids": [
+        37
+      ],
+      "evidence": [
+        {
+          "item_id": 37,
+          "source": "google_news",
+          "source_name": "Google News",
+          "title": "Paramount Games Studio and WB Games merge under Skydance following completion of $111bn acquisition",
+          "url": "https://news.google.com/rss/articles/CBMixwFBVV95cUxQR0d3T05acTdLQkkyQmxvMjRiN2N0Z0dJbTdGYm1kZWt5bEpncDRpZjIyWHpONktMeFp5UGNPMC1aZXpXSE9jZk1vT2hLRVoybmg0X1ZjelhFZllvSzFDZkJFeV9YRmllMFhUaWVRREtHYVMwSlZuSkpIZWJWWUR3NXR5Q1dMb0VHQTVwTzlRUFlySUEtZWg0b3QxbWFhbEFVQV9ockpnM3VCZWY0UHpSbGpJdy1WUV8xZDh4RnpNUnE5Z2tSMm84?oc=5",
+          "publisher": "GamesIndustry.biz",
+          "excerpt": null,
+          "context_source": null,
+          "published_at_utc": "2026-10-07T14:00:22Z",
+          "retrieved_at_utc": "2026-10-07T21:43:37.151663Z",
+          "feed": "https://news.google.com/rss/headlines/section/topic/ENTERTAINMENT?hl=en-US&gl=US&ceid=US%3Aen"
+        }
+      ],
+      "tech_only": false,
+      "entities": [
+        "Paramount Games Studio",
+        "WB Games",
+        "Skydance"
+      ],
+      "evidence_strength": {
+        "level": "limited",
+        "points": 1,
+        "independent_reports": 1,
+        "publishers": [
+          "GamesIndustry.biz"
+        ],
+        "channels": 1,
+        "trend_signals": 0,
+        "duplicates_collapsed": 0,
+        "newest_age_hours": 7.7,
+        "reasons": [
+          "1 independent report (GamesIndustry.biz)",
+          "1 reporting channel",
+          "newest report 8 h before this edition",
+          "not corroborated by a second independent publisher"
+        ]
+      }
+    },
+    {
+      "rank": 41,
+      "story_id": "888da674880665efe99b",
+      "entity_id": "048c610c5f10",
+      "headline": "Abbott Elementary Hits Milestone Season 6",
+      "category": "Entertainment",
+      "sentences": [
+        "Abbott Elementary is hitting a milestone for Season 6, but it isn't resting on its laurels."
+      ],
+      "why_it_matters": null,
+      "labels": [],
+      "momentum": "BASELINE",
+      "velocity_basis": "cold_start",
+      "momentum_note": "",
+      "relevance_score": 5,
+      "velocity_score": 73.3,
+      "combined_score": 59.32,
+      "platforms": [
+        "news_rss"
+      ],
+      "publisher_hosts": [
+        "collider.com"
+      ],
+      "raw_item_count": 1,
+      "member_item_ids": [
+        454
+      ],
+      "evidence": [
+        {
+          "item_id": 454,
+          "source": "news_rss",
+          "source_name": "News feeds",
+          "title": "'Abbott Elementary' Officially Raises the Bar in a Milestone Season 6 | Review",
+          "url": "https://collider.com/abbott-elementary-season-6-review/",
+          "publisher": "Collider",
+          "excerpt": "Abbott Elementary is hitting a milestone for Season 6, but it isn't resting on its laurels. Quinta Brunson's award-winning sitcom is still a winner! | Abbott Elementary is on the precipice of a rare milestone, at least by modern TV standards. In an age where new shows premiere and are axed within a couple of seasons...",
+          "context_source": "page",
+          "published_at_utc": "2026-10-07T21:00:12Z",
+          "retrieved_at_utc": "2026-10-07T21:43:39.721193Z",
+          "feed": "https://collider.com/feed/"
+        }
+      ],
+      "tech_only": false,
+      "entities": [
+        "Abbott Elementary"
+      ],
+      "evidence_strength": {
+        "level": "limited",
+        "points": 1,
+        "independent_reports": 1,
+        "publishers": [
+          "Collider"
+        ],
+        "channels": 1,
+        "trend_signals": 0,
+        "duplicates_collapsed": 0,
+        "newest_age_hours": 0.7,
+        "reasons": [
+          "1 independent report (Collider)",
+          "1 reporting channel",
+          "newest report under an hour before this edition",
+          "not corroborated by a second independent publisher"
+        ]
+      }
+    },
+    {
+      "rank": 42,
+      "story_id": "a6617614fb3fb9ecbf65",
+      "entity_id": "22d984f0cb59",
+      "headline": "Meta Tests Reels-first Facebook Feed in India",
+      "category": "Internet Culture",
+      "sentences": [
+        "Meta is testing a new feature on Facebook in India, which allows users to set the Reels feed as their default.",
+        "The company is expanding its trial of the feature before bringing it to more countries.",
+        "Meta is also experimenting with the same feature on Instagram."
+      ],
+      "why_it_matters": null,
+      "labels": [],
+      "momentum": "BASELINE",
+      "velocity_basis": "cold_start",
+      "momentum_note": "",
+      "relevance_score": 5,
+      "velocity_score": 73.3,
+      "combined_score": 59.32,
+      "platforms": [
+        "news_rss"
+      ],
+      "publisher_hosts": [
+        "socialmediatoday.com"
+      ],
+      "raw_item_count": 1,
+      "member_item_ids": [
+        459
+      ],
+      "evidence": [
+        {
+          "item_id": 459,
+          "source": "news_rss",
+          "source_name": "News feeds",
+          "title": "Meta tests Reels-first Facebook feed in India",
+          "url": "https://www.socialmediatoday.com/news/meta-tests-reels-first-facebook-feed-in-india/832295/",
+          "publisher": "Social Media Today",
+          "excerpt": "The company, which is also experimenting with the option on Instagram, is expanding its trial of the feature before bringing it to more countries. | As Meta experiments with a new option that would enable Instagram users to set the Reels feed as their default home experience, it's also trying out the same idea in...",
+          "context_source": "page",
+          "published_at_utc": "2026-10-06T18:53:54Z",
+          "retrieved_at_utc": "2026-10-07T21:43:39.768765Z",
+          "feed": "https://www.socialmediatoday.com/feeds/news/"
+        }
+      ],
+      "tech_only": false,
+      "entities": [
+        "Meta",
+        "India"
+      ],
+      "evidence_strength": {
+        "level": "limited",
+        "points": 0,
+        "independent_reports": 1,
+        "publishers": [
+          "Social Media Today"
+        ],
+        "channels": 1,
+        "trend_signals": 0,
+        "duplicates_collapsed": 0,
+        "newest_age_hours": 26.8,
+        "reasons": [
+          "1 independent report (Social Media Today)",
+          "1 reporting channel",
+          "newest report 27 h before this edition",
+          "not corroborated by a second independent publisher"
+        ]
+      }
+    }
+  ],
+  "top_ranks": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    7,
+    10,
+    12
+  ],
+  "changes": {
+    "compared_run_id": "20261007T213457Z-a3ff60",
+    "compared_edition_date": "2026-10-07",
+    "compared_revision": 1,
+    "compared_generated_utc": "2026-10-07T21:42:04.737829Z",
+    "new": [
+      {
+        "kind": "new",
+        "headline": "Maduro Expected to Face New Charges of Torture of Americans",
+        "story_id": "0c3fbeab7030f24cb706",
+        "rank": 4,
+        "previous_rank": null,
+        "detail": "not in the previous edition"
+      },
+      {
+        "kind": "new",
+        "headline": "French PM Vows to Address Debt Despite Student Protests",
+        "story_id": "988da63ff939d638c5aa",
+        "rank": 8,
+        "previous_rank": null,
+        "detail": "not in the previous edition"
+      },
+      {
+        "kind": "new",
+        "headline": "Saudi-Led Forces Claim Ground Advances Against Houthis in Yemen",
+        "story_id": "491b04be9d767f6ea2d7",
+        "rank": 11,
+        "previous_rank": null,
+        "detail": "not in the previous edition"
+      },
+      {
+        "kind": "new",
+        "headline": "Apple Partners with the King's Trust on New Creative Labs Initiative",
+        "story_id": "106a83fa4889b896d134",
+        "rank": 14,
+        "previous_rank": null,
+        "detail": "not in the previous edition"
+      },
+      {
+        "kind": "new",
+        "headline": "Microsoft's $6,000 Surface RTX Spark Dev Box Costs an Eye-Watering Amount",
+        "story_id": "2ecd4ac08f8f1f9c14c4",
+        "rank": 19,
+        "previous_rank": null,
+        "detail": "not in the previous edition"
+      },
+      {
+        "kind": "new",
+        "headline": "OpenAI's Release of Mathematical Findings Draws Concerns",
+        "story_id": "d93bcf8dc199a4c7fbf0",
+        "rank": 21,
+        "previous_rank": null,
+        "detail": "not in the previous edition"
+      },
+      {
+        "kind": "new",
+        "headline": "OpenAI Publishes Solutions to Math Challenges",
+        "story_id": "909aba5372f9488202db",
+        "rank": 22,
+        "previous_rank": null,
+        "detail": "not in the previous edition"
+      },
+      {
+        "kind": "new",
+        "headline": "Police Routinely Failing to Investigate 'Revenge Porn', Research Reveals",
+        "story_id": "af45eebf926a7ccbf072",
+        "rank": 24,
+        "previous_rank": null,
+        "detail": "not in the previous edition"
+      },
+      {
+        "kind": "new",
+        "headline": "Apple Watch Series 12 and Ultra 4 Owners Report Skin Irritation",
+        "story_id": "261dfab9aa93d8e51b6d",
+        "rank": 25,
+        "previous_rank": null,
+        "detail": "not in the previous edition"
+      },
+      {
+        "kind": "new",
+        "headline": "Man Convicted of Stealing $50 Million in Crypto",
+        "story_id": "c57cbe9e4e71196999ad",
+        "rank": 27,
+        "previous_rank": null,
+        "detail": "not in the previous edition"
+      },
+      {
+        "kind": "new",
+        "headline": "Ravens Give up Too Much for Cam Jurgens?",
+        "story_id": "3dc6d5fe9783f816da71",
+        "rank": 29,
+        "previous_rank": null,
+        "detail": "not in the previous edition"
+      },
+      {
+        "kind": "new",
+        "headline": "Sony Revives Classic PlayStation Games with Ape Escape",
+        "story_id": "1204459031c2ad649758",
+        "rank": 31,
+        "previous_rank": null,
+        "detail": "not in the previous edition"
+      },
+      {
+        "kind": "new",
+        "headline": "Declan Rice Close to Agreeing New Arsenal Deal",
+        "story_id": "d974dae05d9b476a8ced",
+        "rank": 33,
+        "previous_rank": null,
+        "detail": "not in the previous edition"
+      },
+      {
+        "kind": "new",
+        "headline": "Guardiola Set to Attend Man City's First Home Game Since Guilty Verdict",
+        "story_id": "f4c6b863f55ec21c79cb",
+        "rank": 35,
+        "previous_rank": null,
+        "detail": "not in the previous edition"
+      },
+      {
+        "kind": "new",
+        "headline": "Group of 6 Schools Struggling to Stay Competitive",
+        "story_id": "dbca169c62ced8b592fd",
+        "rank": 36,
+        "previous_rank": null,
+        "detail": "not in the previous edition"
+      },
+      {
+        "kind": "new",
+        "headline": "Duke's Biggest Preseason Advantage Could Be the Players Fans Already Know",
+        "story_id": "714f0a6ebb7b9e2c6307",
+        "rank": 38,
+        "previous_rank": null,
+        "detail": "not in the previous edition"
+      },
+      {
+        "kind": "new",
+        "headline": "Abbott Elementary Hits Milestone Season 6",
+        "story_id": "888da674880665efe99b",
+        "rank": 41,
+        "previous_rank": null,
+        "detail": "not in the previous edition"
+      },
+      {
+        "kind": "new",
+        "headline": "Meta Tests Reels-first Facebook Feed in India",
+        "story_id": "a6617614fb3fb9ecbf65",
+        "rank": 42,
+        "previous_rank": null,
+        "detail": "not in the previous edition"
+      }
+    ],
+    "updated": [
+      {
+        "kind": "updated",
+        "headline": "Israelis Mourn Oct. 7 Attack as Gaza Languishes in Ruins",
+        "story_id": "a5439f16fcbd3dd393e0",
+        "rank": 1,
+        "previous_rank": 10,
+        "detail": "new reporting from Al Jazeera"
+      },
+      {
+        "kind": "updated",
+        "headline": "Fed Officials Expect Another Rate Hike Before Year-End",
+        "story_id": "dac94623f27773fdb909",
+        "rank": 3,
+        "previous_rank": 3,
+        "detail": "new reporting from CNBC Television; headline was “Fed Minutes Show Hawkish Unity Behind September Rate Hike”"
+      },
+      {
+        "kind": "updated",
+        "headline": "Microsoft Debuts Nvidia-Powered Surface Laptop Ultra",
+        "story_id": "4ba6058156f52c05281a",
+        "rank": 7,
+        "previous_rank": 33,
+        "detail": "new reporting from CNBC, The Next Web, Yahoo Finance; headline was “Microsoft Releases New Nvidia-Chip AI PCs”"
+      }
+    ],
+    "signals_up": [
+      {
+        "kind": "signals_up",
+        "headline": "Israelis Mourn Oct. 7 Attack as Gaza Languishes in Ruins",
+        "story_id": "a5439f16fcbd3dd393e0",
+        "rank": 1,
+        "previous_rank": 10,
+        "detail": "signals 2 → 4, independent reports 2 → 3"
+      },
+      {
+        "kind": "signals_up",
+        "headline": "Microsoft Debuts Nvidia-Powered Surface Laptop Ultra",
+        "story_id": "4ba6058156f52c05281a",
+        "rank": 7,
+        "previous_rank": 33,
+        "detail": "signals 1 → 3, independent reports 1 → 3"
+      }
+    ],
+    "signals_down": [],
+    "gone": [
+      {
+        "kind": "gone",
+        "headline": "IceCube and Francis Halzen Win 2026 Physics Nobel",
+        "story_id": "79bc6ddb415f604d8d4f",
+        "rank": null,
+        "previous_rank": 4,
+        "detail": "not in today's selection"
+      },
+      {
+        "kind": "gone",
+        "headline": "Tropical Storm Isaias Forms in Gulf, Could Reach U.S. as Hurricane This Weekend",
+        "story_id": "f929d477bcc9cd387e58",
+        "rank": null,
+        "previous_rank": 6,
+        "detail": "not in today's selection"
+      },
+      {
+        "kind": "gone",
+        "headline": "Trump Administration Proposes a $70,000 Fee for International Students to Work in the U.S",
+        "story_id": "d364b1d0c30231f6c533",
+        "rank": null,
+        "previous_rank": 12,
+        "detail": "not in today's selection"
+      },
+      {
+        "kind": "gone",
+        "headline": "Evicted Spanish Octogenarian Maricarmen Abascal Has Died",
+        "story_id": "427679eb028c8098ce17",
+        "rank": null,
+        "previous_rank": 13,
+        "detail": "not in today's selection"
+      },
+      {
+        "kind": "gone",
+        "headline": "Trump Considers Strike on Iran",
+        "story_id": "7d144b76eafe768584d1",
+        "rank": null,
+        "previous_rank": 14,
+        "detail": "not in today's selection"
+      },
+      {
+        "kind": "gone",
+        "headline": "Trump Loosens Rules on 'Dyed Diesel'",
+        "story_id": "4a1254116cc18374a7c8",
+        "rank": null,
+        "previous_rank": 15,
+        "detail": "not in today's selection"
+      },
+      {
+        "kind": "gone",
+        "headline": "FBI Warns of Ongoing FortiBleed Attacks",
+        "story_id": "34220906e38ba19e41f4",
+        "rank": null,
+        "previous_rank": 20,
+        "detail": "not in today's selection"
+      },
+      {
+        "kind": "gone",
+        "headline": "Undergraduate Student May Have Solved Puzzle Regarding Isolated Galaxies",
+        "story_id": "2fd685da3f5020925f18",
+        "rank": null,
+        "previous_rank": 22,
+        "detail": "not in today's selection"
+      },
+      {
+        "kind": "gone",
+        "headline": "Microsoft Gives Copilot More Control over Windows and Files",
+        "story_id": "7a04f390462857dc2b4a",
+        "rank": null,
+        "previous_rank": 23,
+        "detail": "not in today's selection"
+      },
+      {
+        "kind": "gone",
+        "headline": "White House Announces AI Responsibility Accord, Executive Orders, and Super Intelligence Task Force",
+        "story_id": "e3863c2c259a7fe7107e",
+        "rank": null,
+        "previous_rank": 24,
+        "detail": "not in today's selection"
+      },
+      {
+        "kind": "gone",
+        "headline": "Weight-Loss Drugs Show Signs of Slowing Biological Aging",
+        "story_id": "d7a69f9993ec4786a726",
+        "rank": null,
+        "previous_rank": 25,
+        "detail": "not in today's selection"
+      },
+      {
+        "kind": "gone",
+        "headline": "OpenAI 'Rogue' Agent Activities Found on Wikimedia Projects",
+        "story_id": "f2af0a83174897e14750",
+        "rank": null,
+        "previous_rank": 26,
+        "detail": "not in today's selection"
+      },
+      {
+        "kind": "gone",
+        "headline": "Elon Musk's America PAC Is Quietly Funding November's Most Consequential Elections",
+        "story_id": "8a275fb7e75c0d7dcf6e",
+        "rank": null,
+        "previous_rank": 27,
+        "detail": "not in today's selection"
+      },
+      {
+        "kind": "gone",
+        "headline": "State of Devs 2026: Job Insecurity and Insufficient Wages",
+        "story_id": "3b6eb7be00565632c18f",
+        "rank": null,
+        "previous_rank": 28,
+        "detail": "not in today's selection"
+      },
+      {
+        "kind": "gone",
+        "headline": "Browser-in-Browser Attacks Use Fake Meta Muse Ad Lure to Steal Credentials",
+        "story_id": "b880e0d8a123879ba7af",
+        "rank": null,
+        "previous_rank": 30,
+        "detail": "not in today's selection"
+      },
+      {
+        "kind": "gone",
+        "headline": "Walkable 3D Art History Museum Built from Wikipedia",
+        "story_id": "564c557eb17310fd6af7",
+        "rank": null,
+        "previous_rank": 32,
+        "detail": "not in today's selection"
+      },
+      {
+        "kind": "gone",
+        "headline": "Google, Unity Launch Platform to Create Video Games from Prompts",
+        "story_id": "afe092b561011ca8a836",
+        "rank": null,
+        "previous_rank": 36,
+        "detail": "not in today's selection"
+      },
+      {
+        "kind": "gone",
+        "headline": "Rockstar, Does GTA 6's Jason Show Full Hog or Not?",
+        "story_id": "3cd5bbe5c767c14cc11e",
+        "rank": null,
+        "previous_rank": 38,
+        "detail": "not in today's selection"
+      },
+      {
+        "kind": "gone",
+        "headline": "Man Sentenced to Prison for Bot Streams of AI Songs",
+        "story_id": "8efa66211d969b67f169",
+        "rank": null,
+        "previous_rank": 41,
+        "detail": "not in today's selection"
+      },
+      {
+        "kind": "gone",
+        "headline": "American Football Covers the Cure's 'Boys Don't Cry'",
+        "story_id": "f6295213d59d49944a8f",
+        "rank": null,
+        "previous_rank": 43,
+        "detail": "not in today's selection"
+      },
+      {
+        "kind": "gone",
+        "headline": "Alex Cora Declines Chance to Manage Phillies, Plans to Take 2027 Season Off",
+        "story_id": "51e9365a37f2ffbf4c99",
+        "rank": null,
+        "previous_rank": 45,
+        "detail": "not in today's selection"
+      },
+      {
+        "kind": "gone",
+        "headline": "Michael Malone's First UNC Preseason Test Comes Against a Coach Who Knows the NBA Grind",
+        "story_id": "1c44bdfeaa3b823fe0e4",
+        "rank": null,
+        "previous_rank": 46,
+        "detail": "not in today's selection"
+      },
+      {
+        "kind": "gone",
+        "headline": "Steelers Stuck with Mike McCarthy and Aaron Rodgers",
+        "story_id": "c98863cb6813732754a1",
+        "rank": null,
+        "previous_rank": 47,
+        "detail": "not in today's selection"
+      },
+      {
+        "kind": "gone",
+        "headline": "Luke Littler's Qualification Status for Players Championship Finals",
+        "story_id": "04756f00ba3fafaa1cbd",
+        "rank": null,
+        "previous_rank": 48,
+        "detail": "not in today's selection"
+      },
+      {
+        "kind": "gone",
+        "headline": "EuroLeague Rejects NBA's Merger Offer",
+        "story_id": "3669092bc9e662b6c4f0",
+        "rank": null,
+        "previous_rank": 49,
+        "detail": "not in today's selection"
+      },
+      {
+        "kind": "gone",
+        "headline": "LaMelo and Ant Already Have Some Good Chemistry Going",
+        "story_id": "7ce22a9fe4bc850fe154",
+        "rank": null,
+        "previous_rank": 50,
+        "detail": "not in today's selection"
+      },
+      {
+        "kind": "gone",
+        "headline": "USWNT Coach Emma Hayes Rebuilds Women's Program",
+        "story_id": "c4bbb83f807ee31ffece",
+        "rank": null,
+        "previous_rank": 51,
+        "detail": "not in today's selection"
+      }
+    ],
+    "unchanged": 21
+  }
+}

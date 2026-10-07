@@ -1,5 +1,5 @@
 {
- "generated_utc": "2026-10-07T21:19:51+00:00",
+ "generated_utc": "2026-10-07T23:12:05+00:00",
  "corpus": {
   "editions": [
    "2026-10-07-selftest-r1.json",
@@ -10,10 +10,12 @@
    "2026-10-07-rc12-r1.json",
    "2026-10-07-rc12-r2.json",
    "2026-10-07-rc12c-r1.json",
-   "2026-10-07-rc12c-r2.json"
+   "2026-10-07-rc12c-r2.json",
+   "2026-10-07-rc12d-r1.json",
+   "2026-10-07-rc12d-r2.json"
   ],
-  "reports": 776,
-  "gold_events": 430
+  "reports": 931,
+  "gold_events": 528
  },
  "settings": {
   "identity_neighbors": 12,
@@ -162,15 +164,50 @@
    }
   },
   {
+   "name": "rc12d published on the PC (nomic + rc12d identity gate; 2 rc12d editions)",
+   "precision": 0.887,
+   "recall": 1.0,
+   "f1": 0.94,
+   "false_merges": 12,
+   "missed_merges": 0,
+   "mixed_stories": 5,
+   "true_pairs": 94,
+   "predicted_pairs": 106,
+   "editions": {
+    "2026-10-07-rc12d-r1.json": {
+     "precision": 0.912,
+     "recall": 1.0,
+     "f1": 0.954,
+     "false_merges": 5,
+     "missed_merges": 0,
+     "mixed_stories": 2,
+     "multi_report_stories": 15,
+     "true_pairs": 52,
+     "predicted_pairs": 57
+    },
+    "2026-10-07-rc12d-r2.json": {
+     "precision": 0.857,
+     "recall": 1.0,
+     "f1": 0.923,
+     "false_merges": 7,
+     "missed_merges": 0,
+     "mixed_stories": 3,
+     "multi_report_stories": 15,
+     "true_pairs": 42,
+     "predicted_pairs": 49
+    }
+   }
+  },
+  {
    "name": "identity gate, no embeddings (fallback)",
-   "precision": 0.998,
-   "recall": 0.572,
-   "f1": 0.727,
-   "false_merges": 1,
-   "missed_merges": 308,
-   "mixed_stories": 1,
-   "true_pairs": 719,
-   "predicted_pairs": 412,
+   "precision": 0.996,
+   "recall": 0.568,
+   "f1": 0.724,
+   "false_merges": 2,
+   "missed_merges": 351,
+   "mixed_stories": 2,
+   "true_pairs": 813,
+   "predicted_pairs": 464,
    "editions": {
     "2026-10-07-selftest-r1.json": {
      "precision": 1.0,
@@ -270,19 +307,41 @@
      "multi_report_stories": 20,
      "true_pairs": 101,
      "predicted_pairs": 51
+    },
+    "2026-10-07-rc12d-r1.json": {
+     "precision": 1.0,
+     "recall": 0.558,
+     "f1": 0.716,
+     "false_merges": 0,
+     "missed_merges": 23,
+     "mixed_stories": 0,
+     "multi_report_stories": 12,
+     "true_pairs": 52,
+     "predicted_pairs": 29
+    },
+    "2026-10-07-rc12d-r2.json": {
+     "precision": 0.957,
+     "recall": 0.524,
+     "f1": 0.677,
+     "false_merges": 1,
+     "missed_merges": 20,
+     "mixed_stories": 1,
+     "multi_report_stories": 15,
+     "true_pairs": 42,
+     "predicted_pairs": 23
     }
    }
   },
   {
    "name": "identity gate, replayed rc11 neighbourhoods",
-   "precision": 0.998,
-   "recall": 0.629,
-   "f1": 0.771,
-   "false_merges": 1,
-   "missed_merges": 267,
-   "mixed_stories": 1,
-   "true_pairs": 719,
-   "predicted_pairs": 453,
+   "precision": 0.994,
+   "recall": 0.645,
+   "f1": 0.782,
+   "false_merges": 3,
+   "missed_merges": 289,
+   "mixed_stories": 2,
+   "true_pairs": 813,
+   "predicted_pairs": 527,
    "editions": {
     "2026-10-07-selftest-r1.json": {
      "precision": 1.0,
@@ -357,7 +416,7 @@
      "false_merges": 0,
      "missed_merges": 28,
      "mixed_stories": 0,
-     "multi_report_stories": 20,
+     "multi_report_stories": 19,
      "true_pairs": 62,
      "predicted_pairs": 34
     },
@@ -382,19 +441,41 @@
      "multi_report_stories": 22,
      "true_pairs": 101,
      "predicted_pairs": 56
+    },
+    "2026-10-07-rc12d-r1.json": {
+     "precision": 1.0,
+     "recall": 0.788,
+     "f1": 0.882,
+     "false_merges": 0,
+     "missed_merges": 11,
+     "mixed_stories": 0,
+     "multi_report_stories": 13,
+     "true_pairs": 52,
+     "predicted_pairs": 41
+    },
+    "2026-10-07-rc12d-r2.json": {
+     "precision": 0.939,
+     "recall": 0.738,
+     "f1": 0.827,
+     "false_merges": 2,
+     "missed_merges": 11,
+     "mixed_stories": 1,
+     "multi_report_stories": 16,
+     "true_pairs": 42,
+     "predicted_pairs": 33
     }
    }
   },
   {
    "name": "identity gate, every pair cosine 1",
    "precision": 1.0,
-   "recall": 0.154,
-   "f1": 0.267,
+   "recall": 0.157,
+   "f1": 0.272,
    "false_merges": 0,
-   "missed_merges": 608,
+   "missed_merges": 685,
    "mixed_stories": 0,
-   "true_pairs": 719,
-   "predicted_pairs": 111,
+   "true_pairs": 813,
+   "predicted_pairs": 128,
    "editions": {
     "2026-10-07-selftest-r1.json": {
      "precision": 1.0,
@@ -494,6 +575,28 @@
      "multi_report_stories": 4,
      "true_pairs": 101,
      "predicted_pairs": 14
+    },
+    "2026-10-07-rc12d-r1.json": {
+     "precision": 1.0,
+     "recall": 0.212,
+     "f1": 0.349,
+     "false_merges": 0,
+     "missed_merges": 41,
+     "mixed_stories": 0,
+     "multi_report_stories": 5,
+     "true_pairs": 52,
+     "predicted_pairs": 11
+    },
+    "2026-10-07-rc12d-r2.json": {
+     "precision": 1.0,
+     "recall": 0.143,
+     "f1": 0.25,
+     "false_merges": 0,
+     "missed_merges": 36,
+     "mixed_stories": 0,
+     "multi_report_stories": 4,
+     "true_pairs": 42,
+     "predicted_pairs": 6
     }
    }
   }
@@ -683,6 +786,52 @@
     ]
    ]
   },
+  "rc12d published on the PC (nomic + rc12d identity gate; 2 rc12d editions)": {
+   "2026-10-07-rc12d-r1.json": [
+    [
+     "Nobel Prize in Chemistry 2026 to Henri B. Kagan and Kenso Soai",
+     "Nobel Prizes 2026: brain switches, 'ghost' particle hunter, and 'the chemistry of life'"
+    ],
+    [
+     "Nobel prize in chemistry awarded for work on mirror-image molecules",
+     "Nobel Prizes 2026: brain switches, 'ghost' particle hunter, and 'the chemistry of life'"
+    ],
+    [
+     "Nobel Prizes 2026: brain switches, 'ghost' particle hunter, and 'the chemistry of life'",
+     "Henri B. Kagan and Kenso Soai win Nobel Prize in chemistry"
+    ],
+    [
+     "From Iran to the U.K., Trump Is Being Forced Into Retreat",
+     "Trump wants to turn his private golf club into a presidential retreat"
+    ],
+    [
+     "Trump's Retreat: From the Gulf to Britain, American Forces Pull Back",
+     "Trump wants to turn his private golf club into a presidential retreat"
+    ]
+   ],
+   "2026-10-07-rc12d-r2.json": [
+    [
+     "Israelis mourn Oct. 7 attack as Palestinians in Gaza languish in ruins of the war it sparked",
+     "Gaza child's autoimmune condition triggered amid Israel's war"
+    ],
+    [
+     "Israelis mourn 7 October attack victims three years after deadly Hamas raid",
+     "Gaza child's autoimmune condition triggered amid Israel's war"
+    ],
+    [
+     "Nobel Prize in Chemistry 2026 to Henri B. Kagan and Kenso Soai",
+     "Nobel Prizes 2026: brain switches, 'ghost' particle hunter, and 'the chemistry of life'"
+    ],
+    [
+     "Nobel prize in chemistry awarded for work on mirror-image molecules",
+     "Nobel Prizes 2026: brain switches, 'ghost' particle hunter, and 'the chemistry of life'"
+    ],
+    [
+     "Nobel Prizes 2026: brain switches, 'ghost' particle hunter, and 'the chemistry of life'",
+     "Henri B. Kagan and Kenso Soai win Nobel Prize in chemistry"
+    ]
+   ]
+  },
   "identity gate, no embeddings (fallback)": {
    "2026-10-07-selftest-r1.json": [],
    "2026-10-07-selftest-r2.json": [],
@@ -697,7 +846,14 @@
      "Nvidia RTX Spark for $2,999.99: HP leak reveals RTX Spark laptop pricing ahead of launch"
     ]
    ],
-   "2026-10-07-rc12c-r2.json": []
+   "2026-10-07-rc12c-r2.json": [],
+   "2026-10-07-rc12d-r1.json": [],
+   "2026-10-07-rc12d-r2.json": [
+    [
+     "From Iran to the U.K., Trump Is Being Forced Into Retreat",
+     "Trump wants to turn his private golf club into a presidential retreat"
+    ]
+   ]
   },
   "identity gate, replayed rc11 neighbourhoods": {
    "2026-10-07-selftest-r1.json": [],
@@ -713,7 +869,18 @@
      "Nvidia RTX Spark for $2,999.99: HP leak reveals RTX Spark laptop pricing ahead of launch"
     ]
    ],
-   "2026-10-07-rc12c-r2.json": []
+   "2026-10-07-rc12c-r2.json": [],
+   "2026-10-07-rc12d-r1.json": [],
+   "2026-10-07-rc12d-r2.json": [
+    [
+     "From Iran to the U.K., Trump Is Being Forced Into Retreat",
+     "Trump wants to turn his private golf club into a presidential retreat"
+    ],
+    [
+     "Trump's Retreat: From the Gulf to Britain, American Forces Pull Back",
+     "Trump wants to turn his private golf club into a presidential retreat"
+    ]
+   ]
   },
   "identity gate, every pair cosine 1": {
    "2026-10-07-selftest-r1.json": [],
@@ -724,7 +891,9 @@
    "2026-10-07-rc12-r1.json": [],
    "2026-10-07-rc12-r2.json": [],
    "2026-10-07-rc12c-r1.json": [],
-   "2026-10-07-rc12c-r2.json": []
+   "2026-10-07-rc12c-r2.json": [],
+   "2026-10-07-rc12d-r1.json": [],
+   "2026-10-07-rc12d-r2.json": []
   }
  }
 }

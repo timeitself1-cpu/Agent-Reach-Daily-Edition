@@ -116,12 +116,24 @@ OPEN_FALSE_MERGES = {"2026-10-07-rc12c-r1.json": {frozenset((
     "Nvidia RTX Spark for $2,999.99: HP leak reveals RTX Spark laptop pricing ahead of launch"))}}
 
 
+#: False merges the gate prevents only at a real run's proportions with the cosines the PC recorded: in this
+#: 72-report edition 'Trump' is in 4 titles (scarce), and replayed vectors put the golf club at cosine 0.96 with
+#: the forces' retreat (0.70 and 0.76 on the PC). test_a_common_name_and_one_word_never_attach_a_lone_report
+#: rebuilds the real run.
+SMALL_RUN_MERGES = {"2026-10-07-rc12d-r2.json": {frozenset((
+    "From Iran to the U.K., Trump Is Being Forced Into Retreat",
+    "Trump wants to turn his private golf club into a presidential retreat")), frozenset((
+    "Trump's Retreat: From the Gulf to Britain, American Forces Pull Back",
+    "Trump wants to turn his private golf club into a presidential retreat"))}}
+
+
 @pytest.mark.parametrize("name", EDITIONS)
 def test_no_false_merges_when_rc11_neighbourhoods_are_replayed(name, tmp_path):
     corpus = load_edition(name)
     outcome, groups = run_clusterer(corpus, replay_vectors(corpus), tmp_path)
     s = score(corpus, groups, related_pairs(name))
-    unexpected = [m for m in s.false_merges if frozenset(m) not in OPEN_FALSE_MERGES.get(name, set())]
+    known = OPEN_FALSE_MERGES.get(name, set()) | SMALL_RUN_MERGES.get(name, set())
+    unexpected = [m for m in s.false_merges if frozenset(m) not in known]
     assert unexpected == [], unexpected
     assert outcome.semantic["model_used"] == "embeddinggemma-2:270m"
 
@@ -408,6 +420,25 @@ def test_rc12c_refresh_cases_stay_apart(tmp_path):
     assert pike and index.link_evidence(pike[0], _id(corpus, "Christa Pike 'conscious and speaking'"))[0]
 
 
+def test_rc12d_refresh_cases_stay_apart(tmp_path):
+    """Case H (rc12d on the user's PC, October 7, 16:43): 'Gaza' + 'war' counted as two distinctive phrases and put
+    a Gaza child's illness in the October 7 anniversary story; Nature's 'Nobel Prizes 2026' (its lead names the
+    medicine and physics prizes too) joined the chemistry prize."""
+    corpus, groups = _replayed_groups("2026-10-07-rc12d-r2.json", tmp_path)
+    mourn = [_id(corpus, "Israelis mourn Oct. 7 attack"), _id(corpus, "Israelis mourn 7 October attack")]
+    assert _together(groups, *mourn)
+    assert not any(_together(groups, _id(corpus, "Gaza child"), m) for m in mourn)
+    chemistry = [_id(corpus, p) for p in ("Nobel Prize in Chemistry 2026 to", "Henri B. Kagan and Kenso Soai win",
+                                          "Nobel prize in chemistry awarded")]
+    assert all(_together(groups, chemistry[0], c) for c in chemistry[1:])
+    nature = _id(corpus, "Nobel Prizes 2026: brain switches")
+    assert not any(_together(groups, nature, c) for c in chemistry)
+    corpus, index = _index("2026-10-07-rc12d-r2.json")
+    assert not index.link_evidence(_id(corpus, "Gaza child"), _id(corpus, "Israelis mourn Oct. 7 attack"))[0]
+    assert _id(corpus, "Nobel Prizes 2026: brain switches") in index.roundups
+    assert _id(corpus, "Nobel Prize in Chemistry 2026 to") not in index.roundups
+
+
 def test_a_common_name_and_one_word_need_the_embedding_too():
     """Case H: in a real run (1,329 reports) a name counted as rare up to 6% of the run, so 'Trump' + 'retreat'
     were two distinctive phrases and US forces pulling back joined Trump's golf-club 'presidential retreat'
@@ -438,6 +469,38 @@ def test_a_common_name_and_one_word_need_the_embedding_too():
     assert index.gate.decide(1, 2).verdict == NEUTRAL and index.gate.decide(2, 4).verdict == ACCEPT
     index.attach_vectors({i: [1.0, 0.0] for i in index.items}, 0.45, 0.8)  # the embedding sees one event
     assert index.gate.decide(1, 2).verdict == ACCEPT
+
+
+def test_a_common_name_and_one_word_never_attach_a_lone_report():
+    """Case H again, rc12d on the PC: the golf-club report was alone in its run, and a lone report joined the US
+    forces story because the attach rule still counted 'Trump' as a rare name (6% of the run) while the pair rule
+    already called it common (2%). It was neutral with both members (cosine 0.76 and 0.70), as here."""
+    now = RawTrendItem(title="x", source=SourceName.NEWS_RSS).timestamp
+    rnd = random.Random(5)
+
+    def word() -> str:
+        return "".join(rnd.choice("bcdfghklmnprstvz") + rnd.choice("aeiou") for _ in range(4))
+
+    titles = ["From Iran to the U.K., Trump Is Being Forced Into Retreat",
+              "Trump's Retreat: From the Gulf to Britain, American Forces Pull Back",
+              "Trump wants to turn his private golf club into a presidential retreat"]
+    titles += [f"Officials say Trump weighs {word()} plan for {word()}" for _ in range(15)]
+    titles += [f"Officials say Trump's {word()} plan for {word()} stalls" for _ in range(15)]
+    titles += [f"Regulators review {word()} rules for {word()} growers" for _ in range(600)]
+    items = [CleanedTrendItem(item_id=i, title=t, normalized_title=t, source=SourceName.NEWS_RSS, heuristic_score=0.5,
+                              timestamp=now) for i, t in enumerate(titles, 1)]
+    index = LinkIndex(items, items)
+    assert index.name_cap < index.name_df("trump") <= index.rare_cap  # as on the PC
+    # the recorded cosines: forces 0.868 with each other; the golf club 0.757 and 0.701 with them
+    y = (0.701 - 0.868 * 0.757) / (1 - 0.868 ** 2) ** 0.5
+    vectors = {i: [0.0, 0.0, 0.0, 1.0] for i in index.items}
+    vectors.update({1: [1.0, 0.0, 0.0, 0.0], 2: [0.868, (1 - 0.868 ** 2) ** 0.5, 0.0, 0.0],
+                    3: [0.757, y, (1 - 0.757 ** 2 - y ** 2) ** 0.5, 0.0]})
+    index.attach_vectors(vectors, 0.45, 0.8)
+    gate = index.gate
+    assert gate.decide(1, 2).verdict == ACCEPT
+    assert gate.decide(1, 3).verdict == NEUTRAL and gate.decide(2, 3).verdict == NEUTRAL
+    assert cohesive_groups([1, 2, 3], gate) == [[1, 2], [3]]
 
 
 @pytest.mark.xfail(strict=True, reason="open: two RTX Spark laptop stories share five title words (October 7, rc12c)")

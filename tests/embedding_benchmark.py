@@ -54,7 +54,7 @@ from agent_reach.pipeline.clusterer import LinkIndex
 from agent_reach.pipeline.density import density_cluster
 from agent_reach.pipeline.embeddings import EmbeddingUnavailable, embed_reports
 from agent_reach.pipeline.event_identity import cohesive_groups, lexical_candidates, nearest_candidates
-from tests.event_corpus import (EDITIONS, RC11_EDITIONS, RC12_EDITIONS, RC12C_EDITIONS, CorpusItem, load_edition,
+from tests.event_corpus import (EDITIONS, RC11_EDITIONS, RC12_EDITIONS, RC12C_EDITIONS, RC12D_EDITIONS, CorpusItem, load_edition,
                                 recorded_groups, related_pairs, score)
 
 # embeddinggemma:300m (the first EmbeddingGemma): October 7, Ollama could run EmbeddingGemma 2 on Macs only, so the
@@ -234,6 +234,8 @@ async def run(models: list[str], use_ollama: bool, host: str, client=None, repla
         lambda n, c: recorded_groups(c), only=RC12_EDITIONS)
     add("rc12c published on the PC (nomic + rc12b identity gate; 2 rc12c editions)",
         lambda n, c: recorded_groups(c), only=RC12C_EDITIONS)
+    add("rc12d published on the PC (nomic + rc12d identity gate; 2 rc12d editions)",
+        lambda n, c: recorded_groups(c), only=RC12D_EDITIONS)
     add("identity gate, no embeddings (fallback)", lambda n, c: identity_groups(c, settings, None)[0])
     add("identity gate, replayed rc11 neighbourhoods", lambda n, c: identity_groups(c, settings, replay_vectors(c))[0])
     add("identity gate, every pair cosine 1",

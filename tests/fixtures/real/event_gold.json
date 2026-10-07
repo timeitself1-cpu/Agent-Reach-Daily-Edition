@@ -110,6 +110,29 @@
    "same_event": [["France Suspends Use of Stun Grenades", "French Riot Police Fire Tear Gas"]],
    "related": [["France Suspends Use of Stun Grenades", "france-iran-ambassador"],
                ["Jon Rahm Quits LIV Golf", "liv-golf-financing"]]
+  },
+  "2026-10-07-rc12d-r1.json": {
+   "split": {
+    "Trump's Forces Pull Back Globally": {"Trump wants to turn": "trump-golf-retreat"},
+    "Christa Pike Survives Botched Execution": {
+     "Texas set to carry out first US execution": "texas-execution",
+     "Lawyers looking to block Texas man": "texas-execution"
+    }
+   },
+   "unassigned": ["Nobel Prizes 2026: brain switches"],
+   "related": [["Christa Pike Survives Botched Execution", "texas-execution"]]
+  },
+  "2026-10-07-rc12d-r2.json": {
+   "split": {
+    "Trump's Retreat: From the Gulf": {"Trump wants to turn": "trump-golf-retreat"},
+    "Christa Pike Survives Botched Execution": {
+     "Texas set to carry out first US execution": "texas-execution",
+     "Lawyers looking to block Texas man": "texas-execution"
+    },
+    "Israelis Mourn Oct. 7 Attack": {"Gaza child": "gaza-child-autoimmune"}
+   },
+   "unassigned": ["Nobel Prizes 2026: brain switches"],
+   "related": [["Christa Pike Survives Botched Execution", "texas-execution"]]
   }
  }
 }

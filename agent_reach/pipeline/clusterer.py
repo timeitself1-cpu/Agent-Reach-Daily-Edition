@@ -380,7 +380,8 @@ EXCLUSIVE_QUALIFIERS = (
 #: privacy probe of a smart-glasses app maker to a profile of Meta's AI-app billionaire; 'multimodal' +
 #: 'model' joined Mistral Large 4 to EmbeddingGemma 2; 'agents' joined Sierra's protocol to Wikimedia's report).
 #: A negation is no subject: "don't" + 'poll' joined a Reuters/Ipsos poll on AI risks to a poll on taxpayer-funded
-#: campaign ads (October 7, rc12c on the PC).
+#: campaign ads (October 7, rc12c on the PC). A war is a topic that runs for years, not one event: 'Gaza' + 'war'
+#: put a Gaza child's illness in the story of Israelis mourning the October 7 attack (October 7, rc12d on the PC).
 COMMON_WORDS = frozenset("""
 add adds added adding use uses used using make made making take takes took taking taken give gives gave giving
 given come comes came coming going goes went gone see sees saw seen seeing show shows showed shown showing
@@ -405,6 +406,7 @@ technology technologies tech app apps ai model models platform platforms device 
 digital software tool tools feature features agent agents possible possibly likely
 confirm confirms confirmed confirming warn warns warned warning send sends sent sending
 don't doesn't didn't can't won't isn't aren't wasn't weren't hasn't haven't wouldn't shouldn't couldn't
+war wars
 """.split())
 #: Calendar words are when, not what: 'October 7' joined NASA's picture of the day ('APOD: 2026 October 7'),
 #: a Fauda review ('Fauda's October 7 Episodes'), the '#October7' hashtag and 'October 2026 Satellite Puzzler'
@@ -454,7 +456,8 @@ class LinkIndex:
         self.nameless_cap = max(3, int(0.01 * n))
         self.name_cap = max(4, int(0.02 * n))  # a name alone as one of two pieces of evidence (link_evidence)
         self.roundups = {iid for iid, it in pool.items()
-                         if is_roundup(it.normalized_title) or any(is_roundup(o.title) for o in it.observations)}
+                         if is_roundup(it.normalized_title) or any(is_roundup(o.title) for o in it.observations)
+                         or self._names_several_fields(it)}
         self._rx_cache: dict[str, re.Pattern[str] | None] = {}
         self._co_cache: dict[tuple[str, str], bool] = {}
         self.name_words = self._name_words(pool.values())
@@ -467,6 +470,14 @@ class LinkIndex:
         self._titles: dict[int, frozenset[str]] = {}
         self._sc_names: frozenset[str] | None = None
         self._gate = None
+
+    @staticmethod
+    def _names_several_fields(it: CleanedTrendItem) -> bool:
+        """Title and lead name three prizes or fields of one kind: the report covers several stories. Nature's
+        'Nobel Prizes 2026: brain switches, 'ghost' particle hunter, and the chemistry of life' (its lead names the
+        medicine and physics prizes) joined the chemistry prize (October 7, rc12d on the PC)."""
+        words = significant_tokens(f"{it.normalized_title}. {clip_words(it.context or '', 300)}")
+        return any(sum(1 for field in fields if field & words) >= 3 for fields in EXCLUSIVE_QUALIFIERS)
 
     # ............................................................ names
     @staticmethod
@@ -729,14 +740,16 @@ class LinkIndex:
             self._sc_names = frozenset(found)
         return self._sc_names
 
-    def shares_name(self, a: int, b: int, rare: bool = False, titles: bool = False) -> bool:
+    def shares_name(self, a: int, b: int, rare: bool = False, titles: bool = False, scarce: bool = False) -> bool:
         """Both reports write the same name. With ``rare``, only a name few reports of the run carry: a
         name in six reports ('Google') says who, not what (October 7: Google's gaming platform and Google's
-        investment in a 'virtual cell' shared 'Google' + 'create')."""
+        investment in a 'virtual cell' shared 'Google' + 'create'). With ``scarce``, only a name in at most 2% of
+        the run (``name_cap``), the bar a name must pass to count as evidence on its own."""
         na, nb = self.written_names(a) - INSTITUTION_NAMES, self.written_names(b) - INSTITUTION_NAMES
         if titles:  # only names both TITLES write (in any form): a name in one page's lead is context, not the subject
             na, nb = self._title_names(a, na), self._title_names(b, nb)
-        return any(self.same_name(x, y) and (not rare or self.name_df(x) <= self.rare_cap) for x in na for y in nb)
+        cap = self.name_cap if scarce else self.rare_cap
+        return any(self.same_name(x, y) and (not (rare or scarce) or self.name_df(x) <= cap) for x in na for y in nb)
 
     def _title_words(self, item_id: int) -> frozenset[str]:
         if item_id not in self._titles:

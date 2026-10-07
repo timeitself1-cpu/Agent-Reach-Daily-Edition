@@ -54,7 +54,7 @@ class _Index(Protocol):
 
     def specific_overlap(self, a: int, b: int) -> list[str]: ...
 
-    def shares_name(self, a: int, b: int, rare: bool = False) -> bool: ...
+    def shares_name(self, a: int, b: int, rare: bool = False, titles: bool = False, scarce: bool = False) -> bool: ...
 
     def context_support(self, a: int, b: int) -> list[str]: ...
 
@@ -257,9 +257,13 @@ def _attach_supported(groups: list[list[int]], gate: IdentityGate) -> list[list[
         def title_link(m: int) -> bool:
             return bool(gate.index.specific_overlap(x, m)) or gate.index.shares_name(x, m, rare=True, titles=True)
 
+        # a name and one specific word attach a report on their own only when the name is scarce (2% of the run,
+        # as in link_evidence): at 6% 'Trump' + 'retreat' still put Trump's golf-club 'presidential retreat' in the
+        # story of US forces pulling back, neutral with both at cosine 0.76 and 0.70 (October 7, rc12d on the PC)
         return (len(gate.index.shared_units(x, g[0], words, context=True)) >= 2 and len(words) >= 2
                 and any(gate.index.specific_overlap(x, m) for m in g) and all(title_link(m) for m in g)
-                or any(gate.index.shares_name(x, m, rare=True, titles=True) and gate.index.specific_overlap(x, m) for m in g))
+                or any(gate.index.shares_name(x, m, titles=True, scarce=True) and gate.index.specific_overlap(x, m)
+                       for m in g))
 
     for x in lone:
         homes = [g for g in stories if fits(x, g)]
