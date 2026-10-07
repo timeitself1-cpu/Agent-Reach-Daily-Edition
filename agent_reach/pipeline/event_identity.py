@@ -226,7 +226,9 @@ def _attach_supported(groups: list[list[int]], gate: IdentityGate) -> list[list[
     the Spanish snap election over the housing crisis)."""
     stories = [g for g in groups if len(g) >= 2]
     lone = [g[0] for g in groups if len(g) == 1]
-    if not stories or not lone:
+    # without embeddings, support is one shared word and nothing corroborates it ('multimodal' + 'model'
+    # attached Mistral Large 4 to EmbeddingGemma 2; 'agent' joined Sierra's protocol to Wikimedia's rogue agents)
+    if not stories or not lone or not gate.vectors:
         return groups
     attached: set[int] = set()
     def fits(x: int, g: list[int]) -> bool:

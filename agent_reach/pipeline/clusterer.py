@@ -353,6 +353,9 @@ EXCLUSIVE_QUALIFIERS = (
 #: They never count as the shared 'what happened' that links two reports. 'midterm(s)' is a season word:
 #: in US news before November 2026 a diesel order, a $90 Medicare payment and a late-night joke all
 #: mention the midterms (as frequent in the run as 'diesel', so a frequency floor cannot tell them apart).
+#: Broad technology concepts are the same (October 7: 'app', 'AI', 'privacy' and 'smart glasses' joined a
+#: privacy probe of a smart-glasses app maker to a profile of Meta's AI-app billionaire; 'multimodal' +
+#: 'model' joined Mistral Large 4 to EmbeddingGemma 2).
 COMMON_WORDS = frozenset("""
 add adds added adding use uses used using make made making take takes took taking taken give gives gave giving
 given come comes came coming going goes went gone see sees saw seen seeing show shows showed shown showing
@@ -373,6 +376,8 @@ historic raise raises raised raising million millions billion billions trillion 
 evening afternoon weekend safety
 midterm midterms
 federal
+technology technologies tech app apps ai model models platform platforms device devices smart privacy data online
+digital software tool tools feature features
 """.split())
 #: Calendar words are when, not what: 'October 7' joined NASA's picture of the day ('APOD: 2026 October 7'),
 #: a Fauda review ('Fauda's October 7 Episodes'), the '#October7' hashtag and 'October 2026 Satellite Puzzler'
@@ -586,7 +591,11 @@ class LinkIndex:
         cap = self.rare_cap if shared & self.name_words else self.nameless_cap
         rare_units = [u for u in self.shared_units(a, b, shared)
                       if any(self.df[t] <= cap and t not in COMMON_WORDS for t in u)]
-        if len(rare_units) >= 2 and any(self._event_unit(u) for u in rare_units):
+        # an action word alone ('releases') is not one of the two: 'Mistral AI Releases Mistral Large 4 ...
+        # Multimodal MoE Model' and 'Google DeepMind Releases EmbeddingGemma 2, a 740M Open Multimodal
+        # Embedding Model' are two launches (October 7, selftest r2)
+        what = [u for u in rare_units if not u <= EVENT_WORDS]
+        if len(what) >= 2 and any(self._event_unit(u) for u in rare_units):
             return True, [" ".join(sorted(u)) for u in rare_units], "two distinctive phrases in common"
         # short trend fragments ('Packers', 'Bijan') link to a fuller title via one distinctive name
         short = a if len(ta) <= len(tb) else b

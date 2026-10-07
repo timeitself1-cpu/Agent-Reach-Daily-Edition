@@ -12,6 +12,7 @@ import random
 
 from agent_reach.models import CleanedTrendItem, RawTrendItem, SourceName
 from agent_reach.pipeline.clusterer import LinkIndex
+from agent_reach.pipeline.event_identity import IdentityGate, cohesive_groups
 from tests.test_accuracy import NOW, REAL
 
 #: (source, title, context) as they appeared in the edition
@@ -125,6 +126,12 @@ def _groups(ids: list[int]) -> list[list[int]]:
     return sorted((sorted(g) for g in INDEX.components(ids, [])), key=lambda g: (-len(g), g))
 
 
+def _groups_embedded(ids: list[int]) -> list[list[int]]:
+    """Grouping when the embedding model agrees that the reports are close (identical vectors)."""
+    gate = IdentityGate(INDEX, {i: [1.0] for i in ids})
+    return sorted((sorted(g) for g in cohesive_groups(ids, gate)), key=lambda g: (-len(g), g))
+
+
 # ---------------------------------------------------------------- story membership
 def test_an_everyday_word_does_not_link_two_stories():
     assert _groups([1, 2, 3, 4, 5, 6, 7]) == [[2, 3, 6, 7], [1, 4], [5]]
@@ -181,8 +188,12 @@ def test_one_shared_key_name_is_not_the_same_story():
 
 def test_corroborated_stories_of_the_edition_stay_together():
     # (the BBC Quebec title, 18, shares only names with the others and never linked by title alone)
-    for ids in ([11, 12, 13, 14], [15, 16, 17], [19, 20], [21, 22]):
+    for ids in ([11, 12, 13, 14], [19, 20], [21, 22]):
         assert _groups(ids) == [ids]
+    # rc12: 'What to know about Spain's housing protests ...' shares only 'housing' with the snap-election
+    # reports: without an embedding nothing confirms it, with an agreeing embedding it joins
+    assert _groups([15, 16, 17]) == [[15, 16], [17]]
+    assert _groups_embedded([15, 16, 17]) == [[15, 16, 17]]
     # rc12, precision first: "Trump says 'threat' led US to pull bombers from RAF Fairford" shares 'bombers' +
     # 'threat' with the B-1 report but only the word 'led' with 'Potential Iranian Drone Attack Led to Exit of
     # U.S. Aircraft From British Air Base'; linked to one of two members, it is not chained in by title alone

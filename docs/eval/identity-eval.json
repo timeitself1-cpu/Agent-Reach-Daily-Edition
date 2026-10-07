@@ -1,0 +1,410 @@
+{
+ "generated_utc": "2026-10-07T16:15:04+00:00",
+ "corpus": {
+  "editions": [
+   "2026-10-07-selftest-r1.json",
+   "2026-10-07-selftest-r2.json",
+   "2026-10-07-selftest2-r1.json",
+   "2026-10-07-selftest2-r2.json",
+   "2026-10-07-0935-export.json"
+  ],
+  "reports": 427,
+  "gold_events": 225
+ },
+ "settings": {
+  "identity_neighbors": 12,
+  "identity_candidate_cosine": 0.45,
+  "identity_strong_cosine": 0.8,
+  "event_max_age_hours": 72.0
+ },
+ "ollama": false,
+ "rows": [
+  {
+   "name": "rc11 published (nomic + HDBSCAN + single-link)",
+   "precision": 0.885,
+   "recall": 0.976,
+   "f1": 0.928,
+   "false_merges": 52,
+   "missed_merges": 10,
+   "mixed_stories": 13,
+   "true_pairs": 411,
+   "predicted_pairs": 453,
+   "editions": {
+    "2026-10-07-selftest-r1.json": {
+     "precision": 1.0,
+     "recall": 0.915,
+     "f1": 0.955,
+     "false_merges": 0,
+     "missed_merges": 10,
+     "mixed_stories": 0,
+     "multi_report_stories": 20,
+     "true_pairs": 117,
+     "predicted_pairs": 107
+    },
+    "2026-10-07-selftest-r2.json": {
+     "precision": 0.947,
+     "recall": 1.0,
+     "f1": 0.973,
+     "false_merges": 6,
+     "missed_merges": 0,
+     "mixed_stories": 2,
+     "multi_report_stories": 17,
+     "true_pairs": 108,
+     "predicted_pairs": 114
+    },
+    "2026-10-07-selftest2-r1.json": {
+     "precision": 0.864,
+     "recall": 1.0,
+     "f1": 0.927,
+     "false_merges": 11,
+     "missed_merges": 0,
+     "mixed_stories": 4,
+     "multi_report_stories": 24,
+     "true_pairs": 70,
+     "predicted_pairs": 81
+    },
+    "2026-10-07-selftest2-r2.json": {
+     "precision": 0.786,
+     "recall": 1.0,
+     "f1": 0.88,
+     "false_merges": 15,
+     "missed_merges": 0,
+     "mixed_stories": 3,
+     "multi_report_stories": 17,
+     "true_pairs": 55,
+     "predicted_pairs": 70
+    },
+    "2026-10-07-0935-export.json": {
+     "precision": 0.753,
+     "recall": 1.0,
+     "f1": 0.859,
+     "false_merges": 20,
+     "missed_merges": 0,
+     "mixed_stories": 4,
+     "multi_report_stories": 19,
+     "true_pairs": 61,
+     "predicted_pairs": 81
+    }
+   }
+  },
+  {
+   "name": "identity gate, no embeddings (fallback)",
+   "precision": 1.0,
+   "recall": 0.635,
+   "f1": 0.777,
+   "false_merges": 0,
+   "missed_merges": 150,
+   "mixed_stories": 0,
+   "true_pairs": 411,
+   "predicted_pairs": 261,
+   "editions": {
+    "2026-10-07-selftest-r1.json": {
+     "precision": 1.0,
+     "recall": 0.427,
+     "f1": 0.599,
+     "false_merges": 0,
+     "missed_merges": 67,
+     "mixed_stories": 0,
+     "multi_report_stories": 19,
+     "true_pairs": 117,
+     "predicted_pairs": 50
+    },
+    "2026-10-07-selftest-r2.json": {
+     "precision": 1.0,
+     "recall": 0.426,
+     "f1": 0.597,
+     "false_merges": 0,
+     "missed_merges": 62,
+     "mixed_stories": 0,
+     "multi_report_stories": 18,
+     "true_pairs": 108,
+     "predicted_pairs": 46
+    },
+    "2026-10-07-selftest2-r1.json": {
+     "precision": 1.0,
+     "recall": 0.971,
+     "f1": 0.986,
+     "false_merges": 0,
+     "missed_merges": 2,
+     "mixed_stories": 0,
+     "multi_report_stories": 20,
+     "true_pairs": 70,
+     "predicted_pairs": 68
+    },
+    "2026-10-07-selftest2-r2.json": {
+     "precision": 1.0,
+     "recall": 0.836,
+     "f1": 0.911,
+     "false_merges": 0,
+     "missed_merges": 9,
+     "mixed_stories": 0,
+     "multi_report_stories": 19,
+     "true_pairs": 55,
+     "predicted_pairs": 46
+    },
+    "2026-10-07-0935-export.json": {
+     "precision": 1.0,
+     "recall": 0.836,
+     "f1": 0.911,
+     "false_merges": 0,
+     "missed_merges": 10,
+     "mixed_stories": 0,
+     "multi_report_stories": 16,
+     "true_pairs": 61,
+     "predicted_pairs": 51
+    }
+   }
+  },
+  {
+   "name": "identity gate, replayed rc11 neighbourhoods",
+   "precision": 1.0,
+   "recall": 0.762,
+   "f1": 0.865,
+   "false_merges": 0,
+   "missed_merges": 98,
+   "mixed_stories": 0,
+   "true_pairs": 411,
+   "predicted_pairs": 313,
+   "editions": {
+    "2026-10-07-selftest-r1.json": {
+     "precision": 1.0,
+     "recall": 0.684,
+     "f1": 0.812,
+     "false_merges": 0,
+     "missed_merges": 37,
+     "mixed_stories": 0,
+     "multi_report_stories": 19,
+     "true_pairs": 117,
+     "predicted_pairs": 80
+    },
+    "2026-10-07-selftest-r2.json": {
+     "precision": 1.0,
+     "recall": 0.583,
+     "f1": 0.737,
+     "false_merges": 0,
+     "missed_merges": 45,
+     "mixed_stories": 0,
+     "multi_report_stories": 17,
+     "true_pairs": 108,
+     "predicted_pairs": 63
+    },
+    "2026-10-07-selftest2-r1.json": {
+     "precision": 1.0,
+     "recall": 0.986,
+     "f1": 0.993,
+     "false_merges": 0,
+     "missed_merges": 1,
+     "mixed_stories": 0,
+     "multi_report_stories": 21,
+     "true_pairs": 70,
+     "predicted_pairs": 69
+    },
+    "2026-10-07-selftest2-r2.json": {
+     "precision": 1.0,
+     "recall": 0.909,
+     "f1": 0.952,
+     "false_merges": 0,
+     "missed_merges": 5,
+     "mixed_stories": 0,
+     "multi_report_stories": 18,
+     "true_pairs": 55,
+     "predicted_pairs": 50
+    },
+    "2026-10-07-0935-export.json": {
+     "precision": 1.0,
+     "recall": 0.836,
+     "f1": 0.911,
+     "false_merges": 0,
+     "missed_merges": 10,
+     "mixed_stories": 0,
+     "multi_report_stories": 16,
+     "true_pairs": 61,
+     "predicted_pairs": 51
+    }
+   }
+  },
+  {
+   "name": "identity gate, every pair cosine 1",
+   "precision": 1.0,
+   "recall": 0.187,
+   "f1": 0.316,
+   "false_merges": 0,
+   "missed_merges": 334,
+   "mixed_stories": 0,
+   "true_pairs": 411,
+   "predicted_pairs": 77,
+   "editions": {
+    "2026-10-07-selftest-r1.json": {
+     "precision": 1.0,
+     "recall": 0.145,
+     "f1": 0.254,
+     "false_merges": 0,
+     "missed_merges": 100,
+     "mixed_stories": 0,
+     "multi_report_stories": 4,
+     "true_pairs": 117,
+     "predicted_pairs": 17
+    },
+    "2026-10-07-selftest-r2.json": {
+     "precision": 1.0,
+     "recall": 0.102,
+     "f1": 0.185,
+     "false_merges": 0,
+     "missed_merges": 97,
+     "mixed_stories": 0,
+     "multi_report_stories": 4,
+     "true_pairs": 108,
+     "predicted_pairs": 11
+    },
+    "2026-10-07-selftest2-r1.json": {
+     "precision": 1.0,
+     "recall": 0.343,
+     "f1": 0.511,
+     "false_merges": 0,
+     "missed_merges": 46,
+     "mixed_stories": 0,
+     "multi_report_stories": 3,
+     "true_pairs": 70,
+     "predicted_pairs": 24
+    },
+    "2026-10-07-selftest2-r2.json": {
+     "precision": 1.0,
+     "recall": 0.236,
+     "f1": 0.382,
+     "false_merges": 0,
+     "missed_merges": 42,
+     "mixed_stories": 0,
+     "multi_report_stories": 4,
+     "true_pairs": 55,
+     "predicted_pairs": 13
+    },
+    "2026-10-07-0935-export.json": {
+     "precision": 1.0,
+     "recall": 0.197,
+     "f1": 0.329,
+     "false_merges": 0,
+     "missed_merges": 49,
+     "mixed_stories": 0,
+     "multi_report_stories": 3,
+     "true_pairs": 61,
+     "predicted_pairs": 12
+    }
+   }
+  }
+ ],
+ "models": [],
+ "false_merge_examples": {
+  "rc11 published (nomic + HDBSCAN + single-link)": {
+   "2026-10-07-selftest-r1.json": [],
+   "2026-10-07-selftest-r2.json": [
+    [
+     "Federal Agents Have Detained More Than 500 American Citizens in Trump's Immigration Crackdown",
+     "ABC and Trump's FCC battle in federal court over free speech and jurisdiction issues"
+    ],
+    [
+     "Federal Agents Have Detained More Than 500 American Citizens in Trump's Immigration Crackdown",
+     "Disney, ABC battle Trump's FCC in court over free speech protections"
+    ],
+    [
+     "EmbeddingGemma 2: An open, lightweight multimodal embedding model",
+     "Claude launches Google Docs, Sheets, and Slides integration with sidebar and more"
+    ],
+    [
+     "Google claims EmbeddingGemma 2 outperforms rival embedding models twice its size",
+     "Claude launches Google Docs, Sheets, and Slides integration with sidebar and more"
+    ],
+    [
+     "Claude launches Google Docs, Sheets, and Slides integration with sidebar and more",
+     "Google DeepMind Releases EmbeddingGemma 2, a 740M Open Multimodal Embedding Model Built on Gemma 4"
+    ]
+   ],
+   "2026-10-07-selftest2-r1.json": [
+    [
+     "Star Moles Signs to Dead Oceans, Readies 2027 Tour",
+     "Dead star likely birthed a new planet, in astronomical first"
+    ],
+    [
+     "Worlds collide! James Webb Space Telescope investigates what happens when planets crash together",
+     "NASA's Prima space telescope would aim to see what James Webb can't"
+    ],
+    [
+     "NASA's Webb finds signs of Mars-sized worlds smashing together",
+     "NASA's Prima space telescope would aim to see what James Webb can't"
+    ],
+    [
+     "What happened in the first Maine Senate debate between Collins and Jackson",
+     "Battleground candidates clash over Trump and Cornell allegations reignite debate over campus assault: Morning Rundown"
+    ],
+    [
+     "What happened in the first Maine Senate debate between Collins and Jackson",
+     "News Wrap: Cornell says Sally Yates will review handling of sexual assault reports"
+    ]
+   ],
+   "2026-10-07-selftest2-r2.json": [
+    [
+     "Worlds collide! James Webb Space Telescope investigates what happens when planets crash together",
+     "NASA's Prima space telescope would aim to see what James Webb can't"
+    ],
+    [
+     "NASA's Webb finds signs of Mars-sized worlds smashing together",
+     "NASA's Prima space telescope would aim to see what James Webb can't"
+    ],
+    [
+     "Google launches platform to create video games from text prompts",
+     "Google invests millions in Mark Zuckerberg's efforts to create a 'virtual cell'"
+    ],
+    [
+     "Google launches platform to create video games from text prompts",
+     "\"The beginning of a new scientific paradigm\": Zuckerberg's Biohub, U.S. and Google build virtual cell"
+    ],
+    [
+     "Google invests millions in Mark Zuckerberg's efforts to create a 'virtual cell'",
+     "Google, Unity Launch Platform to Create Video Games From Prompts"
+    ]
+   ],
+   "2026-10-07-0935-export.json": [
+    [
+     "Worlds collide! James Webb Space Telescope investigates what happens when planets crash together",
+     "NASA's Prima space telescope would aim to see what James Webb can't"
+    ],
+    [
+     "NASA's Webb finds signs of Mars-sized worlds smashing together",
+     "NASA's Prima space telescope would aim to see what James Webb can't"
+    ],
+    [
+     "What happened in the first Maine Senate debate between Collins and Jackson",
+     "Reports of sexual violence are up. Data from Cornell and other colleges in 8 charts."
+    ],
+    [
+     "What happened in the first Maine Senate debate between Collins and Jackson",
+     "Battleground candidates clash over Trump and Cornell allegations reignite debate over campus assault: Morning Rundown"
+    ],
+    [
+     "What happened in the first Maine Senate debate between Collins and Jackson",
+     "News Wrap: Cornell says Sally Yates will review handling of sexual assault reports"
+    ]
+   ]
+  },
+  "identity gate, no embeddings (fallback)": {
+   "2026-10-07-selftest-r1.json": [],
+   "2026-10-07-selftest-r2.json": [],
+   "2026-10-07-selftest2-r1.json": [],
+   "2026-10-07-selftest2-r2.json": [],
+   "2026-10-07-0935-export.json": []
+  },
+  "identity gate, replayed rc11 neighbourhoods": {
+   "2026-10-07-selftest-r1.json": [],
+   "2026-10-07-selftest-r2.json": [],
+   "2026-10-07-selftest2-r1.json": [],
+   "2026-10-07-selftest2-r2.json": [],
+   "2026-10-07-0935-export.json": []
+  },
+  "identity gate, every pair cosine 1": {
+   "2026-10-07-selftest-r1.json": [],
+   "2026-10-07-selftest-r2.json": [],
+   "2026-10-07-selftest2-r1.json": [],
+   "2026-10-07-selftest2-r2.json": [],
+   "2026-10-07-0935-export.json": []
+  }
+ }
+}

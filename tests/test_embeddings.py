@@ -211,3 +211,23 @@ def test_legacy_density_method_still_runs_and_is_reported(tmp_path):
 def test_unknown_cluster_method_is_refused(tmp_path):
     with pytest.raises(ValueError):
         _settings(tmp_path, cluster_method="kmeans")
+
+
+def test_benchmark_runs_real_model_rows_and_reports_a_missing_model(tmp_path):
+    """The harness the user runs on Windows (Benchmark-Embeddings.ps1), here with a fake Ollama: per model three
+    groupings, cosine distributions, cache hit rate; a model that is not pulled is reported, not fatal."""
+    from tests.embedding_benchmark import main, markdown, run
+
+    fake = FakeEmbedder({"embeddinggemma-2:270m": "sha256:g1"}, dims=64)
+    result = asyncio.run(run(["embeddinggemma-2:270m", "embeddinggemma-2:latest"], True, "http://x", client=fake))
+    names = [r["name"] for r in result["rows"]]
+    assert names[0].startswith("rc11 published") and result["rows"][0]["false_merges"] == 52
+    assert sum(n.startswith("embeddinggemma-2:270m + ") for n in names) == 3
+    gemma = result["models"][0]
+    assert gemma["cache_hit_rate"] == 1.0 and gemma["dims"] == 64
+    assert set(gemma["cosines"]) >= {"same_event", "different_event", "candidate_recall", "suggested_strong_cosine"}
+    assert result["models"][1]["model"] == "embeddinggemma-2:latest" and "not found" in result["models"][1]["error"]
+    text = markdown(result)
+    assert "| rc11 published" in text and "## embeddinggemma-2:latest" in text
+    assert main(["--out", str(tmp_path)]) == 0  # offline run writes both files
+    assert (tmp_path / "identity-eval.json").exists() and (tmp_path / "identity-eval.md").exists()
