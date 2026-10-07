@@ -69,6 +69,12 @@ log = logging.getLogger(__name__)
 #: llama3.1:8b starts dropping commas / truncating JSON above ~25 items per call.
 MAX_BATCH_SIZE = 25
 MIN_BATCH_SIZE = 5
+#: Output budget of one model call, and the most stories one labelling call may carry. Each label (headline,
+#: summary, entities) takes about 100 tokens: 20 one-report stories ran into the 2,048-token limit three times
+#: in a row and came back as cut-off JSON (October 7, PC: 'label 11/14: invalid JSON', 75 s lost, and a
+#: relabel batch fell back to titles from the reports).
+LABEL_NUM_PREDICT = 2048
+MAX_GROUPS_PER_LABEL_CALL = 12
 HEADLINE_MAX_WORDS = 14
 #: A headline with no sentence or clause break may run this long rather than be cut mid-clause
 #: ("'Ba's Book': How Making the Heartfelt Hybrid Film Exploring Trauma Brought").
@@ -228,6 +234,10 @@ def connection_lost(exc: BaseException) -> bool:
 
 class ClusteringError(Exception):
     pass
+
+
+class AnswerCutOff(ClusteringError):
+    """The model reached the output limit and its JSON is incomplete: the same prompt would be cut off again."""
 
 
 # ======================================================================= helpers
@@ -941,7 +951,7 @@ class SemanticClusterer:
                     options={
                         "temperature": self.settings.ollama_temperature,
                         "num_ctx": self.settings.ollama_num_ctx,
-                        "num_predict": 2048,
+                        "num_predict": LABEL_NUM_PREDICT,
                     },
                     keep_alive=self.settings.ollama_keep_alive,
                 )
@@ -950,10 +960,17 @@ class SemanticClusterer:
                 content = getattr(message, "content", None) if message is not None else None
                 if content is None and isinstance(resp, dict):
                     content = resp.get("message", {}).get("content")
-                return extract_json(content or "")
+                try:
+                    return extract_json(content or "")
+                except json.JSONDecodeError as exc:
+                    if self._cut_off(resp):
+                        raise AnswerCutOff(f"{label}: the answer reached the {LABEL_NUM_PREDICT}-token limit") from exc
+                    raise
             except json.JSONDecodeError as exc:
                 last_exc = exc
                 log.warning("%s: invalid JSON (attempt %d): %s", label, attempt + 1, exc)
+            except AnswerCutOff:
+                raise
             except Exception as exc:  # noqa: BLE001
                 last_exc = exc
                 msg = str(exc).lower()
@@ -974,6 +991,12 @@ class SemanticClusterer:
             finally:
                 heartbeat.cancel()
         raise ClusteringError(f"{label} failed after retries: {last_exc}")
+
+    @staticmethod
+    def _cut_off(resp: Any) -> bool:
+        reason = getattr(resp, "done_reason", None) or (resp.get("done_reason") if isinstance(resp, dict) else None)
+        count = getattr(resp, "eval_count", None) or (resp.get("eval_count") if isinstance(resp, dict) else None)
+        return reason == "length" or (isinstance(count, int) and count >= LABEL_NUM_PREDICT)
 
     @staticmethod
     async def _heartbeat(label: str, started: float, every: float = 60.0) -> None:
@@ -1314,14 +1337,19 @@ class SemanticClusterer:
         chunk: list[DraftCluster] = []
         chunks: list[list[DraftCluster]] = []
         for d in sorted(pending, key=lambda x: -len(x.item_ids)):
-            if chunk and sum(len(c.item_ids) for c in chunk) + len(d.item_ids) > self.batch_size:
+            if chunk and (sum(len(c.item_ids) for c in chunk) + len(d.item_ids) > self.batch_size
+                          or len(chunk) >= MAX_GROUPS_PER_LABEL_CALL):
                 chunks.append(chunk)
                 chunk = []
             chunk.append(d)
         if chunk:
             chunks.append(chunk)
 
-        for ci, group_chunk in enumerate(chunks, start=1):
+        done = 0
+        while chunks:
+            group_chunk = chunks.pop(0)
+            done += 1
+            ci, total = done, done + len(chunks)
             lines: list[str] = []
             for gi, d in enumerate(group_chunk, start=1):
                 lines.append(f"Group {gi}:")
@@ -1330,8 +1358,18 @@ class SemanticClusterer:
             lines.append(f"Label groups 1..{len(group_chunk)}. Return labels only.")
             self.label_calls += 1
             try:
-                data = await self._chat_json(CLUSTER_SYSTEM_PROMPT, "\n".join(lines), _relabel_schema(), f"label {ci}/{len(chunks)}")
+                data = await self._chat_json(CLUSTER_SYSTEM_PROMPT, "\n".join(lines), _relabel_schema(), f"label {ci}/{total}")
                 parsed = _RelabelResponse.model_validate(data)
+            except AnswerCutOff as exc:
+                if len(group_chunk) > 1:
+                    # half the stories per call: each half fits the output limit (a cut-off answer is not retried)
+                    half = len(group_chunk) // 2
+                    chunks[0:0] = [group_chunk[:half], group_chunk[half:]]
+                    log.info("%s; labelling its %d stories in two smaller calls", exc, len(group_chunk))
+                    continue
+                log.warning("relabel pass failed (%s); using heuristic labels", exc)
+                self.label_calls_failed += 1
+                parsed = _RelabelResponse()
             except (ClusteringError, ValueError) as exc:
                 log.warning("relabel pass failed (%s); using heuristic labels", exc)
                 self.label_calls_failed += 1

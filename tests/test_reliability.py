@@ -3,6 +3,7 @@ import asyncio
 from collections import Counter
 from datetime import timedelta
 import json
+import re
 import socket
 import sqlite3
 import time
@@ -26,6 +27,61 @@ from agent_reach.storage.db import SCHEMA, TrendDatabase
 def item(i, title, source="hackernews", **extra):
     return CleanedTrendItem(item_id=i, title=title, normalized_title=title,
                             source=source, heuristic_score=0.8, **extra)
+
+
+class CutOffChat:
+    """A model whose answer is cut off at the output limit when asked about more than six stories at once (the
+    user's PC, October 7: 20 one-report stories per call came back as incomplete JSON three times in a row)."""
+
+    def __init__(self):
+        self.sizes: list[int] = []
+
+    async def chat(self, model, messages, format, options, keep_alive):
+        groups = re.findall(r"^Group (\d+):", messages[1]["content"], re.M)
+        self.sizes.append(len(groups))
+        if len(groups) > 6:
+            return {"message": {"content": '{"groups": [{"group_id": 1, "headline": "Cut'}, "done_reason": "length",
+                    "eval_count": options["num_predict"], "eval_duration": 25_000_000_000}
+        out = [{"group_id": int(g), "headline": f"Model headline {g}", "category": "Tech", "primary_entities": [],
+                "summary": "A thing happened.", "relevance_score": 6} for g in groups]
+        return {"message": {"content": json.dumps({"groups": out})}, "done_reason": "stop", "eval_count": 300,
+                "eval_duration": 3_000_000_000}
+
+
+def test_a_cut_off_label_answer_is_split_not_retried(settings):
+    """At most MAX_GROUPS_PER_LABEL_CALL stories per call; an answer cut off at the output limit is not sent again
+    as it was (it would be cut off again) but split in two, and every story still gets the model's label."""
+    from agent_reach.pipeline.clusterer import MAX_GROUPS_PER_LABEL_CALL
+
+    clusterer = SemanticClusterer(settings)
+    fake = CutOffChat()
+    clusterer._client = fake
+    rows = [item(i, f"Separate report number {i} about topic {i}") for i in range(1, 31)]
+    drafts = [DraftCluster([r.item_id], "", "", needs_label=True) for r in rows]
+    asyncio.run(clusterer._relabel(drafts, [], {r.item_id: r for r in rows}))
+    assert max(fake.sizes) <= MAX_GROUPS_PER_LABEL_CALL
+    assert all(d.headline.startswith("Model headline") for d in drafts)
+    assert clusterer.label_calls_failed == 0
+    # no prompt was sent twice in the same size after a cut-off: each cut-off call is followed by its halves
+    for k, size in enumerate(fake.sizes[:-1]):
+        if size > 6:
+            assert fake.sizes[k + 1] == size // 2
+
+
+def test_a_single_story_cut_off_falls_back_to_its_own_title(settings, monkeypatch):
+    from agent_reach.pipeline.clusterer import AnswerCutOff
+
+    clusterer = SemanticClusterer(settings)
+    calls = []
+
+    async def cut(*args):
+        calls.append(args)
+        raise AnswerCutOff("label 1/1: the answer reached the 2048-token limit")
+    monkeypatch.setattr(clusterer, "_chat_json", cut)
+    rows = [item(1, "Acme launches a new database for developers")]
+    drafts = [DraftCluster([1], "", "", needs_label=True)]
+    asyncio.run(clusterer._relabel(drafts, [], {1: rows[0]}))
+    assert len(calls) == 1 and clusterer.label_calls_failed == 1 and drafts[0].headline
 
 
 def test_model_assignments_cannot_change_membership(settings, monkeypatch):
