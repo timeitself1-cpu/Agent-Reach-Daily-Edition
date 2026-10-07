@@ -812,9 +812,9 @@ class SemanticClusterer:
         started = time.perf_counter()
         groups, noise, method = await self._group(items, try_embeddings=use_llm)
         if self.settings.outlier_policy == "keep_top":
-            keep = [i for i in noise if by_id[i].heuristic_score >= self.settings.singleton_keep_score]
-            groups.extend([[i] for i in keep])
-            noise = [i for i in noise if i not in set(keep)]
+            keep = {i for i in noise if by_id[i].heuristic_score >= self.settings.singleton_keep_score}
+            groups.extend([i] for i in noise if i in keep)
+            noise = [i for i in noise if i not in keep]
         discards["density_noise"].extend(noise)
         if Counter(i for group in groups for i in group) + Counter(noise) != Counter(by_id.keys()):
             raise ValueError("invalid density partition")
@@ -1313,7 +1313,7 @@ class SemanticClusterer:
                 if df[t] <= max(short_cap, 12):
                     index[t].append(iid)
         checked: set[tuple[int, int]] = set()
-        for t, ids in index.items():
+        for ids in index.values():
             for x in range(len(ids)):
                 for y in range(x + 1, len(ids)):
                     a, b = ids[x], ids[y]

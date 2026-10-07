@@ -1749,7 +1749,7 @@ class SettingsDialog:
         ttk.Label(frm, text="The task checks hourly and at logon, runs only while you are logged on, and never "
                             "wakes the PC. With it disabled, refreshes happen when this window is open.",
                   wraplength=560, foreground=self.window.c["muted"]).grid(row=9, column=0, columnspan=3, sticky="w", pady=(8, 0))
-        self._task_bg(lambda: self._task_text())
+        self._task_bg(self._task_text)
 
     def _storage_tab(self, nb) -> None:
         frm = self._tab(nb, "Storage")

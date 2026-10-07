@@ -5,8 +5,8 @@ conventions), then this file. `README.md` is the user guide; `docs/architecture.
 
 ## Where things stand
 
-- **Branch:** `claude/loving-darwin-a7rqvs` (all work is pushed there; no PR has been opened, and
-  none should be unless the user asks). Version `agent_reach/daily/__init__.py` = `1.0.0rc10`.
+- **Branch:** rc10 was developed on `claude/loving-darwin-a7rqvs`; the review pass below is on
+  `claude/affectionate-galileo-isxik1` (no PR has been opened, and none should be unless the user asks). Version `agent_reach/daily/__init__.py` = `1.0.0rc10`.
 - **CI:** `tests.yml` is green on rc10 (Python 3.10 and 3.12; the 15 GUI tests skip there without a
   display). On the user's Windows PC: 371 tests, 370 pass and 1 skips (SIGKILL semantics; a Reddit
   pacing test can fail by milliseconds when the PC is busy); the GUI
@@ -30,6 +30,22 @@ filler, headlines, feed doctor, TikTok off). rc7 In brief, NEW/UPDATED/DAY tags,
 follow/mute. rc8 daily podcast (Windows System.Speech via PowerShell, espeak-ng fallback).
 rc9 second accuracy pass from the real October 5 evening edition. rc10 third accuracy pass from the
 real October 6 morning edition, and a cloud runner that fits a Daily refresh (below).
+
+## Review pass after rc10d (bugs found by reading the Daily code, no new features)
+
+- The window trusted the pid in `state/progress.json` / `refresh.lock.json`. After a crash or power
+  loss that pid can belong to another process: the window showed "Refreshing" forever, Refresh was
+  blocked, and Cancel would terminate the unrelated process. `AppController.activity` now confirms with
+  a non-blocking probe of the OS refresh lock (skipped while the worker is the window's own child).
+- A run stopped by the Daily time limit stayed `running` in SQLite (cancellation is not an
+  `Exception`); `run_once` marks it invalid.
+- A cache-repair `OSError` (Windows refusing to move a damaged file a scanner holds open) escaped the
+  worker before the attempt was recorded; it is now logged and the refresh continues.
+- `check_ollama` crashed on another program answering on port 11434; a negative or NaN `Retry-After`
+  is clamped; Follow / Mute from the story menu is validated like the Topics tab.
+- Line endings: 22 files were stored with CRLF, which made the two `.ps1` files show as modified in
+  every fresh clone. `.gitattributes` now has `* text=auto` and the repository stores LF (CRLF is still
+  checked out for `.ps1`, `.cmd`, `.bat`).
 
 ## rc10 in short (see the commit message and `tests/test_accuracy3.py`)
 
@@ -196,8 +212,7 @@ A cloud sandbox has no Ollama and no news access. Three ways to see real output:
   suddenly skip). `/opt/pwsh/pwsh` can parse-check `.ps1` files.
 - On the user's Windows PC: Python 3.9/3.11/3.12 only (no 3.10; CI covers 3.10). PowerShell 5.1:
   `[IO.File]` calls resolve relative paths against the process folder (the user's install), not the
-  shell location, so always pass absolute paths. A fresh clone shows the two `.ps1` files as modified
-  (CRLF normalisation); stage files by name.
+  shell location, so always pass absolute paths.
 - Read large files by line range (`gui.py` is ~2,000 lines, `edition.py` ~1,100, `clusterer.py` ~1,300);
   use `grep -n` to find the place first.
 - Screenshots are expensive: take one only to check a visual change, at a modest size.
