@@ -192,11 +192,25 @@ def test_aggregator_items_count_as_their_publisher():
     assert assess(ev, T0).independent_reports == 1
 
 
-def test_trend_signals_add_diversity_but_never_corroborate():
+def test_trend_signals_never_corroborate():
     ev = [_ev(None, "ferry strike", source="google_trends", hours=None),
           _ev(None, "Ferry strike thread", source="reddit", hours=1)]
     st = assess(ev, T0)
     assert st.independent_reports == 0 and st.trend_signals == 2 and st.level == "limited"
+    assert st.channels == 0 and st.newest_age_hours is None  # attention is neither a channel nor recency
+
+
+def test_attention_never_lifts_a_story_to_strong():
+    """rc12: three articles from one channel plus a Google Trends phrase and a Bluesky post read as 'Strong
+    evidence' (the trend channel added the diversity point). Attention is shown, not counted."""
+    reports = [_ev("Wire One", "Quake hits Port Calder", hours=30), _ev("Daily Two", "Port Calder quake damages roads", hours=30),
+               _ev("Third Paper", "Roads damaged in Calder earthquake", hours=30)]
+    attention = [_ev(None, "port calder quake", source="google_trends", hours=None),
+                 _ev(None, "Port Calder quake post", source="bluesky", hours=1)]
+    st = assess(reports + attention, T0)
+    assert (st.level, st.independent_reports, st.channels, st.trend_signals) == ("moderate", 3, 1, 2)
+    assert st.newest_age_hours == 30  # the fresh post is attention, not a newer report
+    assert assess(reports, T0).points == st.points
 
 
 def test_recency_uses_stated_times_only_and_is_deterministic():

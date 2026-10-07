@@ -73,7 +73,7 @@ recall >= 0.6; fallback tested; evaluation artifact; real benchmark command for 
       `cohesive_groups`: merge only through an accepted edge with no rejected cross pair and a strict majority
       of supporting cross pairs; ambiguous fragments join nothing). `LinkIndex.components` uses it (no
       single-link chaining). Roundups by digest names (Morning Rundown, News Wrap). Date words never link.
-- [ ] D. Evidence vs attention: trend/social signals (Google Trends, X, Bluesky, fragments) never count as
+- [x] D. Evidence vs attention: trend/social signals (Google Trends, X, Bluesky, fragments) never count as
       factual corroboration; strength (Strong/Moderate/Limited) recomputed from the cleaned membership;
       syndication logic kept.
 - [ ] E. Continuity: NEW/UPDATED only for continuing events matched by identity; the newest reliable evidence
@@ -214,3 +214,4 @@ Each rule starts from quotes in `docs/REAL-EDITION-FINDINGS.md`; each gets a fix
 - 2026-10-07 | rc12 A | (this commit) | labelled corpus of the 5 real Oct 7 editions: rc11 published 52 false merges in 13 stories | B + C
 - 2026-10-07 | rc12 B+C | (this commit) | EmbeddingGemma 2 backend + model-aware cache + fallback; identity gate + cohesive groups: 0 false merges on the corpus under replayed rc11 neighbourhoods and identical vectors, replay recall 0.73 | F (summary gate), then D, E
 - 2026-10-07 | rc12 F | (this commit) | 'By studying 21 rare.' rejected (truncated copy + intro-only gates) with the real lead as fallback; 'Oct. 7' no longer ends a sentence | D, E
+- 2026-10-07 | rc12 D | (this commit) | trend/social signals no longer add channel diversity or recency; strength comes from the gated membership (evidence is never changed after build_story); syndication unchanged | E
