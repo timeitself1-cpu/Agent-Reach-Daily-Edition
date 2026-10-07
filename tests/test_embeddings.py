@@ -7,6 +7,7 @@ never be read back for EmbeddingGemma, and a re-pulled model must not reuse the 
 from __future__ import annotations
 
 import asyncio
+import json
 import math
 from datetime import datetime, timezone
 
@@ -200,6 +201,10 @@ def test_no_embedding_model_at_all_groups_lexically_and_logs_it(tmp_path, caplog
     assert any("lexical grouping" in r.getMessage() for r in caplog.records)
     assert not s.false_merges and s.correct_pairs > 0  # still useful stories, still no mixed events
     assert outcome.pair_log and all(set(d) >= {"verdict", "reasons", "cosine", "shared_evidence"} for d in outcome.pair_log)
+    # the counts describe the grouping itself, not the coherence checks that ask the gate again afterwards
+    gate = sem["gate"]
+    assert gate["pairs_decided"] >= gate["candidate_pairs"] > 0
+    assert gate["merges_accepted"] <= len(outcome.pair_log)
 
 
 def test_legacy_density_method_still_runs_and_is_reported(tmp_path):
@@ -231,3 +236,28 @@ def test_benchmark_runs_real_model_rows_and_reports_a_missing_model(tmp_path):
     assert "| rc11 published" in text and "## embeddinggemma-2:latest" in text
     assert main(["--out", str(tmp_path)]) == 0  # offline run writes both files
     assert (tmp_path / "identity-eval.json").exists() and (tmp_path / "identity-eval.md").exists()
+
+
+def test_benchmark_saves_real_vectors_and_replays_them_offline(tmp_path, monkeypatch):
+    """The PC run saves each model's vectors; the same rows come back offline from that file (``--replay``)."""
+    import tests.embedding_benchmark as bench
+
+    fake = FakeEmbedder({"nomic-embed-text": "sha256:n1"}, dims=32)
+    real = asyncio.run(bench.run(["nomic-embed-text"], True, "http://x", client=fake))
+    monkeypatch.setattr(bench, "run", lambda *a, **k: _done(real))  # the CLI, with the fake model's result
+    assert bench.main(["--ollama", "--models", "nomic-embed-text", "--out", str(tmp_path)]) == 0
+    dump = tmp_path / "vectors-nomic-embed-text.json.gz"
+    assert dump.exists() and "vectors" not in json.loads((tmp_path / "identity-eval.json").read_text())
+    monkeypatch.undo()
+    replayed = asyncio.run(bench.run([], False, "http://x", replay=[dump]))
+    live = {r["name"]: r for r in real["rows"] if r["name"].startswith("nomic-embed-text + ")}
+    again = {r["name"].replace(" (replayed from vectors-nomic-embed-text.json.gz)", ""): r for r in replayed["rows"]
+             if "(replayed from" in r["name"]}
+    assert set(again) == set(live)
+    for name, row in live.items():
+        assert (again[name]["false_merges"], again[name]["recall"]) == (row["false_merges"], row["recall"])
+    assert "real vectors replayed" in bench.markdown(replayed)
+
+
+async def _done(value):
+    return value

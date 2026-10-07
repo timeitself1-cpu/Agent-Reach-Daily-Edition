@@ -880,6 +880,7 @@ class SemanticClusterer:
         self.label_calls_failed = 0
         self.model_gone = False  # the model refused a connection: no more calls this run
         self.embedding_run = EmbeddingRun(requested_model=settings.embed_model)
+        self._grouping_stats: dict | None = None  # the gate's counts right after stage 3a (later checks reuse it)
 
     @property
     def batch_size(self) -> int:
@@ -1081,6 +1082,7 @@ class SemanticClusterer:
         ids = [it.item_id for it in items]
         fragments = {i for i in ids if len(index.toks[i]) <= 3}
         self.embedding_run = EmbeddingRun(requested_model=self.settings.embed_model, items=len(items))
+        self._grouping_stats = None
         if try_embeddings:
             try:
                 client = self._get_client()
@@ -1092,6 +1094,7 @@ class SemanticClusterer:
                 index.attach_vectors(vecs, self.settings.identity_candidate_cosine, self.settings.identity_strong_cosine)
                 edges = nearest_candidates(ids, vecs, self.settings.identity_neighbors, self.settings.identity_candidate_cosine)
                 groups = cohesive_groups(ids, index.gate, edges, fragments)
+                self._snapshot_gate(index, edges)
                 method = (f"identity gate on {self.embedding_run.model} neighbours "
                           f"(k={self.settings.identity_neighbors}, cosine>={self.settings.identity_candidate_cosine:.2f})")
                 return self._split_noise(groups, method, len(edges))
@@ -1105,7 +1108,15 @@ class SemanticClusterer:
                             str(exc)[:160], self.settings.embed_model)
         edges = lexical_candidates(ids, index.toks, max(6, int(0.1 * len(ids))))
         groups = cohesive_groups(ids, index.gate, edges, fragments)
+        self._snapshot_gate(index, edges)
         return self._split_noise(groups, "identity gate on lexical candidates (no embeddings)", len(edges))
+
+    def _snapshot_gate(self, index: LinkIndex, edges: list[tuple[int, int]]) -> None:
+        """The gate's counts for the grouping itself. The coherence checks after it ask the same gate about every
+        pair inside each story again, which inflated the diagnostics (October 7, PC: '33670 candidate pairs' and
+        18573 merges for 2116 candidate pairs and 16 multi-report stories)."""
+        self._grouping_stats = {**index.gate.stats.as_dict(), "candidate_pairs": len(edges),
+                                "pairs_decided": index.gate.stats.candidate_pairs}
 
     def _semantic(self, index: LinkIndex, method: str, clusters: list[MacroCluster], seconds: float) -> dict:
         run = self.embedding_run
@@ -1115,7 +1126,8 @@ class SemanticClusterer:
         return {"embedding": run.as_dict(), "model_used": used, "fallback": fallback[:400], "method": method,
                 "cluster_method": self.settings.cluster_method,
                 "candidate_cosine": self.settings.identity_candidate_cosine,
-                "strong_cosine": self.settings.identity_strong_cosine, "gate": index.gate.stats.as_dict(),
+                "strong_cosine": self.settings.identity_strong_cosine,
+                "gate": self._grouping_stats or index.gate.stats.as_dict(),
                 "roundups_in_run": len(index.roundups & {i for i in index.items}), "stories": len(clusters),
                 "multi_report_stories": sum(1 for c in clusters if len(c.member_item_ids) > 1),
                 "seconds": round(seconds, 2)}

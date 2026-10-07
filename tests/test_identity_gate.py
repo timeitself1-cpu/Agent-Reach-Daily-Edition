@@ -290,5 +290,12 @@ def test_rejected_candidates_are_explained():
     assert d["verdict"] == "reject" and d["reasons"] == ["multi-story roundup"]
     assert d["cosine"] is not None and d["cosine"] > 0.8  # rc11's embedding neighbourhood said "same story"
     assert d["a_title"] and d["b_title"]
-    log = index.gate.pair_log()
-    assert log and log[0]["verdict"] != "accept"  # the closest non-accepted pairs come first
+    for a, b in combinations(sorted(vectors), 2):
+        index.gate.decide(a, b)
+    log = index.gate.pair_log(limit=60)
+    # accepted pairs make the stories (a false merge is found among them): they come first and survive the limit;
+    # then refusals, then undecided pairs, roundup refusals last
+    ranks = [3 if "roundup" in d["reasons"][0] else ["accept", "reject", "neutral"].index(d["verdict"]) for d in log]
+    assert ranks == sorted(ranks) and ranks[0] == 0
+    accepted = sum(d.verdict == ACCEPT for d in index.gate.decisions())
+    assert ranks.count(0) == min(accepted, 60)

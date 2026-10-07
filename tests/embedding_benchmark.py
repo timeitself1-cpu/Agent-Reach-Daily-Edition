@@ -3,6 +3,7 @@
     python -m tests.embedding_benchmark                       # offline: no Ollama needed (runs anywhere)
     python -m tests.embedding_benchmark --ollama              # + real models through the local Ollama
     python -m tests.embedding_benchmark --ollama --models nomic-embed-text,embeddinggemma-2:270m,embeddinggemma-2:latest
+    python -m tests.embedding_benchmark --replay vectors-nomic-embed-text.json.gz   # real vectors saved on the PC
 
 Every grouping is scored against the gold events of ``tests/fixtures/real/event_gold.json`` with pairwise
 precision / recall / F1 and the RAW number of false merges (two different events published as one story),
@@ -34,8 +35,10 @@ from __future__ import annotations
 
 import argparse
 import asyncio
+import gzip
 import json
 import random
+import re
 import statistics
 import sys
 import tempfile
@@ -191,7 +194,23 @@ async def embed_corpora(client, model: str, corpora: dict[str, list[CorpusItem]]
     return out
 
 
-async def run(models: list[str], use_ollama: bool, host: str, client=None) -> dict:
+def load_vectors(path: Path, corpora: dict[str, list[CorpusItem]]) -> tuple[str, dict[str, dict[int, list[float]]]]:
+    """Real vectors a benchmark run on the user's PC saved (``vectors-<model>.json.gz``), checked title by title."""
+    with gzip.open(path, "rt", encoding="utf-8") as fh:
+        data = json.load(fh)
+    out: dict[str, dict[int, list[float]]] = {}
+    for name, corpus in corpora.items():
+        saved = data["editions"][name]
+        out[name] = {}
+        for c in corpus:
+            row = saved[str(c.item.item_id)]
+            if row["title"] != c.title:
+                raise ValueError(f"{path.name}: {name} report {c.item.item_id} is {row['title']!r}, corpus has {c.title!r}")
+            out[name][c.item.item_id] = row["vector"]
+    return data["model"], out
+
+
+async def run(models: list[str], use_ollama: bool, host: str, client=None, replay: list[Path] | None = None) -> dict:
     corpora = {name: load_edition(name) for name in EDITIONS}
     settings = Settings(db_path=Path(tempfile.gettempdir()) / "agent-reach-bench.db")
     rows, examples = [], {}
@@ -207,6 +226,22 @@ async def run(models: list[str], use_ollama: bool, host: str, client=None) -> di
     add("identity gate, every pair cosine 1",
         lambda n, c: identity_groups(c, settings, {x.item.item_id: _unit([1.0] * 16) for x in c})[0])
     models_out = []
+    dumps: dict[str, dict] = {}  # real vectors per model, written next to the result for offline replay
+
+    def add_model(label: str, vecs: dict[str, dict[int, list[float]]]) -> float:
+        clock = time.perf_counter()
+        add(f"{label} + HDBSCAN + single-link (rc11 structure)",
+            lambda n, c: density_groups(c, settings, vecs[n], single_link=True))
+        add(f"{label} + HDBSCAN + identity gate (cluster_method=density)",
+            lambda n, c: density_groups(c, settings, vecs[n], single_link=False))
+        add(f"{label} + identity gate (cluster_method=identity, default)",
+            lambda n, c: identity_groups(c, settings, vecs[n])[0])
+        return round(time.perf_counter() - clock, 2)
+
+    for path in replay or []:
+        model, vecs = load_vectors(path, corpora)
+        add_model(f"{model} (replayed from {path.name})", vecs)
+        models_out.append({"model": model, "replayed_from": path.name, "cosines": cosine_report(corpora, vecs, settings)})
     if use_ollama:
         if client is None:
             from ollama import AsyncClient
@@ -221,14 +256,9 @@ async def run(models: list[str], use_ollama: bool, host: str, client=None) -> di
                     print(f"  {model}: not available ({str(exc)[:160]}). Pull it: ollama pull {model}", file=sys.stderr)
                     continue
                 vecs = emb.pop("vectors")
-                clock = time.perf_counter()
-                add(f"{model} + HDBSCAN + single-link (rc11 structure)",
-                    lambda n, c: density_groups(c, settings, vecs[n], single_link=True))
-                add(f"{model} + HDBSCAN + identity gate (cluster_method=density)",
-                    lambda n, c: density_groups(c, settings, vecs[n], single_link=False))
-                add(f"{model} + identity gate (cluster_method=identity, default)",
-                    lambda n, c: identity_groups(c, settings, vecs[n])[0])
-                emb["grouping_seconds"] = round(time.perf_counter() - clock, 2)
+                dumps[model] = {name: {str(c.item.item_id): {"title": c.title, "vector": [round(x, 5) for x in vecs[name][c.item.item_id]]}
+                                       for c in corpus} for name, corpus in corpora.items()}
+                emb["grouping_seconds"] = add_model(model, vecs)
                 emb["cosines"] = cosine_report(corpora, vecs, settings)
                 models_out.append(emb)
     return {"generated_utc": datetime.now(timezone.utc).isoformat(timespec="seconds"),
@@ -236,7 +266,8 @@ async def run(models: list[str], use_ollama: bool, host: str, client=None) -> di
                        "gold_events": sum(len({x.gold for x in c if x.gold}) for c in corpora.values())},
             "settings": {k: getattr(settings, k) for k in ("identity_neighbors", "identity_candidate_cosine",
                                                             "identity_strong_cosine", "event_max_age_hours")},
-            "ollama": use_ollama, "rows": rows, "models": models_out, "false_merge_examples": examples}
+            "ollama": use_ollama, "rows": rows, "models": models_out, "false_merge_examples": examples,
+            "vectors": dumps}
 
 
 def markdown(result: dict) -> str:
@@ -259,10 +290,13 @@ def markdown(result: dict) -> str:
             lines += [f"## {m['model']}", "", f"Not available: {m['error']}", ""]
             continue
         c = m["cosines"]
-        lines += [f"## {m['model']} ({m['dims']} dims, digest {m['digest'] or 'unknown'})", "",
-                  f"- embedding: {m['reports']} reports in {m['cold_seconds']} s cold, {m['warm_seconds']} s from the "
-                  f"cache (hit rate {m['cache_hit_rate']}); grouping {m['grouping_seconds']} s",
-                  f"- same-event cosine: {c['same_event']}", f"- different-event cosine: {c['different_event']}",
+        if "replayed_from" in m:
+            lines += [f"## {m['model']} (real vectors replayed from {m['replayed_from']})", ""]
+        else:
+            lines += [f"## {m['model']} ({m['dims']} dims, digest {m['digest'] or 'unknown'})", "",
+                      f"- embedding: {m['reports']} reports in {m['cold_seconds']} s cold, {m['warm_seconds']} s from "
+                      f"the cache (hit rate {m['cache_hit_rate']}); grouping {m['grouping_seconds']} s"]
+        lines += [f"- same-event cosine: {c['same_event']}", f"- different-event cosine: {c['different_event']}",
                   f"- kNN candidates contain {c['candidate_recall']} of same-event pairs; "
                   f"{c['different_pairs_above_strong']} different-event pairs reach the strong cosine; "
                   f"{c['same_pairs_below_candidate_floor']} same-event pairs fall below the candidate floor",
@@ -285,10 +319,18 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--ollama", action="store_true", help="also run real embedding models through Ollama")
     ap.add_argument("--models", default=DEFAULT_MODELS, help=f"comma-separated Ollama model tags (default {DEFAULT_MODELS})")
     ap.add_argument("--host", default="http://localhost:11434")
+    ap.add_argument("--replay", type=Path, action="append", default=[],
+                    help="vectors-<model>.json.gz saved by an earlier --ollama run: score those real vectors offline")
     ap.add_argument("--out", type=Path, default=Path("docs") / "eval", help="folder for identity-eval.json/.md")
     args = ap.parse_args(argv)
-    result = asyncio.run(run([m.strip() for m in args.models.split(",") if m.strip()], args.ollama, args.host))
+    result = asyncio.run(run([m.strip() for m in args.models.split(",") if m.strip()], args.ollama, args.host,
+                             replay=args.replay))
     args.out.mkdir(parents=True, exist_ok=True)
+    # the real vectors (a few MB per model) let the next fix be checked offline against this PC's embeddings
+    for model, dump in result.pop("vectors", {}).items():
+        name = "vectors-" + re.sub(r"[^A-Za-z0-9._-]+", "_", model) + ".json.gz"
+        with gzip.open(args.out / name, "wt", encoding="utf-8") as fh:
+            json.dump({"model": model, "editions": dump}, fh)
     (args.out / "identity-eval.json").write_text(json.dumps(result, indent=1), encoding="utf-8")
     (args.out / "identity-eval.md").write_text(markdown(result), encoding="utf-8")
     for r in result["rows"]:

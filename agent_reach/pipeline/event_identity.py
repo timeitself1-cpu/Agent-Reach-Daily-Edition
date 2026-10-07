@@ -169,11 +169,15 @@ class IdentityGate:
         return list(self._cache.values())
 
     def pair_log(self, limit: int = MAX_LOGGED_PAIRS) -> list[dict]:
-        """Every decided pair for the developer artifact; the most similar non-accepted pairs first."""
+        """Decided pairs for the developer artifact: every accepted pair first (they make the stories, so a false
+        merge is found there), then refusals, then the most similar undecided pairs, roundup refusals last. Accepted
+        pairs used to come last and a real run's 33,670 decisions cut all of them (October 7, PC)."""
         titles = {i: getattr(it, "normalized_title", "") for i, it in self.index.items.items()}
+        rank = {ACCEPT: 0, REJECT: 1, NEUTRAL: 2}
 
         def order(d: PairDecision) -> tuple:
-            return (d.verdict == ACCEPT, -(d.cosine if d.cosine is not None else len(d.shared) / 10))
+            roundup = d.verdict == REJECT and any("roundup" in r for r in d.reasons)
+            return (3 if roundup else rank.get(d.verdict, 2), -(d.cosine if d.cosine is not None else len(d.shared) / 10))
 
         return [d.as_dict(titles) for d in sorted(self._cache.values(), key=order)[:limit]]
 
