@@ -61,8 +61,9 @@ category sections), a grounded "why it matters" pass, an HTML export and a spoke
   personal data first (`grep -iE "downt|@gmail"`).
 - **Website** getagentreach.dev: repository `timeitself1-cpu/Agent-Reach-Website` (static `index.html`, `app.js`,
   `styles.css`, served by Cloudflare from `main`; `index.html` has CRLF line endings). Its demo loads
-  `daily-sample.json` from `--export-sample`. The user authorized pushing the demo update to `main` (Oct 7); ask
-  again for other site changes.
+  `daily-sample.json` from `--export-sample`. Since Oct 7 the whole page is about Agent Reach Daily (hero preview,
+  sample edition, features, how it works, privacy, install, status); every claim must match the app. The user
+  asked for site changes to go straight to `main` (Oct 7); check the page at phone width before pushing.
 - User-facing text (banners, notes, release notes) is plain English for a non-developer: what happened and
   what to do, no stack traces, no internal names.
 
