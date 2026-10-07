@@ -13,9 +13,14 @@ function renderStory(){const s=sample.stories[selected];
     const a=url?el('a',src.title):el('span',src.title);if(url){a.href=url;a.rel='noopener noreferrer';a.target='_blank';}
     li.append(a,el('small',src.outlet+(src.via&&src.via!==src.outlet?' via '+src.via:'')));return li;}));
   $('demo-evidence').textContent=s.evidence.length?s.evidence.join('; ')+'.':'One report.';
-  $('demo-grouping').textContent=sample.app+': stories grouped with '+sample.models.grouping+' and summarized with '+sample.models.summaries+', both running locally through Ollama.';
+  $('demo-grouping').textContent='Agent Reach Daily on a Windows PC: grouped with '+sample.models.grouping+', written by '+sample.models.summaries+', both running locally in Ollama.';
   $('event-json').textContent=JSON.stringify(s,null,2);
   document.querySelectorAll('[data-story]').forEach(b=>{const on=Number(b.dataset.story)===selected;b.classList.toggle('active',on);b.setAttribute('aria-pressed',String(on));});}
+function renderPreview(){const day=new Date(sample.edition_date+'T12:00:00Z');
+  $('preview-date').textContent=day.toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric',year:'numeric',timeZone:'UTC'});
+  $('preview-count').textContent=sample.stories_in_edition+' stories';
+  $('preview-list').replaceChildren(...sample.stories.slice(0,3).map(s=>{const li=document.createElement('li');
+    li.append(el('span',s.category.toUpperCase(),'preview-cat'),el('strong',s.headline),el('span',s.independent_reports?s.independent_reports+' independent reports':s.sources.length+' sources','preview-meta'));return li;}));}
 function renderList(){$('story-list').replaceChildren(...sample.stories.map((s,i)=>{const b=el('button',null,'event-option');b.type='button';b.dataset.story=String(i);
     b.append(el('span',s.category.toUpperCase(),'tiny-label'),el('strong',s.headline),el('span',s.sources.length+' sources'));
     b.addEventListener('click',()=>{selected=i;renderStory();});return b;}));
@@ -24,5 +29,5 @@ function renderList(){$('story-list').replaceChildren(...sample.stories.map((s,i
   $('sample-note').textContent=sample.stories.length+' of the edition’s '+sample.stories_in_edition+' stories. Summaries are written by the app; the articles belong to their publishers.';}
 document.querySelectorAll('[data-view]').forEach(button=>button.addEventListener('click',()=>{const json=button.dataset.view==='json';$('event-summary').hidden=json;$('event-json').hidden=!json;document.querySelectorAll('[data-view]').forEach(b=>b.setAttribute('aria-pressed',String(b===button)));}));
 fetch('daily-sample.json',{cache:'no-cache'}).then(r=>{if(!r.ok)throw new Error(r.status);return r.json();})
-  .then(data=>{if(!data||!Array.isArray(data.stories)||!data.stories.length)throw new Error('empty');sample=data;renderList();renderStory();})
+  .then(data=>{if(!data||!Array.isArray(data.stories)||!data.stories.length)throw new Error('empty');sample=data;renderPreview();renderList();renderStory();})
   .catch(()=>{$('demo-title').textContent='The sample edition could not be loaded.';$('demo-description').replaceChildren(el('p','Please reload the page.'));});
