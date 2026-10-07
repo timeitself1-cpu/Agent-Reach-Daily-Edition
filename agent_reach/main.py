@@ -197,6 +197,13 @@ async def run_once(
         await asyncio.to_thread(db.invalidate_run, run_id, str(exc))
         log.error("Run %s INVALID; report withheld: %s", run_id, exc)
         raise
+    except BaseException as exc:  # cancelled (a time limit) or interrupted: never leave the run 'running'
+        try:
+            db.invalidate_run(run_id, f"stopped: {type(exc).__name__}")
+        except Exception:  # noqa: BLE001 - the original stop is what matters
+            log.debug("could not mark run %s invalid", run_id, exc_info=True)
+        log.warning("Run %s stopped before finishing (%s); report withheld", run_id, type(exc).__name__)
+        raise
     finally:
         db.close()
 

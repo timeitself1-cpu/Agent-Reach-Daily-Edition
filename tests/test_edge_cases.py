@@ -134,3 +134,33 @@ def test_tiktok_paced_retries_then_clean_fail():
     items, stat = asyncio.run(go())
     assert not stat.ok and items == [] and len(stamps) == 3
     assert min(b - a for a, b in zip(stamps, stamps[1:])) >= 0.29
+
+
+def test_retry_after_is_never_negative_or_nan():
+    from agent_reach.ingestion.base import BaseIngester
+
+    class Probe(BaseIngester):
+        source = SourceName.REDDIT
+
+        async def fetch(self):
+            return []
+
+    ing = Probe(None, Settings(http_backoff_max_s=8.0), asyncio.Semaphore(1))
+    wait = lambda value: ing._retry_after(httpx.Response(429, headers={"Retry-After": value}))  # noqa: E731
+    assert wait("-5") == 0.0 and wait("nan") is None and wait("120") == 8.0 and wait("2") == 2.0
+
+
+def test_ollama_check_survives_a_server_that_is_not_ollama(monkeypatch):
+    """Another program on port 11434 (or a proxy page) answers with JSON of another shape: 'not reachable'
+    with a reason, never an AttributeError that crashes the refresh or the setup check."""
+    from agent_reach.daily import prereqs
+
+    real_client = httpx.Client
+    answers = {"/api/tags": ["not", "a", "dict"], "/api/version": ["x"]}
+    monkeypatch.setattr(prereqs.httpx, "Client", lambda **kw: real_client(
+        transport=httpx.MockTransport(lambda req: httpx.Response(200, json=answers[req.url.path])), **kw))
+    status = prereqs.check_ollama("http://localhost:11434", ["llama3.1:8b"])
+    assert not status.reachable and "not like an Ollama server" in status.error
+    answers["/api/tags"] = {"models": [{"name": "llama3.1:8b"}, "junk"]}
+    status = prereqs.check_ollama("http://localhost:11434", ["llama3.1:8b"])
+    assert status.ready and status.version is None

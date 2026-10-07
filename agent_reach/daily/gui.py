@@ -970,7 +970,8 @@ class DailyWindow:
         topics = [t for t in getattr(prefs, key) if t.lower() != topic.lower()]
         if on:
             topics.append(topic)
-        save_prefs(self.paths, prefs.model_copy(update={key: topics}))
+        setattr(prefs, key, topics)  # validated (whitespace, length, duplicates) like the Topics tab
+        save_prefs(self.paths, prefs)
         self._sidebar_key = None
         self.refresh_view(force=True)
 

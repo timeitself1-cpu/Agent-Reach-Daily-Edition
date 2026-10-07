@@ -251,3 +251,14 @@ def test_refresh_records_feed_health_for_the_feed_doctor(daily_env):
     world = next(r for r in health.feeds.values() if r.name == "Wire One - World")
     assert arts.failures_in_row == 1 and arts.failing_since_utc is not None and "503" in arts.last_error
     assert world.failures_in_row == 0 and world.last_ok_utc is not None
+
+
+def test_a_cache_repair_error_does_not_stop_the_refresh(daily_env, monkeypatch):
+    """Windows can refuse to move a damaged file (a virus scanner holds it open): the refresh still runs."""
+    def locked(self):
+        raise PermissionError("[WinError 32] The process cannot access the file")
+
+    monkeypatch.setattr(EditionStore, "repair", locked)
+    out = _refresh(daily_env)
+    assert out.code == R.EXIT_PUBLISHED, out.message
+    assert load_state(daily_env.paths)[0].last_attempt_outcome == "success"

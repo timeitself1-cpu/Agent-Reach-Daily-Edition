@@ -20,7 +20,7 @@ from datetime import date, datetime
 from agent_reach.daily import VERSION_LABEL
 from agent_reach.daily.edition import DailyEdition, Story, health_summary, newest_published, safe_url
 from agent_reach.daily.fsutil import atomic_write_json, read_json
-from agent_reach.daily.lock import pid_alive, read_holder_info
+from agent_reach.daily.lock import LockBusy, RefreshLock, pid_alive, read_holder_info
 from agent_reach.daily.paths import PROJECT_ROOT, DataPaths
 from agent_reach.daily.prefs import DailyPrefs, load_prefs
 from agent_reach.daily.state import DueInfo, RefreshState, check_due, load_state
@@ -147,11 +147,27 @@ class AppController:
         alive = pid_alive(pid) if pid else False
         if not (running_child or alive):
             return RefreshActivity(False)
+        if not running_child and not self._lock_held():
+            # files left by a worker that died (crash, power loss): its pid may now belong to another
+            # process, which must never be shown as a refresh (or stopped by Cancel)
+            return RefreshActivity(False)
         prog = prog or {}
         return RefreshActivity(True, stage=str(prog.get("stage", "starting")),
                                message=str(prog.get("message", "Starting refresh")),
                                trigger=str(prog.get("trigger") or (holder or {}).get("trigger") or ""),
                                pid=pid, started=parse_utc(prog.get("started_utc")))
+
+    def _lock_held(self) -> bool:
+        """True when a refresh worker holds the OS lock (the only reliable sign one is running)."""
+        lock = RefreshLock(self.paths.lock_file, None)
+        try:
+            lock.acquire()
+        except LockBusy:
+            return True
+        except OSError:
+            return True  # cannot tell: trust the pid check
+        lock.release()
+        return False
 
     def list_dates(self) -> list[date]:
         return self.store.list_dates()
@@ -300,15 +316,16 @@ class AppController:
     def cancel_refresh(self) -> bool:
         """Stop the running worker (blocks for up to ~15 s: call it from a background thread)."""
         act = self.activity()
-        if not act.running or not act.pid:
+        pid = act.pid or getattr(self.child, "pid", None)  # our own worker, before it wrote its progress
+        if not act.running or not pid:
             return False
         import os
         import signal
 
         try:
-            os.kill(int(act.pid), signal.SIGTERM)
+            os.kill(int(pid), signal.SIGTERM)
         except OSError as exc:
-            log.warning("could not stop refresh worker %s: %s", act.pid, exc)
+            log.warning("could not stop refresh worker %s: %s", pid, exc)
             return False
         if self.child is not None:
             try:

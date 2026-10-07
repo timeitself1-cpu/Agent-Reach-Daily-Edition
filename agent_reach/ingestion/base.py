@@ -299,7 +299,10 @@ class BaseIngester(abc.ABC):
         if not raw:
             return None
         try:
-            return min(float(raw), self.settings.http_backoff_max_s)
+            seconds = float(raw)
+            if seconds != seconds:  # NaN
+                return None
+            return max(0.0, min(seconds, self.settings.http_backoff_max_s))
         except ValueError:
             try:
                 dt = parsedate_to_datetime(raw)

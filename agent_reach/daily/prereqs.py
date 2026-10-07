@@ -57,9 +57,13 @@ def check_ollama(host: str, required_models: list[str], timeout_s: float = 3.0) 
         with httpx.Client(timeout=timeout_s, trust_env=False) as client:
             tags = client.get(f"{host}/api/tags")
             tags.raise_for_status()
-            names = [str(m.get("name") or m.get("model")) for m in (tags.json() or {}).get("models", [])]
+            listing = tags.json()
+            if not isinstance(listing, dict) or not isinstance(listing.get("models", []), list):
+                raise ValueError(f"{host} answered, but not like an Ollama server")
+            names = [str(m.get("name") or m.get("model")) for m in listing.get("models", []) if isinstance(m, dict)]
             try:
-                version = client.get(f"{host}/api/version").json().get("version")
+                answer = client.get(f"{host}/api/version").json()
+                version = answer.get("version") if isinstance(answer, dict) else None
             except (httpx.HTTPError, ValueError):
                 version = None
     except (httpx.HTTPError, ValueError) as exc:

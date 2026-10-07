@@ -126,6 +126,27 @@ def test_stale_progress_file_from_a_dead_worker_is_not_refreshing(daily_paths):
     assert not _ctrl(daily_paths)[0].snapshot().activity.running
 
 
+def test_progress_file_whose_pid_was_reused_is_not_refreshing(daily_paths):
+    """A worker that died (power loss) leaves progress.json; after a reboot its pid can belong to any process.
+    Only the OS lock says a refresh is running, so Cancel can never stop an unrelated process."""
+    from agent_reach.daily.lock import RefreshLock
+
+    atomic_write_json(daily_paths.progress_file, {"pid": os.getpid(), "trigger": "scheduled", "stage": "cluster",
+                                                  "message": "Grouping and summarizing stories"})
+    ctrl, spawner = _ctrl(daily_paths)
+    assert not ctrl.snapshot().activity.running
+    assert not ctrl.cancel_refresh()
+    assert ctrl.start_refresh(manual=True) and len(spawner.calls) == 1  # Refresh is not blocked
+    spawner.children[0].running = False
+    worker = RefreshLock(daily_paths.lock_file, daily_paths.lock_info)
+    worker.acquire({"trigger": "scheduled"})
+    try:
+        snap = ctrl.snapshot()
+        assert snap.activity.running and snap.activity.stage == "cluster"
+    finally:
+        worker.release()
+
+
 def test_launch_refresh_only_when_due(daily_paths):
     ctrl, spawner = _ctrl(daily_paths)
     assert not ctrl.maybe_auto_refresh()  # first run: the user starts the first refresh

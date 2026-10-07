@@ -165,7 +165,10 @@ def refresh(
     progress: ProgressWriter | None = None
     try:
         store = EditionStore(paths)
-        store.repair()
+        try:
+            store.repair()
+        except OSError:  # e.g. a damaged file held open by a virus scanner: the refresh can still run
+            log.exception("cache repair failed; continuing with the cache as it is")
         state, _ = load_state(paths)
         changed = _reconcile_with_cache(state, store)
         changed |= recover_interrupted(state, now=now_fn(), prefs=prefs)
