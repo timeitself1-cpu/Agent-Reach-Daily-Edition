@@ -19,7 +19,10 @@ unchecked sub-task, do it, then update this file.
 
 ## Where we are (October 7, 2026)
 
-- Version **1.0.0rc11** (zip rc11d, commit `0f246d6`) on branch `claude/affectionate-galileo-isxik1`, CI green.
+- Version **1.0.0rc12** (zip rc12a) on branch `claude/affectionate-galileo-isxik1`: EmbeddingGemma 2 + event
+  identity done in the sandbox (0 false merges on the labelled corpus, CI green). **Next:** the user's
+  `Benchmark-Embeddings.ps1 -PullModels` results (270M vs full model, real cosines; tune
+  `identity_*_cosine` only from them), then Phase 1. rc11 was zip rc11d, commit `0f246d6`.
 - Reliability is proven on the user's Windows PC (self-test round 2): offline suite 404 passed on Windows,
   launchers (shortcuts, .cmd), real Ollama checks, cancel at once/halfway, full real refresh (~6 min, 46-51
   stories, podcast), model drop ends in 9 s, repeated use coherent.
@@ -81,10 +84,13 @@ recall >= 0.6; fallback tested; evaluation artifact; real benchmark command for 
 - [x] F. Summary quality: malformed/truncated sentences rejected ("By studying 21 rare." = JSON string cut at an
       inner double quote), month abbreviations never end a sentence ("Oct. 7"), deterministic extractive
       fallback.
-- [ ] G. Evaluation + release: `docs/eval/rc12-identity-eval.{json,md}` (rc11 recorded vs lexical vs replay vs
+- [x] G. Evaluation + release: `docs/eval/identity-eval.{json,md}` (rc11 recorded vs lexical vs replay vs
       identical), `tests/embedding_benchmark.py` + `Benchmark-Embeddings.ps1` for the user's PC (nomic vs
       gemma 270m vs full model; old density vs identity), compact semantic diagnostics in the HTML + full
       pair log in diagnostics, prefs migration to the Gemma model, setup pulls it, rc12 release + zip.
+- [~] H. Real-model benchmark on the user's PC (`Benchmark-Embeddings.ps1 -PullModels`). NEEDS: the two zips.
+      Then: compare false merges/recall for nomic, 270M and full; set `identity_strong_cosine` from the
+      different-event p99 only if the numbers say so; record in this file and REAL-EDITION-FINDINGS.
 
 ## Phase 1: "Report a problem with this story" (the feedback loop)
 
@@ -218,3 +224,4 @@ Each rule starts from quotes in `docs/REAL-EDITION-FINDINGS.md`; each gets a fix
 - 2026-10-07 | rc12 E | (this commit) | newest dated report leads when the summary only describes an earlier day (stock market: Wednesday fall before Tuesday record, 'Developing'); what-changed matches by the most shared URLs and a story split from an old false merge is neither new nor fading | G
 - 2026-10-07 | rc12 G (eval) | (this commit) | tests/embedding_benchmark.py + docs/eval/identity-eval.{md,json}: rc11 52 false merges; gate 0 with no embeddings (R 0.635), replayed neighbourhoods (R 0.762) and all-identical vectors | Windows benchmark script, HTML diagnostics, prefs migration, release
 - 2026-10-07 | rc12 G (app) | (this commit) | prefs v9 (EmbeddingGemma 2 default, nomic fallback), model actually used + compact 'How stories were grouped' in the HTML/details, pair log in diagnostics\semantic, setup checks the model, Benchmark-Embeddings.ps1, self-test checks the grouping model | docs + release
+- 2026-10-07 | rc12 G (release) | (this commit) | 1.0.0rc12: docs (README, RELEASE-NOTES, HANDOFF, CLAUDE.md, architecture, findings) | H (user's PC benchmark), then Phase 1

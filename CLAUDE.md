@@ -23,7 +23,8 @@ reader built on the pipeline, and the classic CLI report (`python -m agent_reach
 guide, `docs/architecture.md` the internals, `docs/RELEASE-NOTES.md` what changed per release.
 
 The pipeline is **Module 1** of a modular trend-intelligence system. It ingests trend signals from 10+
-sources, filters noise, enriches items with page content, groups them by embedding density, has a local LLM
+sources, filters noise, enriches items with page content, groups them into events (embedding neighbours +
+an explicit same-event gate), has a local LLM
 (`llama3.1:8b` via Ollama) label the groups, scores relevance and velocity, and writes an ASCII executive
 report plus SQLite history. The Daily app turns one validated run into a dated edition (Top Stories +
 category sections), a grounded "why it matters" pass, an HTML export and a spoken podcast.
@@ -32,7 +33,7 @@ category sections), a grounded "why it matters" pass, an HTML export and a spoke
 
 - Runs the app on **Windows 11** (RTX 4070 Super, 2560x1440 at 100%) from
   `C:\Users\downt\Downloads\Agent Reach\src\Agent-Reach`, Python 3.12 venv in `.venv`, Ollama 0.40 with
-  `llama3.1:8b` and `nomic-embed-text`. Data folder: `%LOCALAPPDATA%\AgentReachDaily` (never touch it from
+  `llama3.1:8b` and `nomic-embed-text` (rc12 asks for `embeddinggemma-2:270m` too; nomic is its fallback). Data folder: `%LOCALAPPDATA%\AgentReachDaily` (never touch it from
   tests; the self-test only reads it). A real refresh takes about 6 minutes there.
 - **Constraints:** local-model-first; no paid APIs, cloud LLMs, hosted services, telemetry, accounts,
   Docker or new frameworks. "Finish the application we already have, do not turn it into a research
@@ -68,6 +69,8 @@ python -m pyflakes agent_reach tests    # must be clean
 python -m agent_reach --no-llm --help   # CLI smoke test
 python -m agent_reach.daily --help      # Daily CLI smoke test
 python -m tests.replay_benchmark        # offline reliability replay
+python -m tests.embedding_benchmark     # event-identity scores on the labelled Oct 7 corpus -> docs/eval/ (--ollama: real models)
+python -m tests.html_fixture <export.html> <out.json>   # an exported edition page -> fixture
 python -m tests.daily_selftest --world --skip-pytest  # dry run of the Windows self-test harness (fake world)
 ```
 
@@ -96,8 +99,10 @@ agent_reach/
   main.py              run_once(): ingest -> clean -> enrich -> cluster -> score -> persist (invalidates on any stop)
   ingestion/           base.py (BaseIngester.run never raises, retries, pacing) + news, search, social, tech, video
   pipeline/            cleaner.py (filters, normalize/sanitize, SENTENCE_RX, roundups/live blogs)
-                       density.py (embeddings + HDBSCAN)  clusterer.py (LinkIndex, coherence, key-name gate,
-                       model labels, connection_lost circuit breaker, clip_words)  scorer.py (relevance, momentum)
+                       embeddings.py (event representation, Ollama embeddings, model+digest-aware cache, fallback)
+                       event_identity.py (IdentityGate ACCEPT/REJECT/NEUTRAL + reasons, cohesive_groups, kNN)
+                       density.py (HDBSCAN, legacy cluster_method=density)  clusterer.py (LinkIndex evidence,
+                       coherence, key-name gate, model labels, connection_lost circuit breaker, clip_words)  scorer.py (relevance, momentum)
                        enricher.py (page context, SSRF guard)  evidence.py
   storage/db.py        SQLite history (runs valid/invalid/running, items, clusters, snapshots)
   daily/
@@ -121,10 +126,15 @@ tests/
   test_daily_processes.py   real processes: cancel, kill, hang/watchdog, time limit, model drop, stale pid, damage
   test_daily_windows.py     Windows only: real file locks (CreateFileW no-share), read-only, TerminateProcess
   test_real_editions.py     fixtures from the user's real editions (regressions + strict xfails)
+  event_corpus.py      labelled real editions (fixtures/real/event_gold.json) + pairwise P/R/F1, false merges
+  test_identity_gate.py     no false merges / no bridges on that corpus; named October 7 cases
+  embedding_benchmark.py    rc11 vs gate (offline) and nomic vs EmbeddingGemma (--ollama); Benchmark-Embeddings.ps1
+  html_fixture.py      exported edition HTML -> fixture JSON
   daily_selftest.py    the self-test the user runs (Test-AgentReachDaily.ps1); --world = dry run here
 docs/  PLAN.md (roadmap, live)  HANDOFF.md (history, state)  RELEASE-NOTES.md  REAL-EDITION-FINDINGS.md
-       WINDOWS-TEST-RC11.md  architecture.md  reliability-v2.1.md
-Setup-AgentReachDaily.ps1  Test-AgentReachDaily.ps1  Uninstall-AgentReachDaily.ps1  AgentReachDaily.cmd/.pyw
+       WINDOWS-TEST-RC11.md  architecture.md  reliability-v2.1.md  eval/identity-eval.{md,json}
+Setup-AgentReachDaily.ps1  Test-AgentReachDaily.ps1  Benchmark-Embeddings.ps1  Uninstall-AgentReachDaily.ps1
+AgentReachDaily.cmd/.pyw
 ```
 
 ## Environment limits (cloud sessions)
@@ -144,7 +154,7 @@ Setup-AgentReachDaily.ps1  Test-AgentReachDaily.ps1  Uninstall-AgentReachDaily.p
 ## Invariants: do not break these
 
 1. **Item ledger balances.** `ingested == sum(discarded[reason]) + clustered`, in raw-item units (`CleanedTrendItem.raw_weight`). Every dropped item goes into exactly one named bucket (`models.DISCARD_STAGES`). `ClusterOutcome.assert_partition` and `PipelineAccounting` enforce this; tests assert it.
-2. **The LLM never decides grouping.** Grouping comes from embeddings + HDBSCAN (`pipeline/density.py`), or the lexical fallback. The LLM only labels groups.
+2. **The LLM never decides grouping.** Embeddings only propose candidate neighbours (`pipeline/embeddings.py`; lexical candidates when no model answers); the same-event gate decides membership (`pipeline/event_identity.py`): never single-link chaining, never a merge across a refused pair, a strict majority of supporting pairs, a false split before a false merge. The LLM only labels groups.
 3. **Outliers are noise.** They are dropped, never forced into a mixed cluster.
 4. **Entity isolation.** A cluster must be connected by distinctive shared tokens, a literally shared entity, or entities that co-occur in another item of the run (`LinkIndex`), and every member must mention one of the cluster's key names (`_key_name_gate`, names learned from the run's text). A phrase both titles share ("Supreme Court") counts once (`LinkIndex.shared_units`), and names alone never link two full titles. An LLM entity list or headline alone is never evidence.
 5. **No filler.** `[INSUFFICIENT_DATA]`, placeholder summaries (`FILLER_RX`), the model's remarks about its input (`edition.UNSTATED_RX`) and relevance <= 3 are dropped before the report. In the Daily app every summary sentence must be supported by the story's own sources (`edition.support`, 60% of content words) and be English.
@@ -174,6 +184,9 @@ Setup-AgentReachDaily.ps1  Test-AgentReachDaily.ps1  Uninstall-AgentReachDaily.p
 
 ## Known open items (details and order: docs/PLAN.md)
 
+- **Within a run, one story = one event since rc12** (0 false merges on the labelled corpus). Real-model
+  numbers for EmbeddingGemma 2 (270M vs full) need the user's PC (`Benchmark-Embeddings.ps1`); thresholds
+  `identity_candidate_cosine` / `identity_strong_cosine` are untuned until then.
 - **Story identity across refreshes** is the biggest quality gap: editions minutes apart disagree (the #1
   story can vanish), NEW/"what changed" is mostly noise, one event can appear in two sections. The user's
   PC has `agent_reach/daily/events.py`, `agent_reach/pipeline/identity.py` and `tests/test_event_*.py` that
@@ -181,8 +194,8 @@ Setup-AgentReachDaily.ps1  Test-AgentReachDaily.ps1  Uninstall-AgentReachDaily.p
 - Thin single-outlet and promotional/evergreen items fill the category sections; some leads do not say what
   happened; "why it matters" is accepted for 0-2 of ~18 stories.
 - Momentum is uncertain for a day after any feed-list change (the scorer compares the whole configuration).
-- Similarity thresholds (`density_member_min_cosine=0.62`, `hdbscan_selection="leaf"`) are tuned for
-  `nomic-embed-text`; use the `stage 3a density` log line of a real run to tune further.
+- Each exact embedding model (tag + Ollama digest) is its own space: never reuse or compare vectors across
+  models; bump `EVENT_REPR_VERSION` when the embedded text changes.
 - Google News links are redirect pages with no article text; Reddit is mostly blocked (429/403); YouTube
   channel feeds have whole-site outages (treated as one outage since rc11).
 - `AgentReachDaily.pyw` double-click did not open the window on the user's PC (shortcuts and .cmd do).

@@ -7,7 +7,8 @@ desktop window: what happened, why it matters, whether it is new or continuing, 
 fact came from.
 
 - **Local AI, no subscriptions.** Summaries are written by [Ollama](https://ollama.com) on your
-  own PC (`llama3.1:8b` + `nomic-embed-text`). No paid or cloud AI API is used or needed.
+  own PC (`llama3.1:8b` writes; `embeddinggemma-2:270m` groups reports into stories, with
+  `nomic-embed-text` as its fallback). No paid or cloud AI API is used or needed.
 - **Evidence first.** The model only words what the collected sources say. Every "why it
   matters" note is checked against the evidence: invented names, numbers or vague filler are
   dropped rather than shown.
@@ -31,11 +32,12 @@ powershell -ExecutionPolicy Bypass -File .\Setup-AgentReachDaily.ps1 -PullModels
 ```
 
 The setup script creates the project environment (`.venv`), installs the requirements, checks
-Ollama and downloads the two models when `-PullModels` is given, creates your data folder,
+Ollama and downloads the models when `-PullModels` is given, creates your data folder,
 puts an **Agent Reach** shortcut on the Desktop and in the Start menu, and (with `-RegisterTask`)
 registers the background refresh task. It never deletes anything. Add `-DryRun` to see every step
-first. Leave out `-PullModels` if you already ran `ollama pull llama3.1:8b` and
-`ollama pull nomic-embed-text`.
+first. Leave out `-PullModels` if you already ran `ollama pull llama3.1:8b`,
+`ollama pull embeddinggemma-2:270m` and `ollama pull nomic-embed-text`. Without EmbeddingGemma the app
+still works: it groups stories with `nomic-embed-text` and says so under "How stories were grouped".
 
 Then **double-click "Agent Reach"** on the Desktop. The first time, choose
 **Collect today's news now**; on a PC without a graphics card the first edition takes roughly
@@ -178,7 +180,7 @@ account or cloud service. Each podcast is saved as `podcasts\YYYY-MM-DD.wav` wit
 | Symptom | What to do |
 |---|---|
 | "Ollama is not running" | Start **Ollama** from the Start menu (the app also tries to start it). Check with `--check`. |
-| "model(s) ... are missing" | `ollama pull llama3.1:8b` and `ollama pull nomic-embed-text`, or re-run setup with `-PullModels`. |
+| "model(s) ... are missing" | `ollama pull llama3.1:8b`, `ollama pull embeddinggemma-2:270m` and `ollama pull nomic-embed-text`, or re-run setup with `-PullModels`. |
 | "No news source responded" | You are offline or a firewall blocks the feeds. The previous edition is kept; it retries automatically. |
 | A source shows PARTIAL or FAILED (Details) | Normal from time to time (Reddit and X often rate-limit automated readers). The edition is built from the rest and says what was missing. Expand "News feeds", "YouTube" or "Google News" in Details to see which feed, channel or section failed and why. |
 | A publisher feed keeps failing | Feed addresses move. Settings > Publisher feeds > select it > **Test**; then Edit the address or turn the feed off. |
@@ -240,8 +242,11 @@ checks do), never sees the web, and its output is checked before it is shown. De
 On your own PC, `powershell -ExecutionPolicy Bypass -File .\Test-AgentReachDaily.ps1` runs the self-test
 with the real Ollama and real news in a scratch folder (your data folder is only read) and leaves a zip of
 the results on the Desktop; see [docs/WINDOWS-TEST-RC11.md](docs/WINDOWS-TEST-RC11.md).
+`powershell -ExecutionPolicy Bypass -File .\Benchmark-Embeddings.ps1 -PullModels` first compares the embedding
+models for story grouping (nomic-embed-text, EmbeddingGemma 2 270M and the full model) on labelled real
+editions, then runs the same self-test; send back both zips from the Desktop.
 
 Tests never touch the network or a real Ollama. `tests/daily_fakes.py` holds synthetic publisher
 feeds (fictional places on `.test` hosts) and a deterministic fake model; `samples/DEMO-edition.json`
-is the clearly labelled demo edition. Version: Agent Reach Daily 1.0 release candidate 11
+is the clearly labelled demo edition. Version: Agent Reach Daily 1.0 release candidate 12
 (`python -m agent_reach.daily --version`). What changed in each release: `docs/RELEASE-NOTES.md`.

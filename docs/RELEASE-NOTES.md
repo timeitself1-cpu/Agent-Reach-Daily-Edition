@@ -5,6 +5,63 @@ Each release candidate is delivered as a zip of the repository. Extract it over 
 Your editions, settings and history (`%LOCALAPPDATA%\AgentReachDaily`) are kept. Earlier releases are
 summarised in `docs/HANDOFF.md` ("Release history").
 
+## 1.0.0rc12
+
+### One story = one event (story grouping rebuilt)
+
+The October 7 editions put different events into one story 13 times. Examples: the Australian privacy
+investigation of a smart-glasses app maker carried the Wall Street Journal's profile of the billionaire
+behind Meta's AI app; the Maine Senate debate carried two Cornell stories and a newsletter roundup; the
+Webb telescope's planetary-collision finding carried NASA's PRIMA telescope plan; "October 7" as a date
+joined NASA's picture of the day, a TV review and a satellite puzzle. The cause was structural: if A looked
+like B and B looked like C, A and C ended up together, so one roundup or one shared word could bridge two
+events.
+
+1. **Similar is not the same event.** The embedding model now only suggests which reports might belong
+   together. A separate same-event check decides, and it needs specific shared facts. Shared broad words
+   (technology, app, AI, privacy, smart devices, model, platform), dates, weekdays and names alone are
+   never enough. Newsletter roundups and live blogs ("Morning Rundown", "News Wrap") join no story.
+   Reports join a story only when most of its reports agree, so one report can no longer bridge two
+   stories. When unsure, two stories are shown instead of one mixed story.
+2. **New grouping model: EmbeddingGemma 2** (`embeddinggemma-2:270m`, a few hundred MB). Your settings
+   switch to it automatically; `nomic-embed-text` stays as the fallback. If the new model is not
+   installed, refreshes keep working with the old one, and the edition says so. Download it with
+   `ollama pull embeddinggemma-2:270m`, or rerun setup with `-PullModels`.
+3. **Faster repeat refreshes.** Each report's embedding is remembered (a cache next to the history
+   database), separately for every model and model version. A second refresh on the same day only
+   embeds reports it has not seen.
+4. **"How stories were grouped"** at the bottom of the HTML export, plus the footer and the Details
+   panel, name the model that actually grouped the stories and why another one was not used, with a few
+   counts. The full list of every same-event decision (for troubleshooting) goes to
+   `diagnostics\semantic\` in your data folder, never into the edition.
+
+### Text and evidence
+
+5. **A summary cut in half is no longer published.** "By studying 21 rare." (the Webb story): the model
+   stopped at a quotation mark. Such a sentence is now refused, and the story uses its source's own
+   first sentence instead. "Oct. 7" and "Sept. 30" no longer end a sentence ("Netanyahu faces a
+   reckoning over the Oct.").
+6. **The newest report sets the current state.** The stock-market story said "record high Tuesday" on
+   Wednesday morning, while its newest report said stocks fell on Wednesday. When a summary only
+   describes an earlier day and a source states what happened today, that source sentence now comes
+   first, the earlier one follows, and the card is labelled **Developing**.
+7. **Attention is not evidence.** Google Trends, X, Bluesky, Mastodon and Reddit items show interest,
+   not reporting. They no longer raise a story to "Strong evidence" through channel diversity or
+   recency.
+8. **"What changed" is fairer.** A story is matched to the earlier story it shares the most articles
+   with. When an earlier edition had merged two events that are now apart, neither half is called "new"
+   or "fading".
+
+### For testing on your PC
+
+- `Benchmark-Embeddings.ps1` compares nomic-embed-text, EmbeddingGemma 2 270M and the full EmbeddingGemma 2
+  on the labelled October 7 editions (wrongly merged stories, correctly grouped reports, speed, cache
+  reuse), then runs the self-test. Both result zips land on your Desktop.
+- The self-test now checks that the configured grouping model was used, and includes the same-event
+  decisions in its zip.
+- Expect "momentum uncertain" notes for about a day after upgrading: momentum is compared only with
+  refreshes made with the same settings, and the grouping model is one of them.
+
 ## 1.0.0rc11
 
 ### Stabilization pass (found by reviewing the code; no new features)

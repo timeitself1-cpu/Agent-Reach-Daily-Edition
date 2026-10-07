@@ -82,3 +82,37 @@ on top, and YouTube answered again (the October 7 night outage was transient).
 - Not fixed (xfail): the #1 Top Story "US Woman Who Survived Botched Execution Is Conscious, Speaking"
   (Christa Pike, 3 reports) is absent from the edition made 6 minutes later; 21 of 46 stories "no longer
   listed" again.
+
+## October 7, 2026, 9:35 AM: HTML export of the refreshed edition (`2026-10-07-0935-export.json`)
+
+Turned into a fixture with `python -m tests.html_fixture <export.html> <out.json>`; every published report of
+this and the four other October 7 editions is labelled with its real event in `tests/fixtures/real/event_gold.json`
+(`tests/event_corpus.py` scores any grouping). rc11 published **52 false merges in 13 stories** over the five
+editions. All fixed in rc12 (identity gate; `tests/test_identity_gate.py`, `docs/eval/identity-eval.md`):
+
+- Tech #1 "Privacy Watchdog Launches Investigation into China-Based Company" (Australia's privacy regulator vs
+  Shenzhen Qingcheng, maker of the HeyCyan app in Kmart's smartglasses) carried WSJ's "The Mulleted,
+  Meme-Loving Billionaire Behind Meta's Hit AI App". Shared only broad concepts ('app', 'AI', 'behind').
+- #6 "Collins Distances Herself from Trump in Maine Senate Debate" carried the Washington Post's Cornell
+  sexual-violence charts, PBS's "News Wrap: Cornell says Sally Yates will review ..." and NBC's Morning
+  Rundown ("Battleground candidates clash over Trump and Cornell allegations ..."): a roundup bridged them.
+- #3 "James Webb Space Telescope Investigates Planetary Collisions" carried Mashable's "NASA's Prima space
+  telescope would aim to see what James Webb can't" ('James Webb Space Telescope' is one name, not two facts).
+- #10 "NASA Features Supernova Remnant Pa 30 and Satellite Puzzler" joined APOD "2026 October 7", The
+  Atlantic's Fauda review, the "#October7" hashtag and "October 2026 Satellite Puzzler": a date as evidence.
+- Selftest editions: "Star Moles Signs to Dead Oceans" in "Dead Star Likely Birthed a New Planet"; Claude's
+  Google Docs integration in "Google Releases EmbeddingGemma 2"; ABC/FCC court fight in the 500 detained
+  US citizens story; Google's 'virtual cell' investment in Google's gaming platform.
+
+Text:
+
+- Science #3 summary was only "By studying 21 rare." (source: 'By studying 21 rare "extreme debris disks" ...':
+  the model's JSON string ended at the inner quote). Fixed: truncated-copy and intro-only gates, real lead as
+  fallback (`test_a_summary_cut_at_a_quotation_mark_is_not_published`).
+- Selftest2 r2 #9 "Prime Minister Benjamin Netanyahu faces a reckoning over the Oct.": split after a month
+  abbreviation. Fixed (`MONTH_DAY_GUARD`).
+- #2 "Stock Markets Hit Record High Despite Inflation, High Fuel Prices" said "record high Tuesday" on
+  Wednesday while its newest report said U.S. equities fell on Wednesday. Fixed: the newest dated source
+  sentence leads, card labelled "Developing" (`test_the_newest_report_controls_the_current_state`). The
+  headline itself still comes from the model and can stay stale: open.
+- The same story was "Strong evidence" partly because a Google Trends query added a channel. Fixed (rc12 D).

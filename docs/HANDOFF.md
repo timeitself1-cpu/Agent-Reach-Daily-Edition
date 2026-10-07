@@ -1,4 +1,4 @@
-# Handoff: Agent Reach Daily (state after 1.0.0rc11)
+# Handoff: Agent Reach Daily (state after 1.0.0rc12)
 
 For a new Claude session picking up this project. Read `CLAUDE.md` first (commands, invariants,
 conventions, workflow), then **`docs/PLAN.md` (the live roadmap: continue at its first unchecked
@@ -9,7 +9,8 @@ sub-task)**. This file is the history and background. `README.md` is the user gu
 
 - **Branch:** rc10 was developed on `claude/loving-darwin-a7rqvs`; rc11 is on
   `claude/affectionate-galileo-isxik1` (no PR has been opened, and none should be unless the user asks).
-  Version `agent_reach/daily/__init__.py` = `1.0.0rc11`. Release notes: `docs/RELEASE-NOTES.md`.
+  rc12 continues there. Version `agent_reach/daily/__init__.py` = `1.0.0rc12`. Release notes:
+  `docs/RELEASE-NOTES.md`.
 - **CI:** `tests.yml` is green on rc11 (Python 3.10 and 3.12, pytest under `xvfb-run` so the GUI tests
   really run, plus a dry run of the self-test harness). Up to rc10 the GUI tests silently skipped in CI.
 - **Windows:** rc11 has been validated on the user's PC with two self-test rounds (October 7): the offline
@@ -35,7 +36,28 @@ filler, headlines, feed doctor, TikTok off). rc7 In brief, NEW/UPDATED/DAY tags,
 follow/mute. rc8 daily podcast (Windows System.Speech via PowerShell, espeak-ng fallback).
 rc9 second accuracy pass from the real October 5 evening edition. rc10 third accuracy pass from the
 real October 6 morning edition, and a cloud runner that fits a Daily refresh (below).
-rc11 stabilization pass (six robustness fixes from a code review; see below).
+rc11 stabilization pass (six robustness fixes from a code review; see below). rc12 story identity:
+EmbeddingGemma 2 neighbours + an explicit same-event gate (below).
+
+## rc12 in short (event identity; the user's priority over Phase 1)
+
+- **Why:** five real October 7 editions published 52 false merges (13 mixed stories). HDBSCAN plus
+  single-link `LinkIndex.components` chained A~B, B~C into A=C through roundups, dates and broad words.
+- **Measured on:** `tests/event_corpus.py` + `tests/fixtures/real/event_gold.json` (427 reports, 225 gold
+  events). `python -m tests.embedding_benchmark` writes `docs/eval/identity-eval.md`: rc11 52 false merges;
+  rc12 0 with no embeddings (recall 0.635), 0 with replayed rc11 neighbourhoods (0.762), 0 with every
+  cosine forced to 1. Real-model numbers (nomic vs `embeddinggemma-2:270m` vs the full model) need the
+  user's PC: `Benchmark-Embeddings.ps1 -PullModels`. NOT run yet; no Ollama in the cloud sandbox.
+- **Design:** `pipeline/embeddings.py` (event representation `event_repr_v2`, task prompts, model+digest
+  aware SQLite cache, fallback chain) proposes kNN candidates; `pipeline/event_identity.py`
+  (`IdentityGate`: ACCEPT/REJECT/NEUTRAL with reasons; `cohesive_groups`: accepted edge + no conflict +
+  strict majority support) decides. `LinkIndex.components` uses the same gate. `cluster_method=density`
+  keeps HDBSCAN as the candidate source if ever needed. Pair log: `diagnostics\semantic\`.
+- **Thresholds** (`identity_candidate_cosine=0.45`, `identity_strong_cosine=0.80`) are untuned guesses
+  for EmbeddingGemma: read the benchmark's cosine distributions from the user's PC before changing them.
+- Also: summary gates (quote-truncated copies, intro-only phrases, month abbreviations), newest report
+  sets the current state ("Developing"), attention signals never raise strength, what-changed by best
+  URL overlap with split-aware continuity, prefs v9.
 
 ## rc11 stabilization pass (bugs found by reading the Daily code, no new features)
 
