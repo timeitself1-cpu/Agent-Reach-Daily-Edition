@@ -222,6 +222,30 @@ def test_broad_shared_concepts_never_merge_two_events():
     assert cohesive_groups([1, 2, 3], index.gate) == [[1], [2], [3]]
 
 
+def test_hacked_shop_notification_is_not_wikimedias_rogue_agents(tmp_path):
+    """Case E (the first real-model benchmark on the user's PC, October 7, nomic-embed-text + identity gate):
+    'Asos confirms hackers sent 'unauthorised' notification to app users' joined Wikimedia's report on OpenAI's
+    rogue agents through 'confirms' in both titles and 'sent', 'third-party' in both page leads. A reporting
+    verb and words common in the run's page text are not evidence of one event."""
+    corpus = load_edition("2026-10-07-selftest-r2.json")
+    rnd = random.Random(3)
+    wiki = [_id(corpus, p) for p in ('OpenAI "rogue" agent', "OpenAI agents tried to hack", "Wikimedia confirms OpenAI")]
+    asos = _id(corpus, "Asos confirms hackers")
+    topic = [rnd.gauss(0, 1) for _ in range(32)]
+    vectors = {}
+    for c in corpus:
+        i = c.item.item_id
+        noise = [rnd.gauss(0, 1) for _ in range(32)]
+        weight = 0.15 if i in wiki else 0.9 if i == asos else 3.0  # Asos: cosine ~0.6 to the Wikimedia reports
+        vectors[i] = _unit([t + weight * n for t, n in zip(topic, noise)])
+    _, groups = run_clusterer(corpus, vectors, tmp_path)
+    assert any(_together(groups, a, b) for a, b in combinations(wiki, 2))  # the Wikimedia story still forms
+    assert not any(_together(groups, asos, w) for w in wiki)
+    corpus, index = _index("2026-10-07-selftest-r2.json")
+    for w in wiki:
+        assert not index.gate.decide(asos, w).support
+
+
 class TableGate(IdentityGate):
     """A gate whose verdicts come from a table (pairs not in it are neutral, no support)."""
 

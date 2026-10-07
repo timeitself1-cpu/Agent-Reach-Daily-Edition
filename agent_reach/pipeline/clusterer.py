@@ -378,6 +378,7 @@ midterm midterms
 federal
 technology technologies tech app apps ai model models platform platforms device devices smart privacy data online
 digital software tool tools feature features
+confirm confirms confirmed confirming warn warns warned warning send sends sent sending
 """.split())
 #: Calendar words are when, not what: 'October 7' joined NASA's picture of the day ('APOD: 2026 October 7'),
 #: a Fauda review ('Fauda's October 7 Episodes'), the '#October7' hashtag and 'October 2026 Satellite Puzzler'
@@ -434,6 +435,7 @@ class LinkIndex:
         self._entity_toks: dict[int, tuple[list[set[str]], set[str]] | None] = {}
         self._written: dict[int, frozenset[str]] = {}
         self._repr: dict[int, set[str]] = {}
+        self._repr_df: Counter[str] | None = None
         self._sc_names: frozenset[str] | None = None
         self._gate = None
 
@@ -645,13 +647,23 @@ class LinkIndex:
             return []
         ra, rb = self._repr_toks(a), self._repr_toks(b)
         names = self._name_part_tokens(a, b, ra & rb)
+        # rare in the run's page text too, not only in its titles: 'sent' and 'third-party' are in few
+        # headlines but in many article leads (October 7, PC: an Asos hacked-notification story joined
+        # Wikimedia's report on OpenAI's rogue agents through 'confirms', 'sent' and 'third-party')
         shared = {t for t in ra & rb if not is_date_token(t) and t not in COMMON_WORDS and t not in EVENT_WORDS
                   and t not in self.name_words and t not in names and self.df.get(t, 0) <= self.rare_cap
-                  and any(c.isalpha() for c in t)}
+                  and self.repr_df[t] <= self.rare_cap and any(c.isalpha() for c in t)}
         if not shared:
             return []
         units = self.shared_units(a, b, shared, context=True)
         return sorted(shared) if len(units) >= 2 or self.shares_name(a, b, rare=True) else []
+
+    @property
+    def repr_df(self) -> Counter[str]:
+        """Document frequency over the event texts (title + lead of the page) of the whole run."""
+        if self._repr_df is None:
+            self._repr_df = Counter(t for iid in self.items for t in self._repr_toks(iid))
+        return self._repr_df
 
     def _repr_toks(self, item_id: int) -> set[str]:
         if item_id not in self._repr:
