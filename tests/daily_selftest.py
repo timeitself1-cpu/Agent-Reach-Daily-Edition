@@ -569,7 +569,7 @@ def part_pytest(report: Report, args) -> None:
         return
     started = time.monotonic()
     # a test file that does not load (e.g. a file of another version left in the folder) must not stop the rest
-    out = subprocess.run([sys.executable, "-m", "pytest", "-q", "-p", "no:cacheprovider", "-o", "addopts=", "-rs",
+    out = subprocess.run([sys.executable, "-m", "pytest", "-q", "-p", "no:cacheprovider", "-o", "addopts=", "-rfEs",
                           "--continue-on-collection-errors"],
                          cwd=str(PROJECT_ROOT), capture_output=True, text=True, timeout=3600)
     (report.out / "pytest-output.txt").write_text(out.stdout + "\n" + out.stderr, encoding="utf-8")
@@ -580,10 +580,20 @@ def part_pytest(report: Report, args) -> None:
         report.add(P, "test files that do not load (not part of this release?)", "FAIL",
                    "\n".join(broken) + "\nThese files import code this release does not have. If they come from other "
                    "work in this folder, keep that work safe before deleting them.")
-    tail = "\n".join(line for line in out.stdout.splitlines()[-25:] if line.strip())
-    failed = [line for line in out.stdout.splitlines() if line.startswith("FAILED ")]
-    report.check(P, "full offline suite (window, Windows locks, process kill/cancel, pipeline)",
-                 out.returncode == 0 or (bool(broken) and not failed), tail, time.monotonic() - started)
+    lines = out.stdout.splitlines()
+    tail = "\n".join(line for line in lines[-25:] if line.strip())
+    # the FAILED lines need -rf, and the count line is the backstop: with only -rs the October 7 self-test showed
+    # PASS for '1 failed, 449 passed ... 2 errors' (the 2 errors were the stray files above)
+    failed = [line for line in lines if line.startswith("FAILED ")]
+    counted = re.search(r"\b(\d+) failed\b", lines[-1] if lines else "")
+    ok = out.returncode == 0 or (bool(broken) and not failed and not counted)
+    report.check(P, "full offline suite (window, Windows locks, process kill/cancel, pipeline)", ok,
+                 "\n".join(failed[:10] + [tail]), time.monotonic() - started)
+    gui_skips = [line for line in lines if line.startswith("SKIPPED") and "test_daily_gui" in line]
+    if gui_skips:
+        report.add(P, "window tests ran inside the test suite", "FAIL",
+                   "\n".join(gui_skips)[:800] + "\nTk could not start inside the test run (the window itself is "
+                   "checked again in part 2). If this repeats, send the zip.")
 
 
 def part_refresh_ux(report: Report, args, base: Path, prefs: DailyPrefs) -> None:

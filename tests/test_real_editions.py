@@ -252,3 +252,29 @@ def test_the_newest_report_controls_the_current_state():
     tue = datetime(2026, 10, 6, 23, 0, tzinfo=timezone.utc)
     assert newest_state(story.sentences[1:], cluster, items, tue) is None
     assert newest_state(["Stocks fell on Wednesday as yields rose."], cluster, items, at) is None
+
+
+def test_selftest_reports_a_failed_offline_suite_as_fail(tmp_path, monkeypatch):
+    """The October 7 self-test said PASS for pytest's '1 failed, 449 passed, 2 skipped, 5 xfailed, 1 warning,
+    2 errors' (the 2 errors were stray test files of other work): with only -rs, pytest prints no FAILED lines."""
+    import subprocess
+    import tests.daily_selftest as st
+
+    stdout = "\n".join([
+        "ERROR collecting tests/test_event_contract.py", "ERROR collecting tests/test_event_identity.py",
+        "SKIPPED [1] tests\\test_daily_gui.py:67: no display: Can't find a usable tk.tcl",
+        "1 failed, 449 passed, 2 skipped, 5 xfailed, 1 warning, 2 errors in 279.11s (0:04:39)"])
+    monkeypatch.setattr(st.subprocess, "run", lambda *a, **k: subprocess.CompletedProcess(a[0], 1, stdout, ""))
+    report = st.Report(tmp_path)
+    st.part_pytest(report, None)
+    status = {c.name: c.status for c in report.checks}
+    assert status["test files that do not load (not part of this release?)"] == "FAIL"
+    assert status["full offline suite (window, Windows locks, process kill/cancel, pipeline)"] == "FAIL"
+    assert status["window tests ran inside the test suite"] == "FAIL"
+    clean = stdout.replace("1 failed, ", "").replace("SKIPPED [1] tests\\test_daily_gui.py:67: no display: Can't find a usable tk.tcl\n", "")
+    monkeypatch.setattr(st.subprocess, "run", lambda *a, **k: subprocess.CompletedProcess(a[0], 1, clean, ""))
+    report = st.Report(tmp_path)
+    st.part_pytest(report, None)
+    status = {c.name: c.status for c in report.checks}  # only the stray files: the suite itself passed
+    assert status["full offline suite (window, Windows locks, process kill/cancel, pipeline)"] == "PASS"
+    assert "window tests ran inside the test suite" not in status

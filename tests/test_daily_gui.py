@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import time
+
 import pytest
 
 tk = pytest.importorskip("tkinter")
@@ -16,7 +18,15 @@ def root():
     try:
         r = tk.Tk()
     except tk.TclError as exc:
-        pytest.skip(f"no display: {exc}")
+        # once on Windows (October 7, PC) one of the window tests could not read tk.tcl, which every other test
+        # and the launchers read fine: a file briefly held by another program. A second try settles that.
+        if "couldn't read file" not in str(exc):
+            pytest.skip(f"no display: {exc}")
+        time.sleep(1.0)
+        try:
+            r = tk.Tk()
+        except tk.TclError as exc2:
+            pytest.skip(f"no display: {exc2}")
     r.withdraw()
     yield r
     r.destroy()
