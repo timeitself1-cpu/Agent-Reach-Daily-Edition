@@ -1,12 +1,13 @@
-# Handoff: Agent Reach Daily (state after 1.0.0rc10)
+# Handoff: Agent Reach Daily (state after 1.0.0rc11)
 
 For a new Claude session picking up this project. Read `CLAUDE.md` first (commands, invariants,
 conventions), then this file. `README.md` is the user guide; `docs/architecture.md` the internals.
 
 ## Where things stand
 
-- **Branch:** rc10 was developed on `claude/loving-darwin-a7rqvs`; the review pass below is on
-  `claude/affectionate-galileo-isxik1` (no PR has been opened, and none should be unless the user asks). Version `agent_reach/daily/__init__.py` = `1.0.0rc10`.
+- **Branch:** rc10 was developed on `claude/loving-darwin-a7rqvs`; rc11 is on
+  `claude/affectionate-galileo-isxik1` (no PR has been opened, and none should be unless the user asks).
+  Version `agent_reach/daily/__init__.py` = `1.0.0rc11`. Release notes: `docs/RELEASE-NOTES.md`.
 - **CI:** `tests.yml` is green on rc10 (Python 3.10 and 3.12; the 15 GUI tests skip there without a
   display). On the user's Windows PC: 371 tests, 370 pass and 1 skips (SIGKILL semantics; a Reddit
   pacing test can fail by milliseconds when the PC is busy); the GUI
@@ -30,8 +31,9 @@ filler, headlines, feed doctor, TikTok off). rc7 In brief, NEW/UPDATED/DAY tags,
 follow/mute. rc8 daily podcast (Windows System.Speech via PowerShell, espeak-ng fallback).
 rc9 second accuracy pass from the real October 5 evening edition. rc10 third accuracy pass from the
 real October 6 morning edition, and a cloud runner that fits a Daily refresh (below).
+rc11 stabilization pass (six robustness fixes from a code review; see below).
 
-## Review pass after rc10d (bugs found by reading the Daily code, no new features)
+## rc11 stabilization pass (bugs found by reading the Daily code, no new features)
 
 - The window trusted the pid in `state/progress.json` / `refresh.lock.json`. After a crash or power
   loss that pid can belong to another process: the window showed "Refreshing" forever, Refresh was
