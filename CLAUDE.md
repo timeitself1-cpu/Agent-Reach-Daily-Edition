@@ -59,6 +59,10 @@ category sections), a grounded "why it matters" pass, an HTML export and a spoke
   `tests/fixtures/real/*.json` + `tests/test_real_editions.py` (a regression test when fixed, a
   `pytest.mark.xfail(strict=True)` test when open, so a fix flips it). Strip nothing but check fixtures for
   personal data first (`grep -iE "downt|@gmail"`).
+- **Website** getagentreach.dev: repository `timeitself1-cpu/Agent-Reach-Website` (static `index.html`, `app.js`,
+  `styles.css`, served by Cloudflare from `main`; `index.html` has CRLF line endings). Its demo loads
+  `daily-sample.json` from `--export-sample`. The user authorized pushing the demo update to `main` (Oct 7); ask
+  again for other site changes.
 - User-facing text (banners, notes, release notes) is plain English for a non-developer: what happened and
   what to do, no stack traces, no internal names.
 
@@ -120,6 +124,7 @@ agent_reach/
     lock.py            OS byte-range refresh lock   fsutil.py atomic writes, read retry   paths.py data layout
     feedhealth.py      feed doctor (channel_outage)  reading.py  read state, follow/mute, In brief, Day N
     strength.py        evidence strength   podcast.py  Windows System.Speech / espeak   render_html.py  export
+    sample.py          public sample of an edition for the website (--export-sample; no publisher excerpts)
     prereqs.py         Ollama checks/start   scheduler.py  Task Scheduler XML   timeutil.py  Central time, DST
 tests/
   fakes.py, daily_fakes.py   mock sources + fake Ollama; synthetic feeds on .test hosts + fake daily model

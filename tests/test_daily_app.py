@@ -310,6 +310,10 @@ def test_cli_status_export_and_reset(daily_paths, tmp_path):
     assert status["latest_edition"] == "2026-10-01" and status["editions"] == ["2026-10-01"]
     out = tmp_path / "exports dir" / "today.html"
     assert run("--export-html", str(out)).returncode == 0 and "Trending news for" in out.read_text()
+    sample = tmp_path / "site" / "daily-sample.json"
+    assert run("--export-sample", str(sample), "--stories", "1").returncode == 0
+    assert [s["rank"] for s in json.loads(sample.read_text(encoding="utf-8"))["stories"]] == [1]
+    assert run("--export-sample", str(sample), "--stories", "99").returncode == 2
     refused = run("--reset-cache")
     assert refused.returncode == 2 and "--yes" in refused.stderr
     assert EditionStore(daily_paths).list_dates()

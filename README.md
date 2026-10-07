@@ -85,8 +85,13 @@ Command line (from the project folder):
 .\.venv\Scripts\python.exe -m agent_reach.daily --status        # due / last success / backoff, as JSON
 .\.venv\Scripts\python.exe -m agent_reach.daily --check         # is Ollama running with both models?
 .\.venv\Scripts\python.exe -m agent_reach.daily --export-html today.html
+.\.venv\Scripts\python.exe -m agent_reach.daily --export-sample daily-sample.json --stories 1,2,3,4,9
 .\.venv\Scripts\python.exe -m agent_reach.daily --help          # everything else (task, reset, exit codes)
 ```
+
+`--export-sample` writes a few stories of an edition (headlines, the app's summaries, source names and links,
+no publisher article text) for the demo on getagentreach.dev: replace `daily-sample.json` in the website's
+repository with it. Read the chosen stories first; only stories grouped correctly belong on the site.
 
 ## How refreshing works
 
