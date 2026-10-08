@@ -1,0 +1,4313 @@
+{
+  "edition_date": "2026-10-08",
+  "revision": 6,
+  "generated_utc": "2026-10-08T21:49:17.989544+00:00",
+  "stories": [
+    {
+      "rank": 1,
+      "story_id": "0317f2df6bc96342a006",
+      "entity_id": "b89e086afcc6",
+      "headline": "US Suspends Microsoft from Green Card Program",
+      "category": "Tech",
+      "sentences": [
+        "The Trump administration has suspended Microsoft and other tech firms from a green card program for their foreign workers.",
+        "The program has been blocked due to alleged fraud, and major tech companies including Microsoft and Adobe are affected."
+      ],
+      "why_it_matters": null,
+      "labels": [],
+      "momentum": "UNCERTAIN",
+      "velocity_basis": "coverage_uncertain",
+      "momentum_note": "24h comparable sources: bluesky, google_news, google_trends, hackernews, mastodon, news_rss, reddit, wikipedia, x_trends24, youtube; 48h configuration changed or unavailable; 168h configuration changed or unavailable",
+      "relevance_score": 9,
+      "velocity_score": 50.0,
+      "combined_score": 74.0,
+      "platforms": [
+        "google_news",
+        "hackernews",
+        "news_rss",
+        "x_trends24",
+        "youtube"
+      ],
+      "publisher_hosts": [
+        "apnews.com",
+        "bbc.co.uk",
+        "dw.com",
+        "reuters.com",
+        "tomshardware.com",
+        "wired.com",
+        "youtube.com"
+      ],
+      "raw_item_count": 14,
+      "member_item_ids": [
+        4,
+        12,
+        13,
+        288,
+        385,
+        418,
+        501,
+        1228,
+        1290,
+        1166
+      ],
+      "evidence": [
+        {
+          "item_id": 12,
+          "source": "hackernews",
+          "source_name": "Hacker News",
+          "title": "Trump administration is suspending Microsoft from a green card program",
+          "url": "https://apnews.com/article/h1b-visa-program-vance-microsoft-e7b3a407f822702b269ee277d21343ea",
+          "publisher": "apnews.com",
+          "excerpt": null,
+          "context_source": null,
+          "published_at_utc": "2026-10-08T15:15:00Z",
+          "retrieved_at_utc": "2026-10-08T21:42:18.813742Z",
+          "feed": null
+        },
+        {
+          "item_id": 12,
+          "source": "google_news",
+          "source_name": "Google News",
+          "title": "The Trump administration is suspending Microsoft from a green card program, alleging fraud",
+          "url": "https://news.google.com/rss/articles/CBMilwFBVV95cUxOSlNGOUJHbkJ0UXdETE9EUWMySjZkMWVzX3V6Ny1yNlc1Ym4ydmx5NXY2UEJyak1mNVROdkRqOTNGY2kxT1BrQUwyYVRzSmlDNlVIa0xnenNUM2cyWjg2NTd0Rl9seW1JOVFuRHczVk93M2RkOWdDOUV0Sl90WjFJeEZEeWNTUFFvNkNkRU81alBOWlltQ1VN?oc=5",
+          "publisher": "AP News",
+          "excerpt": null,
+          "context_source": null,
+          "published_at_utc": "2026-10-08T20:24:00Z",
+          "retrieved_at_utc": "2026-10-08T21:42:15.509784Z",
+          "feed": "https://news.google.com/rss/search?q=site%3Aapnews.com+when%3A1d&hl=en-US&gl=US&ceid=US%3Aen"
+        },
+        {
+          "item_id": 4,
+          "source": "google_news",
+          "source_name": "Google News",
+          "title": "Trump administration freezes green cards for Microsoft, IT firms, probes universities",
+          "url": "https://news.google.com/rss/articles/CBMisAFBVV95cUxNenk2MHZ3TFhxRjBqU1pTRmZvNFRUYy1CSG5rXzNSeGRqS05lLUlIRlBYM3hTQ3d4dUwyVmdtc0Z4cVhqOUdKZmh0VWhjQmxldjZKejR3WGxzOEdXZEJwVUxXN0pOelgzcndVakpzWHFiNHFIWi1aZkM1SjdfNFB1dG9hcGVEZTlYdmg0ckJ1MmtqMVBNUEl1MHJBVkxmSGdJVDlXS2ZENlpQY3FRSzB1NQ?oc=5",
+          "publisher": "Reuters",
+          "excerpt": null,
+          "context_source": null,
+          "published_at_utc": "2026-10-08T20:45:27Z",
+          "retrieved_at_utc": "2026-10-08T21:42:15.015643Z",
+          "feed": "https://news.google.com/rss/headlines/section/topic/BUSINESS?hl=en-US&gl=US&ceid=US%3Aen"
+        },
+        {
+          "item_id": 13,
+          "source": "google_news",
+          "source_name": "Google News",
+          "title": "The skilled foreign tech workers' green card program under attack from Trump",
+          "url": "https://news.google.com/rss/articles/CBMirAFBVV95cUxQd1hHTXgzeWc3WFZOUDJMdFg1dGQyNFhDSVBwZV9sTHliMzUwcjltTVNvWlowXzBfNUFwcHRMcHpjbnFOQ1NsUDd4U3hHU0d5MHNFek5HN3dIeXRZSWJqWDdvdlY2OEdMZm9La3BBUU80SVE2Y3RiMTEtZlNBSWZkMFNPdjVTQXBYWXdoZEF6dnJvbjVHcDI2WlJXS3lsem52b1dkM2c2UW1PZ1o0?oc=5",
+          "publisher": "Reuters",
+          "excerpt": null,
+          "context_source": null,
+          "published_at_utc": "2026-10-08T20:19:02Z",
+          "retrieved_at_utc": "2026-10-08T21:42:15.486282Z",
+          "feed": "https://news.google.com/rss/search?q=site%3Areuters.com+when%3A1d&hl=en-US&gl=US&ceid=US%3Aen"
+        },
+        {
+          "item_id": 288,
+          "source": "news_rss",
+          "source_name": "News feeds",
+          "title": "White House blocks Microsoft from foreign worker hiring program",
+          "url": "https://www.bbc.co.uk/news/articles/ck5yngl2y4gpo?at_medium=RSS&at_campaign=rss",
+          "publisher": "BBC News - Technology",
+          "excerpt": "An international visa program has for years allowed US tech companies to hire highly skilled workers from abroad. | Microsoft and several other technology firms have been barred by the White House from hiring skilled international workers on a permanent basis through a widely used visa program. | Vice President JD...",
+          "context_source": "page",
+          "published_at_utc": "2026-10-08T21:37:35Z",
+          "retrieved_at_utc": "2026-10-08T21:42:15.609846Z",
+          "feed": "https://feeds.bbci.co.uk/news/technology/rss.xml"
+        },
+        {
+          "item_id": 1166,
+          "source": "x_trends24",
+          "source_name": "X (trends24)",
+          "title": "Microsoft",
+          "url": "https://x.com/search?q=Microsoft",
+          "publisher": "x.com",
+          "excerpt": null,
+          "context_source": null,
+          "published_at_utc": null,
+          "retrieved_at_utc": "2026-10-08T21:42:14.855049Z",
+          "feed": null
+        },
+        {
+          "item_id": 385,
+          "source": "news_rss",
+          "source_name": "News feeds",
+          "title": "US suspends Microsoft, Adobe from filing for green cards",
+          "url": "https://www.dw.com/en/us-suspends-microsoft-adobe-from-filing-for-green-cards/a-79605053?maca=en-rss-en-all-1573-rdf",
+          "publisher": "DW - English",
+          "excerpt": "The Trump administration cut off tech firms, including Microsoft and Adobe, from filing for green cards for their foreign workers. | The Trump administration on Thursday said it was suspending major tech firms, including Microsoft, from applying for a program that allowed their foreign workers to work permanently in...",
+          "context_source": "page",
+          "published_at_utc": "2026-10-08T20:04:00Z",
+          "retrieved_at_utc": "2026-10-08T21:42:15.780350Z",
+          "feed": "https://rss.dw.com/rdf/rss-en-all"
+        },
+        {
+          "item_id": 418,
+          "source": "news_rss",
+          "source_name": "News feeds",
+          "title": "U.S. suspends green card path for H-1B workers at Microsoft and Adobe — labor certification program blocked due to alleged fraud",
+          "url": "https://www.tomshardware.com/tech-industry/policy/u-s-suspends-green-card-path-for-h-1b-workers-at-microsoft-and-adobe-labor-certification-program-blocked-due-to-alleged-fraud",
+          "publisher": "Tom's Hardware",
+          "excerpt": "U.S. suspends green card path for H-1B workers at Microsoft and Adobe - labor certification program blocked due to alleged fraud | Cognizant, Infosys, Tata, and others are also listed. | During a Thursday announcement, Vice President JD Vance said that well-known tech companies Microsoft and Adobe are now blocked out...",
+          "context_source": "page",
+          "published_at_utc": "2026-10-08T17:26:07Z",
+          "retrieved_at_utc": "2026-10-08T21:42:16.080433Z",
+          "feed": "https://www.tomshardware.com/feeds/all"
+        }
+      ],
+      "tech_only": false,
+      "entities": [
+        "Microsoft",
+        "Trump Administration"
+      ],
+      "evidence_strength": {
+        "level": "strong",
+        "points": 6,
+        "independent_reports": 9,
+        "publishers": [
+          "AP News",
+          "BBC News",
+          "DW",
+          "PBS NewsHour",
+          "Reuters",
+          "Tom's Hardware",
+          "Wired",
+          "apnews.com",
+          "reuters.com"
+        ],
+        "channels": 4,
+        "trend_signals": 1,
+        "duplicates_collapsed": 1,
+        "newest_age_hours": 0.1,
+        "reasons": [
+          "9 independent reports (AP News, BBC News, DW, PBS NewsHour, ...)",
+          "1 repeat or syndicated copy counted once",
+          "1 trend/social signal (attention, not reporting)",
+          "4 reporting channels",
+          "newest report under an hour before this edition"
+        ]
+      }
+    },
+    {
+      "rank": 2,
+      "story_id": "cccf90f18bb427241378",
+      "entity_id": "ae11ca5eef8e",
+      "headline": "USS Abraham Lincoln Returns Home After Long and Grueling Deployment",
+      "category": "News",
+      "sentences": [
+        "The USS Abraham Lincoln, an aircraft carrier, has returned home to San Diego after a nearly 11-month deployment, during which its crew endured food shortages and spent much of its time in combat without a day off.",
+        "The ship and its crew of over 4,500 sailors and Marines have finally returned home after a record-long deployment."
+      ],
+      "why_it_matters": null,
+      "labels": [],
+      "momentum": "UNCERTAIN",
+      "velocity_basis": "coverage_uncertain",
+      "momentum_note": "24h comparable sources: bluesky, google_news, google_trends, hackernews, mastodon, news_rss, reddit, wikipedia, x_trends24, youtube; 48h configuration changed or unavailable; 168h configuration changed or unavailable",
+      "relevance_score": 9,
+      "velocity_score": 50.0,
+      "combined_score": 74.0,
+      "platforms": [
+        "google_news",
+        "news_rss"
+      ],
+      "publisher_hosts": [
+        "apnews.com",
+        "cbsnews.com",
+        "nbcnews.com",
+        "npr.org",
+        "nytimes.com"
+      ],
+      "raw_item_count": 7,
+      "member_item_ids": [
+        3,
+        40,
+        306,
+        310
+      ],
+      "evidence": [
+        {
+          "item_id": 310,
+          "source": "news_rss",
+          "source_name": "News feeds",
+          "title": "USS Lincoln docks in San Diego, returning home for first time in 321 days",
+          "url": "https://www.cbsnews.com/news/uss-lincoln-san-diego-returns/",
+          "publisher": "CBS News - World",
+          "excerpt": "The USS Abraham Lincoln and its more than 4,500 sailors returned home to San Diego on Thursday for the first time in 321 days. | The and its more than 4,500 sailors and Marines returned home to San Diego on Thursday for the first time in 321 days, a jubilant homecoming after a long deployment that included months in...",
+          "context_source": "page",
+          "published_at_utc": "2026-10-08T21:15:00Z",
+          "retrieved_at_utc": "2026-10-08T21:42:15.898045Z",
+          "feed": "https://www.cbsnews.com/latest/rss/world"
+        },
+        {
+          "item_id": 3,
+          "source": "news_rss",
+          "source_name": "News feeds",
+          "title": "U.S.S. Abraham Lincoln Returns Home After Long and Grueling Deployment",
+          "url": "https://www.nytimes.com/2026/10/08/us/politics/uss-abraham-lincoln-san-diego.html",
+          "publisher": "New York Times - Home Page",
+          "excerpt": "The aircraft carrier, whose crew endured food shortages, spent much of its nearly 11-month deployment in combat without a day off.",
+          "context_source": "feed",
+          "published_at_utc": "2026-10-08T21:34:00Z",
+          "retrieved_at_utc": "2026-10-08T21:42:15.809787Z",
+          "feed": "https://rss.nytimes.com/services/xml/rss/nyt/HomePage.xml"
+        },
+        {
+          "item_id": 3,
+          "source": "google_news",
+          "source_name": "Google News",
+          "title": "U.S.S. Abraham Lincoln Returns Home After Long and Grueling Deployment",
+          "url": "https://news.google.com/rss/articles/CBMiiAFBVV95cUxPbTdrT2pHbVp5eGtTd3hySkxqak1VaEVtWEU5NlR6WjdHV0M0T2tBaXNNaG4xd3AtaDFIb1BtXzUtTWZhQ0tZZ3J5NFZaM0pseVhDbjI1cU5zYmhVdWxST3U5VTRhZnl5cF8xUlJsdThXelFlWk1mbFhMbk1PSDNSVDlITnpybUIx?oc=5",
+          "publisher": "The New York Times",
+          "excerpt": null,
+          "context_source": null,
+          "published_at_utc": "2026-10-08T19:54:19Z",
+          "retrieved_at_utc": "2026-10-08T21:42:14.998005Z",
+          "feed": "https://news.google.com/rss/headlines/section/topic/NATION?hl=en-US&gl=US&ceid=US%3Aen"
+        },
+        {
+          "item_id": 40,
+          "source": "news_rss",
+          "source_name": "News feeds",
+          "title": "The long-deployed USS Lincoln is returning home to San Diego",
+          "url": "https://www.npr.org/2026/10/08/g-s1-147195/uss-lincoln-returning-san-diego",
+          "publisher": "NPR - News",
+          "excerpt": "The USS Abraham Lincoln is returning home to San Diego Thursday after supporting the Iran war during a record long deployment of 265 uninterrupted days at sea that included reports of deteriorating conditions among its crew.",
+          "context_source": "page",
+          "published_at_utc": "2026-10-08T16:18:20Z",
+          "retrieved_at_utc": "2026-10-08T21:42:15.309830Z",
+          "feed": "https://feeds.npr.org/1001/rss.xml"
+        },
+        {
+          "item_id": 40,
+          "source": "google_news",
+          "source_name": "Google News",
+          "title": "The long-deployed USS Lincoln returns home to San Diego Bay",
+          "url": "https://news.google.com/rss/articles/CBMilAFBVV95cUxOaXpmdmZOT25ZT1RrbXRKYnRQY1VxbGR5WkFIVzMtX2hSU19MSUc1cHpJWDlJU0tkLVZOa0hNMlhXNlJxMjFlLWJiTUtlMy1nNnpwdlV3U3FYcUtBaU1OZXNxeEJjVjZxUWltUXBtX0xKME9LNjlVRDFsYWZWT2xXQW91ZlFPbDdlRlZJQzNwSjRJdHJP?oc=5",
+          "publisher": "AP News",
+          "excerpt": null,
+          "context_source": null,
+          "published_at_utc": "2026-10-08T21:07:00Z",
+          "retrieved_at_utc": "2026-10-08T21:42:15.509784Z",
+          "feed": "https://news.google.com/rss/search?q=site%3Aapnews.com+when%3A1d&hl=en-US&gl=US&ceid=US%3Aen"
+        },
+        {
+          "item_id": 306,
+          "source": "news_rss",
+          "source_name": "News feeds",
+          "title": "USS Lincoln docks in San Diego after 10-month deployment",
+          "url": "https://www.nbcnews.com/meet-the-press/video/uss-lincoln-docks-in-san-diego-after-10-month-deployment-271285829735",
+          "publisher": "NBC News - Top Stories",
+          "excerpt": "NBC News senior national security correspondent Courtney Kube joins Meet the Press NOW from the USS Lincoln as its service members prepare to reunite with their families after a record-long deployment. | Raffensperger says he hasn't spoken to Trump since 2021 call asking him to 'find' votes 05:12 | Now PlayingUSS...",
+          "context_source": "page",
+          "published_at_utc": "2026-10-08T20:29:12Z",
+          "retrieved_at_utc": "2026-10-08T21:42:15.856833Z",
+          "feed": "https://feeds.nbcnews.com/nbcnews/public/news"
+        }
+      ],
+      "tech_only": false,
+      "entities": [
+        "USS Abraham Lincoln"
+      ],
+      "evidence_strength": {
+        "level": "strong",
+        "points": 6,
+        "independent_reports": 5,
+        "publishers": [
+          "AP News",
+          "CBS News",
+          "NBC News",
+          "NPR",
+          "New York Times"
+        ],
+        "channels": 2,
+        "trend_signals": 0,
+        "duplicates_collapsed": 1,
+        "newest_age_hours": 0.1,
+        "reasons": [
+          "5 independent reports (AP News, CBS News, NBC News, NPR, ...)",
+          "1 repeat or syndicated copy counted once",
+          "2 reporting channels",
+          "newest report under an hour before this edition"
+        ]
+      }
+    },
+    {
+      "rank": 3,
+      "story_id": "5741f1eaaf58060fbf20",
+      "entity_id": "98ee678e61e2",
+      "headline": "Hurricane Isaias Strengthens to Category 2, Threatens Gulf Coast",
+      "category": "News",
+      "sentences": [
+        "Hurricane Isaias has strengthened to a Category 2 storm and is threatening the Gulf Coast with rain, flooding, and storm surge.",
+        "The hurricane is expected to make landfall over the coming days, bringing damaging winds and heavy rains to parts of the US."
+      ],
+      "why_it_matters": null,
+      "labels": [],
+      "momentum": "UNCERTAIN",
+      "velocity_basis": "coverage_uncertain",
+      "momentum_note": "24h comparable sources: bluesky, google_news, google_trends, hackernews, mastodon, news_rss, reddit, wikipedia, x_trends24, youtube; 48h configuration changed or unavailable; 168h configuration changed or unavailable",
+      "relevance_score": 8,
+      "velocity_score": 50.0,
+      "combined_score": 68.0,
+      "platforms": [
+        "google_news",
+        "news_rss",
+        "youtube"
+      ],
+      "publisher_hosts": [
+        "apnews.com",
+        "bbc.co.uk",
+        "cbsnews.com",
+        "foxweather.com",
+        "npr.org",
+        "youtube.com"
+      ],
+      "raw_item_count": 7,
+      "member_item_ids": [
+        27,
+        78,
+        285,
+        381,
+        579,
+        1271
+      ],
+      "evidence": [
+        {
+          "item_id": 285,
+          "source": "news_rss",
+          "source_name": "News feeds",
+          "title": "BBC on Hurricane Isaias and its expected Gulf Coast landfall",
+          "url": "https://www.bbc.co.uk/news/videos/ckz65l2gne1po?at_medium=RSS&at_campaign=rss",
+          "publisher": "BBC News - Science",
+          "excerpt": "BBC Weather's Chris Fawkes says the first hurricane of the 2026 Atlantic season could bring dangerous winds, storm surge and heavy rains to the Gulf Coast Friday. | Hurricane Isaias, the first hurricane of the 2026 Atlantic season, is intensifying as it heads toward the northern Gulf Coast. The storm is expected to...",
+          "context_source": "page",
+          "published_at_utc": "2026-10-08T19:39:32Z",
+          "retrieved_at_utc": "2026-10-08T21:42:15.668674Z",
+          "feed": "https://feeds.bbci.co.uk/news/science_and_environment/rss.xml"
+        },
+        {
+          "item_id": 27,
+          "source": "google_news",
+          "source_name": "Google News",
+          "title": "Isaias strengthens into Category 2 hurricane on collision course with the US Gulf Coast",
+          "url": "https://news.google.com/rss/articles/CBMiugFBVV95cUxQNzlTM0pnaG9JM2k2Z19LSllNREhMckxuUE15MnZZdHZMYVUyendPbnBOejU3bS1RWXdJZXFPZllWb2hOMGdHS2ZPMTFqMTdGRFM4Yll1blQ2M2xMWC1YLTR4OVhsTVdyTUxkdm5CN1RUTXltMUpMdlhuLVoxcUVyTDFqejZyeTdvRHY5WGFMLURMTWRBZ1poYUl1WVI3VTMwajI0UzgwTzBKaU45eTVianM3eHhKSWtGVWc?oc=5",
+          "publisher": "AP News",
+          "excerpt": null,
+          "context_source": null,
+          "published_at_utc": "2026-10-08T21:28:00Z",
+          "retrieved_at_utc": "2026-10-08T21:42:15.509784Z",
+          "feed": "https://news.google.com/rss/search?q=site%3Aapnews.com+when%3A1d&hl=en-US&gl=US&ceid=US%3Aen"
+        },
+        {
+          "item_id": 381,
+          "source": "news_rss",
+          "source_name": "News feeds",
+          "title": "Hurricane Isaias threatens Gulf Coast with rain, flooding. See its path.",
+          "url": "https://www.cbsnews.com/news/hurricane-isaias-first-storm-2026-atlantic-season-record/",
+          "publisher": "CBS News - Latest",
+          "excerpt": "Hurricane Isaias strengthens to Category 2, threatens northern Gulf Coast. See maps, forecast path. | Hurricane Isaias, the first Atlantic hurricane of 2026, has strengthened into a Category 2 storm as it takes aim at the Gulf Coast from Mississippi to the Florida Panhandle. | Hurricane is intensifying and is expected...",
+          "context_source": "page",
+          "published_at_utc": "2026-10-08T21:25:00Z",
+          "retrieved_at_utc": "2026-10-08T21:42:15.433326Z",
+          "feed": "https://www.cbsnews.com/latest/rss/main"
+        },
+        {
+          "item_id": 1271,
+          "source": "youtube",
+          "source_name": "YouTube",
+          "title": "Hurricane Isaias is coming. What could it hit?",
+          "url": "https://www.youtube.com/watch?v=JWvrCFXc7uk",
+          "publisher": "BBC News",
+          "excerpt": "Isaias has strengthened to the first hurricane of the Atlantic season this year and will make landfall over the coming days. It has the potential to bring damaging winds, torrential rain and a storm surge to parts of the US Gulf Coast.",
+          "context_source": "feed",
+          "published_at_utc": "2026-10-08T18:30:11Z",
+          "retrieved_at_utc": "2026-10-08T21:42:18.127428Z",
+          "feed": "https://www.youtube.com/feeds/videos.xml?channel_id=UC16niRr50-MSBwiO3YDb3RA"
+        },
+        {
+          "item_id": 78,
+          "source": "google_news",
+          "source_name": "Google News",
+          "title": "Hurricane Isaias threatens to swamp Georgia-Alabama and other college football games",
+          "url": "https://news.google.com/rss/articles/CBMiqAFBVV95cUxNdmFMX0hfS3dsOHhRTGE2cy10RV9yTGZnVXhfbE1mNEtUc0dTZFZhMTlXZHBwSUZqeHZEeW1yZnQ5b3Nza3ltWnQ1dEFJdWpMWjRBWVNjTlpQWG9hOFQ3U09VYlIxaGhtTy1zMGI2WjBMUjU4NE10Z2tQeU9WTkI3MVN3bVdudTZOcWhwZ0xWTTlyelhkbE1wWTBxSjZkYUhVYkRNaW9uQjLSAa4BQVVfeXFMTWd5ODJsWmJTX3pmVGFKQkpGd1V1Z0lDUDA1ci1PQnhNQWNuVEFyMWFuS0pYZENXYktuaGtQaXFWaU9VNzJRRFZ6bGVtbnhPWGxzZmZhRnJTRW1iRGxkWTMzeWxHWXlnU05rWkMwNWl4d0xoUFVFVjE5dXFkdkpIUDVwQ1VsRllWTjMwN05HUEpWUWR2T29QT1FVOUc1MGd1Y1BJcVIxa0t4RFdtYkpR?oc=5",
+          "publisher": "FOX Weather",
+          "excerpt": null,
+          "context_source": null,
+          "published_at_utc": "2026-10-08T16:55:00Z",
+          "retrieved_at_utc": "2026-10-08T21:42:15.103881Z",
+          "feed": "https://news.google.com/rss/headlines/section/topic/SPORTS?hl=en-US&gl=US&ceid=US%3Aen"
+        },
+        {
+          "item_id": 579,
+          "source": "news_rss",
+          "source_name": "News feeds",
+          "title": "Isaias intensifies to hurricane. And, judge orders Pike execution evidence preserved",
+          "url": "https://www.npr.org/2026/10/08/g-s1-147105/up-first-newsletter-hurricane-isaias-house-elections-christa-pike-nidal-hasan-cnn-ms-now-politico",
+          "publisher": "NPR - World",
+          "excerpt": "People in the Gulf are preparing for bad weather this weekend after Isaias intensified into a hurricane. And, a judge has ordered Christa Pike's failed execution evidence be preserved. | Tropical Storm Isaias intensified into a hurricane overnight and is forecast to make landfall as early as tomorrow night near the...",
+          "context_source": "page",
+          "published_at_utc": "2026-10-08T11:35:22Z",
+          "retrieved_at_utc": "2026-10-08T21:42:15.315682Z",
+          "feed": "https://feeds.npr.org/1004/rss.xml"
+        }
+      ],
+      "tech_only": false,
+      "entities": [
+        "Isaias",
+        "Gulf Coast"
+      ],
+      "evidence_strength": {
+        "level": "strong",
+        "points": 6,
+        "independent_reports": 5,
+        "publishers": [
+          "AP News",
+          "BBC News",
+          "CBS News",
+          "FOX Weather",
+          "NPR"
+        ],
+        "channels": 3,
+        "trend_signals": 0,
+        "duplicates_collapsed": 1,
+        "newest_age_hours": 0.2,
+        "reasons": [
+          "5 independent reports (AP News, BBC News, CBS News, FOX Weather, ...)",
+          "1 repeat or syndicated copy counted once",
+          "3 reporting channels",
+          "newest report under an hour before this edition"
+        ]
+      }
+    },
+    {
+      "rank": 4,
+      "story_id": "e4a50cff38c189ca6a90",
+      "entity_id": "6e0b085473d2",
+      "headline": "Trump Promises Not to Resume Iran Strikes Before Midterm Elections",
+      "category": "News",
+      "sentences": [
+        "President Trump announced that the US will not attack Iran before the midterm elections, causing a drop in crude oil prices.",
+        "Crude oil prices had shot up on Thursday after reports President Trump was considering more strikes."
+      ],
+      "why_it_matters": null,
+      "labels": [],
+      "momentum": "UNCERTAIN",
+      "velocity_basis": "coverage_uncertain",
+      "momentum_note": "24h comparable sources: bluesky, google_news, google_trends, hackernews, mastodon, news_rss, reddit, wikipedia, x_trends24, youtube; 48h configuration changed or unavailable; 168h configuration changed or unavailable",
+      "relevance_score": 8,
+      "velocity_score": 50.0,
+      "combined_score": 68.0,
+      "platforms": [
+        "google_news",
+        "news_rss",
+        "youtube"
+      ],
+      "publisher_hosts": [
+        "bloomberg.com",
+        "cbsnews.com",
+        "reuters.com",
+        "youtube.com"
+      ],
+      "raw_item_count": 4,
+      "member_item_ids": [
+        41,
+        411,
+        553,
+        1302
+      ],
+      "evidence": [
+        {
+          "item_id": 41,
+          "source": "google_news",
+          "source_name": "Google News",
+          "title": "Trump says US will not attack Iran before midterm elections in November",
+          "url": "https://news.google.com/rss/articles/CBMivAFBVV95cUxNMmV2ZUhoRklKSzBPaFkzWHVFdkwxVDlVVU8tdDV2NXc4NEkxTjZSTVhoaklIeTlJX3BCUTFkRUREY1VDVGpTY1lhZEQ4OHgyRG81S0RLa0JJVEZHTWpiUFJVRy0xZmVSWEpVbDZsVFBSRzZ4bmw2RnhtMXlBelJ1Vi1GUnVuZ3htemdTdExuTktpQ2dKdzhFRmRMd0MwMlYtd3JPb1J0NVlKcVNtWUlNNHRoNVFWaFBWUHNTdg?oc=5",
+          "publisher": "Reuters",
+          "excerpt": null,
+          "context_source": null,
+          "published_at_utc": "2026-10-08T17:22:39Z",
+          "retrieved_at_utc": "2026-10-08T21:42:15.486282Z",
+          "feed": "https://news.google.com/rss/search?q=site%3Areuters.com+when%3A1d&hl=en-US&gl=US&ceid=US%3Aen"
+        },
+        {
+          "item_id": 411,
+          "source": "news_rss",
+          "source_name": "News feeds",
+          "title": "Trump promises not to resume Iran strikes before midterm elections",
+          "url": "https://www.cbsnews.com/live-updates/iran-war-nuclear-donald-trump-vance-rubio-strait-of-hormuz/",
+          "publisher": "CBS News - World",
+          "excerpt": "Iran War Updates: Trump promises not to resume strikes before midterm elections | Crude oil prices had shot up on Thursday after reports President Trump was considering more strikes. They immediately dropped again after his new announcement. | President Trump promised Thursday the U.S. would not attack Iran before the...",
+          "context_source": "page",
+          "published_at_utc": "2026-10-08T20:06:00Z",
+          "retrieved_at_utc": "2026-10-08T21:42:15.898045Z",
+          "feed": "https://www.cbsnews.com/latest/rss/world"
+        },
+        {
+          "item_id": 553,
+          "source": "news_rss",
+          "source_name": "News feeds",
+          "title": "Gold Rises After Trump Says US Won’t Attack Iran Before Midterms",
+          "url": "https://www.bloomberg.com/news/articles/2026-10-07/gold-near-nine-week-low-on-prospects-for-rate-hike-by-year-end",
+          "publisher": "Bloomberg - Markets",
+          "excerpt": "Gold Near Nine-Week Low on Prospects for Rate Hike by Year-End | Gold rose from a two-month low, with traders assessing the outlook for energy prices after President Donald Trump said the US won't attack Iran before the midterm elections. | Bullion climbed as much as 0.9% to trade near $4,146 an ounce, as a surge in...",
+          "context_source": "page",
+          "published_at_utc": "2026-10-07T23:37:27Z",
+          "retrieved_at_utc": "2026-10-08T21:42:17.527509Z",
+          "feed": "https://feeds.bloomberg.com/markets/news.rss"
+        },
+        {
+          "item_id": 1302,
+          "source": "youtube",
+          "source_name": "YouTube",
+          "title": "Saudi airports hit, Trump signals Iran restraint before midterms",
+          "url": "https://www.youtube.com/watch?v=xGlVyUUcTew",
+          "publisher": "Reuters",
+          "excerpt": "President Donald Trump says he wont strike Iran again before the midterm elections. Microsoft, Adobe and other tech companies are suspended from a worker visa program.",
+          "context_source": "feed",
+          "published_at_utc": "2026-10-08T20:25:57Z",
+          "retrieved_at_utc": "2026-10-08T21:42:18.133144Z",
+          "feed": "https://www.youtube.com/feeds/videos.xml?channel_id=UChqUTb7kYRX8-EiaN3XFrSQ"
+        }
+      ],
+      "tech_only": false,
+      "entities": [
+        "Trump",
+        "Iran"
+      ],
+      "evidence_strength": {
+        "level": "strong",
+        "points": 5,
+        "independent_reports": 3,
+        "publishers": [
+          "Bloomberg",
+          "CBS News",
+          "Reuters"
+        ],
+        "channels": 3,
+        "trend_signals": 0,
+        "duplicates_collapsed": 1,
+        "newest_age_hours": 1.3,
+        "reasons": [
+          "3 independent reports (Bloomberg, CBS News, Reuters)",
+          "1 repeat or syndicated copy counted once",
+          "3 reporting channels",
+          "newest report 1 h before this edition"
+        ]
+      }
+    },
+    {
+      "rank": 5,
+      "story_id": "7bb838f20b58f4d2e433",
+      "entity_id": "07db55ed85fa",
+      "headline": "SpaceX Announces Plan to Become a 'Major Mobile Carrier'",
+      "category": "Science & AI",
+      "sentences": [
+        "SpaceX has acquired a portfolio of low-band spectrum licenses to help its Starlink Mobile service become a major US carrier.",
+        "The company says it will deploy its Starlink Mobile service when the Federal Communications Commission signs off on the deal."
+      ],
+      "why_it_matters": null,
+      "labels": [],
+      "momentum": "UNCERTAIN",
+      "velocity_basis": "coverage_uncertain",
+      "momentum_note": "24h comparable sources: bluesky, google_news, google_trends, hackernews, mastodon, news_rss, reddit, wikipedia, x_trends24, youtube; 48h configuration changed or unavailable; 168h configuration changed or unavailable",
+      "relevance_score": 8,
+      "velocity_score": 50.0,
+      "combined_score": 68.0,
+      "platforms": [
+        "news_rss"
+      ],
+      "publisher_hosts": [
+        "cnbc.com",
+        "techmeme.com",
+        "theverge.com"
+      ],
+      "raw_item_count": 3,
+      "member_item_ids": [
+        290,
+        353,
+        388
+      ],
+      "evidence": [
+        {
+          "item_id": 290,
+          "source": "news_rss",
+          "source_name": "News feeds",
+          "title": "SpaceX announces plan to become a ‘major mobile carrier’",
+          "url": "https://www.theverge.com/science/1008467/spacex-announces-plan-to-become-a-major-mobile-carrier",
+          "publisher": "The Verge",
+          "excerpt": "SpaceX is getting serious about Starlink Mobile. | SpaceX has acquired a portfolio of low-band spectrum licenses - a move the company says \"will pave the way\" for its Starlink Mobile service to become a \"major\" US carrier. When the Federal Communications Commission signs off on the deal, SpaceX says it will deploy its...",
+          "context_source": "page",
+          "published_at_utc": "2026-10-08T21:23:31Z",
+          "retrieved_at_utc": "2026-10-08T21:42:15.650950Z",
+          "feed": "https://www.theverge.com/rss/index.xml"
+        },
+        {
+          "item_id": 353,
+          "source": "news_rss",
+          "source_name": "News feeds",
+          "title": "SpaceX agrees to buy a nationwide low-band spectrum portfolio to help Starlink \"become a major mobile carrier\"; AT&T, T-Mobile, Verizon fall 6%+ after hours (Bloomberg)",
+          "url": "https://www.techmeme.com/261008/p48#a261008p48",
+          "publisher": "Techmeme",
+          "excerpt": "SpaceX agrees to buy a nationwide low-band spectrum portfolio to help Starlink \"become a major mobile carrier\"; AT&T, T-Mobile, Verizon fall 6%+ after hours | From Bloomberg. View the full context on Techmeme. | Protecting your Cloud Applications Data - Backing up Office 365, Google Workspace, Dropbox & Salesforce...",
+          "context_source": "page",
+          "published_at_utc": "2026-10-08T21:25:01Z",
+          "retrieved_at_utc": "2026-10-08T21:42:17.574473Z",
+          "feed": "https://www.techmeme.com/feed.xml"
+        },
+        {
+          "item_id": 388,
+          "source": "news_rss",
+          "source_name": "News feeds",
+          "title": "SpaceX deal to acquire spectrum license hammers shares of AT&T, Verizon and T-Mobile",
+          "url": "https://www.cnbc.com/2026/10/08/spacex-spectrum-license-att-verizon-tmobile.html",
+          "publisher": "CNBC - Top News",
+          "excerpt": "SpaceX agreed to purchase a nationwide spectrum portfolio as it to pushes its Starlink service deeper into the U.S. telecommunications market. | SpaceX announced an agreement on Thursday to purchase a nationwide spectrum portfolio as it pushes its Starlink service deeper into the U.S. telecommunications market. Shares...",
+          "context_source": "page",
+          "published_at_utc": "2026-10-08T21:35:10Z",
+          "retrieved_at_utc": "2026-10-08T21:42:15.668674Z",
+          "feed": "https://www.cnbc.com/id/100003114/device/rss/rss.html"
+        }
+      ],
+      "tech_only": false,
+      "entities": [
+        "SpaceX"
+      ],
+      "evidence_strength": {
+        "level": "moderate",
+        "points": 4,
+        "independent_reports": 3,
+        "publishers": [
+          "CNBC",
+          "Techmeme",
+          "The Verge"
+        ],
+        "channels": 1,
+        "trend_signals": 0,
+        "duplicates_collapsed": 0,
+        "newest_age_hours": 0.1,
+        "reasons": [
+          "3 independent reports (CNBC, Techmeme, The Verge)",
+          "1 reporting channel",
+          "newest report under an hour before this edition"
+        ]
+      }
+    },
+    {
+      "rank": 6,
+      "story_id": "24fa086bb2b459eb3c45",
+      "entity_id": "1fe4bcfae81c",
+      "headline": "Arizona Congressional Candidate Says She Was Raped",
+      "category": "News",
+      "sentences": [
+        "A Democratic congressional candidate in Arizona has alleged that she was raped while fixing a campaign sign.",
+        "She was trying to repair a campaign sign in the middle of the night."
+      ],
+      "why_it_matters": null,
+      "labels": [],
+      "momentum": "UNCERTAIN",
+      "velocity_basis": "coverage_uncertain",
+      "momentum_note": "24h comparable sources: bluesky, google_news, google_trends, hackernews, mastodon, news_rss, reddit, wikipedia, x_trends24, youtube; 48h configuration changed or unavailable; 168h configuration changed or unavailable",
+      "relevance_score": 8,
+      "velocity_score": 50.0,
+      "combined_score": 68.0,
+      "platforms": [
+        "google_news",
+        "youtube"
+      ],
+      "publisher_hosts": [
+        "washingtonpost.com",
+        "youtube.com"
+      ],
+      "raw_item_count": 3,
+      "member_item_ids": [
+        43,
+        1272
+      ],
+      "evidence": [
+        {
+          "item_id": 43,
+          "source": "youtube",
+          "source_name": "YouTube",
+          "title": "Arizona candidate says she was raped while fixing campaign sign",
+          "url": "https://www.youtube.com/watch?v=2_FkMmdlHRI",
+          "publisher": "ABC News",
+          "excerpt": "A Democratic congressional candidate in Arizona says she was raped over the summer while trying to repair a campaign sign. Bernadette Greene-Placentia, who is running in the state's 8th district to try to unseat GOP Rep.",
+          "context_source": "feed",
+          "published_at_utc": "2026-10-08T18:34:29Z",
+          "retrieved_at_utc": "2026-10-08T21:42:18.262878Z",
+          "feed": "https://www.youtube.com/feeds/videos.xml?channel_id=UCBi2mrWuNuyYy4gbM6fU18Q"
+        },
+        {
+          "item_id": 43,
+          "source": "google_news",
+          "source_name": "Google News",
+          "title": "Arizona House candidate says she was raped while out fixing campaign signs",
+          "url": "https://news.google.com/rss/articles/CBMixAFBVV95cUxPTHlvc3Q5YkRMZjdEZWx4eHZ3UUVaODBiR0hDWktreEhJcXllYmU3Mll3dXdxNTJ2d2loajRjNXBqZnU5b0k5OXdBTXBMckRDVzM1NzQ1YmppY3hnQXNoT3gta2VPTTZ4QS1kWjBRbXFzQThENnlvaVR1Y3hfOWhtcUpCQzVqdldORVVrZWt5SVUzUjczbG90S3pIN2ZqVEV1U01sQXc1MjEwdWFGbThEaWRYcUkxMWZ6RFJrSE9EWS1UaWx4?oc=5",
+          "publisher": "The Washington Post",
+          "excerpt": null,
+          "context_source": null,
+          "published_at_utc": "2026-10-08T19:11:39Z",
+          "retrieved_at_utc": "2026-10-08T21:42:14.866161Z",
+          "feed": "https://news.google.com/rss?hl=en-US&gl=US&ceid=US%3Aen"
+        },
+        {
+          "item_id": 1272,
+          "source": "youtube",
+          "source_name": "YouTube",
+          "title": "Arizona congressional candidate says she was raped while fixing campaign sign",
+          "url": "https://www.youtube.com/watch?v=V1Y4m5D8xig",
+          "publisher": "CBS News",
+          "excerpt": "Bernadette Greene-Placentia, a democratic candidate for Congress in Arizona, told the Phoenix New Times that she was sexually assaulted while she was fixing a campaign sign in the middle of the night. CBS News' Shanelle Kaul has more.",
+          "context_source": "feed",
+          "published_at_utc": "2026-10-08T15:58:38Z",
+          "retrieved_at_utc": "2026-10-08T21:42:18.397926Z",
+          "feed": "https://www.youtube.com/feeds/videos.xml?channel_id=UC8p1vwvWtl6T73JiExfWs1g"
+        }
+      ],
+      "tech_only": false,
+      "entities": [
+        "Bernadette Greene-Placentia",
+        "Arizona"
+      ],
+      "evidence_strength": {
+        "level": "strong",
+        "points": 5,
+        "independent_reports": 3,
+        "publishers": [
+          "ABC News",
+          "CBS News",
+          "The Washington Post"
+        ],
+        "channels": 2,
+        "trend_signals": 0,
+        "duplicates_collapsed": 0,
+        "newest_age_hours": 2.5,
+        "reasons": [
+          "3 independent reports (ABC News, CBS News, The Washington Post)",
+          "2 reporting channels",
+          "newest report 2 h before this edition"
+        ]
+      }
+    },
+    {
+      "rank": 7,
+      "story_id": "e15037d9d9eeea73f571",
+      "entity_id": "7b81f275c075",
+      "headline": "Pete Hegseth Says Public Can Watch Fort Hood Shooter's Execution",
+      "category": "News",
+      "sentences": [
+        "Defense Secretary Pete Hegseth announced that the public will be able to watch the execution of Fort Hood shooter Nidal Hasan by firing squad."
+      ],
+      "why_it_matters": null,
+      "labels": [],
+      "momentum": "UNCERTAIN",
+      "velocity_basis": "coverage_uncertain",
+      "momentum_note": "24h comparable sources: bluesky, google_news, google_trends, hackernews, mastodon, news_rss, reddit, wikipedia, x_trends24, youtube; 48h configuration changed or unavailable; 168h configuration changed or unavailable",
+      "relevance_score": 8,
+      "velocity_score": 50.0,
+      "combined_score": 68.0,
+      "platforms": [
+        "google_news",
+        "news_rss"
+      ],
+      "publisher_hosts": [
+        "abcnews.com",
+        "axios.com"
+      ],
+      "raw_item_count": 3,
+      "member_item_ids": [
+        193,
+        511
+      ],
+      "evidence": [
+        {
+          "item_id": 193,
+          "source": "news_rss",
+          "source_name": "News feeds",
+          "title": "Pete Hegseth says public can watch Fort Hood shooter's execution",
+          "url": "https://www.axios.com/2026/10/08/hegseth-nidal-hasan-firing-squad-public-tv",
+          "publisher": "Axios",
+          "excerpt": "Defense Secretary Pete Hegseth said Thursday that the public will be able to watch the execution of the Fort Hood shooter by firing squad. Why it matters: The U.S. hasn't held a public execution in 90 years , and Hegseth's remarks raise questions about how the military would allow people to watch. Nidal Hasan, who was...",
+          "context_source": "feed",
+          "published_at_utc": "2026-10-08T21:19:38Z",
+          "retrieved_at_utc": "2026-10-08T21:42:17.129257Z",
+          "feed": "https://api.axios.com/feed/"
+        },
+        {
+          "item_id": 193,
+          "source": "google_news",
+          "source_name": "Google News",
+          "title": "Pete Hegseth says public can watch Fort Hood shooter's execution",
+          "url": "https://news.google.com/rss/articles/CBMigAFBVV95cUxQUlVhMWhtVTdJZEctYVZWUk5jR0tUakpkQjJxMGVDaEpySGZlVWFRTnFmWXYtNGlrNV9YT0ZmVlNpdVdBZFNaV0xHM1pXakJ1d3FPY05mSkI1NmNPRE96LU5sTVNGU1U2Ql93djRIVWE3X2k0X2gyRkw2ckN0cWl6Sg?oc=5",
+          "publisher": "Axios",
+          "excerpt": null,
+          "context_source": null,
+          "published_at_utc": "2026-10-08T20:17:21Z",
+          "retrieved_at_utc": "2026-10-08T21:42:14.998005Z",
+          "feed": "https://news.google.com/rss/headlines/section/topic/NATION?hl=en-US&gl=US&ceid=US%3Aen"
+        },
+        {
+          "item_id": 511,
+          "source": "news_rss",
+          "source_name": "News feeds",
+          "title": "Hegseth says Hasan execution will be public",
+          "url": "https://abcnews.com/Politics/hegseth-hasan-execution-public/story?id=137110734",
+          "publisher": "ABC News - Top Stories",
+          "excerpt": "Hegseth said he would make sure \"people are able to watch it, that it's public.\" | Secretary of Defense Pete Hegseth said on Thursday that Nidal Hasan's December execution by firing squad at Ft. Hood will be public.",
+          "context_source": "page",
+          "published_at_utc": "2026-10-08T21:03:48Z",
+          "retrieved_at_utc": "2026-10-08T21:42:15.976990Z",
+          "feed": "https://abcnews.go.com/abcnews/topstories"
+        }
+      ],
+      "tech_only": false,
+      "entities": [
+        "Pete Hegseth"
+      ],
+      "evidence_strength": {
+        "level": "moderate",
+        "points": 4,
+        "independent_reports": 2,
+        "publishers": [
+          "ABC News",
+          "Axios"
+        ],
+        "channels": 2,
+        "trend_signals": 0,
+        "duplicates_collapsed": 1,
+        "newest_age_hours": 0.4,
+        "reasons": [
+          "2 independent reports (ABC News, Axios)",
+          "1 repeat or syndicated copy counted once",
+          "2 reporting channels",
+          "newest report under an hour before this edition"
+        ]
+      }
+    },
+    {
+      "rank": 8,
+      "story_id": "0d8ae34dadf11c5f2b81",
+      "entity_id": "18124e746b13",
+      "headline": "NASA's SpaceX Crew-12 Returns to Earth After Nearly Eight Months in Space",
+      "category": "Science & AI",
+      "sentences": [
+        "Four astronauts and a cosmonaut from NASA's Crew-12 mission have returned to Earth after spending nearly eight months in space, conducting spacewalks, science experiments, and research.",
+        "The crew members splashed down off the coast of California at 11:34 a.m."
+      ],
+      "why_it_matters": null,
+      "labels": [],
+      "momentum": "UNCERTAIN",
+      "velocity_basis": "coverage_uncertain",
+      "momentum_note": "24h comparable sources: bluesky, google_news, google_trends, hackernews, mastodon, news_rss, reddit, wikipedia, x_trends24, youtube; 48h configuration changed or unavailable; 168h configuration changed or unavailable",
+      "relevance_score": 7,
+      "velocity_score": 50.0,
+      "combined_score": 62.0,
+      "platforms": [
+        "google_news",
+        "news_rss",
+        "youtube"
+      ],
+      "publisher_hosts": [
+        "houstonpublicmedia.org",
+        "nasa.gov",
+        "npr.org",
+        "space.com",
+        "youtube.com"
+      ],
+      "raw_item_count": 9,
+      "member_item_ids": [
+        7,
+        14,
+        56,
+        70,
+        1281
+      ],
+      "evidence": [
+        {
+          "item_id": 7,
+          "source": "news_rss",
+          "source_name": "News feeds",
+          "title": "4 people on NASA's Crew-12 mission return to Earth after 8 months in space",
+          "url": "https://www.npr.org/2026/10/08/nx-s1-5992845/nasa-spacex-crew-12-international-space-station-iss-splashdown",
+          "publisher": "NPR - Science",
+          "excerpt": "Four people - two NASA astronauts, one from the European Space Agency and a Russian cosmonaut - spent nearly eight months at the space station, conducting spacewalks, science experiments and research. | Three astronauts and a cosmonaut of NASA's Crew-12 mission have safely returned to Earth after an almost eight-month...",
+          "context_source": "page",
+          "published_at_utc": "2026-10-08T15:34:39Z",
+          "retrieved_at_utc": "2026-10-08T21:42:15.768666Z",
+          "feed": "https://feeds.npr.org/1007/rss.xml"
+        },
+        {
+          "item_id": 7,
+          "source": "google_news",
+          "source_name": "Google News",
+          "title": "4 people on NASA's Crew-12 mission return to Earth after 8 months in space",
+          "url": "https://news.google.com/rss/articles/CBMiqwFBVV95cUxNcl9qUkRWTGNpb3dJMDdMOXp5QWJIMGlFMmtrQUNPcGRlQmRoc0hBX0lEOWdqa1h3bExkLWZpMU9yeV8wbndqQlp0bkJ3TXZkdFFjSk42TUVSY1kzWm16Tm9ndUwwUlJyU2xnUjMxTzc1VDA4TmotOE5qWG4wSmwyZjFKN2xRUmVuXzIwdllvUGpmTlZHZnAtX1FqSnF0d1NkSFIxZUN6NnpvbVk?oc=5",
+          "publisher": "NPR",
+          "excerpt": null,
+          "context_source": null,
+          "published_at_utc": "2026-10-08T15:34:39Z",
+          "retrieved_at_utc": "2026-10-08T21:42:15.027447Z",
+          "feed": "https://news.google.com/rss/headlines/section/topic/SCIENCE?hl=en-US&gl=US&ceid=US%3Aen"
+        },
+        {
+          "item_id": 56,
+          "source": "google_news",
+          "source_name": "Google News",
+          "title": "Splashdown! Crew-12 astronauts return to Earth after nearly 8 months in space (video)",
+          "url": "https://news.google.com/rss/articles/CBMivAFBVV95cUxNck44bkQ0c3B3Z2VTLTgzU01XeVRibHgzRUFtbENGaXJkemNjbzBpQmZtNTlBUDBpZW5DajEtdG5EWmt4OGZ1bnc0a29xT3llUk5BSjZ3WVB0a0x2ODBNRzRjRG4zODJOcjZ6c2VpWEt3N2tjSjdQOXJpRzdILTZSNDdjUDJpUTRfUk81Mm11cG1HWnJfa01tMERpYzZ4ZlFNSW5GTzk2YlhNMF9nWE1URzFvdVlYQmtCS05lUg?oc=5",
+          "publisher": "Space",
+          "excerpt": null,
+          "context_source": null,
+          "published_at_utc": "2026-10-08T16:05:24Z",
+          "retrieved_at_utc": "2026-10-08T21:42:15.592166Z",
+          "feed": "https://news.google.com/rss/search?q=space+OR+NASA+OR+astronomy+when%3A1d&hl=en-US&gl=US&ceid=US%3Aen"
+        },
+        {
+          "item_id": 70,
+          "source": "google_news",
+          "source_name": "Google News",
+          "title": "NASA’s SpaceX Crew-12 returns to Earth after nearly eight months in space",
+          "url": "https://news.google.com/rss/articles/CBMi3gFBVV95cUxNVnR2NWhPeFBqLUpSUzJLeldIdWZvWkhoSUhXakdaTUVLSkJzVlM3RHBwVHlIZjVWNlAwUmhleWU2V3kwYmh0RWxOM3JPZUhXNkxyREhLa2RtS291MlY4aUNTazN4VGhURkw2ZmdkNzBPM3Y4VTdzcGU1eHBuUFNhU25uQlFVU0ZTXzIwU2c4WWd3NnZFa1lpWVJEUk42YXVBckRqeXNOblBrbllnRE0wQ25XMmV2M2hDMzVJNm5LX3NwYVRhZ3M5S2VkaFhjTkkwUGdhRTRUNnZxZlZjYUHSAeYBQVVfeXFMTVVkaGxvMnFCbmZLZkJvalhxbXNfMzZ0TzA2RWwyTkgySjNaTjRFQVM0Y19FbFJpTkJzU29jMGF5TjI4SFAwSy1HOV9MLTZfWnEwc1UxOUtuNElBSDF5akNndXoydzdadlk2WGo2V2NDOWVFYlZWSy1vMEx0cjJnRlZBWU5CVlNRTXJHYmJOVVZJaHBrYzFZc0ZtSHN3TlpmZVVuOEg4eXd2dlBJTnE0SU14MFFrN0NOd3FRNTBHQnY1Y0xjM3puZldSajhwcXd2MG1RSHMxMXZyOGRTRER1aEV2bXRrNXc?oc=5",
+          "publisher": "Houston Public Media",
+          "excerpt": null,
+          "context_source": null,
+          "published_at_utc": "2026-10-08T15:37:10Z",
+          "retrieved_at_utc": "2026-10-08T21:42:15.592166Z",
+          "feed": "https://news.google.com/rss/search?q=space+OR+NASA+OR+astronomy+when%3A1d&hl=en-US&gl=US&ceid=US%3Aen"
+        },
+        {
+          "item_id": 14,
+          "source": "google_news",
+          "source_name": "Google News",
+          "title": "NASA’s SpaceX Crew-12 Dragon Splashes Down at 11:34 a.m. EDT",
+          "url": "https://news.google.com/rss/articles/CBMirgFBVV95cUxPcUFIODdkU2hJV0NGVXdPNzV2U3o5YWVoQUpieV8tSUFIN2pDemtzTTFLUlhkU0hDZ2JrcWN4YTJfcXJ6OS1rTzFScVRrclY0TWZtTnpteGZBNlVPQmI0Tk1IdElTSEpTT3oyaEdmNjhUX01vSFplNUNud0F1V2RkLVQ2YmUyZEFnd0N6R1hXNlFoemhJTzJEakh1bElWcERoeDZDdjc5Y2xUMmFzQWc?oc=5",
+          "publisher": "NASA (.gov)",
+          "excerpt": null,
+          "context_source": null,
+          "published_at_utc": "2026-10-08T15:40:32Z",
+          "retrieved_at_utc": "2026-10-08T21:42:15.592166Z",
+          "feed": "https://news.google.com/rss/search?q=space+OR+NASA+OR+astronomy+when%3A1d&hl=en-US&gl=US&ceid=US%3Aen"
+        },
+        {
+          "item_id": 1281,
+          "source": "youtube",
+          "source_name": "YouTube",
+          "title": "NASA's SpaceX Crew-12 Re-Entry & Splashdown",
+          "url": "https://www.youtube.com/watch?v=x6p9Ri0DlNE",
+          "publisher": "NASA",
+          "excerpt": "Welcome Crew-12 back to Earth with us! NASA astronauts Jessica Meir and Jack Hathaway, ESA (European Space Agency) astronaut Sophie Adenot, and Roscosmos cosmonaut Andrey Fedyaev are scheduled to splash down off the coast of California at 11:34 a.m.",
+          "context_source": "feed",
+          "published_at_utc": "2026-10-08T16:52:21Z",
+          "retrieved_at_utc": "2026-10-08T21:42:18.551048Z",
+          "feed": "https://www.youtube.com/feeds/videos.xml?channel_id=UCLA_DiR1FfKNvjuUpBHmylQ"
+        }
+      ],
+      "tech_only": false,
+      "entities": [
+        "NASA",
+        "SpaceX",
+        "Crew-12"
+      ],
+      "evidence_strength": {
+        "level": "strong",
+        "points": 6,
+        "independent_reports": 5,
+        "publishers": [
+          "Houston Public Media",
+          "NASA",
+          "NASA (.gov)",
+          "NPR",
+          "Space"
+        ],
+        "channels": 3,
+        "trend_signals": 0,
+        "duplicates_collapsed": 1,
+        "newest_age_hours": 4.8,
+        "reasons": [
+          "5 independent reports (Houston Public Media, NASA, NASA (.gov), NPR, ...)",
+          "1 repeat or syndicated copy counted once",
+          "3 reporting channels",
+          "newest report 5 h before this edition"
+        ]
+      }
+    },
+    {
+      "rank": 9,
+      "story_id": "3d6512711f03814c69dd",
+      "entity_id": "802f18073c6e",
+      "headline": "Spain Mourns Maricarmen Abascal, Whose Eviction Sparked Housing Protests",
+      "category": "News",
+      "sentences": [
+        "An 87-year-old woman, Maricarmen Abascal, was evicted from her home in Spain, sparking protests and anger across the country."
+      ],
+      "why_it_matters": null,
+      "labels": [],
+      "momentum": "UNCERTAIN",
+      "velocity_basis": "coverage_uncertain",
+      "momentum_note": "24h comparable sources: bluesky, google_news, google_trends, hackernews, mastodon, news_rss, reddit, wikipedia, x_trends24, youtube; 48h configuration changed or unavailable; 168h configuration changed or unavailable",
+      "relevance_score": 7,
+      "velocity_score": 50.0,
+      "combined_score": 62.0,
+      "platforms": [
+        "google_news",
+        "news_rss"
+      ],
+      "publisher_hosts": [
+        "bbc.co.uk",
+        "democracynow.org",
+        "france24.com"
+      ],
+      "raw_item_count": 4,
+      "member_item_ids": [
+        2,
+        486,
+        578
+      ],
+      "evidence": [
+        {
+          "item_id": 2,
+          "source": "google_news",
+          "source_name": "Google News",
+          "title": "“She Put Her Body on the Line”: Maricarmen, 87, Dies; Her Eviction Sparked Spain Housing Protests",
+          "url": "https://news.google.com/rss/articles/CBMib0FVX3lxTE9vbmRIRld5YTk3RUNqbVhqWnZBTXlEbURCcFUzSVRCRml1bXdoNEtkeGg4Nkw4ODFNUnNGNFI0VWkySk5jYnY4d3I2TFlYcVYzcXgySjlLUHFsZ0VLZHdYdmduZjRpTC0xZDM0Z2RWMA?oc=5",
+          "publisher": "Democracy Now!",
+          "excerpt": null,
+          "context_source": null,
+          "published_at_utc": "2026-10-08T12:00:00Z",
+          "retrieved_at_utc": "2026-10-08T21:42:14.866161Z",
+          "feed": "https://news.google.com/rss/headlines/section/topic/WORLD?hl=en-US&gl=US&ceid=US%3Aen"
+        },
+        {
+          "item_id": 486,
+          "source": "news_rss",
+          "source_name": "News feeds",
+          "title": "Spain mourns Maricarmen Abascal, whose eviction sparked housing protests",
+          "url": "https://www.france24.com/en/spain-mourns-maricarmen-abascal-whose-eviction-sparked-housing-protests",
+          "publisher": "France 24 - English",
+          "excerpt": "Protests and anger have grown across Spain after the death of an 87-year-old woman in the wake of her eviction from her home. Maricarmen Abascal was thrown out of her home of seven decades in what became.",
+          "context_source": "page",
+          "published_at_utc": "2026-10-08T20:35:36Z",
+          "retrieved_at_utc": "2026-10-08T21:42:15.603437Z",
+          "feed": "https://www.france24.com/en/rss"
+        },
+        {
+          "item_id": 578,
+          "source": "news_rss",
+          "source_name": "News feeds",
+          "title": "Protesters blame 'vulture funds' for Spain's housing crisis",
+          "url": "https://www.bbc.co.uk/news/articles/c3j4790elkx7o?at_medium=RSS&at_campaign=rss",
+          "publisher": "BBC News - World",
+          "excerpt": "Hundreds have pitched their tents in central Madrid, while the Spanish prime minister has called a snap election. | Pierina Nicuray, a 21-year-old university graduate, has spent a week camped out in Madrid's Puerta del Sol square. | Like many of the hundreds of others who have pitched their tents here to protest at...",
+          "context_source": "page",
+          "published_at_utc": "2026-10-08T19:10:06Z",
+          "retrieved_at_utc": "2026-10-08T21:42:15.286247Z",
+          "feed": "https://feeds.bbci.co.uk/news/world/rss.xml"
+        }
+      ],
+      "tech_only": false,
+      "entities": [
+        "Maricarmen Abascal",
+        "Spain"
+      ],
+      "evidence_strength": {
+        "level": "strong",
+        "points": 5,
+        "independent_reports": 3,
+        "publishers": [
+          "BBC News",
+          "Democracy Now!",
+          "France 24"
+        ],
+        "channels": 2,
+        "trend_signals": 0,
+        "duplicates_collapsed": 0,
+        "newest_age_hours": 1.1,
+        "reasons": [
+          "3 independent reports (BBC News, Democracy Now!, France 24)",
+          "2 reporting channels",
+          "newest report 1 h before this edition"
+        ]
+      }
+    },
+    {
+      "rank": 10,
+      "story_id": "8924aab52128c6df4b7b",
+      "entity_id": "37f30f0059f9",
+      "headline": "Police Use Tear Gas and Water Cannons on Student Protestors in Paris",
+      "category": "News",
+      "sentences": [
+        "Police in Paris used tear gas and water cannons to disperse student protesters demanding more funding and teachers, with 6,059 arrests made."
+      ],
+      "why_it_matters": null,
+      "labels": [],
+      "momentum": "UNCERTAIN",
+      "velocity_basis": "coverage_uncertain",
+      "momentum_note": "24h comparable sources: bluesky, google_news, google_trends, hackernews, mastodon, news_rss, reddit, wikipedia, x_trends24, youtube; 48h configuration changed or unavailable; 168h configuration changed or unavailable",
+      "relevance_score": 7,
+      "velocity_score": 50.0,
+      "combined_score": 62.0,
+      "platforms": [
+        "news_rss",
+        "youtube"
+      ],
+      "publisher_hosts": [
+        "aljazeera.com",
+        "lemonde.fr",
+        "youtube.com"
+      ],
+      "raw_item_count": 3,
+      "member_item_ids": [
+        279,
+        280,
+        1273
+      ],
+      "evidence": [
+        {
+          "item_id": 279,
+          "source": "news_rss",
+          "source_name": "News feeds",
+          "title": "Police use tear gas and water cannons on student protestors in Paris",
+          "url": "https://www.aljazeera.com/video/newsfeed/2026/10/8/police-use-tear-gas-and-water-cannons-on-student-protestors-in-paris?traffic_source=rss",
+          "publisher": "Al Jazeera - All",
+          "excerpt": "Police fired tear gas and water cannons as demonstrators gathered in Paris to demand more funding and teachers.",
+          "context_source": "page",
+          "published_at_utc": "2026-10-08T21:17:05Z",
+          "retrieved_at_utc": "2026-10-08T21:42:15.464814Z",
+          "feed": "https://www.aljazeera.com/xml/rss/all.xml"
+        },
+        {
+          "item_id": 280,
+          "source": "news_rss",
+          "source_name": "News feeds",
+          "title": "French high school protests: The questions raised by two weeks of police intervention",
+          "url": "https://www.lemonde.fr/en/france/article/2026/10/08/french-high-school-protests-the-questions-raised-by-two-weeks-of-police-intervention_6758395_7.html",
+          "publisher": "Le Monde - English",
+          "excerpt": "Increasingly criticized after footage emerged showing heavy-handed police tactics and injured teenagers, Interior Minister Laurent Nunez is not toning down his communication. Law enforcement says 6,059 arrests were made between September 28 and October 5, a record number.",
+          "context_source": "feed",
+          "published_at_utc": "2026-10-08T18:00:04Z",
+          "retrieved_at_utc": "2026-10-08T21:42:15.492164Z",
+          "feed": "https://www.lemonde.fr/en/rss/une.xml"
+        },
+        {
+          "item_id": 1273,
+          "source": "youtube",
+          "source_name": "YouTube",
+          "title": "French police use tear gas as education protests escalate in Paris",
+          "url": "https://www.youtube.com/watch?v=9VZjHq5JJLg",
+          "publisher": "Al Jazeera English",
+          "excerpt": "French police have used tear gas and water cannon to disperse protesters in central Paris as demonstrations over the country's education system enter their third week. High school students, university students and teachers' unions are demanding more teachers, better school buildings and improved facilities, with the...",
+          "context_source": "feed",
+          "published_at_utc": "2026-10-08T18:26:55Z",
+          "retrieved_at_utc": "2026-10-08T21:42:18.435233Z",
+          "feed": "https://www.youtube.com/feeds/videos.xml?channel_id=UCNye-wNBqNL5ZzHSJj3l8Bg"
+        }
+      ],
+      "tech_only": false,
+      "entities": [
+        "Paris",
+        "French Police"
+      ],
+      "evidence_strength": {
+        "level": "strong",
+        "points": 5,
+        "independent_reports": 3,
+        "publishers": [
+          "Al Jazeera",
+          "Al Jazeera English",
+          "Le Monde"
+        ],
+        "channels": 2,
+        "trend_signals": 0,
+        "duplicates_collapsed": 0,
+        "newest_age_hours": 0.4,
+        "reasons": [
+          "3 independent reports (Al Jazeera, Al Jazeera English, Le Monde)",
+          "2 reporting channels",
+          "newest report under an hour before this edition"
+        ]
+      }
+    },
+    {
+      "rank": 11,
+      "story_id": "b6f8b398be25eb9aef79",
+      "entity_id": "4d7e2f37f3ab",
+      "headline": "ChatGPT for Teens Found to Be an 'Unacceptable Risk'",
+      "category": "Science & AI",
+      "sentences": [
+        "Common Sense Media found ChatGPT for Teens to be an unacceptable risk after extensive testing.",
+        "The chatbot failed in five key areas."
+      ],
+      "why_it_matters": null,
+      "labels": [],
+      "momentum": "UNCERTAIN",
+      "velocity_basis": "coverage_uncertain",
+      "momentum_note": "24h comparable sources: bluesky, google_news, google_trends, hackernews, mastodon, news_rss, reddit, wikipedia, x_trends24, youtube; 48h configuration changed or unavailable; 168h configuration changed or unavailable",
+      "relevance_score": 7,
+      "velocity_score": 50.0,
+      "combined_score": 62.0,
+      "platforms": [
+        "news_rss"
+      ],
+      "publisher_hosts": [
+        "bbc.co.uk",
+        "engadget.com"
+      ],
+      "raw_item_count": 2,
+      "member_item_ids": [
+        399,
+        692
+      ],
+      "evidence": [
+        {
+          "item_id": 399,
+          "source": "news_rss",
+          "source_name": "News feeds",
+          "title": "Child safety group calls ChatGPT for Teens an unacceptable risk",
+          "url": "https://www.engadget.com/2281719/child-safety-group-calls-chatgpt-for-teens-an-unacceptable-risk/",
+          "publisher": "Engadget",
+          "excerpt": "After extensive testing, Common Sense Media found the chatbot failed in five key areas.",
+          "context_source": "page",
+          "published_at_utc": "2026-10-08T20:36:46Z",
+          "retrieved_at_utc": "2026-10-08T21:42:15.721546Z",
+          "feed": "https://www.engadget.com/rss.xml"
+        },
+        {
+          "item_id": 692,
+          "source": "news_rss",
+          "source_name": "News feeds",
+          "title": "OpenAI says teen ChatGPT use limited but research finds it an 'unacceptable risk'",
+          "url": "https://www.bbc.co.uk/news/articles/cwz0vrmxkvy4o?at_medium=RSS&at_campaign=rss",
+          "publisher": "BBC News - Technology",
+          "excerpt": "The research found that important guardrails for teens using ChatGPT often failed. | OpenAI's ChatGPT for Teens was designed to promote healthier use of the artificial intelligence (AI) chatbot, but new research has found its important safety features fall short. | The major AI firm rolled out many teen safety...",
+          "context_source": "page",
+          "published_at_utc": "2026-10-07T20:34:17Z",
+          "retrieved_at_utc": "2026-10-08T21:42:15.609846Z",
+          "feed": "https://feeds.bbci.co.uk/news/technology/rss.xml"
+        }
+      ],
+      "tech_only": false,
+      "entities": [
+        "ChatGPT",
+        "OpenAI"
+      ],
+      "evidence_strength": {
+        "level": "moderate",
+        "points": 3,
+        "independent_reports": 2,
+        "publishers": [
+          "BBC News",
+          "Engadget"
+        ],
+        "channels": 1,
+        "trend_signals": 0,
+        "duplicates_collapsed": 0,
+        "newest_age_hours": 1.1,
+        "reasons": [
+          "2 independent reports (BBC News, Engadget)",
+          "1 reporting channel",
+          "newest report 1 h before this edition"
+        ]
+      }
+    },
+    {
+      "rank": 12,
+      "story_id": "0374bdd4def778454eb1",
+      "entity_id": "c3f50df5a25c",
+      "headline": "Margaret Hamilton, Computing Pioneer Who Led Software Development for the Apollo Program, Dies at 90",
+      "category": "Tech",
+      "sentences": [
+        "Margaret Hamilton, a pioneering computer scientist who led the development of software for the Apollo program, has died at the age of 90.",
+        "She coined the term 'software engineering' and was awarded the Presidential Medal of Freedom for her contributions to the field."
+      ],
+      "why_it_matters": null,
+      "labels": [],
+      "momentum": "UNCERTAIN",
+      "velocity_basis": "coverage_uncertain",
+      "momentum_note": "24h comparable sources: bluesky, google_news, google_trends, hackernews, mastodon, news_rss, reddit, wikipedia, x_trends24, youtube; 48h configuration changed or unavailable; 168h configuration changed or unavailable",
+      "relevance_score": 6,
+      "velocity_score": 50.0,
+      "combined_score": 56.0,
+      "platforms": [
+        "mastodon",
+        "news_rss"
+      ],
+      "publisher_hosts": [
+        "arstechnica.com",
+        "bbc.co.uk",
+        "news.mit.edu",
+        "nytimes.com",
+        "theguardian.com"
+      ],
+      "raw_item_count": 7,
+      "member_item_ids": [
+        289,
+        403,
+        405,
+        896,
+        1317
+      ],
+      "evidence": [
+        {
+          "item_id": 289,
+          "source": "news_rss",
+          "source_name": "News feeds",
+          "title": "R.I.P. Margaret Hamilton, whose code saved the Apollo 11 Moon landing",
+          "url": "https://arstechnica.com/science/2026/10/r-i-p-margaret-hamilton-whose-code-saved-the-apollo-11-moon-landing/",
+          "publisher": "Ars Technica",
+          "excerpt": "Hamilton also coined the term \"software engineering\" and founded two successful software companies. | Margaret Hamilton, who coined the term \"software engineering\" and led the development of on-board flight software for NASA's Apollo program in the 1960s, died last week at the age of 90. A recipient of the...",
+          "context_source": "page",
+          "published_at_utc": "2026-10-08T20:15:53Z",
+          "retrieved_at_utc": "2026-10-08T21:42:15.650950Z",
+          "feed": "https://feeds.arstechnica.com/arstechnica/index"
+        },
+        {
+          "item_id": 405,
+          "source": "mastodon",
+          "source_name": "Mastodon",
+          "title": "Margaret Hamilton, trailblazer whose software powered Apollo 11 moon landing, dies at 90",
+          "url": "https://www.theguardian.com/science/2026/oct/07/margaret-hamilton-moon-computer-software",
+          "publisher": "The Guardian",
+          "excerpt": "MIT computer scientist led development of software for moon mission and earned Presidential Medal of Freedom | Margaret Hamilton, the computer pioneer whose software powered the first moon landing, has died, the Massachusetts Institute of Technology (MIT) announced on Wednesday. She was 90. | In an era before titles...",
+          "context_source": "page",
+          "published_at_utc": "2026-10-08T00:40:37Z",
+          "retrieved_at_utc": "2026-10-08T21:42:15.251368Z",
+          "feed": "https://mastodon.social/api/v1/trends/links"
+        },
+        {
+          "item_id": 1317,
+          "source": "mastodon",
+          "source_name": "Mastodon",
+          "title": "Margaret Hamilton, Whose Software Guided the Apollo Missions, Has Died",
+          "url": "https://www.nytimes.com/2026/10/07/obituaries/margaret-hamilton-dead.html",
+          "publisher": "The New York Times",
+          "excerpt": "Margaret Hamilton, the first female programmer hired to work on the space project at M.I.T., was 90.",
+          "context_source": "feed",
+          "published_at_utc": "2026-10-07T23:05:07Z",
+          "retrieved_at_utc": "2026-10-08T21:42:15.251368Z",
+          "feed": "https://mastodon.social/api/v1/trends/links"
+        },
+        {
+          "item_id": 403,
+          "source": "news_rss",
+          "source_name": "News feeds",
+          "title": "Margaret Hamilton, computing pioneer who led software development for the Apollo program, dies at 90",
+          "url": "https://news.mit.edu/2026/margaret-hamilton-computing-pioneer-dies-1007",
+          "publisher": "Lobsters",
+          "excerpt": null,
+          "context_source": null,
+          "published_at_utc": "2026-10-07T21:38:09Z",
+          "retrieved_at_utc": "2026-10-08T21:42:15.909820Z",
+          "feed": "https://lobste.rs/rss"
+        },
+        {
+          "item_id": 896,
+          "source": "mastodon",
+          "source_name": "Mastodon",
+          "title": "Margaret Hamilton, whose software helped land Apollo 11 on the moon, dies at 90",
+          "url": "https://www.bbc.co.uk/news/articles/cx5yn46j41zpo",
+          "publisher": "BBC News",
+          "excerpt": "Pioneering computer scientist led the development of the software for Nasa's Apollo mission and was awarded the Presidential Medal of Freedom. | The computer scientist behind groundbreaking research that helped land Nasa's astronauts on the Moon, has died aged 90. | Margaret Hamilton was a trailblazer in her field...",
+          "context_source": "page",
+          "published_at_utc": null,
+          "retrieved_at_utc": "2026-10-08T21:42:15.251368Z",
+          "feed": "https://mastodon.social/api/v1/trends/links"
+        },
+        {
+          "item_id": 896,
+          "source": "news_rss",
+          "source_name": "News feeds",
+          "title": "Margaret Hamilton, whose software helped land Apollo 11 on the Moon, dies at 90",
+          "url": "https://www.bbc.co.uk/news/articles/cx5yn46j41zpo?at_medium=RSS&at_campaign=rss",
+          "publisher": "BBC News - Science",
+          "excerpt": null,
+          "context_source": null,
+          "published_at_utc": "2026-10-08T05:10:40Z",
+          "retrieved_at_utc": "2026-10-08T21:42:15.668674Z",
+          "feed": "https://feeds.bbci.co.uk/news/science_and_environment/rss.xml"
+        }
+      ],
+      "tech_only": false,
+      "entities": [
+        "Margaret Hamilton"
+      ],
+      "evidence_strength": {
+        "level": "moderate",
+        "points": 4,
+        "independent_reports": 3,
+        "publishers": [
+          "Ars Technica",
+          "BBC News",
+          "Lobsters"
+        ],
+        "channels": 1,
+        "trend_signals": 3,
+        "duplicates_collapsed": 0,
+        "newest_age_hours": 1.4,
+        "reasons": [
+          "3 independent reports (Ars Technica, BBC News, Lobsters)",
+          "3 trend/social signals (attention, not reporting)",
+          "1 reporting channel",
+          "newest report 1 h before this edition"
+        ]
+      }
+    },
+    {
+      "rank": 13,
+      "story_id": "c622f1618362cc54fe68",
+      "entity_id": "ff95cb5f0a7d",
+      "headline": "Lawyers for Accused Man in Cornell Case Want Letitia James Removed as Prosecutor",
+      "category": "News",
+      "sentences": [
+        "Lawyers for Gillio Lopes, accused in the Cornell case, are seeking to have New York Attorney General Letitia James removed as special prosecutor."
+      ],
+      "why_it_matters": null,
+      "labels": [],
+      "momentum": "UNCERTAIN",
+      "velocity_basis": "coverage_uncertain",
+      "momentum_note": "24h comparable sources: bluesky, google_news, google_trends, hackernews, mastodon, news_rss, reddit, wikipedia, x_trends24, youtube; 48h configuration changed or unavailable; 168h configuration changed or unavailable",
+      "relevance_score": 6,
+      "velocity_score": 50.0,
+      "combined_score": 56.0,
+      "platforms": [
+        "google_news",
+        "youtube"
+      ],
+      "publisher_hosts": [
+        "washingtonpost.com",
+        "youtube.com"
+      ],
+      "raw_item_count": 3,
+      "member_item_ids": [
+        31,
+        1287
+      ],
+      "evidence": [
+        {
+          "item_id": 31,
+          "source": "google_news",
+          "source_name": "Google News",
+          "title": "Lawyers for accused man in Cornell case want Letitia James removed as prosecutor",
+          "url": "https://news.google.com/rss/articles/CBMivAFBVV95cUxPcXNwdjBaeVVDY1o0azhLZmN0SXJaT3hKQWFXNXlEVG9FQjdBNHF3dFZpRzhacGtBQ0czeldVdTF0bkxUdWExZTNrQnQ5THBmVkE2VzVMZlFaWFNndWd4U3VadVY5cTkyd0U1djRONjFDT1VJZlh5QXA1NlFwak5udWl6enE5MzRaaFZsVkFXV1VVWW5kei1RcDdWSjIyNjVleUlvNEhUMG5KbHB0aU1xWkF4UXNDU2lTTHBtTA?oc=5",
+          "publisher": "The Washington Post",
+          "excerpt": null,
+          "context_source": null,
+          "published_at_utc": "2026-10-08T18:59:32Z",
+          "retrieved_at_utc": "2026-10-08T21:42:14.998005Z",
+          "feed": "https://news.google.com/rss/headlines/section/topic/NATION?hl=en-US&gl=US&ceid=US%3Aen"
+        },
+        {
+          "item_id": 1287,
+          "source": "youtube",
+          "source_name": "YouTube",
+          "title": "Cornell defendant trying to get AG Letitia James removed as special prosecutor",
+          "url": "https://www.youtube.com/watch?v=v-gJ9t2uTxY",
+          "publisher": "NBC News",
+          "excerpt": "A defendant in the Cornell rape case is attempting to get New York Attorney General Letitia James removed as special prosecutor. The attorney for Gillio Lopes, who has denied that he sexually assaulted the woman, filed a petition in Albany County Supreme Court saying James should not be the prosecutor in the case...",
+          "context_source": "feed",
+          "published_at_utc": "2026-10-08T18:08:13Z",
+          "retrieved_at_utc": "2026-10-08T21:42:18.277046Z",
+          "feed": "https://www.youtube.com/feeds/videos.xml?channel_id=UCeY0bbntWzzVIaj2z3QigXg"
+        }
+      ],
+      "tech_only": false,
+      "entities": [
+        "Letitia James"
+      ],
+      "evidence_strength": {
+        "level": "moderate",
+        "points": 4,
+        "independent_reports": 2,
+        "publishers": [
+          "NBC News",
+          "The Washington Post"
+        ],
+        "channels": 2,
+        "trend_signals": 0,
+        "duplicates_collapsed": 0,
+        "newest_age_hours": 2.7,
+        "reasons": [
+          "2 independent reports (NBC News, The Washington Post)",
+          "2 reporting channels",
+          "newest report 3 h before this edition"
+        ]
+      }
+    },
+    {
+      "rank": 14,
+      "story_id": "9e958ec862b0a2278e57",
+      "entity_id": "5a50e5e7b392",
+      "headline": "Trump Declares AI 'The Enemy' If Not Called 'Super Intelligence'",
+      "category": "Science & AI",
+      "sentences": [
+        "US President Donald Trump has declared that artificial intelligence should now be called 'super intelligence'."
+      ],
+      "why_it_matters": null,
+      "labels": [],
+      "momentum": "UNCERTAIN",
+      "velocity_basis": "coverage_uncertain",
+      "momentum_note": "24h comparable sources: bluesky, google_news, google_trends, hackernews, mastodon, news_rss, reddit, wikipedia, x_trends24, youtube; 48h configuration changed or unavailable; 168h configuration changed or unavailable",
+      "relevance_score": 6,
+      "velocity_score": 50.0,
+      "combined_score": 56.0,
+      "platforms": [
+        "google_news",
+        "news_rss"
+      ],
+      "publisher_hosts": [
+        "independent.co.uk",
+        "newscientist.com"
+      ],
+      "raw_item_count": 2,
+      "member_item_ids": [
+        50,
+        425
+      ],
+      "evidence": [
+        {
+          "item_id": 50,
+          "source": "google_news",
+          "source_name": "Google News",
+          "title": "Trump declares anyone who uses the term Artificial Intelligence to be ‘The Enemy!’",
+          "url": "https://news.google.com/rss/articles/CBMiswFBVV95cUxPdExPMWRnMzR4Y1VidUdjSE1rbEU5SDk1SmdZaEZBdGRpNmJocXp3U3pYTHd6YjdNQVVWejJJa2Q2cndRMnF3MGtOYjhYR29TU3MzTExscEJkc294US1xMGdxZHg5aHB6djBLQ3FtQWFhaUdlN3RuTWxOcW1CQWRwc1NHOFN3aGFFeFY0SkZqU1daNzBjeDFqWkpqR2Z3cG82OW81Wkt1cGlCUmNUbnV0YUFycw?oc=5",
+          "publisher": "The Independent",
+          "excerpt": null,
+          "context_source": null,
+          "published_at_utc": "2026-10-08T17:51:00Z",
+          "retrieved_at_utc": "2026-10-08T21:42:15.409817Z",
+          "feed": "https://news.google.com/rss/search?q=artificial+intelligence+when%3A1d&hl=en-US&gl=US&ceid=US%3Aen"
+        },
+        {
+          "item_id": 425,
+          "source": "news_rss",
+          "source_name": "News feeds",
+          "title": "AI or ‘super intelligence’? Trump isn’t the only one who is confused",
+          "url": "https://www.newscientist.com/article/2592404-ai-or-super-intelligence-trump-isnt-the-only-one-who-is-confused/?utm_campaign=RSS|NSNS&utm_content=home&utm_medium=RSS&utm_source=NSNS",
+          "publisher": "New Scientist",
+          "excerpt": "US President Donald Trump has declared that artificial intelligence should now be called \"super intelligence\". Columnist Jacob Aron explains where that term came from and explores whether its many historical meanings apply today",
+          "context_source": "feed",
+          "published_at_utc": "2026-10-08T16:07:59Z",
+          "retrieved_at_utc": "2026-10-08T21:42:16.980378Z",
+          "feed": "https://www.newscientist.com/feed/home/"
+        }
+      ],
+      "tech_only": false,
+      "entities": [
+        "Trump",
+        "AI"
+      ],
+      "evidence_strength": {
+        "level": "moderate",
+        "points": 4,
+        "independent_reports": 2,
+        "publishers": [
+          "New Scientist",
+          "The Independent"
+        ],
+        "channels": 2,
+        "trend_signals": 0,
+        "duplicates_collapsed": 0,
+        "newest_age_hours": 3.9,
+        "reasons": [
+          "2 independent reports (New Scientist, The Independent)",
+          "2 reporting channels",
+          "newest report 4 h before this edition"
+        ]
+      }
+    },
+    {
+      "rank": 15,
+      "story_id": "99dc15a56dfde30e55a9",
+      "entity_id": "7d3bbb5cbbc4",
+      "headline": "OpenAI Withdraws 3 Math Papers",
+      "category": "Science & AI",
+      "sentences": [
+        "The company has updated its GitHub math repository with new formalizations and withdrawals."
+      ],
+      "why_it_matters": null,
+      "labels": [],
+      "momentum": "UNCERTAIN",
+      "velocity_basis": "coverage_uncertain",
+      "momentum_note": "24h comparable sources: bluesky, google_news, google_trends, hackernews, mastodon, news_rss, reddit, wikipedia, x_trends24, youtube; 48h configuration changed or unavailable; 168h configuration changed or unavailable",
+      "relevance_score": 6,
+      "velocity_score": 50.0,
+      "combined_score": 56.0,
+      "platforms": [
+        "hackernews"
+      ],
+      "publisher_hosts": [
+        "github.com"
+      ],
+      "raw_item_count": 2,
+      "member_item_ids": [
+        1217,
+        1220
+      ],
+      "evidence": [
+        {
+          "item_id": 1220,
+          "source": "hackernews",
+          "source_name": "Hacker News",
+          "title": "OpenAI withdraws three mathematical results",
+          "url": "https://twitter.com/danintheory/status/2108065033070789090",
+          "publisher": "twitter.com",
+          "excerpt": "Dan Roberts (@danintheory) on X | We've updated our GitHub math repo with 6 new Lean formalizations, 19 modifications, and 3 withdrawals. The repo now has ~42% top-line results formalized. We will continue to update the repo with new formalizations and with any errata we notice. | Dan Roberts on X: \"We've updated our...",
+          "context_source": "page",
+          "published_at_utc": "2026-10-08T07:05:40Z",
+          "retrieved_at_utc": "2026-10-08T21:42:18.813742Z",
+          "feed": null
+        },
+        {
+          "item_id": 1217,
+          "source": "hackernews",
+          "source_name": "Hacker News",
+          "title": "OpenAI Withdraws 3 Math Papers",
+          "url": "https://github.com/openai/math/blob/main/history.md",
+          "publisher": "github.com",
+          "excerpt": "math/history.md at main openai/math | Contribute to openai/math development by creating an account on GitHub. | For any withdrawn papers, their README files explain the gap and link to the retracted manuscript. For any updated papers, previously published editions remain accessible through the version notes in their...",
+          "context_source": "page",
+          "published_at_utc": "2026-10-08T08:08:37Z",
+          "retrieved_at_utc": "2026-10-08T21:42:18.813742Z",
+          "feed": null
+        }
+      ],
+      "tech_only": true,
+      "entities": [
+        "OpenAI"
+      ],
+      "evidence_strength": {
+        "level": "moderate",
+        "points": 3,
+        "independent_reports": 2,
+        "publishers": [
+          "github.com",
+          "twitter.com"
+        ],
+        "channels": 1,
+        "trend_signals": 0,
+        "duplicates_collapsed": 0,
+        "newest_age_hours": 13.6,
+        "reasons": [
+          "2 independent reports (github.com, twitter.com)",
+          "1 reporting channel",
+          "newest report 14 h before this edition"
+        ]
+      }
+    },
+    {
+      "rank": 16,
+      "story_id": "d8db94b41f759d24c83e",
+      "entity_id": "7baa6ec41da1",
+      "headline": "A'ja Wilson Stands Alone with Record Fifth WNBA MVP Award",
+      "category": "Sports",
+      "sentences": [
+        "A'ja Wilson has won a record fifth WNBA Most Valuable Player award, becoming the first player to win three straight MVPs.",
+        "Wilson became the first player in league history to win three straight WNBA MVP awards, moving clear of Sheryl Swoopes, Lisa Leslie and Lauren Jackson."
+      ],
+      "why_it_matters": null,
+      "labels": [],
+      "momentum": "UNCERTAIN",
+      "velocity_basis": "coverage_uncertain",
+      "momentum_note": "24h comparable sources: bluesky, google_news, google_trends, hackernews, mastodon, news_rss, reddit, wikipedia, x_trends24, youtube; 48h configuration changed or unavailable; 168h configuration changed or unavailable",
+      "relevance_score": 5,
+      "velocity_score": 50.0,
+      "combined_score": 50.0,
+      "platforms": [
+        "google_news",
+        "news_rss"
+      ],
+      "publisher_hosts": [
+        "espn.com",
+        "theguardian.com"
+      ],
+      "raw_item_count": 4,
+      "member_item_ids": [
+        9,
+        432
+      ],
+      "evidence": [
+        {
+          "item_id": 9,
+          "source": "news_rss",
+          "source_name": "News feeds",
+          "title": "Aces star Wilson wins record 5th WNBA MVP award",
+          "url": "https://www.espn.com/wnba/story/_/id/50135041/sources-aces-star-aja-wilson-wins-record-5th-wnba-mvp-award",
+          "publisher": "ESPN - Top Headlines",
+          "excerpt": "Las Vegas Aces center A'ja Wilson has won a record fifth WNBA Most Valuable Player award for the 2026 season, becoming the first player in league history to win three straight MVPs.",
+          "context_source": "feed",
+          "published_at_utc": null,
+          "retrieved_at_utc": "2026-10-08T21:42:15.668674Z",
+          "feed": "https://www.espn.com/espn/rss/news"
+        },
+        {
+          "item_id": 9,
+          "source": "google_news",
+          "source_name": "Google News",
+          "title": "Aces star A'ja Wilson wins record 5th WNBA MVP award",
+          "url": "https://news.google.com/rss/articles/CBMiqAFBVV95cUxQVkhIRUpuemNYUllRNjYyVzRTaFBucVB3YTU3Z3VnQUs4TkJhSnk4UkRaNDFxV3ItSVNzbXFLM212TW9xWWVNVWJYWmtGcVpYWmxUbjFBYUxpODhnajhJcWM1QjA2NTRmRzdtSFIyYlBoMDl2T2VOci0wQ1ZDaDRVcVJKM3RRNjgyRGRvS1Q0cFFHcVUydlpOTzhLbDRsSnYtM0RwU2FNdUI?oc=5",
+          "publisher": "ESPN",
+          "excerpt": null,
+          "context_source": null,
+          "published_at_utc": "2026-10-08T20:33:00Z",
+          "retrieved_at_utc": "2026-10-08T21:42:15.103881Z",
+          "feed": "https://news.google.com/rss/headlines/section/topic/SPORTS?hl=en-US&gl=US&ceid=US%3Aen"
+        },
+        {
+          "item_id": 432,
+          "source": "news_rss",
+          "source_name": "News feeds",
+          "title": "A’ja Wilson stands alone with record fifth WNBA MVP award after historic three-peat",
+          "url": "https://www.theguardian.com/sport/2026/oct/08/aja-wilson-record-fifth-wnba-mvp-award-las-vegas-aces",
+          "publisher": "The Guardian - Sport",
+          "excerpt": "The Las Vegas Aces star becomes the first player to win three straight WNBA MVP awards, moving clear of Sheryl Swoopes, Lisa Leslie and Lauren Jackson | A'ja Wilson was named the WNBA's most valuable player on Thursday for a third consecutive year and a record fifth time overall. | Wilson became the first player in...",
+          "context_source": "page",
+          "published_at_utc": "2026-10-08T21:05:10Z",
+          "retrieved_at_utc": "2026-10-08T21:42:16.668648Z",
+          "feed": "https://www.theguardian.com/sport/rss"
+        }
+      ],
+      "tech_only": false,
+      "entities": [
+        "A'ja Wilson"
+      ],
+      "evidence_strength": {
+        "level": "moderate",
+        "points": 4,
+        "independent_reports": 2,
+        "publishers": [
+          "ESPN",
+          "The Guardian"
+        ],
+        "channels": 2,
+        "trend_signals": 0,
+        "duplicates_collapsed": 1,
+        "newest_age_hours": 0.6,
+        "reasons": [
+          "2 independent reports (ESPN, The Guardian)",
+          "1 repeat or syndicated copy counted once",
+          "2 reporting channels",
+          "newest report under an hour before this edition"
+        ]
+      }
+    },
+    {
+      "rank": 17,
+      "story_id": "589d19bb3d5118f83c38",
+      "entity_id": "7d3bbb5cbbc4",
+      "headline": "OpenAI Annualized Revenues $20B Less Than Previously Signaled",
+      "category": "Tech",
+      "sentences": [
+        "OpenAI has reported annualized revenues of $50 billion, which is $20 billion less than previously signaled.",
+        "OpenAI has told investors that it hit roughly $50 billion in annualized revenue at the end of September."
+      ],
+      "why_it_matters": null,
+      "labels": [],
+      "momentum": "UNCERTAIN",
+      "velocity_basis": "coverage_uncertain",
+      "momentum_note": "24h comparable sources: bluesky, google_news, google_trends, hackernews, mastodon, news_rss, reddit, wikipedia, x_trends24, youtube; 48h configuration changed or unavailable; 168h configuration changed or unavailable",
+      "relevance_score": 9,
+      "velocity_score": 50.0,
+      "combined_score": 74.0,
+      "platforms": [
+        "hackernews"
+      ],
+      "publisher_hosts": [
+        "cnbc.com"
+      ],
+      "raw_item_count": 1,
+      "member_item_ids": [
+        1219
+      ],
+      "evidence": [
+        {
+          "item_id": 1219,
+          "source": "hackernews",
+          "source_name": "Hacker News",
+          "title": "OpenAI annualised revenues $20B less than previously signalled",
+          "url": "https://www.cnbc.com/2026/10/08/open-ai-revenue-nvidia-oracle-coreweave.html",
+          "publisher": "cnbc.com",
+          "excerpt": "Nvidia, Oracle, CoreWeave and other AI stocks sink on OpenAI revenue report | OpenAI has told investors that it hit roughly $50 billion in annualized revenue at the end of September, CNBC confirmed. | Shares of Nvidia, Oracle, CoreWeave and other artificial intelligence names sank lower on Thursday after the market...",
+          "context_source": "page",
+          "published_at_utc": "2026-10-08T16:45:58Z",
+          "retrieved_at_utc": "2026-10-08T21:42:18.813742Z",
+          "feed": null
+        }
+      ],
+      "tech_only": true,
+      "entities": [
+        "OpenAI"
+      ],
+      "evidence_strength": {
+        "level": "limited",
+        "points": 1,
+        "independent_reports": 1,
+        "publishers": [
+          "cnbc.com"
+        ],
+        "channels": 1,
+        "trend_signals": 0,
+        "duplicates_collapsed": 0,
+        "newest_age_hours": 4.9,
+        "reasons": [
+          "1 independent report (cnbc.com)",
+          "1 reporting channel",
+          "newest report 5 h before this edition",
+          "not corroborated by a second independent publisher"
+        ]
+      }
+    },
+    {
+      "rank": 18,
+      "story_id": "657b3a4a298f01b670cd",
+      "entity_id": "83ff8ed5e49b",
+      "headline": "Open-Weight Model Embarrassed by French",
+      "category": "Science & AI",
+      "sentences": [
+        "A $6.3 billion open-weight model was embarrassed by the French, with KERNEL, Mistral, Reflection AI, and Moonshot making big moves in the open-weight race."
+      ],
+      "why_it_matters": null,
+      "labels": [],
+      "momentum": "UNCERTAIN",
+      "velocity_basis": "coverage_uncertain",
+      "momentum_note": "24h comparable sources: bluesky, google_news, google_trends, hackernews, mastodon, news_rss, reddit, wikipedia, x_trends24, youtube; 48h configuration changed or unavailable; 168h configuration changed or unavailable",
+      "relevance_score": 9,
+      "velocity_score": 50.0,
+      "combined_score": 74.0,
+      "platforms": [
+        "youtube"
+      ],
+      "publisher_hosts": [
+        "youtube.com"
+      ],
+      "raw_item_count": 1,
+      "member_item_ids": [
+        1280
+      ],
+      "evidence": [
+        {
+          "item_id": 1280,
+          "source": "youtube",
+          "source_name": "YouTube",
+          "title": "A $6.3 billion open-weight model just got embarrassed by the French...",
+          "url": "https://www.youtube.com/watch?v=WrCjAAl9okA",
+          "publisher": "Fireship",
+          "excerpt": "KERNEL is the simplest way to let your agents act on any website. Mistral, Reflection AI, and Moonshot all made big moves in the open-weight race this week.",
+          "context_source": "feed",
+          "published_at_utc": "2026-10-07T20:24:27Z",
+          "retrieved_at_utc": "2026-10-08T21:42:18.396926Z",
+          "feed": "https://www.youtube.com/feeds/videos.xml?channel_id=UCsBjURrPoezykLs9EqgamOA"
+        }
+      ],
+      "tech_only": false,
+      "entities": [
+        "KERNEL",
+        "Mistral",
+        "Reflection AI",
+        "Moonshot"
+      ],
+      "evidence_strength": {
+        "level": "limited",
+        "points": 0,
+        "independent_reports": 1,
+        "publishers": [
+          "Fireship"
+        ],
+        "channels": 1,
+        "trend_signals": 0,
+        "duplicates_collapsed": 0,
+        "newest_age_hours": 25.3,
+        "reasons": [
+          "1 independent report (Fireship)",
+          "1 reporting channel",
+          "newest report 25 h before this edition",
+          "not corroborated by a second independent publisher"
+        ]
+      }
+    },
+    {
+      "rank": 19,
+      "story_id": "6558714c7b07443018cd",
+      "entity_id": "71fa21fb7ace",
+      "headline": "Trump Envoys to Discuss 'New Ideas' for Ukraine Peace in Miami",
+      "category": "News",
+      "sentences": [
+        "US President Donald Trump's envoys will meet Ukrainian negotiators and European officials in Miami to discuss new proposals to end Russia's war in Ukraine."
+      ],
+      "why_it_matters": null,
+      "labels": [],
+      "momentum": "UNCERTAIN",
+      "velocity_basis": "coverage_uncertain",
+      "momentum_note": "24h comparable sources: bluesky, google_news, google_trends, hackernews, mastodon, news_rss, reddit, wikipedia, x_trends24, youtube; 48h configuration changed or unavailable; 168h configuration changed or unavailable",
+      "relevance_score": 8,
+      "velocity_score": 50.0,
+      "combined_score": 68.0,
+      "platforms": [
+        "news_rss"
+      ],
+      "publisher_hosts": [
+        "france24.com"
+      ],
+      "raw_item_count": 1,
+      "member_item_ids": [
+        281
+      ],
+      "evidence": [
+        {
+          "item_id": 281,
+          "source": "news_rss",
+          "source_name": "News feeds",
+          "title": "Trump envoys, European officials to discuss ‘new ideas’ for Ukraine peace in Miami",
+          "url": "https://www.france24.com/en/europe/20261008-trump-envoys-ukraine-peace-talks-miami",
+          "publisher": "France 24 - English",
+          "excerpt": "US President Donald Trump's envoys will meet Ukrainian negotiators and European officials in Miami on Friday to discuss new proposals to end Russia's war in Ukraine, two US sources told AFP. Steve Witkoff.",
+          "context_source": "page",
+          "published_at_utc": "2026-10-08T21:19:29Z",
+          "retrieved_at_utc": "2026-10-08T21:42:15.603437Z",
+          "feed": "https://www.france24.com/en/rss"
+        }
+      ],
+      "tech_only": false,
+      "entities": [
+        "Ukraine",
+        "Miami"
+      ],
+      "evidence_strength": {
+        "level": "limited",
+        "points": 1,
+        "independent_reports": 1,
+        "publishers": [
+          "France 24"
+        ],
+        "channels": 1,
+        "trend_signals": 0,
+        "duplicates_collapsed": 0,
+        "newest_age_hours": 0.4,
+        "reasons": [
+          "1 independent report (France 24)",
+          "1 reporting channel",
+          "newest report under an hour before this edition",
+          "not corroborated by a second independent publisher"
+        ]
+      }
+    },
+    {
+      "rank": 20,
+      "story_id": "6ad88a29845cdb8aa63a",
+      "entity_id": "4ec0a82a1e19",
+      "headline": "Inside Elon Musk's Midterm Spending Spree",
+      "category": "Tech",
+      "sentences": [
+        "Elon Musk's PAC is spending millions on various initiatives.",
+        "The latest ideology Trump claims is dangerous is also discussed."
+      ],
+      "why_it_matters": null,
+      "labels": [],
+      "momentum": "UNCERTAIN",
+      "velocity_basis": "coverage_uncertain",
+      "momentum_note": "24h comparable sources: bluesky, google_news, google_trends, hackernews, mastodon, news_rss, reddit, wikipedia, x_trends24, youtube; 48h configuration changed or unavailable; 168h configuration changed or unavailable",
+      "relevance_score": 8,
+      "velocity_score": 50.0,
+      "combined_score": 68.0,
+      "platforms": [
+        "news_rss"
+      ],
+      "publisher_hosts": [
+        "wired.com"
+      ],
+      "raw_item_count": 1,
+      "member_item_ids": [
+        296
+      ],
+      "evidence": [
+        {
+          "item_id": 296,
+          "source": "news_rss",
+          "source_name": "News feeds",
+          "title": "Inside Elon Musk’s Midterm Spending Spree",
+          "url": "https://www.wired.com/story/uncanny-valley-podcast-inside-elon-musks-midterm-spending-spree/",
+          "publisher": "Wired",
+          "excerpt": "This week on \"Uncanny Valley,\" we discuss where Elon Musk's PAC is spending millions, the latest ideology Trump claims is dangerous, and the backlash against the designer behind Muse's logo. | This week on Uncanny Valley, Zoe Schiffer and Leah Feiger dive into how Elon Musk's America PAC is spending millions on the...",
+          "context_source": "page",
+          "published_at_utc": "2026-10-08T21:14:12Z",
+          "retrieved_at_utc": "2026-10-08T21:42:15.727472Z",
+          "feed": "https://www.wired.com/feed/rss"
+        }
+      ],
+      "tech_only": false,
+      "entities": [
+        "Elon Musk"
+      ],
+      "evidence_strength": {
+        "level": "limited",
+        "points": 1,
+        "independent_reports": 1,
+        "publishers": [
+          "Wired"
+        ],
+        "channels": 1,
+        "trend_signals": 0,
+        "duplicates_collapsed": 0,
+        "newest_age_hours": 0.5,
+        "reasons": [
+          "1 independent report (Wired)",
+          "1 reporting channel",
+          "newest report under an hour before this edition",
+          "not corroborated by a second independent publisher"
+        ]
+      }
+    },
+    {
+      "rank": 21,
+      "story_id": "4b928d99c7632db53992",
+      "entity_id": "05f5439f9851",
+      "headline": "High-severity Nvidia Bug Could Crash GPU Monitoring",
+      "category": "Tech",
+      "sentences": [
+        "Nvidia released a fix for a high-severity bug that could crash GPU monitoring on exposed servers.",
+        "The bug is tracked as CVE-2026-47483."
+      ],
+      "why_it_matters": null,
+      "labels": [],
+      "momentum": "UNCERTAIN",
+      "velocity_basis": "coverage_uncertain",
+      "momentum_note": "24h comparable sources: bluesky, google_news, google_trends, hackernews, mastodon, news_rss, reddit, wikipedia, x_trends24, youtube; 48h configuration changed or unavailable; 168h configuration changed or unavailable",
+      "relevance_score": 8,
+      "velocity_score": 50.0,
+      "combined_score": 68.0,
+      "platforms": [
+        "news_rss"
+      ],
+      "publisher_hosts": [
+        "theregister.com"
+      ],
+      "raw_item_count": 1,
+      "member_item_ids": [
+        298
+      ],
+      "evidence": [
+        {
+          "item_id": 298,
+          "source": "news_rss",
+          "source_name": "News feeds",
+          "title": "High-severity Nvidia bug could crash GPU monitoring on exposed servers",
+          "url": "https://www.theregister.com/security/2026/10/08/high-severity-nvidia-bug-could-crash-gpu-monitoring-on-exposed-servers/5302077",
+          "publisher": "The Register",
+          "excerpt": "The GPU giant released a fix for the flaw, tracked as CVE-2026-47483 | TSMC taps GlobalFoundries to bolster US silicon interposer production in $2B dealAdvanced packaging tech is essential to the domestic production of high-performance semiconductors used in AI datacenters | Microsoft is about to let Copilot loose on...",
+          "context_source": "page",
+          "published_at_utc": "2026-10-08T18:17:08Z",
+          "retrieved_at_utc": "2026-10-08T21:42:16.064030Z",
+          "feed": "https://www.theregister.com/headlines.atom"
+        }
+      ],
+      "tech_only": false,
+      "entities": [
+        "Nvidia"
+      ],
+      "evidence_strength": {
+        "level": "limited",
+        "points": 1,
+        "independent_reports": 1,
+        "publishers": [
+          "The Register"
+        ],
+        "channels": 1,
+        "trend_signals": 0,
+        "duplicates_collapsed": 0,
+        "newest_age_hours": 3.4,
+        "reasons": [
+          "1 independent report (The Register)",
+          "1 reporting channel",
+          "newest report 3 h before this edition",
+          "not corroborated by a second independent publisher"
+        ]
+      }
+    },
+    {
+      "rank": 22,
+      "story_id": "2b8fe6f3ecc964c6c6bd",
+      "entity_id": "73ae71ea055c",
+      "headline": "Trump Says US Will Not Strike Iran Before Midterms",
+      "category": "News",
+      "sentences": [
+        "The U.S. military has drafted options for three days of strikes, but in recent months the president has repeatedly vetoed plans to restart the war."
+      ],
+      "why_it_matters": null,
+      "labels": [],
+      "momentum": "UNCERTAIN",
+      "velocity_basis": "coverage_uncertain",
+      "momentum_note": "24h comparable sources: bluesky, google_news, google_trends, hackernews, mastodon, news_rss, reddit, wikipedia, x_trends24, youtube; 48h configuration changed or unavailable; 168h configuration changed or unavailable",
+      "relevance_score": 8,
+      "velocity_score": 50.0,
+      "combined_score": 68.0,
+      "platforms": [
+        "news_rss"
+      ],
+      "publisher_hosts": [
+        "nytimes.com"
+      ],
+      "raw_item_count": 1,
+      "member_item_ids": [
+        304
+      ],
+      "evidence": [
+        {
+          "item_id": 304,
+          "source": "news_rss",
+          "source_name": "News feeds",
+          "title": "Trump Says U.S. Will Not Strike Iran Again Before Midterms as Military Draws Up New Plans",
+          "url": "https://www.nytimes.com/2026/10/08/us/politics/trump-iran-war-options.html",
+          "publisher": "New York Times - Home Page",
+          "excerpt": "The U.S. military has drafted options for three days of strikes, but in recent months the president has repeatedly vetoed plans to restart the war.",
+          "context_source": "feed",
+          "published_at_utc": "2026-10-08T21:05:33Z",
+          "retrieved_at_utc": "2026-10-08T21:42:15.809787Z",
+          "feed": "https://rss.nytimes.com/services/xml/rss/nyt/HomePage.xml"
+        }
+      ],
+      "tech_only": false,
+      "entities": [
+        "Iran"
+      ],
+      "evidence_strength": {
+        "level": "limited",
+        "points": 1,
+        "independent_reports": 1,
+        "publishers": [
+          "New York Times"
+        ],
+        "channels": 1,
+        "trend_signals": 0,
+        "duplicates_collapsed": 0,
+        "newest_age_hours": 0.6,
+        "reasons": [
+          "1 independent report (New York Times)",
+          "1 reporting channel",
+          "newest report under an hour before this edition",
+          "not corroborated by a second independent publisher"
+        ]
+      }
+    },
+    {
+      "rank": 23,
+      "story_id": "8442e35832ebba35e0b9",
+      "entity_id": "2ab63c134221",
+      "headline": "As AI Closed in on 'Unique Games' Proof, Researchers Raced to Beat the Machines",
+      "category": "Science & AI",
+      "sentences": [
+        "Researchers rushed to publish their own milestone result after hearing that AI was close to proving a major problem in their field."
+      ],
+      "why_it_matters": null,
+      "labels": [],
+      "momentum": "UNCERTAIN",
+      "velocity_basis": "coverage_uncertain",
+      "momentum_note": "24h comparable sources: bluesky, google_news, google_trends, hackernews, mastodon, news_rss, reddit, wikipedia, x_trends24, youtube; 48h configuration changed or unavailable; 168h configuration changed or unavailable",
+      "relevance_score": 8,
+      "velocity_score": 50.0,
+      "combined_score": 68.0,
+      "platforms": [
+        "news_rss"
+      ],
+      "publisher_hosts": [
+        "quantamagazine.org"
+      ],
+      "raw_item_count": 1,
+      "member_item_ids": [
+        326
+      ],
+      "evidence": [
+        {
+          "item_id": 326,
+          "source": "news_rss",
+          "source_name": "News feeds",
+          "title": "As AI Closed In on ‘Unique Games’ Proof, Researchers Raced to Beat the Machines",
+          "url": "https://www.quantamagazine.org/as-ai-closed-in-on-unique-games-proof-researchers-raced-to-beat-the-machines-20261007/",
+          "publisher": "Quanta Magazine",
+          "excerpt": "In the shadow of a rumored AI proof of one of the biggest problems in their field, three computer scientists rushed to publish their own milestone result. | On the morning of September 11, 2026, Dor Minzer received a text message from a friend asking whether he was close to settling one of the most famous open...",
+          "context_source": "page",
+          "published_at_utc": "2026-10-07T15:08:46Z",
+          "retrieved_at_utc": "2026-10-08T21:42:16.315650Z",
+          "feed": "https://www.quantamagazine.org/feed/"
+        }
+      ],
+      "tech_only": false,
+      "entities": [
+        "Dor Minzer",
+        "Unique Games"
+      ],
+      "evidence_strength": {
+        "level": "limited",
+        "points": 0,
+        "independent_reports": 1,
+        "publishers": [
+          "Quanta Magazine"
+        ],
+        "channels": 1,
+        "trend_signals": 0,
+        "duplicates_collapsed": 0,
+        "newest_age_hours": 30.6,
+        "reasons": [
+          "1 independent report (Quanta Magazine)",
+          "1 reporting channel",
+          "newest report 31 h before this edition",
+          "not corroborated by a second independent publisher"
+        ]
+      }
+    },
+    {
+      "rank": 24,
+      "story_id": "84f1f58d54385fa775a1",
+      "entity_id": "330c5d5f7d44",
+      "headline": "JetBrains Releases Mellum2.1: A 12B MoE Open Model for Coding Agents",
+      "category": "Science & AI",
+      "sentences": [
+        "JetBrains released Mellum2.1, an Apache 2.0, 12B mixture-of-experts thinking model with 2.5B active parameters.",
+        "The model lifted its SWE-bench Verified score from 2.0 to 47.0."
+      ],
+      "why_it_matters": null,
+      "labels": [],
+      "momentum": "UNCERTAIN",
+      "velocity_basis": "coverage_uncertain",
+      "momentum_note": "24h comparable sources: bluesky, google_news, google_trends, hackernews, mastodon, news_rss, reddit, wikipedia, x_trends24, youtube; 48h configuration changed or unavailable; 168h configuration changed or unavailable",
+      "relevance_score": 8,
+      "velocity_score": 50.0,
+      "combined_score": 68.0,
+      "platforms": [
+        "news_rss"
+      ],
+      "publisher_hosts": [
+        "marktechpost.com"
+      ],
+      "raw_item_count": 1,
+      "member_item_ids": [
+        361
+      ],
+      "evidence": [
+        {
+          "item_id": 361,
+          "source": "news_rss",
+          "source_name": "News feeds",
+          "title": "JetBrains Releases Mellum2.1: A 12B MoE Open Model for Coding Agents",
+          "url": "https://www.marktechpost.com/2026/10/08/jetbrains-releases-mellum2-1-a-12b-moe-open-model-for-coding-agents/",
+          "publisher": "MarkTechPost",
+          "excerpt": "JetBrains released Mellum2.1, an Apache 2.0, 12B mixture-of-experts thinking model with 2.5B active parameters. RL in real repositories lifted its SWE-bench Verified score from 2.0 to 47.0. The post JetBrains Releases Mellum2.1: A 12B MoE Open Model for Coding Agents appeared first on MarkTechPost .",
+          "context_source": "feed",
+          "published_at_utc": "2026-10-08T16:17:35Z",
+          "retrieved_at_utc": "2026-10-08T21:42:17.756891Z",
+          "feed": "https://www.marktechpost.com/feed/"
+        }
+      ],
+      "tech_only": false,
+      "entities": [
+        "JetBrains",
+        "Mellum2.1"
+      ],
+      "evidence_strength": {
+        "level": "limited",
+        "points": 1,
+        "independent_reports": 1,
+        "publishers": [
+          "MarkTechPost"
+        ],
+        "channels": 1,
+        "trend_signals": 0,
+        "duplicates_collapsed": 0,
+        "newest_age_hours": 5.4,
+        "reasons": [
+          "1 independent report (MarkTechPost)",
+          "1 reporting channel",
+          "newest report 5 h before this edition",
+          "not corroborated by a second independent publisher"
+        ]
+      }
+    },
+    {
+      "rank": 25,
+      "story_id": "287bab4c4e7ae789cc1a",
+      "entity_id": "8416db4ec77c",
+      "headline": "Audacious Space Heist Aims to Bring Home Bits of Mysterious Martian Moon",
+      "category": "Science & AI",
+      "sentences": [
+        "A space mission aims to bring back samples from Phobos, a mysterious moon of Mars, which could reveal how it formed."
+      ],
+      "why_it_matters": null,
+      "labels": [],
+      "momentum": "UNCERTAIN",
+      "velocity_basis": "coverage_uncertain",
+      "momentum_note": "24h comparable sources: bluesky, google_news, google_trends, hackernews, mastodon, news_rss, reddit, wikipedia, x_trends24, youtube; 48h configuration changed or unavailable; 168h configuration changed or unavailable",
+      "relevance_score": 8,
+      "velocity_score": 50.0,
+      "combined_score": 68.0,
+      "platforms": [
+        "news_rss"
+      ],
+      "publisher_hosts": [
+        "science.org"
+      ],
+      "raw_item_count": 1,
+      "member_item_ids": [
+        362
+      ],
+      "evidence": [
+        {
+          "item_id": 362,
+          "source": "news_rss",
+          "source_name": "News feeds",
+          "title": "Audacious space heist aims to bring home bits of mysterious martian moon",
+          "url": "https://www.science.org/content/article/audacious-space-heist-japan-aims-bring-home-bits-martian-moon",
+          "publisher": "Science - News",
+          "excerpt": "Samples from Japan's MMX mission could reveal how Phobos formed - and may contain pieces of Mars",
+          "context_source": "feed",
+          "published_at_utc": "2026-10-08T02:00:00Z",
+          "retrieved_at_utc": "2026-10-08T21:42:17.768653Z",
+          "feed": "https://www.science.org/rss/news_current.xml"
+        }
+      ],
+      "tech_only": false,
+      "entities": [
+        "Phobos",
+        "Mars",
+        "Japan's MMX Mission"
+      ],
+      "evidence_strength": {
+        "level": "limited",
+        "points": 1,
+        "independent_reports": 1,
+        "publishers": [
+          "Science"
+        ],
+        "channels": 1,
+        "trend_signals": 0,
+        "duplicates_collapsed": 0,
+        "newest_age_hours": 19.7,
+        "reasons": [
+          "1 independent report (Science)",
+          "1 reporting channel",
+          "newest report 20 h before this edition",
+          "not corroborated by a second independent publisher"
+        ]
+      }
+    },
+    {
+      "rank": 26,
+      "story_id": "dc04afd71754abd838bb",
+      "entity_id": "0fc1e0db9b6f",
+      "headline": "Scientists Discover Genetic Code That Breaks Life's Rules",
+      "category": "Science & AI",
+      "sentences": [
+        "Scientists have accidentally discovered a genetic code that breaks a rule thought to be nearly universal."
+      ],
+      "why_it_matters": null,
+      "labels": [],
+      "momentum": "UNCERTAIN",
+      "velocity_basis": "coverage_uncertain",
+      "momentum_note": "24h comparable sources: bluesky, google_news, google_trends, hackernews, mastodon, news_rss, reddit, wikipedia, x_trends24, youtube; 48h configuration changed or unavailable; 168h configuration changed or unavailable",
+      "relevance_score": 8,
+      "velocity_score": 50.0,
+      "combined_score": 68.0,
+      "platforms": [
+        "news_rss"
+      ],
+      "publisher_hosts": [
+        "sciencedaily.com"
+      ],
+      "raw_item_count": 1,
+      "member_item_ids": [
+        390
+      ],
+      "evidence": [
+        {
+          "item_id": 390,
+          "source": "news_rss",
+          "source_name": "News feeds",
+          "title": "Scientists accidentally discover a genetic code that breaks the rules of life",
+          "url": "https://www.sciencedaily.com/releases/2026/10/261007233136.htm",
+          "publisher": "ScienceDaily - Top Science",
+          "excerpt": "Scientists accidentally discovered a microscopic organism with a genetic code that breaks a rule researchers thought was nearly universal. While testing a new DNA sequencing technique, they examined a previously unknown protist collected from a freshwater pond at Oxford University. To their surprise, the organism uses...",
+          "context_source": "page",
+          "published_at_utc": "2026-10-08T13:31:39Z",
+          "retrieved_at_utc": "2026-10-08T21:42:15.627484Z",
+          "feed": "https://www.sciencedaily.com/rss/top/science.xml"
+        }
+      ],
+      "tech_only": false,
+      "entities": [
+        "Scientists",
+        "Genetic Code"
+      ],
+      "evidence_strength": {
+        "level": "limited",
+        "points": 1,
+        "independent_reports": 1,
+        "publishers": [
+          "ScienceDaily"
+        ],
+        "channels": 1,
+        "trend_signals": 0,
+        "duplicates_collapsed": 0,
+        "newest_age_hours": 8.2,
+        "reasons": [
+          "1 independent report (ScienceDaily)",
+          "1 reporting channel",
+          "newest report 8 h before this edition",
+          "not corroborated by a second independent publisher"
+        ]
+      }
+    },
+    {
+      "rank": 27,
+      "story_id": "58848f228a4a5a395f3c",
+      "entity_id": "693e064d6a46",
+      "headline": "Molly Russell's Father Blames Instagram for Her Death",
+      "category": "Tech",
+      "sentences": [
+        "Molly Russell's father will show an advert blaming Instagram for her death, saying 'too little has changed' since her passing."
+      ],
+      "why_it_matters": null,
+      "labels": [],
+      "momentum": "UNCERTAIN",
+      "velocity_basis": "coverage_uncertain",
+      "momentum_note": "24h comparable sources: bluesky, google_news, google_trends, hackernews, mastodon, news_rss, reddit, wikipedia, x_trends24, youtube; 48h configuration changed or unavailable; 168h configuration changed or unavailable",
+      "relevance_score": 8,
+      "velocity_score": 50.0,
+      "combined_score": 68.0,
+      "platforms": [
+        "news_rss"
+      ],
+      "publisher_hosts": [
+        "theguardian.com"
+      ],
+      "raw_item_count": 1,
+      "member_item_ids": [
+        401
+      ],
+      "evidence": [
+        {
+          "item_id": 401,
+          "source": "news_rss",
+          "source_name": "News feeds",
+          "title": "Molly Russell’s father to tell UK cinemagoers: ‘Instagram helped kill my daughter’",
+          "url": "https://www.theguardian.com/media/2026/oct/08/molly-russell-father-uk-cinemas-the-social-reckoning",
+          "publisher": "The Guardian - Technology",
+          "excerpt": "In ad to be shown before The Social Reckoning, Ian Russell will say 'too little has changed' since death of Molly, 14 | Molly Russell's father will tell UK cinemagoers that \"Instagram helped kill my daughter\" in an advert to be shown before screenings of a new film about Mark Zuckerberg's social media empire. | In the...",
+          "context_source": "page",
+          "published_at_utc": "2026-10-08T08:03:50Z",
+          "retrieved_at_utc": "2026-10-08T21:42:15.820338Z",
+          "feed": "https://www.theguardian.com/technology/rss"
+        }
+      ],
+      "tech_only": false,
+      "entities": [
+        "Molly Russell",
+        "Instagram"
+      ],
+      "evidence_strength": {
+        "level": "limited",
+        "points": 1,
+        "independent_reports": 1,
+        "publishers": [
+          "The Guardian"
+        ],
+        "channels": 1,
+        "trend_signals": 0,
+        "duplicates_collapsed": 0,
+        "newest_age_hours": 13.6,
+        "reasons": [
+          "1 independent report (The Guardian)",
+          "1 reporting channel",
+          "newest report 14 h before this edition",
+          "not corroborated by a second independent publisher"
+        ]
+      }
+    },
+    {
+      "rank": 28,
+      "story_id": "36e5b284d9eda207e9dc",
+      "entity_id": "f551de84e303",
+      "headline": "Magnetic USB-C Port Introduced",
+      "category": "Tech",
+      "sentences": [
+        "Microsoft has introduced a magnetic USB-C port on its Surface Laptop Ultra, which is strong enough for the cable to practically plug itself in."
+      ],
+      "why_it_matters": null,
+      "labels": [],
+      "momentum": "UNCERTAIN",
+      "velocity_basis": "coverage_uncertain",
+      "momentum_note": "24h comparable sources: bluesky, google_news, google_trends, hackernews, mastodon, news_rss, reddit, wikipedia, x_trends24, youtube; 48h configuration changed or unavailable; 168h configuration changed or unavailable",
+      "relevance_score": 8,
+      "velocity_score": 50.0,
+      "combined_score": 68.0,
+      "platforms": [
+        "youtube"
+      ],
+      "publisher_hosts": [
+        "youtube.com"
+      ],
+      "raw_item_count": 1,
+      "member_item_ids": [
+        1277
+      ],
+      "evidence": [
+        {
+          "item_id": 1277,
+          "source": "youtube",
+          "source_name": "YouTube",
+          "title": "The first true magnetic USB-C port?",
+          "url": "https://www.youtube.com/shorts/vt-VcPCTqSo",
+          "publisher": "The Verge",
+          "excerpt": "The first true magnetic USB-C port? Microsoft says the Surface Laptop Ultra has one, and it's strong enough the cable practically plugs itself in!",
+          "context_source": "feed",
+          "published_at_utc": "2026-10-07T21:31:10Z",
+          "retrieved_at_utc": "2026-10-08T21:42:18.495101Z",
+          "feed": "https://www.youtube.com/feeds/videos.xml?channel_id=UCddiUEpeqJcYeBxX1IVBKvQ"
+        }
+      ],
+      "tech_only": false,
+      "entities": [
+        "Microsoft",
+        "Surface Laptop Ultra"
+      ],
+      "evidence_strength": {
+        "level": "limited",
+        "points": 0,
+        "independent_reports": 1,
+        "publishers": [
+          "The Verge"
+        ],
+        "channels": 1,
+        "trend_signals": 0,
+        "duplicates_collapsed": 0,
+        "newest_age_hours": 24.2,
+        "reasons": [
+          "1 independent report (The Verge)",
+          "1 reporting channel",
+          "newest report 24 h before this edition",
+          "not corroborated by a second independent publisher"
+        ]
+      }
+    },
+    {
+      "rank": 29,
+      "story_id": "0452c40b5e91f0ebef02",
+      "entity_id": "2f4f5d81afb9",
+      "headline": "The People Holding up the Internet",
+      "category": "Tech",
+      "sentences": [
+        "Teaches computer science at UCLA, and has been the official coordinator of the time zone file since 2012."
+      ],
+      "why_it_matters": null,
+      "labels": [],
+      "momentum": "UNCERTAIN",
+      "velocity_basis": "coverage_uncertain",
+      "momentum_note": "24h comparable sources: bluesky, google_news, google_trends, hackernews, mastodon, news_rss, reddit, wikipedia, x_trends24, youtube; 48h configuration changed or unavailable; 168h configuration changed or unavailable",
+      "relevance_score": 7,
+      "velocity_score": 50.0,
+      "combined_score": 62.0,
+      "platforms": [
+        "hackernews",
+        "news_rss"
+      ],
+      "publisher_hosts": [
+        "sheets.works"
+      ],
+      "raw_item_count": 2,
+      "member_item_ids": [
+        300
+      ],
+      "evidence": [
+        {
+          "item_id": 300,
+          "source": "hackernews",
+          "source_name": "Hacker News",
+          "title": "The people holding up the internet",
+          "url": "https://sheets.works/data-viz/holding-up-the-internet",
+          "publisher": "sheets.works",
+          "excerpt": "Four billion phones ask one text file what time it is. One lecturer keeps it in his spare time. We counted the rest. | Billions of phones run on code looked after by a handful of people. We counted them from the code itself. | Teaches computer science at UCLA, and has been the official coordinator of the time zone...",
+          "context_source": "page",
+          "published_at_utc": "2026-10-08T06:41:35Z",
+          "retrieved_at_utc": "2026-10-08T21:42:18.813742Z",
+          "feed": null
+        }
+      ],
+      "tech_only": false,
+      "entities": [
+        "Billions of Phones",
+        "One Lecturer"
+      ],
+      "evidence_strength": {
+        "level": "limited",
+        "points": 1,
+        "independent_reports": 1,
+        "publishers": [
+          "sheets.works"
+        ],
+        "channels": 1,
+        "trend_signals": 0,
+        "duplicates_collapsed": 0,
+        "newest_age_hours": 15.0,
+        "reasons": [
+          "1 independent report (sheets.works)",
+          "1 reporting channel",
+          "newest report 15 h before this edition",
+          "not corroborated by a second independent publisher"
+        ]
+      }
+    },
+    {
+      "rank": 30,
+      "story_id": "3726c6f479d029b68fd3",
+      "entity_id": "6b061e63ac36",
+      "headline": "Clubs Fear Political Interference in Man City Appeal",
+      "category": "Sports",
+      "sentences": [
+        "Premier League clubs are concerned about political interference in Manchester City's appeal, following comments from Prime Minister Andy Burnham."
+      ],
+      "why_it_matters": null,
+      "labels": [],
+      "momentum": "UNCERTAIN",
+      "velocity_basis": "coverage_uncertain",
+      "momentum_note": "24h comparable sources: bluesky, google_news, google_trends, hackernews, mastodon, news_rss, reddit, wikipedia, x_trends24, youtube; 48h configuration changed or unavailable; 168h configuration changed or unavailable",
+      "relevance_score": 7,
+      "velocity_score": 50.0,
+      "combined_score": 62.0,
+      "platforms": [
+        "news_rss"
+      ],
+      "publisher_hosts": [
+        "bbc.co.uk"
+      ],
+      "raw_item_count": 2,
+      "member_item_ids": [
+        393
+      ],
+      "evidence": [
+        {
+          "item_id": 393,
+          "source": "news_rss",
+          "source_name": "News feeds",
+          "title": "Clubs fear political interference in Man City appeal",
+          "url": "https://www.bbc.co.uk/sport/football/articles/c6y93qq5175wo?at_medium=RSS&at_campaign=rss",
+          "publisher": "BBC Sport",
+          "excerpt": "Manchester City charges: Premier League clubs fear political interference in appeal after Andy Burnham comments | Premier League clubs are \"concerned\" about political interference in Manchester City's appeal after Prime Minister Andy Burnham's comments. | Some Premier League clubs were so \"astonished\" by comments made...",
+          "context_source": "page",
+          "published_at_utc": "2026-10-08T09:16:56Z",
+          "retrieved_at_utc": "2026-10-08T21:42:15.621585Z",
+          "feed": "https://feeds.bbci.co.uk/sport/rss.xml"
+        }
+      ],
+      "tech_only": false,
+      "entities": [
+        "Manchester City",
+        "Premier League"
+      ],
+      "evidence_strength": {
+        "level": "limited",
+        "points": 1,
+        "independent_reports": 1,
+        "publishers": [
+          "BBC Sport"
+        ],
+        "channels": 1,
+        "trend_signals": 0,
+        "duplicates_collapsed": 0,
+        "newest_age_hours": 12.4,
+        "reasons": [
+          "1 independent report (BBC Sport)",
+          "1 reporting channel",
+          "newest report 12 h before this edition",
+          "not corroborated by a second independent publisher"
+        ]
+      }
+    },
+    {
+      "rank": 31,
+      "story_id": "8af12db5f1630f0db2df",
+      "entity_id": "7a488390a939",
+      "headline": "\"Math 2.0\" Will Need to Value Mathematical Progress More Holistically",
+      "category": "Tech",
+      "sentences": [
+        "Math 1.0\" placed a premium on being the first to solve an open problem, even if the solution was not initially well understood."
+      ],
+      "why_it_matters": null,
+      "labels": [],
+      "momentum": "UNCERTAIN",
+      "velocity_basis": "coverage_uncertain",
+      "momentum_note": "24h comparable sources: bluesky, google_news, google_trends, hackernews, mastodon, news_rss, reddit, wikipedia, x_trends24, youtube; 48h configuration changed or unavailable; 168h configuration changed or unavailable",
+      "relevance_score": 7,
+      "velocity_score": 50.0,
+      "combined_score": 62.0,
+      "platforms": [
+        "hackernews"
+      ],
+      "publisher_hosts": [
+        "mathstodon.xyz"
+      ],
+      "raw_item_count": 1,
+      "member_item_ids": [
+        1215
+      ],
+      "evidence": [
+        {
+          "item_id": 1215,
+          "source": "hackernews",
+          "source_name": "Hacker News",
+          "title": "“Math 2.0” will need to value mathematical progress more holistically",
+          "url": "https://mathstodon.xyz/@tao/117395269325940185",
+          "publisher": "mathstodon.xyz",
+          "excerpt": "Terence Tao (@tao@mathstodon.xyz) | \"Math 1.0\" placed a premium on being the first to solve an open problem, even if the solution was not initially well understood. Now that this goal has been optimized to the point of unsustainability, \"Math 2.0\" will need to decenter the role of raw problem solving and value...",
+          "context_source": "page",
+          "published_at_utc": "2026-10-08T05:14:14Z",
+          "retrieved_at_utc": "2026-10-08T21:42:18.813742Z",
+          "feed": null
+        }
+      ],
+      "tech_only": true,
+      "entities": [
+        "Math"
+      ],
+      "evidence_strength": {
+        "level": "limited",
+        "points": 1,
+        "independent_reports": 1,
+        "publishers": [
+          "mathstodon.xyz"
+        ],
+        "channels": 1,
+        "trend_signals": 0,
+        "duplicates_collapsed": 0,
+        "newest_age_hours": 16.5,
+        "reasons": [
+          "1 independent report (mathstodon.xyz)",
+          "1 reporting channel",
+          "newest report 16 h before this edition",
+          "not corroborated by a second independent publisher"
+        ]
+      }
+    },
+    {
+      "rank": 32,
+      "story_id": "f30dcf3a92867346b99d",
+      "entity_id": "d0be2dc421be",
+      "headline": "Apple to Launch Touchscreen OLED MacBook Pro and iPad Mini on October 27",
+      "category": "Tech",
+      "sentences": [
+        "Apple will introduce new OLED touchscreen MacBook Pro models and an OLED iPad mini on October 27.",
+        "The launch will also include an M6 14-inch MacBook Pro and an M6 iMac."
+      ],
+      "why_it_matters": null,
+      "labels": [],
+      "momentum": "UNCERTAIN",
+      "velocity_basis": "coverage_uncertain",
+      "momentum_note": "24h comparable sources: bluesky, google_news, google_trends, hackernews, mastodon, news_rss, reddit, wikipedia, x_trends24, youtube; 48h configuration changed or unavailable; 168h configuration changed or unavailable",
+      "relevance_score": 7,
+      "velocity_score": 50.0,
+      "combined_score": 62.0,
+      "platforms": [
+        "news_rss"
+      ],
+      "publisher_hosts": [
+        "macrumors.com"
+      ],
+      "raw_item_count": 1,
+      "member_item_ids": [
+        355
+      ],
+      "evidence": [
+        {
+          "item_id": 355,
+          "source": "news_rss",
+          "source_name": "News feeds",
+          "title": "Apple to Launch Touchscreen OLED MacBook Pro and OLED iPad mini on October 27",
+          "url": "https://www.macrumors.com/2026/10/08/apple-october-27-macbook-pro/",
+          "publisher": "MacRumors",
+          "excerpt": "Apple will introduce new OLED touchscreen MacBook Pro models and an OLED iPad mini \"on or around\" Tuesday, October 27, reports Bloomberg. The launch will also include an M6 14-inch MacBook Pro and an M6 iMac. The October 27 follows Apple's October 13 debut of a new smart home hub, a revamped Apple TV 4K, and a...",
+          "context_source": "page",
+          "published_at_utc": "2026-10-08T21:12:43Z",
+          "retrieved_at_utc": "2026-10-08T21:42:17.504122Z",
+          "feed": "https://feeds.macrumors.com/MacRumors-All"
+        }
+      ],
+      "tech_only": false,
+      "entities": [
+        "Apple"
+      ],
+      "evidence_strength": {
+        "level": "limited",
+        "points": 1,
+        "independent_reports": 1,
+        "publishers": [
+          "MacRumors"
+        ],
+        "channels": 1,
+        "trend_signals": 0,
+        "duplicates_collapsed": 0,
+        "newest_age_hours": 0.5,
+        "reasons": [
+          "1 independent report (MacRumors)",
+          "1 reporting channel",
+          "newest report under an hour before this edition",
+          "not corroborated by a second independent publisher"
+        ]
+      }
+    },
+    {
+      "rank": 33,
+      "story_id": "a7da54a8161b73bb44ab",
+      "entity_id": "8d6e53e60845",
+      "headline": "Trump Misnames Michigan Senate Nominee Abdul El-Sayed",
+      "category": "Internet Culture",
+      "sentences": [
+        "Trump labels Michigan Senate nominee Abdul El-Sayed a 'terrorist sympathizer'.",
+        "He resorted to racially motivated name-calling."
+      ],
+      "why_it_matters": null,
+      "labels": [],
+      "momentum": "UNCERTAIN",
+      "velocity_basis": "coverage_uncertain",
+      "momentum_note": "24h comparable sources: bluesky, google_news, google_trends, hackernews, mastodon, news_rss, reddit, wikipedia, x_trends24, youtube; 48h configuration changed or unavailable; 168h configuration changed or unavailable",
+      "relevance_score": 7,
+      "velocity_score": 50.0,
+      "combined_score": 62.0,
+      "platforms": [
+        "news_rss"
+      ],
+      "publisher_hosts": [
+        "boingboing.net"
+      ],
+      "raw_item_count": 1,
+      "member_item_ids": [
+        477
+      ],
+      "evidence": [
+        {
+          "item_id": 477,
+          "source": "news_rss",
+          "source_name": "News feeds",
+          "title": "Trump resorts to misnaming Michigan's Abdul El-Sayed",
+          "url": "https://boingboing.net/2026/10/08/trump-abdul-el-sayed-mohammed-jihad.html",
+          "publisher": "Boing Boing",
+          "excerpt": "Trump labels Michigan Senate nominee Abdul El-Sayed a \"terrorist sympathizer\" | Having no remotely credible reason to encourage voters to consider Mike Rogers over Abdul El-Sayed, America's angriest President resorted to racially motivated name-calling. | Diaper Don pulled out all the stops on his classic rhetoric of...",
+          "context_source": "page",
+          "published_at_utc": "2026-10-08T21:00:33Z",
+          "retrieved_at_utc": "2026-10-08T21:42:18.150944Z",
+          "feed": "https://boingboing.net/feed"
+        }
+      ],
+      "tech_only": false,
+      "entities": [
+        "Trump",
+        "Abdul El-Sayed"
+      ],
+      "evidence_strength": {
+        "level": "limited",
+        "points": 1,
+        "independent_reports": 1,
+        "publishers": [
+          "Boing Boing"
+        ],
+        "channels": 1,
+        "trend_signals": 0,
+        "duplicates_collapsed": 0,
+        "newest_age_hours": 0.7,
+        "reasons": [
+          "1 independent report (Boing Boing)",
+          "1 reporting channel",
+          "newest report under an hour before this edition",
+          "not corroborated by a second independent publisher"
+        ]
+      }
+    },
+    {
+      "rank": 34,
+      "story_id": "ebc0e9a40f0798239880",
+      "entity_id": "c0ea35cbfb47",
+      "headline": "Mina Kimes Calls Out Stephen A.'s Top-5 NFL Teams",
+      "category": "Sports",
+      "sentences": [
+        "Mina Kimes has called out Stephen A.'s top-5 NFL teams, sparking a head-to-head debate on First Take."
+      ],
+      "why_it_matters": null,
+      "labels": [],
+      "momentum": "UNCERTAIN",
+      "velocity_basis": "coverage_uncertain",
+      "momentum_note": "24h comparable sources: bluesky, google_news, google_trends, hackernews, mastodon, news_rss, reddit, wikipedia, x_trends24, youtube; 48h configuration changed or unavailable; 168h configuration changed or unavailable",
+      "relevance_score": 7,
+      "velocity_score": 50.0,
+      "combined_score": 62.0,
+      "platforms": [
+        "youtube"
+      ],
+      "publisher_hosts": [
+        "youtube.com"
+      ],
+      "raw_item_count": 1,
+      "member_item_ids": [
+        1282
+      ],
+      "evidence": [
+        {
+          "item_id": 1282,
+          "source": "youtube",
+          "source_name": "YouTube",
+          "title": "Mina Kimes calls out Stephen A.'s top-5 NFL teams A-List: Thought it was a typo! 😭 | First Take",
+          "url": "https://www.youtube.com/watch?v=ltqiQEX_-ac",
+          "publisher": "ESPN",
+          "excerpt": "On First Take, Gerald McCoy, Mina Kimes, Stephen A. Smith, and Louis Riddick join Shae Cornette to discuss Stephen A.'s top-5 NFL teams A-List and get into a head-to-head debate about who should and shouldn't be included.",
+          "context_source": "feed",
+          "published_at_utc": "2026-10-08T16:29:34Z",
+          "retrieved_at_utc": "2026-10-08T21:42:18.500029Z",
+          "feed": "https://www.youtube.com/feeds/videos.xml?channel_id=UCiWLfSweyRNmLpgEHekhoAg"
+        }
+      ],
+      "tech_only": false,
+      "entities": [
+        "Mina Kimes"
+      ],
+      "evidence_strength": {
+        "level": "limited",
+        "points": 1,
+        "independent_reports": 1,
+        "publishers": [
+          "ESPN"
+        ],
+        "channels": 1,
+        "trend_signals": 0,
+        "duplicates_collapsed": 0,
+        "newest_age_hours": 5.2,
+        "reasons": [
+          "1 independent report (ESPN)",
+          "1 reporting channel",
+          "newest report 5 h before this edition",
+          "not corroborated by a second independent publisher"
+        ]
+      }
+    },
+    {
+      "rank": 35,
+      "story_id": "9f3479d6b2d1802efa98",
+      "entity_id": "0717b56ea013",
+      "headline": "MLB Proposes Shorter Regular Season, Best-of-7 Division Series",
+      "category": "Sports",
+      "sentences": [
+        "Major League Baseball has proposed shortening the regular season to 154 games from 162 starting in 2029 and expanding the division series to best-of-seven."
+      ],
+      "why_it_matters": null,
+      "labels": [],
+      "momentum": "UNCERTAIN",
+      "velocity_basis": "coverage_uncertain",
+      "momentum_note": "24h comparable sources: bluesky, google_news, google_trends, hackernews, mastodon, news_rss, reddit, wikipedia, x_trends24, youtube; 48h configuration changed or unavailable; 168h configuration changed or unavailable",
+      "relevance_score": 6,
+      "velocity_score": 50.0,
+      "combined_score": 56.0,
+      "platforms": [
+        "news_rss"
+      ],
+      "publisher_hosts": [
+        "espn.com"
+      ],
+      "raw_item_count": 2,
+      "member_item_ids": [
+        466
+      ],
+      "evidence": [
+        {
+          "item_id": 466,
+          "source": "news_rss",
+          "source_name": "News feeds",
+          "title": "MLB eyes shorter regular season, expanding division series to best-of-7",
+          "url": "https://www.espn.com/mlb/story/_/id/50134346/mlb-proposes-shorter-regular-season-best-7-division-series",
+          "publisher": "ESPN - MLB",
+          "excerpt": "Major League Baseball proposed shortening the regular season to 154 games from 162 starting in 2029 and expanding the division series to best-of-seven in bargaining with players.",
+          "context_source": "feed",
+          "published_at_utc": null,
+          "retrieved_at_utc": "2026-10-08T21:42:17.865911Z",
+          "feed": "https://www.espn.com/espn/rss/mlb/news"
+        }
+      ],
+      "tech_only": false,
+      "entities": [
+        "Major League Baseball"
+      ],
+      "evidence_strength": {
+        "level": "limited",
+        "points": 0,
+        "independent_reports": 1,
+        "publishers": [
+          "ESPN"
+        ],
+        "channels": 1,
+        "trend_signals": 0,
+        "duplicates_collapsed": 0,
+        "newest_age_hours": null,
+        "reasons": [
+          "1 independent report (ESPN)",
+          "1 reporting channel",
+          "no stated publication time",
+          "not corroborated by a second independent publisher"
+        ]
+      }
+    },
+    {
+      "rank": 36,
+      "story_id": "9e27f3dded42af1f0911",
+      "entity_id": "ecdb6dfd69ff",
+      "headline": "Disney's Former Top IP Lawyer Sues House of Mouse for Ageism & Wrongful Termination",
+      "category": "Entertainment",
+      "sentences": [
+        "Disney's former top IP lawyer, Mary, is suing the company for ageism and wrongful termination.",
+        "Mary Fossier employed the full force of the law against intellectual property infringers over decades at Disney."
+      ],
+      "why_it_matters": null,
+      "labels": [],
+      "momentum": "UNCERTAIN",
+      "velocity_basis": "coverage_uncertain",
+      "momentum_note": "24h comparable sources: bluesky, google_news, google_trends, hackernews, mastodon, news_rss, reddit, wikipedia, x_trends24, youtube; 48h configuration changed or unavailable; 168h configuration changed or unavailable",
+      "relevance_score": 6,
+      "velocity_score": 50.0,
+      "combined_score": 56.0,
+      "platforms": [
+        "news_rss"
+      ],
+      "publisher_hosts": [
+        "deadline.com"
+      ],
+      "raw_item_count": 1,
+      "member_item_ids": [
+        333
+      ],
+      "evidence": [
+        {
+          "item_id": 333,
+          "source": "news_rss",
+          "source_name": "News feeds",
+          "title": "Disney’s Former Top IP Lawyer Sues House Of Mouse For Ageism & Wrongful Termination: “Sleepless Nights & Days”",
+          "url": "https://deadline.com/2026/10/disney-lawyer-sues-ageism-firing-1237150535/",
+          "publisher": "Deadline",
+          "excerpt": "Disney's Former Top IP Lawyer Sues For Ageism & Wrongful Termination | A round of layoffs from late 2024 has come back to haunt Disney with one of the company's former top lawyers taking the Mouse House to court | EXCLUSIVE: Over decades at Disney, Mary Fossier employed the full force of the law against individuals...",
+          "context_source": "page",
+          "published_at_utc": "2026-10-08T21:36:33Z",
+          "retrieved_at_utc": "2026-10-08T21:42:17.727462Z",
+          "feed": "https://deadline.com/feed/"
+        }
+      ],
+      "tech_only": false,
+      "entities": [
+        "Disney"
+      ],
+      "evidence_strength": {
+        "level": "limited",
+        "points": 1,
+        "independent_reports": 1,
+        "publishers": [
+          "Deadline"
+        ],
+        "channels": 1,
+        "trend_signals": 0,
+        "duplicates_collapsed": 0,
+        "newest_age_hours": 0.1,
+        "reasons": [
+          "1 independent report (Deadline)",
+          "1 reporting channel",
+          "newest report under an hour before this edition",
+          "not corroborated by a second independent publisher"
+        ]
+      }
+    },
+    {
+      "rank": 37,
+      "story_id": "27dbce1f91fe0524f792",
+      "entity_id": "6fc81117f197",
+      "headline": "Study Finds Social Media Presence Boosts AI Visibility",
+      "category": "Internet Culture",
+      "sentences": [
+        "A new study found that maintaining an active presence on social media platforms can help brands increase their visibility in Google's artificial intelligence search results."
+      ],
+      "why_it_matters": null,
+      "labels": [],
+      "momentum": "UNCERTAIN",
+      "velocity_basis": "coverage_uncertain",
+      "momentum_note": "24h comparable sources: bluesky, google_news, google_trends, hackernews, mastodon, news_rss, reddit, wikipedia, x_trends24, youtube; 48h configuration changed or unavailable; 168h configuration changed or unavailable",
+      "relevance_score": 6,
+      "velocity_score": 50.0,
+      "combined_score": 56.0,
+      "platforms": [
+        "news_rss"
+      ],
+      "publisher_hosts": [
+        "socialmediatoday.com"
+      ],
+      "raw_item_count": 1,
+      "member_item_ids": [
+        375
+      ],
+      "evidence": [
+        {
+          "item_id": 375,
+          "source": "news_rss",
+          "source_name": "News feeds",
+          "title": "AI favors brands with an active social media presence",
+          "url": "https://www.socialmediatoday.com/news/ai-favors-brands-with-an-active-social-media-presence/832450/",
+          "publisher": "Social Media Today",
+          "excerpt": "Social platform links appeared in a majority of Google's artificial intelligence search results, according to a new study. | A new study found that maintaining an active presence on social media platforms can help brands increase their visibility in artificial intelligence-generated search results, with AI chatbots...",
+          "context_source": "page",
+          "published_at_utc": "2026-10-07T22:19:25Z",
+          "retrieved_at_utc": "2026-10-08T21:42:18.186278Z",
+          "feed": "https://www.socialmediatoday.com/feeds/news/"
+        }
+      ],
+      "tech_only": false,
+      "entities": [
+        "Google",
+        "Social Media Platforms"
+      ],
+      "evidence_strength": {
+        "level": "limited",
+        "points": 1,
+        "independent_reports": 1,
+        "publishers": [
+          "Social Media Today"
+        ],
+        "channels": 1,
+        "trend_signals": 0,
+        "duplicates_collapsed": 0,
+        "newest_age_hours": 23.4,
+        "reasons": [
+          "1 independent report (Social Media Today)",
+          "1 reporting channel",
+          "newest report 23 h before this edition",
+          "not corroborated by a second independent publisher"
+        ]
+      }
+    },
+    {
+      "rank": 38,
+      "story_id": "3ed30ed57b66071b7d46",
+      "entity_id": "4eff1862a00d",
+      "headline": "David Zaslav Cashed Out More Than $600 Million in Warner Bros. Stock",
+      "category": "Entertainment",
+      "sentences": [
+        "David Zaslav, the former CEO of Warner Bros. Discovery, has cashed out more than $600 million in Warner Bros. stock following the company's sale to Paramount.",
+        "David Zaslav's total severance package will be more complex."
+      ],
+      "why_it_matters": null,
+      "labels": [],
+      "momentum": "UNCERTAIN",
+      "velocity_basis": "coverage_uncertain",
+      "momentum_note": "24h comparable sources: bluesky, google_news, google_trends, hackernews, mastodon, news_rss, reddit, wikipedia, x_trends24, youtube; 48h configuration changed or unavailable; 168h configuration changed or unavailable",
+      "relevance_score": 6,
+      "velocity_score": 50.0,
+      "combined_score": 56.0,
+      "platforms": [
+        "news_rss"
+      ],
+      "publisher_hosts": [
+        "hollywoodreporter.com"
+      ],
+      "raw_item_count": 1,
+      "member_item_ids": [
+        535
+      ],
+      "evidence": [
+        {
+          "item_id": 535,
+          "source": "news_rss",
+          "source_name": "News feeds",
+          "title": "David Zaslav Cashed Out More Than $600 Million in Warner Bros. Stock in Connection With Sale to Paramount",
+          "url": "https://www.hollywoodreporter.com/business/business-news/david-zaslav-skydance-sale-wbd-payout-1236725569/",
+          "publisher": "The Hollywood Reporter",
+          "excerpt": "The WBD CEO saw his stock liquidated in connection with the acquisition, though his total severance package will be more complex. | Former Warner Bros. Discovery CEO David Zaslav is now more than $600 million richer, now that Paramount's $111 billion takeover is complete. | The executive on Thursday filed his Form 4...",
+          "context_source": "page",
+          "published_at_utc": "2026-10-08T21:19:24Z",
+          "retrieved_at_utc": "2026-10-08T21:42:19.170124Z",
+          "feed": "https://www.hollywoodreporter.com/feed/"
+        }
+      ],
+      "tech_only": false,
+      "entities": [
+        "David Zaslav",
+        "Warner Bros",
+        "Paramount"
+      ],
+      "evidence_strength": {
+        "level": "limited",
+        "points": 1,
+        "independent_reports": 1,
+        "publishers": [
+          "The Hollywood Reporter"
+        ],
+        "channels": 1,
+        "trend_signals": 0,
+        "duplicates_collapsed": 0,
+        "newest_age_hours": 0.4,
+        "reasons": [
+          "1 independent report (The Hollywood Reporter)",
+          "1 reporting channel",
+          "newest report under an hour before this edition",
+          "not corroborated by a second independent publisher"
+        ]
+      }
+    },
+    {
+      "rank": 39,
+      "story_id": "3929b82fa1edc74c6ef4",
+      "entity_id": "d29ce0dc216f",
+      "headline": "Warhammer 40,000: Dawn of War 4 - Official Space Marines Faction Trailer",
+      "category": "Entertainment",
+      "sentences": [
+        "The Space Marines Faction Trailer for Warhammer 40,000: Dawn of War 4 has been released, showcasing humanity's greatest warriors."
+      ],
+      "why_it_matters": null,
+      "labels": [],
+      "momentum": "UNCERTAIN",
+      "velocity_basis": "coverage_uncertain",
+      "momentum_note": "24h comparable sources: bluesky, google_news, google_trends, hackernews, mastodon, news_rss, reddit, wikipedia, x_trends24, youtube; 48h configuration changed or unavailable; 168h configuration changed or unavailable",
+      "relevance_score": 6,
+      "velocity_score": 50.0,
+      "combined_score": 56.0,
+      "platforms": [
+        "youtube"
+      ],
+      "publisher_hosts": [
+        "youtube.com"
+      ],
+      "raw_item_count": 1,
+      "member_item_ids": [
+        1299
+      ],
+      "evidence": [
+        {
+          "item_id": 1299,
+          "source": "youtube",
+          "source_name": "YouTube",
+          "title": "Warhammer 40,000: Dawn of War 4 - Official Space Marines Faction Trailer",
+          "url": "https://www.youtube.com/watch?v=MqD9g43YRFg",
+          "publisher": "IGN",
+          "excerpt": "Don't miss the Space Marines Faction Trailer for Warhammer 40,000: Dawn of War 4, an upcoming real-time strategy game developed by King Art. Players can get the rundown of the Space Marine faction, humanity's greatest warriors who have been genetically enhanced for battle in service to the Emperor.",
+          "context_source": "feed",
+          "published_at_utc": "2026-10-08T17:20:45Z",
+          "retrieved_at_utc": "2026-10-08T21:42:18.539239Z",
+          "feed": "https://www.youtube.com/feeds/videos.xml?channel_id=UCKy1dAqELo0zrOtPkf0eTMw"
+        }
+      ],
+      "tech_only": false,
+      "entities": [
+        "Warhammer 40,000",
+        "Dawn of War 4"
+      ],
+      "evidence_strength": {
+        "level": "limited",
+        "points": 1,
+        "independent_reports": 1,
+        "publishers": [
+          "IGN"
+        ],
+        "channels": 1,
+        "trend_signals": 0,
+        "duplicates_collapsed": 0,
+        "newest_age_hours": 4.4,
+        "reasons": [
+          "1 independent report (IGN)",
+          "1 reporting channel",
+          "newest report 4 h before this edition",
+          "not corroborated by a second independent publisher"
+        ]
+      }
+    },
+    {
+      "rank": 40,
+      "story_id": "b71c868823569884227f",
+      "entity_id": "7d93abf5909a",
+      "headline": "Triple-i Initiative Returns",
+      "category": "Entertainment",
+      "sentences": [
+        "The Triple-i Initiative returns with 40 announcements, including game reveals and new game announcements, such as Dave the Diver and Risk of Rain 2."
+      ],
+      "why_it_matters": null,
+      "labels": [],
+      "momentum": "UNCERTAIN",
+      "velocity_basis": "coverage_uncertain",
+      "momentum_note": "24h comparable sources: bluesky, google_news, google_trends, hackernews, mastodon, news_rss, reddit, wikipedia, x_trends24, youtube; 48h configuration changed or unavailable; 168h configuration changed or unavailable",
+      "relevance_score": 6,
+      "velocity_score": 50.0,
+      "combined_score": 56.0,
+      "platforms": [
+        "youtube"
+      ],
+      "publisher_hosts": [
+        "youtube.com"
+      ],
+      "raw_item_count": 1,
+      "member_item_ids": [
+        1315
+      ],
+      "evidence": [
+        {
+          "item_id": 1315,
+          "source": "youtube",
+          "source_name": "YouTube",
+          "title": "The Triple-i Initiative October 2026",
+          "url": "https://www.youtube.com/watch?v=S8DHtd0OCpw",
+          "publisher": "IGN",
+          "excerpt": "The Triple-i Initiative returns with 40 announcements in 45+ minutes including Dave the Diver, Risk of Rain 2, Windrose, Brotato, Among Us Story, Militsioner, Outward 2 & more, PLUS eight new game reveals!. Tune in October 8th at 9am PDT/12pm EDT/6pm CEST.",
+          "context_source": "feed",
+          "published_at_utc": "2026-10-08T16:55:33Z",
+          "retrieved_at_utc": "2026-10-08T21:42:18.539239Z",
+          "feed": "https://www.youtube.com/feeds/videos.xml?channel_id=UCKy1dAqELo0zrOtPkf0eTMw"
+        }
+      ],
+      "tech_only": false,
+      "entities": [
+        "Triple-i Initiative",
+        "Dave the Diver",
+        "Risk of Rain 2",
+        "Windrose",
+        "Brotato",
+        "Among Us Story"
+      ],
+      "evidence_strength": {
+        "level": "limited",
+        "points": 1,
+        "independent_reports": 1,
+        "publishers": [
+          "IGN"
+        ],
+        "channels": 1,
+        "trend_signals": 0,
+        "duplicates_collapsed": 0,
+        "newest_age_hours": 4.8,
+        "reasons": [
+          "1 independent report (IGN)",
+          "1 reporting channel",
+          "newest report 5 h before this edition",
+          "not corroborated by a second independent publisher"
+        ]
+      }
+    },
+    {
+      "rank": 41,
+      "story_id": "ed9cdc57dfced54c5cec",
+      "entity_id": "0558ea886b24",
+      "headline": "Shaquille O'Neal Addresses Kelsey Mitchell's Remarks",
+      "category": "Sports",
+      "sentences": [
+        "Shaquille O'Neal addressed Kelsey Mitchell's remarks on Caitlin Clark, advising her to leverage the spotlight."
+      ],
+      "why_it_matters": null,
+      "labels": [],
+      "momentum": "UNCERTAIN",
+      "velocity_basis": "coverage_uncertain",
+      "momentum_note": "24h comparable sources: bluesky, google_news, google_trends, hackernews, mastodon, news_rss, reddit, wikipedia, x_trends24, youtube; 48h configuration changed or unavailable; 168h configuration changed or unavailable",
+      "relevance_score": 5,
+      "velocity_score": 50.0,
+      "combined_score": 50.0,
+      "platforms": [
+        "google_news"
+      ],
+      "publisher_hosts": [
+        "foxnews.com"
+      ],
+      "raw_item_count": 2,
+      "member_item_ids": [
+        24
+      ],
+      "evidence": [
+        {
+          "item_id": 24,
+          "source": "google_news",
+          "source_name": "Google News",
+          "title": "Shaquille O'Neal addresses Fever's Kelsey Mitchell's remarks on Caitlin Clark, says to leverage the spotlight",
+          "url": "https://news.google.com/rss/articles/CBMixgFBVV95cUxPU3hDMmh1eU1wMk5NRnl1S1ZHMDZoMVcyWEQzZEJXYzJ4dHJydGhrM0pybHVMMG9lYWZYZ3J1X0Q1cEhhYmlTSUsxWnh0OWZGN2VvTEtEY25jY3poRjdnWWNrenFEbzBkV0RjM0pFenhNSXA0RnV0cGpCLTB0T1lGMVlnNmgwTHltNlJvLVZZQ1FlWkNqTzhhd29aU0ZHUUVIWUVOdmd3N1pDS2Y5d0VYTnA3djROR3lQT3lJc0RmU1BkaWRobmc?oc=5",
+          "publisher": "Fox News",
+          "excerpt": null,
+          "context_source": null,
+          "published_at_utc": "2026-10-08T14:48:42Z",
+          "retrieved_at_utc": "2026-10-08T21:42:15.103881Z",
+          "feed": "https://news.google.com/rss/headlines/section/topic/SPORTS?hl=en-US&gl=US&ceid=US%3Aen"
+        }
+      ],
+      "tech_only": false,
+      "entities": [
+        "Shaquille O'Neal",
+        "Kelsey Mitchell",
+        "Caitlin Clark"
+      ],
+      "evidence_strength": {
+        "level": "limited",
+        "points": 1,
+        "independent_reports": 1,
+        "publishers": [
+          "Fox News"
+        ],
+        "channels": 1,
+        "trend_signals": 0,
+        "duplicates_collapsed": 0,
+        "newest_age_hours": 6.9,
+        "reasons": [
+          "1 independent report (Fox News)",
+          "1 reporting channel",
+          "newest report 7 h before this edition",
+          "not corroborated by a second independent publisher"
+        ]
+      }
+    },
+    {
+      "rank": 42,
+      "story_id": "0016795406cdeb0228fa",
+      "entity_id": "3a9a079d26e1",
+      "headline": "Dak Prescott Breaks Down a Play",
+      "category": "Sports",
+      "sentences": [
+        "Cowboys QB Dak Prescott processes dozens of elements before throwing a 21-yard TD.",
+        "He breaks down a play from pre-snap to post-snap."
+      ],
+      "why_it_matters": null,
+      "labels": [],
+      "momentum": "UNCERTAIN",
+      "velocity_basis": "coverage_uncertain",
+      "momentum_note": "24h comparable sources: bluesky, google_news, google_trends, hackernews, mastodon, news_rss, reddit, wikipedia, x_trends24, youtube; 48h configuration changed or unavailable; 168h configuration changed or unavailable",
+      "relevance_score": 5,
+      "velocity_score": 50.0,
+      "combined_score": 50.0,
+      "platforms": [
+        "news_rss"
+      ],
+      "publisher_hosts": [
+        "espn.com"
+      ],
+      "raw_item_count": 2,
+      "member_item_ids": [
+        291
+      ],
+      "evidence": [
+        {
+          "item_id": 291,
+          "source": "news_rss",
+          "source_name": "News feeds",
+          "title": "Through Dak Prescott's eyes: The Cowboys QB breaks down a play and all he sees",
+          "url": "https://www.espn.com/nfl/story/_/id/50124371/dallas-cowboys-dak-prescott-touchdown",
+          "publisher": "ESPN - Top Headlines",
+          "excerpt": "From pre-snap to post-snap, Prescott processes dozens of elements before the ball leaves his hand and is caught for a 21-yard TD.",
+          "context_source": "feed",
+          "published_at_utc": null,
+          "retrieved_at_utc": "2026-10-08T21:42:15.668674Z",
+          "feed": "https://www.espn.com/espn/rss/news"
+        }
+      ],
+      "tech_only": false,
+      "entities": [
+        "Dak Prescott",
+        "Cowboys"
+      ],
+      "evidence_strength": {
+        "level": "limited",
+        "points": 0,
+        "independent_reports": 1,
+        "publishers": [
+          "ESPN"
+        ],
+        "channels": 1,
+        "trend_signals": 0,
+        "duplicates_collapsed": 0,
+        "newest_age_hours": null,
+        "reasons": [
+          "1 independent report (ESPN)",
+          "1 reporting channel",
+          "no stated publication time",
+          "not corroborated by a second independent publisher"
+        ]
+      }
+    },
+    {
+      "rank": 43,
+      "story_id": "46b486d043212abd1531",
+      "entity_id": "a9dcdf140e10",
+      "headline": "Aaron Judge Calls for Front Office to Go All-In This Offseason",
+      "category": "Sports",
+      "sentences": [
+        "Aaron Judge has called on the Yankees' front office to go all-in this offseason."
+      ],
+      "why_it_matters": null,
+      "labels": [],
+      "momentum": "UNCERTAIN",
+      "velocity_basis": "coverage_uncertain",
+      "momentum_note": "24h comparable sources: bluesky, google_news, google_trends, hackernews, mastodon, news_rss, reddit, wikipedia, x_trends24, youtube; 48h configuration changed or unavailable; 168h configuration changed or unavailable",
+      "relevance_score": 5,
+      "velocity_score": 50.0,
+      "combined_score": 50.0,
+      "platforms": [
+        "google_news"
+      ],
+      "publisher_hosts": [
+        "nytimes.com"
+      ],
+      "raw_item_count": 1,
+      "member_item_ids": [
+        37
+      ],
+      "evidence": [
+        {
+          "item_id": 37,
+          "source": "google_news",
+          "source_name": "Google News",
+          "title": "Aaron Judge calls on front office to go all-in this offseason: ‘We’re the Yankees’",
+          "url": "https://news.google.com/rss/articles/CBMiigFBVV95cUxQU1NfRDRQeGVQemVoYnhiZEJ2VVplUTZCbkxEOWd6WW11RU1JTFhEcXFTWU1pS1Q3T3F2XzF5eGtQX0dLUm5UaUFLQllyZEs0QzlBM0h3a01LcTFFUjlmQnhoQTVWM3V4SXhuV0Zvd1g3MGJrMVhrSWViUE5oMXlQNUVQQ3ZFU2VNOHc?oc=5",
+          "publisher": "The New York Times",
+          "excerpt": null,
+          "context_source": null,
+          "published_at_utc": "2026-10-08T09:30:29Z",
+          "retrieved_at_utc": "2026-10-08T21:42:15.103881Z",
+          "feed": "https://news.google.com/rss/headlines/section/topic/SPORTS?hl=en-US&gl=US&ceid=US%3Aen"
+        }
+      ],
+      "tech_only": false,
+      "entities": [
+        "Aaron Judge",
+        "Yankees"
+      ],
+      "evidence_strength": {
+        "level": "limited",
+        "points": 1,
+        "independent_reports": 1,
+        "publishers": [
+          "The New York Times"
+        ],
+        "channels": 1,
+        "trend_signals": 0,
+        "duplicates_collapsed": 0,
+        "newest_age_hours": 12.2,
+        "reasons": [
+          "1 independent report (The New York Times)",
+          "1 reporting channel",
+          "newest report 12 h before this edition",
+          "not corroborated by a second independent publisher"
+        ]
+      }
+    },
+    {
+      "rank": 44,
+      "story_id": "2082a5d95d17b2166084",
+      "entity_id": "edfad35bb9a9",
+      "headline": "2027 NFL Mock Draft Includes Huge Trade for Arch Manning",
+      "category": "Sports",
+      "sentences": [
+        "A 2027 NFL mock draft includes a huge trade that powers Arch Manning to the No. 1 spot."
+      ],
+      "why_it_matters": null,
+      "labels": [],
+      "momentum": "UNCERTAIN",
+      "velocity_basis": "coverage_uncertain",
+      "momentum_note": "24h comparable sources: bluesky, google_news, google_trends, hackernews, mastodon, news_rss, reddit, wikipedia, x_trends24, youtube; 48h configuration changed or unavailable; 168h configuration changed or unavailable",
+      "relevance_score": 5,
+      "velocity_score": 50.0,
+      "combined_score": 50.0,
+      "platforms": [
+        "google_news"
+      ],
+      "publisher_hosts": [
+        "sports.yahoo.com"
+      ],
+      "raw_item_count": 1,
+      "member_item_ids": [
+        51
+      ],
+      "evidence": [
+        {
+          "item_id": 51,
+          "source": "google_news",
+          "source_name": "Google News",
+          "title": "2027 NFL mock draft: First version includes a huge trade that powers Arch Manning to No. 1 spot",
+          "url": "https://news.google.com/rss/articles/CBMi3gFBVV95cUxNOGF6YnJMengxZVRFU0gyWEJyZW1YNEY1dXNrVkFQQnVOd2NiX05vQ1dJUEtvVmdYLXRPVEhxZ25SYXR5bzlwQTNJckFrbU0yY0QtN21UNUZkRld3STIxQjZVY1lWamZ3UnotbkhMdEF5cndtcHZOQTNaX1lteVdsV2RWQVA3X25RdjNwc0xlTm5Ga3NHbzVMRjBMTlA3akxNUGRodE9FMlZoRld4YjNhWUV2ZW1McWRMWW1ETXJuSzR0LU9mZ21kV0ZmbGo4VGFoZ2x1N1laRnhXV3BqY3c?oc=5",
+          "publisher": "Yahoo Sports",
+          "excerpt": null,
+          "context_source": null,
+          "published_at_utc": "2026-10-08T17:06:53Z",
+          "retrieved_at_utc": "2026-10-08T21:42:15.103881Z",
+          "feed": "https://news.google.com/rss/headlines/section/topic/SPORTS?hl=en-US&gl=US&ceid=US%3Aen"
+        }
+      ],
+      "tech_only": false,
+      "entities": [
+        "Arch Manning"
+      ],
+      "evidence_strength": {
+        "level": "limited",
+        "points": 1,
+        "independent_reports": 1,
+        "publishers": [
+          "Yahoo Sports"
+        ],
+        "channels": 1,
+        "trend_signals": 0,
+        "duplicates_collapsed": 0,
+        "newest_age_hours": 4.6,
+        "reasons": [
+          "1 independent report (Yahoo Sports)",
+          "1 reporting channel",
+          "newest report 5 h before this edition",
+          "not corroborated by a second independent publisher"
+        ]
+      }
+    },
+    {
+      "rank": 45,
+      "story_id": "eadb57d760f44e90e8ac",
+      "entity_id": "46c59f20e914",
+      "headline": "Swiss Queer Film Fest Drops Israeli Film After Boycott Threats",
+      "category": "Entertainment",
+      "sentences": [
+        "The film, 'Tell Me Everything,' was Israel's official Oscar submission."
+      ],
+      "why_it_matters": null,
+      "labels": [],
+      "momentum": "UNCERTAIN",
+      "velocity_basis": "coverage_uncertain",
+      "momentum_note": "24h comparable sources: bluesky, google_news, google_trends, hackernews, mastodon, news_rss, reddit, wikipedia, x_trends24, youtube; 48h configuration changed or unavailable; 168h configuration changed or unavailable",
+      "relevance_score": 5,
+      "velocity_score": 50.0,
+      "combined_score": 50.0,
+      "platforms": [
+        "news_rss"
+      ],
+      "publisher_hosts": [
+        "hollywoodreporter.com"
+      ],
+      "raw_item_count": 1,
+      "member_item_ids": [
+        332
+      ],
+      "evidence": [
+        {
+          "item_id": 332,
+          "source": "news_rss",
+          "source_name": "News feeds",
+          "title": "Swiss Queer Film Fest Drops Israeli Film After Boycott Threats: “We’re Not Sundance, Right?”",
+          "url": "https://www.hollywoodreporter.com/movies/movie-news/queer-film-fest-drops-israeli-film-tell-me-everything-1236725708/",
+          "publisher": "The Hollywood Reporter",
+          "excerpt": "Everybody's Perfect programmers with \"great regret\" bowed to an escalating political backlash against Israel's Oscar submission, 'Tell Me Everything,' screening at their Geneva event. | Israel's official Oscar submission, Moshe Rosenthal's Tell Me Everything, has been dropped by the queer-themed Everybody's Perfect...",
+          "context_source": "page",
+          "published_at_utc": "2026-10-08T21:25:32Z",
+          "retrieved_at_utc": "2026-10-08T21:42:19.169030Z",
+          "feed": "https://www.hollywoodreporter.com/feed/"
+        }
+      ],
+      "tech_only": false,
+      "entities": [
+        "Swiss Queer Film Fest",
+        "Israeli Film"
+      ],
+      "evidence_strength": {
+        "level": "limited",
+        "points": 1,
+        "independent_reports": 1,
+        "publishers": [
+          "The Hollywood Reporter"
+        ],
+        "channels": 1,
+        "trend_signals": 0,
+        "duplicates_collapsed": 0,
+        "newest_age_hours": 0.3,
+        "reasons": [
+          "1 independent report (The Hollywood Reporter)",
+          "1 reporting channel",
+          "newest report under an hour before this edition",
+          "not corroborated by a second independent publisher"
+        ]
+      }
+    },
+    {
+      "rank": 46,
+      "story_id": "1dc0ade035bcf597d157",
+      "entity_id": "74d9551a634c",
+      "headline": "Marvel Announces New Disney Plus Series 'Zodiac'",
+      "category": "Entertainment",
+      "sentences": [
+        "Marvel has announced a new Disney Plus series titled 'Zodiac'.",
+        "The series is a live-action television show."
+      ],
+      "why_it_matters": null,
+      "labels": [],
+      "momentum": "UNCERTAIN",
+      "velocity_basis": "coverage_uncertain",
+      "momentum_note": "24h comparable sources: bluesky, google_news, google_trends, hackernews, mastodon, news_rss, reddit, wikipedia, x_trends24, youtube; 48h configuration changed or unavailable; 168h configuration changed or unavailable",
+      "relevance_score": 5,
+      "velocity_score": 50.0,
+      "combined_score": 50.0,
+      "platforms": [
+        "news_rss"
+      ],
+      "publisher_hosts": [
+        "polygon.com"
+      ],
+      "raw_item_count": 1,
+      "member_item_ids": [
+        337
+      ],
+      "evidence": [
+        {
+          "item_id": 337,
+          "source": "news_rss",
+          "source_name": "News feeds",
+          "title": "Marvel Officially Announces New Disney Plus Series 'Zodiac'",
+          "url": "https://www.polygon.com/marvel-zodiac-tv-series-disney-plus/",
+          "publisher": "Polygon",
+          "excerpt": "Marvel Television isn't done with live-action just yet | Marvel isn't done with live-action television yet. At New York Comic Con on Thursday, Marvel Studios revealed a brand-new series titled Zodiac for Disney Plus. The mysterious new series from Marvel Television is slated to arrive on Disney Plus sometime in 2028....",
+          "context_source": "page",
+          "published_at_utc": "2026-10-08T20:58:47Z",
+          "retrieved_at_utc": "2026-10-08T21:42:16.961198Z",
+          "feed": "https://www.polygon.com/rss/index.xml"
+        }
+      ],
+      "tech_only": false,
+      "entities": [
+        "Marvel",
+        "Zodiac"
+      ],
+      "evidence_strength": {
+        "level": "limited",
+        "points": 1,
+        "independent_reports": 1,
+        "publishers": [
+          "Polygon"
+        ],
+        "channels": 1,
+        "trend_signals": 0,
+        "duplicates_collapsed": 0,
+        "newest_age_hours": 0.7,
+        "reasons": [
+          "1 independent report (Polygon)",
+          "1 reporting channel",
+          "newest report under an hour before this edition",
+          "not corroborated by a second independent publisher"
+        ]
+      }
+    },
+    {
+      "rank": 47,
+      "story_id": "13f06e229fb14b631945",
+      "entity_id": "7fd897062835",
+      "headline": "MLB Division Series: How Guardians Can Get Even, Plus Game 4 Lineups",
+      "category": "Sports",
+      "sentences": [
+        "The Cleveland Guardians are trying to force a Game 5 in the MLB division series against the White Sox."
+      ],
+      "why_it_matters": null,
+      "labels": [],
+      "momentum": "UNCERTAIN",
+      "velocity_basis": "coverage_uncertain",
+      "momentum_note": "24h comparable sources: bluesky, google_news, google_trends, hackernews, mastodon, news_rss, reddit, wikipedia, x_trends24, youtube; 48h configuration changed or unavailable; 168h configuration changed or unavailable",
+      "relevance_score": 5,
+      "velocity_score": 50.0,
+      "combined_score": 50.0,
+      "platforms": [
+        "news_rss"
+      ],
+      "publisher_hosts": [
+        "espn.com"
+      ],
+      "raw_item_count": 1,
+      "member_item_ids": [
+        366
+      ],
+      "evidence": [
+        {
+          "item_id": 366,
+          "source": "news_rss",
+          "source_name": "News feeds",
+          "title": "MLB division series: How Guardians can get even, plus Game 4 lineups",
+          "url": "https://www.espn.com/mlb/story/_/id/50128553/mlb-2026-playoffs-division-series-alds-game-4-updates-lineups-analysis-takeaways",
+          "publisher": "ESPN - MLB",
+          "excerpt": "Cleveland rebounded to avoid being swept. Can it force a Game 5 or will the White Sox advance to face Tampa Bay in the ALCS?",
+          "context_source": "feed",
+          "published_at_utc": "2026-10-08T19:42:55Z",
+          "retrieved_at_utc": "2026-10-08T21:42:17.865911Z",
+          "feed": "https://www.espn.com/espn/rss/mlb/news"
+        }
+      ],
+      "tech_only": false,
+      "entities": [
+        "Cleveland Guardians",
+        "White Sox",
+        "Tampa Bay"
+      ],
+      "evidence_strength": {
+        "level": "limited",
+        "points": 1,
+        "independent_reports": 1,
+        "publishers": [
+          "ESPN"
+        ],
+        "channels": 1,
+        "trend_signals": 0,
+        "duplicates_collapsed": 0,
+        "newest_age_hours": 2.0,
+        "reasons": [
+          "1 independent report (ESPN)",
+          "1 reporting channel",
+          "newest report 2 h before this edition",
+          "not corroborated by a second independent publisher"
+        ]
+      }
+    },
+    {
+      "rank": 48,
+      "story_id": "54985ef2a0877f5e27c4",
+      "entity_id": "f35c02b8b751",
+      "headline": "What's Next for Man City: How Long Will Appeals, Punishments Take?",
+      "category": "Sports",
+      "sentences": [
+        "Man City have appealed the Premier League's guilty verdict, while the sanctions board also begins its work on figuring out appropriate punishments."
+      ],
+      "why_it_matters": null,
+      "labels": [],
+      "momentum": "UNCERTAIN",
+      "velocity_basis": "coverage_uncertain",
+      "momentum_note": "24h comparable sources: bluesky, google_news, google_trends, hackernews, mastodon, news_rss, reddit, wikipedia, x_trends24, youtube; 48h configuration changed or unavailable; 168h configuration changed or unavailable",
+      "relevance_score": 5,
+      "velocity_score": 50.0,
+      "combined_score": 50.0,
+      "platforms": [
+        "news_rss"
+      ],
+      "publisher_hosts": [
+        "espn.com"
+      ],
+      "raw_item_count": 1,
+      "member_item_ids": [
+        367
+      ],
+      "evidence": [
+        {
+          "item_id": 367,
+          "source": "news_rss",
+          "source_name": "News feeds",
+          "title": "What's next for Man City: How long will appeals, punishments take?",
+          "url": "https://www.espn.com/soccer/story/_/id/50132069/manchester-city-guilty-premier-league-verdict-sanctions-appeals-explainer-whats-next",
+          "publisher": "ESPN - Soccer",
+          "excerpt": "Man City have appealed the Premier League's guilty verdict, while the sanctions board also begins its work on figuring out appropriate punishments. So what happens next, and what is the possible timeline?",
+          "context_source": "feed",
+          "published_at_utc": "2026-10-08T21:32:29Z",
+          "retrieved_at_utc": "2026-10-08T21:42:17.865911Z",
+          "feed": "https://www.espn.com/espn/rss/soccer/news"
+        }
+      ],
+      "tech_only": false,
+      "entities": [
+        "Man City"
+      ],
+      "evidence_strength": {
+        "level": "limited",
+        "points": 1,
+        "independent_reports": 1,
+        "publishers": [
+          "ESPN"
+        ],
+        "channels": 1,
+        "trend_signals": 0,
+        "duplicates_collapsed": 0,
+        "newest_age_hours": 0.2,
+        "reasons": [
+          "1 independent report (ESPN)",
+          "1 reporting channel",
+          "newest report under an hour before this edition",
+          "not corroborated by a second independent publisher"
+        ]
+      }
+    },
+    {
+      "rank": 49,
+      "story_id": "25a2951301580e542c2b",
+      "entity_id": "672cf629aec7",
+      "headline": "P.T. Now Available on PC Without Remake",
+      "category": "Internet Culture",
+      "sentences": [
+        "The 2014 horror game P.T.",
+        "Has been reverse-engineered into a native PC port, allowing players to experience the game without the need for a remake.",
+        "The game was reverse-engineered from the original game."
+      ],
+      "why_it_matters": null,
+      "labels": [],
+      "momentum": "UNCERTAIN",
+      "velocity_basis": "coverage_uncertain",
+      "momentum_note": "24h comparable sources: bluesky, google_news, google_trends, hackernews, mastodon, news_rss, reddit, wikipedia, x_trends24, youtube; 48h configuration changed or unavailable; 168h configuration changed or unavailable",
+      "relevance_score": 5,
+      "velocity_score": 50.0,
+      "combined_score": 50.0,
+      "platforms": [
+        "news_rss"
+      ],
+      "publisher_hosts": [
+        "boingboing.net"
+      ],
+      "raw_item_count": 1,
+      "member_item_ids": [
+        376
+      ],
+      "evidence": [
+        {
+          "item_id": 376,
+          "source": "news_rss",
+          "source_name": "News feeds",
+          "title": "You can now play P.T. natively on PC, no remake required",
+          "url": "https://boingboing.net/2026/10/08/you-can-now-play-p-t-natively-on-pc-no-remake-required.html",
+          "publisher": "Boing Boing",
+          "excerpt": "LoreanXavier's P.T. PC is not another fan remake. Rather, it's a native PC port reverse-engineered from the original game. | 2014 horror game P.T. has left an enduring legacy behind, just as much for what it wasn't as what it was. It was a pitch-perfect bite-sized horror experience from the mind of gaming auteur Hideo...",
+          "context_source": "page",
+          "published_at_utc": "2026-10-08T21:02:28Z",
+          "retrieved_at_utc": "2026-10-08T21:42:18.150944Z",
+          "feed": "https://boingboing.net/feed"
+        }
+      ],
+      "tech_only": false,
+      "entities": [
+        "P.T",
+        "LoreanXavier"
+      ],
+      "evidence_strength": {
+        "level": "limited",
+        "points": 1,
+        "independent_reports": 1,
+        "publishers": [
+          "Boing Boing"
+        ],
+        "channels": 1,
+        "trend_signals": 0,
+        "duplicates_collapsed": 0,
+        "newest_age_hours": 0.7,
+        "reasons": [
+          "1 independent report (Boing Boing)",
+          "1 reporting channel",
+          "newest report under an hour before this edition",
+          "not corroborated by a second independent publisher"
+        ]
+      }
+    },
+    {
+      "rank": 50,
+      "story_id": "7a88e2449fb3703ee594",
+      "entity_id": "3242653bbd68",
+      "headline": "Israel Promotes Film Miming NAZA Documentary",
+      "category": "Entertainment",
+      "sentences": [
+        "The Israeli government is promoting an online film project that mimics the style of the award-winning NAZA documentary."
+      ],
+      "why_it_matters": null,
+      "labels": [],
+      "momentum": "UNCERTAIN",
+      "velocity_basis": "coverage_uncertain",
+      "momentum_note": "24h comparable sources: bluesky, google_news, google_trends, hackernews, mastodon, news_rss, reddit, wikipedia, x_trends24, youtube; 48h configuration changed or unavailable; 168h configuration changed or unavailable",
+      "relevance_score": 5,
+      "velocity_score": 50.0,
+      "combined_score": 50.0,
+      "platforms": [
+        "news_rss"
+      ],
+      "publisher_hosts": [
+        "theguardian.com"
+      ],
+      "raw_item_count": 1,
+      "member_item_ids": [
+        395
+      ],
+      "evidence": [
+        {
+          "item_id": 395,
+          "source": "news_rss",
+          "source_name": "News feeds",
+          "title": "Israel promotes film that mimics NAZA documentary",
+          "url": "https://www.theguardian.com/world/2026/oct/08/israel-promotes-film-that-mimics-naza-documentary",
+          "publisher": "The Guardian - Culture",
+          "excerpt": "Embassies post links to hastily produced online film echoing style of real Guardian documentary about mass killings of Gaza civilians | The Israeli government is promoting an online film project that mimics the style of NAZA, the award-winning documentary that details Israel's mass killings of civilians in Gaza, in an...",
+          "context_source": "page",
+          "published_at_utc": "2026-10-08T17:52:35Z",
+          "retrieved_at_utc": "2026-10-08T21:42:16.098033Z",
+          "feed": "https://www.theguardian.com/culture/rss"
+        }
+      ],
+      "tech_only": false,
+      "entities": [
+        "Israel",
+        "NAZA Documentary"
+      ],
+      "evidence_strength": {
+        "level": "limited",
+        "points": 1,
+        "independent_reports": 1,
+        "publishers": [
+          "The Guardian"
+        ],
+        "channels": 1,
+        "trend_signals": 0,
+        "duplicates_collapsed": 0,
+        "newest_age_hours": 3.8,
+        "reasons": [
+          "1 independent report (The Guardian)",
+          "1 reporting channel",
+          "newest report 4 h before this edition",
+          "not corroborated by a second independent publisher"
+        ]
+      }
+    },
+    {
+      "rank": 51,
+      "story_id": "d451bc07b25f0d33a629",
+      "entity_id": "69a47506e612",
+      "headline": "Elvis Costello Talks About His New Boxed Set",
+      "category": "Entertainment",
+      "sentences": [
+        "Elvis Costello talks about his new five-disc set celebrating his music.",
+        "The set includes the origins of his iconic name and glasses, and how he found a sound and persona that transformed rock forever."
+      ],
+      "why_it_matters": null,
+      "labels": [],
+      "momentum": "UNCERTAIN",
+      "velocity_basis": "coverage_uncertain",
+      "momentum_note": "24h comparable sources: bluesky, google_news, google_trends, hackernews, mastodon, news_rss, reddit, wikipedia, x_trends24, youtube; 48h configuration changed or unavailable; 168h configuration changed or unavailable",
+      "relevance_score": 5,
+      "velocity_score": 50.0,
+      "combined_score": 50.0,
+      "platforms": [
+        "news_rss"
+      ],
+      "publisher_hosts": [
+        "variety.com"
+      ],
+      "raw_item_count": 1,
+      "member_item_ids": [
+        433
+      ],
+      "evidence": [
+        {
+          "item_id": 433,
+          "source": "news_rss",
+          "source_name": "News feeds",
+          "title": "Becoming Elvis Costello: The Legend Goes In-Depth on His New ‘My Aim Is True’ Boxed Set, Origins of the Iconic Name and Glasses, and Finding a Sound and Persona That Transformed Rock Forever",
+          "url": "https://variety.com/2026/music/news/elvis-costello-my-aim-is-true-boxed-set-origins-interview-1236906075/",
+          "publisher": "Variety",
+          "excerpt": "Becoming Elvis Costello: The Legend Goes In-Depth on His New 'My Aim Is True' Boxed Set, Origins of the Iconic Name and Glasses, and Finding a Sound and Persona That Transformed Rock Forever | Elvis Costello talks about his new five-disc set celebrating his debut album, 'My Aim Is True,' and finding his voice and...",
+          "context_source": "page",
+          "published_at_utc": "2026-10-08T21:32:03Z",
+          "retrieved_at_utc": "2026-10-08T21:42:16.439176Z",
+          "feed": "https://variety.com/feed/"
+        }
+      ],
+      "tech_only": false,
+      "entities": [
+        "Elvis Costello"
+      ],
+      "evidence_strength": {
+        "level": "limited",
+        "points": 1,
+        "independent_reports": 1,
+        "publishers": [
+          "Variety"
+        ],
+        "channels": 1,
+        "trend_signals": 0,
+        "duplicates_collapsed": 0,
+        "newest_age_hours": 0.2,
+        "reasons": [
+          "1 independent report (Variety)",
+          "1 reporting channel",
+          "newest report under an hour before this edition",
+          "not corroborated by a second independent publisher"
+        ]
+      }
+    },
+    {
+      "rank": 52,
+      "story_id": "c61bf40d4ec2d8af9413",
+      "entity_id": "966bd7fc8a47",
+      "headline": "'Heathens' Trailer: Non-Believers Defy Their Religious Backgrounds, Resolving \"To Reclaim Their Lives\"",
+      "category": "Entertainment",
+      "sentences": [
+        "People are coming out as non-believers in defiance of their families, communities, and churches."
+      ],
+      "why_it_matters": null,
+      "labels": [],
+      "momentum": "UNCERTAIN",
+      "velocity_basis": "coverage_uncertain",
+      "momentum_note": "24h comparable sources: bluesky, google_news, google_trends, hackernews, mastodon, news_rss, reddit, wikipedia, x_trends24, youtube; 48h configuration changed or unavailable; 168h configuration changed or unavailable",
+      "relevance_score": 5,
+      "velocity_score": 50.0,
+      "combined_score": 50.0,
+      "platforms": [
+        "news_rss"
+      ],
+      "publisher_hosts": [
+        "deadline.com"
+      ],
+      "raw_item_count": 1,
+      "member_item_ids": [
+        435
+      ],
+      "evidence": [
+        {
+          "item_id": 435,
+          "source": "news_rss",
+          "source_name": "News feeds",
+          "title": "‘Heathens’ Trailer: Non-Believers Defy Their Religious Backgrounds, Resolving “To Reclaim Their Lives”",
+          "url": "https://deadline.com/2026/10/heathens-trailer-exclusive-1237150473/",
+          "publisher": "Deadline",
+          "excerpt": "Watch Trailer For 'Heathens' About People Coming Out As Non-Believers | Watch the trailer for 'Heathens,' a documentary about people coming out as non-believers in defiance of their families, communities and churches. | EXCLUSIVE: In the new documentary Heathens, five strangers meet at a retreat in the Blue Ridge...",
+          "context_source": "page",
+          "published_at_utc": "2026-10-08T21:34:17Z",
+          "retrieved_at_utc": "2026-10-08T21:42:17.727462Z",
+          "feed": "https://deadline.com/feed/"
+        }
+      ],
+      "tech_only": false,
+      "entities": [
+        "Heathens"
+      ],
+      "evidence_strength": {
+        "level": "limited",
+        "points": 1,
+        "independent_reports": 1,
+        "publishers": [
+          "Deadline"
+        ],
+        "channels": 1,
+        "trend_signals": 0,
+        "duplicates_collapsed": 0,
+        "newest_age_hours": 0.1,
+        "reasons": [
+          "1 independent report (Deadline)",
+          "1 reporting channel",
+          "newest report under an hour before this edition",
+          "not corroborated by a second independent publisher"
+        ]
+      }
+    },
+    {
+      "rank": 53,
+      "story_id": "06a4dbfb2f540df24536",
+      "entity_id": "b0c0ee6727d4",
+      "headline": "Rainbow Six Siege Mobile Already Has A Shutdown Date",
+      "category": "Entertainment",
+      "sentences": [
+        "Ubisoft's live service games continue to flop.",
+        "Rainbow Six Mobile, a free-to-play tactical game, will be shut down just 7 months into its full release."
+      ],
+      "why_it_matters": null,
+      "labels": [],
+      "momentum": "UNCERTAIN",
+      "velocity_basis": "coverage_uncertain",
+      "momentum_note": "24h comparable sources: bluesky, google_news, google_trends, hackernews, mastodon, news_rss, reddit, wikipedia, x_trends24, youtube; 48h configuration changed or unavailable; 168h configuration changed or unavailable",
+      "relevance_score": 5,
+      "velocity_score": 50.0,
+      "combined_score": 50.0,
+      "platforms": [
+        "news_rss"
+      ],
+      "publisher_hosts": [
+        "kotaku.com"
+      ],
+      "raw_item_count": 1,
+      "member_item_ids": [
+        473
+      ],
+      "evidence": [
+        {
+          "item_id": 473,
+          "source": "news_rss",
+          "source_name": "News feeds",
+          "title": "Rainbow Six Siege Mobile Already Has A Shutdown Date Just 7 Months Into Its Full Release",
+          "url": "https://kotaku.com/rainbow-six-siege-mobile-already-has-a-shutdown-date-just-7-months-into-its-full-release-2000742717",
+          "publisher": "Kotaku",
+          "excerpt": "Ubisoft's live service games continue to flop | Ubisoft has not had much luck with live service gaming, including mobile spin-offs of some of its biggest franchises. The latest victim of these struggling efforts is Rainbow Six Mobile, a free-to-play tactical multiplayer shooter that the French publisher has been...",
+          "context_source": "page",
+          "published_at_utc": "2026-10-08T19:54:24Z",
+          "retrieved_at_utc": "2026-10-08T21:42:18.080345Z",
+          "feed": "https://kotaku.com/rss"
+        }
+      ],
+      "tech_only": false,
+      "entities": [
+        "Rainbow Six Siege Mobile"
+      ],
+      "evidence_strength": {
+        "level": "limited",
+        "points": 1,
+        "independent_reports": 1,
+        "publishers": [
+          "Kotaku"
+        ],
+        "channels": 1,
+        "trend_signals": 0,
+        "duplicates_collapsed": 0,
+        "newest_age_hours": 1.8,
+        "reasons": [
+          "1 independent report (Kotaku)",
+          "1 reporting channel",
+          "newest report 2 h before this edition",
+          "not corroborated by a second independent publisher"
+        ]
+      }
+    },
+    {
+      "rank": 54,
+      "story_id": "304b129a201c44645167",
+      "entity_id": "d4214464c23d",
+      "headline": "AI Proves Useful in Election Advice",
+      "category": "Internet Culture",
+      "sentences": [
+        "A political junkie found that AI models, such as ChatGPT and Gemini, provided nonpartisan election advice when prompted."
+      ],
+      "why_it_matters": null,
+      "labels": [],
+      "momentum": "UNCERTAIN",
+      "velocity_basis": "coverage_uncertain",
+      "momentum_note": "24h comparable sources: bluesky, google_news, google_trends, hackernews, mastodon, news_rss, reddit, wikipedia, x_trends24, youtube; 48h configuration changed or unavailable; 168h configuration changed or unavailable",
+      "relevance_score": 5,
+      "velocity_score": 50.0,
+      "combined_score": 50.0,
+      "platforms": [
+        "news_rss"
+      ],
+      "publisher_hosts": [
+        "mashable.com"
+      ],
+      "raw_item_count": 1,
+      "member_item_ids": [
+        846
+      ],
+      "evidence": [
+        {
+          "item_id": 846,
+          "source": "news_rss",
+          "source_name": "News feeds",
+          "title": "When it comes to election advice, maybe AI isnt so bad after all?",
+          "url": "https://mashable.com/tech/election-advice-ai",
+          "publisher": "Mashable",
+          "excerpt": "ChatGPT, Gemini remain surprisingly nonpartisan when prompted for election advice | This political junkie was pleasantly surprised by AI's election-related usefulness. | When I read on NPR this week that people are turning to ChatGPT to tell them how to vote, I shook my head. Here we go again, I thought: another...",
+          "context_source": "page",
+          "published_at_utc": "2026-10-08T17:33:49Z",
+          "retrieved_at_utc": "2026-10-08T21:42:17.172185Z",
+          "feed": "https://mashable.com/feeds/rss/all"
+        }
+      ],
+      "tech_only": false,
+      "entities": [
+        "ChatGPT",
+        "Gemini"
+      ],
+      "evidence_strength": {
+        "level": "limited",
+        "points": 1,
+        "independent_reports": 1,
+        "publishers": [
+          "Mashable"
+        ],
+        "channels": 1,
+        "trend_signals": 0,
+        "duplicates_collapsed": 0,
+        "newest_age_hours": 4.1,
+        "reasons": [
+          "1 independent report (Mashable)",
+          "1 reporting channel",
+          "newest report 4 h before this edition",
+          "not corroborated by a second independent publisher"
+        ]
+      }
+    }
+  ]
+}
