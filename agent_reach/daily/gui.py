@@ -2195,8 +2195,7 @@ class PublishDialog:
             if isinstance(result, Exception):
                 self.render(f"The connection test failed: {result}")
             else:
-                self.render(f"Connected: the key can read {self.P.load_settings(self.paths).repo}. Write access is "
-                            "confirmed by the first publication.")
+                self.render(self.P.connected_message(self.paths))
 
         self.busy = True
         self.render("Testing the connection to GitHub...")

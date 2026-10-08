@@ -437,3 +437,13 @@ def test_the_hourly_retry_waits_when_trying_again_cannot_help(daily_paths, monke
     r = P.catch_up(daily_paths, now=utcnow() + timedelta(hours=2))
     assert r is not None and r.state == "published" and "editions/2026-10-07.json" in gh.files
     assert P.load_status(daily_paths).blocked_on is None
+
+
+def test_a_connection_test_keeps_the_last_failure_visible(daily_paths):
+    """On the PC (Oct 8) the window said "Connected" under a red "Publication failed" and hid why it had failed."""
+    assert P.connected_message(daily_paths).startswith("Connected: the key can read timeitself1-cpu/Agent-Reach-Website.")
+    assert "last attempt" not in P.connected_message(daily_paths)
+    P._record(daily_paths, state="failed", message="Publication failed: no access key is saved.")
+    msg = P.connected_message(daily_paths)
+    assert "the last attempt, made before this test: Publication failed: no access key is saved." in msg
+    assert msg.endswith("Click Publish latest edition to try again.")

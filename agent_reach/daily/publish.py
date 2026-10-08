@@ -964,6 +964,18 @@ def check_connection(paths: DataPaths) -> str:
         target.close()
 
 
+def connected_message(paths: DataPaths) -> str:
+    """What the window says after a successful connection test. A failure recorded before the test stays visible:
+    on the PC (Oct 8) the window said "Connected" under a red "Publication failed" with no reason given."""
+    msg = (f"Connected: the key can read {load_settings(paths).repo}. Write access is confirmed by the first "
+           "publication.")
+    status = load_status(paths)
+    if status.state == "failed" and status.message:
+        msg += (f" The red line above is the last attempt, made before this test: {status.message} "
+                "Click Publish latest edition to try again.")
+    return msg
+
+
 def _read_json_at(target: Target, d: str) -> int | None:
     """Revision of date ``d`` on the site, if any."""
     target.begin()
