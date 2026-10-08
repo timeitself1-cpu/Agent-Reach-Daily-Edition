@@ -5,6 +5,21 @@ Each release candidate is delivered as a zip of the repository. Extract it over 
 Your editions, settings and history (`%LOCALAPPDATA%\AgentReachDaily`) are kept. Earlier releases are
 summarised in `docs/HANDOFF.md` ("Release history").
 
+## 1.0.0rc12 (zip rc12f): the launcher, and one more mixed story
+
+Your test at 6:16 PM ran on the previous version (rc12d): the rc12e fixes were not installed yet. It showed two
+new things:
+
+1. **Double-clicking AgentReachDaily.cmd could stall.** Windows shows a security warning for files that came out
+   of a downloaded zip, and the launcher waited on it for four minutes. Setup now removes that "downloaded from
+   the internet" mark from Agent Reach's own files, so the launcher opens straight away. If it ever happens again,
+   the self-test says so in plain words.
+2. **A university profile was grouped with NASA's Artemis II news** because both mention NASA and the Moon. A
+   name plus one shared word now needs strong agreement from the grouping model before two reports become one
+   story. On your saved editions this kept every correct grouping.
+
+This zip also contains everything from rc12e. After extracting it, run setup once.
+
 ## 1.0.0rc12 (zip rc12e): fewer mixed stories, from your third test
 
 Your test at 4:29 PM passed everything except the two leftover test files. Its two editions still put different

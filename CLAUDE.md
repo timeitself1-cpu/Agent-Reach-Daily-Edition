@@ -195,8 +195,8 @@ AgentReachDaily.cmd/.pyw
 
 ## Known open items (details and order: docs/PLAN.md)
 
-- **Within a run, one story = one event since rc12** (rc12e: 1 false merge on the 11-edition labelled corpus offline,
-  two RTX Spark laptops, strict xfail; live editions had 26, 26, then 12 false merges, fixed in rc12b, rc12d, rc12e). The corpus
+- **Within a run, one story = one event since rc12** (rc12f: 1 false merge on the 13-edition labelled corpus offline,
+  two RTX Spark laptops, strict xfail; live editions had 26, 26, 12 and 8 false merges (round 4 still ran rc12d), fixed in rc12b, rc12d, rc12e, rc12f). The corpus
   runs are small (~90 reports): rarity caps behave differently in a real run of ~1,300, so rebuild real proportions
   in a test when a live false merge does not reproduce offline (`test_a_common_name_and_one_word_need_the_embedding_too`). EmbeddingGemma 2 cannot run on the PC yet:
   Ollama publishes it for Apple's MLX only (newest Ollama on Windows: "this model requires MLX support"). The
