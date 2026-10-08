@@ -5,22 +5,22 @@
  "editions": [
   {
    "date": "2026-10-08",
-   "revision": 4,
-   "generated_utc": "2026-10-08T20:58:24Z",
+   "revision": 5,
+   "generated_utc": "2026-10-08T21:35:47Z",
    "stories": 52,
-   "lead": "Hurricane Isaias Strengthens, Heads Towards US Gulf Coast",
+   "lead": "Trump Administration Suspends Microsoft from Green Card Program",
    "headlines": [
-    "Arizona House Candidate Says She Was Raped While Out Fixing Campaign Signs",
-    "Trump Administration Suspends Microsoft from Green Card Program",
-    "Four Astronauts Return to Earth After 8 Months in Space"
+    "Margaret Hamilton, Pioneering Computer Scientist, Dies at 90",
+    "US Execution Goes Wrong, Public Execution to Be Held",
+    "Hurricane Isaias Strengthens to Category 2, Threatens Gulf Coast"
    ],
    "sections": {
     "News": 10,
     "Tech": 10,
     "Science & AI": 10,
-    "Sports": 10,
-    "Entertainment": 9,
-    "Internet Culture": 3
+    "Sports": 8,
+    "Entertainment": 10,
+    "Internet Culture": 4
    }
   },
   {

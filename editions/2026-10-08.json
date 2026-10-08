@@ -1,276 +1,149 @@
 {
  "schema": "agent_reach.public_edition",
  "schema_version": 1,
- "app": "Agent Reach Daily 1.0.0rc16",
+ "app": "Agent Reach Daily 1.0.0rc17",
  "edition_date": "2026-10-08",
- "revision": 4,
+ "revision": 5,
  "timezone": "America/Chicago",
- "generated_utc": "2026-10-08T20:58:24Z",
+ "generated_utc": "2026-10-08T21:35:47Z",
  "models": {
   "summaries": "llama3.1:8b",
   "grouping": "nomic-embed-text"
  },
  "summaries": "local_model",
- "reports_read": 1519,
+ "reports_read": 1520,
  "sources_answered": 10,
  "sources_tried": 10,
  "compared_with": {
   "edition_date": "2026-10-08",
-  "revision": 3
+  "revision": 4
  },
  "top": [
-  "477e09699ab8",
-  "8e38ad25012c",
-  "3820b28daf92",
-  "dea3ee922b24",
-  "28d75a7c31f0",
-  "551ff59afc8a",
+  "0317f2df6bc9",
+  "0374bdd4def7",
+  "bcd04f81de67",
+  "29f65bdd20f0",
+  "551ead890135",
+  "7bb838f20b58",
+  "24fa086bb2b4",
+  "e45992f0e13a",
   "af699aea7f20",
-  "50648e4e6c2b",
-  "42ab1c0e8d86",
-  "01ae4e59895e"
+  "b6f8b398be25"
  ],
  "sections": [
   {
    "category": "News",
    "ids": [
-    "477e09699ab8",
-    "8e38ad25012c",
-    "551ff59afc8a",
-    "42ab1c0e8d86",
+    "bcd04f81de67",
+    "29f65bdd20f0",
+    "24fa086bb2b4",
     "e45992f0e13a",
-    "ec5f4237121a",
-    "43ea4753baea",
-    "09452b5abcef",
+    "58f53f5b69f5",
+    "e4a50cff38c1",
+    "8924aab52128",
+    "c622f1618362",
     "e2f1dc0b8b1c",
-    "d6b379cc9905"
+    "cd103f2eab05"
    ]
   },
   {
    "category": "Tech",
    "ids": [
-    "3820b28daf92",
+    "0317f2df6bc9",
+    "0374bdd4def7",
     "af699aea7f20",
-    "01ae4e59895e",
-    "d88e6fca6d1b",
-    "589d19bb3d51",
-    "61c0f3f40d47",
-    "d9c172806a0d",
+    "753fe3e2bc41",
+    "0452c40b5e91",
     "5a514c61da91",
     "58848f228a4a",
-    "ae167fdf86c3"
+    "a439df20a8a0",
+    "0806ca90b626",
+    "6ad88a29845c"
    ]
   },
   {
    "category": "Science & AI",
    "ids": [
-    "dea3ee922b24",
-    "50648e4e6c2b",
-    "84935a47e502",
+    "7bb838f20b58",
     "b6f8b398be25",
-    "4a6734c292d8",
+    "1410eccbfc0a",
+    "50648e4e6c2b",
+    "9ef1b4087acf",
+    "99dc15a56dfd",
+    "8442e35832eb",
+    "84f1f58d5438",
     "61c94ae2d668",
-    "30b7f4d7bf75",
-    "88ac4d499669",
-    "657b3a4a298f",
-    "61f9f30f742a"
+    "54ce16f5c557"
    ]
   },
   {
    "category": "Sports",
    "ids": [
-    "2c0db5fb1e1a",
+    "551ead890135",
     "9f3479d6b2d1",
-    "3874f6866d8f",
+    "46b486d04321",
+    "0016795406cd",
     "54985ef2a087",
-    "3726c6f479d0",
-    "b3a265c833f1",
-    "27ccfbfeaf26",
-    "13f06e229fb1",
     "7efcebeeb6fd",
-    "f1c0cf45eec1"
+    "1d57cfd69c51",
+    "ebc0e9a40f07"
    ]
   },
   {
    "category": "Entertainment",
    "ids": [
-    "28d75a7c31f0",
-    "d9d46999cc58",
-    "0281d4b83333",
-    "a18c13b97360",
-    "742758e41432",
-    "ec70a8ed4ee5",
-    "06a4dbfb2f54",
-    "95606dfa920b",
-    "7a88e2449fb3"
+    "75b489ad0471",
+    "8db3cc2445c1",
+    "3ed30ed57b66",
+    "7a88e2449fb3",
+    "13db08aea0ea",
+    "c26b9419f1e9",
+    "0ac999a484d1",
+    "1008ea3f5177",
+    "0474417df9a7",
+    "7cdd60ff764b"
    ]
   },
   {
    "category": "Internet Culture",
    "ids": [
-    "b5b71fe43999",
     "27dbce1f91fe",
-    "1c64bb762ddc"
+    "b5b71fe43999",
+    "25a295130158",
+    "a7da54a8161b"
    ]
   }
  ],
  "stories": [
   {
-   "id": "477e09699ab8",
+   "id": "0317f2df6bc9",
    "rank": 1,
    "top_rank": 1,
-   "category": "News",
-   "headline": "Hurricane Isaias Strengthens, Heads Towards US Gulf Coast",
-   "summary": [
-    "Hurricane Isaias has intensified into a hurricane and is heading towards the US Gulf Coast, bringing dangerous winds, storm surge, and heavy rains.",
-    "The first hurricane of the 2026 Atlantic season, Isaias is expected to make landfall over the coming days.",
-    "Isaias has the potential to bring damaging winds, torrential rain and a storm surge to parts of the US Gulf Coast."
-   ],
-   "why_it_matters": null,
-   "change": "",
-   "labels": [],
-   "newest_published_utc": "2026-10-08T19:39:32Z",
-   "coverage": {
-    "level": "strong",
-    "independent_reports": 4,
-    "publishers": [
-     "ABC News",
-     "AP News",
-     "BBC News",
-     "NPR"
-    ],
-    "repeats": 1,
-    "signals": 0,
-    "channels": 3
-   },
-   "sources": [
-    {
-     "outlet": "AP News",
-     "via": "Google News",
-     "title": "Hurricane Isaias is expected to strengthen as it barrels toward the US Gulf Coast",
-     "url": "https://news.google.com/rss/articles/CBMiugFBVV95cUxQNzlTM0pnaG9JM2k2Z19LSllNREhMckxuUE15MnZZdHZMYVUyendPbnBOejU3bS1RWXdJZXFPZllWb2hOMGdHS2ZPMTFqMTdGRFM4Yll1blQ2M2xMWC1YLTR4OVhsTVdyTUxkdm5CN1RUTXltMUpMdlhuLVoxcUVyTDFqejZyeTdvRHY5WGFMLURMTWRBZ1poYUl1WVI3VTMwajI0UzgwTzBKaU45eTVianM3eHhKSWtGVWc?oc=5",
-     "published_utc": "2026-10-08T19:16:00Z",
-     "kind": "report"
-    },
-    {
-     "outlet": "BBC News",
-     "via": "News feeds",
-     "title": "BBC on Hurricane Isaias and its expected Gulf Coast landfall",
-     "url": "https://www.bbc.co.uk/news/videos/ckz65l2gne1po?at_medium=RSS&at_campaign=rss",
-     "published_utc": "2026-10-08T19:39:32Z",
-     "kind": "report"
-    },
-    {
-     "outlet": "BBC News",
-     "via": "YouTube",
-     "title": "Hurricane Isaias is coming. What could it hit?",
-     "url": "https://www.youtube.com/watch?v=JWvrCFXc7uk",
-     "published_utc": "2026-10-08T18:30:11Z",
-     "kind": "repeat"
-    },
-    {
-     "outlet": "ABC News",
-     "via": "YouTube",
-     "title": "Isaias Strengthens Into First Hurricane of the Atlantic Season. What You Need to Know - October 8",
-     "url": "https://www.youtube.com/watch?v=gzjTOPy5k2s",
-     "published_utc": "2026-10-08T16:56:34Z",
-     "kind": "report"
-    },
-    {
-     "outlet": "NPR",
-     "via": "News feeds",
-     "title": "Isaias intensifies to hurricane. And, judge orders Pike execution evidence preserved",
-     "url": "https://www.npr.org/2026/10/08/g-s1-147105/up-first-newsletter-hurricane-isaias-house-elections-christa-pike-nidal-hasan-cnn-ms-now-politico",
-     "published_utc": "2026-10-08T11:35:22Z",
-     "kind": "report"
-    }
-   ]
-  },
-  {
-   "id": "8e38ad25012c",
-   "rank": 2,
-   "top_rank": 2,
-   "category": "News",
-   "headline": "Arizona House Candidate Says She Was Raped While Out Fixing Campaign Signs",
-   "summary": [
-    "Bernadette Greene-Placentia, a democratic candidate for Congress in Arizona, said she was sexually assaulted while fixing a campaign sign."
-   ],
-   "why_it_matters": null,
-   "change": "",
-   "labels": [],
-   "newest_published_utc": "2026-10-08T19:11:39Z",
-   "coverage": {
-    "level": "strong",
-    "independent_reports": 3,
-    "publishers": [
-     "CBS News",
-     "NPR",
-     "The Washington Post"
-    ],
-    "repeats": 0,
-    "signals": 0,
-    "channels": 3
-   },
-   "sources": [
-    {
-     "outlet": "The Washington Post",
-     "via": "Google News",
-     "title": "Arizona House candidate says she was raped while out fixing campaign signs",
-     "url": "https://news.google.com/rss/articles/CBMixAFBVV95cUxPTHlvc3Q5YkRMZjdEZWx4eHZ3UUVaODBiR0hDWktreEhJcXllYmU3Mll3dXdxNTJ2d2loajRjNXBqZnU5b0k5OXdBTXBMckRDVzM1NzQ1YmppY3hnQXNoT3gta2VPTTZ4QS1kWjBRbXFzQThENnlvaVR1Y3hfOWhtcUpCQzVqdldORVVrZWt5SVUzUjczbG90S3pIN2ZqVEV1U01sQXc1MjEwdWFGbThEaWRYcUkxMWZ6RFJrSE9EWS1UaWx4?oc=5",
-     "published_utc": "2026-10-08T19:11:39Z",
-     "kind": "report"
-    },
-    {
-     "outlet": "NPR",
-     "via": "News feeds",
-     "title": "White House correspondent April Ryan reflects on reporting while under attack",
-     "url": "https://www.npr.org/2026/10/08/nx-s1-5994416/white-house-correspondent-april-ryan-reflects-on-reporting-while-under-attack",
-     "published_utc": "2026-10-08T15:24:23Z",
-     "kind": "report"
-    },
-    {
-     "outlet": "CBS News",
-     "via": "YouTube",
-     "title": "Arizona congressional candidate says she was raped while fixing campaign sign",
-     "url": "https://www.youtube.com/watch?v=V1Y4m5D8xig",
-     "published_utc": "2026-10-08T15:58:38Z",
-     "kind": "report"
-    }
-   ]
-  },
-  {
-   "id": "3820b28daf92",
-   "rank": 3,
-   "top_rank": 3,
    "category": "Tech",
    "headline": "Trump Administration Suspends Microsoft from Green Card Program",
    "summary": [
-    "The Trump administration has suspended Microsoft from a green card program, citing alleged fraud and abuse of the system.",
-    "This move could affect tens of thousands of foreign workers who rely on the program for permanent residence."
+    "The Trump administration has suspended Microsoft and other tech firms from a green card program for their foreign workers.",
+    "The program has been blocked due to alleged fraud, and Vice President JD Vance said that Microsoft has abused the system more than any other company."
    ],
    "why_it_matters": null,
-   "change": "updated",
+   "change": "",
    "labels": [],
-   "newest_published_utc": "2026-10-08T20:24:00Z",
+   "newest_published_utc": "2026-10-08T20:45:27Z",
    "coverage": {
     "level": "strong",
-    "independent_reports": 13,
+    "independent_reports": 9,
     "publishers": [
      "AP News",
      "BBC News",
-     "Business Insider",
      "DW",
-     "Fortune",
-     "New York Times",
      "PBS NewsHour",
      "Reuters",
-     "Times of India",
      "Tom's Hardware",
      "Wired",
      "apnews.com",
      "reuters.com"
     ],
-    "repeats": 2,
+    "repeats": 1,
     "signals": 1,
     "channels": 4
    },
@@ -284,14 +157,6 @@
      "kind": "report"
     },
     {
-     "outlet": "New York Times",
-     "via": "News feeds",
-     "title": "Trump Administration Suspends Microsoft From Green Card Program, Alleging Visa Fraud",
-     "url": "https://www.nytimes.com/2026/10/08/us/politics/microsoft-visas-green-cards.html",
-     "published_utc": "2026-10-08T19:22:17Z",
-     "kind": "report"
-    },
-    {
      "outlet": "AP News",
      "via": "Google News",
      "title": "The Trump administration is suspending Microsoft from a green card program, alleging fraud",
@@ -300,19 +165,27 @@
      "kind": "report"
     },
     {
+     "outlet": "Reuters",
+     "via": "Google News",
+     "title": "Trump administration freezes green cards for Microsoft, IT firms, probes universities",
+     "url": "https://news.google.com/rss/articles/CBMisAFBVV95cUxNenk2MHZ3TFhxRjBqU1pTRmZvNFRUYy1CSG5rXzNSeGRqS05lLUlIRlBYM3hTQ3d4dUwyVmdtc0Z4cVhqOUdKZmh0VWhjQmxldjZKejR3WGxzOEdXZEJwVUxXN0pOelgzcndVakpzWHFiNHFIWi1aZkM1SjdfNFB1dG9hcGVEZTlYdmg0ckJ1MmtqMVBNUEl1MHJBVkxmSGdJVDlXS2ZENlpQY3FRSzB1NQ?oc=5",
+     "published_utc": "2026-10-08T20:45:27Z",
+     "kind": "report"
+    },
+    {
+     "outlet": "Reuters",
+     "via": "Google News",
+     "title": "The skilled foreign tech workers' green card program under attack from Trump",
+     "url": "https://news.google.com/rss/articles/CBMirAFBVV95cUxQd1hHTXgzeWc3WFZOUDJMdFg1dGQyNFhDSVBwZV9sTHliMzUwcjltTVNvWlowXzBfNUFwcHRMcHpjbnFOQ1NsUDd4U3hHU0d5MHNFek5HN3dIeXRZSWJqWDdvdlY2OEdMZm9La3BBUU80SVE2Y3RiMTEtZlNBSWZkMFNPdjVTQXBYWXdoZEF6dnJvbjVHcDI2WlJXS3lsem52b1dkM2c2UW1PZ1o0?oc=5",
+     "published_utc": "2026-10-08T20:19:02Z",
+     "kind": "repeat"
+    },
+    {
      "outlet": "BBC News",
      "via": "News feeds",
      "title": "White House blocks Microsoft from foreign worker hiring program",
      "url": "https://www.bbc.co.uk/news/articles/ck5yngl2y4gpo?at_medium=RSS&at_campaign=rss",
      "published_utc": "2026-10-08T19:57:04Z",
-     "kind": "report"
-    },
-    {
-     "outlet": "Times of India",
-     "via": "News feeds",
-     "title": "Green Cards red-carded: MAGA benches India-linked IT firms from PERM process",
-     "url": "https://timesofindia.indiatimes.com/world/us/green-cards-red-carded-maga-benches-india-linked-it-firms-from-perm-process/articleshow/134796240.cms",
-     "published_utc": "2026-10-08T17:02:50Z",
      "kind": "report"
     },
     {
@@ -324,364 +197,50 @@
      "kind": "signal"
     },
     {
-     "outlet": "Reuters",
-     "via": "Google News",
-     "title": "The skilled foreign tech workers' green card program under attack from Trump",
-     "url": "https://news.google.com/rss/articles/CBMirAFBVV95cUxQd1hHTXgzeWc3WFZOUDJMdFg1dGQyNFhDSVBwZV9sTHliMzUwcjltTVNvWlowXzBfNUFwcHRMcHpjbnFOQ1NsUDd4U3hHU0d5MHNFek5HN3dIeXRZSWJqWDdvdlY2OEdMZm9La3BBUU80SVE2Y3RiMTEtZlNBSWZkMFNPdjVTQXBYWXdoZEF6dnJvbjVHcDI2WlJXS3lsem52b1dkM2c2UW1PZ1o0?oc=5",
-     "published_utc": "2026-10-08T20:19:02Z",
-     "kind": "report"
-    },
-    {
      "outlet": "DW",
      "via": "News feeds",
      "title": "US suspends Microsoft, Adobe from filing for green cards",
      "url": "https://www.dw.com/en/us-suspends-microsoft-adobe-from-filing-for-green-cards/a-79605053?maca=en-rss-en-all-1573-rdf",
      "published_utc": "2026-10-08T20:04:00Z",
      "kind": "report"
-    }
-   ]
-  },
-  {
-   "id": "dea3ee922b24",
-   "rank": 4,
-   "top_rank": 4,
-   "category": "Science & AI",
-   "headline": "Four Astronauts Return to Earth After 8 Months in Space",
-   "summary": [
-    "Four astronauts, including NASA's Jessica Meir and Jack Hathaway, returned to Earth after spending nearly eight months at the International Space Station.",
-    "They conducted spacewalks, science experiments, and research during their time in space."
-   ],
-   "why_it_matters": null,
-   "change": "",
-   "labels": [],
-   "newest_published_utc": "2026-10-08T19:42:17Z",
-   "coverage": {
-    "level": "strong",
-    "independent_reports": 4,
-    "publishers": [
-     "NASA",
-     "NPR",
-     "PBS News",
-     "Space"
-    ],
-    "repeats": 2,
-    "signals": 0,
-    "channels": 3
-   },
-   "sources": [
+    },
     {
-     "outlet": "NPR",
+     "outlet": "Tom's Hardware",
      "via": "News feeds",
-     "title": "4 people on NASA's Crew-12 mission return to Earth after 8 months in space",
-     "url": "https://www.npr.org/2026/10/08/nx-s1-5992845/nasa-spacex-crew-12-international-space-station-iss-splashdown",
-     "published_utc": "2026-10-08T15:34:39Z",
-     "kind": "report"
-    },
-    {
-     "outlet": "NPR",
-     "via": "Google News",
-     "title": "4 people on NASA's Crew-12 mission return to Earth after 8 months in space",
-     "url": "https://news.google.com/rss/articles/CBMiqwFBVV95cUxNcl9qUkRWTGNpb3dJMDdMOXp5QWJIMGlFMmtrQUNPcGRlQmRoc0hBX0lEOWdqa1h3bExkLWZpMU9yeV8wbndqQlp0bkJ3TXZkdFFjSk42TUVSY1kzWm16Tm9ndUwwUlJyU2xnUjMxTzc1VDA4TmotOE5qWG4wSmwyZjFKN2xRUmVuXzIwdllvUGpmTlZHZnAtX1FqSnF0d1NkSFIxZUN6NnpvbVk?oc=5",
-     "published_utc": "2026-10-08T15:34:39Z",
-     "kind": "repeat"
-    },
-    {
-     "outlet": "PBS News",
-     "via": "News feeds",
-     "title": "WATCH: Four astronauts return to Earth after 8 months aboard International Space Station",
-     "url": "https://www.pbs.org/newshour/science/watch-four-astronauts-return-to-earth-after-8-months-aboard-international-space-station",
-     "published_utc": "2026-10-08T19:42:17Z",
-     "kind": "report"
-    },
-    {
-     "outlet": "PBS",
-     "via": "Google News",
-     "title": "WATCH: Four astronauts return to Earth after 8 months aboard International Space Station",
-     "url": "https://news.google.com/rss/articles/CBMiwgFBVV95cUxOeDJTQlRMNzB4TzBHZE5Jd2lqWlVFSDk0QmQ0MnJzWExoeGpDUFpXaU1UcDQ2NFc1bDNubHRYMHB6MUxxRWlfSzZ2Zl8zQlBsYkhFQmRrX0VndThYLW1zR0xPUEttZm5mTnhCNmI3dUh2ZlBhRVdPUVFteGNzVWNCb0ZrcFVCNjNJWk5GNjZ1YnpmNkpLdU1JbXBVdzZXQW9MYjU3eGNUNzVYVHVNWEdyaEdaN29XR3dVdV92czFBNDA0QQ?oc=5",
-     "published_utc": "2026-10-08T19:42:17Z",
-     "kind": "repeat"
-    },
-    {
-     "outlet": "Space",
-     "via": "Google News",
-     "title": "Splashdown! Crew-12 astronauts return to Earth after nearly 8 months in space (video)",
-     "url": "https://news.google.com/rss/articles/CBMivAFBVV95cUxNck44bkQ0c3B3Z2VTLTgzU01XeVRibHgzRUFtbENGaXJkemNjbzBpQmZtNTlBUDBpZW5DajEtdG5EWmt4OGZ1bnc0a29xT3llUk5BSjZ3WVB0a0x2ODBNRzRjRG4zODJOcjZ6c2VpWEt3N2tjSjdQOXJpRzdILTZSNDdjUDJpUTRfUk81Mm11cG1HWnJfa01tMERpYzZ4ZlFNSW5GTzk2YlhNMF9nWE1URzFvdVlYQmtCS05lUg?oc=5",
-     "published_utc": "2026-10-08T16:05:24Z",
-     "kind": "report"
-    },
-    {
-     "outlet": "NASA",
-     "via": "YouTube",
-     "title": "NASA's SpaceX Crew-12 Re-Entry & Splashdown",
-     "url": "https://www.youtube.com/watch?v=x6p9Ri0DlNE",
-     "published_utc": "2026-10-08T16:52:21Z",
+     "title": "U.S. suspends green card path for H-1B workers at Microsoft and Adobe — labor certification program blocked due to alleged fraud",
+     "url": "https://www.tomshardware.com/tech-industry/policy/u-s-suspends-green-card-path-for-h-1b-workers-at-microsoft-and-adobe-labor-certification-program-blocked-due-to-alleged-fraud",
+     "published_utc": "2026-10-08T17:26:07Z",
      "kind": "report"
     }
    ]
   },
   {
-   "id": "28d75a7c31f0",
-   "rank": 5,
-   "top_rank": 5,
-   "category": "Entertainment",
-   "headline": "Canadian Poet Anne Carson Wins 2026 Nobel Prize in Literature",
+   "id": "0374bdd4def7",
+   "rank": 2,
+   "top_rank": 2,
+   "category": "Tech",
+   "headline": "Margaret Hamilton, Pioneering Computer Scientist, Dies at 90",
    "summary": [
-    "Canadian poet Anne Carson has been awarded the 2026 Nobel Prize in Literature for her genre-crossing works.",
-    "She is celebrated for her bold and inventive writing style."
-   ],
-   "why_it_matters": null,
-   "change": "",
-   "labels": [],
-   "newest_published_utc": "2026-10-08T20:27:59Z",
-   "coverage": {
-    "level": "strong",
-    "independent_reports": 3,
-    "publishers": [
-     "BBC News",
-     "Reuters",
-     "theguardian.com"
-    ],
-    "repeats": 0,
-    "signals": 0,
-    "channels": 3
-   },
-   "sources": [
-    {
-     "outlet": "theguardian.com",
-     "via": "Hacker News",
-     "title": "Anne Carson wins Nobel Prize in literature 2026",
-     "url": "https://www.theguardian.com/books/2026/oct/08/wins-the-nobel-prize-in-literature-2026",
-     "published_utc": "2026-10-08T11:58:50Z",
-     "kind": "report"
-    },
-    {
-     "outlet": "Reuters",
-     "via": "Google News",
-     "title": "Genre-defying Canadian poet Anne Carson wins 2026 Nobel Prize in Literature",
-     "url": "https://news.google.com/rss/articles/CBMiqgFBVV95cUxQbUx4U0FuVzFvSF82M1NoMW5JQ3AwNzVjaVBDRXdoNGxrRmg0NjgtZmZscTE4S1VCMUhoc0hOMHB0WFc2NENraU9iaF9ZUjZwNzNwSVFXWjNKc3NELV8wX2huMVlnV2lVYkdlRFJQQXZiTlBNYXNSSmxSNmhsZ3dqZmN3WGNZb1ZBczJfdktMT0ZyR3RwZGNuOGxXeHQ0WlJ1bU9OTGhXN01SUQ?oc=5",
-     "published_utc": "2026-10-08T20:27:59Z",
-     "kind": "report"
-    },
-    {
-     "outlet": "BBC News",
-     "via": "News feeds",
-     "title": "'Bold and inventive' Canadian poet Anne Carson wins Nobel Literature Prize",
-     "url": "https://www.bbc.co.uk/news/articles/cq4g1j54nepyo?at_medium=RSS&at_campaign=rss",
-     "published_utc": "2026-10-08T14:33:23Z",
-     "kind": "report"
-    }
-   ]
-  },
-  {
-   "id": "551ff59afc8a",
-   "rank": 6,
-   "top_rank": 6,
-   "category": "News",
-   "headline": "Russian Strike Kills at Least 30 in Ukraine",
-   "summary": [
-    "At least 30 people have been killed in a Russian glide bomb attack on two civilian buses in the eastern front line city of Kramatorsk."
+    "Margaret Hamilton, the pioneering computer scientist who led the development of the software for the Apollo 11 moon landing, has died at 90.",
+    "She was a trailblazer in the field of software engineering and was awarded the Presidential Medal of Freedom."
    ],
    "why_it_matters": null,
    "change": "updated",
-   "labels": [],
-   "newest_published_utc": "2026-10-08T17:13:57Z",
-   "coverage": {
-    "level": "moderate",
-    "independent_reports": 2,
-    "publishers": [
-     "BBC News",
-     "CBS News"
-    ],
-    "repeats": 0,
-    "signals": 0,
-    "channels": 1
-   },
-   "sources": [
-    {
-     "outlet": "BBC News",
-     "via": "News feeds",
-     "title": "Russian strike on buses kills at least 30, say officials, as deadly attacks on Ukraine surge",
-     "url": "https://www.bbc.co.uk/news/articles/c875pwq134l3o?at_medium=RSS&at_campaign=rss",
-     "published_utc": "2026-10-08T16:31:29Z",
-     "kind": "report"
-    },
-    {
-     "outlet": "CBS News",
-     "via": "News feeds",
-     "title": "Russian guided missile kills 30 on packed Ukrainian city buses",
-     "url": "https://www.cbsnews.com/news/russia-ukraine-kramatorsk-missile-strike-buses/",
-     "published_utc": "2026-10-08T17:13:57Z",
-     "kind": "report"
-    }
-   ]
-  },
-  {
-   "id": "af699aea7f20",
-   "rank": 7,
-   "top_rank": 7,
-   "category": "Tech",
-   "headline": "Apple to Launch Touchscreen MacBook Pro and More on October 27",
-   "summary": [
-    "Apple will introduce new OLED touchscreen MacBook Pro models and an OLED iPad mini on October 27, following its October 13 debut of new MacBook Pro and iMac models.",
-    "The launch will include an online video presentation and in-person component for the press."
-   ],
-   "why_it_matters": null,
-   "change": "",
-   "labels": [],
-   "newest_published_utc": "2026-10-08T20:31:56Z",
-   "coverage": {
-    "level": "moderate",
-    "independent_reports": 2,
-    "publishers": [
-     "9to5Mac",
-     "MacRumors"
-    ],
-    "repeats": 0,
-    "signals": 0,
-    "channels": 1
-   },
-   "sources": [
-    {
-     "outlet": "9to5Mac",
-     "via": "News feeds",
-     "title": "Apple to launch touchscreen MacBook Pro and more on October 27: report",
-     "url": "https://9to5mac.com/2026/10/08/apple-to-launch-touchscreen-macbook-pro-and-more-on-october-27-report/",
-     "published_utc": "2026-10-08T20:28:30Z",
-     "kind": "report"
-    },
-    {
-     "outlet": "MacRumors",
-     "via": "News feeds",
-     "title": "Apple to Launch Touchscreen OLED MacBook Pro and OLED iPad mini on October 27",
-     "url": "https://www.macrumors.com/2026/10/08/apple-october-27-macbook-pro/",
-     "published_utc": "2026-10-08T20:31:56Z",
-     "kind": "report"
-    }
-   ]
-  },
-  {
-   "id": "50648e4e6c2b",
-   "rank": 8,
-   "top_rank": 8,
-   "category": "Science & AI",
-   "headline": "Anthropic Launches New Features for Claude",
-   "summary": [
-    "Anthropic has launched two new beta features for Claude: Dashboards, which turns data sources into live dashboards, and Motion, which generates animated explainer videos from text and images.",
-    "Docs, Slides, and Design now work across all plans, including free accounts."
-   ],
-   "why_it_matters": null,
-   "change": "updated",
-   "labels": [],
-   "newest_published_utc": "2026-10-08T20:36:01Z",
-   "coverage": {
-    "level": "moderate",
-    "independent_reports": 2,
-    "publishers": [
-     "The Decoder",
-     "Tubefilter"
-    ],
-    "repeats": 0,
-    "signals": 0,
-    "channels": 1
-   },
-   "sources": [
-    {
-     "outlet": "The Decoder",
-     "via": "News feeds",
-     "title": "Claude can now generate animated explainer videos and live data dashboards from text prompts",
-     "url": "https://the-decoder.com/claude-can-now-generate-animated-explainer-videos-and-live-data-dashboards-from-text-prompts/",
-     "published_utc": "2026-10-08T19:17:22Z",
-     "kind": "report"
-    },
-    {
-     "outlet": "Tubefilter",
-     "via": "News feeds",
-     "title": "AI-generated videos get labels. The European Union is applying the same standards to text.",
-     "url": "https://www.tubefilter.com/2026/10/08/european-union-eu-generative-ai-text-chatgpt/",
-     "published_utc": "2026-10-08T20:36:01Z",
-     "kind": "report"
-    }
-   ]
-  },
-  {
-   "id": "42ab1c0e8d86",
-   "rank": 9,
-   "top_rank": 9,
-   "category": "News",
-   "headline": "Trump's Red-dyed Diesel Plan Sparks Criticism",
-   "summary": [
-    "Trump's plan to allow red-dyed diesel to be used on highways has been criticized by experts, who say it is more of a midterms appeal than a gas price solution."
-   ],
-   "why_it_matters": null,
-   "change": "",
-   "labels": [],
-   "newest_published_utc": "2026-10-08T16:42:55Z",
-   "coverage": {
-    "level": "moderate",
-    "independent_reports": 2,
-    "publishers": [
-     "Fortune",
-     "NPR"
-    ],
-    "repeats": 0,
-    "signals": 0,
-    "channels": 1
-   },
-   "sources": [
-    {
-     "outlet": "Fortune",
-     "via": "News feeds",
-     "title": "‘Lipstick on a pig’: Trump’s red-dyed diesel plan is more midterms appeal than gas price solution, experts say—and even truckers are calling his bluff",
-     "url": "https://fortune.com/2026/10/08/trump-red-dyed-diesel-midterm-elections-gas-prices-iran-war/",
-     "published_utc": "2026-10-08T16:42:55Z",
-     "kind": "report"
-    },
-    {
-     "outlet": "NPR",
-     "via": "News feeds",
-     "title": "Why Trump just loosened the rules on 'dyed diesel' — normally a farm fuel",
-     "url": "https://www.npr.org/2026/10/07/nx-s1-5992963/dyed-diesel-fuel-price-farmers-trucks",
-     "published_utc": "2026-10-07T18:00:31Z",
-     "kind": "report"
-    }
-   ]
-  },
-  {
-   "id": "01ae4e59895e",
-   "rank": 10,
-   "top_rank": 10,
-   "category": "Tech",
-   "headline": "Margaret Hamilton Dies at 90",
-   "summary": [
-    "Margaret Hamilton, a pioneering computer scientist, has died at 90.",
-    "She led the development of software for NASA's Apollo program and coined the term 'software engineering'."
-   ],
-   "why_it_matters": null,
-   "change": "",
    "labels": [],
    "newest_published_utc": "2026-10-08T20:15:53Z",
    "coverage": {
-    "level": "strong",
-    "independent_reports": 4,
+    "level": "moderate",
+    "independent_reports": 3,
     "publishers": [
      "Ars Technica",
      "BBC News",
-     "The Washington Post",
-     "news.mit.edu"
+     "Lobsters"
     ],
     "repeats": 0,
-    "signals": 4,
-    "channels": 3
+    "signals": 3,
+    "channels": 1
    },
    "sources": [
-    {
-     "outlet": "news.mit.edu",
-     "via": "Hacker News",
-     "title": "Margaret Hamilton has died",
-     "url": "https://news.mit.edu/2026/margaret-hamilton-computing-pioneer-dies-1007",
-     "published_utc": "2026-10-07T21:16:18Z",
-     "kind": "report"
-    },
     {
      "outlet": "Ars Technica",
      "via": "News feeds",
@@ -707,11 +266,11 @@
      "kind": "signal"
     },
     {
-     "outlet": "The Washington Post",
-     "via": "Google News",
-     "title": "Margaret Hamilton dies at 90. Her programming helped astronauts reach the moon.",
-     "url": "https://news.google.com/rss/articles/CBMiwgFBVV95cUxOMUZpekxVZDFBTlRsM2xHcDkxeDBYZ0lnbzJQVjBqUFo1ck5OUHNFS1FwSHc4WDBMRmpFeVQzdmp3WDFQcnpWNE5vSHpobmRLeTdUY3R3ZlZQZW9KMWtVaVBpeTdQWk92MzlHY3lRMXRJUHhDdzJITjZlWTlIZFh2NmYtVDdjS1QwMXc3YXBjaW03RHV5SkZhODNYNExWbWNWczUtaTZKall1NC1aMElqTW0xSUpDVXU4MHQtVnA0Q0ozQQ?oc=5",
-     "published_utc": "2026-10-08T20:15:40Z",
+     "outlet": "Lobsters",
+     "via": "News feeds",
+     "title": "Margaret Hamilton, computing pioneer who led software development for the Apollo program, dies at 90",
+     "url": "https://news.mit.edu/2026/margaret-hamilton-computing-pioneer-dies-1007",
+     "published_utc": "2026-10-07T21:38:09Z",
      "kind": "report"
     },
     {
@@ -729,186 +288,292 @@
      "url": "https://www.bbc.co.uk/news/articles/cx5yn46j41zpo?at_medium=RSS&at_campaign=rss",
      "published_utc": "2026-10-08T05:10:40Z",
      "kind": "report"
-    },
-    {
-     "outlet": "reddit.com",
-     "via": "Reddit",
-     "title": "Margaret Hamilton, whose software helped land Apollo astronauts on the moon, has died",
-     "url": "https://www.reddit.com/r/news/comments/1x0nxa8/margaret_hamilton_whose_software_helped_land/",
-     "published_utc": "2026-10-08T10:58:58Z",
-     "kind": "signal"
     }
    ]
   },
   {
-   "id": "84935a47e502",
-   "rank": 11,
-   "top_rank": null,
-   "category": "Science & AI",
-   "headline": "Trump Declares 'AI' as 'The Enemy' and Pushes for 'Super Intelligence'",
+   "id": "bcd04f81de67",
+   "rank": 3,
+   "top_rank": 3,
+   "category": "News",
+   "headline": "US Execution Goes Wrong, Public Execution to Be Held",
    "summary": [
-    "US President Donald Trump has declared that artificial intelligence should now be called 'super intelligence', sparking confusion and debate.",
-    "Trump says anyone who does not refer to AI as 'super intelligence' is 'THE ENEMY."
+    "The US execution of Christa Pike went wrong, but Defense Secretary Pete Hegseth has announced that the public execution of Nidal Hasan will be held.",
+    "The U.S. hasn't held a public execution in 90 years."
    ],
    "why_it_matters": null,
    "change": "updated",
    "labels": [],
-   "newest_published_utc": "2026-10-08T20:18:00Z",
+   "newest_published_utc": "2026-10-08T21:19:38Z",
    "coverage": {
     "level": "strong",
-    "independent_reports": 5,
+    "independent_reports": 4,
     "publishers": [
+     "ABC News",
      "Axios",
-     "Forbes",
-     "New Scientist",
-     "Politico",
-     "The Independent"
+     "BBC",
+     "BBC News"
     ],
-    "repeats": 1,
-    "signals": 1,
+    "repeats": 0,
+    "signals": 2,
     "channels": 2
    },
    "sources": [
     {
-     "outlet": "Politico",
-     "via": "Google News",
-     "title": "Trump says anyone who does not refer to AI as ‘super intelligence’ is ‘THE ENEMY'",
-     "url": "https://news.google.com/rss/articles/CBMijwFBVV95cUxNaTV1aTVjdklWRlVSRk44SVpZck9ENF9lWFAxSWVBMmNZQmktWDVZUC04Tmd1aUwwM01WLVJ3Sl93XzRaRTY3S3hvNm5UMFV0MXZiQk1VU0RIR3l4aVJLZHhlSjJ0ZWdHR3Y5YndyMmI2WG9CNnNibU02QS0tWEZhd2NDeG9YYWZqenV1MVpHNA?oc=5",
-     "published_utc": "2026-10-08T20:18:00Z",
+     "outlet": "Axios",
+     "via": "News feeds",
+     "title": "Pete Hegseth says public can watch Fort Hood shooter's execution",
+     "url": "https://www.axios.com/2026/10/08/hegseth-nidal-hasan-firing-squad-public-tv",
+     "published_utc": "2026-10-08T21:19:38Z",
      "kind": "report"
     },
     {
-     "outlet": "The Independent",
-     "via": "Google News",
-     "title": "Trump declares anyone who uses the term Artificial Intelligence to be ‘The Enemy!’",
-     "url": "https://news.google.com/rss/articles/CBMiswFBVV95cUxPdExPMWRnMzR4Y1VidUdjSE1rbEU5SDk1SmdZaEZBdGRpNmJocXp3U3pYTHd6YjdNQVVWejJJa2Q2cndRMnF3MGtOYjhYR29TU3MzTExscEJkc294US1xMGdxZHg5aHB6djBLQ3FtQWFhaUdlN3RuTWxOcW1CQWRwc1NHOFN3aGFFeFY0SkZqU1daNzBjeDFqWkpqR2Z3cG82OW81Wkt1cGlCUmNUbnV0YUFycw?oc=5",
-     "published_utc": "2026-10-08T17:51:00Z",
-     "kind": "report"
-    },
-    {
-     "outlet": "x.com",
-     "via": "X (trends24)",
-     "title": "THE ENEMY",
-     "url": "https://x.com/search?q=THE%20ENEMY",
+     "outlet": "en.wikipedia.org",
+     "via": "Wikipedia",
+     "title": "Christa Pike",
+     "url": "https://en.wikipedia.org/wiki/Christa_Pike",
      "published_utc": null,
      "kind": "signal"
     },
     {
-     "outlet": "Forbes",
+     "outlet": "BBC",
      "via": "Google News",
-     "title": "Trump: People Who Still Say ‘AI’ Are ‘The Enemy’",
-     "url": "https://news.google.com/rss/articles/CBMivwFBVV95cUxNdjVXN0QzNVNydnBVbDV1NnBTU08tUmNLNGtlb2tRZXZJUkdkcmg5ZDBYc0d0X053R2hHSkY0cW83SnJQc0ktZU1FVlFESlZkanR6cTdTUVZkUWNia2ZyZXBjVFdsTVpGTTJsWTZ1T0dfYnV4ZWNDVGRtbVNTdy14M2x3Q2c1bjdrVHJ2MDlFVTF6cjd2bllTY19BVTJYT0loQTRxcGU3Y2UzZk04azRQOUp5Rk9TQXk4eXptNW5kNA?oc=5",
-     "published_utc": "2026-10-08T17:16:40Z",
+     "title": "Christa Pike now walking after US execution went wrong, lawyer says",
+     "url": "https://news.google.com/rss/articles/CBMiW0FVX3lxTE0teGdqeXlGMXM5cVRMQXg1SnRzazFtdDhQY0NCVlZ2X3kxbkpJdzcxOFZhRHdvR0tEQm14WVVKSE9PSmQ2bVVfQVVON1hBWG9lSUxUQ2FfYzRXVlU?oc=5",
+     "published_utc": "2026-10-08T15:02:32Z",
      "kind": "report"
     },
     {
-     "outlet": "New Scientist",
+     "outlet": "BBC News",
      "via": "News feeds",
-     "title": "AI or ‘super intelligence’? Trump isn’t the only one who is confused",
-     "url": "https://www.newscientist.com/article/2592404-ai-or-super-intelligence-trump-isnt-the-only-one-who-is-confused/?utm_campaign=RSS|NSNS&utm_content=home&utm_medium=RSS&utm_source=NSNS",
-     "published_utc": "2026-10-08T16:07:59Z",
+     "title": "Christa Pike now walking after failed US execution, lawyer tells BBC",
+     "url": "https://www.bbc.co.uk/news/articles/c60rln74yzvxo?at_medium=RSS&at_campaign=rss",
+     "published_utc": "2026-10-08T15:02:32Z",
      "kind": "report"
     },
     {
-     "outlet": "Axios",
+     "outlet": "bsky.app",
+     "via": "Bluesky",
+     "title": "Christa Pike execution",
+     "url": "https://bsky.app/profile/did:plc:qrz3lhbyuxbeilrc6nekdqme/feed/eb7814811fab",
+     "published_utc": null,
+     "kind": "signal"
+    },
+    {
+     "outlet": "ABC News",
      "via": "News feeds",
-     "title": "Trump: Anyone saying \"AI\" is \"THE ENEMY!\" The White House uses it",
-     "url": "https://www.axios.com/2026/10/08/trump-ai-super-intelligence-white-house",
-     "published_utc": "2026-10-08T18:31:40Z",
+     "title": "Hegseth says Hasan execution will be public",
+     "url": "https://abcnews.com/Politics/hegseth-hasan-execution-public/story?id=137110734",
+     "published_utc": "2026-10-08T21:03:48Z",
      "kind": "report"
-    },
+    }
+   ]
+  },
+  {
+   "id": "29f65bdd20f0",
+   "rank": 4,
+   "top_rank": 4,
+   "category": "News",
+   "headline": "Hurricane Isaias Strengthens to Category 2, Threatens Gulf Coast",
+   "summary": [
+    "Hurricane Isaias has strengthened to a Category 2 storm and is threatening the Gulf Coast with rain, flooding, and storm surge.",
+    "The hurricane is expected to make landfall from Mississippi to the Florida Panhandle."
+   ],
+   "why_it_matters": null,
+   "change": "updated",
+   "labels": [],
+   "newest_published_utc": "2026-10-08T21:25:38Z",
+   "coverage": {
+    "level": "strong",
+    "independent_reports": 4,
+    "publishers": [
+     "AP News",
+     "BBC News",
+     "CBS News",
+     "NBC News"
+    ],
+    "repeats": 1,
+    "signals": 0,
+    "channels": 3
+   },
+   "sources": [
     {
-     "outlet": "Axios",
+     "outlet": "AP News",
      "via": "Google News",
-     "title": "Trump: Anyone saying \"AI\" is \"THE ENEMY!\" The White House uses it",
-     "url": "https://news.google.com/rss/articles/CBMifEFVX3lxTFAxTktKejZ1TEZZaXd5YUFIU1VzLVl5eml0V3A1VFNJaWtqakpKajNycFFGMkJpMEs0Um42bS1FbFN5ZHZtTURidmRycHYxWC1laHpwa25FM09DWUgtRVdadGRRaGs4UnlfQ00xa0ppdk9HTnFpRF8td00xNi0?oc=5",
-     "published_utc": "2026-10-08T19:45:45Z",
+     "title": "Isaias strengthens into Category 2 hurricane while churning toward the US Gulf Coast",
+     "url": "https://news.google.com/rss/articles/CBMiugFBVV95cUxQNzlTM0pnaG9JM2k2Z19LSllNREhMckxuUE15MnZZdHZMYVUyendPbnBOejU3bS1RWXdJZXFPZllWb2hOMGdHS2ZPMTFqMTdGRFM4Yll1blQ2M2xMWC1YLTR4OVhsTVdyTUxkdm5CN1RUTXltMUpMdlhuLVoxcUVyTDFqejZyeTdvRHY5WGFMLURMTWRBZ1poYUl1WVI3VTMwajI0UzgwTzBKaU45eTVianM3eHhKSWtGVWc?oc=5",
+     "published_utc": "2026-10-08T21:13:00Z",
+     "kind": "report"
+    },
+    {
+     "outlet": "CBS News",
+     "via": "News feeds",
+     "title": "Hurricane Isaias threatens Gulf Coast with rain, flooding. See its path.",
+     "url": "https://www.cbsnews.com/news/hurricane-isaias-first-storm-2026-atlantic-season-record/",
+     "published_utc": "2026-10-08T21:25:38Z",
+     "kind": "report"
+    },
+    {
+     "outlet": "BBC News",
+     "via": "News feeds",
+     "title": "BBC on Hurricane Isaias and its expected Gulf Coast landfall",
+     "url": "https://www.bbc.co.uk/news/videos/ckz65l2gne1po?at_medium=RSS&at_campaign=rss",
+     "published_utc": "2026-10-08T19:39:32Z",
+     "kind": "report"
+    },
+    {
+     "outlet": "NBC News",
+     "via": "Google News",
+     "title": "Gas prices face new threat as Hurricane Isaias forces widespread Gulf oil shutdowns",
+     "url": "https://news.google.com/rss/articles/CBMilAFBVV95cUxPMS1qMmdPanZ2WHVXUk0zNDVZMUVRRjY4QURCaUROQ1JIOUZjOFRwMl9vY21lYS1aQ1g3ZlF5WjlJbGZVSklaRmhmQ0tQaTNvd3N4OXdmM045cFc1YnhQaUswVHhha3hBRUNQTXE5Y0dBMkdDU05zVlVQT3NGcFlEUl9TVWxrTUthbUFiX002NUcwOTQ0?oc=5",
+     "published_utc": "2026-10-08T18:33:35Z",
+     "kind": "report"
+    },
+    {
+     "outlet": "BBC News",
+     "via": "YouTube",
+     "title": "Hurricane Isaias is coming. What could it hit?",
+     "url": "https://www.youtube.com/watch?v=JWvrCFXc7uk",
+     "published_utc": "2026-10-08T18:30:11Z",
      "kind": "repeat"
     }
    ]
   },
   {
-   "id": "d9d46999cc58",
-   "rank": 12,
-   "top_rank": null,
-   "category": "Entertainment",
-   "headline": "Marvel's 'X-Men '97' Season 3 Teaser Debuts at New York Comic-Con",
+   "id": "551ead890135",
+   "rank": 5,
+   "top_rank": 5,
+   "category": "Sports",
+   "headline": "A'ja Wilson Wins Record 5th WNBA MVP Award",
    "summary": [
-    "Marvel has renewed 'X-Men '97' for Season 3 on Disney+, and a first look at the new season was revealed at New York Comic-Con.",
-    "The animated series will feature Deadpool in Season 3."
+    "A'ja Wilson has won a record fifth WNBA Most Valuable Player award for the 2026 season, becoming the first player in league history to win three straight MVPs.",
+    "She finished ahead of Olivia Miles, Kelsey Mitchell, and Caitlin Clark."
    ],
    "why_it_matters": null,
    "change": "new",
    "labels": [],
-   "newest_published_utc": "2026-10-08T20:50:32Z",
+   "newest_published_utc": "2026-10-08T21:05:10Z",
+   "coverage": {
+    "level": "strong",
+    "independent_reports": 3,
+    "publishers": [
+     "CBS Sports",
+     "ESPN",
+     "The Guardian"
+    ],
+    "repeats": 1,
+    "signals": 0,
+    "channels": 2
+   },
+   "sources": [
+    {
+     "outlet": "ESPN",
+     "via": "News feeds",
+     "title": "Aces star Wilson wins record 5th WNBA MVP award",
+     "url": "https://www.espn.com/wnba/story/_/id/50135041/sources-aces-star-aja-wilson-wins-record-5th-wnba-mvp-award",
+     "published_utc": null,
+     "kind": "report"
+    },
+    {
+     "outlet": "ESPN",
+     "via": "Google News",
+     "title": "Aces star A'ja Wilson wins record 5th WNBA MVP award",
+     "url": "https://news.google.com/rss/articles/CBMiqAFBVV95cUxQVkhIRUpuemNYUllRNjYyVzRTaFBucVB3YTU3Z3VnQUs4TkJhSnk4UkRaNDFxV3ItSVNzbXFLM212TW9xWWVNVWJYWmtGcVpYWmxUbjFBYUxpODhnajhJcWM1QjA2NTRmRzdtSFIyYlBoMDl2T2VOci0wQ1ZDaDRVcVJKM3RRNjgyRGRvS1Q0cFFHcVUydlpOTzhLbDRsSnYtM0RwU2FNdUI?oc=5",
+     "published_utc": "2026-10-08T20:33:00Z",
+     "kind": "repeat"
+    },
+    {
+     "outlet": "CBS Sports",
+     "via": "News feeds",
+     "title": "A'ja Wilson named 2026 WNBA MVP: Aces star wins third straight, becomes first five-time honoree",
+     "url": "https://www.cbssports.com/wnba/news/aja-wilson-2026-wnba-mvp-las-vegas-aces/",
+     "published_utc": "2026-10-08T20:51:35Z",
+     "kind": "report"
+    },
+    {
+     "outlet": "The Guardian",
+     "via": "News feeds",
+     "title": "A’ja Wilson stands alone with record fifth WNBA MVP award after historic three-peat",
+     "url": "https://www.theguardian.com/sport/2026/oct/08/aja-wilson-record-fifth-wnba-mvp-award-las-vegas-aces",
+     "published_utc": "2026-10-08T21:05:10Z",
+     "kind": "report"
+    }
+   ]
+  },
+  {
+   "id": "7bb838f20b58",
+   "rank": 6,
+   "top_rank": 6,
+   "category": "Science & AI",
+   "headline": "SpaceX Announces Plan to Become a 'Major Mobile Carrier'",
+   "summary": [
+    "SpaceX has acquired a portfolio of low-band spectrum licenses, paving the way for its Starlink Mobile service to become a major US carrier.",
+    "The acquisition will help SpaceX expand its presence in the telecommunications market."
+   ],
+   "why_it_matters": null,
+   "change": "new",
+   "labels": [],
+   "newest_published_utc": "2026-10-08T21:25:01Z",
    "coverage": {
     "level": "moderate",
     "independent_reports": 3,
     "publishers": [
-     "Collider",
-     "Screen Rant",
-     "Variety"
+     "CNBC",
+     "Techmeme",
+     "The Verge"
     ],
-    "repeats": 1,
+    "repeats": 0,
     "signals": 0,
     "channels": 1
    },
    "sources": [
     {
-     "outlet": "Variety",
+     "outlet": "The Verge",
      "via": "News feeds",
-     "title": "Marvel’s ‘X-Men ’97’ Season 3 Teaser Debuts at New York Comic-Con",
-     "url": "https://variety.com/2026/tv/news/x-men-97-renewed-season-3-teaser-1236828689/",
-     "published_utc": "2026-10-08T20:50:32Z",
+     "title": "SpaceX announces plan to become a ‘major mobile carrier’",
+     "url": "https://www.theverge.com/science/1008467/spacex-announces-plan-to-become-a-major-mobile-carrier",
+     "published_utc": "2026-10-08T21:23:31Z",
      "kind": "report"
     },
     {
-     "outlet": "Collider",
+     "outlet": "Techmeme",
      "via": "News feeds",
-     "title": "'X-Men '97' Season 3 Officially Adds Marvel's Most R-Rated Hero",
-     "url": "https://collider.com/deadpool-is-officially-crashing-x-men-97-season-3/",
-     "published_utc": "2026-10-08T20:49:29Z",
+     "title": "SpaceX agrees to buy a nationwide low-band spectrum portfolio to help Starlink \"become a major mobile carrier\"; AT&T, T-Mobile, Verizon fall 6%+ after hours (Bloomberg)",
+     "url": "https://www.techmeme.com/261008/p48#a261008p48",
+     "published_utc": "2026-10-08T21:25:01Z",
      "kind": "report"
     },
     {
-     "outlet": "Collider",
+     "outlet": "CNBC",
      "via": "News feeds",
-     "title": "Disney's R-Rated Marvel Series Officially Renewed for 2 More Seasons",
-     "url": "https://collider.com/marvel-zombies-seasons-3-4-renewed/",
-     "published_utc": "2026-10-08T20:48:06Z",
-     "kind": "repeat"
-    },
-    {
-     "outlet": "Screen Rant",
-     "via": "News feeds",
-     "title": "Marvel Officially Confirms Next Live-Action Series For Disney+",
-     "url": "https://screenrant.com/zodiac-project-marvel-live-action-show-confirmed-release-year/",
-     "published_utc": "2026-10-08T20:33:02Z",
+     "title": "SpaceX deal to acquire spectrum license hammers shares of AT&T, Verizon and T-Mobile",
+     "url": "https://www.cnbc.com/2026/10/08/spacex-spectrum-license-att-verizon-tmobile.html",
+     "published_utc": "2026-10-08T21:19:49Z",
      "kind": "report"
     }
    ]
   },
   {
-   "id": "0281d4b83333",
-   "rank": 13,
-   "top_rank": null,
-   "category": "Entertainment",
-   "headline": "Cyberpunk 2077 Movie in the Works at Paramount",
+   "id": "24fa086bb2b4",
+   "rank": 7,
+   "top_rank": 7,
+   "category": "News",
+   "headline": "Arizona Congressional Candidate Says She Was Raped While Fixing Campaign Sign",
    "summary": [
-    "A live-action movie adaptation of the video game Cyberpunk 2077 is in development at Paramount Pictures, with CD Projekt Red producing."
+    "A Democratic congressional candidate in Arizona, Bernadette Greene-Placentia, has said that she was raped while fixing a campaign sign over the summer.",
+    "She is running in the state's 8th district to unseat GOP Rep."
    ],
    "why_it_matters": null,
    "change": "updated",
    "labels": [],
-   "newest_published_utc": "2026-10-08T20:30:26Z",
+   "newest_published_utc": "2026-10-08T19:11:39Z",
    "coverage": {
     "level": "strong",
-    "independent_reports": 4,
+    "independent_reports": 3,
     "publishers": [
-     "Deadline",
-     "Engadget",
-     "Kotaku",
-     "Polygon"
+     "ABC News",
+     "CBS News",
+     "The Washington Post"
     ],
     "repeats": 0,
     "signals": 0,
@@ -916,47 +581,40 @@
    },
    "sources": [
     {
-     "outlet": "Deadline",
+     "outlet": "ABC News",
+     "via": "YouTube",
+     "title": "Arizona candidate says she was raped while fixing campaign sign",
+     "url": "https://www.youtube.com/watch?v=2_FkMmdlHRI",
+     "published_utc": "2026-10-08T18:34:29Z",
+     "kind": "report"
+    },
+    {
+     "outlet": "The Washington Post",
      "via": "Google News",
-     "title": "'Cyberpunk 2077' Movie In The Works At Paramount",
-     "url": "https://news.google.com/rss/articles/CBMikgFBVV95cUxPSEpvekhWSjVNOHpudDgyZ0h5b2hMQWtNY2lvYlREcnNEdHBrbmhneDZNaG9SbVpqNlh6cVNsSUFzOGZWN09Ud2hBYldhN0R0b3FaNno3aDhQOEdsaXJqb1lzSkNIZkFiTjlsbmJSUWJCSktBM3ZWM2s0V0Fpd3RRcURTckhGSktSTmFSYVlfNmh0Zw?oc=5",
-     "published_utc": "2026-10-08T18:00:00Z",
+     "title": "Arizona House candidate says she was raped while out fixing campaign signs",
+     "url": "https://news.google.com/rss/articles/CBMixAFBVV95cUxPTHlvc3Q5YkRMZjdEZWx4eHZ3UUVaODBiR0hDWktreEhJcXllYmU3Mll3dXdxNTJ2d2loajRjNXBqZnU5b0k5OXdBTXBMckRDVzM1NzQ1YmppY3hnQXNoT3gta2VPTTZ4QS1kWjBRbXFzQThENnlvaVR1Y3hfOWhtcUpCQzVqdldORVVrZWt5SVUzUjczbG90S3pIN2ZqVEV1U01sQXc1MjEwdWFGbThEaWRYcUkxMWZ6RFJrSE9EWS1UaWx4?oc=5",
+     "published_utc": "2026-10-08T19:11:39Z",
      "kind": "report"
     },
     {
-     "outlet": "Polygon",
-     "via": "News feeds",
-     "title": "Cyberpunk 2077 Live-Action Movie Officially Announced",
-     "url": "https://www.polygon.com/cyberpunk-2077-movie-paramount-pictures/",
-     "published_utc": "2026-10-08T18:59:26Z",
-     "kind": "report"
-    },
-    {
-     "outlet": "Engadget",
-     "via": "News feeds",
-     "title": "Cyberpunk 2077 is the latest video game to get the movie treatment",
-     "url": "https://www.engadget.com/2281714/cyberpunk-2077-is-the-latest-video-game-to-get-the-movie-treatment/",
-     "published_utc": "2026-10-08T20:30:26Z",
-     "kind": "report"
-    },
-    {
-     "outlet": "Kotaku",
-     "via": "News feeds",
-     "title": "Live-Action Cyberpunk 2077 Movie In Development At Paramount",
-     "url": "https://kotaku.com/live-action-cyberpunk-2077-movie-in-development-at-paramount-2000742726",
-     "published_utc": "2026-10-08T19:07:56Z",
+     "outlet": "CBS News",
+     "via": "YouTube",
+     "title": "Arizona congressional candidate says she was raped while fixing campaign sign",
+     "url": "https://www.youtube.com/watch?v=V1Y4m5D8xig",
+     "published_utc": "2026-10-08T15:58:38Z",
      "kind": "report"
     }
    ]
   },
   {
    "id": "e45992f0e13a",
-   "rank": 14,
-   "top_rank": null,
+   "rank": 8,
+   "top_rank": 8,
    "category": "News",
    "headline": "New U.S. Indictment Charges Former Venezuelan President Nicolas Maduro with Torture",
    "summary": [
-    "Maduro is already facing drug trafficking allegations."
+    "The U.S. has added new torture charges to the case against former Venezuelan President Nicolas Maduro, increasing pressure on the ousted leader.",
+    "Maduro is already facing allegations of drug trafficking."
    ],
    "why_it_matters": null,
    "change": "",
@@ -993,247 +651,58 @@
    ]
   },
   {
-   "id": "ec5f4237121a",
-   "rank": 15,
-   "top_rank": null,
-   "category": "News",
-   "headline": "Eritrean Troops Attacked by Drones in Ethiopia",
+   "id": "af699aea7f20",
+   "rank": 9,
+   "top_rank": 9,
+   "category": "Tech",
+   "headline": "Apple to Launch Touchscreen OLED MacBook Pro and iPad Mini",
    "summary": [
-    "Government forces launched a drone attack on Eritrean troops who crossed into Ethiopia's Tigray region, raising the risk of internal conflict and regional war."
+    "Apple is set to launch new touchscreen OLED MacBook Pro models and an OLED iPad mini on October 27.",
+    "The launch will also include an M6 14-inch MacBook Pro and an M6 iMac."
    ],
    "why_it_matters": null,
    "change": "",
    "labels": [],
-   "newest_published_utc": "2026-10-08T16:32:22Z",
+   "newest_published_utc": "2026-10-08T21:12:43Z",
    "coverage": {
     "level": "moderate",
     "independent_reports": 2,
     "publishers": [
-     "Reuters",
-     "The Guardian"
+     "9to5Mac",
+     "MacRumors"
     ],
     "repeats": 0,
     "signals": 0,
-    "channels": 2
+    "channels": 1
    },
    "sources": [
     {
-     "outlet": "Reuters",
-     "via": "Google News",
-     "title": "Drones target Eritrean troops inside Ethiopia, conflict monitor says",
-     "url": "https://news.google.com/rss/articles/CBMitwFBVV95cUxPcGZrbXdIcm5Lc2E4V3pxendtemhDZ0ZXTzVBWEFCNWZUdnA1N2NSLVd0UV8waTFvRnRvNmpCckNJRDVaWkI5ak1LOGI5d2Uta3BaazRpeWhEQllvTElFZlhqUG01dHlOZC1oRGFVLVYxeTM4ZHJFeGJDOGZpNjlGaFlVd0NtWGI4VUpwSDdDNFpyM3lOLUlZR3BMbnRfQ0g2X1pTbS05REFOWGlZS3g4bWsxZVljcXc?oc=5",
-     "published_utc": "2026-10-08T16:32:22Z",
-     "kind": "report"
-    },
-    {
-     "outlet": "The Guardian",
+     "outlet": "MacRumors",
      "via": "News feeds",
-     "title": "Ethiopia launches drone attack against Eritrean troops who crossed into Tigray",
-     "url": "https://www.theguardian.com/world/2026/oct/08/ethiopia-drone-attack-against-eritrean-troops-in-tigray",
-     "published_utc": "2026-10-08T16:11:32Z",
-     "kind": "report"
-    }
-   ]
-  },
-  {
-   "id": "43ea4753baea",
-   "rank": 16,
-   "top_rank": null,
-   "category": "News",
-   "headline": "Christa Pike Now Walking After US Execution Went Wrong, Lawyer Says",
-   "summary": [
-    "Christa Pike, a murderer, is now walking after surviving two lethal injections.",
-    "She is mentally foggy and is being treated in a hospital."
-   ],
-   "why_it_matters": null,
-   "change": "new",
-   "labels": [],
-   "newest_published_utc": "2026-10-08T15:02:32Z",
-   "coverage": {
-    "level": "moderate",
-    "independent_reports": 2,
-    "publishers": [
-     "BBC",
-     "BBC News"
-    ],
-    "repeats": 0,
-    "signals": 2,
-    "channels": 2
-   },
-   "sources": [
-    {
-     "outlet": "en.wikipedia.org",
-     "via": "Wikipedia",
-     "title": "Christa Pike",
-     "url": "https://en.wikipedia.org/wiki/Christa_Pike",
-     "published_utc": null,
-     "kind": "signal"
-    },
-    {
-     "outlet": "BBC",
-     "via": "Google News",
-     "title": "Christa Pike now walking after US execution went wrong, lawyer says",
-     "url": "https://news.google.com/rss/articles/CBMiW0FVX3lxTE0teGdqeXlGMXM5cVRMQXg1SnRzazFtdDhQY0NCVlZ2X3kxbkpJdzcxOFZhRHdvR0tEQm14WVVKSE9PSmQ2bVVfQVVON1hBWG9lSUxUQ2FfYzRXVlU?oc=5",
-     "published_utc": "2026-10-08T15:02:32Z",
+     "title": "Apple to Launch Touchscreen OLED MacBook Pro and OLED iPad mini on October 27",
+     "url": "https://www.macrumors.com/2026/10/08/apple-october-27-macbook-pro/",
+     "published_utc": "2026-10-08T21:12:43Z",
      "kind": "report"
     },
     {
-     "outlet": "reddit.com",
-     "via": "Reddit",
-     "title": "Christa Pike now walking after US execution went wrong, lawyer says",
-     "url": "https://www.reddit.com/r/news/comments/1x0ma9c/christa_pike_now_walking_after_us_execution_went/",
-     "published_utc": "2026-10-08T09:16:58Z",
-     "kind": "signal"
-    },
-    {
-     "outlet": "BBC News",
+     "outlet": "9to5Mac",
      "via": "News feeds",
-     "title": "Christa Pike now walking after failed US execution, lawyer tells BBC",
-     "url": "https://www.bbc.co.uk/news/articles/c60rln74yzvxo?at_medium=RSS&at_campaign=rss",
-     "published_utc": "2026-10-08T15:02:32Z",
-     "kind": "report"
-    }
-   ]
-  },
-  {
-   "id": "09452b5abcef",
-   "rank": 17,
-   "top_rank": null,
-   "category": "News",
-   "headline": "Trump Promises No Iran Strikes Before Midterm Elections",
-   "summary": [
-    "President Trump announced that the US will not attack Iran before the midterm elections in November.",
-    "Crude oil prices dropped after his announcement."
-   ],
-   "why_it_matters": null,
-   "change": "",
-   "labels": [],
-   "newest_published_utc": "2026-10-08T20:06:33Z",
-   "coverage": {
-    "level": "moderate",
-    "independent_reports": 2,
-    "publishers": [
-     "CBS News",
-     "Reuters"
-    ],
-    "repeats": 0,
-    "signals": 0,
-    "channels": 2
-   },
-   "sources": [
-    {
-     "outlet": "Reuters",
-     "via": "Google News",
-     "title": "Trump says US will not attack Iran before midterm elections in November",
-     "url": "https://news.google.com/rss/articles/CBMivAFBVV95cUxNMmV2ZUhoRklKSzBPaFkzWHVFdkwxVDlVVU8tdDV2NXc4NEkxTjZSTVhoaklIeTlJX3BCUTFkRUREY1VDVGpTY1lhZEQ4OHgyRG81S0RLa0JJVEZHTWpiUFJVRy0xZmVSWEpVbDZsVFBSRzZ4bmw2RnhtMXlBelJ1Vi1GUnVuZ3htemdTdExuTktpQ2dKdzhFRmRMd0MwMlYtd3JPb1J0NVlKcVNtWUlNNHRoNVFWaFBWUHNTdg?oc=5",
-     "published_utc": "2026-10-08T17:22:39Z",
-     "kind": "report"
-    },
-    {
-     "outlet": "CBS News",
-     "via": "News feeds",
-     "title": "Trump promises not to resume Iran strikes before midterm elections",
-     "url": "https://www.cbsnews.com/live-updates/iran-war-nuclear-donald-trump-vance-rubio-strait-of-hormuz/",
-     "published_utc": "2026-10-08T20:06:33Z",
-     "kind": "report"
-    }
-   ]
-  },
-  {
-   "id": "e2f1dc0b8b1c",
-   "rank": 18,
-   "top_rank": null,
-   "category": "News",
-   "headline": "Flights to Riyadh Suspended After Houthi Attacks",
-   "summary": [
-    "Explosions were heard in Saudi Arabia's capital, including a large blast at Riyadh's international airport, where flights were subsequently halted."
-   ],
-   "why_it_matters": null,
-   "change": "new",
-   "labels": [],
-   "newest_published_utc": "2026-10-08T17:23:00Z",
-   "coverage": {
-    "level": "moderate",
-    "independent_reports": 2,
-    "publishers": [
-     "Reuters",
-     "Sky News"
-    ],
-    "repeats": 0,
-    "signals": 0,
-    "channels": 2
-   },
-   "sources": [
-    {
-     "outlet": "Sky News",
-     "via": "News feeds",
-     "title": "Flights to Saudi capital suspended after Houthis 'attack on airport'",
-     "url": "https://news.sky.com/story/airlines-suspend-flights-to-saudi-capital-after-houthis-claim-attack-on-airport-13596623",
-     "published_utc": "2026-10-08T17:23:00Z",
-     "kind": "report"
-    },
-    {
-     "outlet": "Reuters",
-     "via": "Google News",
-     "title": "Lufthansa, Indian airlines suspend flights to Riyadh after Houthi attacks",
-     "url": "https://news.google.com/rss/articles/CBMiuAFBVV95cUxOVXd3SHFQR3NWbldRVWo1OVQtajAyZVYtRzNYcmFzZTR3X2pMaDEzTXJKX3R4aUNPNW9fOEhUalZkVnR3LWtKRWM3VDVqelA0M1QtRlFNOE45ZG16VFVIN0JrbHFQSDFFd0N1OEM5Z3FMS0tnVDJvaEZXSjhSYUVsVWJGWXpBdTdVSjZrVVBEc3JCUzFDQXM4Y2ZjYUpHTWlIb2VtUGFlOWs2djlQYUFZLUZ1X0hSZFJ0?oc=5",
-     "published_utc": "2026-10-08T16:51:58Z",
-     "kind": "report"
-    }
-   ]
-  },
-  {
-   "id": "d6b379cc9905",
-   "rank": 19,
-   "top_rank": null,
-   "category": "News",
-   "headline": "French High School Protests Raise Questions About Police Intervention",
-   "summary": [
-    "Protests at French high schools have raised questions about police intervention, with footage showing heavy-handed tactics and injured teenagers.",
-    "Between September 28 and October 5, 6,059 arrests were made."
-   ],
-   "why_it_matters": null,
-   "change": "",
-   "labels": [],
-   "newest_published_utc": "2026-10-08T18:00:04Z",
-   "coverage": {
-    "level": "moderate",
-    "independent_reports": 2,
-    "publishers": [
-     "Le Monde",
-     "Sky News"
-    ],
-    "repeats": 0,
-    "signals": 0,
-    "channels": 2
-   },
-   "sources": [
-    {
-     "outlet": "Le Monde",
-     "via": "News feeds",
-     "title": "French high school protests: The questions raised by two weeks of police intervention",
-     "url": "https://www.lemonde.fr/en/france/article/2026/10/08/french-high-school-protests-the-questions-raised-by-two-weeks-of-police-intervention_6758395_7.html",
-     "published_utc": "2026-10-08T18:00:04Z",
-     "kind": "report"
-    },
-    {
-     "outlet": "Sky News",
-     "via": "YouTube",
-     "title": "French students clash with police in Paris",
-     "url": "https://www.youtube.com/watch?v=mH-YzbDr3ak",
-     "published_utc": "2026-10-08T17:41:35Z",
+     "title": "Apple to launch touchscreen MacBook Pro and more on October 27: report",
+     "url": "https://9to5mac.com/2026/10/08/apple-to-launch-touchscreen-macbook-pro-and-more-on-october-27-report/",
+     "published_utc": "2026-10-08T20:28:30Z",
      "kind": "report"
     }
    ]
   },
   {
    "id": "b6f8b398be25",
-   "rank": 20,
-   "top_rank": null,
+   "rank": 10,
+   "top_rank": 10,
    "category": "Science & AI",
    "headline": "ChatGPT for Teens Found to Be an 'Unacceptable Risk'",
    "summary": [
-    "After extensive testing, Common Sense Media found the chatbot failed in five key areas, making it an 'unacceptable risk' for teens."
+    "Research has found that ChatGPT for Teens is an 'unacceptable risk' due to its failure in five key areas.",
+    "The chatbot was designed to promote healthier use of the AI, but its safety features have been found to be inadequate."
    ],
    "why_it_matters": null,
    "change": "",
@@ -1270,18 +739,473 @@
    ]
   },
   {
-   "id": "d88e6fca6d1b",
-   "rank": 21,
+   "id": "58f53f5b69f5",
+   "rank": 11,
    "top_rank": null,
-   "category": "Tech",
-   "headline": "Apple Teases 'Welcome Home' Event Next Week",
+   "category": "News",
+   "headline": "USS Abraham Lincoln Returns Home After Long Deployment",
    "summary": [
-    "Apple has announced a 'Welcome Home' event for next week, which may include new smart home products."
+    "The USS Abraham Lincoln has returned home to San Diego after a record-long deployment of 265 uninterrupted days at sea.",
+    "The crew endured food shortages and deteriorating conditions during the deployment."
+   ],
+   "why_it_matters": null,
+   "change": "new",
+   "labels": [],
+   "newest_published_utc": "2026-10-08T21:15:00Z",
+   "coverage": {
+    "level": "strong",
+    "independent_reports": 6,
+    "publishers": [
+     "AP News",
+     "CBS News",
+     "NBC News",
+     "NPR",
+     "New York Times",
+     "South China Morning Post"
+    ],
+    "repeats": 1,
+    "signals": 0,
+    "channels": 2
+   },
+   "sources": [
+    {
+     "outlet": "CBS News",
+     "via": "News feeds",
+     "title": "USS Lincoln docks in San Diego, returning home for first time in 321 days",
+     "url": "https://www.cbsnews.com/news/uss-lincoln-san-diego-returns/",
+     "published_utc": "2026-10-08T21:15:00Z",
+     "kind": "report"
+    },
+    {
+     "outlet": "New York Times",
+     "via": "News feeds",
+     "title": "U.S.S. Abraham Lincoln Returns Home After Long and Grueling Deployment",
+     "url": "https://www.nytimes.com/2026/10/08/us/politics/uss-abraham-lincoln-san-diego.html",
+     "published_utc": "2026-10-08T19:54:19Z",
+     "kind": "report"
+    },
+    {
+     "outlet": "The New York Times",
+     "via": "Google News",
+     "title": "U.S.S. Abraham Lincoln Returns Home After Long and Grueling Deployment",
+     "url": "https://news.google.com/rss/articles/CBMiiAFBVV95cUxPbTdrT2pHbVp5eGtTd3hySkxqak1VaEVtWEU5NlR6WjdHV0M0T2tBaXNNaG4xd3AtaDFIb1BtXzUtTWZhQ0tZZ3J5NFZaM0pseVhDbjI1cU5zYmhVdWxST3U5VTRhZnl5cF8xUlJsdThXelFlWk1mbFhMbk1PSDNSVDlITnpybUIx?oc=5",
+     "published_utc": "2026-10-08T19:54:19Z",
+     "kind": "repeat"
+    },
+    {
+     "outlet": "NPR",
+     "via": "News feeds",
+     "title": "The long-deployed USS Lincoln is returning home to San Diego",
+     "url": "https://www.npr.org/2026/10/08/g-s1-147195/uss-lincoln-returning-san-diego",
+     "published_utc": "2026-10-08T16:18:20Z",
+     "kind": "report"
+    },
+    {
+     "outlet": "AP News",
+     "via": "Google News",
+     "title": "The long-deployed USS Lincoln returns home to San Diego Bay",
+     "url": "https://news.google.com/rss/articles/CBMilAFBVV95cUxOaXpmdmZOT25ZT1RrbXRKYnRQY1VxbGR5WkFIVzMtX2hSU19MSUc1cHpJWDlJU0tkLVZOa0hNMlhXNlJxMjFlLWJiTUtlMy1nNnpwdlV3U3FYcUtBaU1OZXNxeEJjVjZxUWltUXBtX0xKME9LNjlVRDFsYWZWT2xXQW91ZlFPbDdlRlZJQzNwSjRJdHJP?oc=5",
+     "published_utc": "2026-10-08T21:07:00Z",
+     "kind": "report"
+    },
+    {
+     "outlet": "South China Morning Post",
+     "via": "News feeds",
+     "title": "The long-deployed USS Abraham Lincoln returns home to San Diego from Middle East",
+     "url": "https://www.scmp.com/news/world/united-states-canada/article/3370240/long-deployed-uss-abraham-lincoln-returns-home-san-diego-middle-east?utm_source=rss_feed",
+     "published_utc": "2026-10-08T19:21:32Z",
+     "kind": "report"
+    },
+    {
+     "outlet": "NBC News",
+     "via": "News feeds",
+     "title": "USS Lincoln docks in San Diego after 10-month deployment",
+     "url": "https://www.nbcnews.com/meet-the-press/video/uss-lincoln-docks-in-san-diego-after-10-month-deployment-271285829735",
+     "published_utc": "2026-10-08T20:29:12Z",
+     "kind": "report"
+    }
+   ]
+  },
+  {
+   "id": "1410eccbfc0a",
+   "rank": 12,
+   "top_rank": null,
+   "category": "Science & AI",
+   "headline": "Trump Declares AI as 'Super Intelligence'",
+   "summary": [
+    "President Trump has declared that artificial intelligence should now be called 'super intelligence', and has called anyone who uses the term 'AI' an 'enemy' of the White House."
+   ],
+   "why_it_matters": null,
+   "change": "updated",
+   "labels": [],
+   "newest_published_utc": "2026-10-08T20:58:57Z",
+   "coverage": {
+    "level": "strong",
+    "independent_reports": 6,
+    "publishers": [
+     "Axios",
+     "Business Insider",
+     "Forbes",
+     "New Scientist",
+     "Politico",
+     "The Independent"
+    ],
+    "repeats": 1,
+    "signals": 0,
+    "channels": 2
+   },
+   "sources": [
+    {
+     "outlet": "Politico",
+     "via": "Google News",
+     "title": "Trump says anyone who does not refer to AI as ‘super intelligence’ is ‘THE ENEMY'",
+     "url": "https://news.google.com/rss/articles/CBMijwFBVV95cUxNaTV1aTVjdklWRlVSRk44SVpZck9ENF9lWFAxSWVBMmNZQmktWDVZUC04Tmd1aUwwM01WLVJ3Sl93XzRaRTY3S3hvNm5UMFV0MXZiQk1VU0RIR3l4aVJLZHhlSjJ0ZWdHR3Y5YndyMmI2WG9CNnNibU02QS0tWEZhd2NDeG9YYWZqenV1MVpHNA?oc=5",
+     "published_utc": "2026-10-08T20:18:00Z",
+     "kind": "report"
+    },
+    {
+     "outlet": "Business Insider",
+     "via": "Google News",
+     "title": "Trump says you're an 'enemy' of the White House if you don't support his AI rebrand",
+     "url": "https://news.google.com/rss/articles/CBMilAFBVV95cUxQYUtMUVdudXl3TWZHYTZZajBNejdBdGl2T3pEaUVTV2Z1ZUVqTnIxZVhnaGlFcVJVWWNrT0czS3FlaDk5MnptUDBNY25nUjlydnUtTFQ2R3gwR1gzbXhjYTFYMWpaQmpIQXhmWnMwZ3l3U1M4cEZkRkJnX2F4R1d3Vm1ocF9sNm1Ncm01ZWhGMER2bjJQ?oc=5",
+     "published_utc": "2026-10-08T17:43:00Z",
+     "kind": "report"
+    },
+    {
+     "outlet": "The Independent",
+     "via": "Google News",
+     "title": "Trump declares anyone who uses the term Artificial Intelligence to be ‘The Enemy!’",
+     "url": "https://news.google.com/rss/articles/CBMiswFBVV95cUxPdExPMWRnMzR4Y1VidUdjSE1rbEU5SDk1SmdZaEZBdGRpNmJocXp3U3pYTHd6YjdNQVVWejJJa2Q2cndRMnF3MGtOYjhYR29TU3MzTExscEJkc294US1xMGdxZHg5aHB6djBLQ3FtQWFhaUdlN3RuTWxOcW1CQWRwc1NHOFN3aGFFeFY0SkZqU1daNzBjeDFqWkpqR2Z3cG82OW81Wkt1cGlCUmNUbnV0YUFycw?oc=5",
+     "published_utc": "2026-10-08T17:51:00Z",
+     "kind": "report"
+    },
+    {
+     "outlet": "Axios",
+     "via": "News feeds",
+     "title": "Trump: Anyone saying \"AI\" is \"THE ENEMY!\" The White House uses it",
+     "url": "https://www.axios.com/2026/10/08/trump-ai-super-intelligence-white-house",
+     "published_utc": "2026-10-08T18:31:40Z",
+     "kind": "report"
+    },
+    {
+     "outlet": "Axios",
+     "via": "Google News",
+     "title": "Trump: Anyone saying \"AI\" is \"THE ENEMY!\" The White House uses it",
+     "url": "https://news.google.com/rss/articles/CBMifEFVX3lxTFAxTktKejZ1TEZZaXd5YUFIU1VzLVl5eml0V3A1VFNJaWtqakpKajNycFFGMkJpMEs0Um42bS1FbFN5ZHZtTURidmRycHYxWC1laHpwa25FM09DWUgtRVdadGRRaGs4UnlfQ00xa0ppdk9HTnFpRF8td00xNi0?oc=5",
+     "published_utc": "2026-10-08T20:58:57Z",
+     "kind": "repeat"
+    },
+    {
+     "outlet": "New Scientist",
+     "via": "News feeds",
+     "title": "AI or ‘super intelligence’? Trump isn’t the only one who is confused",
+     "url": "https://www.newscientist.com/article/2592404-ai-or-super-intelligence-trump-isnt-the-only-one-who-is-confused/?utm_campaign=RSS|NSNS&utm_content=home&utm_medium=RSS&utm_source=NSNS",
+     "published_utc": "2026-10-08T16:07:59Z",
+     "kind": "report"
+    },
+    {
+     "outlet": "Forbes",
+     "via": "Google News",
+     "title": "Trump: People Who Still Say ‘AI’ Are ‘The Enemy’",
+     "url": "https://news.google.com/rss/articles/CBMivwFBVV95cUxNdjVXN0QzNVNydnBVbDV1NnBTU08tUmNLNGtlb2tRZXZJUkdkcmg5ZDBYc0d0X053R2hHSkY0cW83SnJQc0ktZU1FVlFESlZkanR6cTdTUVZkUWNia2ZyZXBjVFdsTVpGTTJsWTZ1T0dfYnV4ZWNDVGRtbVNTdy14M2x3Q2c1bjdrVHJ2MDlFVTF6cjd2bllTY19BVTJYT0loQTRxcGU3Y2UzZk04azRQOUp5Rk9TQXk4eXptNW5kNA?oc=5",
+     "published_utc": "2026-10-08T17:16:40Z",
+     "kind": "report"
+    }
+   ]
+  },
+  {
+   "id": "e4a50cff38c1",
+   "rank": 13,
+   "top_rank": null,
+   "category": "News",
+   "headline": "Trump Signals Iran Restraint Before Midterms, Gold Rises",
+   "summary": [
+    "President Donald Trump has signaled that the US will not attack Iran before the midterm elections, causing gold prices to rise.",
+    "The announcement has led to a drop in crude oil prices."
+   ],
+   "why_it_matters": null,
+   "change": "updated",
+   "labels": [],
+   "newest_published_utc": "2026-10-08T20:25:57Z",
+   "coverage": {
+    "level": "strong",
+    "independent_reports": 3,
+    "publishers": [
+     "Bloomberg",
+     "CBS News",
+     "Reuters"
+    ],
+    "repeats": 1,
+    "signals": 0,
+    "channels": 3
+   },
+   "sources": [
+    {
+     "outlet": "Bloomberg",
+     "via": "News feeds",
+     "title": "Gold Rises After Trump Says US Won’t Attack Iran Before Midterms",
+     "url": "https://www.bloomberg.com/news/articles/2026-10-07/gold-near-nine-week-low-on-prospects-for-rate-hike-by-year-end",
+     "published_utc": "2026-10-07T23:37:27Z",
+     "kind": "report"
+    },
+    {
+     "outlet": "Reuters",
+     "via": "Google News",
+     "title": "Trump says US will not attack Iran before midterm elections in November",
+     "url": "https://news.google.com/rss/articles/CBMivAFBVV95cUxNMmV2ZUhoRklKSzBPaFkzWHVFdkwxVDlVVU8tdDV2NXc4NEkxTjZSTVhoaklIeTlJX3BCUTFkRUREY1VDVGpTY1lhZEQ4OHgyRG81S0RLa0JJVEZHTWpiUFJVRy0xZmVSWEpVbDZsVFBSRzZ4bmw2RnhtMXlBelJ1Vi1GUnVuZ3htemdTdExuTktpQ2dKdzhFRmRMd0MwMlYtd3JPb1J0NVlKcVNtWUlNNHRoNVFWaFBWUHNTdg?oc=5",
+     "published_utc": "2026-10-08T17:22:39Z",
+     "kind": "report"
+    },
+    {
+     "outlet": "CBS News",
+     "via": "News feeds",
+     "title": "Trump promises not to resume Iran strikes before midterm elections",
+     "url": "https://www.cbsnews.com/live-updates/iran-war-nuclear-donald-trump-vance-rubio-strait-of-hormuz/",
+     "published_utc": "2026-10-08T20:06:00Z",
+     "kind": "report"
+    },
+    {
+     "outlet": "Reuters",
+     "via": "YouTube",
+     "title": "Saudi airports hit, Trump signals Iran restraint before midterms",
+     "url": "https://www.youtube.com/watch?v=xGlVyUUcTew",
+     "published_utc": "2026-10-08T20:25:57Z",
+     "kind": "repeat"
+    }
+   ]
+  },
+  {
+   "id": "8924aab52128",
+   "rank": 14,
+   "top_rank": null,
+   "category": "News",
+   "headline": "Police Use Tear Gas and Water Cannons on Student Protestors in Paris",
+   "summary": [
+    "Police fired tear gas and water cannons as demonstrators gathered in Paris to demand more funding and teachers.",
+    "Between September 28 and October 5, 6,059 arrests were made."
+   ],
+   "why_it_matters": null,
+   "change": "updated",
+   "labels": [],
+   "newest_published_utc": "2026-10-08T21:17:05Z",
+   "coverage": {
+    "level": "strong",
+    "independent_reports": 3,
+    "publishers": [
+     "Al Jazeera",
+     "Al Jazeera English",
+     "Le Monde"
+    ],
+    "repeats": 0,
+    "signals": 0,
+    "channels": 2
+   },
+   "sources": [
+    {
+     "outlet": "Al Jazeera",
+     "via": "News feeds",
+     "title": "Police use tear gas and water cannons on student protestors in Paris",
+     "url": "https://www.aljazeera.com/video/newsfeed/2026/10/8/police-use-tear-gas-and-water-cannons-on-student-protestors-in-paris?traffic_source=rss",
+     "published_utc": "2026-10-08T21:17:05Z",
+     "kind": "report"
+    },
+    {
+     "outlet": "Le Monde",
+     "via": "News feeds",
+     "title": "French high school protests: The questions raised by two weeks of police intervention",
+     "url": "https://www.lemonde.fr/en/france/article/2026/10/08/french-high-school-protests-the-questions-raised-by-two-weeks-of-police-intervention_6758395_7.html",
+     "published_utc": "2026-10-08T18:00:04Z",
+     "kind": "report"
+    },
+    {
+     "outlet": "Al Jazeera English",
+     "via": "YouTube",
+     "title": "French police use tear gas as education protests escalate in Paris",
+     "url": "https://www.youtube.com/watch?v=9VZjHq5JJLg",
+     "published_utc": "2026-10-08T18:26:55Z",
+     "kind": "report"
+    }
+   ]
+  },
+  {
+   "id": "50648e4e6c2b",
+   "rank": 15,
+   "top_rank": null,
+   "category": "Science & AI",
+   "headline": "Anthropic Launches New Features for Claude",
+   "summary": [
+    "Anthropic has launched two new beta features for Claude, including the ability to generate animated explainer videos and live data dashboards from text prompts."
    ],
    "why_it_matters": null,
    "change": "",
    "labels": [],
-   "newest_published_utc": "2026-10-08T19:20:09Z",
+   "newest_published_utc": "2026-10-08T20:36:01Z",
+   "coverage": {
+    "level": "moderate",
+    "independent_reports": 2,
+    "publishers": [
+     "The Decoder",
+     "Tubefilter"
+    ],
+    "repeats": 0,
+    "signals": 0,
+    "channels": 1
+   },
+   "sources": [
+    {
+     "outlet": "The Decoder",
+     "via": "News feeds",
+     "title": "Claude can now generate animated explainer videos and live data dashboards from text prompts",
+     "url": "https://the-decoder.com/claude-can-now-generate-animated-explainer-videos-and-live-data-dashboards-from-text-prompts/",
+     "published_utc": "2026-10-08T19:17:22Z",
+     "kind": "report"
+    },
+    {
+     "outlet": "Tubefilter",
+     "via": "News feeds",
+     "title": "AI-generated videos get labels. The European Union is applying the same standards to text.",
+     "url": "https://www.tubefilter.com/2026/10/08/european-union-eu-generative-ai-text-chatgpt/",
+     "published_utc": "2026-10-08T20:36:01Z",
+     "kind": "report"
+    }
+   ]
+  },
+  {
+   "id": "9ef1b4087acf",
+   "rank": 16,
+   "top_rank": null,
+   "category": "Science & AI",
+   "headline": "NASA's Crew-12 Astronauts Return to Earth After 8 Months in Space",
+   "summary": [
+    "Four astronauts from NASA's Crew-12 mission have returned to Earth after spending nearly eight months at the International Space Station.",
+    "The crew conducted spacewalks, science experiments, and research during their stay."
+   ],
+   "why_it_matters": null,
+   "change": "updated",
+   "labels": [],
+   "newest_published_utc": "2026-10-08T17:22:13Z",
+   "coverage": {
+    "level": "strong",
+    "independent_reports": 5,
+    "publishers": [
+     "Bloomberg Technology",
+     "NASA",
+     "NASA (.gov)",
+     "NPR",
+     "Space"
+    ],
+    "repeats": 1,
+    "signals": 0,
+    "channels": 3
+   },
+   "sources": [
+    {
+     "outlet": "NASA (.gov)",
+     "via": "Google News",
+     "title": "NASA’s SpaceX Crew-12 Dragon Splashes Down at 11:34 a.m. EDT",
+     "url": "https://news.google.com/rss/articles/CBMirgFBVV95cUxPcUFIODdkU2hJV0NGVXdPNzV2U3o5YWVoQUpieV8tSUFIN2pDemtzTTFLUlhkU0hDZ2JrcWN4YTJfcXJ6OS1rTzFScVRrclY0TWZtTnpteGZBNlVPQmI0Tk1IdElTSEpTT3oyaEdmNjhUX01vSFplNUNud0F1V2RkLVQ2YmUyZEFnd0N6R1hXNlFoemhJTzJEakh1bElWcERoeDZDdjc5Y2xUMmFzQWc?oc=5",
+     "published_utc": "2026-10-08T15:40:32Z",
+     "kind": "report"
+    },
+    {
+     "outlet": "NPR",
+     "via": "News feeds",
+     "title": "4 people on NASA's Crew-12 mission return to Earth after 8 months in space",
+     "url": "https://www.npr.org/2026/10/08/nx-s1-5992845/nasa-spacex-crew-12-international-space-station-iss-splashdown",
+     "published_utc": "2026-10-08T15:34:39Z",
+     "kind": "report"
+    },
+    {
+     "outlet": "NPR",
+     "via": "Google News",
+     "title": "4 people on NASA's Crew-12 mission return to Earth after 8 months in space",
+     "url": "https://news.google.com/rss/articles/CBMiqwFBVV95cUxNcl9qUkRWTGNpb3dJMDdMOXp5QWJIMGlFMmtrQUNPcGRlQmRoc0hBX0lEOWdqa1h3bExkLWZpMU9yeV8wbndqQlp0bkJ3TXZkdFFjSk42TUVSY1kzWm16Tm9ndUwwUlJyU2xnUjMxTzc1VDA4TmotOE5qWG4wSmwyZjFKN2xRUmVuXzIwdllvUGpmTlZHZnAtX1FqSnF0d1NkSFIxZUN6NnpvbVk?oc=5",
+     "published_utc": "2026-10-08T15:34:39Z",
+     "kind": "repeat"
+    },
+    {
+     "outlet": "Space",
+     "via": "Google News",
+     "title": "Splashdown! Crew-12 astronauts return to Earth after nearly 8 months in space (video)",
+     "url": "https://news.google.com/rss/articles/CBMivAFBVV95cUxNck44bkQ0c3B3Z2VTLTgzU01XeVRibHgzRUFtbENGaXJkemNjbzBpQmZtNTlBUDBpZW5DajEtdG5EWmt4OGZ1bnc0a29xT3llUk5BSjZ3WVB0a0x2ODBNRzRjRG4zODJOcjZ6c2VpWEt3N2tjSjdQOXJpRzdILTZSNDdjUDJpUTRfUk81Mm11cG1HWnJfa01tMERpYzZ4ZlFNSW5GTzk2YlhNMF9nWE1URzFvdVlYQmtCS05lUg?oc=5",
+     "published_utc": "2026-10-08T16:05:24Z",
+     "kind": "report"
+    },
+    {
+     "outlet": "NASA",
+     "via": "YouTube",
+     "title": "NASA's SpaceX Crew-12 Re-Entry & Splashdown",
+     "url": "https://www.youtube.com/watch?v=x6p9Ri0DlNE",
+     "published_utc": "2026-10-08T16:52:21Z",
+     "kind": "report"
+    },
+    {
+     "outlet": "Bloomberg Technology",
+     "via": "YouTube",
+     "title": "SpaceX Crew Capsule Splashes Down in Pacific After ISS Stay",
+     "url": "https://www.youtube.com/watch?v=ykn1jVpMXvc",
+     "published_utc": "2026-10-08T17:22:13Z",
+     "kind": "report"
+    }
+   ]
+  },
+  {
+   "id": "c622f1618362",
+   "rank": 17,
+   "top_rank": null,
+   "category": "News",
+   "headline": "Cornell Defendant Seeks Removal of AG Letitia James as Prosecutor",
+   "summary": [
+    "A defendant in the Cornell rape case has filed a petition to remove New York Attorney General Letitia James as special prosecutor.",
+    "The defendant, Gillio Lopes, denies sexually assaulting the woman."
+   ],
+   "why_it_matters": null,
+   "change": "new",
+   "labels": [],
+   "newest_published_utc": "2026-10-08T18:59:32Z",
+   "coverage": {
+    "level": "moderate",
+    "independent_reports": 2,
+    "publishers": [
+     "NBC News",
+     "The Washington Post"
+    ],
+    "repeats": 0,
+    "signals": 0,
+    "channels": 2
+   },
+   "sources": [
+    {
+     "outlet": "The Washington Post",
+     "via": "Google News",
+     "title": "Lawyers for accused man in Cornell case want Letitia James removed as prosecutor",
+     "url": "https://news.google.com/rss/articles/CBMivAFBVV95cUxPcXNwdjBaeVVDY1o0azhLZmN0SXJaT3hKQWFXNXlEVG9FQjdBNHF3dFZpRzhacGtBQ0czeldVdTF0bkxUdWExZTNrQnQ5THBmVkE2VzVMZlFaWFNndWd4U3VadVY5cTkyd0U1djRONjFDT1VJZlh5QXA1NlFwak5udWl6enE5MzRaaFZsVkFXV1VVWW5kei1RcDdWSjIyNjVleUlvNEhUMG5KbHB0aU1xWkF4UXNDU2lTTHBtTA?oc=5",
+     "published_utc": "2026-10-08T18:59:32Z",
+     "kind": "report"
+    },
+    {
+     "outlet": "NBC News",
+     "via": "YouTube",
+     "title": "Cornell defendant trying to get AG Letitia James removed as special prosecutor",
+     "url": "https://www.youtube.com/watch?v=v-gJ9t2uTxY",
+     "published_utc": "2026-10-08T18:08:13Z",
+     "kind": "report"
+    }
+   ]
+  },
+  {
+   "id": "753fe3e2bc41",
+   "rank": 18,
+   "top_rank": null,
+   "category": "Tech",
+   "headline": "Apple Announces Special October Event",
+   "summary": [
+    "Apple has announced a special October event, which may include new smart home products."
+   ],
+   "why_it_matters": null,
+   "change": "",
+   "labels": [],
+   "newest_published_utc": "2026-10-08T21:16:50Z",
    "coverage": {
     "level": "moderate",
     "independent_reports": 2,
@@ -1295,42 +1219,129 @@
    },
    "sources": [
     {
-     "outlet": "Android Authority",
-     "via": "News feeds",
-     "title": "Apple teases ‘Welcome Home’ event next week",
-     "url": "https://www.androidauthority.com/apple-smart-home-event-3720906/",
-     "published_utc": "2026-10-08T18:49:36Z",
-     "kind": "report"
-    },
-    {
      "outlet": "Mashable",
      "via": "News feeds",
      "title": "Welcome home: Apple unveils special October event",
      "url": "https://mashable.com/tech/apple-welcome-home-october-13-special-event-announced",
      "published_utc": "2026-10-08T19:20:09Z",
      "kind": "report"
+    },
+    {
+     "outlet": "Android Authority",
+     "via": "News feeds",
+     "title": "Apple could swiftly follow its smart home event with new iPads and MacBooks",
+     "url": "https://www.androidauthority.com/apple-october-ipad-macbook-3721018/",
+     "published_utc": "2026-10-08T21:16:50Z",
+     "kind": "report"
     }
    ]
   },
   {
-   "id": "2c0db5fb1e1a",
-   "rank": 22,
+   "id": "75b489ad0471",
+   "rank": 19,
    "top_rank": null,
-   "category": "Sports",
-   "headline": "Will Cowboys Play Down to Opponent?",
+   "category": "Entertainment",
+   "headline": "Marvel Announces New Disney Plus Series 'Zodiac'",
    "summary": [
-    "From pre-snap to post-snap, Prescott processes dozens of elements before the ball leaves his hand and is caught for a 21-yard TD."
+    "Marvel has announced a new Disney Plus series titled 'Zodiac', which will be a live-action spy thriller.",
+    "The series will be produced by Marvel Studios and will premiere in 2028."
    ],
    "why_it_matters": null,
    "change": "new",
    "labels": [],
-   "newest_published_utc": "2026-10-08T14:03:27Z",
+   "newest_published_utc": "2026-10-08T21:04:14Z",
    "coverage": {
     "level": "moderate",
     "independent_reports": 2,
     "publishers": [
-     "Dallas Cowboys",
-     "ESPN"
+     "Collider",
+     "Polygon"
+    ],
+    "repeats": 0,
+    "signals": 0,
+    "channels": 1
+   },
+   "sources": [
+    {
+     "outlet": "Polygon",
+     "via": "News feeds",
+     "title": "Marvel Officially Announces New Disney Plus Series 'Zodiac'",
+     "url": "https://www.polygon.com/marvel-zodiac-tv-series-disney-plus/",
+     "published_utc": "2026-10-08T20:58:47Z",
+     "kind": "report"
+    },
+    {
+     "outlet": "Collider",
+     "via": "News feeds",
+     "title": "Marvel Officially Announces New Spy Thriller Series for 2028",
+     "url": "https://collider.com/marvel-zodiac-spy-thriller-series-2028-shield/",
+     "published_utc": "2026-10-08T21:04:14Z",
+     "kind": "report"
+    }
+   ]
+  },
+  {
+   "id": "99dc15a56dfd",
+   "rank": 20,
+   "top_rank": null,
+   "category": "Science & AI",
+   "headline": "OpenAI Withdraws Three Mathematical Results",
+   "summary": [
+    "The company has updated its repository with new formalizations and modifications to the withdrawn papers."
+   ],
+   "why_it_matters": null,
+   "change": "new",
+   "labels": [],
+   "newest_published_utc": "2026-10-08T08:08:37Z",
+   "coverage": {
+    "level": "moderate",
+    "independent_reports": 2,
+    "publishers": [
+     "github.com",
+     "twitter.com"
+    ],
+    "repeats": 0,
+    "signals": 0,
+    "channels": 1
+   },
+   "sources": [
+    {
+     "outlet": "twitter.com",
+     "via": "Hacker News",
+     "title": "OpenAI withdraws three mathematical results",
+     "url": "https://twitter.com/danintheory/status/2108065033070789090",
+     "published_utc": "2026-10-08T07:05:40Z",
+     "kind": "report"
+    },
+    {
+     "outlet": "github.com",
+     "via": "Hacker News",
+     "title": "OpenAI Withdraws 3 Math Papers",
+     "url": "https://github.com/openai/math/blob/main/history.md",
+     "published_utc": "2026-10-08T08:08:37Z",
+     "kind": "report"
+    }
+   ]
+  },
+  {
+   "id": "e2f1dc0b8b1c",
+   "rank": 21,
+   "top_rank": null,
+   "category": "News",
+   "headline": "Lufthansa, Indian Airlines Suspend Flights to Riyadh After Houthi Attacks",
+   "summary": [
+    "Explosions were heard in Saudi Arabia's capital, including a large blast at Riyadh's international airport, where flights were subsequently halted."
+   ],
+   "why_it_matters": null,
+   "change": "",
+   "labels": [],
+   "newest_published_utc": "2026-10-08T17:23:00Z",
+   "coverage": {
+    "level": "moderate",
+    "independent_reports": 2,
+    "publishers": [
+     "Reuters",
+     "Sky News"
     ],
     "repeats": 0,
     "signals": 0,
@@ -1338,41 +1349,42 @@
    },
    "sources": [
     {
-     "outlet": "Dallas Cowboys",
+     "outlet": "Reuters",
      "via": "Google News",
-     "title": "Mailbag: Will Cowboys play down to opponent?",
-     "url": "https://news.google.com/rss/articles/CBMigwFBVV95cUxNU3MzU2lYb3RnNHpocmpYMjZzTmlSX3VnLXhZSGxLN1RUNndyUk1mV1FCcVJPM3dUamh5ZVltTTFHWDM0UmtkR3pLb0RZOE5WTmtNSzVFT0h6MEdlU1EtTVBxcUE1Yzlwbm1Zc0JJNXhCcHk3eDFGZXJpRkxMOEdHRHpaSQ?oc=5",
-     "published_utc": "2026-10-08T14:03:27Z",
+     "title": "Lufthansa, Indian airlines suspend flights to Riyadh after Houthi attacks",
+     "url": "https://news.google.com/rss/articles/CBMiuAFBVV95cUxOVXd3SHFQR3NWbldRVWo1OVQtajAyZVYtRzNYcmFzZTR3X2pMaDEzTXJKX3R4aUNPNW9fOEhUalZkVnR3LWtKRWM3VDVqelA0M1QtRlFNOE45ZG16VFVIN0JrbHFQSDFFd0N1OEM5Z3FMS0tnVDJvaEZXSjhSYUVsVWJGWXpBdTdVSjZrVVBEc3JCUzFDQXM4Y2ZjYUpHTWlIb2VtUGFlOWs2djlQYUFZLUZ1X0hSZFJ0?oc=5",
+     "published_utc": "2026-10-08T16:51:58Z",
      "kind": "report"
     },
     {
-     "outlet": "ESPN",
+     "outlet": "Sky News",
      "via": "News feeds",
-     "title": "Through Dak Prescott's eyes: The Cowboys QB breaks down a play and all he sees",
-     "url": "https://www.espn.com/nfl/story/_/id/50124371/dallas-cowboys-dak-prescott-touchdown",
-     "published_utc": null,
+     "title": "Flights to Saudi capital suspended after Houthis 'attack on airport'",
+     "url": "https://news.sky.com/story/airlines-suspend-flights-to-saudi-capital-after-houthis-claim-attack-on-airport-13596623",
+     "published_utc": "2026-10-08T17:23:00Z",
      "kind": "report"
     }
    ]
   },
   {
-   "id": "a18c13b97360",
-   "rank": 23,
+   "id": "8db3cc2445c1",
+   "rank": 22,
    "top_rank": null,
    "category": "Entertainment",
-   "headline": "Marvel Studios' Spider-Man TV Show Gets Official Release Date",
+   "headline": "Crazy Rich Asians TV Series Gets Green Light",
    "summary": [
-    "The animated series 'Your Friendly Neighborhood Spider-Man' has set its Season 2 release date on Disney+, following its successful Season 1 premiere."
+    "The TV series adaptation of 'Crazy Rich Asians' has been given a green light by HBO.",
+    "The series will be a follow-up to the blockbuster film and will feature a star-studded cast, including Constance Wu and Henry Golding."
    ],
    "why_it_matters": null,
    "change": "new",
    "labels": [],
-   "newest_published_utc": "2026-10-08T20:44:40Z",
+   "newest_published_utc": "2026-10-08T21:00:05Z",
    "coverage": {
     "level": "moderate",
     "independent_reports": 2,
     "publishers": [
-     "Screen Rant",
+     "Deadline",
      "Variety"
     ],
     "repeats": 0,
@@ -1381,84 +1393,42 @@
    },
    "sources": [
     {
-     "outlet": "Screen Rant",
+     "outlet": "Variety",
      "via": "News feeds",
-     "title": "Marvel Studios' Spider-Man TV Show Gets Official Release Date For Disney+",
-     "url": "https://screenrant.com/your-friendly-neighborhood-spider-man-season-2-release-date-2027/",
-     "published_utc": "2026-10-08T20:41:36Z",
+     "title": "‘Crazy Rich Asians’ HBO Series Sets Cast: Constance Wu, Henry Golding, Michelle Yeoh, Ronny Chieng Returning",
+     "url": "https://variety.com/2026/tv/news/crazy-rich-asians-series-cast-constance-wu-henry-golding-michelle-yeoh-1236905874/",
+     "published_utc": "2026-10-08T21:00:00Z",
      "kind": "report"
     },
     {
-     "outlet": "Variety",
+     "outlet": "Deadline",
      "via": "News feeds",
-     "title": "‘Your Friendly Neighborhood Spider-Man’ Season 2 Sets Release Date",
-     "url": "https://variety.com/2026/tv/news/your-friendly-neighborhood-spider-man-season-2-release-date-1236828607/",
-     "published_utc": "2026-10-08T20:44:40Z",
+     "title": "‘Crazy Rich Asians’ Gets Series Order At HBO From Adele Lim, Jon M. Chu & Kevin Kwan",
+     "url": "https://deadline.com/2026/10/crazy-rich-asians-hbo-series-order-adele-lim-jon-m-chu-1237150542/",
+     "published_utc": "2026-10-08T21:00:05Z",
      "kind": "report"
     }
    ]
   },
   {
-   "id": "4a6734c292d8",
-   "rank": 24,
+   "id": "cd103f2eab05",
+   "rank": 23,
    "top_rank": null,
-   "category": "Science & AI",
-   "headline": "NASA Announces Bold Science Initiatives for America's Golden Age Summit",
+   "category": "News",
+   "headline": "Russian Strike on Buses Kills at Least 30, Say Officials, as Deadly Attacks on Ukraine Surge",
    "summary": [
-    "The initiatives aim to deepen scientific understanding and accelerate innovation."
+    "A Russian strike on two civilian buses in Ukraine killed at least 30 people, according to officials.",
+    "The attack is part of a surge in deadly attacks on Ukraine."
    ],
    "why_it_matters": null,
    "change": "",
    "labels": [],
-   "newest_published_utc": "2026-10-08T19:58:17Z",
+   "newest_published_utc": "2026-10-08T16:31:29Z",
    "coverage": {
     "level": "limited",
     "independent_reports": 1,
     "publishers": [
-     "NASA"
-    ],
-    "repeats": 1,
-    "signals": 0,
-    "channels": 2
-   },
-   "sources": [
-    {
-     "outlet": "NASA",
-     "via": "News feeds",
-     "title": "NASA Announces Bold Science Initiatives for America’s Golden Age Summit",
-     "url": "https://www.nasa.gov/news-release/nasa-announces-bold-science-initiatives-for-americas-golden-age-summit/",
-     "published_utc": "2026-10-08T19:40:00Z",
-     "kind": "report"
-    },
-    {
-     "outlet": "NASA (.gov)",
-     "via": "Google News",
-     "title": "NASA Announces Bold Science Initiatives for America’s Golden Age Summit",
-     "url": "https://news.google.com/rss/articles/CBMiqAFBVV95cUxPRlhpRThRTDRxN29pcWtpalZ6aUpNSWxSTUd3ai1VcHhMN3JTOTRXNFNxa3ZkWmtTb05KSTBRZW1idjUwbXlORDVGd0FkUjlQcmNKb3RiVlIyWlc5WGlxa20tazNEc1JHWHlTUFFoS3p3dnBuYWNCbEllVEhWUC1YQTFGN2xwTW43N09heUtGNGFlcXlleG5YcXVrc0RpaDJONTQybXd2aTg?oc=5",
-     "published_utc": "2026-10-08T19:58:17Z",
-     "kind": "repeat"
-    }
-   ]
-  },
-  {
-   "id": "589d19bb3d51",
-   "rank": 25,
-   "top_rank": null,
-   "category": "Tech",
-   "headline": "OpenAI Annualised Revenues $20B Less Than Previously Signalled",
-   "summary": [
-    "OpenAI has told investors that it hit roughly $50 billion in annualized revenue at the end of September.",
-    "This is $20 billion less than previously signalled."
-   ],
-   "why_it_matters": null,
-   "change": "new",
-   "labels": [],
-   "newest_published_utc": "2026-10-08T16:45:58Z",
-   "coverage": {
-    "level": "limited",
-    "independent_reports": 1,
-    "publishers": [
-     "cnbc.com"
+     "BBC News"
     ],
     "repeats": 0,
     "signals": 0,
@@ -1466,23 +1436,125 @@
    },
    "sources": [
     {
-     "outlet": "cnbc.com",
+     "outlet": "BBC News",
+     "via": "News feeds",
+     "title": "Russian strike on buses kills at least 30, say officials, as deadly attacks on Ukraine surge",
+     "url": "https://www.bbc.co.uk/news/articles/c875pwq134l3o?at_medium=RSS&at_campaign=rss",
+     "published_utc": "2026-10-08T16:31:29Z",
+     "kind": "report"
+    }
+   ]
+  },
+  {
+   "id": "0452c40b5e91",
+   "rank": 24,
+   "top_rank": null,
+   "category": "Tech",
+   "headline": "The People Holding up the Internet",
+   "summary": [
+    "Teaches computer science at UCLA, and has been the official coordinator of the time zone file since 2012."
+   ],
+   "why_it_matters": null,
+   "change": "new",
+   "labels": [],
+   "newest_published_utc": "2026-10-08T06:41:35Z",
+   "coverage": {
+    "level": "limited",
+    "independent_reports": 1,
+    "publishers": [
+     "sheets.works"
+    ],
+    "repeats": 0,
+    "signals": 0,
+    "channels": 1
+   },
+   "sources": [
+    {
+     "outlet": "sheets.works",
      "via": "Hacker News",
-     "title": "OpenAI annualised revenues $20B less than previously signalled",
-     "url": "https://www.cnbc.com/2026/10/08/open-ai-revenue-nvidia-oracle-coreweave.html",
-     "published_utc": "2026-10-08T16:45:58Z",
+     "title": "The people holding up the internet",
+     "url": "https://sheets.works/data-viz/holding-up-the-internet",
+     "published_utc": "2026-10-08T06:41:35Z",
+     "kind": "report"
+    }
+   ]
+  },
+  {
+   "id": "8442e35832eb",
+   "rank": 25,
+   "top_rank": null,
+   "category": "Science & AI",
+   "headline": "As AI Closed in on 'Unique Games' Proof, Researchers Raced to Beat the Machines",
+   "summary": [
+    "On the morning of September 11, 2026, Dor Minzer received a text message from a friend asking whether he was close to settling one of the most famous open questions in theoretical computer science."
+   ],
+   "why_it_matters": null,
+   "change": "new",
+   "labels": [],
+   "newest_published_utc": "2026-10-07T15:08:46Z",
+   "coverage": {
+    "level": "limited",
+    "independent_reports": 1,
+    "publishers": [
+     "Quanta Magazine"
+    ],
+    "repeats": 0,
+    "signals": 0,
+    "channels": 1
+   },
+   "sources": [
+    {
+     "outlet": "Quanta Magazine",
+     "via": "News feeds",
+     "title": "As AI Closed In on ‘Unique Games’ Proof, Researchers Raced to Beat the Machines",
+     "url": "https://www.quantamagazine.org/as-ai-closed-in-on-unique-games-proof-researchers-raced-to-beat-the-machines-20261007/",
+     "published_utc": "2026-10-07T15:08:46Z",
+     "kind": "report"
+    }
+   ]
+  },
+  {
+   "id": "84f1f58d5438",
+   "rank": 26,
+   "top_rank": null,
+   "category": "Science & AI",
+   "headline": "JetBrains Releases Mellum2.1: A 12B MoE Open Model for Coding Agents",
+   "summary": [
+    "JetBrains has released Mellum2.1, a 12B mixture-of-experts thinking model with 2.5B active parameters, which has improved its SWE-bench Verified score."
+   ],
+   "why_it_matters": null,
+   "change": "new",
+   "labels": [],
+   "newest_published_utc": "2026-10-08T16:17:35Z",
+   "coverage": {
+    "level": "limited",
+    "independent_reports": 1,
+    "publishers": [
+     "MarkTechPost"
+    ],
+    "repeats": 0,
+    "signals": 0,
+    "channels": 1
+   },
+   "sources": [
+    {
+     "outlet": "MarkTechPost",
+     "via": "News feeds",
+     "title": "JetBrains Releases Mellum2.1: A 12B MoE Open Model for Coding Agents",
+     "url": "https://www.marktechpost.com/2026/10/08/jetbrains-releases-mellum2-1-a-12b-moe-open-model-for-coding-agents/",
+     "published_utc": "2026-10-08T16:17:35Z",
      "kind": "report"
     }
    ]
   },
   {
    "id": "61c94ae2d668",
-   "rank": 26,
+   "rank": 27,
    "top_rank": null,
    "category": "Science & AI",
    "headline": "Fired OpenAI Safety Researchers Dispute Misconduct Claims",
    "summary": [
-    "Three fired OpenAI safety researchers dispute allegations of mishandling sensitive information, warning that their dismissals are creating a chilling effect on the company's AI safety culture."
+    "Three fired OpenAI safety researchers dispute allegations of mishandling sensitive information, warning in an open letter that their dismissals are creating a chilling effect on the company's AI safety culture."
    ],
    "why_it_matters": null,
    "change": "",
@@ -1510,58 +1582,23 @@
    ]
   },
   {
-   "id": "30b7f4d7bf75",
-   "rank": 27,
-   "top_rank": null,
-   "category": "Science & AI",
-   "headline": "Oracle Turns Specialist Knowledge into Fast Workflows",
-   "summary": [
-    "Oracle is using ChatGPT and Codex to turn specialist knowledge into fast, repeatable workflows."
-   ],
-   "why_it_matters": null,
-   "change": "new",
-   "labels": [],
-   "newest_published_utc": "2026-10-08T16:00:00Z",
-   "coverage": {
-    "level": "limited",
-    "independent_reports": 1,
-    "publishers": [
-     "OpenAI"
-    ],
-    "repeats": 0,
-    "signals": 0,
-    "channels": 1
-   },
-   "sources": [
-    {
-     "outlet": "OpenAI",
-     "via": "News feeds",
-     "title": "How Oracle turns days of work into minutes with ChatGPT and Codex",
-     "url": "https://openai.com/index/oracle",
-     "published_utc": "2026-10-08T16:00:00Z",
-     "kind": "report"
-    }
-   ]
-  },
-  {
-   "id": "88ac4d499669",
+   "id": "54ce16f5c557",
    "rank": 28,
    "top_rank": null,
    "category": "Science & AI",
-   "headline": "Atomic Clock Sets New World Record for Time-keeping Precision",
+   "headline": "Scientists Found Homo Erectus 200,000 Years Earlier Than Expected",
    "summary": [
-    "An Atomic Clock has set a new world record for time-keeping precision, measuring slices of time as accurately as possible.",
-    "The clock is based on atomic transitions."
+    "New fossils from South Africa have been discovered, including an adult Homo erectus skull fragment dated to about 2 million years ago, supporting evidence that the species existed 200,000 years earlier than expected."
    ],
    "why_it_matters": null,
    "change": "new",
    "labels": [],
-   "newest_published_utc": "2026-10-08T20:00:00Z",
+   "newest_published_utc": "2026-10-08T12:47:46Z",
    "coverage": {
     "level": "limited",
     "independent_reports": 1,
     "publishers": [
-     "ScienceAlert"
+     "ScienceDaily"
     ],
     "repeats": 0,
     "signals": 0,
@@ -1569,202 +1606,23 @@
    },
    "sources": [
     {
-     "outlet": "ScienceAlert",
+     "outlet": "ScienceDaily",
      "via": "News feeds",
-     "title": "'The Most Accurate Clock in The World': Atomic Clock Just Set a New World Record",
-     "url": "https://www.sciencealert.com/the-most-accurate-clock-in-the-world-atomic-clock-just-set-a-new-world-record",
-     "published_utc": "2026-10-08T20:00:00Z",
+     "title": "Scientists found Homo erectus 200,000 years earlier than expected",
+     "url": "https://www.sciencedaily.com/releases/2026/10/261007042113.htm",
+     "published_utc": "2026-10-08T12:47:46Z",
      "kind": "report"
-    }
-   ]
-  },
-  {
-   "id": "61c0f3f40d47",
-   "rank": 29,
-   "top_rank": null,
-   "category": "Tech",
-   "headline": "Apple Plans Second October Launch for New Products",
-   "summary": [
-    "Apple plans to launch new products, including a touch-screen MacBook and a new iPad mini, on or around October 27."
-   ],
-   "why_it_matters": null,
-   "change": "new",
-   "labels": [],
-   "newest_published_utc": "2026-10-08T20:25:02Z",
-   "coverage": {
-    "level": "limited",
-    "independent_reports": 1,
-    "publishers": [
-     "Techmeme"
-    ],
-    "repeats": 0,
-    "signals": 0,
-    "channels": 1
-   },
-   "sources": [
-    {
-     "outlet": "Techmeme",
-     "via": "News feeds",
-     "title": "Sources: Apple plans a second October launch, on or around October 27, for its first touch-screen MacBook, a new iPad mini, and M6 14-inch MacBook Pro and iMac (Mark Gurman/Bloomberg)",
-     "url": "https://www.techmeme.com/261008/p46#a261008p46",
-     "published_utc": "2026-10-08T20:25:02Z",
-     "kind": "report"
-    }
-   ]
-  },
-  {
-   "id": "d9c172806a0d",
-   "rank": 30,
-   "top_rank": null,
-   "category": "Tech",
-   "headline": "Whistle: Speech to Text in 16.9 MB",
-   "summary": [
-    "Whistle is an open speech recognition model that runs on the same CPU engine as Needle.",
-    "It transcribes seven languages and loads beside Needle so one binary turns a clip straight into tool calls."
-   ],
-   "why_it_matters": null,
-   "change": "new",
-   "labels": [],
-   "newest_published_utc": "2026-10-08T16:59:39Z",
-   "coverage": {
-    "level": "limited",
-    "independent_reports": 1,
-    "publishers": [
-     "cactuscompute.com"
-    ],
-    "repeats": 0,
-    "signals": 0,
-    "channels": 1
-   },
-   "sources": [
-    {
-     "outlet": "cactuscompute.com",
-     "via": "Hacker News",
-     "title": "Whistle: Speech to Text in 16.9 MB",
-     "url": "https://cactuscompute.com/blog/whistle",
-     "published_utc": "2026-10-08T16:59:39Z",
-     "kind": "report"
-    }
-   ]
-  },
-  {
-   "id": "657b3a4a298f",
-   "rank": 31,
-   "top_rank": null,
-   "category": "Science & AI",
-   "headline": "Open-weight Model Gets Embarrassed by French",
-   "summary": [
-    "The model is KERNEL, and the French models Mistral, Reflection AI, and Moonshot made big moves in the open-weight race."
-   ],
-   "why_it_matters": null,
-   "change": "",
-   "labels": [],
-   "newest_published_utc": "2026-10-07T20:24:27Z",
-   "coverage": {
-    "level": "limited",
-    "independent_reports": 1,
-    "publishers": [
-     "Fireship"
-    ],
-    "repeats": 0,
-    "signals": 0,
-    "channels": 1
-   },
-   "sources": [
-    {
-     "outlet": "Fireship",
-     "via": "YouTube",
-     "title": "A $6.3 billion open-weight model just got embarrassed by the French...",
-     "url": "https://www.youtube.com/watch?v=WrCjAAl9okA",
-     "published_utc": "2026-10-07T20:24:27Z",
-     "kind": "report"
-    }
-   ]
-  },
-  {
-   "id": "9f3479d6b2d1",
-   "rank": 32,
-   "top_rank": null,
-   "category": "Sports",
-   "headline": "MLB Eyes Shorter Regular Season and Expanded Division Series",
-   "summary": [
-    "Major League Baseball proposed shortening the regular season to 154 games from 162 starting in 2029 and expanding the division series to best-of-seven."
-   ],
-   "why_it_matters": null,
-   "change": "new",
-   "labels": [],
-   "newest_published_utc": null,
-   "coverage": {
-    "level": "limited",
-    "independent_reports": 1,
-    "publishers": [
-     "ESPN"
-    ],
-    "repeats": 0,
-    "signals": 0,
-    "channels": 1
-   },
-   "sources": [
-    {
-     "outlet": "ESPN",
-     "via": "News feeds",
-     "title": "MLB eyes shorter regular season, expanding division series to best-of-7",
-     "url": "https://www.espn.com/mlb/story/_/id/50134346/mlb-proposes-shorter-regular-season-best-7-division-series",
-     "published_utc": null,
-     "kind": "report"
-    }
-   ]
-  },
-  {
-   "id": "61f9f30f742a",
-   "rank": 33,
-   "top_rank": null,
-   "category": "Science & AI",
-   "headline": "Russia's 'Plague' Death Sparks Concern",
-   "summary": [
-    "Russia has reported a lab worker's death at a plague research institute, sparking concern and questions about the cause of the death."
-   ],
-   "why_it_matters": null,
-   "change": "new",
-   "labels": [],
-   "newest_published_utc": "2026-10-08T17:18:02Z",
-   "coverage": {
-    "level": "limited",
-    "independent_reports": 1,
-    "publishers": [
-     "New Scientist"
-    ],
-    "repeats": 0,
-    "signals": 1,
-    "channels": 1
-   },
-   "sources": [
-    {
-     "outlet": "New Scientist",
-     "via": "News feeds",
-     "title": "The big unanswered question about Russia’s ‘plague’ death",
-     "url": "https://www.newscientist.com/article/2592786-the-big-unanswered-question-about-russias-plague-death/?utm_campaign=RSS|NSNS&utm_content=home&utm_medium=RSS&utm_source=NSNS",
-     "published_utc": "2026-10-08T17:18:02Z",
-     "kind": "report"
-    },
-    {
-     "outlet": "bsky.app",
-     "via": "Bluesky",
-     "title": "Russia denies second plague case",
-     "url": "https://bsky.app/profile/did:plc:qrz3lhbyuxbeilrc6nekdqme/feed/37678c174695",
-     "published_utc": null,
-     "kind": "signal"
     }
    ]
   },
   {
    "id": "5a514c61da91",
-   "rank": 34,
+   "rank": 29,
    "top_rank": null,
    "category": "Tech",
-   "headline": "Amazon Builds 1,000th Satellite",
+   "headline": "Amazon Builds 1,000th Satellite, Space Internet Service Weeks Away",
    "summary": [
-    "Amazon has built its 1,000th Leo satellite, with the company saying that its space internet service is weeks away from launch."
+    "Amazon has built its 1,000th broadband satellite."
    ],
    "why_it_matters": null,
    "change": "",
@@ -1793,16 +1651,15 @@
   },
   {
    "id": "58848f228a4a",
-   "rank": 35,
+   "rank": 30,
    "top_rank": null,
    "category": "Tech",
-   "headline": "Father Blames Instagram for Daughter's Death",
+   "headline": "Molly Russell's Father Blames Instagram for Her Death",
    "summary": [
-    "Ian Russell will show an advert in UK cinemas blaming Instagram for his daughter's death.",
-    "The advert will be shown before screenings of The Social Reckoning."
+    "Molly Russell's father will tell UK cinemagoers that 'Instagram helped kill my daughter' in an advert to be shown before screenings of a film about social media's impact."
    ],
    "why_it_matters": null,
-   "change": "new",
+   "change": "",
    "labels": [],
    "newest_published_utc": "2026-10-08T08:03:50Z",
    "coverage": {
@@ -1827,24 +1684,24 @@
    ]
   },
   {
-   "id": "ae167fdf86c3",
-   "rank": 36,
+   "id": "3ed30ed57b66",
+   "rank": 31,
    "top_rank": null,
-   "category": "Tech",
-   "headline": "ICE Detainees Expose Conditions Inside Facility",
+   "category": "Entertainment",
+   "headline": "David Zaslav Cashed Out More Than $600 Million in Warner Bros. Stock",
    "summary": [
-    "ICE detainees used video conferencing software to expose conditions inside an ICE detention center in Georgia.",
-    "The men's actions cost them - literally and figuratively."
+    "David Zaslav, the former CEO of Warner Bros. Discovery, has cashed out more than $600 million in Warner Bros. stock in connection with the sale to Paramount.",
+    "The total severance package for Zaslav will be more complex."
    ],
    "why_it_matters": null,
-   "change": "",
+   "change": "new",
    "labels": [],
-   "newest_published_utc": "2026-10-08T19:45:00Z",
+   "newest_published_utc": "2026-10-08T21:19:24Z",
    "coverage": {
     "level": "limited",
     "independent_reports": 1,
     "publishers": [
-     "The Verge"
+     "The Hollywood Reporter"
     ],
     "repeats": 0,
     "signals": 0,
@@ -1852,29 +1709,167 @@
    },
    "sources": [
     {
-     "outlet": "The Verge",
+     "outlet": "The Hollywood Reporter",
      "via": "News feeds",
-     "title": "ICE detainees in Georgia used the facility’s video calling software to expose the conditions inside",
-     "url": "https://www.theverge.com/report/1008342/folkston-georgia-ice-detention-hunger-strike-video",
-     "published_utc": "2026-10-08T19:45:00Z",
+     "title": "David Zaslav Cashed Out More Than $600 Million in Warner Bros. Stock in Connection With Sale to Paramount",
+     "url": "https://www.hollywoodreporter.com/business/business-news/david-zaslav-skydance-sale-wbd-payout-1236725569/",
+     "published_utc": "2026-10-08T21:19:24Z",
      "kind": "report"
     }
    ]
   },
   {
-   "id": "3874f6866d8f",
-   "rank": 37,
+   "id": "a439df20a8a0",
+   "rank": 32,
    "top_rank": null,
-   "category": "Sports",
-   "headline": "USMNT Moves on from Pulisic-era Savior Complex",
+   "category": "Tech",
+   "headline": "Microsoft's New Surface Laptop Ultra Finally Has a Starting Price (You Should Sit Down)",
    "summary": [
-    "In 1990, then-United States men's national team manager Bob Gansler made a critical and somewhat controversial choice.",
-    "He left three of the program's laureled veterans at home and brought in younger players."
+    "Microsoft has announced a launch date for its new Surface Laptop Ultra, which features an AI powerhouse chip and up to 128GB of unified memory, with a starting price that is likely to be high."
+   ],
+   "why_it_matters": null,
+   "change": "new",
+   "labels": [],
+   "newest_published_utc": "2026-10-08T04:21:00Z",
+   "coverage": {
+    "level": "limited",
+    "independent_reports": 1,
+    "publishers": [
+     "ZDNET"
+    ],
+    "repeats": 0,
+    "signals": 0,
+    "channels": 1
+   },
+   "sources": [
+    {
+     "outlet": "ZDNET",
+     "via": "News feeds",
+     "title": "Microsoft’s new Surface Laptop Ultra finally has a starting price (you should sit down)",
+     "url": "https://www.zdnet.com/tech/microsoft-surface-laptop-ultra-preorder-starting-price/",
+     "published_utc": "2026-10-08T04:21:00Z",
+     "kind": "report"
+    }
+   ]
+  },
+  {
+   "id": "0806ca90b626",
+   "rank": 33,
+   "top_rank": null,
+   "category": "Tech",
+   "headline": "Money Trail Backs Leaked Chats from Extortion Crew",
+   "summary": [
+    "Researchers corroborated parts of the leaked chats from the Silent Ransom Group, detailing crypto payouts, cash brokers, and recruitment."
+   ],
+   "why_it_matters": null,
+   "change": "new",
+   "labels": [],
+   "newest_published_utc": "2026-10-08T16:09:00Z",
+   "coverage": {
+    "level": "limited",
+    "independent_reports": 1,
+    "publishers": [
+     "The Register"
+    ],
+    "repeats": 0,
+    "signals": 0,
+    "channels": 1
+   },
+   "sources": [
+    {
+     "outlet": "The Register",
+     "via": "News feeds",
+     "title": "Money trail backs leaked chats from extortion crew that walks into US law firms",
+     "url": "https://www.theregister.com/cyber-crime/2026/10/08/money-trail-backs-leaked-chats-from-extortion-crew-that-walks-into-us-law-firms/5302031",
+     "published_utc": "2026-10-08T16:09:00Z",
+     "kind": "report"
+    }
+   ]
+  },
+  {
+   "id": "6ad88a29845c",
+   "rank": 34,
+   "top_rank": null,
+   "category": "Tech",
+   "headline": "Elon Musk's Midterm Spending Spree",
+   "summary": [
+    "Elon Musk's PAC is spending millions, with the latest ideology Trump claims is dangerous.",
+    "The backlash against the designer behind Muse's logo is also discussed."
+   ],
+   "why_it_matters": null,
+   "change": "new",
+   "labels": [],
+   "newest_published_utc": "2026-10-08T21:14:12Z",
+   "coverage": {
+    "level": "limited",
+    "independent_reports": 1,
+    "publishers": [
+     "Wired"
+    ],
+    "repeats": 0,
+    "signals": 0,
+    "channels": 1
+   },
+   "sources": [
+    {
+     "outlet": "Wired",
+     "via": "News feeds",
+     "title": "Inside Elon Musk’s Midterm Spending Spree",
+     "url": "https://www.wired.com/story/uncanny-valley-podcast-inside-elon-musks-midterm-spending-spree/",
+     "published_utc": "2026-10-08T21:14:12Z",
+     "kind": "report"
+    }
+   ]
+  },
+  {
+   "id": "27dbce1f91fe",
+   "rank": 35,
+   "top_rank": null,
+   "category": "Internet Culture",
+   "headline": "AI Favors Brands with an Active Social Media Presence",
+   "summary": [
+    "A new study found that maintaining an active presence on social media platforms can help brands increase their visibility in Google's artificial intelligence search results.",
+    "Social platform links appeared in a majority of Google's AI search results."
    ],
    "why_it_matters": null,
    "change": "",
    "labels": [],
-   "newest_published_utc": "2026-10-08T15:45:19Z",
+   "newest_published_utc": "2026-10-07T22:19:25Z",
+   "coverage": {
+    "level": "limited",
+    "independent_reports": 1,
+    "publishers": [
+     "Social Media Today"
+    ],
+    "repeats": 0,
+    "signals": 0,
+    "channels": 1
+   },
+   "sources": [
+    {
+     "outlet": "Social Media Today",
+     "via": "News feeds",
+     "title": "AI favors brands with an active social media presence",
+     "url": "https://www.socialmediatoday.com/news/ai-favors-brands-with-an-active-social-media-presence/832450/",
+     "published_utc": "2026-10-07T22:19:25Z",
+     "kind": "report"
+    }
+   ]
+  },
+  {
+   "id": "7a88e2449fb3",
+   "rank": 36,
+   "top_rank": null,
+   "category": "Entertainment",
+   "headline": "Israel Promotes Film Mimicking NAZA Documentary",
+   "summary": [
+    "The Israeli government is promoting an online film project that mimics the style of NAZA, the award-winning documentary about mass killings of Gaza civilians.",
+    "The film echoes the style of the real Guardian documentary."
+   ],
+   "why_it_matters": null,
+   "change": "",
+   "labels": [],
+   "newest_published_utc": "2026-10-08T17:52:35Z",
    "coverage": {
     "level": "limited",
     "independent_reports": 1,
@@ -1889,27 +1884,60 @@
     {
      "outlet": "The Guardian",
      "via": "News feeds",
-     "title": "With no Pulisic and good results, have the USMNT moved on from their savior complex? | Leander Schaerlaeckens",
-     "url": "https://www.theguardian.com/football/2026/oct/08/usmnt-christian-pulisic-youth-movement-mauricio-pochettino",
-     "published_utc": "2026-10-08T15:45:19Z",
+     "title": "Israel promotes film that mimics NAZA documentary",
+     "url": "https://www.theguardian.com/world/2026/oct/08/israel-promotes-film-that-mimics-naza-documentary",
+     "published_utc": "2026-10-08T17:52:35Z",
      "kind": "report"
     }
    ]
   },
   {
-   "id": "54985ef2a087",
+   "id": "13db08aea0ea",
+   "rank": 37,
+   "top_rank": null,
+   "category": "Entertainment",
+   "headline": "Hayden Panettiere's Daughter Appears at Hearing About 'Missing' Jewelry",
+   "summary": [
+    "Hayden Panettiere's 11-year-old daughter Kaya appeared by video at a court hearing as her father gained the power to pursue 'missing' jewelry on her behalf."
+   ],
+   "why_it_matters": null,
+   "change": "new",
+   "labels": [],
+   "newest_published_utc": "2026-10-08T19:51:55Z",
+   "coverage": {
+    "level": "limited",
+    "independent_reports": 1,
+    "publishers": [
+     "Rolling Stone"
+    ],
+    "repeats": 0,
+    "signals": 0,
+    "channels": 1
+   },
+   "sources": [
+    {
+     "outlet": "Rolling Stone",
+     "via": "News feeds",
+     "title": "Hayden Panettiere’s Daughter Appears at Hearing About ‘Missing’ Jewelry",
+     "url": "https://www.rollingstone.com/tv-movies/tv-movie-news/hayden-panettiere-daughter-estate-missing-jewelry-1235639856/",
+     "published_utc": "2026-10-08T19:51:55Z",
+     "kind": "report"
+    }
+   ]
+  },
+  {
+   "id": "9f3479d6b2d1",
    "rank": 38,
    "top_rank": null,
    "category": "Sports",
-   "headline": "Man City Appeals Premier League's Guilty Verdict",
+   "headline": "MLB Eyes Shorter Regular Season, Expanding Division Series to best-of-7",
    "summary": [
-    "Man City have appealed the Premier League's guilty verdict, while the sanctions board begins its work on figuring out punishments.",
-    "The possible timeline is unclear."
+    "Major League Baseball proposed shortening the regular season to 154 games from 162 starting in 2029 and expanding the division series to best-of-seven in bargaining with players."
    ],
    "why_it_matters": null,
    "change": "",
    "labels": [],
-   "newest_published_utc": null,
+   "newest_published_utc": "2026-10-08T21:28:48Z",
    "coverage": {
     "level": "limited",
     "independent_reports": 1,
@@ -1924,31 +1952,32 @@
     {
      "outlet": "ESPN",
      "via": "News feeds",
-     "title": "What's next for Man City: How long will appeals, punishments take?",
-     "url": "https://www.espn.com/soccer/story/_/id/50132069/manchester-city-guilty-premier-league-verdict-sanctions-appeals-explainer-whats-next",
-     "published_utc": null,
+     "title": "MLB eyes shorter regular season, expanding division series to best-of-7",
+     "url": "https://www.espn.com/mlb/story/_/id/50134346/mlb-proposes-shorter-regular-season-best-7-division-series",
+     "published_utc": "2026-10-08T21:28:48Z",
      "kind": "report"
     }
    ]
   },
   {
-   "id": "742758e41432",
+   "id": "c26b9419f1e9",
    "rank": 39,
    "top_rank": null,
    "category": "Entertainment",
-   "headline": "Joe Rogan Renews Nine-Figure Spotify Deal",
+   "headline": "White House Correspondent Reflects on Reporting Under Attack",
    "summary": [
-    "Joe Rogan renewed a nine-figure deal with Spotify."
+    "White House correspondent April Ryan has spent decades pressing presidents for answers.",
+    "She talks about access, power, race, and how asking questions put her in President Trump's crosshairs."
    ],
    "why_it_matters": null,
    "change": "",
    "labels": [],
-   "newest_published_utc": "2026-10-08T13:02:00Z",
+   "newest_published_utc": "2026-10-08T15:24:23Z",
    "coverage": {
     "level": "limited",
     "independent_reports": 1,
     "publishers": [
-     "Variety"
+     "NPR"
     ],
     "repeats": 0,
     "signals": 0,
@@ -1956,56 +1985,21 @@
    },
    "sources": [
     {
-     "outlet": "Variety",
-     "via": "Google News",
-     "title": "Joe Rogan Renews Nine-Figure Spotify Deal",
-     "url": "https://news.google.com/rss/articles/CBMihgFBVV95cUxNNzRlc1MtVlJpbHFyQzlWbU5PbWJ3cnl2TGV4ZjNrYVAtWkpxMW9wSUoyNWtSMm9IM2xQVEM2Unc0UjNmckVoYTVlUkxzaVlKVnFmMHdkM2pMNVRfTVpNUldDRnFNMjJ5YUtUbzVSaGtCbWhmNDM0QlJRZnYtOVMzMVpCb2lSUQ?oc=5",
-     "published_utc": "2026-10-08T13:02:00Z",
-     "kind": "report"
-    }
-   ]
-  },
-  {
-   "id": "3726c6f479d0",
-   "rank": 40,
-   "top_rank": null,
-   "category": "Sports",
-   "headline": "Clubs Fear Political Interference in Man City Appeal",
-   "summary": [
-    "Premier League clubs are concerned about political interference in Manchester City's appeal.",
-    "The appeal is related to comments made by Prime Minister Andy Burnham."
-   ],
-   "why_it_matters": null,
-   "change": "",
-   "labels": [],
-   "newest_published_utc": "2026-10-08T09:16:56Z",
-   "coverage": {
-    "level": "limited",
-    "independent_reports": 1,
-    "publishers": [
-     "BBC Sport"
-    ],
-    "repeats": 0,
-    "signals": 0,
-    "channels": 1
-   },
-   "sources": [
-    {
-     "outlet": "BBC Sport",
+     "outlet": "NPR",
      "via": "News feeds",
-     "title": "Clubs fear political interference in Man City appeal",
-     "url": "https://www.bbc.co.uk/sport/football/articles/c6y93qq5175wo?at_medium=RSS&at_campaign=rss",
-     "published_utc": "2026-10-08T09:16:56Z",
+     "title": "White House correspondent April Ryan reflects on reporting while under attack",
+     "url": "https://www.npr.org/2026/10/08/nx-s1-5994416/white-house-correspondent-april-ryan-reflects-on-reporting-while-under-attack",
+     "published_utc": "2026-10-08T15:24:23Z",
      "kind": "report"
     }
    ]
   },
   {
    "id": "b5b71fe43999",
-   "rank": 41,
+   "rank": 40,
    "top_rank": null,
    "category": "Internet Culture",
-   "headline": "Disney, TikTok Strike Deal to Let Creators Use Disney Characters in Videos",
+   "headline": "Disney and TikTok Partner on Character Use",
    "summary": [
     "Disney and TikTok have struck a deal to allow creators to use Disney characters in their videos."
    ],
@@ -2035,23 +2029,23 @@
    ]
   },
   {
-   "id": "b3a265c833f1",
-   "rank": 42,
+   "id": "46b486d04321",
+   "rank": 41,
    "top_rank": null,
    "category": "Sports",
-   "headline": "Yankees' Jazz Chisholm Questions Getting Booed by Home Fans",
+   "headline": "Aaron Judge Calls for Front Office to Go All-In",
    "summary": [
-    "Yankees player Jazz Chisholm has questioned getting booed by home fans, following in the footsteps of the Astros who were booed at home earlier in the playoffs."
+    "Aaron Judge has called on the Yankees' front office to go all-in this offseason."
    ],
    "why_it_matters": null,
    "change": "new",
    "labels": [],
-   "newest_published_utc": "2026-10-08T20:49:03Z",
+   "newest_published_utc": "2026-10-08T09:30:29Z",
    "coverage": {
     "level": "limited",
     "independent_reports": 1,
     "publishers": [
-     "Yahoo Sports"
+     "The New York Times"
     ],
     "repeats": 0,
     "signals": 0,
@@ -2059,33 +2053,34 @@
    },
    "sources": [
     {
-     "outlet": "Yahoo Sports",
-     "via": "News feeds",
-     "title": "Like Astros earlier in playoffs, Yankees&#39; Jazz Chisholm questions getting booed by home fans",
-     "url": "https://sports.yahoo.com/articles/astros-earlier-playoffs-yankees-jazz-204903327.html",
-     "published_utc": "2026-10-08T20:49:03Z",
+     "outlet": "The New York Times",
+     "via": "Google News",
+     "title": "Aaron Judge calls on front office to go all-in this offseason: ‘We’re the Yankees’",
+     "url": "https://news.google.com/rss/articles/CBMiigFBVV95cUxQU1NfRDRQeGVQemVoYnhiZEJ2VVplUTZCbkxEOWd6WW11RU1JTFhEcXFTWU1pS1Q3T3F2XzF5eGtQX0dLUm5UaUFLQllyZEs0QzlBM0h3a01LcTFFUjlmQnhoQTVWM3V4SXhuV0Zvd1g3MGJrMVhrSWViUE5oMXlQNUVQQ3ZFU2VNOHc?oc=5",
+     "published_utc": "2026-10-08T09:30:29Z",
      "kind": "report"
     }
    ]
   },
   {
-   "id": "ec70a8ed4ee5",
-   "rank": 43,
+   "id": "0ac999a484d1",
+   "rank": 42,
    "top_rank": null,
    "category": "Entertainment",
-   "headline": "'Furiosa' Duo Leads Cast in 'Chiquita'",
+   "headline": "Diddy's Release Date Keeps Changing Amid Federal Prostitution Convictions",
    "summary": [
-    "Alyla Browne and Elsa Pataky, stars of 'Furiosa', are among the cast members of the upcoming film 'Chiquita', which has begun production in Australia."
+    "Diddy's release date from prison keeps changing due to federal prostitution convictions.",
+    "He is serving a sentence and will be released after serving it."
    ],
    "why_it_matters": null,
    "change": "new",
    "labels": [],
-   "newest_published_utc": "2026-10-08T20:17:42Z",
+   "newest_published_utc": "2026-10-08T20:36:39Z",
    "coverage": {
     "level": "limited",
     "independent_reports": 1,
     "publishers": [
-     "Deadline"
+     "Billboard"
     ],
     "repeats": 0,
     "signals": 0,
@@ -2093,63 +2088,62 @@
    },
    "sources": [
     {
-     "outlet": "Deadline",
+     "outlet": "Billboard",
      "via": "News feeds",
-     "title": "‘Furiosa’ Duo Alyla Browne & Elsa Pataky Lead Cast In ‘Chiquita’; Screen Australia, Umbrella & Essential Film Group Among Partners",
-     "url": "https://deadline.com/2026/10/mad-max-alyla-browne-elsa-pataky-cast-in-chiquita-1237150490/",
-     "published_utc": "2026-10-08T20:17:42Z",
+     "title": "Diddy’s Release Date: When Is It? And Why Does It Keep Changing?",
+     "url": "https://www.billboard.com/lists/diddy-release-date-when-is-it-why-does-it-keep-changing/",
+     "published_utc": "2026-10-08T20:36:39Z",
      "kind": "report"
     }
    ]
   },
   {
-   "id": "27ccfbfeaf26",
+   "id": "0016795406cd",
+   "rank": 43,
+   "top_rank": null,
+   "category": "Sports",
+   "headline": "Through Dak Prescott's Eyes: The Cowboys QB Breaks Down a Play",
+   "summary": [
+    "Dallas Cowboys quarterback Dak Prescott breaks down a play, highlighting his pre-snap and post-snap processing."
+   ],
+   "why_it_matters": null,
+   "change": "",
+   "labels": [],
+   "newest_published_utc": "2026-10-08T21:27:09Z",
+   "coverage": {
+    "level": "limited",
+    "independent_reports": 1,
+    "publishers": [
+     "ESPN"
+    ],
+    "repeats": 0,
+    "signals": 0,
+    "channels": 1
+   },
+   "sources": [
+    {
+     "outlet": "ESPN",
+     "via": "News feeds",
+     "title": "Through Dak Prescott's eyes: The Cowboys QB breaks down a play and all he sees",
+     "url": "https://www.espn.com/nfl/story/_/id/50124371/dallas-cowboys-dak-prescott-touchdown",
+     "published_utc": "2026-10-08T21:27:09Z",
+     "kind": "report"
+    }
+   ]
+  },
+  {
+   "id": "54985ef2a087",
    "rank": 44,
    "top_rank": null,
    "category": "Sports",
-   "headline": "Rookie Becomes Key Piece of Warriors' Future",
+   "headline": "What's Next for Man City: Appeals and Punishments",
    "summary": [
-    "The Golden State Warriors have high hopes for rookie Yaxel Lendeborg, who has become a key piece of their future."
-   ],
-   "why_it_matters": null,
-   "change": "new",
-   "labels": [],
-   "newest_published_utc": "2026-10-08T19:56:31Z",
-   "coverage": {
-    "level": "limited",
-    "independent_reports": 1,
-    "publishers": [
-     "ESPN"
-    ],
-    "repeats": 0,
-    "signals": 0,
-    "channels": 1
-   },
-   "sources": [
-    {
-     "outlet": "ESPN",
-     "via": "News feeds",
-     "title": "How a rookie became a key piece of the Warriors' future",
-     "url": "https://www.espn.com/nba/story/_/id/50125703/warriors-yaxel-lendeborg-training-camp-preseason-debut",
-     "published_utc": "2026-10-08T19:56:31Z",
-     "kind": "report"
-    }
-   ]
-  },
-  {
-   "id": "13f06e229fb1",
-   "rank": 45,
-   "top_rank": null,
-   "category": "Sports",
-   "headline": "Guardians Look to Force Game 5 in MLB Division Series",
-   "summary": [
-    "The Cleveland Guardians are looking to force a Game 5 in the MLB division series against the White Sox.",
-    "They rebounded to avoid being swept."
+    "Manchester City has appealed the Premier League's guilty verdict, while the sanctions board begins its work on determining punishments."
    ],
    "why_it_matters": null,
    "change": "",
    "labels": [],
-   "newest_published_utc": "2026-10-08T19:42:55Z",
+   "newest_published_utc": "2026-10-08T21:28:50Z",
    "coverage": {
     "level": "limited",
     "independent_reports": 1,
@@ -2164,66 +2158,67 @@
     {
      "outlet": "ESPN",
      "via": "News feeds",
-     "title": "MLB division series: How Guardians can get even, plus Game 4 lineups",
-     "url": "https://www.espn.com/mlb/story/_/id/50128553/mlb-2026-playoffs-division-series-alds-game-4-updates-lineups-analysis-takeaways",
-     "published_utc": "2026-10-08T19:42:55Z",
+     "title": "What's next for Man City: How long will appeals, punishments take?",
+     "url": "https://www.espn.com/soccer/story/_/id/50132069/manchester-city-guilty-premier-league-verdict-sanctions-appeals-explainer-whats-next",
+     "published_utc": "2026-10-08T21:28:50Z",
      "kind": "report"
     }
    ]
   },
   {
-   "id": "06a4dbfb2f54",
+   "id": "25a295130158",
+   "rank": 45,
+   "top_rank": null,
+   "category": "Internet Culture",
+   "headline": "You Can Now Play P.T. Natively on PC, No Remake Required",
+   "summary": [
+    "LoreanXavier's P.T.",
+    "PC is a native port of the 2014 horror game, reverse-engineered from the original game."
+   ],
+   "why_it_matters": null,
+   "change": "new",
+   "labels": [],
+   "newest_published_utc": "2026-10-08T21:02:28Z",
+   "coverage": {
+    "level": "limited",
+    "independent_reports": 1,
+    "publishers": [
+     "Boing Boing"
+    ],
+    "repeats": 0,
+    "signals": 0,
+    "channels": 1
+   },
+   "sources": [
+    {
+     "outlet": "Boing Boing",
+     "via": "News feeds",
+     "title": "You can now play P.T. natively on PC, no remake required",
+     "url": "https://boingboing.net/2026/10/08/you-can-now-play-p-t-natively-on-pc-no-remake-required.html",
+     "published_utc": "2026-10-08T21:02:28Z",
+     "kind": "report"
+    }
+   ]
+  },
+  {
+   "id": "1008ea3f5177",
    "rank": 46,
    "top_rank": null,
    "category": "Entertainment",
-   "headline": "Rainbow Six Siege Mobile to Shut Down After 7 Months",
+   "headline": "Final Fantasy VII Revelation Announces an NPC-ified Version of Shiva",
    "summary": [
-    "Ubisoft's Rainbow Six Siege Mobile will shut down just 7 months after its full release, marking another live service gaming flop."
-   ],
-   "why_it_matters": null,
-   "change": "",
-   "labels": [],
-   "newest_published_utc": "2026-10-08T19:54:24Z",
-   "coverage": {
-    "level": "limited",
-    "independent_reports": 1,
-    "publishers": [
-     "Kotaku"
-    ],
-    "repeats": 0,
-    "signals": 0,
-    "channels": 1
-   },
-   "sources": [
-    {
-     "outlet": "Kotaku",
-     "via": "News feeds",
-     "title": "Rainbow Six Siege Mobile Already Has A Shutdown Date Just 7 Months Into Its Full Release",
-     "url": "https://kotaku.com/rainbow-six-siege-mobile-already-has-a-shutdown-date-just-7-months-into-its-full-release-2000742717",
-     "published_utc": "2026-10-08T19:54:24Z",
-     "kind": "report"
-    }
-   ]
-  },
-  {
-   "id": "95606dfa920b",
-   "rank": 47,
-   "top_rank": null,
-   "category": "Entertainment",
-   "headline": "Dave the Diver Gets Subnautica 2-Themed DLC Pack",
-   "summary": [
-    "The Dave the Diver team is releasing a free Subnautica 2-themed DLC pack in early 2027.",
-    "The pack will be completely free and available to all players."
+    "Final Fantasy VII Revelation announced an NPC-ified version of Shiva, voiced by Marisha Ray, at New York Comic Con 2026.",
+    "The Critical Role performer is also the real-life wife of the voice of Vincent Valentine."
    ],
    "why_it_matters": null,
    "change": "new",
    "labels": [],
-   "newest_published_utc": "2026-10-08T17:00:00Z",
+   "newest_published_utc": "2026-10-08T18:19:41Z",
    "coverage": {
     "level": "limited",
     "independent_reports": 1,
     "publishers": [
-     "Eurogamer"
+     "IGN"
     ],
     "repeats": 0,
     "signals": 0,
@@ -2231,97 +2226,28 @@
    },
    "sources": [
     {
-     "outlet": "Eurogamer",
+     "outlet": "IGN",
      "via": "News feeds",
-     "title": "\"It's clear that we both adore one another's games a lot\" - Dave the Diver and Subnautica 2 team up for a crossover made in heaven",
-     "url": "https://www.eurogamer.net/dave-the-diver-final-dlc-subnautica-2-crossover",
-     "published_utc": "2026-10-08T17:00:00Z",
-     "kind": "report"
-    }
-   ]
-  },
-  {
-   "id": "27dbce1f91fe",
-   "rank": 48,
-   "top_rank": null,
-   "category": "Internet Culture",
-   "headline": "Social Media Presence Boosts Brand Visibility",
-   "summary": [
-    "A new study found that maintaining an active presence on social media platforms can help brands increase their visibility in Google's artificial intelligence search results."
-   ],
-   "why_it_matters": null,
-   "change": "new",
-   "labels": [],
-   "newest_published_utc": "2026-10-07T22:19:25Z",
-   "coverage": {
-    "level": "limited",
-    "independent_reports": 1,
-    "publishers": [
-     "Social Media Today"
-    ],
-    "repeats": 0,
-    "signals": 0,
-    "channels": 1
-   },
-   "sources": [
-    {
-     "outlet": "Social Media Today",
-     "via": "News feeds",
-     "title": "AI favors brands with an active social media presence",
-     "url": "https://www.socialmediatoday.com/news/ai-favors-brands-with-an-active-social-media-presence/832450/",
-     "published_utc": "2026-10-07T22:19:25Z",
-     "kind": "report"
-    }
-   ]
-  },
-  {
-   "id": "7a88e2449fb3",
-   "rank": 49,
-   "top_rank": null,
-   "category": "Entertainment",
-   "headline": "Israel Promotes Film Mimicking NAZA Documentary",
-   "summary": [
-    "The Israeli government is promoting an online film project that mimics the style of NAZA, the award-winning documentary about mass killings of Gaza civilians."
-   ],
-   "why_it_matters": null,
-   "change": "new",
-   "labels": [],
-   "newest_published_utc": "2026-10-08T17:52:35Z",
-   "coverage": {
-    "level": "limited",
-    "independent_reports": 1,
-    "publishers": [
-     "The Guardian"
-    ],
-    "repeats": 0,
-    "signals": 0,
-    "channels": 1
-   },
-   "sources": [
-    {
-     "outlet": "The Guardian",
-     "via": "News feeds",
-     "title": "Israel promotes film that mimics NAZA documentary",
-     "url": "https://www.theguardian.com/world/2026/oct/08/israel-promotes-film-that-mimics-naza-documentary",
-     "published_utc": "2026-10-08T17:52:35Z",
+     "title": "Final Fantasy VII Revelation Announces an NPC-ified Version of Shiva Voiced by Marisha Ray | NYCC 2026",
+     "url": "https://www.ign.com/articles/final-fantasy-vii-revelation-announces-an-npc-ified-version-of-shiva-voiced-by-marisha-ray-nycc-2026",
+     "published_utc": "2026-10-08T18:19:41Z",
      "kind": "report"
     }
    ]
   },
   {
    "id": "7efcebeeb6fd",
-   "rank": 50,
+   "rank": 47,
    "top_rank": null,
    "category": "Sports",
-   "headline": "76ers to Unveil New-Look Starting 5 vs. Nets",
+   "headline": "Sources: Sixers Plan to Unveil New-Look Starting 5 vs. Nets in Preseason",
    "summary": [
-    "The 76ers plan to play their starters Thursday against the Nets.",
-    "The 76ers will unveil their new-look starting 5 against the Nets in preseason."
+    "The 76ers plan to play their starters Thursday against the Nets, sources told ESPN."
    ],
    "why_it_matters": null,
    "change": "",
    "labels": [],
-   "newest_published_utc": "2026-10-08T20:51:55Z",
+   "newest_published_utc": null,
    "coverage": {
     "level": "limited",
     "independent_reports": 1,
@@ -2338,30 +2264,29 @@
      "via": "News feeds",
      "title": "Sources: Sixers plan to unveil new-look starting 5 vs. Nets in preseason",
      "url": "https://www.espn.com/nba/story/_/id/50134832/sources-76ers-plan-play-starters-preseason-game-vs-nets",
-     "published_utc": "2026-10-08T20:51:55Z",
+     "published_utc": null,
      "kind": "report"
     }
    ]
   },
   {
-   "id": "f1c0cf45eec1",
-   "rank": 51,
+   "id": "0474417df9a7",
+   "rank": 48,
    "top_rank": null,
-   "category": "Sports",
-   "headline": "USWNT Excited to Face No. 1 Spain in Friendlies",
+   "category": "Entertainment",
+   "headline": "Bobby Kotick Returns: Former Activision Boss Becomes Board Member of Skydance",
    "summary": [
-    "The USWNT will face top-ranked Spain in two friendlies.",
-    "The USWNT will play two friendlies against the top-ranked Spain team."
+    "Former Activision boss Bobby Kotick joins the board of directors at Skydance, a new company formed by Paramount and Warner Bros. The move comes after a seismic merger between the two companies."
    ],
    "why_it_matters": null,
    "change": "new",
    "labels": [],
-   "newest_published_utc": "2026-10-08T20:40:31Z",
+   "newest_published_utc": "2026-10-08T15:47:01Z",
    "coverage": {
     "level": "limited",
     "independent_reports": 1,
     "publishers": [
-     "Sporting News"
+     "Eurogamer"
     ],
     "repeats": 0,
     "signals": 0,
@@ -2369,28 +2294,29 @@
    },
    "sources": [
     {
-     "outlet": "Sporting News",
+     "outlet": "Eurogamer",
      "via": "News feeds",
-     "title": "USWNT excited to 'polish tools' against No. 1 Spain ahead of two friendlies between top international sides",
-     "url": "https://www.sportingnews.com/us/soccer/news/uswnt-polish-tools-no-1-spain-two-friendlies-top-international/a5dc60c1af157b642253ce22",
-     "published_utc": "2026-10-08T20:40:31Z",
+     "title": "Bobby Kotick returns: former Activision boss becomes board member of Skydance, the new company formed by Paramount and Warner Bros",
+     "url": "https://www.eurogamer.net/bobby-kotick-skydance-board-of-directors-1",
+     "published_utc": "2026-10-08T15:47:01Z",
      "kind": "report"
     }
    ]
   },
   {
-   "id": "1c64bb762ddc",
-   "rank": 52,
+   "id": "a7da54a8161b",
+   "rank": 49,
    "top_rank": null,
    "category": "Internet Culture",
-   "headline": "Trump Imagines Missiles Hitting Los Angeles and San Diego",
+   "headline": "Trump Resorts to Misnaming Michigan's Abdul El-Sayed",
    "summary": [
-    "Trump has again described the danger he brought home."
+    "Donald Trump misnamed Michigan Senate nominee Abdul El-Sayed, labeling him a 'terrorist sympathizer'.",
+    "The move is racially motivated and lacks credible reason."
    ],
    "why_it_matters": null,
-   "change": "",
+   "change": "new",
    "labels": [],
-   "newest_published_utc": "2026-10-08T16:51:51Z",
+   "newest_published_utc": "2026-10-08T21:00:33Z",
    "coverage": {
     "level": "limited",
     "independent_reports": 1,
@@ -2405,9 +2331,111 @@
     {
      "outlet": "Boing Boing",
      "via": "News feeds",
-     "title": "\"A missile into San Diego or Los Angeles,\" Trump again describes the danger he brought home",
-     "url": "https://boingboing.net/2026/10/08/trump-again-iran-hit-los-angeles-san-diego.html",
-     "published_utc": "2026-10-08T16:51:51Z",
+     "title": "Trump resorts to misnaming Michigan's Abdul El-Sayed",
+     "url": "https://boingboing.net/2026/10/08/trump-abdul-el-sayed-mohammed-jihad.html",
+     "published_utc": "2026-10-08T21:00:33Z",
+     "kind": "report"
+    }
+   ]
+  },
+  {
+   "id": "7cdd60ff764b",
+   "rank": 50,
+   "top_rank": null,
+   "category": "Entertainment",
+   "headline": "David Byrne and Daniel Pemberton Made a Song Using Weird Elon Musk Quotes",
+   "summary": [
+    "David Byrne and composer Daniel Pemberton have shared a new collaborative song they made using a prompt with quotes from Elon Musk."
+   ],
+   "why_it_matters": null,
+   "change": "new",
+   "labels": [],
+   "newest_published_utc": "2026-10-08T16:53:33Z",
+   "coverage": {
+    "level": "limited",
+    "independent_reports": 1,
+    "publishers": [
+     "Pitchfork"
+    ],
+    "repeats": 0,
+    "signals": 0,
+    "channels": 1
+   },
+   "sources": [
+    {
+     "outlet": "Pitchfork",
+     "via": "News feeds",
+     "title": "David Byrne and Daniel Pemberton Made a Song Using Weird Elon Musk Quotes",
+     "url": "https://pitchfork.com/story/david-byrne-and-daniel-pemberton-made-a-song-using-weird-elon-musk-quotes/",
+     "published_utc": "2026-10-08T16:53:33Z",
+     "kind": "report"
+    }
+   ]
+  },
+  {
+   "id": "1d57cfd69c51",
+   "rank": 51,
+   "top_rank": null,
+   "category": "Sports",
+   "headline": "Haaland Encourages Man City Fans to Stay Positive",
+   "summary": [
+    "Erling Haaland has encouraged Man City fans to stay positive after the team was found guilty of serious breaches of Premier League financial rules."
+   ],
+   "why_it_matters": null,
+   "change": "new",
+   "labels": [],
+   "newest_published_utc": "2026-10-08T16:00:00Z",
+   "coverage": {
+    "level": "limited",
+    "independent_reports": 1,
+    "publishers": [
+     "Sky Sports"
+    ],
+    "repeats": 0,
+    "signals": 0,
+    "channels": 1
+   },
+   "sources": [
+    {
+     "outlet": "Sky Sports",
+     "via": "News feeds",
+     "title": "'Stick together, enjoy the ride and smile' - Haaland's message to Man City fans",
+     "url": "https://www.skysports.com/football/news/12040/13596522/man-city-charges-erling-haaland-encourages-clubs-fans-to-stay-positive-after-guilty-verdict",
+     "published_utc": "2026-10-08T16:00:00Z",
+     "kind": "report"
+    }
+   ]
+  },
+  {
+   "id": "ebc0e9a40f07",
+   "rank": 52,
+   "top_rank": null,
+   "category": "Sports",
+   "headline": "Stephen A.'s Top-5 NFL Teams Debated on First Take",
+   "summary": [
+    "Stephen A. Smith's top-5 NFL teams were debated on First Take, with Gerald McCoy, Mina Kimes, and Louis Riddick joining the discussion."
+   ],
+   "why_it_matters": null,
+   "change": "new",
+   "labels": [],
+   "newest_published_utc": "2026-10-08T16:29:34Z",
+   "coverage": {
+    "level": "limited",
+    "independent_reports": 1,
+    "publishers": [
+     "ESPN"
+    ],
+    "repeats": 0,
+    "signals": 0,
+    "channels": 1
+   },
+   "sources": [
+    {
+     "outlet": "ESPN",
+     "via": "YouTube",
+     "title": "Mina Kimes calls out Stephen A.'s top-5 NFL teams A-List: Thought it was a typo! 😭 | First Take",
+     "url": "https://www.youtube.com/watch?v=ltqiQEX_-ac",
+     "published_utc": "2026-10-08T16:29:34Z",
      "kind": "report"
     }
    ]
