@@ -168,6 +168,7 @@ tests/
   daily_selftest.py    the self-test the user runs (Test-AgentReachDaily.ps1); --world = dry run here
 BUILD.md (four-phase roadmap)  HANDOFF.md (current state, how to resume)  CLAUDE.md (this file)
 docs/  EVENT-IDENTITY.md (cross-edition answer key, diagnosis, registry design, results)  PUBLISHING.md
+       BACKEND-AUDIT.md (Oct 8 audit: findings F1-F14, plan = PLAN Phase B)
        PLAN.md (sub-tasks + progress log)  HISTORY.md (up to rc12)  RELEASE-NOTES.md  REAL-EDITION-FINDINGS.md
        WINDOWS-TEST-RC11.md  architecture.md  reliability-v2.1.md  eval/identity-eval.{md,json}
 Setup-AgentReachDaily.ps1  Test-AgentReachDaily.ps1  Benchmark-Embeddings.ps1  Uninstall-AgentReachDaily.ps1

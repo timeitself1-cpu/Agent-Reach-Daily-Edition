@@ -138,3 +138,6 @@ The cause is in collection and selection (PLAN 2.2), not yet diagnosed.
    `docs/PLAN.md`, update `BUILD.md` status marks and this file, then commit and push to the branch.
 9. Without the zip, do not invent data. The unblocked work is PLAN 2.2 (why events drop out) on the
    existing fixtures.
+10. Also unblocked: the **backend audit** of Oct 8 (`docs/BACKEND-AUDIT.md`, PLAN Phase B). Two high findings on the
+    live-site path: a removed story returns after a same-day revision (B1), a failed upload waits for the next
+    refresh (B2). Start it when the user says so; the front end (website repo) is being changed by another tool.

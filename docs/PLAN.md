@@ -34,6 +34,10 @@ first unchecked sub-task of the current phase here, does it, and updates this fi
   No Windows installer yet. "Keep changes modular; avoid repeated testing or redesigning working features."
   Also open: the one-time key setup on the PC (W6).
 
+- **Oct 8 (evening): backend audit** (`docs/BACKEND-AUDIT.md`, shared as a Claude doc). The user has ChatGPT on the
+  website front end (mobile layout, search clarity and recovery). Phase B below = the audit's plan; B1-B7 are
+  unblocked while Phase 2 waits for the rc14 self-test zip. Start Phase B only when the user says so.
+
 ## Where we were (October 7, 2026)
 
 - Version **1.0.0rc12** (zip rc12f) on branch `claude/affectionate-galileo-isxik1`: EmbeddingGemma 2 + event
@@ -181,6 +185,26 @@ new agents, new LLM infrastructure, accounts, databases, pipeline changes.
       visitors still see the rc12 README); (b) [ ] story timelines on the site, AFTER Phase 2 makes event matching
       across editions reliable; (c) [x] archive search (monthly search files written by the publisher, `/search/`);
       (d) NOT NOW (user): a one-click Windows installer and GitHub Releases.
+
+## Phase B: backend audit fixes (audit of October 8; `docs/BACKEND-AUDIT.md`)
+
+Goal: the step that feeds the live site is as safe as the rest. One commit and one test per item; no new services.
+
+- [ ] B1. Removed stories stay removed (F1): `hidden_stories` also keeps each removed story's report keys (URL,
+      normalized title); a story is left out when more than half of its reports were removed (the registry's rule).
+      Acceptance: fixture test (remove every r1 story, publish r2): 0 come back (today 28 of 144).
+- [ ] B2. Retry publication on the hourly check (F2): when not due, `--refresh-if-due` publishes the latest edition
+      if publishing is on and the site lacks it (status failed or older revision), at most once an hour.
+      Acceptance: fake-world process test: first upload 503, next tick publishes, third makes no commit.
+- [ ] B3. Publish before the podcast (F6). Acceptance: refresh test asserts the stage order.
+- [ ] B4. Access-key expiry warning (F5) from GitHub's `github-authentication-token-expiration` header, 7 days ahead.
+- [ ] B5. One bad story, not the whole day (F10): `assert_public` per story; the status names what was left out.
+- [ ] B6. Validate dates in publish/withdraw/hide (F13); read each file once per pinned head, close clients (F11).
+- [ ] B7. Release rc15 (B1-B6), zip to the user.
+- [ ] B8. `docs/PUBLIC-DATA.md` + `docs/schema/` (edition, index, search month) + a real example; a test validates
+      the publisher's output for all fixtures (F4). Share with the front end; F9/F12 only if it agrees.
+- [ ] B9. With Phase 2.5/3: publish the registry's event id per story + an `aliases` map from old story ids (F3).
+- [ ] B10. `windows-latest` CI job (F7); `constraints.txt` with the CI-tested versions for Setup and CI (F8).
 
 ## Phase 1: "Report a problem with this story" (the feedback loop)
 
@@ -345,3 +369,4 @@ Each rule starts from quotes in `docs/REAL-EDITION-FINDINGS.md`; each gets a fix
 - 2026-10-08 | Phase 2.0-2.1 | (this commit) | cross-edition answer key (12 editions, 256 events) + churn report; baseline changes._match: near P 0.967 R 0.954, 6h+ apart P 0.966 R 0.752, top stories kept 111/288 far apart; floor test + strict xfail target | 2.1b multi-day editions from the self-test; 2.2 causes; 2.4 matcher
 - 2026-10-08 | PR #4, Phase 2.1b-2.4 | 9674c46 (merge), (this commit) | rc13c merged; rc14: matching vs carry-over vs Top Stories reported apart; diagnosis (false continuations = URL overlap with mixed stories + entity sets; misses = new articles, one shared name); daily/registry.py observing in the refresh; Oct 7 held-out 6h+: P 0.991 R 0.898 (was 0.989/0.703); self-test brings 14 days + events.json | user runs the self-test on rc14; extend the answer key to >= 7 days
 - 2026-10-08 | handoff | (this commit) | BUILD.md (roadmap, 4 phases), HANDOFF.md (state), CLAUDE.md updated; docs/HANDOFF.md -> docs/HISTORY.md; rc14 self-test NOT run yet | user sends the rc14 self-test zip; then 2.1b multi-day answer key
+- 2026-10-08 | backend audit | (this commit) | audit of rc14 (pipeline, worker, store, publisher): 510 passed (Tk, xvfb), pyflakes clean; 14 findings, 2 high (removed stories return after a revision: 28/144 on fixtures; failed upload waits a day); Phase B + docs/BACKEND-AUDIT.md | user decides: Phase B (rc15) now, or wait for the rc14 self-test zip (Phase 2.1b)
