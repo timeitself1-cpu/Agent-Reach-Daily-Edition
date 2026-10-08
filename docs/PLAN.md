@@ -17,7 +17,15 @@ unchecked sub-task, do it, then update this file.
 - Do not tune semantic accuracy blindly: every quality rule starts from a real edition quote in
   `docs/REAL-EDITION-FINDINGS.md`.
 
-## Where we are (October 7, 2026)
+## Where we are (October 8, 2026)
+
+- **rc13 (zip rc13), branch `claude/sweet-ramanujan-xj36o5`: website + automatic publishing (Phase W below),
+  re-prioritised by the user on October 8** ("UX first, ship early"). getagentreach.dev is a news site rendered
+  from published editions; the app publishes each validated edition by itself once the user saves a GitHub access
+  key. **Next:** the user does the one-time key setup (W6) and runs one refresh with publishing on; then H7e and
+  Phase 1 as before.
+
+## Where we were (October 7, 2026)
 
 - Version **1.0.0rc12** (zip rc12f) on branch `claude/affectionate-galileo-isxik1`: EmbeddingGemma 2 + event
   identity. PC round 1 (Oct 7 12:07) fixed in rc12b (H1-H6), round 2 (13:36) in rc12d (H7b), round 3 (16:29) in
@@ -132,6 +140,30 @@ recall >= 0.6; fallback tested; evaluation artifact; real benchmark command for 
         Ollama 0.40.0 cannot open it, ollama/ollama#18847; EmbeddingGemma 2 is MLX-only). When a later Ollama runs
         one: `Benchmark-Embeddings.ps1 -PullModels`, replay here with `--replay <vectors-*.json.gz>`, put it in the
         fallback chain only if it beats nomic; set `identity_strong_cosine` only if the different-event p99 says so.
+
+## Phase W: the website and automatic publishing (user's priority, October 8)
+
+Goal: getagentreach.dev is a news-first site that updates itself from the app's real editions. Out of scope:
+new agents, new LLM infrastructure, accounts, databases, pipeline changes.
+
+- [x] W1. Inspect: site = static repo `timeitself1-cpu/Agent-Reach-Website`, Cloudflare Workers static assets
+      deployed from `main` on every push; the app's public-safe export (`sample.py`) is the starting point.
+- [x] W2. `daily/publish.py`: public edition (no excerpts/paths; independent vs repeat vs signal per source),
+      edition page + archive index, FolderTarget/GitHubTarget (one fast-forward commit, re-read on conflict,
+      no commit when unchanged), DPAPI key, status, withdraw, hide_story, refresh hook, CLI flags. 10 tests +
+      a refresh test + a window test.
+- [x] W3. Window: **...** > Website publishing (on/off, status, last published, live check, publish now, withdraw,
+      key save/test/forget); story menu "Remove from the website...".
+- [x] W4. Website redesign (dark, editorial): front page, story pages with sources and coverage, Latest News,
+      Technology / Science & AI / World, archive, about (method, coverage, corrections, privacy, app), 404;
+      checked at 1440 and 390 px with Playwright (no errors, no horizontal scroll).
+- [x] W5. Seed the site with the newest real edition (Oct 7 r2, 44 stories) through the folder target; site commit 91d14bc on main.
+- [~] W6. NEEDS the user: create the fine-grained key (docs/PUBLISHING.md), paste it, tick Automatic
+      publishing, run a refresh; the next edition should appear on the site within minutes. Then check the
+      `Live website now shows` line.
+- [ ] W7. Later (not blocking): an og:image per edition; show the publishing state in the main window's status
+      line; Windows test of DPAPI on the PC (`test_access_key_is_stored_outside_the_repo_and_forgotten` runs
+      there in the self-test's pytest).
 
 ## Phase 1: "Report a problem with this story" (the feedback loop)
 
@@ -272,3 +304,4 @@ Each rule starts from quotes in `docs/REAL-EDITION-FINDINGS.md`; each gets a fix
 - 2026-10-07 | rc12 H7c | f631426, d9cb362, (this commit) | round 3 (16:29): 12 false merges in the live rc12d editions; attach rule needs a scarce name, 'war' everyday, three-field prize round-ups; self-test keeps the second grouping file; corpus 11 editions, 1 false merge offline, no recall lost | H7d: user deletes the stray tests, runs the self-test on rc12e
 - 2026-10-07 | website | (this commit), site a34517e | `--export-sample` (public edition sample, no publisher excerpts); getagentreach.dev demo shows 5 real stories of the Oct 7 rc12d edition instead of fictional events | H7d: user runs the self-test on rc12e
 - 2026-10-08 | rc12 H7d | 83d9dd6, 7b93072, (this commit) | round 4 (18:16, rc12d): Setup unblocks downloaded files + self-test explains a held launch; scarce name + one word needs strong cosine with vectors (Pitt State/Artemis II); MIT license and website (Oct 8); corpus 13 editions, no recall lost | H7e: user installs rc12f, runs the self-test
+- 2026-10-08 | W1-W5 | (this commit), site 91d14bc | rc13: website redesign + opt-in automatic publishing (one GitHub commit per edition, withdraw, story removal, key in DPAPI); site seeded with the real Oct 7 r2 edition | W6: user saves the key and runs a refresh

@@ -312,3 +312,28 @@ def test_an_edition_file_held_open_fails_the_refresh_in_plain_words(daily_env, m
     assert out.code == R.EXIT_FAILED and "could not be saved" in out.message and "open in another program" in out.message
     assert "Unexpected error" not in out.message
     assert EditionStore(daily_env.paths).load_latest().edition.run_id == first.run_id
+
+
+def test_refresh_publishes_to_the_website_when_switched_on_and_a_website_failure_never_fails_it(daily_env, tmp_path,
+                                                                                                 monkeypatch):
+    import json
+
+    from agent_reach.daily import publish
+
+    publish.save_settings(daily_env.paths, publish.PublishSettings(enabled=True))
+    publish.save_token(daily_env.paths, "test-key")
+    site = tmp_path / "site"
+    monkeypatch.setattr(publish, "github_target", lambda paths, settings=None, client=None: publish.FolderTarget(site))
+    out = _refresh(daily_env)
+    assert out.code == R.EXIT_PUBLISHED and "Published successfully" in out.message
+    d = out.edition.edition_date.isoformat()
+    assert json.loads((site / "editions/index.json").read_text())["latest"] == d
+    assert len(json.loads((site / f"editions/{d}.json").read_text())["stories"]) == len(out.edition.stories)
+
+    def broken(paths, settings=None, client=None):
+        raise publish.PublishError("GitHub did not accept the access key.")
+
+    monkeypatch.setattr(publish, "github_target", broken)
+    out = _refresh(daily_env)
+    assert out.code == R.EXIT_PUBLISHED and "Publication failed" in out.message  # the local edition is still new
+    assert publish.load_status(daily_env.paths).state == "failed"

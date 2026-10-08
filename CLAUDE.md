@@ -41,7 +41,8 @@ category sections), a grounded "why it matters" pass, an HTML export and a spoke
   Docker or new frameworks. "Finish the application we already have, do not turn it into a research
   project." **Never claim untested results**: say what ran where (sandbox, CI, the user's PC). Never
   simulate success for something that needs their machine; prepare the harness, give the exact command.
-- **Branch:** `claude/affectionate-galileo-isxik1` (rc11+). Committing and pushing there is authorized.
+- **Branch:** `claude/affectionate-galileo-isxik1` (rc11-rc12); rc13 (website publishing, Oct 8) was made on
+  `claude/sweet-ramanujan-xj36o5`. Committing and pushing to the session's branch is authorized.
   No pull requests unless asked; nothing else remote without asking. The repository's default branch is
   `claude/loving-darwin-a7rqvs` (what visitors download): the user had PR #1 merged into it on Oct 8 (rc12e).
   Start new work from the default branch; a new PR is needed to bring later releases there.
@@ -62,11 +63,16 @@ category sections), a grounded "why it matters" pass, an HTML export and a spoke
   `pytest.mark.xfail(strict=True)` test when open, so a fix flips it). Strip nothing but check fixtures for
   personal data first (`grep -iE "downt|@gmail"`).
 - **License** MIT (`LICENSE`, Michael Brown, 2026; added Oct 8). Contact address: hello@getagentreach.dev.
-- **Website** getagentreach.dev: repository `timeitself1-cpu/Agent-Reach-Website` (static `index.html`, `app.js`,
-  `styles.css`, served by Cloudflare from `main`; `index.html` has CRLF line endings). Its demo loads
-  `daily-sample.json` from `--export-sample`. Since Oct 7 the whole page is about Agent Reach Daily (hero preview,
-  sample edition, features, how it works, privacy, install, status); every claim must match the app. The user
-  asked for site changes to go straight to `main` (Oct 7); check the page at phone width before pushing.
+- **Website** getagentreach.dev: repository `timeitself1-cpu/Agent-Reach-Website`, served by Cloudflare (Workers
+  static assets, `wrangler.jsonc`) from `main`, every push deployed. Since rc13 (Oct 8) it is a news site rendered
+  from the published editions: `editions/index.json` + `editions/YYYY-MM-DD.json` + `daily/YYYY-MM-DD/index.html`,
+  written by the app's opt-in publisher (`daily/publish.py`, one GitHub commit per edition; guide
+  `docs/PUBLISHING.md`); page shells (`index.html`, `daily/`, `latest/`, `technology/`, `science/`, `world/`,
+  `archive/`, `about/`, `404.html`), `assets/site.js` (renders everything as text), `assets/site.css`, self-hosted
+  OFL fonts. News first; app download and methodology live on `/about/`. Every claim must match the app. The user
+  asked for site changes to go straight to `main` (Oct 7); check the page at phone width before pushing
+  (Playwright + `python -m http.server`; the sandbox cannot reach getagentreach.dev: verify a deploy through the
+  Cloudflare check on the pushed commit).
 - User-facing text (banners, notes, release notes) is plain English for a non-developer: what happened and
   what to do, no stack traces, no internal names.
 
@@ -128,7 +134,9 @@ agent_reach/
     lock.py            OS byte-range refresh lock   fsutil.py atomic writes, read retry   paths.py data layout
     feedhealth.py      feed doctor (channel_outage)  reading.py  read state, follow/mute, In brief, Day N
     strength.py        evidence strength   podcast.py  Windows System.Speech / espeak   render_html.py  export
-    sample.py          public sample of an edition for the website (--export-sample; no publisher excerpts)
+    sample.py          public sample of an edition (--export-sample; no publisher excerpts; the old site demo)
+    publish.py         website publishing: public edition, FolderTarget/GitHubTarget (one fast-forward commit),
+                       DPAPI access key, status, withdraw, hide_story; refresh hook publish_after_refresh
     prereqs.py         Ollama checks/start   scheduler.py  Task Scheduler XML   timeutil.py  Central time, DST
 tests/
   fakes.py, daily_fakes.py   mock sources + fake Ollama; synthetic feeds on .test hosts + fake daily model
@@ -182,6 +190,9 @@ AgentReachDaily.cmd/.pyw
 13. **User data lives outside the repo** (`%LOCALAPPDATA%\AgentReachDaily`); the demo edition is never written to the news cache. A file another program holds (antivirus, OneDrive) is never treated as damaged: no rename, no reset to defaults (`fsutil.FileUnavailable`).
 14. Keep business logic in `daily/app.py` (testable without Tk); `daily/gui.py` is the view. Tk is only touched from the Tk thread: background work reports through queues or a polled thread, never `root.after` from another thread.
 15. **Nothing hangs for ever.** The refresh has a time limit and a watchdog (`refresh.Watchdog`, limit + 25 min) that records the outcome and exits; the first refused model connection ends model calls for that run (`clusterer.connection_lost`).
+16. **The website never gets worse than it was.** Publishing is opt-in, runs after the edition is saved, never fails
+    a refresh, commits all files of an edition at once (fast-forward only, no commit when nothing changed), never
+    replaces a newer revision, and uploads only `public_edition` (no excerpts, paths, logs or settings).
 
 ## Conventions
 

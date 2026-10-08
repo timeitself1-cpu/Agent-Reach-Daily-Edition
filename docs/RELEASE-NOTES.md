@@ -5,6 +5,25 @@ Each release candidate is delivered as a zip of the repository. Extract it over 
 Your editions, settings and history (`%LOCALAPPDATA%\AgentReachDaily`) are kept. Earlier releases are
 summarised in `docs/HANDOFF.md` ("Release history").
 
+## 1.0.0rc13 (zip rc13): your editions on getagentreach.dev, automatically
+
+1. **The website is now a news site.** getagentreach.dev opens on the newest edition: a lead story, the top
+   stories, then World, Technology, Science & AI, Sports, Entertainment and Internet Culture. Every story has its
+   own page with the summary, how widely it was reported (independent outlets, repeats and syndicated copies
+   counted once, social signals shown as attention only) and every source with its date and link. `/daily/` is the
+   newest edition, `/daily/2026-10-07/` a fixed date, and `/archive/` lists them all. It works on phones.
+2. **Automatic publishing (off until you switch it on).** After a successful refresh the app can put the edition
+   on the website by itself. One-time setup: create a GitHub access key for the website repository (README,
+   "Publishing to the website"), paste it in **...** > **Website publishing...**, tick **Automatic publishing**.
+   The window shows the last published edition, whether it worked, and what the live site shows.
+3. **Safe by design.** Only the news goes up (no excerpts, logs, settings or anything about your PC). An edition
+   goes up in one piece or not at all: a failed upload leaves yesterday's edition on the website, and the refresh
+   itself still succeeds. Retries never duplicate an edition.
+4. **Corrections.** Right-click a story > **Remove from the website...**, or take a whole edition off the site from
+   the publishing window.
+
+After extracting the zip, run setup once as usual. Nothing changes until you set up publishing.
+
 ## 1.0.0rc12 (zip rc12f): the launcher, and one more mixed story
 
 Your test at 6:16 PM ran on the previous version (rc12d): the rc12e fixes were not installed yet. It showed two

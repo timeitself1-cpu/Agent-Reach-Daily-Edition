@@ -445,6 +445,14 @@ async def _attempt(paths: DataPaths, prefs: DailyPrefs, store: EditionStore, *, 
             msg += f" {pod.message}"
         except Exception:  # noqa: BLE001
             log.exception("podcast failed")
+    from agent_reach.daily.publish import load_settings as publish_settings, publish_after_refresh
+
+    if publish_settings(paths).enabled:
+        # opt-in: the edition is already saved here, so a website problem never fails the refresh
+        progress("website", "Publishing to the website")
+        result = await asyncio.to_thread(publish_after_refresh, paths, final)
+        if result is not None:
+            msg += f" {result.message}"
     return RefreshOutcome(EXIT_PUBLISHED, "published", msg, final)
 
 

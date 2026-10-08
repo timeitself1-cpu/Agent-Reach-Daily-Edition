@@ -43,7 +43,7 @@ CREATE_NO_WINDOW = 0x08000000
 
 #: The worker's progress stages as the steps a reader sees ('Refreshing, step 4 of 7: Grouping ...').
 REFRESH_STEPS = {"prereq": 1, "ingest": 2, "clean": 3, "enrich": 3, "cluster": 4, "score": 5, "persist": 5,
-                 "edition": 5, "brief": 6, "publish": 7, "podcast": 7}
+                 "edition": 5, "brief": 6, "publish": 7, "podcast": 7, "website": 7}
 
 
 @dataclass

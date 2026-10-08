@@ -13,11 +13,12 @@ Modules (light imports only; the pipeline is imported lazily by ``refresh``):
     prereqs     local Ollama / model checks and optional start
     scheduler   current-user Task Scheduler XML, install/uninstall/status
     refresh     the refresh worker (scheduled, GUI launch or manual)
+    publish     opt-in website publishing (public edition, one GitHub commit per edition, withdraw)
     app / gui   GUI controller (no Tk) and the tkinter view
 """
 
 APP_NAME = "Agent Reach Daily"
 APP_ID = "AgentReachDaily"
 #: Release identity of the Daily app (PEP 440). "rc" until the Windows acceptance checks pass.
-__version__ = "1.0.0rc12"
-VERSION_LABEL = "v1.0 (release candidate 12)"
+__version__ = "1.0.0rc13"
+VERSION_LABEL = "v1.0 (release candidate 13)"
