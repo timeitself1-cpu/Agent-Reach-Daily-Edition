@@ -63,7 +63,7 @@ test('latest river and category pages retain every fixture story', async () => {
 test('fresh, stale, and archived edition information survives', async () => {
   const p = await open('/');
   assert.match(p.d.querySelector('.strip').textContent, /Latest edition.*Update 2.*44 stories.*1,517 reports.*10 of 10/s);
-  assert.equal(p.d.querySelector('.strip time[datetime="2026-10-07T23:42:20Z"]').textContent.startsWith('Published'),true);
+  assert.equal(p.d.querySelector('.strip time[datetime="2026-10-07T23:42:20Z"]').textContent.startsWith('Generated'),true);
   assert.equal(p.d.querySelector('.live.old'),null);
   p.close();
   const stale = await open('/', {now:'2026-10-10T16:00:00Z'});
@@ -82,9 +82,13 @@ test('story sources and source groups match fixture, jump preserves URL', async 
     assert.equal(p.d.querySelector('h1').textContent,story.headline);
     assert.equal(p.d.querySelectorAll('.sources .source').length,story.sources.length);
     assert.deepEqual([...p.d.querySelectorAll('.sources a.title')].map(a=>a.href).sort(), story.sources.map(s=>s.url).sort());
-    for (const kind of ['report','repeat','signal']) {
+    for (const [kind, title] of [['report','Independent reports'],['repeat','Repeats and syndicated copies'],['signal','Social and search signals']]) {
       const count=story.sources.filter(s=>s.kind===kind).length;
-      if(count) assert.ok([...p.d.querySelectorAll('.sources h3')].some(h=>h.textContent.endsWith(`(${count})`)));
+      const heading=[...p.d.querySelectorAll('.sources h3')].find(h=>h.textContent===`${title} (${count})`);
+      if(count) {
+        assert.ok(heading,`${story.id}: ${kind}`);
+        assert.deepEqual([...heading.parentElement.querySelectorAll('a.title')].map(a=>a.href).sort(),story.sources.filter(s=>s.kind===kind).map(s=>s.url).sort());
+      } else assert.equal([...p.d.querySelectorAll('.sources h3')].some(h=>h.textContent.startsWith(title)),false);
     }
     const hash = p.w.location.hash;
     p.d.querySelector('.source-jump').click();

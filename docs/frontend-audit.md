@@ -1,10 +1,10 @@
 # Agent Reach frontend audit and improvement plan
 
-Reviewed October 8, 2026 against `main` at `8161be5` and https://getagentreach.dev/.
+Baseline reviewed October 8, 2026 against `main` at `8161be5` and https://getagentreach.dev/. The focused polish merged in [PR #1](https://github.com/timeitself1-cpu/Agent-Reach-Website/pull/1) at `a2fc699`. The post-merge review and its follow-up are recorded below.
 
 ## Architecture and boundaries
 
-This is a dependency-free static site deployed with Cloudflare Workers Assets (`wrangler.jsonc`). Route directories contain HTML shells; `assets/site.js` renders the public pages with DOM APIs and `assets/site.css` supplies the shared design system. About contains static prose. Newsreader and Inter are self-hosted. There is no build step, package manifest, test runner, or publishing implementation in this repository.
+This is a dependency-free static site deployed with Cloudflare Workers Assets (`wrangler.jsonc`). Route directories contain HTML shells; `assets/site.js` renders the public pages with DOM APIs and `assets/site.css` supplies the shared design system. About contains static prose. Newsreader and Inter are self-hosted. There is no build step, package manifest, or publishing implementation in this repository. The polish pass added development-only regression checks using Node's test runner and an externally installed jsdom dependency.
 
 The renderer reads the existing `agent_reach.public_index` and `agent_reach.public_edition` v1 documents from `/editions/`. It derives ordered stories in memory. Story URLs use an edition path plus `#story-{id}`. Search loads monthly `/search/YYYY-MM.json` files, six months at a time, with forty results per page. It supports prefix and quoted-phrase matching, section filtering, relevance/date ordering, highlighting, and URL state. RSS, robots, sitemap and edition HTML are committed artifacts.
 
@@ -36,18 +36,18 @@ Finished the mobile navigation and reflow acceptance criteria on the frontend br
 
 - All seven existing section links are visible without horizontal scrolling. Navigation wraps at every width and each link has a target at least 44px wide and tall. Active-section indication and link destinations are preserved.
 - At phone widths the brand and Search action remain available, including 320px. At 641–880px the edition date occupies its own row above the brand/actions, avoiding the cramped date column at the tablet boundary.
-- Edition date, publication time, revision, story/report totals and freshness state remain in the existing wrapping strip.
+- Edition date, generation time, revision, story/report totals and freshness state remain in the existing wrapping strip.
 - Long unbroken publisher names, labels, archive headlines, coverage text and source metadata wrap inside their containers. Section titles and their navigation links can use separate rows. No content is hidden to suppress horizontal overflow.
 
 Validation: 88 browser layout checks across all eleven public page shells at actual viewport widths of 320, 360, 390, 480, 640, 641, 768 and 1440px. Every check passed page reflow, navigation visibility, navigation reflow and minimum navigation target size. All 44 fixture stories also passed a 320px page-overflow check, and each section link was followed at 320px to confirm its destination and current-section indication.
 
 Eighteen additional layout checks covered Home, Latest, Technology, Archive, Search and story detail at 320, 640 and 1440px with long publisher names, source titles, summaries and labels. Expanded source disclosures were included. These checks used a temporary local server that adapted copies of the existing JSON fixture in memory; committed fixtures and schemas were untouched. No page overflow remained. The mobile screenshot and machine-readable measurement reports accompany the audit handoff.
 
-The existing 11 DOM regression tests and syntax/whitespace checks also pass. This completion is scoped to the frontend implementation in the draft PR; merge and deployment are separate from the mobile acceptance criteria.
+The 11 DOM regression tests and syntax/whitespace checks also pass. PR #1 has since merged, and the deployed mobile implementation passed the post-merge checks below.
 
 ## Focused polish pass — completed
 
-Implemented the first-pass work in all five priorities. The visible navigation wraps through tablet widths, and the masthead reflows at 320px. Edition dates, revision and publication time retain their values in separate semantic elements. The simplified lead keeps the serif typography and dark palette; desktop cards use three columns. Source disclosures have larger targets, source titles are visibly linked, and the article has a Sources heading and focusable jump control that preserves its permanent URL.
+Implemented the first-pass work in all five priorities. The visible navigation wraps through tablet widths, and the masthead reflows at 320px. Edition dates, revision and generation time retain their values in separate semantic elements. The simplified lead keeps the serif typography and dark palette; desktop cards use three columns. Source disclosures have larger targets, source titles are visibly linked, and the article has a Sources heading and focusable jump control that preserves its permanent URL.
 
 Search has visible labels, a submit button, responsive field layout and query guidance. Failed monthly requests can be retried without a page reload, partial results are explicitly identified, and zero results have a browse-by-date recovery link. Search still runs locally with the same matching, sorting, highlighting, monthly batching, pagination and URL parameters. Keyboard submission keeps focus. Skip links retain the mounted content and story hash, story transitions focus the new title, and ordinary anchors do not trigger the story router.
 
@@ -86,6 +86,18 @@ In Cloudflare's non-production/preview deploy command setting, replace the faili
 npx wrangler@4.148.0 preview --config wrangler.jsonc --worker-name agent-reach-website
 ```
 
-Then retry the branch build after the configuration commit is available. The CLI version is pinned to the version shown in the supplied log. This command creates a branch Preview and leaves production deployment to its existing command.
+The CLI version is pinned to the version shown in the supplied log. This command creates a branch Preview and leaves production deployment to its existing command.
 
-Verified against the installed Wrangler 4.148.0 help and [Cloudflare's preview configuration documentation](https://developers.cloudflare.com/workers/previews/configuration/). This diagnoses the reported argument error; successful remote deployment still requires updating the dashboard command and retrying the build.
+Verified against the installed Wrangler 4.148.0 help and [Cloudflare's preview configuration documentation](https://developers.cloudflare.com/workers/previews/configuration/). After PR #1 merged, Cloudflare reported a successful production build for `a2fc699`. The deployed frontend and JSON/feed content match that merge. The dashboard's saved non-production command was not inspected during the post-merge review; production success does not independently confirm a branch Preview deployment.
+
+## Post-merge review — October 8, 2026
+
+The merge tree matches the reviewed frontend branch. Only shared CSS/JavaScript, this audit, development tests, and the empty Cloudflare preview configuration block changed from the baseline. Edition/search fixtures, existing HTML shells, RSS, sitemap, robots and fonts remain unchanged. No backend or publishing code was added, and production event timelines remain deferred.
+
+The deployed site passed 55 layout checks: all eleven public shells at actual viewport widths of 320, 390, 641, 768 and 1440px. Every check retained seven visible section links with at least 44px targets and no horizontal page overflow. Production JavaScript, CSS, edition index, edition fixture, monthly search fixture and RSS match the merged content after normalizing Windows checkout line endings.
+
+Live search checks confirmed prefix and quoted-phrase matching, Technology filtering, Best match URL state, retained input focus on keyboard submission, and the zero-result archive recovery link. Live article keyboard checks confirmed Sources focus with the permanent story hash intact, skip-to-main without replacing the article, next-story focus, and browser Back restoring the correct article title and focus.
+
+One presentation accuracy correction is prepared on the follow-up branch: the strip now labels `generated_utc` as **Generated**, rather than **Published**. The existing JSON provides generation time, not a separate confirmed publication timestamp. The underlying value, time zone, revision and freshness calculations are unchanged. The regression check now verifies this label; evidence checks also verify exact source URLs within each report/repeat/signal group for all 44 stories.
+
+Priority #1 meets its acceptance criteria. Priorities #2–#5 have their focused first passes complete; their explicitly listed later work remains open. The review does not certify article factual accuracy, assistive-technology compatibility across screen readers, or untested browser/device combinations.
