@@ -42,7 +42,9 @@ category sections), a grounded "why it matters" pass, an HTML export and a spoke
   project." **Never claim untested results**: say what ran where (sandbox, CI, the user's PC). Never
   simulate success for something that needs their machine; prepare the harness, give the exact command.
 - **Branch:** `claude/affectionate-galileo-isxik1` (rc11+). Committing and pushing there is authorized.
-  No pull requests unless asked; nothing else remote without asking.
+  No pull requests unless asked; nothing else remote without asking. The repository's default branch is
+  `claude/loving-darwin-a7rqvs` (what visitors download): the user had PR #1 merged into it on Oct 8 (rc12e).
+  Start new work from the default branch; a new PR is needed to bring later releases there.
 - **Delivery:** each release goes to the user as a zip of the repository:
   `git archive --format=zip --prefix=Agent-Reach/ -o <scratchpad>/Agent-Reach-Daily-v1.0rcNN<letter>.zip HEAD`
   sent with SendUserFile (display "attach"). Letters (rc11b, rc11c, rc11d) mark rebuilds of the same
