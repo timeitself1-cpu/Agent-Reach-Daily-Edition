@@ -24,10 +24,10 @@ Agent Reach Daily is the desktop product; the original command-line trend report
 Requirements: Windows 10/11, Python 3.10 or newer (3.12 recommended, with "tcl/tk" ticked in the
 installer), [Ollama](https://ollama.com/download), about 6 GB of disk space for the models.
 
-Open PowerShell and run, from the project folder:
+Open PowerShell in the folder you extracted (the one that contains `Setup-AgentReachDaily.ps1`) and run:
 
 ```powershell
-cd "C:\Users\downt\Downloads\Agent Reach\src\Agent-Reach"
+cd "$HOME\Downloads\Agent-Reach"   # your folder
 powershell -ExecutionPolicy Bypass -File .\Setup-AgentReachDaily.ps1 -PullModels -RegisterTask
 ```
 
@@ -116,7 +116,7 @@ repository with it. Read the chosen stories first; only stories grouped correctl
 ## Your data
 
 Everything lives in `%LOCALAPPDATA%\AgentReachDaily` (for example
-`C:\Users\downt\AppData\Local\AgentReachDaily`), never in the project folder:
+`C:\Users\<you>\AppData\Local\AgentReachDaily`), never in the project folder:
 
 | Path | Contents |
 |---|---|
@@ -177,7 +177,7 @@ previous edition preserved") and what the live site shows. Details: [docs/PUBLIS
 - All AI work runs locally through Ollama. Nothing is sent to OpenAI, Anthropic, Google or any
   other AI service, and no API key or subscription is needed.
 - The internet is used to read public sources, with no account or API key:
-  - **114 publisher feeds from about 100 organisations**: world and US news (BBC, NPR, The
+  - **112 publisher feeds from about 100 organisations**: world and US news (BBC, NPR, The
     Guardian, PBS, CBS, NBC, ABC, Fox News, New York Times, Washington Post, Al Jazeera, Le Monde,
     France 24, DW, Sky News, The Independent, Euronews, CBC, ABC Australia, South China Morning
     Post, The Japan Times, Times of India, Politico, The Hill, Axios, Vox, The Atlantic,

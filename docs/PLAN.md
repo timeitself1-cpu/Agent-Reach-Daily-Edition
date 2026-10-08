@@ -164,6 +164,15 @@ new agents, new LLM infrastructure, accounts, databases, pipeline changes.
 - [ ] W7. Later (not blocking): an og:image per edition; show the publishing state in the main window's status
       line; Windows test of DPAPI on the PC (`test_access_key_is_stored_outside_the_repo_and_forgotten` runs
       there in the self-test's pytest).
+- [x] W8. Outside review of the site (user, Oct 8; it described the OLD rc12 landing page, so it was written before
+      91d14bc went live or the deploy did not run): RSS `feed.xml` + `sitemap.xml` written by the publisher in the
+      same commit as the index (`index_files`), `robots.txt`, feed links; source counts made consistent (strip
+      "10 of 10 kinds of source", About lists them; README 114 -> 112 feeds); README's personal paths made generic.
+- [ ] W9. From the same review, in this order, each only when the user asks for it: (a) bring rc13 to the default
+      branch with a PR (GitHub visitors still see the rc12 README); (b) story timelines on the site = Phase 2
+      (stable event ids across editions) first, then a "how this story developed" list per story; (c) site
+      search over the archive (a small headline index written by the publisher, no server); (d) a one-click
+      Windows installer and GitHub Releases instead of zip + PowerShell.
 
 ## Phase 1: "Report a problem with this story" (the feedback loop)
 
@@ -305,3 +314,4 @@ Each rule starts from quotes in `docs/REAL-EDITION-FINDINGS.md`; each gets a fix
 - 2026-10-07 | website | (this commit), site a34517e | `--export-sample` (public edition sample, no publisher excerpts); getagentreach.dev demo shows 5 real stories of the Oct 7 rc12d edition instead of fictional events | H7d: user runs the self-test on rc12e
 - 2026-10-08 | rc12 H7d | 83d9dd6, 7b93072, (this commit) | round 4 (18:16, rc12d): Setup unblocks downloaded files + self-test explains a held launch; scarce name + one word needs strong cosine with vectors (Pitt State/Artemis II); MIT license and website (Oct 8); corpus 13 editions, no recall lost | H7e: user installs rc12f, runs the self-test
 - 2026-10-08 | W1-W5 | (this commit), site 91d14bc | rc13: website redesign + opt-in automatic publishing (one GitHub commit per edition, withdraw, story removal, key in DPAPI); site seeded with the real Oct 7 r2 edition | W6: user saves the key and runs a refresh
+- 2026-10-08 | W8 | (this commit), site 5ad9ae3 | 499 passed (Tk, xvfb), pyflakes clean; review follow-ups: RSS feed + sitemap rebuilt with every publication (tests extended), robots.txt, consistent source counts, generic README paths | W6: user saves the key and runs a refresh; W9 waits for the user

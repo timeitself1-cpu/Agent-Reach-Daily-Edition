@@ -14,6 +14,8 @@ What goes up for one edition (``site_files``):
 * ``daily/YYYY-MM-DD/index.html``  the permanent page of that date (``edition_page``); ``/daily/`` and the
   home page show the newest date.
 * ``editions/index.json``  the archive list, rewritten from what is already on the site plus this edition.
+* ``feed.xml`` (RSS, one item per edition) and ``sitemap.xml``, both rebuilt from that archive list
+  (``index_files``), so they always agree with it, also after a withdrawal.
 
 Safety:
 
@@ -39,10 +41,12 @@ import logging
 import os
 import re
 import sys
+from email.utils import format_datetime
 from dataclasses import dataclass, field
 from datetime import date, datetime, timezone
 from pathlib import Path
 from typing import Literal
+from xml.sax.saxutils import escape as xml_escape
 
 from pydantic import BaseModel, Field
 
@@ -65,6 +69,11 @@ PUBLIC_SCHEMA = "agent_reach.public_edition"
 PUBLIC_SCHEMA_VERSION = 1
 INDEX_SCHEMA = "agent_reach.public_index"
 INDEX_PATH = "editions/index.json"
+FEED_PATH = "feed.xml"
+SITEMAP_PATH = "sitemap.xml"
+FEED_ITEMS = 30
+# Page shells that exist on the site whatever is published (sitemap.xml lists them).
+STATIC_PAGES = ("", "daily/", "latest/", "technology/", "science/", "world/", "archive/", "about/")
 #: Environment variable that overrides the stored access key (CI, a portable install).
 TOKEN_ENV = "AGENT_REACH_PUBLISH_TOKEN"
 HTTP_TIMEOUT_S = 30.0
@@ -356,6 +365,7 @@ def edition_page(public: dict, site_url: str = SITE_URL) -> bytes:
         f"<meta property=\"og:type\" content=\"article\"><meta property=\"og:url\" content=\"{url}\">\n"
         "<meta name=\"theme-color\" content=\"#121417\">\n"
         "<link rel=\"icon\" href=\"/assets/icon.svg\" type=\"image/svg+xml\">\n"
+        "<link rel=\"alternate\" type=\"application/rss+xml\" title=\"Agent Reach Daily\" href=\"/feed.xml\">\n"
         "<link rel=\"stylesheet\" href=\"/assets/site.css\"><script src=\"/assets/site.js\" defer></script>\n"
         "</head>\n"
         f"<body data-page=\"edition\" data-date=\"{d}\">\n<div id=\"app\">\n"
@@ -382,6 +392,70 @@ def merge_index(current: dict | None, entry: dict | None = None, remove: str | N
     editions.sort(key=lambda e: e["date"], reverse=True)
     return {"schema": INDEX_SCHEMA, "schema_version": 1, "latest": editions[0]["date"] if editions else None,
             "editions": editions}
+
+
+def _parse_utc(value) -> datetime | None:
+    try:
+        return datetime.strptime(str(value), "%Y-%m-%dT%H:%M:%SZ").replace(tzinfo=timezone.utc)
+    except ValueError:
+        return None
+
+
+def feed_xml(index: dict, site_url: str = SITE_URL) -> bytes:
+    """RSS 2.0, one item per edition (newest first). A later revision of a day keeps the item's link and guid,
+    so feed readers update it instead of showing the day twice. Built from the archive list only: no clock, so
+    the same list always gives the same bytes (a retry commits nothing)."""
+    base = site_url.rstrip("/")
+    entries = [e for e in index.get("editions", []) if isinstance(e.get("date"), str)][:FEED_ITEMS]
+    stamps = [t for t in (_parse_utc(e.get("generated_utc")) for e in entries) if t]
+    items = []
+    for e in entries:
+        try:
+            day = format_long_date(date.fromisoformat(e["date"]))
+        except ValueError:
+            continue
+        link = f"{base}/daily/{e['date']}/"
+        heads = [str(e.get("lead") or "")] + [str(x) for x in e.get("headlines") or []]
+        desc = (f"Top stories: {'; '.join(h for h in heads if h)}. "
+                f"{e.get('stories', 0)} stories in this edition, summarized by a local AI model; read the sources.")
+        stamp = _parse_utc(e.get("generated_utc"))
+        items.append(
+            "<item>"
+            f"<title>{xml_escape(f'{day}: {heads[0]}')}</title>"
+            f"<link>{xml_escape(link)}</link><guid isPermaLink=\"true\">{xml_escape(link)}</guid>"
+            + (f"<pubDate>{format_datetime(stamp, usegmt=True)}</pubDate>" if stamp else "")
+            + f"<description>{xml_escape(desc)}</description></item>\n")
+    built = f"<lastBuildDate>{format_datetime(max(stamps), usegmt=True)}</lastBuildDate>" if stamps else ""
+    return (
+        "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n"
+        "<rss version=\"2.0\" xmlns:atom=\"http://www.w3.org/2005/Atom\"><channel>\n"
+        f"<title>Agent Reach Daily</title><link>{xml_escape(base)}/</link>"
+        f"<atom:link href=\"{xml_escape(base)}/{FEED_PATH}\" rel=\"self\" type=\"application/rss+xml\"/>"
+        "<description>The day's news from public reporting: each event as one story, summarized by a local AI "
+        "model, with its sources. Summaries can be wrong; coverage strength is not a fact check.</description>"
+        f"<language>en</language>{built}\n" + "".join(items) + "</channel></rss>\n"
+    ).encode("utf-8")
+
+
+def sitemap_xml(index: dict, site_url: str = SITE_URL) -> bytes:
+    """The page shells plus one permanent page per published date."""
+    base = site_url.rstrip("/")
+    urls = [f"<url><loc>{xml_escape(f'{base}/{p}')}</loc></url>" for p in STATIC_PAGES]
+    for e in index.get("editions", []):
+        if not isinstance(e.get("date"), str):
+            continue
+        stamp = _parse_utc(e.get("generated_utc"))
+        mod = f"<lastmod>{stamp.date().isoformat()}</lastmod>" if stamp else ""
+        loc = xml_escape(f"{base}/daily/{e['date']}/")
+        urls.append(f"<url><loc>{loc}</loc>{mod}</url>")
+    return ("<?xml version=\"1.0\" encoding=\"utf-8\"?>\n"
+            "<urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\">\n"
+            + "\n".join(urls) + "\n</urlset>\n").encode("utf-8")
+
+
+def index_files(index: dict, site_url: str = SITE_URL) -> dict[str, bytes]:
+    """Everything derived from the archive list; committed together with it."""
+    return {FEED_PATH: feed_xml(index, site_url), SITEMAP_PATH: sitemap_xml(index, site_url), INDEX_PATH: _dumps(index)}
 
 
 # ====================================================================== targets
@@ -548,7 +622,7 @@ def site_files(edition: DailyEdition, settings: PublishSettings, current_index: 
     d = edition.edition_date.isoformat()
     public = public_edition(edition, settings.hidden_stories.get(d))
     files = {edition_json_path(d): _dumps(public), edition_page_path(d): edition_page(public, settings.site_url),
-             INDEX_PATH: _dumps(merge_index(current_index, index_entry(public)))}
+             **index_files(merge_index(current_index, index_entry(public)), settings.site_url)}
     return public, files
 
 
@@ -645,7 +719,8 @@ def withdraw(paths: DataPaths, d: str, target: Target | None = None) -> PublishR
         return PublishResult("skipped", "Another publication is running; try again in a minute.")
     try:
         def plan(t: Target) -> dict:
-            files: dict[str, bytes | None] = {INDEX_PATH: _dumps(merge_index(_read_json(t, INDEX_PATH), remove=d))}
+            files: dict[str, bytes | None] = dict(
+                index_files(merge_index(_read_json(t, INDEX_PATH), remove=d), settings.site_url))
             for p in (edition_json_path(d), edition_page_path(d)):
                 if t.read(p) is not None:
                     files[p] = None

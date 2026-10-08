@@ -8,6 +8,7 @@ import hashlib
 import json
 import sys
 from pathlib import Path
+from xml.etree import ElementTree
 
 import httpx
 import pytest
@@ -149,9 +150,17 @@ def test_folder_publish_is_idempotent_and_withdraw_moves_latest_back(daily_paths
     assert r.state == "published"
     r = P.publish_edition(daily_paths, real_edition(), site)
     assert r.state == "published" and set(r.changed) == {"editions/2026-10-07.json", "editions/index.json",
-                                                         "daily/2026-10-07/index.html"}
+                                                         "daily/2026-10-07/index.html", "feed.xml", "sitemap.xml"}
     index = json.loads((tmp_path / "site/editions/index.json").read_text())
     assert index["latest"] == "2026-10-07" and [e["date"] for e in index["editions"]] == ["2026-10-07", "2026-10-06"]
+    # the RSS feed and the sitemap follow the archive list: valid XML, one feed item per date, newest first
+    feed = ElementTree.fromstring((tmp_path / "site/feed.xml").read_bytes())
+    links = [i.findtext("link") for i in feed.iter("item")]
+    assert links == ["https://getagentreach.dev/daily/2026-10-07/", "https://getagentreach.dev/daily/2026-10-06/"]
+    assert feed.find("channel/item/title").text.startswith("October 7, 2026: ")
+    sitemap = (tmp_path / "site/sitemap.xml").read_text()
+    ElementTree.fromstring(sitemap)
+    assert "/daily/2026-10-06/</loc><lastmod>" in sitemap and "<loc>https://getagentreach.dev/about/</loc>" in sitemap
     page = (tmp_path / "site/daily/2026-10-07/index.html").read_text()
     assert 'data-date="2026-10-07"' in page and "Margaret Hamilton" in page
     assert P.publish_edition(daily_paths, real_edition(), site).state == "unchanged"  # a retry adds nothing
@@ -166,6 +175,8 @@ def test_folder_publish_is_idempotent_and_withdraw_moves_latest_back(daily_paths
     assert r.state == "withdrawn"
     assert not (tmp_path / "site/editions/2026-10-07.json").exists()
     assert json.loads((tmp_path / "site/editions/index.json").read_text())["latest"] == "2026-10-06"
+    assert "/daily/2026-10-07/" not in (tmp_path / "site/feed.xml").read_text()
+    assert "/daily/2026-10-07/" not in (tmp_path / "site/sitemap.xml").read_text()
     # automatic publishing does not bring the withdrawn edition back; a newer revision of that day would
     assert P.publish_edition(daily_paths, real_edition(), site, automatic=True).state == "skipped"
     newer = real_edition().model_copy(update={"revision": 3})
@@ -180,7 +191,7 @@ def test_github_publication_is_one_commit_and_a_retry_makes_none(daily_paths):
     assert r.state == "published" and r.commit == gh.head
     assert gh.commits[gh.head]["message"] == "Publish the 2026-10-07 edition (revision 2)"
     assert set(gh.files) == {"index.html", "editions/2026-10-07.json", "editions/index.json",
-                             "daily/2026-10-07/index.html"}
+                             "daily/2026-10-07/index.html", "feed.xml", "sitemap.xml"}
     assert sum(c.startswith("PATCH") for c in gh.calls) == 1
     before = gh.head
     r = P.publish_edition(daily_paths, real_edition(), gh.target())

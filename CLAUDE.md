@@ -65,7 +65,8 @@ category sections), a grounded "why it matters" pass, an HTML export and a spoke
 - **License** MIT (`LICENSE`, Michael Brown, 2026; added Oct 8). Contact address: hello@getagentreach.dev.
 - **Website** getagentreach.dev: repository `timeitself1-cpu/Agent-Reach-Website`, served by Cloudflare (Workers
   static assets, `wrangler.jsonc`) from `main`, every push deployed. Since rc13 (Oct 8) it is a news site rendered
-  from the published editions: `editions/index.json` + `editions/YYYY-MM-DD.json` + `daily/YYYY-MM-DD/index.html`,
+  from the published editions: `editions/index.json` + `editions/YYYY-MM-DD.json` + `daily/YYYY-MM-DD/index.html`
+  + `feed.xml` (RSS) + `sitemap.xml` (both rebuilt from the index; `robots.txt` is static),
   written by the app's opt-in publisher (`daily/publish.py`, one GitHub commit per edition; guide
   `docs/PUBLISHING.md`); page shells (`index.html`, `daily/`, `latest/`, `technology/`, `science/`, `world/`,
   `archive/`, `about/`, `404.html`), `assets/site.js` (renders everything as text), `assets/site.css`, self-hosted

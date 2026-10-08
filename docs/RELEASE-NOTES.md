@@ -21,6 +21,9 @@ summarised in `docs/HANDOFF.md` ("Release history").
    itself still succeeds. Retries never duplicate an edition.
 4. **Corrections.** Right-click a story > **Remove from the website...**, or take a whole edition off the site from
    the publishing window.
+5. **RSS and search engines (zip rc13b).** Each publication also updates the site's RSS feed
+   (getagentreach.dev/feed.xml, one item per edition) and its sitemap, so readers can follow the editions in a feed
+   reader and search engines can find every dated page.
 
 After extracting the zip, run setup once as usual. Nothing changes until you set up publishing.
 
