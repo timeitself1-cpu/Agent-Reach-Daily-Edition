@@ -2,6 +2,8 @@
 
 Baseline reviewed October 8, 2026 against `main` at `8161be5` and https://getagentreach.dev/. The focused polish merged in [PR #1](https://github.com/timeitself1-cpu/Agent-Reach-Website/pull/1) at `a2fc699`. The post-merge review and its follow-up are recorded below.
 
+The next round of findings and priorities is in [frontend-audit-round-2.md](frontend-audit-round-2.md).
+
 ## Architecture and boundaries
 
 This is a dependency-free static site deployed with Cloudflare Workers Assets (`wrangler.jsonc`). Route directories contain HTML shells; `assets/site.js` renders the public pages with DOM APIs and `assets/site.css` supplies the shared design system. About contains static prose. Newsreader and Inter are self-hosted. There is no build step, package manifest, or publishing implementation in this repository. The polish pass added development-only regression checks using Node's test runner and an externally installed jsdom dependency.
