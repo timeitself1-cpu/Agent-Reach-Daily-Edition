@@ -29,7 +29,8 @@ Safety:
   no commit (no duplicate editions). One file per date: a later revision of the day replaces the earlier one.
 * A demo edition, an edition the site already has in a newer revision, and a date the user withdrew (until a
   newer revision exists) are never published.
-* ``withdraw`` takes a date off the site; ``hide_story`` removes one story from the public copy and republishes.
+* ``withdraw`` takes a date off the site; ``hide_story`` removes one story from the public copy and republishes;
+  later revisions of that date leave it out too, recognised by its reports (its id can change).
 
 Local files (``%LOCALAPPDATA%\\AgentReachDaily\\publish``): ``publish.json`` (settings, hidden stories, withdrawn
 dates), ``status.json`` (last attempt and last success), ``access-key.dat`` (the access key, encrypted with
@@ -59,6 +60,7 @@ from agent_reach.daily.edition import DailyEdition, Story, category_sections, ne
 from agent_reach.daily.fsutil import FileUnavailable, atomic_write_bytes, atomic_write_json, read_json, unlink_with_retry
 from agent_reach.daily.lock import LockBusy, RefreshLock
 from agent_reach.daily.paths import DataPaths
+from agent_reach.daily.registry import evidence_keys
 from agent_reach.daily.strength import SIGNAL_SOURCES, origin, strength_of
 from agent_reach.pipeline.cleaner import dedupe_key
 from agent_reach.daily.timeutil import format_central, format_long_date, utcnow
@@ -116,6 +118,10 @@ class PublishSettings(BaseModel):
     repo: str = SITE_REPO
     branch: str = SITE_BRANCH
     hidden_stories: dict[str, list[str]] = Field(default_factory=dict)  # date -> story ids kept off the site
+    # date -> story id -> that story's reports (each: its article link and normalized title keys). A story id is a
+    # fingerprint of the reports and changes when a later revision adds or loses one, so the reports are what keep
+    # a removed story off the site (rc15; settings from rc13/rc14 have ids only)
+    hidden_reports: dict[str, dict[str, list[list[str]]]] = Field(default_factory=dict)
     withdrawn: dict[str, int] = Field(default_factory=dict)  # date -> newest revision the user took down
 
 
@@ -313,11 +319,43 @@ def _public_story(s: Story, edition: DailyEdition, change: str, top_rank: int | 
             "sources": sources}
 
 
-def public_edition(edition: DailyEdition, hidden: list[str] | None = None) -> dict:
+def removed_reports(story: Story) -> list[list[str]]:
+    """What identifies a removed story in later revisions: one entry per report (its link and title keys)."""
+    return sorted(sorted(keys) for keys in evidence_keys(story))
+
+
+def is_removed(story: Story, hidden_ids: set[str], hidden_reports: dict[str, list[list[str]]] | None = None) -> bool:
+    """Is this story one the user took off the website, by id or as the same story in a later revision?
+
+    The same story = more than half of ITS reports were in a removed story, or more than half of the removed
+    story's reports are in it. Either way round: a story that grew from 2 to 6 reports, or the corrected half of
+    a mixed story the user removed, stays off the site. Removing too much is the safe side of a correction.
+    On October 7 a same-day revision brought back 28 of 144 continuing stories when only ids were kept."""
+    if story.story_id[:12] in hidden_ids:
+        return True
+    if not hidden_reports:
+        return False
+    mine = evidence_keys(story)
+    if not mine:
+        return False
+    my_keys = set().union(*mine)
+    for reports in hidden_reports.values():
+        gone = [set(r) for r in reports if r]
+        if not gone:
+            continue
+        gone_keys = set().union(*gone)
+        if 2 * sum(bool(r & gone_keys) for r in mine) > len(mine) or 2 * sum(bool(r & my_keys) for r in gone) > len(gone):
+            return True
+    return False
+
+
+def public_edition(edition: DailyEdition, hidden: list[str] | None = None,
+                   hidden_reports: dict[str, list[list[str]]] | None = None) -> dict:
     """The public copy of an edition (deterministic: the same edition always gives the same bytes)."""
     if edition.demo:
         raise PublishError("This is the demo edition (made-up stories); it is never published.")
     hidden_ids = {h[:12] for h in hidden or []}
+    hidden_ids |= {s.story_id[:12] for s in edition.stories if is_removed(s, hidden_ids, hidden_reports)}
     stories = [s for s in edition.stories if s.story_id[:12] not in hidden_ids]
     if not stories:
         raise PublishError("Every story of this edition was removed from the website; nothing to publish.")
@@ -679,7 +717,7 @@ def _read_json(target: Target, path: str) -> dict | None:
 def site_files(edition: DailyEdition, settings: PublishSettings, current_index: dict | None) -> tuple[dict, dict]:
     """(public edition, {path: bytes}) for one edition."""
     d = edition.edition_date.isoformat()
-    public = public_edition(edition, settings.hidden_stories.get(d))
+    public = public_edition(edition, settings.hidden_stories.get(d), settings.hidden_reports.get(d))
     files = {edition_json_path(d): _dumps(public), edition_page_path(d): edition_page(public, settings.site_url),
              **index_files(merge_index(current_index, index_entry(public)), settings.site_url)}
     return public, files
@@ -816,12 +854,16 @@ def _read_json_at(target: Target, d: str) -> int | None:
 
 
 def hide_story(paths: DataPaths, edition: DailyEdition, story_id: str, target: Target | None = None) -> PublishResult:
-    """Remove one story from the public copy of this edition and republish it (a correction)."""
+    """Remove one story from the public copy of this edition and republish it (a correction). Later revisions of
+    the same date leave it out too, recognised by its reports (``is_removed``)."""
     settings = load_settings(paths)
     d = edition.edition_date.isoformat()
     hidden = settings.hidden_stories.setdefault(d, [])
     if story_id[:12] not in hidden:
         hidden.append(story_id[:12])
+    story = next((s for s in edition.stories if s.story_id[:12] == story_id[:12]), None)
+    if story is not None:
+        settings.hidden_reports.setdefault(d, {})[story_id[:12]] = removed_reports(story)
     save_settings(paths, settings)
     return publish_edition(paths, edition, target, settings=settings)
 

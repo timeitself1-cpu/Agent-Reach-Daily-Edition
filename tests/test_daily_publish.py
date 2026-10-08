@@ -246,6 +246,47 @@ def test_hide_story_republishes_without_it(daily_paths):
     assert "Christa Pike" not in gh.files["search/2026-10.json"].decode()
 
 
+def test_a_removed_story_stays_off_the_site_in_later_revisions_of_the_day(daily_paths, tmp_path):
+    """A story's id is a fingerprint of its reports, so the day's next revision usually gives it a new id. On
+    October 7 a removal kept by id alone came back for 28 of 144 continuing stories; the reports keep it off."""
+    site = P.FolderTarget(tmp_path / "site")
+    first, second = real_edition("2026-10-07-rc12-r1.json"), real_edition("2026-10-07-rc12-r2.json")
+    assert P.publish_edition(daily_paths, first, site).state == "published"
+    stun = next(s for s in first.stories if s.headline.startswith("France Halts Use of Stun Grenades"))
+    again = next(s for s in second.stories if s.headline.startswith("France Halts Use of Stun Grenades"))
+    assert again.story_id[:12] != stun.story_id[:12]  # the same story under a new id
+    assert P.hide_story(daily_paths, first, stun.story_id, site).state == "published"
+    assert P.publish_edition(daily_paths, second, site, automatic=True).state == "published"
+    for path in ("editions/2026-10-07.json", "daily/2026-10-07/index.html", "search/2026-10.json"):
+        assert "Stun Grenades" not in (tmp_path / "site" / path).read_text(encoding="utf-8")
+    assert json.loads((tmp_path / "site/editions/2026-10-07.json").read_text())["revision"] == 2
+    # settings written by rc13/rc14 (ids only) still load and still hide by id
+    old = json.loads(P.settings_file(daily_paths).read_text())
+    del old["hidden_reports"]
+    P.settings_file(daily_paths).write_text(json.dumps(old))
+    assert P.load_settings(daily_paths).hidden_stories["2026-10-07"] == [stun.story_id[:12]]
+
+
+def test_no_removed_story_comes_back_in_the_real_second_revisions():
+    """Each first-revision story of the six real October 7 pairs is removed in turn; the second revision's
+    public copy must not carry the story that continues it (more than half of its links)."""
+    came_back = continuing = 0
+    for first_name in sorted(p.name for p in REAL.glob("2026-10-07-*-r1.json")):
+        first, second = real_edition(first_name), real_edition(first_name.replace("-r1", "-r2"))
+        for s in first.stories:
+            links = {e.url for e in s.evidence if e.url}
+            same = next((t for t in second.stories
+                         if links and 2 * len(links & {e.url for e in t.evidence if e.url}) > len(links)), None)
+            if same is None:
+                continue
+            continuing += 1
+            pub = P.public_edition(second, [s.story_id], {s.story_id[:12]: P.removed_reports(s)})
+            came_back += same.story_id[:12] in {x["id"] for x in pub["stories"]}
+            # and nothing unrelated goes with it (the three extra stories it can take are the same event)
+            assert len(pub["stories"]) >= len(second.stories) - 2
+    assert continuing == 144 and came_back == 0
+
+
 def test_archive_search_files_per_month_repair_themselves(daily_paths, tmp_path):
     """search/YYYY-MM.json holds what the search page shows, newest date first; a month whose file is missing
     (editions published before search existed) is rebuilt from the edition files on the next publication."""
