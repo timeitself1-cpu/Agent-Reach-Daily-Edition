@@ -19,8 +19,8 @@ tracks each real-world event over time (timelines), and later feeds structured e
 
 ## Release and repository state
 
-- **Current release: rc15** (`agent_reach/daily/__init__.py`: `1.0.0rc15`), zip `Agent-Reach-Daily-v1.0rc15.zip`
-  delivered Oct 8. rc15 = rc14 + the backend audit's Step 1 (`docs/BACKEND-AUDIT.md`, PLAN Phase B1-B4): removed
+- **Current release: rc15** (`agent_reach/daily/__init__.py`: `1.0.0rc15`), zip `Agent-Reach-Daily-v1.0rc15b.zip`
+  delivered Oct 8 (rc15b = rc15 + a steadier window test after a CI failure on Python 3.10; CI green). rc15 = rc14 + the backend audit's Step 1 (`docs/BACKEND-AUDIT.md`, PLAN Phase B1-B4): removed
   stories stay off the site in later revisions, the hourly check retries a failed upload, website before podcast,
   access-key expiry warning. Not yet run on the PC.
 - **Branch:** `claude/great-hawking-t1h2cl` (rc15; fast-forwarded from rc14's `claude/sweet-ramanujan-xj36o5`).
