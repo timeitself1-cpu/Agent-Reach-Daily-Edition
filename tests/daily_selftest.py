@@ -904,6 +904,8 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--keep-scratch", action="store_true", help="keep the scratch data folders under %%TEMP%%")
     p.add_argument("--world", action="store_true", help=argparse.SUPPRESS)  # dry run of this harness, fake world
     args = p.parse_args(argv)
+    # the self-test starts the app many times: none of those starts may install an update in the middle of it
+    os.environ["AGENT_REACH_NO_UPDATE"] = "1"
 
     stamp = datetime.now().strftime("%Y%m%d-%H%M")
     out = (args.out or desktop()) / f"AgentReach-selftest-{stamp}"

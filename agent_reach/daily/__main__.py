@@ -100,7 +100,53 @@ def _refresh_command(args: argparse.Namespace, paths: DataPaths) -> int:
         if published is not None:
             logging.getLogger("agent_reach.daily").info("website catch-up %s: %s", published.state, published.message)
             print(f"website: {published.message}")
+        # and a new release of the app is installed while no window is open (a window keeps its own code)
+        from agent_reach.daily import updater
+        from agent_reach.daily.prefs import load_prefs as _load_prefs
+
+        outcome = updater.update(paths, auto_update=_load_prefs(paths)[0].auto_update, background=True)
+        if outcome.state in ("updated", "failed"):
+            logging.getLogger("agent_reach.daily").info("update %s: %s", outcome.state, outcome.message)
+            print(f"update: {outcome.message}")
     return result.code
+
+
+def _gui_command(args: argparse.Namespace, paths: DataPaths) -> int:
+    """Open the window, after installing a new release if one is out (silently; a small notice while it
+    installs). After an update the window is started again, so it runs the new code."""
+    import logging
+    import os
+
+    from agent_reach.daily import updater
+    from agent_reach.daily.gui import run_gui, run_with_notice
+    from agent_reach.daily.lock import LockBusy
+    from agent_reach.daily.logs import setup_logging
+    from agent_reach.daily.prefs import load_prefs
+
+    paths.ensure()
+    lock = updater.window_lock(paths)
+    try:
+        lock.acquire()  # held while the window is open: the hourly check never replaces its code
+    except LockBusy:
+        lock = None  # another window is open: it keeps its code, and this one opens without updating
+    try:
+        if lock is not None and not os.environ.get(updater.UPDATED_ENV):
+            setup_logging(paths, "gui", args.log_level)
+            try:
+                auto = load_prefs(paths)[0].auto_update
+            except Exception:  # noqa: BLE001 - unreadable settings: the window explains them; no update now
+                auto = False
+            outcome = run_with_notice(lambda announce: updater.update(paths, auto_update=auto, announce=announce))
+            if outcome is not None and outcome.state == "updated":
+                logging.getLogger("agent_reach.daily").info("restarting the window after the update")
+                lock.release()
+                lock = None
+                updater.relaunch(["--gui"] + (["--data-dir", str(args.data_dir)] if args.data_dir else []))
+                return 0
+        return run_gui(paths)
+    finally:
+        if lock is not None:
+            lock.release()
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -108,9 +154,7 @@ def main(argv: list[str] | None = None) -> int:
     paths = DataPaths.resolve(args.data_dir)
 
     if args.gui:
-        from agent_reach.daily.gui import run_gui
-
-        return run_gui(paths)
+        return _gui_command(args, paths)
 
     if args.refresh_if_due or args.refresh_now:
         try:
