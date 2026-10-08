@@ -5,20 +5,20 @@
  "editions": [
   {
    "date": "2026-10-08",
-   "revision": 5,
-   "generated_utc": "2026-10-08T21:35:47Z",
-   "stories": 52,
-   "lead": "Trump Administration Suspends Microsoft from Green Card Program",
+   "revision": 6,
+   "generated_utc": "2026-10-08T21:49:17Z",
+   "stories": 54,
+   "lead": "US Suspends Microsoft from Green Card Program",
    "headlines": [
-    "Margaret Hamilton, Pioneering Computer Scientist, Dies at 90",
-    "US Execution Goes Wrong, Public Execution to Be Held",
-    "Hurricane Isaias Strengthens to Category 2, Threatens Gulf Coast"
+    "USS Abraham Lincoln Returns Home After Long and Grueling Deployment",
+    "Hurricane Isaias Strengthens to Category 2, Threatens Gulf Coast",
+    "Trump Promises Not to Resume Iran Strikes Before Midterm Elections"
    ],
    "sections": {
     "News": 10,
     "Tech": 10,
     "Science & AI": 10,
-    "Sports": 8,
+    "Sports": 10,
     "Entertainment": 10,
     "Internet Culture": 4
    }
