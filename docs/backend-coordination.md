@@ -78,7 +78,7 @@ Public editions retain `schema_version: 1`. A publisher may add this optional to
 ```json
 "changes": {
   "compared_with": {"edition_date": "2026-10-08", "revision": 5},
-  "new": ["12hexstoryid0"],
+  "new": ["0317f2df6bc9"],
   "updated": [],
   "fading": [],
   "dropped": [{"headline": "Earlier headline", "category": "News"}]
