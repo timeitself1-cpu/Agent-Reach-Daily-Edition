@@ -1,6 +1,6 @@
 # Agent Reach frontend audit and improvement plan — round 2
 
-Reviewed October 8, 2026 against `main` at `90e605c` (the October 8 edition, revision 2: 53 stories). Round 1 is recorded in [frontend-audit.md](frontend-audit.md). Its five priorities (mobile navigation, search recovery, keyboard continuity, editorial hierarchy, and evidence/edition context) are complete. This round checks the site as it now ships, with a second day of real data, and plans the next set of improvements.
+Reviewed October 8, 2026 against `main` at `90e605c` (the October 8 edition, revision 2: 53 stories). Round 1 is recorded in [frontend-audit.md](frontend-audit.md). Its five priorities (mobile navigation, search recovery, keyboard continuity, editorial hierarchy, and evidence/edition context) are complete. This round checks the site as it now ships, with a second day of real data, and plans the next set of improvements. The follow-up roadmap, reviewed against revision 6 and the app's HTML export, is in [roadmap.md](roadmap.md).
 
 ## How this was checked, and its limits
 
