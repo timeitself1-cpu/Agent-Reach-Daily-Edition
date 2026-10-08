@@ -9,7 +9,8 @@ version of this document is a Claude doc; this file is the repository copy, and 
 5 Windows-only skips, 7 strict xfails; pyflakes clean; CI green on the last 4 runs. Measurements on the 12 real
 October 7 editions in `tests/fixtures/real/`. Nothing ran on the Windows PC or against the live site.
 
-**Status:** Step 1 (F1, F2, F5, F6) shipped in rc15 on Oct 8 (PLAN B1-B4); the rest is open.
+**Status:** Step 1 (F1, F2, F5, F6) shipped in rc15 on Oct 8 (PLAN B1-B4); round 2 Step A (N1, N5, F10, F11, F13,
+B11) in rc16 (PLAN B5, B6, B11-B13). Open: F3, F4, F7-F9, F12, F14, N2-N4, N6.
 
 ## Summary
 

@@ -19,10 +19,10 @@ tracks each real-world event over time (timelines), and later feeds structured e
 
 ## Release and repository state
 
-- **Current release: rc15** (`agent_reach/daily/__init__.py`: `1.0.0rc15`), zip `Agent-Reach-Daily-v1.0rc15b.zip`
-  delivered Oct 8 (rc15b = rc15 + a steadier window test after a CI failure on Python 3.10; CI green). rc15 = rc14 + the backend audit's Step 1 (`docs/BACKEND-AUDIT.md`, PLAN Phase B1-B4): removed
-  stories stay off the site in later revisions, the hourly check retries a failed upload, website before podcast,
-  access-key expiry warning. Not yet run on the PC.
+- **Current release: rc16** (`agent_reach/daily/__init__.py`: `1.0.0rc16`), zip `Agent-Reach-Daily-v1.0rc16.zip`
+  delivered Oct 8. rc16 = rc15 + backend audit round 2 Step A (PLAN B5, B6, B11-B13): a thin same-day refresh
+  never replaces a full edition, one bad story is left out instead of the day, the hourly retry stops on hopeless
+  failures. rc15 (audit Step 1) runs on the PC since Oct 8; rc16 not yet.
 - **Branch:** `claude/great-hawking-t1h2cl` (rc15; fast-forwarded from rc14's `claude/sweet-ramanujan-xj36o5`).
 - **Code commit (rc14):** `7cd47e7`, CI green. rc15's commits are on the branch (`git log`).
 - **Front end:** the user has ChatGPT changing the website (mobile layout, search clarity and recovery) since

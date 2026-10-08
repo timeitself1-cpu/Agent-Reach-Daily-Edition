@@ -5,6 +5,22 @@ Each release candidate is delivered as a zip of the repository. Extract it over 
 Your editions, settings and history (`%LOCALAPPDATA%\AgentReachDaily`) are kept. Earlier releases are
 summarised in `docs/HISTORY.md` ("Release history").
 
+## 1.0.0rc16 (zip rc16): the website never gets thinner
+
+From the second backend audit of October 8 (`docs/BACKEND-AUDIT.md`, round 2, Step A).
+
+1. **A poor refresh no longer replaces a good edition of the same day.** If a later refresh finds much less (for
+   example only 2 of 10 news sources answered), today's edition stays as it was, in the app and on the website,
+   and the app tries again later. The message says how much each refresh found.
+2. **One odd story no longer keeps the whole edition off the website.** A story whose text looks like a file
+   path on your PC is left out and named; the rest of the edition goes up.
+3. **The hourly retry stops when retrying cannot help** (a refused or expired key, a key without access, or a
+   newer edition already on the site). Saving a new key starts it again.
+4. **Test connection keeps the reason visible** when the last publication failed, and says to click Publish
+   latest edition to try again.
+5. Publishing reads less from GitHub and closes its connections; taking an edition off the website accepts only
+   a real date.
+
 ## 1.0.0rc15 (zip rc15): the website stays correct and up to date on its own
 
 From the backend audit of October 8 (`docs/BACKEND-AUDIT.md`, Step 1).
