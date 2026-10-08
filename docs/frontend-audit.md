@@ -29,3 +29,34 @@ Preserve JSON and HTML publishing contracts, source grouping, ranking, URLs, RSS
 3. Commit search recovery and keyboard routing fixes, with regression verification recorded here.
 
 Review the existing fixture on Home, Latest News, all category routes, Archive, Search, dated/current Daily, story detail, About and 404. Check desktop and 320/390/768px layouts, keyboard skip/source/previous-next paths, RSS links, and unchanged published artifacts. Simulate network failure and time-dependent states locally without modifying fixtures. No merge or production deployment is part of this pass.
+
+## Focused polish pass — completed
+
+Implemented the first-pass work in all five priorities. The visible navigation wraps through tablet widths, and the masthead reflows at 320px. Edition dates, revision and publication time retain their values in separate semantic elements. The simplified lead keeps the serif typography and dark palette; desktop cards use three columns. Source disclosures have larger targets, source titles are visibly linked, and the article has a Sources heading and focusable jump control that preserves its permanent URL.
+
+Search has visible labels, a submit button, responsive field layout and query guidance. Failed monthly requests can be retried without a page reload, partial results are explicitly identified, and zero results have a browse-by-date recovery link. Search still runs locally with the same matching, sorting, highlighting, monthly batching, pagination and URL parameters. Keyboard submission keeps focus. Skip links retain the mounted content and story hash, story transitions focus the new title, and ordinary anchors do not trigger the story router.
+
+### Verification
+
+- `node --check assets/site.js` and `git diff --check`: pass.
+- `tests/frontend.cjs`: 11 passing DOM regression tests using the committed JSON fixture. Includes eleven route shells; all 44 stories and their source URLs; complete category/latest lists; source jump and skip behavior; story focus; phrase/prefix/outlet queries; filters/sort/clear/submit; unavailable-month retry; stale and archived notices; safe text rendering; delayed-query races; and load failure recovery.
+- Multi-month batching, partial failure and pagination use copies of the existing fixture with dates adapted **in memory**. No fixture files or data contracts were edited.
+- Browser layout checks at 320, 390, 768 and 1440px on Home, Search, Archive, Technology, story detail and About. Additional 641px boundary checks after fixing clipped tablet navigation. Final checks found no horizontal page overflow and no clipped section navigation on the tested widths. Desktop and mobile screenshots are included in the handoff.
+- Browser keyboard checks: skip to main retains the story; Sources moves focus to evidence without changing its URL; next-story and browser Back focus the correct article title. Browser search section and relevance controls preserve URL state and return expected fixture results.
+- `editions/`, monthly search JSON, every existing HTML shell, RSS, sitemap, robots, fonts and `wrangler.jsonc` are unchanged. No new runtime dependency, build step or publishing change.
+
+This is a focused browser/DOM review, not a full screen-reader certification or Safari/Firefox/device lab audit. Only one real edition is available; long-history behavior was simulated locally. Production event timelines and the cross-edition registry remain deferred.
+
+### Reproduce the regression checks
+
+Use Node 24 and install the test-only dependency **outside the served repository**. From the repository root in PowerShell:
+
+```powershell
+npm install --prefix ../agent-reach-qa --no-audit --no-fund jsdom@30.1.2
+$env:NODE_PATH = (Resolve-Path ../agent-reach-qa/node_modules).Path
+node --test tests/frontend.cjs
+node --check assets/site.js
+git diff --check
+```
+
+For visual review, run `python -m http.server 8765 --bind 127.0.0.1` from the repository root and visit `http://127.0.0.1:8765/`. The test harness is development-only; it neither runs on the website nor writes data.
