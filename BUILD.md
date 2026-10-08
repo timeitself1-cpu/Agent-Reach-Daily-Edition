@@ -48,9 +48,9 @@ successful refresh. No manual copying, and no cloud AI. A failed upload never re
   no server and loads the newest 6 months first. Website commit 8161be5. (W9c)
 
 **Remaining:**
-- [~] W6 **(user):** create the fine-grained GitHub key, paste it in the app, tick Automatic publishing, run a
-  refresh, and confirm the live site updates. Not confirmed yet. The site currently shows the October 7
-  edition, seeded by hand from the same code.
+- [x] W6 **(user):** key created and saved on the PC (Oct 8, rc15); the first publication from the PC reached
+  the site repository (commit 90e605c: the October 8 edition, 53 stories). Automatic publishing is ticked; the
+  first automatic publication after a refresh is not yet seen.
 - [~] **DPAPI key storage on real Windows:** its test runs only in the user's self-test (rc14 self-test not
   run yet).
 - [ ] W7, not blocking: an og:image per edition; publishing state in the main window's status line.

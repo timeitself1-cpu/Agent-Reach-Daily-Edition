@@ -92,8 +92,8 @@ the archive, RSS, the sitemap, and `/search/` (runs in the browser, newest 6 mon
 
 - **The rc14 Windows self-test has NOT been run by the user.** No multi-day data exists in the repository.
 - **Multi-day validation is NOT done.** The answer key covers one day (12 editions of October 7).
-- Website publishing from the PC is unconfirmed: the key setup (PLAN W6) and a live automatic publication
-  are not confirmed.
+- Website publishing from the PC works (Oct 8, rc15): key saved, first publication by hand reached the site
+  repo (commit 90e605c, Oct 8 r2). The first AUTOMATIC publication after a refresh is not yet confirmed.
 - DPAPI key storage is untested on Windows; its test runs in the self-test.
 
 ## Known limitations and open issues

@@ -171,9 +171,10 @@ new agents, new LLM infrastructure, accounts, databases, pipeline changes.
       Technology / Science & AI / World, archive, about (method, coverage, corrections, privacy, app), 404;
       checked at 1440 and 390 px with Playwright (no errors, no horizontal scroll).
 - [x] W5. Seed the site with the newest real edition (Oct 7 r2, 44 stories) through the folder target; site commit 91d14bc on main.
-- [~] W6. NEEDS the user: create the fine-grained key (docs/PUBLISHING.md), paste it, tick Automatic
-      publishing, run a refresh; the next edition should appear on the site within minutes. Then check the
-      `Live website now shows` line.
+- [x] W6. Key setup on the PC (Oct 8, rc15): key saved (DPAPI, Windows), the first publication by hand
+      ("Publish latest edition") reached the site repo as commit 90e605c (Oct 8 r2, 53 stories, index + feed +
+      sitemap + search). Automatic publishing is now ticked; the first AUTOMATIC publication after a refresh is
+      still to be seen. (Before the key, refreshes published nothing: automatic publishing was off.)
 - [ ] W7. Later (not blocking): an og:image per edition; show the publishing state in the main window's status
       line; Windows test of DPAPI on the PC (`test_access_key_is_stored_outside_the_repo_and_forgotten` runs
       there in the self-test's pytest).
@@ -207,6 +208,8 @@ Goal: the step that feeds the live site is as safe as the rest. One commit and o
 - [ ] B8b. Search entries carry their edition's revision (`v`, optional field) so the site can refetch a stale
       cached month (search recovery, docs/BACKEND-AUDIT.md). Acceptance: publish test expects `v`; a revision rewrites it.
 - [ ] B9. With Phase 2.5/3: publish the registry's event id per story + an `aliases` map from old story ids (F3).
+- [ ] B11. The window's Test connection replaces the last failure's reason with "Connected..." while the headline
+      still says "Publication failed" (seen on the PC, Oct 8): keep the reason visible (or say it is an old result).
 - [ ] B10. `windows-latest` CI job (F7); `constraints.txt` with the CI-tested versions for Setup and CI (F8).
 
 ## Phase 1: "Report a problem with this story" (the feedback loop)
@@ -375,3 +378,4 @@ Each rule starts from quotes in `docs/REAL-EDITION-FINDINGS.md`; each gets a fix
 - 2026-10-08 | backend audit | (this commit) | audit of rc14 (pipeline, worker, store, publisher): 510 passed (Tk, xvfb), pyflakes clean; 14 findings, 2 high (removed stories return after a revision: 28/144 on fixtures; failed upload waits a day); Phase B + docs/BACKEND-AUDIT.md | user decides: Phase B (rc15) now, or wait for the rc14 self-test zip (Phase 2.1b)
 - 2026-10-08 | B1-B4, B7 | bcf298a, 30cf56e, 8ec5bf0, 0f44921, (this commit) | rc15: removed stories stay off in later revisions (0 of 144 back, was 28), hourly catch-up of a failed upload, website before podcast, key-expiry warning; full suite with Tk green | user installs rc15 (and runs the rc14/rc15 self-test); then B5-B6 or Phase 2.1b
 - 2026-10-08 | rc15b | 90eba6d, (this commit) | CI on rc15 failed once on 3.10 (publishing window test busy > 20 s: Tk finalizer in a worker thread); window-test fixture collects garbage on the Tk thread; CI green on 3.10 and 3.12; zip rc15b | user installs rc15b; then B5-B6 or Phase 2.1b
+- 2026-10-08 | W6 | site 90e605c | first publication from the user's PC (rc15, by hand after saving the key): Oct 8 r2, 53 stories, one commit with index, feed, sitemap, search; automatic publishing now on | first automatic publication after the next refresh; B11 (window message)
