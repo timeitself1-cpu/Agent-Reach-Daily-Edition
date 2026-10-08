@@ -1,8 +1,28 @@
 {
  "schema": "agent_reach.public_index",
  "schema_version": 1,
- "latest": "2026-10-07",
+ "latest": "2026-10-08",
  "editions": [
+  {
+   "date": "2026-10-08",
+   "revision": 2,
+   "generated_utc": "2026-10-08T19:48:01Z",
+   "stories": 53,
+   "lead": "USS Abraham Lincoln Returns Home to San Diego After Record Deployment",
+   "headlines": [
+    "OpenAI's Revenue Is Reportedly $20 Billion Less Than Previously Projected",
+    "US Charges Maduro with Ordering Torture of Opponents and Americans",
+    "Trump Administration Suspends Microsoft from Green Card Program"
+   ],
+   "sections": {
+    "News": 10,
+    "Tech": 10,
+    "Science & AI": 10,
+    "Sports": 10,
+    "Entertainment": 10,
+    "Internet Culture": 3
+   }
+  },
   {
    "date": "2026-10-07",
    "revision": 2,
