@@ -409,7 +409,8 @@ async def _attempt(paths: DataPaths, prefs: DailyPrefs, store: EditionStore, *, 
     edition = assemble_edition(report, selection, prefs, started=started, completed=completed,
                                trigger=trigger, config_fingerprint=config_fingerprint(report.effective_config),
                                brief_stats=brief_stats)
-    decision = evaluate_publication(edition, prefs, allow_extractive=allow_extractive)
+    same_day, _ = store.load_date(edition.edition_date)  # the edition this one would replace as a new revision
+    decision = evaluate_publication(edition, prefs, allow_extractive=allow_extractive, same_day=same_day)
     if not decision.publishable:
         return _failed(paths, prefs, trigger, started, now_fn, "no_update", EXIT_NO_UPDATE,
                        "No new edition: " + " ".join(decision.reasons) + " The previous edition is kept.",

@@ -405,3 +405,33 @@ def test_the_hourly_check_never_undoes_a_withdrawal(daily_env, monkeypatch, tmp_
     assert publish.withdraw(daily_env.paths, d).state == "failed"
     assert publish.load_status(daily_env.paths).failed_action == "withdraw"
     assert publish.catch_up(daily_env.paths, now=soon) is None  # a failed withdrawal is never turned into a publish
+
+
+def test_a_thin_refresh_never_replaces_a_full_edition_of_the_same_day(daily_env, tmp_path, monkeypatch):
+    """Backend audit round 2, N1 (Oct 8): a later run where few sources answered replaced the day's full edition,
+    on the website too. Now it is 'no new edition' and both keep the full one."""
+    from agent_reach.daily import publish
+    from agent_reach.daily.prefs import save_prefs
+
+    prefs, _ = load_prefs(daily_env.paths)
+    save_prefs(daily_env.paths, prefs.model_copy(update={"min_ok_sources": 1}))
+    site = tmp_path / "site"
+    monkeypatch.setattr(publish, "github_target", lambda paths, settings=None, client=None: publish.FolderTarget(site))
+    publish.save_settings(daily_env.paths, publish.PublishSettings(enabled=True))
+    publish.save_token(daily_env.paths, "test-key")
+    full = _refresh(daily_env).edition
+    assert full.coverage.sources_ok == 3
+    daily_env.net.down.update({"hn.algolia.com", "news.google.com"})  # two of the three sources stop answering
+    out = _refresh(daily_env)
+    assert out.code == R.EXIT_NO_UPDATE and "found much less than today's edition" in out.message, out.message
+    assert "from 1 source, against" in out.message and "previous edition is kept" in out.message
+    kept = EditionStore(daily_env.paths).load_latest().edition
+    assert kept.run_id == full.run_id and kept.revision == 1
+    import json
+
+    assert json.loads((site / f"editions/{full.edition_date.isoformat()}.json").read_text())["revision"] == 1
+    # the check can be turned off; then the thin run replaces the edition as before
+    prefs, _ = load_prefs(daily_env.paths)
+    save_prefs(daily_env.paths, prefs.model_copy(update={"min_share_of_same_day": 0.0}))
+    out = _refresh(daily_env)
+    assert out.code == R.EXIT_PUBLISHED and out.edition.revision == 2

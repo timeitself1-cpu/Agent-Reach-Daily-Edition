@@ -112,6 +112,9 @@ class DailyPrefs(BaseModel):
     max_tech_only_share: float = Field(default=0.34, ge=0.0, le=1.0)  # of Top Stories
     min_useful_stories: int = Field(default=3, ge=1, le=50)
     min_ok_sources: int = Field(default=2, ge=1, le=20)
+    # a later refresh of the same day replaces that day's edition (and its page on the website) only when at least
+    # this share of the sources and of the stories of the edition it replaces came through; 0 turns the check off
+    min_share_of_same_day: float = Field(default=0.5, ge=0.0, le=1.0)
     max_story_age_hours: float = Field(default=48.0, ge=6.0, le=336.0)  # older publication times are not "today"
     # processing budget: articles grouped and labelled per refresh (more = broader but slower on CPU)
     max_items_for_llm: int = Field(default=260, ge=40, le=400)
