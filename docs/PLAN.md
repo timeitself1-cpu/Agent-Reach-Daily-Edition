@@ -206,12 +206,20 @@ stories reuse their labels (faster refreshes). Acceptance: the strict xfails
 `test_the_lead_story_survives_the_next_refresh` pass (remove their marks), and churn metrics below improve
 on every fixture pair.
 
-- [ ] 2.0 Resolve 0.5 (the existing events.py/identity.py work). If it is available, review it against this
-      plan and adopt what fits; do not build a second, parallel design.
-- [ ] 2.1 Measure first: `tests/churn_report.py` (or a test helper) computes for each fixture pair:
-      stories matched by URL overlap, by `changes._match`, "new"/"gone" counts, and whether each Top Story
-      survives. Record the baseline numbers in the Progress log (r1->r2 on Oct 7: 20 of 35 matched, 3
-      identical headlines; selftest2: the #1 story vanished).
+- [x] 2.0 Resolve 0.5 (the existing events.py/identity.py work): not in this repository; the user deleted it on
+      Oct 7 ("no longer needed"). Phase 2 builds on rc12's within-run gate (`pipeline/event_identity.py`) instead.
+- [x] 2.1 Measure first (Oct 8): `tests/cross_edition.py` + `fixtures/real/cross_edition_gold.json`, an answer key
+      for the 12 Oct 7 editions (536 stories, 256 events, 108 in more than one edition; built from shared reports
+      on top of the per-edition gold, plus 9 hand-checked splits, 12 joins, 16 'related' pairs).
+      `python -m tests.cross_edition` scores a matcher. **Baseline, today's `changes._match`:** consecutive
+      editions P 0.967 R 0.954 (7 false continuations, e.g. Trump's golf-club "retreat" continued as the forces'
+      "retreat"; Cornell/Yates as the Maine debate); **6 h+ apart P 0.966 R 0.752** (56 missed: the same event
+      with all-new articles and new wording, e.g. Apple + LG, Decisions API, French protests); Top Stories still
+      listed in the next edition 73/100, 6 h+ apart 111/288 (selection churn: 2.2/2.6).
+      `tests/test_cross_edition.py`: floor test + strict xfail target (6 h+ apart P >= 0.99, R >= 0.90).
+      Gap: all 12 editions are one day; day-to-day pairs need real editions from consecutive days (2.1b).
+- [ ] 2.1b Real editions from several consecutive days: the self-test zip carries only today's two; add the
+      last 7 days of editions (news only, checked for personal data) so the answer key can span days.
 - [ ] 2.2 Find the cause of churn on the fixtures before designing: how much comes from (a) which ~260 of
       ~1,450 items are selected for clustering (`cleaner.select_for_llm` budget, per-feed floors), (b)
       HDBSCAN grouping differences, (c) story selection caps/ranking (`edition.select_stories`), (d) model
@@ -317,3 +325,4 @@ Each rule starts from quotes in `docs/REAL-EDITION-FINDINGS.md`; each gets a fix
 - 2026-10-08 | W1-W5 | (this commit), site 91d14bc | rc13: website redesign + opt-in automatic publishing (one GitHub commit per edition, withdraw, story removal, key in DPAPI); site seeded with the real Oct 7 r2 edition | W6: user saves the key and runs a refresh
 - 2026-10-08 | W8 | (this commit), site 5ad9ae3 | 499 passed (Tk, xvfb), pyflakes clean; review follow-ups: RSS feed + sitemap rebuilt with every publication (tests extended), robots.txt, consistent source counts, generic README paths | W6: user saves the key and runs a refresh; W9 waits for the user
 - 2026-10-08 | W9c search | (this commit), site 8161be5 | archive search: publisher writes search/YYYY-MM.json in the edition commit (self-repairing, withdraw-aware, 1 new test); /search/ page (newest 6 months first, accents ignored, phrases, section filter); Playwright 1440/390 on a 10-month copy | PR of rc13 to the default branch; then Phase 2 (event identity across editions)
+- 2026-10-08 | Phase 2.0-2.1 | (this commit) | cross-edition answer key (12 editions, 256 events) + churn report; baseline changes._match: near P 0.967 R 0.954, 6h+ apart P 0.966 R 0.752, top stories kept 111/288 far apart; floor test + strict xfail target | 2.1b multi-day editions from the self-test; 2.2 causes; 2.4 matcher

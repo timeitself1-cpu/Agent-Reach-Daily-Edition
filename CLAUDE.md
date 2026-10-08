@@ -149,6 +149,8 @@ tests/
   test_real_editions.py     fixtures from the user's real editions (regressions + strict xfails)
   event_corpus.py      labelled real editions (fixtures/real/event_gold.json) + pairwise P/R/F1, false merges
   test_identity_gate.py     no false merges / no bridges on that corpus; named October 7 cases
+  cross_edition.py     answer key: which stories of different editions are one event (fixtures/real/cross_edition_gold.json
+                       rules) + churn report of a matcher (`python -m tests.cross_edition`); test_cross_edition.py
   embedding_benchmark.py    rc11 vs gate (offline) and nomic vs EmbeddingGemma (--ollama); Benchmark-Embeddings.ps1
   html_fixture.py      exported edition HTML -> fixture JSON
   daily_selftest.py    the self-test the user runs (Test-AgentReachDaily.ps1); --world = dry run here

@@ -1,0 +1,48 @@
+{
+ "about": "Rules for the cross-edition answer key of the twelve October 7, 2026 editions (tests/cross_edition.py). Stories of different editions are one event when they share a report; 'force' gives stories (by headline start) their own event, 'join' joins events that share no report but are one occurrence, 'related' pairs are different occurrences of one ongoing topic and are not scored. Hand-checked on October 8, 2026 from the shared-report clusters and every pair of events with two or more shared headline words.",
+ "force": {
+  "hp-rtx-spark-laptop-leak": ["Nvidia RTX Spark for $2,999.99"],
+  "microsoft-surface-laptop-ultra": ["Microsoft Launches Surface Laptop Ultra", "Microsoft Debuts Nvidia-Powered Surface Laptop Ultra",
+                                     "Microsoft Releases New Nvidia-Chip AI PCs", "Microsoft Says New $2,599 Laptop"],
+  "france-halts-stun-grenades": ["France Halts Use of Stun Grenades", "France Halts Stun Grenade", "France Suspends Use of Stun Grenades"],
+  "france-student-protests": ["French Students Protest", "French Riot Police Fire Tear Gas", "Student Protests Turn Violent in France",
+                              "Student Protests in France Turn Violent"],
+  "french-pm-debt-vow": ["French PM Vows to Address Debt"],
+  "french-mayor-protest-clash": ["French Mayor Caught in Viral Video"],
+  "oct7-children-cope": ["Israeli and Palestinian Kids Cope"],
+  "oct7-accountability": ["Israelis Demand Accountability", "Netanyahu Faces Reckoning"],
+  "oct7-commemoration": ["Israel Marks Three Years", "Israel Commemorates Victims", "Israelis Mourn"]
+ },
+ "join": [
+  ["Google Launches AI-Powered Gaming Platform", "Google Launches Playground for Easy Game Creation"],
+  ["Apple Is Reportedly Partnering with LG", "Apple and LG Reportedly Teaming up"],
+  ["PlayStation Bringing Back Ape Escape", "Sony Is Reportedly Plotting to Revive Classic PlayStation"],
+  ["Possible Plague Death at Russian Lab", "WHO Investigates Death of Plague"],
+  ["Ravens Acquire Center Cam Jurgens", "Why Eagles Are Trading Cam Jurgens", "How Trading Cam Jurgens Impacts"],
+  ["OpenAI Rolls Out GPT-6 in ChatGPT", "ChatGPT Gets GPT-6"],
+  ["Jon Rahm Leaves LIV Golf", "Jon Rahm Will Not Return"],
+  ["Disney Plus Set as Official Streaming Home", "Disney+ to Stream Super Bowl"],
+  ["Man Eyed Mall of America", "FBI Arrests Man for Plotting Mass Shooting"],
+  ["Paramount Completes $111B", "Warner and Paramount Merge to Form Skydance"],
+  ["OpenAI Dumps 372", "OpenAI Publishes Solutions to", "OpenAI Debuts Dozens of New Math", "OpenAI's Mathematical Findings", "OpenAI's Release of Mathematical Findings"],
+  ["Decisions API Enters Public Beta", "OpenAI Launches Decisions API"]
+ ],
+ "related": [
+  ["Nvidia RTX Spark for $2,999.99", "Microsoft Launches Surface Laptop Ultra"],
+  ["Microsoft's $6,000 Surface RTX Spark Dev Box", "Microsoft Launches Surface Laptop Ultra"],
+  ["France Halts Stun Grenade", "French Students Protest"],
+  ["French PM Vows to Address Debt", "French Students Protest"],
+  ["French Mayor Caught in Viral Video", "French Students Protest"],
+  ["Israeli and Palestinian Kids Cope", "Israel Marks Three Years"],
+  ["Netanyahu Faces Reckoning", "Israel Marks Three Years"],
+  ["Israeli and Palestinian Kids Cope", "Netanyahu Faces Reckoning"],
+  ["New Leaks Provide First Look at Apple and LG", "Apple and LG Reportedly Teaming up"],
+  ["Paramount Games Studio and WB Games Merge", "Paramount Completes $111B"],
+  ["Skydance to Make Paramount & Warner Bros. Lots", "Paramount Completes $111B"],
+  ["Eva Marie Saint and Frank G. Mancuso", "Eva Marie Saint Dies"],
+  ["FortiBleed Attacks Continue", "FBI Warns of Ongoing FortiBleed"],
+  ["Azerbaijan Denies Link to German Spy", "Former German Spy Chief Arrested"],
+  ["Stephen A. Smith Apologizes for Lane Johnson", "Lane Johnson Retires"],
+  ["Grading In-Season NFL Trades", "Ravens Acquire Center Cam Jurgens"]
+ ]
+}
