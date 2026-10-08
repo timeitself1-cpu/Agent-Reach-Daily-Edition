@@ -11,6 +11,7 @@ from __future__ import annotations
 
 import asyncio
 import json
+from datetime import timedelta
 from pathlib import Path
 from types import SimpleNamespace
 
@@ -296,13 +297,18 @@ def test_selftest_brings_back_the_recent_days_of_editions(daily_paths, tmp_path)
 
 
 def test_real_second_revisions_still_replace_the_first_but_a_thin_one_does_not():
-    """Backend audit round 2, N1 (Oct 8): the same-day check must let every real second revision of October 7
-    through, and stop a run where 2 of 10 sources answered and 3 stories passed."""
+    """Historical healthy revisions pass after an hour; rapid revisions and thin runs wait."""
     from agent_reach.daily.edition import evaluate_publication
 
     prefs = DailyPrefs()
     for first_name in sorted(p.name for p in (Path(__file__).parent / "fixtures" / "real").glob("2026-10-07-*-r1.json")):
         first, second = _edition(first_name), _edition(first_name.replace("-r1", "-r2"))
+        decision = evaluate_publication(second, prefs, same_day=first)
+        if not decision.publishable:
+            assert any("60 minutes" in reason for reason in decision.reasons), first_name
+        # After the minimum interval, the historical healthy revision is still accepted.
+        second.generation_completed_utc = max(second.generation_completed_utc,
+                                              first.generation_completed_utc + timedelta(hours=1))
         assert evaluate_publication(second, prefs, same_day=first).publishable, first_name
     full = _edition("2026-10-07-rc12d2-r2.json")
     thin = full.model_copy(deep=True)
@@ -314,5 +320,6 @@ def test_real_second_revisions_still_replace_the_first_but_a_thin_one_does_not()
     # fewer stories because the user lowered 'stories per section' to 3 is not a thin run (6 sections: up to 18)
     fewer = full.model_copy(deep=True)
     fewer.stories = fewer.stories[:12]
+    fewer.generation_completed_utc += timedelta(hours=1)
     assert evaluate_publication(fewer, prefs.model_copy(update={"max_stories": 3}), same_day=full).publishable
     assert not evaluate_publication(fewer, prefs, same_day=full).publishable

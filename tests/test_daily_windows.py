@@ -53,6 +53,7 @@ def world(tmp_path):
 
 def _worker(paths):
     return subprocess.run(world_command(["--refresh-now", "--data-dir", str(paths.root)]), cwd=str(PROJECT_ROOT),
+                          env={**os.environ, 'AR_WORLD_ADVANCE_HOUR': '1'},
                           capture_output=True, text=True, timeout=180)
 
 

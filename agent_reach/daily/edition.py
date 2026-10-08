@@ -29,7 +29,7 @@ from pydantic import BaseModel, ConfigDict, Field, field_validator, model_valida
 from agent_reach.daily.prefs import GENERAL_NEWS_SOURCES, TECH_SOURCES, DailyPrefs
 from agent_reach.daily.timeutil import CENTRAL_TZ_NAME, central_date, parse_utc
 from agent_reach.daily.changes import EditionChanges
-from agent_reach.daily.strength import EvidenceStrength, assess
+from agent_reach.daily.strength import EvidenceStrength, assess, strength_of
 from agent_reach.pipeline.cleaner import MONTH_DAY_GUARD, significant_tokens
 from agent_reach.models import PUBLISHED_FUTURE_TOLERANCE, CategoryEnum, CleanedTrendItem, MacroCluster, PipelineReport, RawTrendItem
 
@@ -61,7 +61,7 @@ SENTENCE_SPLIT_RX = re.compile(
     r"(?:(?<=[.!?])|(?<=[.!?][\"'\u2019\u201d]))" + MONTH_DAY_GUARD +
     r"(?<!\bSt\.)(?<!\bMr\.)(?<!\bMs\.)(?<!\bDr\.)(?<!\bJr\.)(?<!\bSr\.)(?<!\bMrs\.)(?<!\bGen\.)"
     r"(?<!\bSen\.)(?<!\bRep\.)(?<!\bGov\.)(?<!\bvs\.)(?<!\bU\.S\.)(?<!\bU\.K\.)(?<!\bU\.N\.)(?<!\bE\.U\.)(?<!\bNo\.)"
-    r"(?<!\bBros\.)(?<!\bInc\.)(?<!\bCorp\.)(?<!\bCo\.)(?<!\bLtd\.)"
+    r"(?<!\bBros\.)(?<!\bInc\.)(?<!\bCorp\.)(?<!\bCo\.)(?<!\bLtd\.)(?<!\bP\.T\.)"
     r"(?<![\s(\"][A-Z]\.)"  # a middle initial: 'Biologist James D. Watson' (a real edition, October 7)
     r"\s+(?=[A-Z0-9\"'(\u2018\u201c])"
 )
@@ -897,6 +897,19 @@ FIRST_PERSON_RX = re.compile(
 #: A story told only through video clips (highlights, reactions, recaps) is not a report.
 CLIP_TITLE_RX = re.compile(r"\b(?:highlights|full game|full match|full episode|reaction|recap|live ?stream)\b",
                            re.IGNORECASE)
+FILLER_TITLE_RX = re.compile(r"\b(?:trailers?|podcasts?|mock drafts?|first take|debate show|explainer|explained|"
+                             r"breaks? down a play|video essay|uncanny valley)\b", re.I)
+
+
+def qualifies(story: Story, now: datetime) -> bool:
+    strength = strength_of(story, now)
+    if strength.independent_reports >= 2:
+        return True
+    if any(FILLER_TITLE_RX.search(title) for title in [story.headline, *(e.title for e in story.evidence)]):
+        return False
+    news_type = any(e.source in {'news_rss', 'google_news'} for e in story.evidence)
+    strong_signal = story.relevance_score >= 9 and story.raw_item_count >= 3
+    return news_type or strong_signal
 #: A category may place this many stories beyond ``max_per_category`` in Top Stories when they are strong.
 STRONG_EXTRA_PER_CATEGORY = 2
 
@@ -962,6 +975,8 @@ def select_stories(stories: list[Story], prefs: DailyPrefs, *, now: datetime) ->
             sel.dropped_stale += 1
         elif is_weak(s):
             sel.dropped_weak += 1
+        elif not qualifies(s, now):
+            sel.dropped_weak += 1
         elif is_live_blog_only(s):
             sel.dropped_live_blog += 1
         elif any(same_topic(s, c) for c in candidates):
@@ -984,6 +999,16 @@ def select_stories(stories: list[Story], prefs: DailyPrefs, *, now: datetime) ->
             per_cat[s.category.value] += 1
         else:
             sel.held_back += 1
+
+    # Once there is a useful body of corroborated news, keep single-outlet items below half the edition.
+    # A short section is preferable to padding. On an unusually sparse day, eligible news can still publish.
+    corroborated = sum(strength_of(s, now).independent_reports >= 2 for s in chosen)
+    if corroborated >= prefs.min_useful_stories:
+        singles = sorted((s for s in chosen if strength_of(s, now).independent_reports < 2),
+                         key=lambda s: (s.relevance_score, s.combined_score), reverse=True)
+        permitted = {id(s) for s in singles[:corroborated - 1]}
+        sel.held_back += len(singles) - len(permitted)
+        chosen = [s for s in chosen if strength_of(s, now).independent_reports >= 2 or id(s) in permitted]
 
     tech_cap = per_section if prefs.max_tech_only_share >= 1 else int(per_section * prefs.max_tech_only_share)
     top: list[Story] = []
@@ -1353,13 +1378,19 @@ def evaluate_publication(edition: DailyEdition, prefs: DailyPrefs, *, allow_extr
     share = prefs.min_share_of_same_day
     if same_day is not None and same_day.edition_date == edition.edition_date and share > 0 and not reasons:
         before_sources, before_stories = same_day.coverage.sources_ok, len(same_day.stories)
-        # fewer stories because the user lowered 'stories per section' since then is not a thin run
         allowed = prefs.max_stories * max(1, len({s.category for s in same_day.stories}))
         if cov.sources_ok < share * before_sources or len(edition.stories) < share * min(before_stories, allowed):
             reasons.append(f"This refresh found much less than today's edition ({plural(len(edition.stories), 'story', 'stories')} "
                            f"from {plural(cov.sources_ok, 'source', 'sources')}, against "
                            f"{plural(before_stories, 'story', 'stories')} from {plural(before_sources, 'source', 'sources')}); "
                            "some news sources may not have answered.")
+    if same_day is not None and same_day.edition_date == edition.edition_date:
+        interval = (edition.generation_completed_utc - same_day.generation_completed_utc).total_seconds()
+        from agent_reach.daily.changes import _match
+        breaking = any(strength_of(s, edition.generation_completed_utc).level == 'strong'
+                       and _match(s, same_day.stories) is None for s in top_stories(edition)[:3])
+        if interval < 3600 and not breaking:
+            reasons.append('Same-day updates wait at least 60 minutes unless new Strong coverage reaches the top 3.')
     return PublishDecision(publishable=not reasons, reasons=reasons)
 
 

@@ -1006,7 +1006,7 @@ class SemanticClusterer:
         return False, f"model '{wanted}' not pulled (run: ollama pull {wanted})"
 
     async def _chat_json(
-        self, system: str, user: str, schema: dict[str, Any], label: str = "LLM call"
+        self, system: str, user: str, schema: dict[str, Any], label: str = "LLM call", *, max_attempts: int | None = None
     ) -> dict[str, Any]:
         """One structured Ollama call with live progress logging.
 
@@ -1019,7 +1019,7 @@ class SemanticClusterer:
             raise ClusteringError(f"{label} skipped: the model stopped answering earlier in this run")
         client = self._get_client()
         last_exc: Exception | None = None
-        for attempt in range(self.settings.llm_max_retries + 1):
+        for attempt in range(max_attempts if max_attempts is not None else self.settings.llm_max_retries + 1):
             started = time.perf_counter()
             heartbeat = asyncio.create_task(self._heartbeat(label, started))
             try:
@@ -1167,6 +1167,7 @@ class SemanticClusterer:
         for d in drafts:
             if len(index.components(d.item_ids, d.entities)) != 1:
                 raise ValueError("final cluster coherence validation failed")
+        await self._verify_summaries(drafts, by_id, regenerate=llm_ok)
         clusters, final_discards = self._finalize(drafts, by_id)
         for r, ids in final_discards.items():
             discards[r].extend(ids)
@@ -1177,6 +1178,33 @@ class SemanticClusterer:
                                  pair_log=index.gate.pair_log())
         outcome.assert_partition(items)
         return outcome
+
+    async def _verify_summaries(self, drafts, by_id, *, regenerate):
+        from agent_reach.pipeline.summary_checks import validate_summary, repair_text, extractive_fallback
+        for draft in drafts:
+            if self.is_insufficient(draft.summary, draft.headline):
+                continue
+            members = sorted((by_id[i] for i in draft.item_ids), key=lambda m: m.heuristic_score, reverse=True)
+            sources = [(m.normalized_title, m.context or m.description) for m in members]
+            errors = validate_summary(draft.summary, draft.headline, sources)
+            if errors and regenerate:
+                prompt = 'Group 1:\n' + '\n'.join('  - ' + self._render_item(m) for m in members[:10])
+                prompt += '\nRewrite this headline/summary once. Fix: ' + '; '.join(errors)
+                prompt += '\nEvery name and number must be supported in the same cited sentence context. Include a subject and the headline entities/action. Return group_id 1.'
+                self.label_calls += 1
+                try:
+                    data = await self._chat_json(CLUSTER_SYSTEM_PROMPT, prompt, _relabel_schema(), 'summary verification',
+                                                 max_attempts=1)
+                    revised = _RelabelResponse.model_validate(data)
+                    label = next((g for g in revised.groups if g.group_id == 1), None)
+                    if label:
+                        draft.headline, draft.summary = label.headline, label.summary
+                except (ClusteringError, ValueError):
+                    self.label_calls_failed += 1
+                errors = validate_summary(draft.summary, draft.headline, sources)
+            if errors:
+                draft.headline, draft.summary = extractive_fallback(sources)
+            draft.summary = repair_text(draft.summary)
 
     async def _group(self, items: list[CleanedTrendItem], try_embeddings: bool,
                      index: LinkIndex | None = None) -> tuple[list[list[int]], list[int], str]:
@@ -1594,7 +1622,8 @@ class SemanticClusterer:
             sentences = [f"{headline.rstrip('.')} is drawing attention across trend sources."]
         if len(sentences) == 1:
             sentences.append(closing)
-        return sanitize_summary(" ".join(sentences[:2]), entities)
+        from agent_reach.pipeline.summary_checks import repair_text
+        return repair_text(sanitize_summary(" ".join(sentences[:2]), entities))
 
     @staticmethod
     def is_insufficient(summary: str, headline: str = "") -> bool:

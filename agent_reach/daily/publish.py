@@ -64,6 +64,8 @@ from agent_reach.daily.registry import evidence_keys
 from agent_reach.daily.strength import SIGNAL_SOURCES, origin, strength_of
 from agent_reach.pipeline.cleaner import dedupe_key
 from agent_reach.daily.timeutil import format_central, format_long_date, utcnow
+from agent_reach.outlets import outlet_name
+from agent_reach.ingestion.google_urls import is_google_news
 
 log = logging.getLogger(__name__)
 
@@ -330,6 +332,8 @@ def _outlet(name: str) -> str:
 
 
 def _public_story(s: Story, edition: DailyEdition, change: str, top_rank: int | None) -> dict:
+    from agent_reach.pipeline.summary_checks import verified_story
+    headline, summary = verified_story(s)
     strength = strength_of(s, edition.generation_completed_utc)
     sources, seen = [], set()
     origins: set[str] = set()
@@ -353,11 +357,12 @@ def _public_story(s: Story, edition: DailyEdition, change: str, top_rank: int | 
         if key in seen:
             continue
         seen.add(key)
-        sources.append({"outlet": _outlet(ev.publisher or ev.source_name), "via": ev.source_name, "title": ev.title,
+        sources.append({"outlet": outlet_name(ev.publisher, ev.url) or _outlet(ev.source_name),
+                        "via": "Google News" if is_google_news(url) else ev.source_name, "title": ev.title,
                         "url": url, "published_utc": _utc(ev.published_at_utc), "kind": kind})
     labels = [label for label in s.labels if label in ("Hot", "Rising")]
     return {"id": s.story_id[:12], "rank": s.rank, "top_rank": top_rank, "category": s.category.value,
-            "headline": s.headline, "summary": list(s.sentences), "why_it_matters": s.why_it_matters,
+            "headline": headline, "summary": summary, "why_it_matters": s.why_it_matters,
             "change": change, "labels": labels, "newest_published_utc": _utc(newest_published(s)),
             "coverage": {"level": strength.level, "independent_reports": strength.independent_reports,
                          "publishers": list(strength.publishers), "repeats": strength.duplicates_collapsed,
@@ -406,7 +411,8 @@ def public_edition(edition: DailyEdition, hidden: list[str] | None = None,
     hidden_ids = {h[:12] for h in hidden or []}
     hidden_ids |= {s.story_id[:12] for s in edition.stories if is_removed(s, hidden_ids, hidden_reports)}
     local = [s for s in edition.stories
-             if s.story_id[:12] not in hidden_ids and looks_local(_public_story(s, edition, "", None))]
+             if s.story_id[:12] not in hidden_ids and
+             (looks_local([s.headline, *s.sentences]) or looks_local(_public_story(s, edition, "", None)))]
     hidden_ids |= {s.story_id[:12] for s in local}
     if left_out is not None:
         left_out.extend(s.rank for s in local)
@@ -439,6 +445,15 @@ def public_edition(edition: DailyEdition, hidden: list[str] | None = None,
                     for s in stories],
     }
     public["sections"] = [sec for sec in public["sections"] if sec["ids"]]
+    if changes is not None:
+        public['changes'] = {
+            'compared_with': public['compared_with'],
+            'new': [c.story_id[:12] for c in changes.new if c.story_id in kept],
+            'updated': [c.story_id[:12] for c in changes.updated if c.story_id in kept],
+            'fading': [c.story_id[:12] for c in changes.signals_down if c.story_id in kept],
+            'dropped': [{'headline': c.headline, 'category': getattr(c, 'category', '')}
+                        for c in changes.gone if c.story_id[:12] not in hidden_ids],
+        }
     assert_public(public)
     return public
 

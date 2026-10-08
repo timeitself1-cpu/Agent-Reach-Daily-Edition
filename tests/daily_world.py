@@ -17,6 +17,8 @@ Behaviour switches (environment variables):
     AR_WORLD_HANG_AT           a progress stage ("cluster", "brief", ...) at which the worker hangs in a
                                blocking call that ignores cancellation (a stuck driver or DNS call)
     AR_WORLD_WATCHDOG_S        overrides the worker's hard watchdog limit (seconds)
+    AR_WORLD_ADVANCE_HOUR      "1": simulate a later same-day collection for repeat-publication tests
+    AR_WORLD_BRIEF_CALLS       model calls that succeed in the brief pass before it disconnects
 """
 
 from __future__ import annotations
@@ -79,6 +81,35 @@ def install() -> None:
     EN._resolve_public = public_dns
     down = os.environ.get("AR_WORLD_MODEL_DOWN") == "1"
     R.default_ollama_probe = lambda prefs: F.OllamaDown() if down else F.OllamaUp()
+    if os.environ.get('AR_WORLD_ADVANCE_HOUR') == '1':
+        from datetime import datetime, timedelta, timezone
+        from agent_reach.daily.state import load_state
+        from agent_reach.daily.store import EditionStore
+        real_refresh = R.refresh
+
+        def refresh(paths, **kwargs):
+            state, _ = load_state(paths)
+            when = datetime.now(timezone.utc)
+            if state.last_success_utc is not None:
+                when = max(when, state.last_success_utc + timedelta(hours=1))
+            else:
+                previous = EditionStore(paths).load_latest().edition
+                if previous is not None:
+                    when = max(when, previous.generation_completed_utc + timedelta(hours=1))
+            kwargs.setdefault('now_fn', lambda: when)
+            return real_refresh(paths, **kwargs)
+
+        R.refresh = refresh
+    brief_calls = _env_float('AR_WORLD_BRIEF_CALLS')
+    if brief_calls is not None:
+        real_progress = R.ProgressWriter.__call__
+
+        def progress(self, stage, message):
+            if stage == 'brief':
+                model.dies_after = model.n + brief_calls
+            real_progress(self, stage, message)
+
+        R.ProgressWriter.__call__ = progress
     limit = _env_float("AR_WORLD_RUN_LIMIT_S")
     if limit:
         real_load = R.load_prefs

@@ -360,17 +360,19 @@ def test_refresh_persists_changes_against_the_previous_edition(daily_env):
     page = render_edition_html(first)
     assert "first edition: there is no earlier edition to compare with" in page.lower()
     daily_env.net.down.add("sports")  # the sports feed disappears in the next refresh
-    second = refresh(daily_env.paths, trigger="manual", force=True, ollama_probe=lambda p: OllamaUp()).edition
+    second = refresh(daily_env.paths, trigger="manual", force=True, ollama_probe=lambda p: OllamaUp(),
+                     now_fn=lambda: first.generation_completed_utc + timedelta(hours=1)).edition
     ch = EditionStore(daily_env.paths).load_latest().edition.changes
     assert ch is not None and ch == second.changes
     assert ch.compared_run_id == first.run_id and ch.compared_revision == 1 and second.revision == 2
     gone = {c.headline for c in ch.gone}
-    assert {"Riverton Hawks Win Championship Final in Overtime", "Kestrel City Marathon Sets Course Record"} <= gone
+    assert not gone  # Feed failure alone does not evict yesterday's still-fresh listed stories.
+    assert {s.story_id for s in first.stories if s.category.value == "Sports"} <= {s.story_id for s in second.stories}
     assert not ch.new and ch.unchanged >= 5
     page = render_edition_html(second)
-    assert "<details><summary>What changed since last refresh (2 no longer listed)</summary>" in page
+    assert "<details><summary>What changed since last refresh (No material changes)</summary>" in page
     assert page.index("What changed since last refresh") > page.index('<section class="sec"')  # after the news
-    assert "Riverton Hawks Win Championship Final in Overtime" in page
+    assert any(s.headline in page for s in first.stories if s.category.value == "Sports")
 
 
 def test_demo_edition_has_no_change_section():

@@ -46,6 +46,7 @@ class ChangeItem(BaseModel):
     rank: int | None = None  # rank in the new edition (None for "gone")
     previous_rank: int | None = None
     detail: str = ""
+    category: str = ""
 
 
 class EditionChanges(BaseModel):
@@ -181,7 +182,7 @@ def compare_editions(previous, current) -> EditionChanges:
             changes.unchanged += 1
     for old in remaining:
         changes.gone.append(ChangeItem(kind="gone", headline=old.headline, story_id=old.story_id,
-                                       previous_rank=old.rank, detail="not in today's selection"))
+                                       previous_rank=old.rank, category=old.category.value, detail="not in today's selection"))
     return changes
 
 
