@@ -430,6 +430,11 @@ test('missing story recovery never guesses on ties, weak matches, or absent head
     assert.match(p.d.querySelector('.story-recovery').textContent,/full edition/);
     p.close();
   }
+  ed.stories[0].headline='What You Need To Know About Alpha';
+  const boilerplate=await open('/daily/2026-10-07/?headline=What+You+Need+To+Know+About+Beta#story-abcdef123456',{fetch:u=>u.includes('/editions/2026')?ed:undefined});
+  assert.equal(boilerplate.d.querySelector('.story'),null);
+  assert.match(boilerplate.d.querySelector('.story-recovery').textContent,/full edition/);
+  boilerplate.close();
 });
 
 test('withdrawn edition JSON and dated 404 shells provide archive recovery',async()=>{

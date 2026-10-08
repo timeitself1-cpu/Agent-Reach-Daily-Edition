@@ -415,15 +415,17 @@
   const COVER = {strong: 'Strong coverage', moderate: 'Moderate coverage', limited: 'Limited coverage'};
   const fold = t => String(t || '').normalize('NFKD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
   const norm = t => ' ' + fold(t).replace(/[^\p{L}\p{N}]+/gu, ' ').trim() + ' ';
+  const commonHeadlineWords = new Set('a about an and are as at be by for from has have how in is it of on or that the this to was were what will with you your'.split(' '));
   function recoverHeadline(ed, hint) {
     if (!hint) return null;
     const key = norm(hint).trim();
     if (!key) return null;
     const exact = ed.stories.filter(s => norm(s.headline).trim() === key);
     if (exact.length) return exact.length === 1 ? exact[0] : null;
-    const words = new Set(key.split(' '));
+    const words = new Set(key.split(' ').filter(w => !commonHeadlineWords.has(w)));
+    if (words.size < 3) return null;
     const candidates = ed.stories.map(story => {
-      const own = new Set(norm(story.headline).trim().split(' '));
+      const own = new Set(norm(story.headline).trim().split(' ').filter(w => !commonHeadlineWords.has(w)));
       const shared = [...words].filter(w => own.has(w)).length;
       return {story, shared, size: own.size};
     }).sort((a, b) => b.shared - a.shared);
