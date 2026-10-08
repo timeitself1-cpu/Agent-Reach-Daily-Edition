@@ -278,3 +278,41 @@ def test_selftest_reports_a_failed_offline_suite_as_fail(tmp_path, monkeypatch):
     status = {c.name: c.status for c in report.checks}  # only the stray files: the suite itself passed
     assert status["full offline suite (window, Windows locks, process kill/cancel, pipeline)"] == "PASS"
     assert "window tests ran inside the test suite" not in status
+
+
+def test_selftest_brings_back_the_recent_days_of_editions(daily_paths, tmp_path):
+    """Phase 2.1b: the answer key for event identity needs real editions from consecutive days. The self-test
+    copies the newest dated editions (read only) and skips a damaged file instead of touching it."""
+    import tests.daily_selftest as st
+
+    src = FIXTURES / "2026-10-07-rc12d2-r2.json"
+    for day in range(1, 18):
+        (daily_paths.editions_dir / f"2026-09-{day:02d}.json").write_bytes(src.read_bytes())
+    (daily_paths.editions_dir / "2026-09-18.json").write_text("{damaged", encoding="utf-8")
+    copied = st.copy_history(daily_paths, tmp_path / "history")
+    assert copied == [f"2026-09-{d:02d}" for d in range(4, 18)]  # 14 newest readable dates; 18 is damaged
+    assert (daily_paths.editions_dir / "2026-09-18.json").read_text(encoding="utf-8") == "{damaged"
+    assert sorted(p.name for p in (tmp_path / "history").iterdir())[0] == "2026-09-04.json"
+
+
+def test_real_second_revisions_still_replace_the_first_but_a_thin_one_does_not():
+    """Backend audit round 2, N1 (Oct 8): the same-day check must let every real second revision of October 7
+    through, and stop a run where 2 of 10 sources answered and 3 stories passed."""
+    from agent_reach.daily.edition import evaluate_publication
+
+    prefs = DailyPrefs()
+    for first_name in sorted(p.name for p in (Path(__file__).parent / "fixtures" / "real").glob("2026-10-07-*-r1.json")):
+        first, second = _edition(first_name), _edition(first_name.replace("-r1", "-r2"))
+        assert evaluate_publication(second, prefs, same_day=first).publishable, first_name
+    full = _edition("2026-10-07-rc12d2-r2.json")
+    thin = full.model_copy(deep=True)
+    thin.stories = thin.stories[:3]
+    thin.coverage.sources_ok = 2
+    decision = evaluate_publication(thin, prefs, same_day=full)
+    assert not decision.publishable and "3 stories from 2 sources, against 44 stories" in decision.reasons[0]
+    assert evaluate_publication(thin, prefs).publishable  # alone (a new day) it would still be an edition
+    # fewer stories because the user lowered 'stories per section' to 3 is not a thin run (6 sections: up to 18)
+    fewer = full.model_copy(deep=True)
+    fewer.stories = fewer.stories[:12]
+    assert evaluate_publication(fewer, prefs.model_copy(update={"max_stories": 3}), same_day=full).publishable
+    assert not evaluate_publication(fewer, prefs, same_day=full).publishable

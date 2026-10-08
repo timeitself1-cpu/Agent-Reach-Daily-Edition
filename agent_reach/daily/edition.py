@@ -1326,8 +1326,14 @@ class PublishDecision:
     reasons: list[str]
 
 
-def evaluate_publication(edition: DailyEdition, prefs: DailyPrefs, *, allow_extractive: bool = False) -> PublishDecision:
-    """Publication is stricter than ledger validity: an empty run can balance and still be useless."""
+def evaluate_publication(edition: DailyEdition, prefs: DailyPrefs, *, allow_extractive: bool = False,
+                         same_day: DailyEdition | None = None) -> PublishDecision:
+    """Publication is stricter than ledger validity: an empty run can balance and still be useless.
+
+    ``same_day`` is the edition of the same date that this one would replace (as a new revision). A refresh where
+    fewer than ``prefs.min_share_of_same_day`` of its sources answered, or of its stories passed, keeps that
+    edition: before rc16 a run with 2 of 10 sources and 3 stories replaced a full edition of the day, on the
+    website too (backend audit round 2, N1, Oct 8)."""
     reasons: list[str] = []
     cov = edition.coverage
     if cov.sources_ok == 0:
@@ -1344,6 +1350,16 @@ def evaluate_publication(edition: DailyEdition, prefs: DailyPrefs, *, allow_extr
                            "required by your settings.")
         else:
             reasons.append("The local model was not used, and AI summaries are required by your settings.")
+    share = prefs.min_share_of_same_day
+    if same_day is not None and same_day.edition_date == edition.edition_date and share > 0 and not reasons:
+        before_sources, before_stories = same_day.coverage.sources_ok, len(same_day.stories)
+        # fewer stories because the user lowered 'stories per section' since then is not a thin run
+        allowed = prefs.max_stories * max(1, len({s.category for s in same_day.stories}))
+        if cov.sources_ok < share * before_sources or len(edition.stories) < share * min(before_stories, allowed):
+            reasons.append(f"This refresh found much less than today's edition ({plural(len(edition.stories), 'story', 'stories')} "
+                           f"from {plural(cov.sources_ok, 'source', 'sources')}, against "
+                           f"{plural(before_stories, 'story', 'stories')} from {plural(before_sources, 'source', 'sources')}); "
+                           "some news sources may not have answered.")
     return PublishDecision(publishable=not reasons, reasons=reasons)
 
 

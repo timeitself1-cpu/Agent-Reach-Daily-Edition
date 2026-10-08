@@ -7,7 +7,7 @@ from __future__ import annotations
 
 import pytest
 
-from tests.cross_edition import EDITIONS, load_gold, report
+from tests.cross_edition import EDITIONS, load_gold, registry_matcher, report
 
 
 def test_the_answer_key_is_complete_and_consistent():
@@ -33,7 +33,19 @@ def test_todays_matcher_does_not_get_worse():
     assert far.precision >= 0.96 and far.recall >= 0.75
 
 
-@pytest.mark.xfail(strict=True, reason="Phase 2 target: same event recognised across a day, no false continuations")
-def test_events_are_recognised_hours_apart_without_false_continuations():
-    far = report()["6h+ apart"]
+def test_the_event_registry_matcher_on_october_7():
+    """daily/registry.py on the same pairs (Oct 8): 6 h+ apart P 0.995 R 0.915 (today's matcher: 0.966 / 0.752);
+    consecutive P 0.977 R 0.968. Its remaining false continuations all come from stories that were already two
+    events inside one run (the golf-club and the forces' "retreat"; the French PM and a mayor)."""
+    scores = report(registry_matcher)
+    near, far = scores["consecutive"], scores["6h+ apart"]
+    assert far.precision >= 0.99 and far.recall >= 0.91
+    assert near.precision >= 0.97 and near.recall >= 0.96
+    assert far.recall > report()["6h+ apart"].recall + 0.15
+
+
+@pytest.mark.xfail(strict=True, reason="Phase 2 target on HELD-OUT pairs: P >= 0.99 and R >= 0.90 hours apart; "
+                                       "Oct 8: P 0.991 R 0.898. To be re-based on a multi-day held-out set (PLAN 2.1b)")
+def test_events_are_recognised_hours_apart_on_held_out_editions():
+    far = report(registry_matcher, "held-out")["6h+ apart"]
     assert far.precision >= 0.99 and far.recall >= 0.90

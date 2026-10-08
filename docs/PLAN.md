@@ -1,7 +1,8 @@
 # Agent Reach Daily: plan
 
-The live roadmap. **A new session starts here** (after `CLAUDE.md`): find the current phase, take the first
-unchecked sub-task, do it, then update this file.
+The live step-by-step plan and progress log. **A new session reads `CLAUDE.md`, `HANDOFF.md` (current state) and
+`BUILD.md` (the four-phase roadmap: its Phase 1 = Phase W here, Phase 2 = Phase 2 here) first**, then takes the
+first unchecked sub-task of the current phase here, does it, and updates this file.
 
 ## How to use and update this file
 
@@ -19,6 +20,12 @@ unchecked sub-task, do it, then update this file.
 
 ## Where we are (October 8, 2026)
 
+- **Oct 8 (later): PR #4 merged rc13c into the default branch (9674c46).** rc14 on `claude/sweet-ramanujan-xj36o5`
+  (restarted from the default branch): event registry, observing only, and the self-test's 14-day history.
+  User's Phase 2 order (Oct 8): identity before timelines; answer key over >= 7 real days; matching measured
+  apart from selection/publishing churn; diagnose before choosing; registry with stable ids, first/last seen,
+  evidence, confidence, safe ambiguity; benchmark on a held-out multi-day set (targets, not guarantees);
+  timelines only after that. No UI redesign, no installer. Design and results: `docs/EVENT-IDENTITY.md`.
 - **rc13 (zip rc13), branch `claude/sweet-ramanujan-xj36o5`: website + automatic publishing (Phase W below),
   re-prioritised by the user on October 8** ("UX first, ship early"). getagentreach.dev is a news site rendered
   from published editions; the app publishes each validated edition by itself once the user saves a GitHub access
@@ -26,6 +33,10 @@ unchecked sub-task, do it, then update this file.
   (done, W9c), (3) **cross-edition event identity = Phase 2, next**, (4) story timelines once matching is reliable.
   No Windows installer yet. "Keep changes modular; avoid repeated testing or redesigning working features."
   Also open: the one-time key setup on the PC (W6).
+
+- **Oct 8 (evening): backend audit** (`docs/BACKEND-AUDIT.md`, shared as a Claude doc). The user has ChatGPT on the
+  website front end (mobile layout, search clarity and recovery). Phase B below = the audit's plan; B1-B7 are
+  unblocked while Phase 2 waits for the rc14 self-test zip. Start Phase B only when the user says so.
 
 ## Where we were (October 7, 2026)
 
@@ -160,9 +171,10 @@ new agents, new LLM infrastructure, accounts, databases, pipeline changes.
       Technology / Science & AI / World, archive, about (method, coverage, corrections, privacy, app), 404;
       checked at 1440 and 390 px with Playwright (no errors, no horizontal scroll).
 - [x] W5. Seed the site with the newest real edition (Oct 7 r2, 44 stories) through the folder target; site commit 91d14bc on main.
-- [~] W6. NEEDS the user: create the fine-grained key (docs/PUBLISHING.md), paste it, tick Automatic
-      publishing, run a refresh; the next edition should appear on the site within minutes. Then check the
-      `Live website now shows` line.
+- [x] W6. Key setup on the PC (Oct 8, rc15): key saved (DPAPI, Windows), the first publication by hand
+      ("Publish latest edition") reached the site repo as commit 90e605c (Oct 8 r2, 53 stories, index + feed +
+      sitemap + search). Automatic publishing is now ticked; the first AUTOMATIC publication after a refresh is
+      still to be seen. (Before the key, refreshes published nothing: automatic publishing was off.)
 - [ ] W7. Later (not blocking): an og:image per edition; show the publishing state in the main window's status
       line; Windows test of DPAPI on the PC (`test_access_key_is_stored_outside_the_repo_and_forgotten` runs
       there in the self-test's pytest).
@@ -170,10 +182,44 @@ new agents, new LLM infrastructure, accounts, databases, pipeline changes.
       91d14bc went live or the deploy did not run): RSS `feed.xml` + `sitemap.xml` written by the publisher in the
       same commit as the index (`index_files`), `robots.txt`, feed links; source counts made consistent (strip
       "10 of 10 kinds of source", About lists them; README 114 -> 112 feeds); README's personal paths made generic.
-- [~] W9. From the same review, ordered by the user on Oct 8: (a) [~] PR of rc13 into the default branch (GitHub
+- [~] W9. From the same review, ordered by the user on Oct 8: (a) [x] PR #4 merged (Oct 8, 9674c46) (GitHub
       visitors still see the rc12 README); (b) [ ] story timelines on the site, AFTER Phase 2 makes event matching
       across editions reliable; (c) [x] archive search (monthly search files written by the publisher, `/search/`);
       (d) NOT NOW (user): a one-click Windows installer and GitHub Releases.
+
+## Phase B: backend audit fixes (audit of October 8; `docs/BACKEND-AUDIT.md`)
+
+Goal: the step that feeds the live site is as safe as the rest. One commit and one test per item; no new services.
+
+- [x] B1. Removed stories stay removed (F1): `hidden_stories` also keeps each removed story's report keys (URL,
+      normalized title); a story is left out when more than half of its reports were removed (the registry's rule).
+      Acceptance: fixture test (remove every r1 story, publish r2): 0 come back (today 28 of 144).
+- [x] B2. Retry publication on the hourly check (F2): when not due, `--refresh-if-due` publishes the latest edition
+      if publishing is on and the site lacks it (status failed or older revision), at most once an hour.
+      Acceptance: fake-world process test: first upload 503, next tick publishes, third makes no commit.
+- [x] B3. Publish before the podcast (F6). Acceptance: refresh test asserts the stage order.
+- [x] B4. Access-key expiry warning (F5) from GitHub's `github-authentication-token-expiration` header, 7 days ahead.
+- [x] B5. One bad story, not the whole day (F10): `assert_public` per story; the status names what was left out.
+- [x] B6. Validate dates in publish/withdraw/hide (F13); read each file once per pinned head, close clients (F11).
+- [x] B7. Release rc15 = Step 1 (B1-B4), zip to the user (Oct 8). B5-B6 (Step 2) go into the next build.
+      B2's test runs the real `--refresh-if-due` command in-process with a fake GitHub (not a separate process).
+- [ ] B8. `docs/PUBLIC-DATA.md` + `docs/schema/` (edition, index, search month) + a real example; a test validates
+      the publisher's output for all fixtures (F4). Share with the front end; F9/F12 only if it agrees.
+- [-] B8b. (dropped Oct 8: the website revalidates search files instead) Search entries carry their edition's revision (`v`, optional field) so the site can refetch a stale
+      cached month (search recovery, docs/BACKEND-AUDIT.md). Acceptance: publish test expects `v`; a revision rewrites it.
+- [ ] B9. With Phase 2.5/3: publish the registry's event id per story + an `aliases` map from old story ids (F3).
+- [x] B11. The window's Test connection replaces the last failure's reason with "Connected..." while the headline
+      still says "Publication failed" (seen on the PC, Oct 8): keep the reason visible (or say it is an old result).
+- [x] B12. (audit round 2, N1, HIGH) A later same-day refresh with fewer than half the sources answered or half the
+      stories of the day's current revision is "no new edition" (locally and on the site); a manual refresh may still
+      publish it. Acceptance: the 44-story fixture is not replaced by a 3-story revision from 2 of 10 sources.
+- [x] B13. (N5) The hourly catch-up pauses after 401/403/"newer revision" until a new key or a new edition.
+- [ ] B14. (N3) A signal source names its platform ("Mastodon (link to theguardian.com)"), never a news outlet as
+      a signal. Counting linked articles as reports is a separate decision for the user (rc12 D kept them out).
+- [ ] B15. (N2) The publisher keeps New/Updated only when `compared_with` is the edition on the site.
+- [ ] B16. (N4) Dated pages from a template file the website owns; then F9 (pre-rendered story text).
+- [ ] B17. (N6) Scheduled task limit = refresh limit + 25 min (or cap the setting at 95 min).
+- [ ] B10. `windows-latest` CI job (F7); `constraints.txt` with the CI-tested versions for Setup and CI (F8).
 
 ## Phase 1: "Report a problem with this story" (the feedback loop)
 
@@ -218,16 +264,26 @@ on every fixture pair.
       listed in the next edition 73/100, 6 h+ apart 111/288 (selection churn: 2.2/2.6).
       `tests/test_cross_edition.py`: floor test + strict xfail target (6 h+ apart P >= 0.99, R >= 0.90).
       Gap: all 12 editions are one day; day-to-day pairs need real editions from consecutive days (2.1b).
-- [ ] 2.1b Real editions from several consecutive days: the self-test zip carries only today's two; add the
-      last 7 days of editions (news only, checked for personal data) so the answer key can span days.
-- [ ] 2.2 Find the cause of churn on the fixtures before designing: how much comes from (a) which ~260 of
+- [~] 2.1b Real editions from several consecutive days. Done in rc14: the self-test copies the newest 14 dated
+      editions + `state/events.json` into `history/`. NEEDS the user's next self-test zip; then extend the answer
+      key to >= 7 calendar days (hand-checked positives, negatives, related pairs), hold out the last days.
+- [~] 2.2 (Oct 8: churn measured apart from matching, docs/EVENT-IDENTITY.md: carry-over 44% consecutive,
+      16% 6 h+ apart; Top Stories again top 48% / 15%.) Find the cause of churn on the fixtures before designing: how much comes from (a) which ~260 of
       ~1,450 items are selected for clustering (`cleaner.select_for_llm` budget, per-feed floors), (b)
       HDBSCAN grouping differences, (c) story selection caps/ranking (`edition.select_stories`), (d) model
       relevance scores varying run to run. Use the logs in the self-test zips. Write the findings here.
-- [ ] 2.3 Event registry: a persistent store (`state/events.json` or a SQLite table in `data/agent_reach.db`)
+- [x] 2.3 (Oct 8, rc14) `daily/registry.py`, `state/events.json`, recorded by the refresh worker after the edition
+      is saved, OBSERVING ONLY (no edition uses it yet; never fails a refresh). Stable ids, first/last seen, report
+      keys, key names, fading word profile, appearances with tier/confidence/reason/undecided candidates; no
+      embedding centroid yet (vectors are not kept per story; wording tf-idf instead). Original text: a persistent store (`state/events.json` or a SQLite table in `data/agent_reach.db`)
       of events: id, first_seen, last_seen, headline history, key names, URL set, embedding centroid
       (from the run's vectors), category, last story text. Owned by the refresh worker (lock holder).
-- [ ] 2.4 Matching a new run's clusters to registry events: shared article URLs; then key-name + event-word
+- [~] 2.4 (Oct 8) Matching implemented on stories (not clusters) against events of the last 7 days: shared
+      reports as a SHARE of the story's reports (> 50%) + wording agreement; else tf-idf wording with a rare
+      non-name word; names never alone; undecided within 90% -> kept apart. Oct 7 held-out pairs 6 h+ apart:
+      P 0.991 R 0.898 (today's matcher 0.989 / 0.703); target P >= 0.99 R >= 0.90 still a strict xfail. Remaining
+      false continuations come from stories already mixed inside a run. Re-check on the multi-day held-out set
+      (2.1b) before 2.5. Original text: Matching a new run's clusters to registry events: shared article URLs; then key-name + event-word
       fingerprint; then embedding cosine of centroids with a strict threshold; never merge two clusters of
       the same run into one event unless they share URLs (invariant 2: the LLM never decides). Unit tests
       from the fixture pairs (Messi farewell #15/#37; plague story day to day; the Nobel prizes must stay
@@ -326,3 +382,11 @@ Each rule starts from quotes in `docs/REAL-EDITION-FINDINGS.md`; each gets a fix
 - 2026-10-08 | W8 | (this commit), site 5ad9ae3 | 499 passed (Tk, xvfb), pyflakes clean; review follow-ups: RSS feed + sitemap rebuilt with every publication (tests extended), robots.txt, consistent source counts, generic README paths | W6: user saves the key and runs a refresh; W9 waits for the user
 - 2026-10-08 | W9c search | (this commit), site 8161be5 | archive search: publisher writes search/YYYY-MM.json in the edition commit (self-repairing, withdraw-aware, 1 new test); /search/ page (newest 6 months first, accents ignored, phrases, section filter); Playwright 1440/390 on a 10-month copy | PR of rc13 to the default branch; then Phase 2 (event identity across editions)
 - 2026-10-08 | Phase 2.0-2.1 | (this commit) | cross-edition answer key (12 editions, 256 events) + churn report; baseline changes._match: near P 0.967 R 0.954, 6h+ apart P 0.966 R 0.752, top stories kept 111/288 far apart; floor test + strict xfail target | 2.1b multi-day editions from the self-test; 2.2 causes; 2.4 matcher
+- 2026-10-08 | PR #4, Phase 2.1b-2.4 | 9674c46 (merge), (this commit) | rc13c merged; rc14: matching vs carry-over vs Top Stories reported apart; diagnosis (false continuations = URL overlap with mixed stories + entity sets; misses = new articles, one shared name); daily/registry.py observing in the refresh; Oct 7 held-out 6h+: P 0.991 R 0.898 (was 0.989/0.703); self-test brings 14 days + events.json | user runs the self-test on rc14; extend the answer key to >= 7 days
+- 2026-10-08 | handoff | (this commit) | BUILD.md (roadmap, 4 phases), HANDOFF.md (state), CLAUDE.md updated; docs/HANDOFF.md -> docs/HISTORY.md; rc14 self-test NOT run yet | user sends the rc14 self-test zip; then 2.1b multi-day answer key
+- 2026-10-08 | backend audit | (this commit) | audit of rc14 (pipeline, worker, store, publisher): 510 passed (Tk, xvfb), pyflakes clean; 14 findings, 2 high (removed stories return after a revision: 28/144 on fixtures; failed upload waits a day); Phase B + docs/BACKEND-AUDIT.md | user decides: Phase B (rc15) now, or wait for the rc14 self-test zip (Phase 2.1b)
+- 2026-10-08 | B1-B4, B7 | bcf298a, 30cf56e, 8ec5bf0, 0f44921, (this commit) | rc15: removed stories stay off in later revisions (0 of 144 back, was 28), hourly catch-up of a failed upload, website before podcast, key-expiry warning; full suite with Tk green | user installs rc15 (and runs the rc14/rc15 self-test); then B5-B6 or Phase 2.1b
+- 2026-10-08 | rc15b | 90eba6d, (this commit) | CI on rc15 failed once on 3.10 (publishing window test busy > 20 s: Tk finalizer in a worker thread); window-test fixture collects garbage on the Tk thread; CI green on 3.10 and 3.12; zip rc15b | user installs rc15b; then B5-B6 or Phase 2.1b
+- 2026-10-08 | W6 | site 90e605c | first publication from the user's PC (rc15, by hand after saving the key): Oct 8 r2, 53 stories, one commit with index, feed, sitemap, search; automatic publishing now on | first automatic publication after the next refresh; B11 (window message)
+- 2026-10-08 | backend audit round 2 | (this commit) | rc15 + first live edition (site 90e605c): publishing proven; N1 HIGH (thin same-day revision replaces a full one, reproduced), N2 New badges vs unpublished revision (40/53), N3 newspapers as signals, N4-N6 low; B12-B17 | user decides: rc16 (B12, B5-B6, B13, B11) next
+- 2026-10-08 | B12, B5-B6, B13, B11 (round 2 Step A) | a3af246, fcd024d, 7d9bb1c, 260a032, (this commit) | rc16: thin same-day refresh refused (fixture: 44-story edition kept), one bad story left out not the day, dates checked, reads once (6 not 8), hopeless failures not retried hourly, connection test keeps the failure reason | user installs rc16; then Step B (B14 signals, B15 badges)

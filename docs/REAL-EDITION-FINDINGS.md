@@ -4,6 +4,18 @@ Real editions are the test material for the intelligence / event layer. Each fin
 the story, and the regression test that holds it (`tests/test_real_editions.py`; `xfail` = not fixed yet).
 Fixtures: `tests/fixtures/real/` (edition JSON as the app wrote it; public news only).
 
+## October 8, 2026, 2:48 PM: the first edition published from the PC (rc15, website commit 90e605c)
+
+The public copy only (`editions/2026-10-08.json` on the website; the full edition is not in this repository yet).
+53 stories, 1,512 reports read, 10 of 10 sources. Backend audit round 2 (`docs/BACKEND-AUDIT.md`):
+- #6 "Margaret Hamilton Dies at 90": The Guardian, The New York Times and BBC News appear as kind "signal" (their
+  links came through Mastodon posts), so the site shows a newspaper as "social/search signal" (N3).
+- 40 of 53 stories badged New against revision 1, which never reached the site (N2).
+- 37 of 53 single-report stories; 1 of 53 "why it matters" (#34, "The call affected the outcome of the game.").
+- Category: #2 OpenAI's revenue under Science & AI; #11 Anne Carson's literature Nobel under Entertainment.
+- Promotional/evergreen: #50 "Physical Media and IRL Experiences Are Booming" (a Variety summit takeaway), #52 "The
+  Triple-i Initiative October 2026". #34 (one source) summary drifts to other games ("The Dodgers reached the NLCS").
+
 ## October 7, 2026: rc11 self-test on the user's Windows PC
 
 Two editions 9 minutes apart (`2026-10-07-selftest-r1.json`, `-r2.json`; r2 after setting sections to 8).
@@ -57,7 +69,7 @@ on top, and YouTube answered again (the October 7 night outage was transient).
    NEW tag is only useful once stories have an identity across editions (event layer).
 2. **No Hot or Rising labels** ("the sources or settings changed since the refresh used for comparison"): the
    settings v8 feed change after the 8:03 AM refresh. Momentum is lost for a day after any feed change because
-   the scorer compares the whole configuration (HANDOFF open item).
+   the scorer compares the whole configuration (docs/HISTORY.md open item).
 3. **Thin single-outlet filler in the category sections**: 8 of 9 Tech stories, 5 of 6 Science & AI and 6 of 7
    Entertainment stories are one outlet each, including a shopping deal ("LG Evo B6 4K 120Hz OLED TV Drops to
    Under $1,000 for Prime Day" passed the promotional filter), a TV listing ("MLB Playoff Games on TV Today:

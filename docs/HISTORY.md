@@ -1,9 +1,9 @@
-# Handoff: Agent Reach Daily (state after 1.0.0rc12)
+# History: Agent Reach Daily up to 1.0.0rc12 (October 1-7, 2026)
 
-For a new Claude session picking up this project. Read `CLAUDE.md` first (commands, invariants,
-conventions, workflow), then **`docs/PLAN.md` (the live roadmap: continue at its first unchecked
-sub-task)**. This file is the history and background. `README.md` is the user guide;
-`docs/architecture.md` the internals.
+**Historical, not current.** This was the session handoff until rc12; "Where things stand" and "Open items"
+below describe October 7. The current state is in `HANDOFF.md` (repository root), the roadmap in `BUILD.md`,
+the step-by-step plan in `docs/PLAN.md`. Kept for the release history, the rc9-rc12 accuracy work, the open
+quality items (still valid unless PLAN.md ticks them) and the working tips.
 
 ## Where things stand
 

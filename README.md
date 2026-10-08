@@ -123,7 +123,7 @@ Everything lives in `%LOCALAPPDATA%\AgentReachDaily` (for example
 | `cache\editions\YYYY-MM-DD.json` | the daily editions (kept 30 days; the newest is never deleted) |
 | `cache\latest.json` | pointer to the newest edition |
 | `settings.json` | your settings (Settings dialog) |
-| `state\` | refresh history (last attempt vs. last success, backoff), the refresh lock, window size |
+| `state\` | refresh history (last attempt vs. last success, backoff), the refresh lock, window size, and `events.json`: the event registry (which earlier event each story continues, kept 30 days; it only observes for now) |
 | `data\agent_reach.db` | SQLite history used to tell new / rising / continuing stories |
 | `logs\` | `gui.log`, `refresh.log`, `scheduler.log` (rotating, about 6 MB each at most) |
 | `diagnostics\` | details of the last 30 failed or unpublished refreshes |
@@ -166,9 +166,15 @@ previous edition preserved") and what the live site shows. Details: [docs/PUBLIS
   and each source's outlet, headline, link and time. Never publisher excerpts, logs, settings, file paths or
   anything about your PC. The PC only makes outgoing requests to GitHub; nothing listens for connections.
 - **A failed upload changes nothing on the site**: an edition goes up as one commit or not at all, and the
-  website keeps the previous edition. Retrying never creates duplicates.
-- **Corrections:** right-click a story > **Remove from the website...**; or **Take this edition off the
-  website...** in the publishing window.
+  website keeps the previous edition. Retrying never creates duplicates. The app tries again by itself at its
+  next hourly check (the scheduled task), so a short outage does not leave the site a day behind.
+- **Corrections:** right-click a story > **Remove from the website...** (it stays off when a later refresh the
+  same day finds that story again); or **Take this edition off the website...** in the publishing window.
+- **The day's edition never gets thinner:** a later refresh of the same day replaces the edition (in the app and
+  on the website) only if at least half as many sources answered and half as many stories came through; otherwise
+  the edition stays and the app tries again later.
+- **Key expiry:** a week before the access key expires, the publishing window and the refresh message say so;
+  make a new key the same way and paste it.
 - The key is stored encrypted for your Windows account in `publish\access-key.dat` in the data folder (never in
   the project folder). **Forget key** deletes it; revoke it on github.com if it may have leaked.
 
@@ -290,7 +296,7 @@ editions, then runs the same self-test; send back both zips from the Desktop.
 
 Tests never touch the network or a real Ollama. `tests/daily_fakes.py` holds synthetic publisher
 feeds (fictional places on `.test` hosts) and a deterministic fake model; `samples/DEMO-edition.json`
-is the clearly labelled demo edition. Version: Agent Reach Daily 1.0 release candidate 13
+is the clearly labelled demo edition. Version: Agent Reach Daily 1.0 release candidate 16
 (`python -m agent_reach.daily --version`). What changed in each release: `docs/RELEASE-NOTES.md`.
 
 ## License and contact

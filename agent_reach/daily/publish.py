@@ -29,7 +29,8 @@ Safety:
   no commit (no duplicate editions). One file per date: a later revision of the day replaces the earlier one.
 * A demo edition, an edition the site already has in a newer revision, and a date the user withdrew (until a
   newer revision exists) are never published.
-* ``withdraw`` takes a date off the site; ``hide_story`` removes one story from the public copy and republishes.
+* ``withdraw`` takes a date off the site; ``hide_story`` removes one story from the public copy and republishes;
+  later revisions of that date leave it out too, recognised by its reports (its id can change).
 
 Local files (``%LOCALAPPDATA%\\AgentReachDaily\\publish``): ``publish.json`` (settings, hidden stories, withdrawn
 dates), ``status.json`` (last attempt and last success), ``access-key.dat`` (the access key, encrypted with
@@ -59,6 +60,7 @@ from agent_reach.daily.edition import DailyEdition, Story, category_sections, ne
 from agent_reach.daily.fsutil import FileUnavailable, atomic_write_bytes, atomic_write_json, read_json, unlink_with_retry
 from agent_reach.daily.lock import LockBusy, RefreshLock
 from agent_reach.daily.paths import DataPaths
+from agent_reach.daily.registry import evidence_keys
 from agent_reach.daily.strength import SIGNAL_SOURCES, origin, strength_of
 from agent_reach.pipeline.cleaner import dedupe_key
 from agent_reach.daily.timeutil import format_central, format_long_date, utcnow
@@ -85,6 +87,12 @@ STATIC_PAGES = ("", "daily/", "latest/", "technology/", "science/", "world/", "a
 TOKEN_ENV = "AGENT_REACH_PUBLISH_TOKEN"
 HTTP_TIMEOUT_S = 30.0
 COMMIT_ATTEMPTS = 3
+#: The scheduled check runs every hour; a failed automatic publication is tried again at most this often
+#: (a little under an hour, so a check that runs a minute early is not skipped).
+CATCH_UP_MINUTES = 55
+#: GitHub states a fine-grained key's expiry on every API answer; the window warns this many days ahead.
+EXPIRY_HEADER = "github-authentication-token-expiration"
+KEY_WARN_DAYS = 7
 
 State = Literal["never", "publishing", "published", "unchanged", "failed", "withdrawn", "skipped"]
 
@@ -95,6 +103,11 @@ class PublishError(Exception):
 
 class Conflict(PublishError):
     """The site branch moved while this commit was being made: re-read and try again."""
+
+
+class Hopeless(PublishError):
+    """A failure that trying again cannot fix: the key was refused, it lacks access, or the site already has a
+    newer revision. The hourly retry waits for a new key or a new edition (audit round 2, N5)."""
 
 
 def edition_json_path(d: str) -> str:
@@ -116,6 +129,10 @@ class PublishSettings(BaseModel):
     repo: str = SITE_REPO
     branch: str = SITE_BRANCH
     hidden_stories: dict[str, list[str]] = Field(default_factory=dict)  # date -> story ids kept off the site
+    # date -> story id -> that story's reports (each: its article link and normalized title keys). A story id is a
+    # fingerprint of the reports and changes when a later revision adds or loses one, so the reports are what keep
+    # a removed story off the site (rc15; settings from rc13/rc14 have ids only)
+    hidden_reports: dict[str, dict[str, list[list[str]]]] = Field(default_factory=dict)
     withdrawn: dict[str, int] = Field(default_factory=dict)  # date -> newest revision the user took down
 
 
@@ -128,6 +145,9 @@ class PublishStatus(BaseModel):
     revision: int | None = None
     stories: int | None = None
     commit: str | None = None
+    failed_action: Literal["publish", "withdraw"] | None = None  # what the last failure was trying to do
+    blocked_on: str | None = None  # 'date#revision' that failed hopelessly: not retried until a new key or edition
+    key_expires_utc: datetime | None = None  # as GitHub stated it on the last call (None: no expiry, or unknown)
 
 
 def _dir(paths: DataPaths) -> Path:
@@ -214,6 +234,7 @@ def save_token(paths: DataPaths, token: str) -> None:
     atomic_write_bytes(key_file(paths), data)
     if sys.platform != "win32":
         os.chmod(key_file(paths), 0o600)
+    _record(paths, key_expires_utc=None, blocked_on=None)  # a new key: expiry read on its first call; retries resume
 
 
 def load_token(paths: DataPaths) -> str | None:
@@ -234,6 +255,33 @@ def load_token(paths: DataPaths) -> str | None:
 
 def forget_token(paths: DataPaths) -> None:
     unlink_with_retry(key_file(paths))
+    _record(paths, key_expires_utc=None)
+
+
+def parse_expiry(value: str | None) -> datetime | None:
+    """GitHub's ``github-authentication-token-expiration`` header ('2026-11-07 12:00:00 UTC'), or None."""
+    text = (value or "").strip().replace(" UTC", " +0000")
+    for fmt in ("%Y-%m-%d %H:%M:%S %z", "%Y-%m-%dT%H:%M:%S%z"):
+        try:
+            return datetime.strptime(text, fmt).astimezone(timezone.utc)
+        except ValueError:
+            continue
+    return None
+
+
+def key_warning(expires: datetime | None, now: datetime | None = None) -> str:
+    """Plain-English warning when the access key expires within ``KEY_WARN_DAYS`` (or has expired)."""
+    if expires is None:
+        return ""
+    now = now or utcnow()
+    day = format_long_date(expires.date())
+    if expires <= now:
+        return (f"Your access key expired on {day}. Publishing stops until you make a new one on github.com and "
+                "paste it in Website publishing.")
+    if (expires - now).total_seconds() <= KEY_WARN_DAYS * 86400:
+        return (f"Your access key expires on {day}. Make a new one on github.com before then and paste it in "
+                "Website publishing (the steps are the same as the first time).")
+    return ""
 
 
 def has_token(paths: DataPaths) -> bool:
@@ -257,12 +305,16 @@ def _text_values(obj, key: str = ""):
         yield obj
 
 
+def looks_local(obj) -> bool:
+    """Does any text in ``obj`` look like a path on this PC?"""
+    return any(_LOCAL_RX.search(text) for text in _text_values(obj))
+
+
 def assert_public(obj) -> None:
     """Refuse to publish text that looks like a path on this PC (defence in depth: no field should carry one)."""
-    for text in _text_values(obj):
-        if _LOCAL_RX.search(text):
-            raise PublishError("The edition contains text that looks like a file path on this computer, so it was "
-                               "not published. Please report this.")
+    if looks_local(obj):
+        raise PublishError("The edition contains text that looks like a file path on this computer, so it was "
+                           "not published. Please report this.")
 
 
 def _utc(value: datetime | None) -> str | None:
@@ -313,11 +365,51 @@ def _public_story(s: Story, edition: DailyEdition, change: str, top_rank: int | 
             "sources": sources}
 
 
-def public_edition(edition: DailyEdition, hidden: list[str] | None = None) -> dict:
-    """The public copy of an edition (deterministic: the same edition always gives the same bytes)."""
+def removed_reports(story: Story) -> list[list[str]]:
+    """What identifies a removed story in later revisions: one entry per report (its link and title keys)."""
+    return sorted(sorted(keys) for keys in evidence_keys(story))
+
+
+def is_removed(story: Story, hidden_ids: set[str], hidden_reports: dict[str, list[list[str]]] | None = None) -> bool:
+    """Is this story one the user took off the website, by id or as the same story in a later revision?
+
+    The same story = more than half of ITS reports were in a removed story, or more than half of the removed
+    story's reports are in it. Either way round: a story that grew from 2 to 6 reports, or the corrected half of
+    a mixed story the user removed, stays off the site. Removing too much is the safe side of a correction.
+    On October 7 a same-day revision brought back 28 of 144 continuing stories when only ids were kept."""
+    if story.story_id[:12] in hidden_ids:
+        return True
+    if not hidden_reports:
+        return False
+    mine = evidence_keys(story)
+    if not mine:
+        return False
+    my_keys = set().union(*mine)
+    for reports in hidden_reports.values():
+        gone = [set(r) for r in reports if r]
+        if not gone:
+            continue
+        gone_keys = set().union(*gone)
+        if 2 * sum(bool(r & gone_keys) for r in mine) > len(mine) or 2 * sum(bool(r & my_keys) for r in gone) > len(gone):
+            return True
+    return False
+
+
+def public_edition(edition: DailyEdition, hidden: list[str] | None = None,
+                   hidden_reports: dict[str, list[list[str]]] | None = None, left_out: list[int] | None = None) -> dict:
+    """The public copy of an edition (deterministic: the same edition always gives the same bytes).
+
+    A story whose text looks like a path on this PC is left out (its rank goes into ``left_out``) instead of
+    stopping the whole edition: one headline about "AppData" used to keep the day off the site (audit F10)."""
     if edition.demo:
         raise PublishError("This is the demo edition (made-up stories); it is never published.")
     hidden_ids = {h[:12] for h in hidden or []}
+    hidden_ids |= {s.story_id[:12] for s in edition.stories if is_removed(s, hidden_ids, hidden_reports)}
+    local = [s for s in edition.stories
+             if s.story_id[:12] not in hidden_ids and looks_local(_public_story(s, edition, "", None))]
+    hidden_ids |= {s.story_id[:12] for s in local}
+    if left_out is not None:
+        left_out.extend(s.rank for s in local)
     stories = [s for s in edition.stories if s.story_id[:12] not in hidden_ids]
     if not stories:
         raise PublishError("Every story of this edition was removed from the website; nothing to publish.")
@@ -536,6 +628,8 @@ class Target:
     def commit(self, changes: dict[str, bytes | None], message: str) -> str:
         raise NotImplementedError
 
+    def close(self) -> None: ...
+
 
 class FolderTarget(Target):
     """A local copy of the website (preview, tests). The archive list is written last, so the site never lists a
@@ -580,11 +674,14 @@ class GitHubTarget(Target):
 
         self.repo, self.branch = repo, branch
         self.description = f"github.com/{repo} ({branch})"
+        self.own_client = client is None  # a client made here is closed here
         self.client = client or httpx.Client(timeout=HTTP_TIMEOUT_S, follow_redirects=True)
         self.headers = {"Authorization": f"Bearer {token}", "Accept": "application/vnd.github+json",
                         "X-GitHub-Api-Version": "2022-11-28", "User-Agent": f"AgentReachDaily/{__version__}"}
         self.head: str | None = None
         self.tree: str | None = None
+        self.key_expires: datetime | None = None  # from GitHub's answers (fine-grained keys expire)
+        self._files: dict[str, bytes | None] = {}  # what was read at the pinned version (each file read once)
 
     def _call(self, method: str, path: str, *, ok=(200, 201), allow=(), **kw):
         import httpx
@@ -594,13 +691,14 @@ class GitHubTarget(Target):
             r = self.client.request(method, url, headers={**self.headers, **kw.pop("headers", {})}, **kw)
         except httpx.HTTPError as exc:
             raise PublishError(f"Could not reach GitHub ({type(exc).__name__}). Is this PC online?") from exc
+        self.key_expires = parse_expiry(r.headers.get(EXPIRY_HEADER)) or self.key_expires
         if r.status_code in ok or r.status_code in allow:
             return r
         if r.status_code == 401:
-            raise PublishError("GitHub did not accept the access key (it may have expired or been revoked). "
+            raise Hopeless("GitHub did not accept the access key (it may have expired or been revoked). "
                                "Paste a new one in Website publishing.")
         if r.status_code in (403, 404):
-            raise PublishError(f"The access key cannot {'read' if method == 'GET' else 'write to'} {self.repo}. "
+            raise Hopeless(f"The access key cannot {'read' if method == 'GET' else 'write to'} {self.repo}. "
                                "It needs access to that repository with 'Contents: Read and write'.")
         if r.status_code == 409 or (r.status_code == 422 and path.startswith("/git/refs")):
             raise Conflict("The website changed while publishing.")
@@ -610,6 +708,11 @@ class GitHubTarget(Target):
         ref = self._call("GET", f"/git/ref/heads/{self.branch}").json()
         self.head = ref["object"]["sha"]
         self.tree = self._call("GET", f"/git/commits/{self.head}").json()["tree"]["sha"]
+        self._files = {}
+
+    def close(self) -> None:
+        if self.own_client:
+            self.client.close()
 
     def check(self) -> str:
         """Read access to the repository and branch (the write permission shows on the first publication)."""
@@ -617,6 +720,13 @@ class GitHubTarget(Target):
         return self.head or ""
 
     def read(self, path: str) -> bytes | None:
+        """The file at the pinned version; each file is fetched once per version (the plan and the comparison of
+        what changed both read the index and the search month: audit F11)."""
+        if path not in self._files:
+            self._files[path] = self._fetch(path)
+        return self._files[path]
+
+    def _fetch(self, path: str) -> bytes | None:
         r = self._call("GET", f"/contents/{path}?ref={self.head}", allow=(404,))
         if r.status_code == 404:
             return None
@@ -676,10 +786,11 @@ def _read_json(target: Target, path: str) -> dict | None:
     return obj if isinstance(obj, dict) else None
 
 
-def site_files(edition: DailyEdition, settings: PublishSettings, current_index: dict | None) -> tuple[dict, dict]:
+def site_files(edition: DailyEdition, settings: PublishSettings, current_index: dict | None,
+               left_out: list[int] | None = None) -> tuple[dict, dict]:
     """(public edition, {path: bytes}) for one edition."""
     d = edition.edition_date.isoformat()
-    public = public_edition(edition, settings.hidden_stories.get(d))
+    public = public_edition(edition, settings.hidden_stories.get(d), settings.hidden_reports.get(d), left_out)
     files = {edition_json_path(d): _dumps(public), edition_page_path(d): edition_page(public, settings.site_url),
              **index_files(merge_index(current_index, index_entry(public)), settings.site_url)}
     return public, files
@@ -721,31 +832,43 @@ def publish_edition(paths: DataPaths, edition: DailyEdition, target: Target | No
         return PublishResult("failed", f"Publication failed: the publishing folder is not writable ({exc}).")
     try:
         _record(paths, state="publishing", message=f"Publishing the {label} edition", attempt_utc=utcnow())
+        again = " The app tries again at its next hourly check." if automatic and settings.enabled else ""
         published: dict = {}
 
         def plan(t: Target) -> dict:
             current = _read_json(t, INDEX_PATH)
             on_site = next((e for e in (current or {}).get("editions", []) if e.get("date") == d), None)
             if on_site and int(on_site.get("revision") or 0) > edition.revision:
-                raise PublishError(f"The website already has a newer revision ({on_site['revision']}) of the {label} "
+                raise Hopeless(f"The website already has a newer revision ({on_site['revision']}) of the {label} "
                                    "edition; nothing was changed.")
-            public, files = site_files(edition, settings, current)
-            published["public"] = public
+            left_out: list[int] = []
+            public, files = site_files(edition, settings, current, left_out)
+            published["public"], published["left_out"] = public, left_out
             files.update(search_files(t, merge_index(current, index_entry(public)), d, search_entries(public)))
             return files
 
+        own = target is None
         try:
             target = target or github_target(paths, settings)
-            commit, changed = _with_target(target, plan, f"Publish the {d} edition (revision {edition.revision})")
-        except PublishError as exc:
+            try:
+                commit, changed = _with_target(target, plan, f"Publish the {d} edition (revision {edition.revision})")
+            finally:
+                _note_key(paths, target)
+                if own:
+                    target.close()
+        except Hopeless as exc:
             msg = f"Publication failed: {exc} The website still shows the previous edition."
-            _record(paths, state="failed", message=msg)
+            _record(paths, state="failed", message=msg, failed_action="publish", blocked_on=f"{d}#{edition.revision}")
+            return PublishResult("failed", msg)
+        except PublishError as exc:
+            msg = f"Publication failed: {exc} The website still shows the previous edition.{again}"
+            _record(paths, state="failed", message=msg, failed_action="publish", blocked_on=None)
             return PublishResult("failed", msg)
         except Exception as exc:  # noqa: BLE001 - a bug here must never break a refresh
             log.exception("publishing failed unexpectedly")
             msg = (f"Publication failed ({type(exc).__name__}). The website still shows the previous edition. "
-                   "Details are in the refresh log.")
-            _record(paths, state="failed", message=msg)
+                   f"Details are in the refresh log.{again}")
+            _record(paths, state="failed", message=msg, failed_action="publish")
             return PublishResult("failed", msg)
         if d in settings.withdrawn:
             settings = load_settings(paths)
@@ -756,11 +879,16 @@ def publish_edition(paths: DataPaths, edition: DailyEdition, target: Target | No
         if commit is None:
             msg = f"The website already has the {label} edition ({stories} stories)."
             _record(paths, state="unchanged", message=msg, success_utc=load_status(paths).success_utc or now,
+                    failed_action=None, blocked_on=None,
                     edition_date=d, revision=edition.revision, stories=stories)
             return PublishResult("unchanged", msg)
         msg = (f"Published successfully: the {label} edition ({stories} stories) at {format_central(now)}. "
                "The website shows it within a few minutes.")
+        if published["left_out"]:
+            msg += (f" Left out: story {', '.join(str(r) for r in published['left_out'])}, because its text looks like "
+                    "a file path on this computer. Please report this.")
         _record(paths, state="published", message=msg, success_utc=now, edition_date=d, revision=edition.revision,
+                failed_action=None, blocked_on=None,
                 stories=stories, commit=commit)
         log.info("published %s r%d to %s: %s", d, edition.revision, target.description, ", ".join(changed))
         return PublishResult("published", msg, commit, changed)
@@ -770,6 +898,12 @@ def publish_edition(paths: DataPaths, edition: DailyEdition, target: Target | No
 
 def withdraw(paths: DataPaths, d: str, target: Target | None = None) -> PublishResult:
     """Take one date's edition off the website (the archive and /daily/ then show the next newest date)."""
+    try:
+        if not re.fullmatch(r"\d{4}-\d{2}-\d{2}", d):
+            raise ValueError(d)
+        date.fromisoformat(d)  # the date names the files to delete: never anything else (audit F13)
+    except ValueError:
+        return PublishResult("failed", f"'{d}' is not a date (YYYY-MM-DD); nothing was changed.")
     settings = load_settings(paths)
     lock = RefreshLock(_dir(paths) / "publish.lock")
     try:
@@ -788,12 +922,18 @@ def withdraw(paths: DataPaths, d: str, target: Target | None = None) -> PublishR
             return files
 
         try:
+            own = target is None
             target = target or github_target(paths, settings)
-            on_site = _read_json_at(target, d)
-            commit, _ = _with_target(target, plan, f"Withdraw the {d} edition")
+            try:
+                on_site = _read_json_at(target, d)
+                commit, _ = _with_target(target, plan, f"Withdraw the {d} edition")
+            finally:
+                _note_key(paths, target)
+                if own:
+                    target.close()
         except PublishError as exc:
             msg = f"Could not take the edition off the website: {exc}"
-            _record(paths, state="failed", message=msg, attempt_utc=utcnow())
+            _record(paths, state="failed", message=msg, attempt_utc=utcnow(), failed_action="withdraw")
             return PublishResult("failed", msg)
         settings = load_settings(paths)
         settings.withdrawn[d] = max(int(on_site or 0), settings.withdrawn.get(d, 0), 1)
@@ -801,10 +941,39 @@ def withdraw(paths: DataPaths, d: str, target: Target | None = None) -> PublishR
         day = format_long_date(date.fromisoformat(d))
         msg = (f"The {day} edition was taken off the website." if commit else
                f"The website did not have the {day} edition.")
-        _record(paths, state="withdrawn", message=msg, attempt_utc=utcnow())
+        _record(paths, state="withdrawn", message=msg, attempt_utc=utcnow(), failed_action=None)
         return PublishResult("withdrawn", msg, commit)
     finally:
         lock.release()
+
+
+def _note_key(paths: DataPaths, target: Target) -> None:
+    """Record the key's expiry as GitHub stated it (a folder target states none)."""
+    expires = getattr(target, "key_expires", None)
+    if expires is not None:
+        _record(paths, key_expires_utc=expires)
+
+
+def check_connection(paths: DataPaths) -> str:
+    """The window's 'Test connection': read access to the site's branch (raises PublishError); notes the expiry."""
+    target = github_target(paths)
+    try:
+        return target.check()
+    finally:
+        _note_key(paths, target)
+        target.close()
+
+
+def connected_message(paths: DataPaths) -> str:
+    """What the window says after a successful connection test. A failure recorded before the test stays visible:
+    on the PC (Oct 8) the window said "Connected" under a red "Publication failed" with no reason given."""
+    msg = (f"Connected: the key can read {load_settings(paths).repo}. Write access is confirmed by the first "
+           "publication.")
+    status = load_status(paths)
+    if status.state == "failed" and status.message:
+        msg += (f" The red line above is the last attempt, made before this test: {status.message} "
+                "Click Publish latest edition to try again.")
+    return msg
 
 
 def _read_json_at(target: Target, d: str) -> int | None:
@@ -816,12 +985,16 @@ def _read_json_at(target: Target, d: str) -> int | None:
 
 
 def hide_story(paths: DataPaths, edition: DailyEdition, story_id: str, target: Target | None = None) -> PublishResult:
-    """Remove one story from the public copy of this edition and republish it (a correction)."""
+    """Remove one story from the public copy of this edition and republish it (a correction). Later revisions of
+    the same date leave it out too, recognised by its reports (``is_removed``)."""
     settings = load_settings(paths)
     d = edition.edition_date.isoformat()
     hidden = settings.hidden_stories.setdefault(d, [])
     if story_id[:12] not in hidden:
         hidden.append(story_id[:12])
+    story = next((s for s in edition.stories if s.story_id[:12] == story_id[:12]), None)
+    if story is not None:
+        settings.hidden_reports.setdefault(d, {})[story_id[:12]] = removed_reports(story)
     save_settings(paths, settings)
     return publish_edition(paths, edition, target, settings=settings)
 
@@ -843,11 +1016,53 @@ def publish_after_refresh(paths: DataPaths, edition: DailyEdition) -> PublishRes
             return None
         if not has_token(paths):
             msg = "Publication failed: no access key is saved. The website still shows the previous edition."
-            _record(paths, state="failed", message=msg, attempt_utc=utcnow())
+            _record(paths, state="failed", message=msg, attempt_utc=utcnow(), failed_action="publish")
             return PublishResult("failed", msg)
-        return publish_edition(paths, edition, settings=settings, automatic=True)
+        result = publish_edition(paths, edition, settings=settings, automatic=True)
+        warning = key_warning(load_status(paths).key_expires_utc)
+        if warning:
+            result.message = f"{result.message} {warning}"
+        return result
     except (OSError, FileUnavailable) as exc:
         log.exception("publishing could not start")
+        return PublishResult("failed", f"Publication failed ({type(exc).__name__}); the website was not changed.")
+
+
+def catch_up(paths: DataPaths, now: datetime | None = None) -> PublishResult | None:
+    """The hourly scheduled check, when no refresh is due: publish the latest edition if automatic publishing is
+    on and the website did not get it (the last publication failed, was interrupted, or never ran).
+
+    Before rc15 a failed upload waited for the next refresh, 24 hours later by default (audit F2, Oct 8). Tried at
+    most once per ``CATCH_UP_MINUTES``; a withdrawn date stays withdrawn; a failed withdrawal is not turned into a
+    publication. None when there is nothing to do (no network call). Never raises."""
+    try:
+        settings = load_settings(paths)
+        if not settings.enabled or not has_token(paths):
+            return None
+        status = load_status(paths)
+        if status.state == "failed" and status.failed_action == "withdraw":
+            return None  # the user's withdrawal failed: the window says so; republishing would undo their intent
+        now = now or utcnow()
+        if status.attempt_utc is not None and (now - status.attempt_utc).total_seconds() < CATCH_UP_MINUTES * 60:
+            return None
+        from agent_reach.daily.store import EditionStore
+
+        edition = EditionStore(paths).load_latest().edition
+        if edition is None or edition.demo:
+            return None
+        d = edition.edition_date.isoformat()
+        if settings.withdrawn.get(d, 0) >= edition.revision:
+            return None
+        if status.state == "failed" and status.blocked_on == f"{d}#{edition.revision}":
+            return None  # a refused key or a newer revision on the site: retrying the same edition cannot help
+        sent = status.state in ("published", "unchanged") and status.edition_date is not None
+        if sent and (status.edition_date, status.revision or 0) >= (d, edition.revision):
+            return None  # the website has this edition (or a newer one) from this PC
+        log.info("website catch-up: publishing the %s edition (revision %d); last publication: %s", d,
+                 edition.revision, status.state)
+        return publish_edition(paths, edition, settings=settings, automatic=True)
+    except Exception as exc:  # noqa: BLE001 - the scheduled check must end quietly whatever happens here
+        log.exception("website catch-up failed")
         return PublishResult("failed", f"Publication failed ({type(exc).__name__}); the website was not changed.")
 
 
@@ -860,6 +1075,8 @@ def live_edition(site_url: str = SITE_URL, client=None) -> tuple[str | None, int
         c = client or httpx.Client(timeout=10.0, follow_redirects=True)
         r = c.get(f"{site_url.rstrip('/')}/{INDEX_PATH}", params={"t": int(utcnow().timestamp())},
                   headers={"Cache-Control": "no-cache", "User-Agent": f"AgentReachDaily/{__version__}"})
+        if client is None:
+            c.close()
         body = r.json() if r.status_code == 200 else {}
         latest = body.get("latest")
         entry = next((e for e in body.get("editions", []) if e.get("date") == latest), {})
@@ -891,4 +1108,5 @@ def status_lines(paths: DataPaths) -> dict:
         last = f"{day}{rev}, {status.stories or 0} stories, sent {format_central(status.success_utc)}"
     return {"headline": head, "kind": kind, "message": status.message, "last_published": last,
             "automatic": settings.enabled, "connected": connected, "site_url": settings.site_url,
-            "repo": settings.repo, "branch": settings.branch}
+            "repo": settings.repo, "branch": settings.branch,
+            "key_warning": key_warning(status.key_expires_utc) if connected else ""}

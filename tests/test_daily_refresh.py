@@ -35,6 +35,10 @@ def test_successful_refresh_publishes_a_complete_grounded_edition(daily_env):
     assert "Mayor of Oakdene Resigns After Audit" not in heads  # a week-old story is not today's news
     assert any("left out because every source was published more than 48 hours" in n for n in ed.notes)
     assert all(s.labels == [] for s in ed.stories)  # first run = baseline: no trend labels
+    from agent_reach.daily.registry import load_registry, registry_file
+
+    events = load_registry(registry_file(daily_env.paths)).events  # observed: one new event per story
+    assert sorted(a.rank for e in events.values() for a in e.appearances) == [s.rank for s in ed.stories]
     why = {s.headline: s.why_it_matters for s in ed.stories}
     assert why["Norvale Harbor Ferry Strike Halts Island Service"].startswith("Island residents")
     assert why["Ransomware Attack Disrupts Halden Hospital Network"].startswith("Patients")
@@ -324,8 +328,14 @@ def test_refresh_publishes_to_the_website_when_switched_on_and_a_website_failure
     publish.save_token(daily_env.paths, "test-key")
     site = tmp_path / "site"
     monkeypatch.setattr(publish, "github_target", lambda paths, settings=None, client=None: publish.FolderTarget(site))
+    stages: list[str] = []
+    original = R.ProgressWriter.__call__
+    monkeypatch.setattr(R.ProgressWriter, "__call__", lambda self, stage, message: (stages.append(stage),
+                                                                                   original(self, stage, message)))
     out = _refresh(daily_env)
     assert out.code == R.EXIT_PUBLISHED and "Published successfully" in out.message
+    # the website does not wait for the podcast recording (audit F6)
+    assert stages.index("publish") < stages.index("website") < stages.index("podcast")
     d = out.edition.edition_date.isoformat()
     assert json.loads((site / "editions/index.json").read_text())["latest"] == d
     assert len(json.loads((site / f"editions/{d}.json").read_text())["stories"]) == len(out.edition.stories)
@@ -337,3 +347,91 @@ def test_refresh_publishes_to_the_website_when_switched_on_and_a_website_failure
     out = _refresh(daily_env)
     assert out.code == R.EXIT_PUBLISHED and "Publication failed" in out.message  # the local edition is still new
     assert publish.load_status(daily_env.paths).state == "failed"
+
+
+def test_the_hourly_check_publishes_an_edition_whose_upload_failed(daily_env, monkeypatch):
+    """Audit F2 (Oct 8): a failed upload used to wait for the next refresh, 24 hours later by default. The
+    scheduled check (--refresh-if-due, hourly) now publishes the latest edition when no refresh is due."""
+    from datetime import timedelta
+
+    from agent_reach.daily import publish
+    from agent_reach.daily.__main__ import main
+    from agent_reach.daily.timeutil import utcnow
+    from tests.test_daily_publish import FakeGitHub
+
+    gh = FakeGitHub({"index.html": b"<html>site</html>"})
+    monkeypatch.setattr(publish, "github_target", lambda paths, settings=None, client=None: gh.target())
+    publish.save_settings(daily_env.paths, publish.PublishSettings(enabled=True))
+    publish.save_token(daily_env.paths, "test-key")
+    gh.fail["GET /git/ref"] = 503  # GitHub is down during the refresh
+    out = _refresh(daily_env)
+    assert out.code == R.EXIT_PUBLISHED and "Publication failed" in out.message and "next hourly check" in out.message
+    site_before, d = gh.head, out.edition.edition_date.isoformat()
+    check = ["--refresh-if-due", "--data-dir", str(daily_env.paths.root)]
+
+    assert main(check) == R.EXIT_NOT_DUE and gh.head == site_before  # minutes later: not yet (at most hourly)
+    later = utcnow() + timedelta(minutes=61)
+    monkeypatch.setattr(publish, "utcnow", lambda: later)
+    assert main(check) == R.EXIT_NOT_DUE  # no refresh is due, but the website gets the edition
+    assert gh.head != site_before and f"editions/{d}.json" in gh.files
+    status = publish.load_status(daily_env.paths)
+    assert status.state == "published" and status.edition_date == d and status.failed_action is None
+    calls = len(gh.calls)
+    monkeypatch.setattr(publish, "utcnow", lambda: later + timedelta(hours=1))
+    assert main(check) == R.EXIT_NOT_DUE and len(gh.calls) == calls  # the site has it: not even a network call
+
+
+def test_the_hourly_check_never_undoes_a_withdrawal(daily_env, monkeypatch, tmp_path):
+    from datetime import timedelta
+
+    from agent_reach.daily import publish
+    from agent_reach.daily.timeutil import utcnow
+
+    site = publish.FolderTarget(tmp_path / "site")
+    monkeypatch.setattr(publish, "github_target", lambda paths, settings=None, client=None: site)
+    publish.save_settings(daily_env.paths, publish.PublishSettings(enabled=True))
+    publish.save_token(daily_env.paths, "test-key")
+    d = _refresh(daily_env).edition.edition_date.isoformat()
+    assert publish.withdraw(daily_env.paths, d).state == "withdrawn"
+    soon = utcnow() + timedelta(hours=2)
+    assert publish.catch_up(daily_env.paths, now=soon) is None  # withdrawn stays withdrawn
+    assert not (tmp_path / "site" / f"editions/{d}.json").exists()
+
+    def down(paths, settings=None, client=None):
+        raise publish.PublishError("Could not reach GitHub (ConnectError). Is this PC online?")
+
+    monkeypatch.setattr(publish, "github_target", down)
+    publish.save_settings(daily_env.paths, publish.PublishSettings(enabled=True))  # (forget the withdrawal)
+    assert publish.withdraw(daily_env.paths, d).state == "failed"
+    assert publish.load_status(daily_env.paths).failed_action == "withdraw"
+    assert publish.catch_up(daily_env.paths, now=soon) is None  # a failed withdrawal is never turned into a publish
+
+
+def test_a_thin_refresh_never_replaces_a_full_edition_of_the_same_day(daily_env, tmp_path, monkeypatch):
+    """Backend audit round 2, N1 (Oct 8): a later run where few sources answered replaced the day's full edition,
+    on the website too. Now it is 'no new edition' and both keep the full one."""
+    from agent_reach.daily import publish
+    from agent_reach.daily.prefs import save_prefs
+
+    prefs, _ = load_prefs(daily_env.paths)
+    save_prefs(daily_env.paths, prefs.model_copy(update={"min_ok_sources": 1}))
+    site = tmp_path / "site"
+    monkeypatch.setattr(publish, "github_target", lambda paths, settings=None, client=None: publish.FolderTarget(site))
+    publish.save_settings(daily_env.paths, publish.PublishSettings(enabled=True))
+    publish.save_token(daily_env.paths, "test-key")
+    full = _refresh(daily_env).edition
+    assert full.coverage.sources_ok == 3
+    daily_env.net.down.update({"hn.algolia.com", "news.google.com"})  # two of the three sources stop answering
+    out = _refresh(daily_env)
+    assert out.code == R.EXIT_NO_UPDATE and "found much less than today's edition" in out.message, out.message
+    assert "from 1 source, against" in out.message and "previous edition is kept" in out.message
+    kept = EditionStore(daily_env.paths).load_latest().edition
+    assert kept.run_id == full.run_id and kept.revision == 1
+    import json
+
+    assert json.loads((site / f"editions/{full.edition_date.isoformat()}.json").read_text())["revision"] == 1
+    # the check can be turned off; then the thin run replaces the edition as before
+    prefs, _ = load_prefs(daily_env.paths)
+    save_prefs(daily_env.paths, prefs.model_copy(update={"min_share_of_same_day": 0.0}))
+    out = _refresh(daily_env)
+    assert out.code == R.EXIT_PUBLISHED and out.edition.revision == 2

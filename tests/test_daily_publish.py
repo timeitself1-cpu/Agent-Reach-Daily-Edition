@@ -127,11 +127,28 @@ def test_public_edition_carries_the_news_and_nothing_private():
     assert P.public_edition(ed) == pub  # deterministic: a retry produces the same bytes
 
 
-def test_text_that_looks_like_a_local_path_is_never_published():
+def test_text_that_looks_like_a_local_path_is_never_published(daily_paths, tmp_path):
+    """Such a story is left out and named in the result; the rest of the day still goes up (audit F10: one
+    headline about "AppData" kept the whole edition off the site)."""
     ed = real_edition()
     ed.stories[3].sentences[0] = r"Saved to C:\Users\someone\AppData\Local\AgentReachDaily\cache."
+    left_out: list[int] = []
+    pub = P.public_edition(ed, left_out=left_out)
+    assert left_out == [ed.stories[3].rank] and len(pub["stories"]) == 43 and "AppData" not in json.dumps(pub)
+    r = P.publish_edition(daily_paths, ed, P.FolderTarget(tmp_path / "site"))
+    assert r.state == "published" and f"Left out: story {ed.stories[3].rank}," in r.message
+    assert "AppData" not in (tmp_path / "site/search/2026-10.json").read_text()
+    # outside the stories there is nothing to leave out: the edition is refused
+    ed.model.llm_model = r"C:\Users\someone\models\llama"
     with pytest.raises(P.PublishError, match="file path"):
         P.public_edition(ed)
+
+
+def test_withdraw_takes_only_a_date(daily_paths):
+    gh = FakeGitHub()
+    r = P.withdraw(daily_paths, "../index", gh.target())
+    assert r.state == "failed" and "not a date" in r.message and gh.calls == []
+    assert P.withdraw(daily_paths, "2026-02-30", gh.target()).state == "failed" and gh.calls == []
 
 
 def test_demo_editions_are_never_published():
@@ -195,6 +212,9 @@ def test_github_publication_is_one_commit_and_a_retry_makes_none(daily_paths):
     assert set(gh.files) == {"index.html", "editions/2026-10-07.json", "editions/index.json",
                              "daily/2026-10-07/index.html", "feed.xml", "sitemap.xml", "search/2026-10.json"}
     assert sum(c.startswith("PATCH") for c in gh.calls) == 1
+    # each file is read once per attempt (audit F11: the index and search month were read twice)
+    reads = [c for c in gh.calls if c.startswith("GET /contents/")]
+    assert len(reads) == len(set(reads)) == 6  # was 8
     before = gh.head
     r = P.publish_edition(daily_paths, real_edition(), gh.target())
     assert r.state == "unchanged" and gh.head == before  # no duplicate commit
@@ -244,6 +264,47 @@ def test_hide_story_republishes_without_it(daily_paths):
     assert len(pub["stories"]) == 43 and pike.story_id[:12] not in pub["top"]
     assert "Christa Pike" not in gh.files["daily/2026-10-07/index.html"].decode()
     assert "Christa Pike" not in gh.files["search/2026-10.json"].decode()
+
+
+def test_a_removed_story_stays_off_the_site_in_later_revisions_of_the_day(daily_paths, tmp_path):
+    """A story's id is a fingerprint of its reports, so the day's next revision usually gives it a new id. On
+    October 7 a removal kept by id alone came back for 28 of 144 continuing stories; the reports keep it off."""
+    site = P.FolderTarget(tmp_path / "site")
+    first, second = real_edition("2026-10-07-rc12-r1.json"), real_edition("2026-10-07-rc12-r2.json")
+    assert P.publish_edition(daily_paths, first, site).state == "published"
+    stun = next(s for s in first.stories if s.headline.startswith("France Halts Use of Stun Grenades"))
+    again = next(s for s in second.stories if s.headline.startswith("France Halts Use of Stun Grenades"))
+    assert again.story_id[:12] != stun.story_id[:12]  # the same story under a new id
+    assert P.hide_story(daily_paths, first, stun.story_id, site).state == "published"
+    assert P.publish_edition(daily_paths, second, site, automatic=True).state == "published"
+    for path in ("editions/2026-10-07.json", "daily/2026-10-07/index.html", "search/2026-10.json"):
+        assert "Stun Grenades" not in (tmp_path / "site" / path).read_text(encoding="utf-8")
+    assert json.loads((tmp_path / "site/editions/2026-10-07.json").read_text())["revision"] == 2
+    # settings written by rc13/rc14 (ids only) still load and still hide by id
+    old = json.loads(P.settings_file(daily_paths).read_text())
+    del old["hidden_reports"]
+    P.settings_file(daily_paths).write_text(json.dumps(old))
+    assert P.load_settings(daily_paths).hidden_stories["2026-10-07"] == [stun.story_id[:12]]
+
+
+def test_no_removed_story_comes_back_in_the_real_second_revisions():
+    """Each first-revision story of the six real October 7 pairs is removed in turn; the second revision's
+    public copy must not carry the story that continues it (more than half of its links)."""
+    came_back = continuing = 0
+    for first_name in sorted(p.name for p in REAL.glob("2026-10-07-*-r1.json")):
+        first, second = real_edition(first_name), real_edition(first_name.replace("-r1", "-r2"))
+        for s in first.stories:
+            links = {e.url for e in s.evidence if e.url}
+            same = next((t for t in second.stories
+                         if links and 2 * len(links & {e.url for e in t.evidence if e.url}) > len(links)), None)
+            if same is None:
+                continue
+            continuing += 1
+            pub = P.public_edition(second, [s.story_id], {s.story_id[:12]: P.removed_reports(s)})
+            came_back += same.story_id[:12] in {x["id"] for x in pub["stories"]}
+            # and nothing unrelated goes with it (the three extra stories it can take are the same event)
+            assert len(pub["stories"]) >= len(second.stories) - 2
+    assert continuing == 144 and came_back == 0
 
 
 def test_archive_search_files_per_month_repair_themselves(daily_paths, tmp_path):
@@ -303,3 +364,86 @@ def test_refresh_hook_is_off_by_default_and_never_raises(daily_paths, monkeypatc
                         P.GitHubTarget("owner/site", "main", "k", client=httpx.Client(transport=httpx.MockTransport(offline))))
     r = P.publish_after_refresh(daily_paths, ed)
     assert r.state == "failed" and "online" in r.message
+
+
+def test_the_window_warns_a_week_before_the_access_key_expires(daily_paths, monkeypatch):
+    """Fine-grained GitHub keys expire; GitHub states the date on every answer. Audit F5 (Oct 8): the app used to
+    find out only when an upload was refused."""
+    from datetime import datetime, timedelta, timezone
+
+    monkeypatch.delenv(P.TOKEN_ENV, raising=False)
+    P.save_token(daily_paths, "github_pat_test")
+    gh = FakeGitHub({"index.html": b"<html>site</html>"})
+    expires = {"value": "2026-10-12 08:30:00 UTC"}
+
+    def answer(request):
+        r = gh.handler(request)
+        r.headers[P.EXPIRY_HEADER] = expires["value"]
+        return r
+
+    target = P.GitHubTarget("owner/site", "main", "k", client=httpx.Client(transport=httpx.MockTransport(answer)))
+    now = datetime(2026, 10, 8, 18, 0, tzinfo=timezone.utc)
+    monkeypatch.setattr(P, "utcnow", lambda: now)
+    assert P.publish_edition(daily_paths, real_edition(), target).state == "published"
+    assert P.load_status(daily_paths).key_expires_utc == datetime(2026, 10, 12, 8, 30, tzinfo=timezone.utc)
+    warning = P.status_lines(daily_paths)["key_warning"]
+    assert warning.startswith("Your access key expires on October 12, 2026.") and "github.com" in warning
+    # a key that runs for another month: no warning; an expired one: says publishing stops
+    assert P.key_warning(now + timedelta(days=30), now) == ""
+    assert "expired on" in P.key_warning(now - timedelta(days=1), now)
+    # the refresh hook carries the warning in the refresh message
+    P.save_settings(daily_paths, P.PublishSettings(enabled=True))
+    monkeypatch.setattr(P, "github_target", lambda paths, settings=None, client=None: target)
+    assert "expires on October 12" in P.publish_after_refresh(daily_paths, real_edition()).message
+    # a new key forgets the old key's date until GitHub states the new one
+    P.save_token(daily_paths, "github_pat_new")
+    assert P.load_status(daily_paths).key_expires_utc is None and P.status_lines(daily_paths)["key_warning"] == ""
+    assert P.parse_expiry("2026-11-07 12:00:00 +0100") == datetime(2026, 11, 7, 11, 0, tzinfo=timezone.utc)
+    assert P.parse_expiry("never") is None and P.parse_expiry(None) is None
+
+
+def test_the_hourly_retry_waits_when_trying_again_cannot_help(daily_paths, monkeypatch):
+    """Audit round 2, N5 (Oct 8): a refused key, a key without access or a newer revision on the site fails the
+    same way every hour. The retry waits for a new key or a new edition instead of calling GitHub forever."""
+    from datetime import timedelta
+
+    from agent_reach.daily.store import EditionStore
+    from agent_reach.daily.timeutil import utcnow
+
+    monkeypatch.delenv(P.TOKEN_ENV, raising=False)
+    EditionStore(daily_paths).publish(real_edition())
+    P.save_settings(daily_paths, P.PublishSettings(enabled=True))
+    P.save_token(daily_paths, "revoked")
+    gh = FakeGitHub()
+    refused = {"on": True}
+
+    def answer(request):
+        if refused["on"]:
+            gh.calls.append("refused")
+            return httpx.Response(401, json={"message": "Bad credentials"})
+        return gh.handler(request)
+
+    monkeypatch.setattr(P, "github_target", lambda paths, settings=None, client=None:
+                        P.GitHubTarget("owner/site", "main", "k", client=httpx.Client(transport=httpx.MockTransport(answer))))
+    edition = EditionStore(daily_paths).load_latest().edition
+    r = P.publish_after_refresh(daily_paths, edition)
+    assert r.state == "failed" and "did not accept the access key" in r.message and "hourly" not in r.message
+    assert P.load_status(daily_paths).blocked_on == f"2026-10-07#{edition.revision}"
+    calls = len(gh.calls)
+    assert P.catch_up(daily_paths, now=utcnow() + timedelta(hours=2)) is None and len(gh.calls) == calls
+    # a new key: the retry resumes and publishes
+    refused["on"] = False
+    P.save_token(daily_paths, "github_pat_new")
+    r = P.catch_up(daily_paths, now=utcnow() + timedelta(hours=2))
+    assert r is not None and r.state == "published" and "editions/2026-10-07.json" in gh.files
+    assert P.load_status(daily_paths).blocked_on is None
+
+
+def test_a_connection_test_keeps_the_last_failure_visible(daily_paths):
+    """On the PC (Oct 8) the window said "Connected" under a red "Publication failed" and hid why it had failed."""
+    assert P.connected_message(daily_paths).startswith("Connected: the key can read timeitself1-cpu/Agent-Reach-Website.")
+    assert "last attempt" not in P.connected_message(daily_paths)
+    P._record(daily_paths, state="failed", message="Publication failed: no access key is saved.")
+    msg = P.connected_message(daily_paths)
+    assert "the last attempt, made before this test: Publication failed: no access key is saved." in msg
+    assert msg.endswith("Click Publish latest edition to try again.")
