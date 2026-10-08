@@ -20,7 +20,7 @@ body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font
   -webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;text-rendering:optimizeLegibility}
 a{color:inherit;text-decoration:none}
 a:focus-visible,button:focus-visible,summary:focus-visible,input:focus-visible,select:focus-visible,[tabindex="-1"]:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:4px}
-main:focus-visible{outline-offset:-3px}
+main[tabindex="-1"]:focus-visible{outline-offset:-3px}
 img{max-width:100%;height:auto;display:block}
 button{font:inherit;color:inherit;background:none;border:0;cursor:pointer;padding:0}
 .wrap{max-width:var(--wrap);margin:0 auto;padding:0 var(--gutter);overflow-wrap:anywhere}
@@ -166,6 +166,7 @@ details.src small{color:var(--faint);font-size:12px}
 .facts li{display:flex;gap:10px}
 .facts li::before{content:"";flex:none;width:5px;height:5px;margin-top:9px;border-radius:50%;background:var(--faint)}
 .fine{font-size:12.5px;color:var(--muted);margin:14px 0 0;line-height:1.5}
+.fine a{color:var(--accent2);text-decoration:underline;text-underline-offset:3px}
 .sources{display:flex;flex-direction:column;gap:22px}
 .sources h2{font-family:var(--serif);font-size:28px;font-weight:600;margin:8px 0 0}
 .source-jump{color:var(--accent2);text-decoration:underline;text-underline-offset:4px;align-self:start;display:inline-flex;align-items:center;min-height:44px}
@@ -175,7 +176,8 @@ details.src small{color:var(--faint);font-size:12px}
 .source:first-of-type{border-top:0}
 .source .outlet{font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--ink2)}
 .source .when{font-size:12.5px;color:var(--muted);text-align:right}
-.source .title{grid-column:1/-1;font-family:var(--serif);font-size:20px;line-height:1.4;text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:4px}
+.source .title{grid-column:1/-1;font-family:var(--serif);font-size:20px;line-height:1.4}
+.source a.title{text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:4px}
 .source a.title:hover{color:var(--accent2);text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:3px}
 .source .via{grid-column:1/-1;font-size:12px;color:var(--faint)}
 .story-nav{grid-column:1/-1;display:grid;grid-template-columns:1fr 1fr;gap:18px;border-top:1px solid var(--line);padding-top:28px}

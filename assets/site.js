@@ -22,6 +22,7 @@
 
   // ------------------------------------------------------------------ helpers
   function webUrl(u) {
+    if (typeof u !== 'string' || !u.trim()) return null;
     try { const x = new URL(u, location.origin); return (x.protocol === 'https:' || x.protocol === 'http:') ? x.href : null; }
     catch (e) { return null; }
   }
@@ -44,8 +45,8 @@
   const dayOf = d => new Date(d + 'T12:00:00Z');
   const longDate = d => dayOf(d).toLocaleDateString('en-US', {weekday: 'long', month: 'long', day: 'numeric', year: 'numeric', timeZone: 'UTC'});
   const shortDate = d => dayOf(d).toLocaleDateString('en-US', {month: 'short', day: 'numeric', year: 'numeric', timeZone: 'UTC'});
-  const clock = iso => new Date(iso).toLocaleTimeString('en-US', {hour: 'numeric', minute: '2-digit', timeZoneName: 'short'});
   const stamp = iso => new Date(iso).toLocaleString('en-US', {month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit'});
+  const fullStamp = iso => new Date(iso).toLocaleString('en-US', {year: 'numeric', month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit', timeZoneName: 'short'});
   function ago(iso) {
     if (!iso) return null;
     const min = (Date.now() - Date.parse(iso)) / 60000;
@@ -196,10 +197,10 @@
     body.prepend(skipLink(), masthead(current, null));
     if (main) main.after(footer()); else body.append(footer());
   }
-  function failed(current, what) {
+  function failed(current, what, withdrawn = false) {
     const message = what || 'The news could not be loaded.';
     mount(current, null, h('div', {class: 'wrap state'}, h('h1', {text: message}),
-      h('p', null, 'Please reload the page. If it keeps happening, the newest edition may still be on its way: ', h('a', {href: '/archive/', text: 'see the archive'}), '.')));
+      h('p', null, withdrawn ? 'This dated edition is no longer available. ' : 'Please reload the page. If it keeps happening, the newest edition may still be on its way: ', h('a', {href: '/archive/', text: 'see the archive'}), '.')));
     document.title = message + ' | Agent Reach Daily';
     pageStatus.textContent = message;
   }
@@ -219,7 +220,7 @@
         h('span', {class: 'live' + (latest && ageH < 30 ? '' : ' old')}, h('b', {text: latest ? 'Latest edition' : 'Archived edition'})),
         h('time', {datetime: ed.edition_date, text: longDate(ed.edition_date)}),
         ed.revision > 1 ? h('span', {text: `Update ${ed.revision}`}) : null,
-        h('time', {datetime: ed.generated_utc, title: stamp(ed.generated_utc), text: `Generated ${clock(ed.generated_utc)}`})),
+        h('time', {datetime: ed.generated_utc, title: ed.generated_utc, text: `Generated ${fullStamp(ed.generated_utc)}`})),
       h('span', {class: 'edition-stats'}, `${plural(ed.stories.length, 'story', 'stories')} from ${plural(ed.reports_read || 0, 'report')} · ${ed.sources_answered || 0} of ${ed.sources_tried || 0} source types responded · AI-generated summaries`));
   }
   function notices(ed, idx) {
@@ -271,10 +272,11 @@
         h('li', null, h('b', {text: 'Write'}), 'A local model (no cloud AI) writes the summary; unsupported sentences are removed.'),
         h('li', null, h('b', {text: 'Publish'}), 'A failed run never replaces the last good edition.')));
   }
-  function renderFront(ed, idx, current) {
+  function renderFront(ed, idx, current, storyNotice) {
     const top = ed.topStories;
     const used = new Set(top.map(s => s.id));
     const content = [h('div', {class: 'wrap'}, strip(ed, idx), notices(ed, idx),
+      storyNotice ? h('p', {class: 'notice story-recovery', text: storyNotice}) : null,
       h('div', {class: 'front'}, lead(ed, top[0]), rail(ed, top.slice(1, 4))))];
     if (top.length > 4) content.push(sectionBand(ed, null, top.slice(4, 8), 'More top stories'));
     for (const sec of ed.sections || []) {
@@ -303,7 +305,7 @@
         list.map(src => {
           const url = webUrl(src.url);
           return h('div', {class: 'source'}, h('span', {class: 'outlet', text: src.outlet}),
-            h('span', {class: 'when', text: src.published_utc ? stamp(src.published_utc) : 'time not stated'}),
+            src.published_utc ? h('time', {class: 'when', datetime: src.published_utc, text: fullStamp(src.published_utc)}) : h('span', {class: 'when', text: 'Time not stated'}),
             url ? h('a', {class: 'title', href: url, rel: 'noopener noreferrer', target: '_blank', text: src.title}) : h('span', {class: 'title', text: src.title}),
             src.via && src.via !== src.outlet ? h('span', {class: 'via', text: 'Found via ' + src.via}) : null);
         }));
@@ -319,20 +321,22 @@
     return h('section', {class: 'panel', 'aria-label': 'Coverage'}, h('h2', {text: 'Coverage'}),
       h('div', {class: `cov-big cov ${c.level}`}, h('span', {class: 'bars', 'aria-hidden': 'true'}, h('i'), h('i'), h('i')), coverage(c)),
       h('ul', {class: 'facts'}, facts),
-      h('p', {class: 'fine'}, 'Coverage counts independent outlets that reported this story. It is not a fact check: several outlets can repeat the same claim. ', h('a', {href: '/about/#coverage', text: 'More'})));
+      h('p', {class: 'fine'}, 'Coverage counts independent outlets that reported this story. It is not a fact check: several outlets can repeat the same claim. ', h('a', {href: '/about/#coverage', text: 'How coverage is measured'})));
   }
-  function renderStory(ed, idx, s) {
+  function renderStory(ed, idx, s, storyNotice) {
     const order = ed.ordered;
     const i = order.indexOf(s);
     const prev = order[i - 1], next = order[i + 1];
     const same = order.filter(x => x.category === s.category && x !== s).slice(0, 4);
     const when = s.newest_published_utc;
-    const main = mount('edition', ed, h('div', {class: 'wrap'}, notices(ed, idx), h('article', {class: 'story', 'data-cat': s.category},
+    const main = mount('edition', ed, h('div', {class: 'wrap'}, strip(ed, idx), notices(ed, idx),
+      storyNotice ? h('p', {class: 'notice story-recovery', text: storyNotice}) : null,
+      h('article', {class: 'story', 'data-cat': s.category},
       h('nav', {class: 'crumbs', 'aria-label': 'Breadcrumb'}, h('a', {href: editionUrl(ed.edition_date), text: `Edition of ${shortDate(ed.edition_date)}`}),
         h('span', {'aria-hidden': 'true', text: '/'}), SECTION[s.category] && SECTION[s.category].path ? h('a', {href: SECTION[s.category].path, text: catLabel(s.category)}) : h('span', {text: catLabel(s.category)}),
         s.top_rank ? h('span', {text: `· Top story ${s.top_rank} of ${ed.topStories.length}`}) : null),
       h('div', {class: 'story-main'}, kicker(s), h('h1', {class: 'hl', tabindex: '-1', text: s.headline}),
-        h('div', {class: 'meta'}, when ? h('span', {text: `Newest report ${stamp(when)}`}) : h('span', {text: 'Publication time not stated'}),
+        h('div', {class: 'meta'}, when ? h('time', {datetime: when, text: `Newest report ${fullStamp(when)}`}) : h('span', {text: 'Publication time not stated'}),
           h('span', {class: 'outlets', text: outlets(s)}), covMeter(s)),
         h('button', {class: 'source-jump', type: 'button', text: `Read ${plural(s.sources.length, 'source')} ↓`}),
         h('div', {class: 'story-body'}, s.summary.map(t => h('p', {text: t}))),
@@ -363,7 +367,7 @@
     mount('latest', ed, h('div', {class: 'wrap'},
       h('header', {class: 'page-head'}, h('h1', {text: 'Latest News'}),
         h('p', {text: `Every story of the ${longDate(ed.edition_date)} edition, newest report first. Times are when the newest source says it was published, in your time zone.`})),
-      notices(ed, idx),
+      strip(ed, idx), notices(ed, idx),
       h('div', {class: 'river'}, known.concat(rest).map(s => h('article', {class: 'river-item', 'data-cat': s.category},
         h('div', {class: 'river-time'}, s.newest_published_utc ? [h('b', {text: new Date(s.newest_published_utc).toLocaleTimeString('en-US', {hour: 'numeric', minute: '2-digit'})}),
           new Date(s.newest_published_utc).toLocaleDateString('en-US', {month: 'short', day: 'numeric'})] : h('b', {text: 'Time not stated'})),
@@ -377,7 +381,7 @@
     const stories = ids.map(id => ed.byId[id]).filter(Boolean);
     mount(cat, ed, h('div', {class: 'wrap'},
       h('header', {class: 'page-head', 'data-cat': cat}, h('h1', {text: sec.title}), h('p', {text: `${sec.blurb} From the ${longDate(ed.edition_date)} edition.`})),
-      notices(ed, idx)),
+      strip(ed, idx), notices(ed, idx)),
       stories.length ? h('section', {class: 'band', 'data-cat': cat, 'aria-label': sec.title}, h('div', {class: 'wrap'},
         h('div', {class: 'grid'}, stories.map((s, i) => card(ed, s, i === 0 && stories.length >= 3 ? 'feature' : '', 'h2')))))
         : h('div', {class: 'wrap state'}, h('p', {text: 'No stories in this section in the latest edition.'})));
@@ -411,6 +415,23 @@
   const COVER = {strong: 'Strong coverage', moderate: 'Moderate coverage', limited: 'Limited coverage'};
   const fold = t => String(t || '').normalize('NFKD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
   const norm = t => ' ' + fold(t).replace(/[^\p{L}\p{N}]+/gu, ' ').trim() + ' ';
+  function recoverHeadline(ed, hint) {
+    if (!hint) return null;
+    const key = norm(hint).trim();
+    if (!key) return null;
+    const exact = ed.stories.filter(s => norm(s.headline).trim() === key);
+    if (exact.length) return exact.length === 1 ? exact[0] : null;
+    const words = new Set(key.split(' '));
+    const candidates = ed.stories.map(story => {
+      const own = new Set(norm(story.headline).trim().split(' '));
+      const shared = [...words].filter(w => own.has(w)).length;
+      return {story, shared, size: own.size};
+    }).sort((a, b) => b.shared - a.shared);
+    const best = candidates[0], runnerUp = candidates[1];
+    // Require substantial overlap on both headlines and a clear margin; never guess on a tie.
+    return best && best.shared >= 3 && best.shared / words.size >= 0.6 && best.shared / best.size >= 0.6 &&
+      (!runnerUp || best.shared - runnerUp.shared >= 2) ? best.story : null;
+  }
   const monthOf = d => d.slice(0, 7);
   const monthName = m => dayOf(m + '-15').toLocaleDateString('en-US', {month: 'long', year: 'numeric', timeZone: 'UTC'});
   function searchForm(q) {
@@ -560,7 +581,7 @@
       return h('article', {class: 'hit', 'data-cat': x.c},
         h('div', {class: 'hit-meta'}, h('time', {datetime: x.d, text: shortDate(x.d)}), h('span', {class: 'kicker', 'data-cat': x.c, text: catLabel(x.c)}),
           x.t ? h('span', {class: 'badge trend', text: `Top story ${x.t}`}) : null),
-        h('h2', {class: 'hl'}, h('a', {href: `/daily/${x.d}/#story-${x.id}`}, marked(x.h, terms))),
+        h('h2', {class: 'hl'}, h('a', {href: `/daily/${x.d}/?headline=${encodeURIComponent(x.h)}#story-${x.id}`}, marked(x.h, terms))),
         x.s ? h('p', {class: 'dek'}, marked(x.s, terms)) : null,
         h('div', {class: 'meta'}, (x.o || []).length ? h('span', {class: 'outlets'}, marked((x.o || []).join(', '), terms)) : null,
           h('span', {class: `cov ${x.l || 'limited'}`}, h('span', {class: 'bars', 'aria-hidden': 'true'}, h('i'), h('i'), h('i')), COVER[x.l] || COVER.limited)));
@@ -593,6 +614,10 @@
   async function start() {
     if (page === 'about') { chrome('about'); return; }
     if (page === 'notfound') {
+      if (/^\/daily\/\d{4}-\d{2}-\d{2}\/$/.test(location.pathname)) {
+        failed('edition', 'This edition was taken off the site.', true);
+        return;
+      }
       mount(null, null, h('div', {class: 'wrap state'}, h('h1', {text: 'Page not found'}),
         h('p', null, 'That page does not exist. ', h('a', {href: '/', text: 'Go to today’s news'}), ' or ', h('a', {href: '/archive/', text: 'browse the archive'}), '.')));
       return;
@@ -607,23 +632,39 @@
     if (!date) { failed(current, 'No edition has been published yet.'); return; }
     let ed;
     try { ed = await loadEdition(date); } catch (e) {
+      if (body.dataset.date && e.message === '404') {
+        failed(current, 'This edition was taken off the site.', true);
+        return;
+      }
       failed(current, body.dataset.date ? `The edition of ${longDate(date)} is not available.` : null);
       return;
     }
     let renderedView = null;
     const route = () => {
       const m = /^#story-([0-9a-f]{6,40})$/.exec(location.hash);
-      const s = m && ed.byId[m[1]];
-      const view = s ? s.id : page;
+      let s = m && ed.byId[m[1]];
+      const hint = new URLSearchParams(location.search);
+      let storyNotice = null;
+      if (m && !s) {
+        s = recoverHeadline(ed, hint.get('headline'));
+        storyNotice = s ? 'The original story link no longer exists in this revision. Showing the closest clear headline match.'
+          : 'This story was updated in a later edition of the day; here is the full edition.';
+      }
+      if (hint.has('headline')) {
+        hint.delete('headline');
+        history.replaceState(null, '', location.pathname + (hint.toString() ? '?' + hint : '') + (s ? '#story-' + s.id : location.hash));
+      }
+      const view = s ? s.id : page + (storyNotice ? ':missing-story' : '');
       if (view === renderedView) return false;
       renderedView = view;
-      if (s) return renderStory(ed, idx, s);
+      if (s) return renderStory(ed, idx, s, storyNotice);
+      if (storyNotice) return renderFront(ed, idx, page === 'home' ? 'home' : 'edition', storyNotice);
       if (page === 'latest') return renderLatest(ed, idx);
       if (page === 'section') return renderSection(ed, idx, body.dataset.section);
       return renderFront(ed, idx, page === 'home' ? 'home' : 'edition');
     };
     route();
-    pageStatus.textContent = `Edition loaded. ${plural(ed.stories.length, 'story', 'stories')}.`;
+    pageStatus.textContent = document.querySelector('.story-recovery')?.textContent || `Edition loaded. ${plural(ed.stories.length, 'story', 'stories')}.`;
     window.addEventListener('hashchange', () => {
       // Ordinary page anchors must not remount the news or discard keyboard focus.
       if (location.hash && !/^#story-/.test(location.hash)) return;
