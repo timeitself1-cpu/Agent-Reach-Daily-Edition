@@ -105,6 +105,11 @@ class Conflict(PublishError):
     """The site branch moved while this commit was being made: re-read and try again."""
 
 
+class Hopeless(PublishError):
+    """A failure that trying again cannot fix: the key was refused, it lacks access, or the site already has a
+    newer revision. The hourly retry waits for a new key or a new edition (audit round 2, N5)."""
+
+
 def edition_json_path(d: str) -> str:
     return f"editions/{d}.json"
 
@@ -141,6 +146,7 @@ class PublishStatus(BaseModel):
     stories: int | None = None
     commit: str | None = None
     failed_action: Literal["publish", "withdraw"] | None = None  # what the last failure was trying to do
+    blocked_on: str | None = None  # 'date#revision' that failed hopelessly: not retried until a new key or edition
     key_expires_utc: datetime | None = None  # as GitHub stated it on the last call (None: no expiry, or unknown)
 
 
@@ -228,7 +234,7 @@ def save_token(paths: DataPaths, token: str) -> None:
     atomic_write_bytes(key_file(paths), data)
     if sys.platform != "win32":
         os.chmod(key_file(paths), 0o600)
-    _record(paths, key_expires_utc=None)  # a new key: its expiry is read on its first call
+    _record(paths, key_expires_utc=None, blocked_on=None)  # a new key: expiry read on its first call; retries resume
 
 
 def load_token(paths: DataPaths) -> str | None:
@@ -689,10 +695,10 @@ class GitHubTarget(Target):
         if r.status_code in ok or r.status_code in allow:
             return r
         if r.status_code == 401:
-            raise PublishError("GitHub did not accept the access key (it may have expired or been revoked). "
+            raise Hopeless("GitHub did not accept the access key (it may have expired or been revoked). "
                                "Paste a new one in Website publishing.")
         if r.status_code in (403, 404):
-            raise PublishError(f"The access key cannot {'read' if method == 'GET' else 'write to'} {self.repo}. "
+            raise Hopeless(f"The access key cannot {'read' if method == 'GET' else 'write to'} {self.repo}. "
                                "It needs access to that repository with 'Contents: Read and write'.")
         if r.status_code == 409 or (r.status_code == 422 and path.startswith("/git/refs")):
             raise Conflict("The website changed while publishing.")
@@ -833,7 +839,7 @@ def publish_edition(paths: DataPaths, edition: DailyEdition, target: Target | No
             current = _read_json(t, INDEX_PATH)
             on_site = next((e for e in (current or {}).get("editions", []) if e.get("date") == d), None)
             if on_site and int(on_site.get("revision") or 0) > edition.revision:
-                raise PublishError(f"The website already has a newer revision ({on_site['revision']}) of the {label} "
+                raise Hopeless(f"The website already has a newer revision ({on_site['revision']}) of the {label} "
                                    "edition; nothing was changed.")
             left_out: list[int] = []
             public, files = site_files(edition, settings, current, left_out)
@@ -850,9 +856,13 @@ def publish_edition(paths: DataPaths, edition: DailyEdition, target: Target | No
                 _note_key(paths, target)
                 if own:
                     target.close()
+        except Hopeless as exc:
+            msg = f"Publication failed: {exc} The website still shows the previous edition."
+            _record(paths, state="failed", message=msg, failed_action="publish", blocked_on=f"{d}#{edition.revision}")
+            return PublishResult("failed", msg)
         except PublishError as exc:
             msg = f"Publication failed: {exc} The website still shows the previous edition.{again}"
-            _record(paths, state="failed", message=msg, failed_action="publish")
+            _record(paths, state="failed", message=msg, failed_action="publish", blocked_on=None)
             return PublishResult("failed", msg)
         except Exception as exc:  # noqa: BLE001 - a bug here must never break a refresh
             log.exception("publishing failed unexpectedly")
@@ -869,7 +879,7 @@ def publish_edition(paths: DataPaths, edition: DailyEdition, target: Target | No
         if commit is None:
             msg = f"The website already has the {label} edition ({stories} stories)."
             _record(paths, state="unchanged", message=msg, success_utc=load_status(paths).success_utc or now,
-                    failed_action=None,
+                    failed_action=None, blocked_on=None,
                     edition_date=d, revision=edition.revision, stories=stories)
             return PublishResult("unchanged", msg)
         msg = (f"Published successfully: the {label} edition ({stories} stories) at {format_central(now)}. "
@@ -878,7 +888,7 @@ def publish_edition(paths: DataPaths, edition: DailyEdition, target: Target | No
             msg += (f" Left out: story {', '.join(str(r) for r in published['left_out'])}, because its text looks like "
                     "a file path on this computer. Please report this.")
         _record(paths, state="published", message=msg, success_utc=now, edition_date=d, revision=edition.revision,
-                failed_action=None,
+                failed_action=None, blocked_on=None,
                 stories=stories, commit=commit)
         log.info("published %s r%d to %s: %s", d, edition.revision, target.description, ", ".join(changed))
         return PublishResult("published", msg, commit, changed)
@@ -1031,6 +1041,8 @@ def catch_up(paths: DataPaths, now: datetime | None = None) -> PublishResult | N
         d = edition.edition_date.isoformat()
         if settings.withdrawn.get(d, 0) >= edition.revision:
             return None
+        if status.state == "failed" and status.blocked_on == f"{d}#{edition.revision}":
+            return None  # a refused key or a newer revision on the site: retrying the same edition cannot help
         sent = status.state in ("published", "unchanged") and status.edition_date is not None
         if sent and (status.edition_date, status.revision or 0) >= (d, edition.revision):
             return None  # the website has this edition (or a newer one) from this PC

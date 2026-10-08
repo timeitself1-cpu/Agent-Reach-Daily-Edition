@@ -400,3 +400,40 @@ def test_the_window_warns_a_week_before_the_access_key_expires(daily_paths, monk
     assert P.load_status(daily_paths).key_expires_utc is None and P.status_lines(daily_paths)["key_warning"] == ""
     assert P.parse_expiry("2026-11-07 12:00:00 +0100") == datetime(2026, 11, 7, 11, 0, tzinfo=timezone.utc)
     assert P.parse_expiry("never") is None and P.parse_expiry(None) is None
+
+
+def test_the_hourly_retry_waits_when_trying_again_cannot_help(daily_paths, monkeypatch):
+    """Audit round 2, N5 (Oct 8): a refused key, a key without access or a newer revision on the site fails the
+    same way every hour. The retry waits for a new key or a new edition instead of calling GitHub forever."""
+    from datetime import timedelta
+
+    from agent_reach.daily.store import EditionStore
+    from agent_reach.daily.timeutil import utcnow
+
+    monkeypatch.delenv(P.TOKEN_ENV, raising=False)
+    EditionStore(daily_paths).publish(real_edition())
+    P.save_settings(daily_paths, P.PublishSettings(enabled=True))
+    P.save_token(daily_paths, "revoked")
+    gh = FakeGitHub()
+    refused = {"on": True}
+
+    def answer(request):
+        if refused["on"]:
+            gh.calls.append("refused")
+            return httpx.Response(401, json={"message": "Bad credentials"})
+        return gh.handler(request)
+
+    monkeypatch.setattr(P, "github_target", lambda paths, settings=None, client=None:
+                        P.GitHubTarget("owner/site", "main", "k", client=httpx.Client(transport=httpx.MockTransport(answer))))
+    edition = EditionStore(daily_paths).load_latest().edition
+    r = P.publish_after_refresh(daily_paths, edition)
+    assert r.state == "failed" and "did not accept the access key" in r.message and "hourly" not in r.message
+    assert P.load_status(daily_paths).blocked_on == f"2026-10-07#{edition.revision}"
+    calls = len(gh.calls)
+    assert P.catch_up(daily_paths, now=utcnow() + timedelta(hours=2)) is None and len(gh.calls) == calls
+    # a new key: the retry resumes and publishes
+    refused["on"] = False
+    P.save_token(daily_paths, "github_pat_new")
+    r = P.catch_up(daily_paths, now=utcnow() + timedelta(hours=2))
+    assert r is not None and r.state == "published" and "editions/2026-10-07.json" in gh.files
+    assert P.load_status(daily_paths).blocked_on is None
