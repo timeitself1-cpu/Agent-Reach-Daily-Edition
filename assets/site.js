@@ -1,6 +1,7 @@
 // Agent Reach Daily website. Every page is rendered from the editions the app publishes:
 //   /editions/index.json        the archive list (newest first, "latest" = newest date)
 //   /editions/YYYY-MM-DD.json   one public edition (written by agent_reach/daily/publish.py)
+//   /search/YYYY-MM.json        the search data of one month (headline, short summary, outlets per story)
 // All text from an edition goes into the page as text (textContent), never as HTML; only absolute
 // http(s) links become links.
 (() => {
@@ -132,7 +133,8 @@
         h('div', {class: 'mast-date'}, h('strong', {text: ed ? 'Edition of ' : 'Today, '}), today),
         h('a', {class: 'brand', href: '/', 'aria-label': 'Agent Reach Daily, home'}, h('span', {class: 'brand-mark', 'aria-hidden': 'true'}),
           h('span', {class: 'brand-name', text: 'Agent Reach'}), h('span', {class: 'brand-daily', text: 'Daily'})),
-        h('div', {class: 'mast-actions'}, h('a', {class: 'pill', href: '/archive/', text: 'Archive'}),
+        h('div', {class: 'mast-actions'}, h('a', {class: 'pill search', href: '/search/', 'aria-current': current === 'search' ? 'page' : null},
+          h('span', {class: 'glass', 'aria-hidden': 'true'}), 'Search'),
           h('a', {class: 'pill solid', href: '/about/#app', text: 'Get the app'}))),
       h('nav', {class: 'nav', 'aria-label': 'Sections'}, NAV.map(([label, href, key]) =>
         h('a', {href, text: label, 'aria-current': key === current ? 'page' : null})))));
@@ -145,7 +147,8 @@
           h('p', {text: 'Summaries can contain mistakes. Always check the linked sources. Headlines and articles belong to their publishers; Agent Reach is not affiliated with the outlets it links to.'})),
         h('div', null, h('h3', {text: 'Read'}), h('ul', null,
           h('li', null, h('a', {href: '/daily/', text: 'Latest edition'})), h('li', null, h('a', {href: '/latest/', text: 'Latest News'})),
-          h('li', null, h('a', {href: '/archive/', text: 'Archive'})), h('li', null, h('a', {href: '/about/#method', text: 'How it works'})),
+          h('li', null, h('a', {href: '/archive/', text: 'Archive'})), h('li', null, h('a', {href: '/search/', text: 'Search the archive'})),
+          h('li', null, h('a', {href: '/about/#method', text: 'How it works'})),
           h('li', null, h('a', {href: '/about/#coverage', text: 'Reading coverage strength'})),
           h('li', null, h('a', {href: '/feed.xml', text: 'RSS feed'})))),
         h('div', null, h('h3', {text: 'Project'}), h('ul', null,
@@ -346,7 +349,8 @@
     }
     mount('archive', null, h('div', {class: 'wrap'},
       h('header', {class: 'page-head'}, h('h1', {text: 'Archive'}),
-        h('p', {text: 'Every edition published here, newest first. Each date keeps its own permanent page; when an edition was updated during the day, the page shows the last update.'})),
+        h('p', {text: 'Every edition published here, newest first. Each date keeps its own permanent page; when an edition was updated during the day, the page shows the last update.'}),
+        searchForm('')),
       h('div', {class: 'archive'}, months.size ? [...months].map(([m, list]) => h('section', {class: 'month'}, h('h2', {text: m}),
         list.map(e => h('a', {class: 'ed-row', href: editionUrl(e.date)},
           h('div', {class: 'ed-day'}, String(dayOf(e.date).getUTCDate()), h('small', {text: dayOf(e.date).toLocaleDateString('en-US', {weekday: 'long', timeZone: 'UTC'})})),
@@ -354,6 +358,144 @@
             h('div', {class: 'chips'}, Object.entries(e.sections || {}).map(([c, n]) => h('span', {class: 'chip', text: `${catLabel(c)} ${n}`})))),
           h('div', {class: 'ed-count', text: plural(e.stories, 'story', 'stories')}))))) : h('p', {class: 'state', text: 'No editions have been published yet.'}))));
     document.title = 'Archive | Agent Reach Daily';
+  }
+
+  // ------------------------------------------------------------------ search
+  // The archive is searched in the browser: one small file per month, newest months first. Only the months the
+  // reader reaches are downloaded, so a search stays fast however long the archive gets.
+  const SEARCH_BATCH = 6;     // months searched before asking to go further back
+  const SEARCH_PAGE = 40;     // results shown before "Show more"
+  const COVER = {strong: 'Strong coverage', moderate: 'Moderate coverage', limited: 'Limited coverage'};
+  const fold = t => String(t || '').normalize('NFKD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+  const norm = t => ' ' + fold(t).replace(/[^\p{L}\p{N}]+/gu, ' ').trim() + ' ';
+  const monthOf = d => d.slice(0, 7);
+  const monthName = m => dayOf(m + '-15').toLocaleDateString('en-US', {month: 'long', year: 'numeric', timeZone: 'UTC'});
+  function searchForm(q) {
+    return h('form', {class: 'search-form', role: 'search', action: '/search/', method: 'get'},
+      h('span', {class: 'glass', 'aria-hidden': 'true'}),
+      h('input', {type: 'search', name: 'q', value: q, placeholder: 'Search every edition: a name, place or topic', 'aria-label': 'Search the archive', autocomplete: 'off', enterkeyhint: 'search'}),
+      h('button', {class: 'pill solid', type: 'submit', text: 'Search'}));
+  }
+  function parseQuery(q) { // words match the start of a word; "quoted words" match as a phrase
+    const terms = [];
+    String(q).replace(/"([^"]+)"|(\S+)/g, (m, phrase, word) => { const t = norm(phrase || word).trim(); if (t) terms.push(t); return ''; });
+    return [...new Set(terms)].slice(0, 8);
+  }
+  function marked(text, terms) {
+    if (!terms.length) return text;
+    const esc = terms.map(t => t.split(' ').map(w => w.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('[^\\p{L}\\p{N}]+'));
+    const rx = new RegExp(`(^|[^\\p{L}\\p{N}])(${esc.join('|')})`, 'giu');
+    const out = []; let last = 0;
+    String(text).replace(rx, (m, pre, hit, at) => {
+      const start = at + pre.length;
+      out.push(text.slice(last, start), h('mark', {text: hit})); last = start + hit.length; return m;
+    });
+    out.push(text.slice(last));
+    return out;
+  }
+  function renderSearch(idx) {
+    const params = new URLSearchParams(location.search);
+    let timer = null;
+    const months = [...new Set((idx.editions || []).map(e => monthOf(e.date)))].sort().reverse();
+    const editionsIn = new Map(); for (const e of idx.editions || []) editionsIn.set(monthOf(e.date), (editionsIn.get(monthOf(e.date)) || 0) + 1);
+    const data = new Map();   // month -> entries with folded text, or null when it could not be loaded
+    const pending = new Map();
+    const st = {q: params.get('q') || '', cat: params.get('cat') || '', sort: params.get('sort') === 'best' ? 'best' : 'new',
+      horizon: Math.min(SEARCH_BATCH, months.length), shown: SEARCH_PAGE, run: 0};
+    function load(m) {
+      if (!pending.has(m)) pending.set(m, getJson(`/search/${m}.json`).then(doc => {
+        const list = Array.isArray(doc && doc.stories) ? doc.stories : [];
+        data.set(m, list.filter(x => x && x.d && x.id && x.h).map(x => Object.assign(x, {
+          _h: norm(x.h), _all: norm([x.h, x.s, (x.o || []).join(' '), catLabel(x.c)].join(' | '))})));
+      }).catch(() => data.set(m, null)));
+      return pending.get(m);
+    }
+    const input = h('input', {type: 'search', value: st.q, placeholder: 'A name, place or topic', 'aria-label': 'Search the archive', autocomplete: 'off', enterkeyhint: 'search', autofocus: true});
+    const cat = h('select', {'aria-label': 'Section'}, h('option', {value: '', text: 'All sections'}),
+      Object.keys(SECTION).map(c => h('option', {value: c, text: catLabel(c), selected: c === st.cat})));
+    const sortBtns = [['new', 'Newest first'], ['best', 'Best match']].map(([k, label]) =>
+      h('button', {type: 'button', class: 'seg', 'data-sort': k, 'aria-pressed': String(st.sort === k), text: label}));
+    const form = h('form', {class: 'search-form', role: 'search'}, h('span', {class: 'glass', 'aria-hidden': 'true'}), input, cat);
+    form.addEventListener('submit', e => { e.preventDefault(); clearTimeout(timer); st.q = input.value.trim(); st.shown = SEARCH_PAGE; remember(); run(); input.blur(); });
+    const status = h('p', {class: 'search-status', 'aria-live': 'polite'});
+    const results = h('div', {class: 'hits'});
+    const more = h('div', {class: 'search-more'});
+    const first = (idx.editions || []).length ? idx.editions[idx.editions.length - 1].date : null;
+    mount('search', null, h('div', {class: 'wrap'},
+      h('header', {class: 'page-head'}, h('h1', {text: 'Search'}),
+        h('p', {text: first ? `Every story of every edition since ${longDate(first)}: ${plural((idx.editions || []).length, 'edition')}. Words match the start of a word; put a phrase in "quotes".` : 'No editions have been published yet.'}),
+        form,
+        h('div', {class: 'segs', role: 'group', 'aria-label': 'Order'}, sortBtns)),
+      status, results, more));
+    document.title = (st.q ? `${st.q}: search` : 'Search') + ' | Agent Reach Daily';
+
+    function remember() {
+      const p = new URLSearchParams();
+      if (st.q) p.set('q', st.q); if (st.cat) p.set('cat', st.cat); if (st.sort === 'best') p.set('sort', 'best');
+      history.replaceState(null, '', '/search/' + (p.toString() ? '?' + p : ''));
+      document.title = (st.q ? `${st.q}: search` : 'Search') + ' | Agent Reach Daily';
+    }
+    async function run() {
+      const ticket = ++st.run;
+      const terms = parseQuery(st.q);
+      const reach = months.slice(0, st.horizon);
+      results.replaceChildren(); more.replaceChildren();
+      if (!terms.length) {
+        status.textContent = months.length ? 'Type to search. Results appear as you type.' : '';
+        if (months.length) load(months[0]);
+        return;
+      }
+      if (reach.some(m => !data.has(m))) status.textContent = 'Searching…';
+      await Promise.all(reach.map(load));
+      if (ticket !== st.run) return;
+      const hits = [];
+      let missing = 0;
+      for (const m of reach) {
+        const list = data.get(m);
+        if (!list) { missing++; continue; }
+        for (const x of list) {
+          if (st.cat && x.c !== st.cat) continue;
+          let score = 0, ok = true;
+          for (const t of terms) {
+            if (!x._all.includes(' ' + t)) { ok = false; break; }
+            score += x._h.includes(' ' + t) ? 3 : 1;
+          }
+          if (ok) hits.push([score + (x.t ? 0.5 : 0), x]);
+        }
+      }
+      hits.sort((a, b) => st.sort === 'best' ? (b[0] - a[0]) || b[1].d.localeCompare(a[1].d) || a[1].r - b[1].r
+        : b[1].d.localeCompare(a[1].d) || a[1].r - b[1].r);
+      const searched = reach.reduce((n, m) => n + (editionsIn.get(m) || 0), 0);
+      const span = reach.length ? (reach.length === 1 ? monthName(reach[0]) : `${monthName(reach[reach.length - 1])} to ${monthName(reach[0])}`) : '';
+      status.textContent = `${plural(hits.length, 'story', 'stories')} in ${plural(searched, 'edition')} (${span}).` +
+        (missing ? ` ${plural(missing, 'month')} could not be loaded; try again later.` : '');
+      results.replaceChildren(...hits.slice(0, st.shown).map(([, x]) => hit(x, terms)));
+      if (hits.length > st.shown) more.append(h('button', {class: 'pill', type: 'button', text: `Show more results (${(hits.length - st.shown).toLocaleString('en-US')} more)`, 'data-act': 'more'}));
+      if (st.horizon < months.length) more.append(h('button', {class: 'pill', type: 'button', 'data-act': 'older',
+        text: `Search older editions (before ${monthName(months[st.horizon - 1])})`}));
+      if (!hits.length && st.horizon >= months.length) results.append(h('p', {class: 'state', text: 'Nothing found. Try fewer or shorter words, or another section.'}));
+    }
+    function hit(x, terms) {
+      return h('article', {class: 'hit', 'data-cat': x.c},
+        h('div', {class: 'hit-meta'}, h('time', {datetime: x.d, text: shortDate(x.d)}), h('span', {class: 'kicker', 'data-cat': x.c, text: catLabel(x.c)}),
+          x.t ? h('span', {class: 'badge trend', text: `Top story ${x.t}`}) : null),
+        h('h2', {class: 'hl'}, h('a', {href: `/daily/${x.d}/#story-${x.id}`}, marked(x.h, terms))),
+        x.s ? h('p', {class: 'dek'}, marked(x.s, terms)) : null,
+        h('div', {class: 'meta'}, (x.o || []).length ? h('span', {class: 'outlets'}, marked((x.o || []).join(', '), terms)) : null,
+          h('span', {class: `cov ${x.l || 'limited'}`}, h('span', {class: 'bars', 'aria-hidden': 'true'}, h('i'), h('i'), h('i')), COVER[x.l] || COVER.limited)));
+    }
+    input.addEventListener('input', () => { clearTimeout(timer); timer = setTimeout(() => { st.q = input.value.trim(); st.shown = SEARCH_PAGE; remember(); run(); }, 140); });
+    cat.addEventListener('change', () => { st.cat = cat.value; st.shown = SEARCH_PAGE; remember(); run(); });
+    for (const b of sortBtns) b.addEventListener('click', () => {
+      st.sort = b.dataset.sort; for (const x of sortBtns) x.setAttribute('aria-pressed', String(x === b)); remember(); run();
+    });
+    more.addEventListener('click', e => {
+      const act = e.target.closest('button') && e.target.closest('button').dataset.act;
+      if (act === 'more') { st.shown += SEARCH_PAGE; run(); }
+      if (act === 'older') { st.horizon = Math.min(months.length, st.horizon + SEARCH_BATCH); run(); }
+    });
+    run();
+    if (!st.q) input.focus();
   }
 
   // ------------------------------------------------------------------ routing
@@ -369,6 +511,7 @@
     let idx;
     try { idx = await loadIndex(); } catch (e) { failed(current); return; }
     if (page === 'archive') { renderArchive(idx); return; }
+    if (page === 'search') { renderSearch(idx); return; }
     const date = body.dataset.date || idx.latest;
     if (!date) { failed(current, 'No edition has been published yet.'); return; }
     let ed;
