@@ -35,6 +35,10 @@ def test_successful_refresh_publishes_a_complete_grounded_edition(daily_env):
     assert "Mayor of Oakdene Resigns After Audit" not in heads  # a week-old story is not today's news
     assert any("left out because every source was published more than 48 hours" in n for n in ed.notes)
     assert all(s.labels == [] for s in ed.stories)  # first run = baseline: no trend labels
+    from agent_reach.daily.registry import load_registry, registry_file
+
+    events = load_registry(registry_file(daily_env.paths)).events  # observed: one new event per story
+    assert sorted(a.rank for e in events.values() for a in e.appearances) == [s.rank for s in ed.stories]
     why = {s.headline: s.why_it_matters for s in ed.stories}
     assert why["Norvale Harbor Ferry Strike Halts Island Service"].startswith("Island residents")
     assert why["Ransomware Attack Disrupts Halden Hospital Network"].startswith("Patients")

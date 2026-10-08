@@ -19,6 +19,12 @@ unchecked sub-task, do it, then update this file.
 
 ## Where we are (October 8, 2026)
 
+- **Oct 8 (later): PR #4 merged rc13c into the default branch (9674c46).** rc14 on `claude/sweet-ramanujan-xj36o5`
+  (restarted from the default branch): event registry, observing only, and the self-test's 14-day history.
+  User's Phase 2 order (Oct 8): identity before timelines; answer key over >= 7 real days; matching measured
+  apart from selection/publishing churn; diagnose before choosing; registry with stable ids, first/last seen,
+  evidence, confidence, safe ambiguity; benchmark on a held-out multi-day set (targets, not guarantees);
+  timelines only after that. No UI redesign, no installer. Design and results: `docs/EVENT-IDENTITY.md`.
 - **rc13 (zip rc13), branch `claude/sweet-ramanujan-xj36o5`: website + automatic publishing (Phase W below),
   re-prioritised by the user on October 8** ("UX first, ship early"). getagentreach.dev is a news site rendered
   from published editions; the app publishes each validated edition by itself once the user saves a GitHub access
@@ -170,7 +176,7 @@ new agents, new LLM infrastructure, accounts, databases, pipeline changes.
       91d14bc went live or the deploy did not run): RSS `feed.xml` + `sitemap.xml` written by the publisher in the
       same commit as the index (`index_files`), `robots.txt`, feed links; source counts made consistent (strip
       "10 of 10 kinds of source", About lists them; README 114 -> 112 feeds); README's personal paths made generic.
-- [~] W9. From the same review, ordered by the user on Oct 8: (a) [~] PR of rc13 into the default branch (GitHub
+- [~] W9. From the same review, ordered by the user on Oct 8: (a) [x] PR #4 merged (Oct 8, 9674c46) (GitHub
       visitors still see the rc12 README); (b) [ ] story timelines on the site, AFTER Phase 2 makes event matching
       across editions reliable; (c) [x] archive search (monthly search files written by the publisher, `/search/`);
       (d) NOT NOW (user): a one-click Windows installer and GitHub Releases.
@@ -218,16 +224,26 @@ on every fixture pair.
       listed in the next edition 73/100, 6 h+ apart 111/288 (selection churn: 2.2/2.6).
       `tests/test_cross_edition.py`: floor test + strict xfail target (6 h+ apart P >= 0.99, R >= 0.90).
       Gap: all 12 editions are one day; day-to-day pairs need real editions from consecutive days (2.1b).
-- [ ] 2.1b Real editions from several consecutive days: the self-test zip carries only today's two; add the
-      last 7 days of editions (news only, checked for personal data) so the answer key can span days.
-- [ ] 2.2 Find the cause of churn on the fixtures before designing: how much comes from (a) which ~260 of
+- [~] 2.1b Real editions from several consecutive days. Done in rc14: the self-test copies the newest 14 dated
+      editions + `state/events.json` into `history/`. NEEDS the user's next self-test zip; then extend the answer
+      key to >= 7 calendar days (hand-checked positives, negatives, related pairs), hold out the last days.
+- [~] 2.2 (Oct 8: churn measured apart from matching, docs/EVENT-IDENTITY.md: carry-over 44% consecutive,
+      16% 6 h+ apart; Top Stories again top 48% / 15%.) Find the cause of churn on the fixtures before designing: how much comes from (a) which ~260 of
       ~1,450 items are selected for clustering (`cleaner.select_for_llm` budget, per-feed floors), (b)
       HDBSCAN grouping differences, (c) story selection caps/ranking (`edition.select_stories`), (d) model
       relevance scores varying run to run. Use the logs in the self-test zips. Write the findings here.
-- [ ] 2.3 Event registry: a persistent store (`state/events.json` or a SQLite table in `data/agent_reach.db`)
+- [x] 2.3 (Oct 8, rc14) `daily/registry.py`, `state/events.json`, recorded by the refresh worker after the edition
+      is saved, OBSERVING ONLY (no edition uses it yet; never fails a refresh). Stable ids, first/last seen, report
+      keys, key names, fading word profile, appearances with tier/confidence/reason/undecided candidates; no
+      embedding centroid yet (vectors are not kept per story; wording tf-idf instead). Original text: a persistent store (`state/events.json` or a SQLite table in `data/agent_reach.db`)
       of events: id, first_seen, last_seen, headline history, key names, URL set, embedding centroid
       (from the run's vectors), category, last story text. Owned by the refresh worker (lock holder).
-- [ ] 2.4 Matching a new run's clusters to registry events: shared article URLs; then key-name + event-word
+- [~] 2.4 (Oct 8) Matching implemented on stories (not clusters) against events of the last 7 days: shared
+      reports as a SHARE of the story's reports (> 50%) + wording agreement; else tf-idf wording with a rare
+      non-name word; names never alone; undecided within 90% -> kept apart. Oct 7 held-out pairs 6 h+ apart:
+      P 0.991 R 0.898 (today's matcher 0.989 / 0.703); target P >= 0.99 R >= 0.90 still a strict xfail. Remaining
+      false continuations come from stories already mixed inside a run. Re-check on the multi-day held-out set
+      (2.1b) before 2.5. Original text: Matching a new run's clusters to registry events: shared article URLs; then key-name + event-word
       fingerprint; then embedding cosine of centroids with a strict threshold; never merge two clusters of
       the same run into one event unless they share URLs (invariant 2: the LLM never decides). Unit tests
       from the fixture pairs (Messi farewell #15/#37; plague story day to day; the Nobel prizes must stay
@@ -326,3 +342,4 @@ Each rule starts from quotes in `docs/REAL-EDITION-FINDINGS.md`; each gets a fix
 - 2026-10-08 | W8 | (this commit), site 5ad9ae3 | 499 passed (Tk, xvfb), pyflakes clean; review follow-ups: RSS feed + sitemap rebuilt with every publication (tests extended), robots.txt, consistent source counts, generic README paths | W6: user saves the key and runs a refresh; W9 waits for the user
 - 2026-10-08 | W9c search | (this commit), site 8161be5 | archive search: publisher writes search/YYYY-MM.json in the edition commit (self-repairing, withdraw-aware, 1 new test); /search/ page (newest 6 months first, accents ignored, phrases, section filter); Playwright 1440/390 on a 10-month copy | PR of rc13 to the default branch; then Phase 2 (event identity across editions)
 - 2026-10-08 | Phase 2.0-2.1 | (this commit) | cross-edition answer key (12 editions, 256 events) + churn report; baseline changes._match: near P 0.967 R 0.954, 6h+ apart P 0.966 R 0.752, top stories kept 111/288 far apart; floor test + strict xfail target | 2.1b multi-day editions from the self-test; 2.2 causes; 2.4 matcher
+- 2026-10-08 | PR #4, Phase 2.1b-2.4 | 9674c46 (merge), (this commit) | rc13c merged; rc14: matching vs carry-over vs Top Stories reported apart; diagnosis (false continuations = URL overlap with mixed stories + entity sets; misses = new articles, one shared name); daily/registry.py observing in the refresh; Oct 7 held-out 6h+: P 0.991 R 0.898 (was 0.989/0.703); self-test brings 14 days + events.json | user runs the self-test on rc14; extend the answer key to >= 7 days

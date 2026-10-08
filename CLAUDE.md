@@ -42,9 +42,11 @@ category sections), a grounded "why it matters" pass, an HTML export and a spoke
   project." **Never claim untested results**: say what ran where (sandbox, CI, the user's PC). Never
   simulate success for something that needs their machine; prepare the harness, give the exact command.
 - **Branch:** `claude/affectionate-galileo-isxik1` (rc11-rc12); rc13 (website publishing, Oct 8) was made on
-  `claude/sweet-ramanujan-xj36o5`. Committing and pushing to the session's branch is authorized.
+  `claude/sweet-ramanujan-xj36o5` and merged as PR #4 (Oct 8); rc14 continues on that branch, restarted from the
+  default branch. Committing and pushing to the session's branch is authorized.
   No pull requests unless asked; nothing else remote without asking. The repository's default branch is
-  `claude/loving-darwin-a7rqvs` (what visitors download): the user had PR #1 merged into it on Oct 8 (rc12e).
+  `claude/loving-darwin-a7rqvs` (what visitors download): PR #1 (rc12e), #3 (rc12f) and #4 (rc13c, squash-merged by
+  Claude at the user's request once CI was green, Oct 8) are in it.
   Start new work from the default branch; a new PR is needed to bring later releases there.
 - **Delivery:** each release goes to the user as a zip of the repository:
   `git archive --format=zip --prefix=Agent-Reach/ -o <scratchpad>/Agent-Reach-Daily-v1.0rcNN<letter>.zip HEAD`
@@ -139,6 +141,9 @@ agent_reach/
     sample.py          public sample of an edition (--export-sample; no publisher excerpts; the old site demo)
     publish.py         website publishing: public edition, FolderTarget/GitHubTarget (one fast-forward commit),
                        DPAPI access key, status, withdraw, hide_story; refresh hook publish_after_refresh
+    registry.py        event registry (state/events.json): stable event ids across editions and days, explainable
+                       matching (shared-report share, tf-idf wording, names never alone, undecided -> kept apart);
+                       recorded after each refresh, OBSERVING ONLY so far (docs/EVENT-IDENTITY.md)
     prereqs.py         Ollama checks/start   scheduler.py  Task Scheduler XML   timeutil.py  Central time, DST
 tests/
   fakes.py, daily_fakes.py   mock sources + fake Ollama; synthetic feeds on .test hosts + fake daily model
@@ -154,7 +159,8 @@ tests/
   embedding_benchmark.py    rc11 vs gate (offline) and nomic vs EmbeddingGemma (--ollama); Benchmark-Embeddings.ps1
   html_fixture.py      exported edition HTML -> fixture JSON
   daily_selftest.py    the self-test the user runs (Test-AgentReachDaily.ps1); --world = dry run here
-docs/  PLAN.md (roadmap, live)  HANDOFF.md (history, state)  RELEASE-NOTES.md  REAL-EDITION-FINDINGS.md
+docs/  EVENT-IDENTITY.md (cross-edition answer key, diagnosis, registry design, results)
+       PLAN.md (roadmap, live)  HANDOFF.md (history, state)  RELEASE-NOTES.md  REAL-EDITION-FINDINGS.md
        WINDOWS-TEST-RC11.md  architecture.md  reliability-v2.1.md  eval/identity-eval.{md,json}
 Setup-AgentReachDaily.ps1  Test-AgentReachDaily.ps1  Benchmark-Embeddings.ps1  Uninstall-AgentReachDaily.ps1
 AgentReachDaily.cmd/.pyw
@@ -197,6 +203,10 @@ AgentReachDaily.cmd/.pyw
 16. **The website never gets worse than it was.** Publishing is opt-in, runs after the edition is saved, never fails
     a refresh, commits all files of an edition at once (fast-forward only, no commit when nothing changed), never
     replaces a newer revision, and uploads only `public_edition` (no excerpts, paths, logs or settings).
+17. **Event identity is evidence, not a guess.** The registry matches on shared reports (as a share of the story's
+    reports) and rare non-name wording; names alone never match; a close second candidate means "kept apart";
+    no model decides. It observes only until it meets its targets on a held-out multi-day answer key; every
+    change to it is scored with `python -m tests.cross_edition` (matching apart from carry-over/Top Stories).
 
 ## Conventions
 

@@ -123,7 +123,7 @@ Everything lives in `%LOCALAPPDATA%\AgentReachDaily` (for example
 | `cache\editions\YYYY-MM-DD.json` | the daily editions (kept 30 days; the newest is never deleted) |
 | `cache\latest.json` | pointer to the newest edition |
 | `settings.json` | your settings (Settings dialog) |
-| `state\` | refresh history (last attempt vs. last success, backoff), the refresh lock, window size |
+| `state\` | refresh history (last attempt vs. last success, backoff), the refresh lock, window size, and `events.json`: the event registry (which earlier event each story continues, kept 30 days; it only observes for now) |
 | `data\agent_reach.db` | SQLite history used to tell new / rising / continuing stories |
 | `logs\` | `gui.log`, `refresh.log`, `scheduler.log` (rotating, about 6 MB each at most) |
 | `diagnostics\` | details of the last 30 failed or unpublished refreshes |
@@ -290,7 +290,7 @@ editions, then runs the same self-test; send back both zips from the Desktop.
 
 Tests never touch the network or a real Ollama. `tests/daily_fakes.py` holds synthetic publisher
 feeds (fictional places on `.test` hosts) and a deterministic fake model; `samples/DEMO-edition.json`
-is the clearly labelled demo edition. Version: Agent Reach Daily 1.0 release candidate 13
+is the clearly labelled demo edition. Version: Agent Reach Daily 1.0 release candidate 14
 (`python -m agent_reach.daily --version`). What changed in each release: `docs/RELEASE-NOTES.md`.
 
 ## License and contact

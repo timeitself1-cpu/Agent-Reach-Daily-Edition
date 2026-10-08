@@ -431,6 +431,10 @@ async def _attempt(paths: DataPaths, prefs: DailyPrefs, store: EditionStore, *, 
     if guard is not None:
         guard.published = final
     store.purge(prefs.retention_days, central_date(completed))
+    from agent_reach.daily.registry import record_edition
+
+    # observe only (Phase 2): which earlier event each story continues; never changes the edition or the outcome
+    await asyncio.to_thread(record_edition, paths, final)
     msg = f"Published {len(final.stories)} stories for {final.edition_date.isoformat()}"
     if final.revision > 1:
         msg += f" (revision {final.revision}, replaces the earlier edition for this date)"

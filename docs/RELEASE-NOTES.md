@@ -5,6 +5,17 @@ Each release candidate is delivered as a zip of the repository. Extract it over 
 Your editions, settings and history (`%LOCALAPPDATA%\AgentReachDaily`) are kept. Earlier releases are
 summarised in `docs/HANDOFF.md` ("Release history").
 
+## 1.0.0rc14 (zip rc14): the app starts recognising the same event across days (behind the scenes)
+
+1. **Event registry, observing only.** After each successful refresh the app records which earlier event each
+   story continues: the same news told again hours or days later, even with new articles and a new headline.
+   Each event keeps a fixed id, when it was first and last seen, its reports, and why every story was matched
+   (or kept apart when the evidence was unclear). Nothing you see changes yet: this builds the history that
+   story timelines will use once the matching is proven on your real editions. Stored in
+   `%LOCALAPPDATA%\AgentReachDaily\state\events.json`; a problem with it never fails a refresh.
+2. **The self-test brings back your last 14 days of editions** (and the registry), so the matching can be
+   checked against real news from consecutive days. Nothing in your data folder is changed.
+
 ## 1.0.0rc13 (zip rc13): your editions on getagentreach.dev, automatically
 
 1. **The website is now a news site.** getagentreach.dev opens on the newest edition: a lead story, the top

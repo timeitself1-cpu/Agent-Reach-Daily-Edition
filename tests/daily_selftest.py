@@ -414,6 +414,12 @@ def part_environment(report: Report, args) -> None:
                    f"{status['last_attempt_outcome']}; failures in a row {status['consecutive_failures']}; "
                    f"damaged files {len(status['corrupt_files'])}")
         copied = copy_history(DataPaths.resolve(real), report.out / "history")
+        from agent_reach.daily.registry import registry_file
+
+        events = registry_file(DataPaths.resolve(real))
+        if events.exists():  # the event registry's decisions, to check against the answer key
+            (report.out / "history").mkdir(parents=True, exist_ok=True)
+            shutil.copy2(events, report.out / "history" / "events.json")
         report.add(P, "your recent editions (copied for the event-tracking answer key)", "INFO",
                    f"{len(copied)} dated edition(s): {', '.join(copied) or 'none'}")
 
