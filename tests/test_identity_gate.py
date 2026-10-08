@@ -22,8 +22,8 @@ from agent_reach.config import Settings
 from agent_reach.models import CleanedTrendItem, RawTrendItem, SourceName
 from agent_reach.pipeline.clusterer import LinkIndex, SemanticClusterer
 from agent_reach.pipeline.embeddings import event_representation
-from agent_reach.pipeline.event_identity import (ACCEPT, COMMON_NAME_AND_PHRASE, NEUTRAL, REJECT, IdentityGate, PairDecision,
-                                                 cohesive_groups)
+from agent_reach.pipeline.event_identity import (ACCEPT, COMMON_NAME_AND_PHRASE, NAME_AND_PHRASE, NEUTRAL, REJECT,
+                                                 IdentityGate, PairDecision, cohesive_groups)
 from tests.event_corpus import (EDITIONS, RC11_EDITIONS, RC12_EDITIONS, RC12C_EDITIONS, load_edition, recorded_groups,
                                 related_pairs, score)
 
@@ -501,6 +501,38 @@ def test_a_common_name_and_one_word_never_attach_a_lone_report():
     assert gate.decide(1, 2).verdict == ACCEPT
     assert gate.decide(1, 3).verdict == NEUTRAL and gate.decide(2, 3).verdict == NEUTRAL
     assert cohesive_groups([1, 2, 3], gate) == [[1, 2], [3]]
+
+
+def test_a_rare_name_and_one_word_need_the_embedding_when_there_is_one():
+    """October 7, 18:26 on the PC: 'NASA' + 'lunar' were two distinctive phrases (NASA in under 2% of the run) and
+    a Pitt State alumnus profile joined NASA's Artemis II lunar data release at cosine 0.79. With vectors, a name
+    plus one word now needs strong agreement (0.8); without them (lexical fallback) it still links."""
+    now = RawTrendItem(title="x", source=SourceName.NEWS_RSS).timestamp
+    rnd = random.Random(11)
+
+    def word() -> str:
+        return "".join(rnd.choice("bcdfghklmnprstvz") + rnd.choice("aeiou") for _ in range(4))
+
+    titles = ["NASA Releases Artemis II Lunar Science Data, Images",
+              "From Pitt State to lunar research at NASA Johnson Space Center"]
+    titles += [f"Officials say NASA weighs {word()} plan for {word()}" for _ in range(8)]
+    titles += [f"Regulators review {word()} rules for {word()} growers" for _ in range(600)]
+    items = [CleanedTrendItem(item_id=i, title=t, normalized_title=t, source=SourceName.NEWS_RSS, heuristic_score=0.5,
+                              timestamp=now) for i, t in enumerate(titles, 1)]
+    index = LinkIndex(items, items)
+    assert index.name_df("nasa") <= index.name_cap  # a scarce name, as on the PC
+    ok, _, why = index.link_evidence(1, 2)
+    assert ok and why == NAME_AND_PHRASE
+    assert index.gate.decide(1, 2).verdict == ACCEPT  # no embeddings: the words decide, as before
+
+    def gate_at(cosine: float):
+        vectors = {i: [0.0, 0.0, 1.0] for i in index.items}
+        vectors.update({1: [1.0, 0.0, 0.0], 2: [cosine, (1 - cosine ** 2) ** 0.5, 0.0]})
+        index.attach_vectors(vectors, 0.45, 0.8)
+        return index.gate.decide(1, 2).verdict
+
+    assert gate_at(0.788) == NEUTRAL  # the recorded cosine
+    assert gate_at(0.85) == ACCEPT
 
 
 @pytest.mark.xfail(strict=True, reason="open: two RTX Spark laptop stories share five title words (October 7, rc12c)")

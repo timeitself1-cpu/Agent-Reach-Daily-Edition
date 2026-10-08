@@ -1,16 +1,16 @@
 # Event identity evaluation (rc12)
 
-Generated 2026-10-07T23:12:05+00:00 on the labelled October 7 corpus (931 reports, 528 gold events, 11 real editions). Pairwise scores over all reports; **false merges** = report pairs from different events published in one story.
+Generated 2026-10-08T00:37:49+00:00 on the labelled October 7 corpus (1085 reports, 626 gold events, 13 real editions). Pairwise scores over all reports; **false merges** = report pairs from different events published in one story.
 
 | Grouping | False merges | Mixed stories | Precision | Recall | F1 |
 |---|---:|---:|---:|---:|---:|
 | rc11 published (nomic + HDBSCAN + single-link; 5 rc11 editions) | 52 | 13 | 0.885 | 0.976 | 0.928 |
 | rc12 published on the PC (nomic + identity gate before rc12b; 2 rc12 editions) | 26 | 6 | 0.816 | 1.000 | 0.898 |
 | rc12c published on the PC (nomic + rc12b identity gate; 2 rc12c editions) | 26 | 8 | 0.872 | 0.917 | 0.894 |
-| rc12d published on the PC (nomic + rc12d identity gate; 2 rc12d editions) | 12 | 5 | 0.887 | 1.000 | 0.940 |
-| identity gate, no embeddings (fallback) | 2 | 2 | 0.996 | 0.568 | 0.724 |
-| identity gate, replayed rc11 neighbourhoods | 3 | 2 | 0.994 | 0.645 | 0.782 |
-| identity gate, every pair cosine 1 | 0 | 0 | 1.000 | 0.157 | 0.272 |
+| rc12d published on the PC (nomic + rc12d identity gate; 4 rc12d editions) | 20 | 8 | 0.903 | 1.000 | 0.949 |
+| identity gate, no embeddings (fallback) | 3 | 3 | 0.994 | 0.571 | 0.725 |
+| identity gate, replayed rc11 neighbourhoods | 4 | 3 | 0.993 | 0.651 | 0.787 |
+| identity gate, every pair cosine 1 | 0 | 0 | 1.000 | 0.173 | 0.295 |
 
 Settings: identity_neighbors=12, identity_candidate_cosine=0.45, identity_strong_cosine=0.8, event_max_age_hours=72.0
 
@@ -66,7 +66,7 @@ Real embedding models were not run here (no Ollama). On a PC with Ollama:
 - 2026-10-07-rc12c-r2.json: "Trump's Retreat: From the Gulf to Britain, American Forces Pull Back" + "Trump wants to turn his private golf club into a presidential retreat"
 - 2026-10-07-rc12c-r2.json: "WATCH: Trump announces eligible U.S. children automatically enrolled in Trump ac" + "Jimmy Kimmel on Trump's joke about Iran bombing LA: 'Our own president wishing d"
 
-**rc12d published on the PC (nomic + rc12d identity gate; 2 rc12d editions)**
+**rc12d published on the PC (nomic + rc12d identity gate; 4 rc12d editions)**
 - 2026-10-07-rc12d-r1.json: "Nobel Prize in Chemistry 2026 to Henri B. Kagan and Kenso Soai" + "Nobel Prizes 2026: brain switches, 'ghost' particle hunter, and 'the chemistry o"
 - 2026-10-07-rc12d-r1.json: "Nobel prize in chemistry awarded for work on mirror-image molecules" + "Nobel Prizes 2026: brain switches, 'ghost' particle hunter, and 'the chemistry o"
 - 2026-10-07-rc12d-r1.json: "Nobel Prizes 2026: brain switches, 'ghost' particle hunter, and 'the chemistry o" + "Henri B. Kagan and Kenso Soai win Nobel Prize in chemistry"
@@ -77,12 +77,22 @@ Real embedding models were not run here (no Ollama). On a PC with Ollama:
 - 2026-10-07-rc12d-r2.json: "Nobel Prize in Chemistry 2026 to Henri B. Kagan and Kenso Soai" + "Nobel Prizes 2026: brain switches, 'ghost' particle hunter, and 'the chemistry o"
 - 2026-10-07-rc12d-r2.json: "Nobel prize in chemistry awarded for work on mirror-image molecules" + "Nobel Prizes 2026: brain switches, 'ghost' particle hunter, and 'the chemistry o"
 - 2026-10-07-rc12d-r2.json: "Nobel Prizes 2026: brain switches, 'ghost' particle hunter, and 'the chemistry o" + "Henri B. Kagan and Kenso Soai win Nobel Prize in chemistry"
+- 2026-10-07-rc12d2-r1.json: "Nobel Prize in Chemistry 2026 to Henri B. Kagan and Kenso Soai" + "Nobel Prizes 2026: brain switches, 'ghost' particle hunter, and 'the chemistry o"
+- 2026-10-07-rc12d2-r1.json: "Nobel prize in chemistry awarded for work on mirror-image molecules" + "Nobel Prizes 2026: brain switches, 'ghost' particle hunter, and 'the chemistry o"
+- 2026-10-07-rc12d2-r1.json: "Nobel Prizes 2026: brain switches, 'ghost' particle hunter, and 'the chemistry o" + "Chemistry Nobel awarded for solving mystery of life's asymmetry"
+- 2026-10-07-rc12d2-r1.json: "Nobel Prizes 2026: brain switches, 'ghost' particle hunter, and 'the chemistry o" + "Nobel Prize in chemistry awarded for discoveries about mirrored molecules that l"
+- 2026-10-07-rc12d2-r1.json: "NASA Releases Artemis II Lunar Science Data, Images" + "From Pitt State to lunar research at NASA Johnson Space Center"
+- 2026-10-07-rc12d2-r2.json: "Nobel Prize in Chemistry 2026 to Henri B. Kagan and Kenso Soai" + "Nobel Prizes 2026: brain switches, 'ghost' particle hunter, and 'the chemistry o"
+- 2026-10-07-rc12d2-r2.json: "Nobel prize in chemistry awarded for work on mirror-image molecules" + "Nobel Prizes 2026: brain switches, 'ghost' particle hunter, and 'the chemistry o"
+- 2026-10-07-rc12d2-r2.json: "Nobel Prizes 2026: brain switches, 'ghost' particle hunter, and 'the chemistry o" + "Nobel Prize in chemistry awarded for discoveries about mirrored molecules that l"
 
 **identity gate, no embeddings (fallback)**
 - 2026-10-07-rc12c-r1.json: "Microsoft and Nvidia launch Surface Laptop Ultra with RTX Spark" + "Nvidia RTX Spark for $2,999.99: HP leak reveals RTX Spark laptop pricing ahead o"
 - 2026-10-07-rc12d-r2.json: "From Iran to the U.K., Trump Is Being Forced Into Retreat" + "Trump wants to turn his private golf club into a presidential retreat"
+- 2026-10-07-rc12d2-r1.json: "NASA Releases Artemis II Lunar Science Data, Images" + "From Pitt State to lunar research at NASA Johnson Space Center"
 
 **identity gate, replayed rc11 neighbourhoods**
 - 2026-10-07-rc12c-r1.json: "Microsoft and Nvidia launch Surface Laptop Ultra with RTX Spark" + "Nvidia RTX Spark for $2,999.99: HP leak reveals RTX Spark laptop pricing ahead o"
 - 2026-10-07-rc12d-r2.json: "From Iran to the U.K., Trump Is Being Forced Into Retreat" + "Trump wants to turn his private golf club into a presidential retreat"
 - 2026-10-07-rc12d-r2.json: "Trump's Retreat: From the Gulf to Britain, American Forces Pull Back" + "Trump wants to turn his private golf club into a presidential retreat"
+- 2026-10-07-rc12d2-r1.json: "NASA Releases Artemis II Lunar Science Data, Images" + "From Pitt State to lunar research at NASA Johnson Space Center"

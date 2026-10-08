@@ -42,6 +42,10 @@ ACCEPT, REJECT, NEUTRAL = "accept", "reject", "neutral"
 MAX_LOGGED_PAIRS = 4000
 #: LinkIndex.link_evidence: a name many reports write plus one specific word, accepted only with strong embedding
 COMMON_NAME_AND_PHRASE = "a common name and one distinctive phrase"
+#: ...and a name few reports write plus one specific word: enough without embeddings (lexical fallback), but with
+#: them the embedding must agree strongly too ('NASA' + 'lunar' at cosine 0.79 joined a university profile to NASA's
+#: Artemis II data release, October 7, 18:16 on the PC)
+NAME_AND_PHRASE = "a name and one distinctive phrase"
 
 
 class _Index(Protocol):
@@ -136,6 +140,8 @@ class IdentityGate:
         else:
             ok, shared, why = self.index.link_evidence(*key)
             specific = self.index.specific_overlap(*key)
+            if why == NAME_AND_PHRASE and cos is not None:
+                ok = cos >= self.strong_cosine  # with vectors the embedding must agree strongly too
             if ok and cos is not None and cos < self.min_cosine:
                 d = PairDecision(*key, NEUTRAL, [f"embedding disagrees (cosine {cos:.2f} < {self.min_cosine:.2f})"],
                                  cos, shared)
