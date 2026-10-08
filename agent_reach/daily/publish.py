@@ -87,6 +87,9 @@ STATIC_PAGES = ("", "daily/", "latest/", "technology/", "science/", "world/", "a
 TOKEN_ENV = "AGENT_REACH_PUBLISH_TOKEN"
 HTTP_TIMEOUT_S = 30.0
 COMMIT_ATTEMPTS = 3
+#: The scheduled check runs every hour; a failed automatic publication is tried again at most this often
+#: (a little under an hour, so a check that runs a minute early is not skipped).
+CATCH_UP_MINUTES = 55
 
 State = Literal["never", "publishing", "published", "unchanged", "failed", "withdrawn", "skipped"]
 
@@ -134,6 +137,7 @@ class PublishStatus(BaseModel):
     revision: int | None = None
     stories: int | None = None
     commit: str | None = None
+    failed_action: Literal["publish", "withdraw"] | None = None  # what the last failure was trying to do
 
 
 def _dir(paths: DataPaths) -> Path:
@@ -759,6 +763,7 @@ def publish_edition(paths: DataPaths, edition: DailyEdition, target: Target | No
         return PublishResult("failed", f"Publication failed: the publishing folder is not writable ({exc}).")
     try:
         _record(paths, state="publishing", message=f"Publishing the {label} edition", attempt_utc=utcnow())
+        again = " The app tries again at its next hourly check." if automatic and settings.enabled else ""
         published: dict = {}
 
         def plan(t: Target) -> dict:
@@ -776,14 +781,14 @@ def publish_edition(paths: DataPaths, edition: DailyEdition, target: Target | No
             target = target or github_target(paths, settings)
             commit, changed = _with_target(target, plan, f"Publish the {d} edition (revision {edition.revision})")
         except PublishError as exc:
-            msg = f"Publication failed: {exc} The website still shows the previous edition."
-            _record(paths, state="failed", message=msg)
+            msg = f"Publication failed: {exc} The website still shows the previous edition.{again}"
+            _record(paths, state="failed", message=msg, failed_action="publish")
             return PublishResult("failed", msg)
         except Exception as exc:  # noqa: BLE001 - a bug here must never break a refresh
             log.exception("publishing failed unexpectedly")
             msg = (f"Publication failed ({type(exc).__name__}). The website still shows the previous edition. "
-                   "Details are in the refresh log.")
-            _record(paths, state="failed", message=msg)
+                   f"Details are in the refresh log.{again}")
+            _record(paths, state="failed", message=msg, failed_action="publish")
             return PublishResult("failed", msg)
         if d in settings.withdrawn:
             settings = load_settings(paths)
@@ -794,11 +799,13 @@ def publish_edition(paths: DataPaths, edition: DailyEdition, target: Target | No
         if commit is None:
             msg = f"The website already has the {label} edition ({stories} stories)."
             _record(paths, state="unchanged", message=msg, success_utc=load_status(paths).success_utc or now,
+                    failed_action=None,
                     edition_date=d, revision=edition.revision, stories=stories)
             return PublishResult("unchanged", msg)
         msg = (f"Published successfully: the {label} edition ({stories} stories) at {format_central(now)}. "
                "The website shows it within a few minutes.")
         _record(paths, state="published", message=msg, success_utc=now, edition_date=d, revision=edition.revision,
+                failed_action=None,
                 stories=stories, commit=commit)
         log.info("published %s r%d to %s: %s", d, edition.revision, target.description, ", ".join(changed))
         return PublishResult("published", msg, commit, changed)
@@ -831,7 +838,7 @@ def withdraw(paths: DataPaths, d: str, target: Target | None = None) -> PublishR
             commit, _ = _with_target(target, plan, f"Withdraw the {d} edition")
         except PublishError as exc:
             msg = f"Could not take the edition off the website: {exc}"
-            _record(paths, state="failed", message=msg, attempt_utc=utcnow())
+            _record(paths, state="failed", message=msg, attempt_utc=utcnow(), failed_action="withdraw")
             return PublishResult("failed", msg)
         settings = load_settings(paths)
         settings.withdrawn[d] = max(int(on_site or 0), settings.withdrawn.get(d, 0), 1)
@@ -839,7 +846,7 @@ def withdraw(paths: DataPaths, d: str, target: Target | None = None) -> PublishR
         day = format_long_date(date.fromisoformat(d))
         msg = (f"The {day} edition was taken off the website." if commit else
                f"The website did not have the {day} edition.")
-        _record(paths, state="withdrawn", message=msg, attempt_utc=utcnow())
+        _record(paths, state="withdrawn", message=msg, attempt_utc=utcnow(), failed_action=None)
         return PublishResult("withdrawn", msg, commit)
     finally:
         lock.release()
@@ -885,11 +892,47 @@ def publish_after_refresh(paths: DataPaths, edition: DailyEdition) -> PublishRes
             return None
         if not has_token(paths):
             msg = "Publication failed: no access key is saved. The website still shows the previous edition."
-            _record(paths, state="failed", message=msg, attempt_utc=utcnow())
+            _record(paths, state="failed", message=msg, attempt_utc=utcnow(), failed_action="publish")
             return PublishResult("failed", msg)
         return publish_edition(paths, edition, settings=settings, automatic=True)
     except (OSError, FileUnavailable) as exc:
         log.exception("publishing could not start")
+        return PublishResult("failed", f"Publication failed ({type(exc).__name__}); the website was not changed.")
+
+
+def catch_up(paths: DataPaths, now: datetime | None = None) -> PublishResult | None:
+    """The hourly scheduled check, when no refresh is due: publish the latest edition if automatic publishing is
+    on and the website did not get it (the last publication failed, was interrupted, or never ran).
+
+    Before rc15 a failed upload waited for the next refresh, 24 hours later by default (audit F2, Oct 8). Tried at
+    most once per ``CATCH_UP_MINUTES``; a withdrawn date stays withdrawn; a failed withdrawal is not turned into a
+    publication. None when there is nothing to do (no network call). Never raises."""
+    try:
+        settings = load_settings(paths)
+        if not settings.enabled or not has_token(paths):
+            return None
+        status = load_status(paths)
+        if status.state == "failed" and status.failed_action == "withdraw":
+            return None  # the user's withdrawal failed: the window says so; republishing would undo their intent
+        now = now or utcnow()
+        if status.attempt_utc is not None and (now - status.attempt_utc).total_seconds() < CATCH_UP_MINUTES * 60:
+            return None
+        from agent_reach.daily.store import EditionStore
+
+        edition = EditionStore(paths).load_latest().edition
+        if edition is None or edition.demo:
+            return None
+        d = edition.edition_date.isoformat()
+        if settings.withdrawn.get(d, 0) >= edition.revision:
+            return None
+        sent = status.state in ("published", "unchanged") and status.edition_date is not None
+        if sent and (status.edition_date, status.revision or 0) >= (d, edition.revision):
+            return None  # the website has this edition (or a newer one) from this PC
+        log.info("website catch-up: publishing the %s edition (revision %d); last publication: %s", d,
+                 edition.revision, status.state)
+        return publish_edition(paths, edition, settings=settings, automatic=True)
+    except Exception as exc:  # noqa: BLE001 - the scheduled check must end quietly whatever happens here
+        log.exception("website catch-up failed")
         return PublishResult("failed", f"Publication failed ({type(exc).__name__}); the website was not changed.")
 
 

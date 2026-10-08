@@ -347,3 +347,61 @@ def test_refresh_publishes_to_the_website_when_switched_on_and_a_website_failure
     out = _refresh(daily_env)
     assert out.code == R.EXIT_PUBLISHED and "Publication failed" in out.message  # the local edition is still new
     assert publish.load_status(daily_env.paths).state == "failed"
+
+
+def test_the_hourly_check_publishes_an_edition_whose_upload_failed(daily_env, monkeypatch):
+    """Audit F2 (Oct 8): a failed upload used to wait for the next refresh, 24 hours later by default. The
+    scheduled check (--refresh-if-due, hourly) now publishes the latest edition when no refresh is due."""
+    from datetime import timedelta
+
+    from agent_reach.daily import publish
+    from agent_reach.daily.__main__ import main
+    from agent_reach.daily.timeutil import utcnow
+    from tests.test_daily_publish import FakeGitHub
+
+    gh = FakeGitHub({"index.html": b"<html>site</html>"})
+    monkeypatch.setattr(publish, "github_target", lambda paths, settings=None, client=None: gh.target())
+    publish.save_settings(daily_env.paths, publish.PublishSettings(enabled=True))
+    publish.save_token(daily_env.paths, "test-key")
+    gh.fail["GET /git/ref"] = 503  # GitHub is down during the refresh
+    out = _refresh(daily_env)
+    assert out.code == R.EXIT_PUBLISHED and "Publication failed" in out.message and "next hourly check" in out.message
+    site_before, d = gh.head, out.edition.edition_date.isoformat()
+    check = ["--refresh-if-due", "--data-dir", str(daily_env.paths.root)]
+
+    assert main(check) == R.EXIT_NOT_DUE and gh.head == site_before  # minutes later: not yet (at most hourly)
+    later = utcnow() + timedelta(minutes=61)
+    monkeypatch.setattr(publish, "utcnow", lambda: later)
+    assert main(check) == R.EXIT_NOT_DUE  # no refresh is due, but the website gets the edition
+    assert gh.head != site_before and f"editions/{d}.json" in gh.files
+    status = publish.load_status(daily_env.paths)
+    assert status.state == "published" and status.edition_date == d and status.failed_action is None
+    calls = len(gh.calls)
+    monkeypatch.setattr(publish, "utcnow", lambda: later + timedelta(hours=1))
+    assert main(check) == R.EXIT_NOT_DUE and len(gh.calls) == calls  # the site has it: not even a network call
+
+
+def test_the_hourly_check_never_undoes_a_withdrawal(daily_env, monkeypatch, tmp_path):
+    from datetime import timedelta
+
+    from agent_reach.daily import publish
+    from agent_reach.daily.timeutil import utcnow
+
+    site = publish.FolderTarget(tmp_path / "site")
+    monkeypatch.setattr(publish, "github_target", lambda paths, settings=None, client=None: site)
+    publish.save_settings(daily_env.paths, publish.PublishSettings(enabled=True))
+    publish.save_token(daily_env.paths, "test-key")
+    d = _refresh(daily_env).edition.edition_date.isoformat()
+    assert publish.withdraw(daily_env.paths, d).state == "withdrawn"
+    soon = utcnow() + timedelta(hours=2)
+    assert publish.catch_up(daily_env.paths, now=soon) is None  # withdrawn stays withdrawn
+    assert not (tmp_path / "site" / f"editions/{d}.json").exists()
+
+    def down(paths, settings=None, client=None):
+        raise publish.PublishError("Could not reach GitHub (ConnectError). Is this PC online?")
+
+    monkeypatch.setattr(publish, "github_target", down)
+    publish.save_settings(daily_env.paths, publish.PublishSettings(enabled=True))  # (forget the withdrawal)
+    assert publish.withdraw(daily_env.paths, d).state == "failed"
+    assert publish.load_status(daily_env.paths).failed_action == "withdraw"
+    assert publish.catch_up(daily_env.paths, now=soon) is None  # a failed withdrawal is never turned into a publish

@@ -92,6 +92,14 @@ def _refresh_command(args: argparse.Namespace, paths: DataPaths) -> int:
     result = refresh(paths, trigger=trigger, force=args.refresh_now, allow_extractive=args.allow_extractive)
     logging.getLogger("agent_reach.daily").info("exit %d %s: %s", result.code, result.outcome, result.message)
     print(f"{result.outcome}: {result.message}")
+    if args.refresh_if_due and result.outcome in ("not_due", "backoff"):
+        # no refresh now: a failed website upload of the latest edition is tried again (at most hourly)
+        from agent_reach.daily.publish import catch_up
+
+        published = catch_up(paths)
+        if published is not None:
+            logging.getLogger("agent_reach.daily").info("website catch-up %s: %s", published.state, published.message)
+            print(f"website: {published.message}")
     return result.code
 
 
