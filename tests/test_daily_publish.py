@@ -344,3 +344,39 @@ def test_refresh_hook_is_off_by_default_and_never_raises(daily_paths, monkeypatc
                         P.GitHubTarget("owner/site", "main", "k", client=httpx.Client(transport=httpx.MockTransport(offline))))
     r = P.publish_after_refresh(daily_paths, ed)
     assert r.state == "failed" and "online" in r.message
+
+
+def test_the_window_warns_a_week_before_the_access_key_expires(daily_paths, monkeypatch):
+    """Fine-grained GitHub keys expire; GitHub states the date on every answer. Audit F5 (Oct 8): the app used to
+    find out only when an upload was refused."""
+    from datetime import datetime, timedelta, timezone
+
+    monkeypatch.delenv(P.TOKEN_ENV, raising=False)
+    P.save_token(daily_paths, "github_pat_test")
+    gh = FakeGitHub({"index.html": b"<html>site</html>"})
+    expires = {"value": "2026-10-12 08:30:00 UTC"}
+
+    def answer(request):
+        r = gh.handler(request)
+        r.headers[P.EXPIRY_HEADER] = expires["value"]
+        return r
+
+    target = P.GitHubTarget("owner/site", "main", "k", client=httpx.Client(transport=httpx.MockTransport(answer)))
+    now = datetime(2026, 10, 8, 18, 0, tzinfo=timezone.utc)
+    monkeypatch.setattr(P, "utcnow", lambda: now)
+    assert P.publish_edition(daily_paths, real_edition(), target).state == "published"
+    assert P.load_status(daily_paths).key_expires_utc == datetime(2026, 10, 12, 8, 30, tzinfo=timezone.utc)
+    warning = P.status_lines(daily_paths)["key_warning"]
+    assert warning.startswith("Your access key expires on October 12, 2026.") and "github.com" in warning
+    # a key that runs for another month: no warning; an expired one: says publishing stops
+    assert P.key_warning(now + timedelta(days=30), now) == ""
+    assert "expired on" in P.key_warning(now - timedelta(days=1), now)
+    # the refresh hook carries the warning in the refresh message
+    P.save_settings(daily_paths, P.PublishSettings(enabled=True))
+    monkeypatch.setattr(P, "github_target", lambda paths, settings=None, client=None: target)
+    assert "expires on October 12" in P.publish_after_refresh(daily_paths, real_edition()).message
+    # a new key forgets the old key's date until GitHub states the new one
+    P.save_token(daily_paths, "github_pat_new")
+    assert P.load_status(daily_paths).key_expires_utc is None and P.status_lines(daily_paths)["key_warning"] == ""
+    assert P.parse_expiry("2026-11-07 12:00:00 +0100") == datetime(2026, 11, 7, 11, 0, tzinfo=timezone.utc)
+    assert P.parse_expiry("never") is None and P.parse_expiry(None) is None

@@ -90,6 +90,9 @@ COMMIT_ATTEMPTS = 3
 #: The scheduled check runs every hour; a failed automatic publication is tried again at most this often
 #: (a little under an hour, so a check that runs a minute early is not skipped).
 CATCH_UP_MINUTES = 55
+#: GitHub states a fine-grained key's expiry on every API answer; the window warns this many days ahead.
+EXPIRY_HEADER = "github-authentication-token-expiration"
+KEY_WARN_DAYS = 7
 
 State = Literal["never", "publishing", "published", "unchanged", "failed", "withdrawn", "skipped"]
 
@@ -138,6 +141,7 @@ class PublishStatus(BaseModel):
     stories: int | None = None
     commit: str | None = None
     failed_action: Literal["publish", "withdraw"] | None = None  # what the last failure was trying to do
+    key_expires_utc: datetime | None = None  # as GitHub stated it on the last call (None: no expiry, or unknown)
 
 
 def _dir(paths: DataPaths) -> Path:
@@ -224,6 +228,7 @@ def save_token(paths: DataPaths, token: str) -> None:
     atomic_write_bytes(key_file(paths), data)
     if sys.platform != "win32":
         os.chmod(key_file(paths), 0o600)
+    _record(paths, key_expires_utc=None)  # a new key: its expiry is read on its first call
 
 
 def load_token(paths: DataPaths) -> str | None:
@@ -244,6 +249,33 @@ def load_token(paths: DataPaths) -> str | None:
 
 def forget_token(paths: DataPaths) -> None:
     unlink_with_retry(key_file(paths))
+    _record(paths, key_expires_utc=None)
+
+
+def parse_expiry(value: str | None) -> datetime | None:
+    """GitHub's ``github-authentication-token-expiration`` header ('2026-11-07 12:00:00 UTC'), or None."""
+    text = (value or "").strip().replace(" UTC", " +0000")
+    for fmt in ("%Y-%m-%d %H:%M:%S %z", "%Y-%m-%dT%H:%M:%S%z"):
+        try:
+            return datetime.strptime(text, fmt).astimezone(timezone.utc)
+        except ValueError:
+            continue
+    return None
+
+
+def key_warning(expires: datetime | None, now: datetime | None = None) -> str:
+    """Plain-English warning when the access key expires within ``KEY_WARN_DAYS`` (or has expired)."""
+    if expires is None:
+        return ""
+    now = now or utcnow()
+    day = format_long_date(expires.date())
+    if expires <= now:
+        return (f"Your access key expired on {day}. Publishing stops until you make a new one on github.com and "
+                "paste it in Website publishing.")
+    if (expires - now).total_seconds() <= KEY_WARN_DAYS * 86400:
+        return (f"Your access key expires on {day}. Make a new one on github.com before then and paste it in "
+                "Website publishing (the steps are the same as the first time).")
+    return ""
 
 
 def has_token(paths: DataPaths) -> bool:
@@ -627,6 +659,7 @@ class GitHubTarget(Target):
                         "X-GitHub-Api-Version": "2022-11-28", "User-Agent": f"AgentReachDaily/{__version__}"}
         self.head: str | None = None
         self.tree: str | None = None
+        self.key_expires: datetime | None = None  # from GitHub's answers (fine-grained keys expire)
 
     def _call(self, method: str, path: str, *, ok=(200, 201), allow=(), **kw):
         import httpx
@@ -636,6 +669,7 @@ class GitHubTarget(Target):
             r = self.client.request(method, url, headers={**self.headers, **kw.pop("headers", {})}, **kw)
         except httpx.HTTPError as exc:
             raise PublishError(f"Could not reach GitHub ({type(exc).__name__}). Is this PC online?") from exc
+        self.key_expires = parse_expiry(r.headers.get(EXPIRY_HEADER)) or self.key_expires
         if r.status_code in ok or r.status_code in allow:
             return r
         if r.status_code == 401:
@@ -779,7 +813,10 @@ def publish_edition(paths: DataPaths, edition: DailyEdition, target: Target | No
 
         try:
             target = target or github_target(paths, settings)
-            commit, changed = _with_target(target, plan, f"Publish the {d} edition (revision {edition.revision})")
+            try:
+                commit, changed = _with_target(target, plan, f"Publish the {d} edition (revision {edition.revision})")
+            finally:
+                _note_key(paths, target)
         except PublishError as exc:
             msg = f"Publication failed: {exc} The website still shows the previous edition.{again}"
             _record(paths, state="failed", message=msg, failed_action="publish")
@@ -834,8 +871,11 @@ def withdraw(paths: DataPaths, d: str, target: Target | None = None) -> PublishR
 
         try:
             target = target or github_target(paths, settings)
-            on_site = _read_json_at(target, d)
-            commit, _ = _with_target(target, plan, f"Withdraw the {d} edition")
+            try:
+                on_site = _read_json_at(target, d)
+                commit, _ = _with_target(target, plan, f"Withdraw the {d} edition")
+            finally:
+                _note_key(paths, target)
         except PublishError as exc:
             msg = f"Could not take the edition off the website: {exc}"
             _record(paths, state="failed", message=msg, attempt_utc=utcnow(), failed_action="withdraw")
@@ -850,6 +890,22 @@ def withdraw(paths: DataPaths, d: str, target: Target | None = None) -> PublishR
         return PublishResult("withdrawn", msg, commit)
     finally:
         lock.release()
+
+
+def _note_key(paths: DataPaths, target: Target) -> None:
+    """Record the key's expiry as GitHub stated it (a folder target states none)."""
+    expires = getattr(target, "key_expires", None)
+    if expires is not None:
+        _record(paths, key_expires_utc=expires)
+
+
+def check_connection(paths: DataPaths) -> str:
+    """The window's 'Test connection': read access to the site's branch (raises PublishError); notes the expiry."""
+    target = github_target(paths)
+    try:
+        return target.check()
+    finally:
+        _note_key(paths, target)
 
 
 def _read_json_at(target: Target, d: str) -> int | None:
@@ -894,7 +950,11 @@ def publish_after_refresh(paths: DataPaths, edition: DailyEdition) -> PublishRes
             msg = "Publication failed: no access key is saved. The website still shows the previous edition."
             _record(paths, state="failed", message=msg, attempt_utc=utcnow(), failed_action="publish")
             return PublishResult("failed", msg)
-        return publish_edition(paths, edition, settings=settings, automatic=True)
+        result = publish_edition(paths, edition, settings=settings, automatic=True)
+        warning = key_warning(load_status(paths).key_expires_utc)
+        if warning:
+            result.message = f"{result.message} {warning}"
+        return result
     except (OSError, FileUnavailable) as exc:
         log.exception("publishing could not start")
         return PublishResult("failed", f"Publication failed ({type(exc).__name__}); the website was not changed.")
@@ -976,4 +1036,5 @@ def status_lines(paths: DataPaths) -> dict:
         last = f"{day}{rev}, {status.stories or 0} stories, sent {format_central(status.success_utc)}"
     return {"headline": head, "kind": kind, "message": status.message, "last_published": last,
             "automatic": settings.enabled, "connected": connected, "site_url": settings.site_url,
-            "repo": settings.repo, "branch": settings.branch}
+            "repo": settings.repo, "branch": settings.branch,
+            "key_warning": key_warning(status.key_expires_utc) if connected else ""}

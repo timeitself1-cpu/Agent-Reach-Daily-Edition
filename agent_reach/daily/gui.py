@@ -2103,8 +2103,9 @@ class PublishDialog:
         self.dot.delete("all")
         n = self.window.px(12)
         self.dot.create_oval(1, 1, n, n, fill=STATUS_DOT.get(kind, c["muted"]), outline="")
-        self.key_state_var.set("A key is saved (encrypted for your Windows account)." if info["connected"]
-                               else "No key saved yet. Publishing needs one, once.")
+        self.key_state_var.set(info["key_warning"] or ("A key is saved (encrypted for your Windows account)."
+                                                       if info["connected"] else
+                                                       "No key saved yet. Publishing needs one, once."))
         self.help_label.configure(text=self.KEY_HELP.format(repo=info["repo"]))
         state = "disabled" if self.busy or not info["connected"] else "normal"
         self.publish_btn.configure(state=state)
@@ -2187,7 +2188,7 @@ class PublishDialog:
             return
 
         def check():
-            return self.P.github_target(self.paths).check()
+            return self.P.check_connection(self.paths)
 
         def done(result) -> None:
             self.busy = False

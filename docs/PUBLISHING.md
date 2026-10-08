@@ -21,8 +21,9 @@ edition, and how to preview the site locally. Code: `agent_reach/daily/publish.p
 1. github.com > Settings > Developer settings > Personal access tokens > **Fine-grained tokens** > Generate new
    token. Resource owner: timeitself1-cpu. Repository access: **Only select repositories**,
    `Agent-Reach-Website`. Repository permissions: **Contents: Read and write** (Metadata: Read is added by
-   GitHub). Expiry: your choice; when it expires, the window says "GitHub did not accept the access key" and you
-   paste a new one.
+   GitHub). Expiry: your choice. From rc15 the app reads the expiry date GitHub sends with every answer and, a
+   week before, says when the key expires (in Website publishing and in the refresh message); make a new key the
+   same way and paste it. An expired key shows "GitHub did not accept the access key".
 2. In the app: **...** > **Website publishing...** > paste the key > **Save key**. It is tested at once.
 3. Tick **Automatic publishing**.
 
