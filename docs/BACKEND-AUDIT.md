@@ -61,3 +61,17 @@ Next: a written data contract with the front end (F4), stable story links (F3).
 - A withdrawn date disappears from the index, the search month and its two files in one commit.
 - New optional fields can appear at any time; renames/removals bump `schema_version`.
 - Often empty: `why_it_matters`, `top_rank` (outside Top Stories), `published_utc`, `compared_with`.
+
+## Search recovery when a story link points to a missing id
+
+The search file and the edition file are written in the same commit, so on a fresh deploy they agree. Mismatches
+come from a cached old search month, a revision published after the result was shown, or external links and
+bookmarks. Suggested fallback for the site, in order:
+
+1. Load `editions/<date>.json`. A 404 means the date was withdrawn: say so and link the archive.
+2. Find the story by `id`; if found, show it.
+3. If the id is missing, match by headline: exact match after lowercasing and stripping punctuation, then the
+   story of that date with the most shared headline words. Require a clear winner; on a tie, do not guess.
+4. If nothing matches, open the date's page with a note that the story was updated in a later edition of the day.
+5. Treat the index's `revision` per date as a cache key: newer than the revision a cached search month was built
+   from means fetch that month again. Search entries do not carry the revision yet (PLAN B8b adds `v`).

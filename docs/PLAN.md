@@ -203,6 +203,8 @@ Goal: the step that feeds the live site is as safe as the rest. One commit and o
 - [ ] B7. Release rc15 (B1-B6), zip to the user.
 - [ ] B8. `docs/PUBLIC-DATA.md` + `docs/schema/` (edition, index, search month) + a real example; a test validates
       the publisher's output for all fixtures (F4). Share with the front end; F9/F12 only if it agrees.
+- [ ] B8b. Search entries carry their edition's revision (`v`, optional field) so the site can refetch a stale
+      cached month (search recovery, docs/BACKEND-AUDIT.md). Acceptance: publish test expects `v`; a revision rewrites it.
 - [ ] B9. With Phase 2.5/3: publish the registry's event id per story + an `aliases` map from old story ids (F3).
 - [ ] B10. `windows-latest` CI job (F7); `constraints.txt` with the CI-tested versions for Setup and CI (F8).
 
