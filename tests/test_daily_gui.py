@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import gc
 import time
 
 import pytest
@@ -15,21 +16,33 @@ from tests.daily_fakes import make_edition, make_story  # noqa: E402
 
 @pytest.fixture
 def root():
+    # Tk objects of earlier windows are freed here, on the Tk thread, and the garbage collector waits until the
+    # test ends: run from a background thread (the publishing dialog's worker), a Tk variable's finalizer waits
+    # about a second for a main loop that tests do not run, which kept the dialog busy past 20 s on the Python
+    # 3.10 CI runner (Oct 8, rc15). The real window runs its main loop, so this concerns tests only.
+    gc.collect()
+    gc.disable()
     try:
         r = tk.Tk()
     except tk.TclError as exc:
         # once on Windows (October 7, PC) one of the window tests could not read tk.tcl, which every other test
         # and the launchers read fine: a file briefly held by another program. A second try settles that.
         if "couldn't read file" not in str(exc):
+            gc.enable()
             pytest.skip(f"no display: {exc}")
         time.sleep(1.0)
         try:
             r = tk.Tk()
         except tk.TclError as exc2:
+            gc.enable()
             pytest.skip(f"no display: {exc2}")
     r.withdraw()
-    yield r
-    r.destroy()
+    try:
+        yield r
+    finally:
+        r.destroy()
+        gc.enable()
+        gc.collect()
 
 
 class NoSpawn:
