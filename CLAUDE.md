@@ -66,10 +66,11 @@ category sections), a grounded "why it matters" pass, an HTML export and a spoke
 - **Website** getagentreach.dev: repository `timeitself1-cpu/Agent-Reach-Website`, served by Cloudflare (Workers
   static assets, `wrangler.jsonc`) from `main`, every push deployed. Since rc13 (Oct 8) it is a news site rendered
   from the published editions: `editions/index.json` + `editions/YYYY-MM-DD.json` + `daily/YYYY-MM-DD/index.html`
-  + `feed.xml` (RSS) + `sitemap.xml` (both rebuilt from the index; `robots.txt` is static),
+  + `feed.xml` (RSS) + `sitemap.xml` (both rebuilt from the index; `robots.txt` is static) + `search/YYYY-MM.json`
+  (archive search, one file per month, self-repairing; the `/search/` page loads the newest 6 months first),
   written by the app's opt-in publisher (`daily/publish.py`, one GitHub commit per edition; guide
   `docs/PUBLISHING.md`); page shells (`index.html`, `daily/`, `latest/`, `technology/`, `science/`, `world/`,
-  `archive/`, `about/`, `404.html`), `assets/site.js` (renders everything as text), `assets/site.css`, self-hosted
+  `archive/`, `search/`, `about/`, `404.html`), `assets/site.js` (renders everything as text), `assets/site.css`, self-hosted
   OFL fonts. News first; app download and methodology live on `/about/`. Every claim must match the app. The user
   asked for site changes to go straight to `main` (Oct 7); check the page at phone width before pushing
   (Playwright + `python -m http.server`; the sandbox cannot reach getagentreach.dev: verify a deploy through the

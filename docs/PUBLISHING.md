@@ -41,9 +41,12 @@ or the logs. `AGENT_REACH_PUBLISH_TOKEN` (environment variable) overrides it, fo
    independent report, a repeat/syndicated copy or a social/search signal. Not included: publisher excerpts,
    run ids, settings, feed lists, model diagnostics, notes, file paths. `assert_public` refuses to publish any
    text that looks like a path on the PC.
-4. Five files go up in **one commit** through GitHub's API: `editions/YYYY-MM-DD.json`,
+4. Six files go up in **one commit** through GitHub's API: `editions/YYYY-MM-DD.json`,
    `daily/YYYY-MM-DD/index.html`, `editions/index.json` (the archive list, merged with what is already on the
-   site), and `feed.xml` (RSS, one item per edition) and `sitemap.xml`, both rebuilt from that archive list. The branch only moves by fast-forward: if it changed meanwhile, the files are re-read and the commit
+   site), `feed.xml` (RSS, one item per edition) and `sitemap.xml`, both rebuilt from that archive list, and
+   `search/YYYY-MM.json`, the archive search data of that month (headline, a short summary, category, outlets
+   and coverage level per story). A month whose search file is missing is rebuilt from the edition files
+   already on the site, so editions published by an older version become searchable on the next publication. The branch only moves by fast-forward: if it changed meanwhile, the files are re-read and the commit
    rebuilt (3 tries). If anything fails, no commit lands and the website keeps the previous edition.
 5. The result is recorded in `publish\status.json` and shown in the window and in the refresh message. A website
    problem never makes the refresh fail.

@@ -16,6 +16,10 @@ What goes up for one edition (``site_files``):
 * ``editions/index.json``  the archive list, rewritten from what is already on the site plus this edition.
 * ``feed.xml`` (RSS, one item per edition) and ``sitemap.xml``, both rebuilt from that archive list
   (``index_files``), so they always agree with it, also after a withdrawal.
+* ``search/YYYY-MM.json``  the archive search data of that month (``search_files``): per story only what the
+  search page shows (date, headline, category, a short summary, outlets, coverage level). One small file per
+  month keeps search fast however long the archive gets: the page loads the newest months first, and the
+  browser revalidates old months instead of downloading them again.
 
 Safety:
 
@@ -72,6 +76,9 @@ INDEX_PATH = "editions/index.json"
 FEED_PATH = "feed.xml"
 SITEMAP_PATH = "sitemap.xml"
 FEED_ITEMS = 30
+SEARCH_SCHEMA = "agent_reach.search_month"
+SEARCH_SUMMARY_CHARS = 280
+SEARCH_OUTLETS = 5
 # Page shells that exist on the site whatever is published (sitemap.xml lists them).
 STATIC_PAGES = ("", "daily/", "latest/", "technology/", "science/", "world/", "archive/", "about/")
 #: Environment variable that overrides the stored access key (CI, a portable install).
@@ -96,6 +103,10 @@ def edition_json_path(d: str) -> str:
 
 def edition_page_path(d: str) -> str:
     return f"daily/{d}/index.html"
+
+
+def search_path(month: str) -> str:
+    return f"search/{month}.json"
 
 
 # ====================================================================== settings and status (local files)
@@ -458,6 +469,54 @@ def index_files(index: dict, site_url: str = SITE_URL) -> dict[str, bytes]:
     return {FEED_PATH: feed_xml(index, site_url), SITEMAP_PATH: sitemap_xml(index, site_url), INDEX_PATH: _dumps(index)}
 
 
+def _clip(text: str, limit: int) -> str:
+    if len(text) <= limit:
+        return text
+    cut = text[:limit].rsplit(" ", 1)[0].rstrip(" ,;:.")
+    return cut + "\u2026"
+
+
+def search_entries(public: dict) -> list[dict]:
+    """The searchable part of each story of a public edition, in edition order."""
+    out = []
+    for s in sorted(public["stories"], key=lambda x: x["rank"]):
+        names: list[str] = []
+        for kind in ("report", "repeat", "signal"):
+            for src in s["sources"]:
+                if src["kind"] == kind and src["outlet"] not in names:
+                    names.append(src["outlet"])
+        out.append({"d": public["edition_date"], "id": s["id"], "r": s["rank"], "t": s["top_rank"],
+                    "c": s["category"], "h": s["headline"], "s": _clip(" ".join(s["summary"]), SEARCH_SUMMARY_CHARS),
+                    "o": names[:SEARCH_OUTLETS], "l": s["coverage"]["level"]})
+    return out
+
+
+def search_files(t: "Target", index: dict, d: str, entries: list[dict] | None) -> dict[str, bytes | None]:
+    """The search file of ``d``'s month with that date's stories replaced by ``entries`` (None: removed).
+
+    Dates of that month that are in the archive but missing from the file (a file damaged or never written, e.g.
+    editions published before search existed) are filled in from their edition files on the site, so the
+    search data repairs itself on the next publication. Stories of dates no longer in the archive are dropped."""
+    month = d[:7]
+    path = search_path(month)
+    raw = t.read(path)
+    current = _read_json(t, path) if raw is not None else None
+    dates = {e["date"] for e in index.get("editions", []) if str(e.get("date", "")).startswith(month)}
+    kept = []
+    if current and current.get("schema") == SEARCH_SCHEMA and isinstance(current.get("stories"), list):
+        kept = [x for x in current["stories"] if isinstance(x, dict) and x.get("d") in dates and x.get("d") != d]
+    have = {x["d"] for x in kept}
+    for other in sorted(dates - have - {d}):
+        pub = _read_json(t, edition_json_path(other))
+        if pub and isinstance(pub.get("stories"), list):
+            kept += search_entries(pub)
+    stories = kept + list(entries or [])
+    if not stories:
+        return {path: None} if raw is not None else {}
+    stories.sort(key=lambda x: (x["d"], -x["r"]), reverse=True)
+    return {path: _dumps({"schema": SEARCH_SCHEMA, "schema_version": 1, "month": month, "stories": stories})}
+
+
 # ====================================================================== targets
 class Target:
     """Where the site lives. ``begin`` pins a version, ``read`` reads at it, ``commit`` applies all changes at once."""
@@ -672,6 +731,7 @@ def publish_edition(paths: DataPaths, edition: DailyEdition, target: Target | No
                                    "edition; nothing was changed.")
             public, files = site_files(edition, settings, current)
             published["public"] = public
+            files.update(search_files(t, merge_index(current, index_entry(public)), d, search_entries(public)))
             return files
 
         try:
@@ -719,8 +779,9 @@ def withdraw(paths: DataPaths, d: str, target: Target | None = None) -> PublishR
         return PublishResult("skipped", "Another publication is running; try again in a minute.")
     try:
         def plan(t: Target) -> dict:
-            files: dict[str, bytes | None] = dict(
-                index_files(merge_index(_read_json(t, INDEX_PATH), remove=d), settings.site_url))
+            index = merge_index(_read_json(t, INDEX_PATH), remove=d)
+            files: dict[str, bytes | None] = dict(index_files(index, settings.site_url))
+            files.update(search_files(t, index, d, None))
             for p in (edition_json_path(d), edition_page_path(d)):
                 if t.read(p) is not None:
                     files[p] = None

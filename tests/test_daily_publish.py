@@ -150,7 +150,8 @@ def test_folder_publish_is_idempotent_and_withdraw_moves_latest_back(daily_paths
     assert r.state == "published"
     r = P.publish_edition(daily_paths, real_edition(), site)
     assert r.state == "published" and set(r.changed) == {"editions/2026-10-07.json", "editions/index.json",
-                                                         "daily/2026-10-07/index.html", "feed.xml", "sitemap.xml"}
+                                                         "daily/2026-10-07/index.html", "feed.xml", "sitemap.xml",
+                                                         "search/2026-10.json"}
     index = json.loads((tmp_path / "site/editions/index.json").read_text())
     assert index["latest"] == "2026-10-07" and [e["date"] for e in index["editions"]] == ["2026-10-07", "2026-10-06"]
     # the RSS feed and the sitemap follow the archive list: valid XML, one feed item per date, newest first
@@ -177,6 +178,7 @@ def test_folder_publish_is_idempotent_and_withdraw_moves_latest_back(daily_paths
     assert json.loads((tmp_path / "site/editions/index.json").read_text())["latest"] == "2026-10-06"
     assert "/daily/2026-10-07/" not in (tmp_path / "site/feed.xml").read_text()
     assert "/daily/2026-10-07/" not in (tmp_path / "site/sitemap.xml").read_text()
+    assert {x["d"] for x in json.loads((tmp_path / "site/search/2026-10.json").read_text())["stories"]} == {"2026-10-06"}
     # automatic publishing does not bring the withdrawn edition back; a newer revision of that day would
     assert P.publish_edition(daily_paths, real_edition(), site, automatic=True).state == "skipped"
     newer = real_edition().model_copy(update={"revision": 3})
@@ -191,7 +193,7 @@ def test_github_publication_is_one_commit_and_a_retry_makes_none(daily_paths):
     assert r.state == "published" and r.commit == gh.head
     assert gh.commits[gh.head]["message"] == "Publish the 2026-10-07 edition (revision 2)"
     assert set(gh.files) == {"index.html", "editions/2026-10-07.json", "editions/index.json",
-                             "daily/2026-10-07/index.html", "feed.xml", "sitemap.xml"}
+                             "daily/2026-10-07/index.html", "feed.xml", "sitemap.xml", "search/2026-10.json"}
     assert sum(c.startswith("PATCH") for c in gh.calls) == 1
     before = gh.head
     r = P.publish_edition(daily_paths, real_edition(), gh.target())
@@ -241,6 +243,31 @@ def test_hide_story_republishes_without_it(daily_paths):
     pub = json.loads(gh.files["editions/2026-10-07.json"])
     assert len(pub["stories"]) == 43 and pike.story_id[:12] not in pub["top"]
     assert "Christa Pike" not in gh.files["daily/2026-10-07/index.html"].decode()
+    assert "Christa Pike" not in gh.files["search/2026-10.json"].decode()
+
+
+def test_archive_search_files_per_month_repair_themselves(daily_paths, tmp_path):
+    """search/YYYY-MM.json holds what the search page shows, newest date first; a month whose file is missing
+    (editions published before search existed) is rebuilt from the edition files on the next publication."""
+    site = P.FolderTarget(tmp_path / "site")
+    older = real_edition("2026-10-07-selftest-r1.json").model_copy(deep=True)
+    older.edition_date = older.edition_date.replace(day=6)
+    september = real_edition().model_copy(deep=True)
+    september.edition_date = september.edition_date.replace(month=9, day=30)
+    for ed in (september, older):
+        assert P.publish_edition(daily_paths, ed, site).state == "published"
+    (tmp_path / "site/search/2026-10.json").unlink()  # as on a site published before search existed
+    assert P.publish_edition(daily_paths, real_edition(), site).state == "published"
+    month = json.loads((tmp_path / "site/search/2026-10.json").read_text())
+    days = [x["d"] for x in month["stories"]]
+    assert days == sorted(days, reverse=True) and set(days) == {"2026-10-07", "2026-10-06"}
+    first = month["stories"][0]
+    assert first["h"] == "Computing Pioneer Margaret Hamilton Dies at 90" and first["r"] == 1
+    assert set(first) == {"d", "id", "r", "t", "c", "h", "s", "o", "l"} and len(first["s"]) <= P.SEARCH_SUMMARY_CHARS + 1
+    assert json.loads((tmp_path / "site/search/2026-09.json").read_text())["stories"][0]["d"] == "2026-09-30"
+    # withdrawing the only date of a month removes that month's file
+    assert P.withdraw(daily_paths, "2026-09-30", site).state == "withdrawn"
+    assert not (tmp_path / "site/search/2026-09.json").exists()
 
 
 # ---------------------------------------------------------------------------------------------------- key and hook

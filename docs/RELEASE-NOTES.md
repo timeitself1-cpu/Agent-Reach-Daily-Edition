@@ -24,6 +24,9 @@ summarised in `docs/HANDOFF.md` ("Release history").
 5. **RSS and search engines (zip rc13b).** Each publication also updates the site's RSS feed
    (getagentreach.dev/feed.xml, one item per edition) and its sitemap, so readers can follow the editions in a feed
    reader and search engines can find every dated page.
+6. **Archive search (zip rc13c).** getagentreach.dev/search finds any story in any edition by headline, summary,
+   outlet or section, in the browser (no server). Each publication updates a small search file for its month;
+   editions published by an earlier version are added automatically the next time you publish.
 
 After extracting the zip, run setup once as usual. Nothing changes until you set up publishing.
 

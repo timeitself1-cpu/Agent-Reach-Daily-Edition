@@ -22,8 +22,10 @@ unchecked sub-task, do it, then update this file.
 - **rc13 (zip rc13), branch `claude/sweet-ramanujan-xj36o5`: website + automatic publishing (Phase W below),
   re-prioritised by the user on October 8** ("UX first, ship early"). getagentreach.dev is a news site rendered
   from published editions; the app publishes each validated edition by itself once the user saves a GitHub access
-  key. **Next:** the user does the one-time key setup (W6) and runs one refresh with publishing on; then H7e and
-  Phase 1 as before.
+  key. **User's order (Oct 8, second message):** (1) PR of rc13 into the default branch, (2) archive search
+  (done, W9c), (3) **cross-edition event identity = Phase 2, next**, (4) story timelines once matching is reliable.
+  No Windows installer yet. "Keep changes modular; avoid repeated testing or redesigning working features."
+  Also open: the one-time key setup on the PC (W6).
 
 ## Where we were (October 7, 2026)
 
@@ -168,11 +170,10 @@ new agents, new LLM infrastructure, accounts, databases, pipeline changes.
       91d14bc went live or the deploy did not run): RSS `feed.xml` + `sitemap.xml` written by the publisher in the
       same commit as the index (`index_files`), `robots.txt`, feed links; source counts made consistent (strip
       "10 of 10 kinds of source", About lists them; README 114 -> 112 feeds); README's personal paths made generic.
-- [ ] W9. From the same review, in this order, each only when the user asks for it: (a) bring rc13 to the default
-      branch with a PR (GitHub visitors still see the rc12 README); (b) story timelines on the site = Phase 2
-      (stable event ids across editions) first, then a "how this story developed" list per story; (c) site
-      search over the archive (a small headline index written by the publisher, no server); (d) a one-click
-      Windows installer and GitHub Releases instead of zip + PowerShell.
+- [~] W9. From the same review, ordered by the user on Oct 8: (a) [~] PR of rc13 into the default branch (GitHub
+      visitors still see the rc12 README); (b) [ ] story timelines on the site, AFTER Phase 2 makes event matching
+      across editions reliable; (c) [x] archive search (monthly search files written by the publisher, `/search/`);
+      (d) NOT NOW (user): a one-click Windows installer and GitHub Releases.
 
 ## Phase 1: "Report a problem with this story" (the feedback loop)
 
@@ -315,3 +316,4 @@ Each rule starts from quotes in `docs/REAL-EDITION-FINDINGS.md`; each gets a fix
 - 2026-10-08 | rc12 H7d | 83d9dd6, 7b93072, (this commit) | round 4 (18:16, rc12d): Setup unblocks downloaded files + self-test explains a held launch; scarce name + one word needs strong cosine with vectors (Pitt State/Artemis II); MIT license and website (Oct 8); corpus 13 editions, no recall lost | H7e: user installs rc12f, runs the self-test
 - 2026-10-08 | W1-W5 | (this commit), site 91d14bc | rc13: website redesign + opt-in automatic publishing (one GitHub commit per edition, withdraw, story removal, key in DPAPI); site seeded with the real Oct 7 r2 edition | W6: user saves the key and runs a refresh
 - 2026-10-08 | W8 | (this commit), site 5ad9ae3 | 499 passed (Tk, xvfb), pyflakes clean; review follow-ups: RSS feed + sitemap rebuilt with every publication (tests extended), robots.txt, consistent source counts, generic README paths | W6: user saves the key and runs a refresh; W9 waits for the user
+- 2026-10-08 | W9c search | (this commit), site 8161be5 | archive search: publisher writes search/YYYY-MM.json in the edition commit (self-repairing, withdraw-aware, 1 new test); /search/ page (newest 6 months first, accents ignored, phrases, section filter); Playwright 1440/390 on a 10-month copy | PR of rc13 to the default branch; then Phase 2 (event identity across editions)
