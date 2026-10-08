@@ -396,7 +396,7 @@
     }
     mount('archive', null, h('div', {class: 'wrap'},
       h('header', {class: 'page-head'}, h('h1', {text: 'Archive'}),
-        h('p', {text: 'Every edition published here, newest first. Each date keeps its own permanent page; when an edition was updated during the day, the page shows the last update.'}),
+        h('p', {text: 'Available editions, newest first. Each has its own dated page; when an edition was updated during the day, the page shows the last update. Withdrawn editions are removed from the archive.'}),
         searchForm('')),
       h('div', {class: 'archive'}, months.size ? [...months].map(([m, list]) => h('section', {class: 'month'}, h('h2', {text: m}),
         list.map(e => h('a', {class: 'ed-row', href: editionUrl(e.date)},
