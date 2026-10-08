@@ -304,6 +304,7 @@ class DailyWindow:
         menu.add_command(label="Details, sources and changes", accelerator="Ctrl+D", command=self.show_details)
         menu.add_command(label="Export as web page...", accelerator="Ctrl+E", command=self.export_html)
         menu.add_command(label="Settings...", accelerator="Ctrl+,", command=self.open_settings)
+        menu.add_command(label="Website publishing...", command=self.open_publishing)
         menu.add_separator()
         menu.add_command(label="Mark all as read", command=self.mark_all_read)
         menu.add_command(label="Expand all sources", command=lambda: self._expand_all(True))
@@ -943,7 +944,40 @@ class DailyWindow:
                     items.append((f"Follow \u201c{name}\u201d", lambda n=name: self.set_topic(n, "follow", True)))
             for name in names:
                 items.append((f"Mute \u201c{name}\u201d", lambda n=name: self.set_topic(n, "mute", True)))
+        edition = self.snap.shown if self.snap else None
+        from agent_reach.daily.publish import has_token
+
+        if edition is not None and not edition.demo and has_token(self.paths):
+            items.append(("", None))
+            items.append(("Remove from the website...", lambda: self.unpublish_story(edition, story)))
         return items
+
+    def unpublish_story(self, edition, story: Story) -> None:
+        """A correction: take one story off the public copy of this edition (it stays in the app)."""
+        if not messagebox.askyesno(APP_NAME, f"Remove \u201c{story.headline}\u201d from the website?\n\nThe rest of the "
+                                             "edition stays online and the story stays here in the app.",
+                                   parent=self.root):
+            return
+        from agent_reach.daily.publish import hide_story
+
+        results: queue.Queue = queue.Queue()
+        threading.Thread(target=lambda: results.put(hide_story(self.paths, edition, story.story_id)),
+                         name="unpublish", daemon=True).start()
+        self._flash_status("Removing the story from the website...")
+
+        def poll() -> None:
+            try:
+                result = results.get_nowait()
+            except queue.Empty:
+                self.root.after(300, poll)
+                return
+            self.status_var.set("Removed from the website." if result.ok else result.message)
+            self._draw_dot("current" if result.ok else "failed")
+
+        self.root.after(300, poll)
+
+    def open_publishing(self) -> None:
+        PublishDialog(self)
 
     def _story_menu(self, event) -> str | None:
         story = self.story_at(f"@{event.x},{event.y}")
@@ -1951,6 +1985,234 @@ class SettingsDialog:
         if new_mode != self.window.mode:
             self.window.apply_theme(new_mode)
         self.window.refresh_view(force=True)
+
+
+class PublishDialog:
+    """Website publishing: automatic on/off, what the website has, publish now, withdraw, the one-time access key.
+    All work (GitHub, the live site) runs on background threads; results are polled on the Tk thread."""
+
+    KEY_HELP = ("One-time setup: on github.com open Settings > Developer settings > Personal access tokens > "
+                "Fine-grained tokens > Generate new token. Repository access: only {repo}. Permissions: Contents, "
+                "Read and write. Copy the key and paste it here. It is stored encrypted for your Windows account in "
+                "the app's data folder, never in the project folder, and is only sent to GitHub.")
+
+    def __init__(self, window: DailyWindow) -> None:
+        from agent_reach.daily import publish as P
+
+        self.P = P
+        self.window = window
+        self.paths = window.paths
+        self.top = top = tk.Toplevel(window.root, bg=window.c["bg"])
+        top.title("Website publishing")
+        top.geometry(f"{window.px(640)}x{window.px(600)}")
+        top.minsize(window.px(520), window.px(520))
+        top.bind("<Escape>", lambda e: top.destroy())
+        top.transient(window.root)
+        dark_title_bar(top, window.mode == "dark")
+        self._results: queue.Queue = queue.Queue()
+        self._pending = 0
+        self.busy = False
+        wrap = window.px(580)
+        frm = ttk.Frame(top, padding=window.px(16))
+        frm.pack(fill="both", expand=True)
+        head = ttk.Frame(frm)
+        head.pack(fill="x")
+        self.dot = tk.Canvas(head, width=window.px(14), height=window.px(14), highlightthickness=0, bg=window.c["bg"])
+        self.dot.pack(side="left", padx=(0, window.px(8)))
+        self.headline_var = tk.StringVar()
+        ttk.Label(head, textvariable=self.headline_var, font=window.f_bold).pack(side="left")
+        self.message_var = tk.StringVar()
+        ttk.Label(frm, textvariable=self.message_var, wraplength=wrap).pack(anchor="w", pady=(window.px(6), 0))
+        self.last_var = tk.StringVar()
+        ttk.Label(frm, textvariable=self.last_var, style="Muted.TLabel", wraplength=wrap).pack(anchor="w", pady=(4, 0))
+        self.live_var = tk.StringVar(value="Live website: checking...")
+        ttk.Label(frm, textvariable=self.live_var, style="Muted.TLabel", wraplength=wrap).pack(anchor="w", pady=(2, 0))
+
+        self.auto_var = tk.BooleanVar(value=P.load_settings(self.paths).enabled)
+        ttk.Checkbutton(frm, text="Automatic publishing: put each new edition on the website after a successful "
+                                  "refresh", variable=self.auto_var, command=self._toggle_auto).pack(
+            anchor="w", pady=(window.px(14), window.px(4)))
+        site = ttk.Frame(frm)
+        site.pack(fill="x", pady=(0, window.px(6)))
+        self.site_var = tk.StringVar()
+        ttk.Label(site, textvariable=self.site_var).pack(side="left")
+        ttk.Button(site, text="Open live website", command=self._open_site).pack(side="right")
+        btns = ttk.Frame(frm)
+        btns.pack(fill="x", pady=(window.px(4), 0))
+        self.publish_btn = ttk.Button(btns, text="Publish latest edition", style="Accent.TButton", command=self.publish_now)
+        self.publish_btn.pack(side="left")
+        self.withdraw_btn = ttk.Button(btns, text="Take this edition off the website...", command=self.withdraw)
+        self.withdraw_btn.pack(side="left", padx=window.px(8))
+
+        ttk.Separator(frm).pack(fill="x", pady=window.px(14))
+        ttk.Label(frm, text="Access key (GitHub)", font=window.f_bold).pack(anchor="w")
+        self.key_state_var = tk.StringVar()
+        ttk.Label(frm, textvariable=self.key_state_var, style="Muted.TLabel", wraplength=wrap).pack(anchor="w", pady=(2, 6))
+        keyrow = ttk.Frame(frm)
+        keyrow.pack(fill="x")
+        self.key_var = tk.StringVar()
+        ttk.Entry(keyrow, textvariable=self.key_var, show="\u2022", width=40).pack(side="left", fill="x", expand=True)
+        ttk.Button(keyrow, text="Save key", command=self.save_key).pack(side="left", padx=(window.px(6), 0))
+        keyrow2 = ttk.Frame(frm)
+        keyrow2.pack(fill="x", pady=(window.px(6), 0))
+        ttk.Button(keyrow2, text="Test connection", command=self.test_key).pack(side="left")
+        ttk.Button(keyrow2, text="Forget key", command=self.forget_key).pack(side="left", padx=window.px(6))
+        self.help_label = ttk.Label(frm, style="Muted.TLabel", wraplength=wrap)
+        self.help_label.pack(anchor="w", pady=(window.px(10), 0))
+        bottom = ttk.Frame(top, padding=(window.px(16), 0, window.px(16), window.px(14)))
+        bottom.pack(fill="x")
+        ttk.Button(bottom, text="Close", command=top.destroy).pack(side="right")
+        self.render()
+        self.check_live()
+
+    # ......................................................... background work (results polled on the Tk thread)
+    def _bg(self, fn, done) -> None:
+        def work():
+            try:
+                result = fn()
+            except Exception as exc:  # noqa: BLE001
+                result = exc
+            self._results.put((done, result))
+
+        self._pending += 1
+        if self._pending == 1:
+            self.top.after(150, self._drain)
+        threading.Thread(target=work, name="publishing", daemon=True).start()
+
+    def _drain(self) -> None:
+        try:
+            while True:
+                done, result = self._results.get_nowait()
+                self._pending -= 1
+                if self.top.winfo_exists():
+                    done(result)
+        except queue.Empty:
+            pass
+        if self._pending > 0 and self.top.winfo_exists():
+            self.top.after(150, self._drain)
+
+    # ......................................................... view
+    def render(self, override: str | None = None) -> None:
+        info = self.P.status_lines(self.paths)
+        self.headline_var.set("Publishing" if self.busy else info["headline"])
+        self.message_var.set(override or info["message"] or "Nothing has been published from this PC yet.")
+        self.last_var.set("Last published edition: " + info["last_published"])
+        self.site_var.set("Website: " + info["site_url"].split("://", 1)[-1])
+        kind = "refreshing" if self.busy else info["kind"]
+        c = self.window.c
+        self.dot.delete("all")
+        n = self.window.px(12)
+        self.dot.create_oval(1, 1, n, n, fill=STATUS_DOT.get(kind, c["muted"]), outline="")
+        self.key_state_var.set("A key is saved (encrypted for your Windows account)." if info["connected"]
+                               else "No key saved yet. Publishing needs one, once.")
+        self.help_label.configure(text=self.KEY_HELP.format(repo=info["repo"]))
+        state = "disabled" if self.busy or not info["connected"] else "normal"
+        self.publish_btn.configure(state=state)
+        self.withdraw_btn.configure(state=state)
+
+    def _run(self, label: str, fn) -> None:
+        self.busy = True
+        self.render(label)
+
+        def done(result) -> None:
+            self.busy = False
+            if isinstance(result, Exception):
+                self.render(f"Something went wrong: {result}")
+            else:
+                self.render(result.message)
+            self.check_live()
+
+        self._bg(fn, done)
+
+    def check_live(self) -> None:
+        site = self.P.load_settings(self.paths).site_url
+
+        def done(result) -> None:
+            if isinstance(result, Exception) or result[0] is None:
+                self.live_var.set("Live website: could not be checked right now (offline, or the site is updating).")
+                return
+            d, rev = result
+            day = format_long_date(date.fromisoformat(d))
+            self.live_var.set(f"Live website now shows: the {day} edition" + (f" (revision {rev})" if rev and rev > 1 else "")
+                              + ". After publishing, the site updates within a few minutes.")
+
+        self._bg(lambda: self.P.live_edition(site), done)
+
+    # ......................................................... actions
+    def _toggle_auto(self) -> None:
+        settings = self.P.load_settings(self.paths)
+        settings.enabled = bool(self.auto_var.get())
+        try:
+            self.P.save_settings(self.paths, settings)
+        except OSError as exc:
+            messagebox.showerror(APP_NAME, f"Could not save the setting: {exc}", parent=self.top)
+            return
+        if settings.enabled and not self.P.has_token(self.paths):
+            self.render("Automatic publishing is on. Save an access key below so it can work.")
+        else:
+            self.render("Automatic publishing is on: each new edition goes to the website after a successful refresh."
+                        if settings.enabled else "Automatic publishing is off. You can still publish by hand.")
+
+    def publish_now(self) -> None:
+        self._run("Publishing the latest edition...", lambda: self.P.publish_latest(self.paths))
+
+    def withdraw(self) -> None:
+        edition = self.window.snap.shown if self.window.snap else None
+        if edition is None or edition.demo:
+            messagebox.showinfo(APP_NAME, "Open the edition you want to take off the website first.", parent=self.top)
+            return
+        d = edition.edition_date.isoformat()
+        day = format_long_date(edition.edition_date)
+        if not messagebox.askyesno(APP_NAME, f"Take the {day} edition off the website?\n\nIts page and archive entry "
+                                             "are removed; the site then shows the next newest edition. It is not "
+                                             "published again automatically unless a newer refresh of that day "
+                                             "replaces it. You can publish it again by hand.", parent=self.top):
+            return
+        self._run(f"Taking the {day} edition off the website...", lambda: self.P.withdraw(self.paths, d))
+
+    def save_key(self) -> None:
+        key = self.key_var.get().strip()
+        try:
+            self.P.save_token(self.paths, key)
+        except (self.P.PublishError, OSError) as exc:
+            messagebox.showerror(APP_NAME, f"The key was not saved: {exc}", parent=self.top)
+            return
+        self.key_var.set("")
+        self.render("Key saved. Checking that it works...")
+        self.test_key()
+
+    def test_key(self) -> None:
+        if not self.P.has_token(self.paths):
+            self.render("Paste an access key first.")
+            return
+
+        def check():
+            return self.P.github_target(self.paths).check()
+
+        def done(result) -> None:
+            self.busy = False
+            if isinstance(result, Exception):
+                self.render(f"The connection test failed: {result}")
+            else:
+                self.render(f"Connected: the key can read {self.P.load_settings(self.paths).repo}. Write access is "
+                            "confirmed by the first publication.")
+
+        self.busy = True
+        self.render("Testing the connection to GitHub...")
+        self._bg(check, done)
+
+    def forget_key(self) -> None:
+        if not messagebox.askyesno(APP_NAME, "Delete the saved access key from this PC? Publishing stops until a new "
+                                             "key is saved. (Revoke it on github.com too if it may be exposed.)",
+                                   parent=self.top):
+            return
+        self.P.forget_token(self.paths)
+        self.render("The key was deleted from this PC.")
+
+    def _open_site(self) -> None:
+        url = safe_url(self.P.load_settings(self.paths).site_url)
+        if url:
+            webbrowser.open(url)
 
 
 class FeedDialog:

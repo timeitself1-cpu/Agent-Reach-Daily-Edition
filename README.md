@@ -24,10 +24,10 @@ Agent Reach Daily is the desktop product; the original command-line trend report
 Requirements: Windows 10/11, Python 3.10 or newer (3.12 recommended, with "tcl/tk" ticked in the
 installer), [Ollama](https://ollama.com/download), about 6 GB of disk space for the models.
 
-Open PowerShell and run, from the project folder:
+Open PowerShell in the folder you extracted (the one that contains `Setup-AgentReachDaily.ps1`) and run:
 
 ```powershell
-cd "C:\Users\downt\Downloads\Agent Reach\src\Agent-Reach"
+cd "$HOME\Downloads\Agent-Reach"   # your folder
 powershell -ExecutionPolicy Bypass -File .\Setup-AgentReachDaily.ps1 -PullModels -RegisterTask
 ```
 
@@ -116,7 +116,7 @@ repository with it. Read the chosen stories first; only stories grouped correctl
 ## Your data
 
 Everything lives in `%LOCALAPPDATA%\AgentReachDaily` (for example
-`C:\Users\downt\AppData\Local\AgentReachDaily`), never in the project folder:
+`C:\Users\<you>\AppData\Local\AgentReachDaily`), never in the project folder:
 
 | Path | Contents |
 |---|---|
@@ -128,6 +128,7 @@ Everything lives in `%LOCALAPPDATA%\AgentReachDaily` (for example
 | `logs\` | `gui.log`, `refresh.log`, `scheduler.log` (rotating, about 6 MB each at most) |
 | `diagnostics\` | details of the last 30 failed or unpublished refreshes |
 | `exports\` | default folder for exported HTML editions |
+| `publish\` | website publishing: settings, last result, the encrypted access key (only if you set it up) |
 
 ## The daily podcast
 
@@ -145,12 +146,38 @@ account or cloud service. Each podcast is saved as `podcasts\YYYY-MM-DD.wav` wit
 - From PowerShell: `.\.venv\Scripts\python.exe -m agent_reach.daily --podcast` (add `--date 2026-10-05`
   for an older edition).
 
+## Publishing to the website (optional)
+
+Agent Reach Daily can put each new edition on [getagentreach.dev](https://getagentreach.dev) by itself: the
+home page shows the newest edition, `/daily/2026-10-08/` keeps each date, and `/archive/` lists them all. It is
+off until you switch it on, and it needs one GitHub access key, once:
+
+1. On github.com: **Settings > Developer settings > Personal access tokens > Fine-grained tokens > Generate new
+   token**. Repository access: **Only select repositories > timeitself1-cpu/Agent-Reach-Website**. Permissions:
+   **Contents: Read and write** (nothing else). Pick an expiry you are comfortable with (a year, for example).
+2. In the app: **...** > **Website publishing...**, paste the key, **Save key** (it tests the connection).
+3. Tick **Automatic publishing**. From then on every successful refresh publishes its edition; nothing to copy
+   or upload. **Publish latest edition** sends the current one now.
+
+The window shows the last published edition, the last result ("Published successfully", "Publication failed:
+previous edition preserved") and what the live site shows. Details: [docs/PUBLISHING.md](docs/PUBLISHING.md).
+
+- **Only the news goes up:** headlines, the app's summaries, categories, coverage strength, New/Updated labels
+  and each source's outlet, headline, link and time. Never publisher excerpts, logs, settings, file paths or
+  anything about your PC. The PC only makes outgoing requests to GitHub; nothing listens for connections.
+- **A failed upload changes nothing on the site**: an edition goes up as one commit or not at all, and the
+  website keeps the previous edition. Retrying never creates duplicates.
+- **Corrections:** right-click a story > **Remove from the website...**; or **Take this edition off the
+  website...** in the publishing window.
+- The key is stored encrypted for your Windows account in `publish\access-key.dat` in the data folder (never in
+  the project folder). **Forget key** deletes it; revoke it on github.com if it may have leaked.
+
 ## Privacy and cost
 
 - All AI work runs locally through Ollama. Nothing is sent to OpenAI, Anthropic, Google or any
   other AI service, and no API key or subscription is needed.
 - The internet is used to read public sources, with no account or API key:
-  - **114 publisher feeds from about 100 organisations**: world and US news (BBC, NPR, The
+  - **112 publisher feeds from about 100 organisations**: world and US news (BBC, NPR, The
     Guardian, PBS, CBS, NBC, ABC, Fox News, New York Times, Washington Post, Al Jazeera, Le Monde,
     France 24, DW, Sky News, The Independent, Euronews, CBC, ABC Australia, South China Morning
     Post, The Japan Times, Times of India, Politico, The Hill, Axios, Vox, The Atlantic,
@@ -186,6 +213,8 @@ account or cloud service. Each podcast is saved as `podcasts\YYYY-MM-DD.wav` wit
   Article pages are fetched to give the model context. Model downloads come from Ollama.
 - Exported HTML files are self-contained (no scripts, no remote assets); only the article links
   need the internet.
+- Website publishing is off unless you switch it on; then the public copy of each edition goes to GitHub
+  (see "Publishing to the website").
 
 ## Troubleshooting
 
@@ -261,7 +290,7 @@ editions, then runs the same self-test; send back both zips from the Desktop.
 
 Tests never touch the network or a real Ollama. `tests/daily_fakes.py` holds synthetic publisher
 feeds (fictional places on `.test` hosts) and a deterministic fake model; `samples/DEMO-edition.json`
-is the clearly labelled demo edition. Version: Agent Reach Daily 1.0 release candidate 12
+is the clearly labelled demo edition. Version: Agent Reach Daily 1.0 release candidate 13
 (`python -m agent_reach.daily --version`). What changed in each release: `docs/RELEASE-NOTES.md`.
 
 ## License and contact

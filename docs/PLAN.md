@@ -17,7 +17,17 @@ unchecked sub-task, do it, then update this file.
 - Do not tune semantic accuracy blindly: every quality rule starts from a real edition quote in
   `docs/REAL-EDITION-FINDINGS.md`.
 
-## Where we are (October 7, 2026)
+## Where we are (October 8, 2026)
+
+- **rc13 (zip rc13), branch `claude/sweet-ramanujan-xj36o5`: website + automatic publishing (Phase W below),
+  re-prioritised by the user on October 8** ("UX first, ship early"). getagentreach.dev is a news site rendered
+  from published editions; the app publishes each validated edition by itself once the user saves a GitHub access
+  key. **User's order (Oct 8, second message):** (1) PR of rc13 into the default branch, (2) archive search
+  (done, W9c), (3) **cross-edition event identity = Phase 2, next**, (4) story timelines once matching is reliable.
+  No Windows installer yet. "Keep changes modular; avoid repeated testing or redesigning working features."
+  Also open: the one-time key setup on the PC (W6).
+
+## Where we were (October 7, 2026)
 
 - Version **1.0.0rc12** (zip rc12f) on branch `claude/affectionate-galileo-isxik1`: EmbeddingGemma 2 + event
   identity. PC round 1 (Oct 7 12:07) fixed in rc12b (H1-H6), round 2 (13:36) in rc12d (H7b), round 3 (16:29) in
@@ -133,6 +143,38 @@ recall >= 0.6; fallback tested; evaluation artifact; real benchmark command for 
         one: `Benchmark-Embeddings.ps1 -PullModels`, replay here with `--replay <vectors-*.json.gz>`, put it in the
         fallback chain only if it beats nomic; set `identity_strong_cosine` only if the different-event p99 says so.
 
+## Phase W: the website and automatic publishing (user's priority, October 8)
+
+Goal: getagentreach.dev is a news-first site that updates itself from the app's real editions. Out of scope:
+new agents, new LLM infrastructure, accounts, databases, pipeline changes.
+
+- [x] W1. Inspect: site = static repo `timeitself1-cpu/Agent-Reach-Website`, Cloudflare Workers static assets
+      deployed from `main` on every push; the app's public-safe export (`sample.py`) is the starting point.
+- [x] W2. `daily/publish.py`: public edition (no excerpts/paths; independent vs repeat vs signal per source),
+      edition page + archive index, FolderTarget/GitHubTarget (one fast-forward commit, re-read on conflict,
+      no commit when unchanged), DPAPI key, status, withdraw, hide_story, refresh hook, CLI flags. 10 tests +
+      a refresh test + a window test.
+- [x] W3. Window: **...** > Website publishing (on/off, status, last published, live check, publish now, withdraw,
+      key save/test/forget); story menu "Remove from the website...".
+- [x] W4. Website redesign (dark, editorial): front page, story pages with sources and coverage, Latest News,
+      Technology / Science & AI / World, archive, about (method, coverage, corrections, privacy, app), 404;
+      checked at 1440 and 390 px with Playwright (no errors, no horizontal scroll).
+- [x] W5. Seed the site with the newest real edition (Oct 7 r2, 44 stories) through the folder target; site commit 91d14bc on main.
+- [~] W6. NEEDS the user: create the fine-grained key (docs/PUBLISHING.md), paste it, tick Automatic
+      publishing, run a refresh; the next edition should appear on the site within minutes. Then check the
+      `Live website now shows` line.
+- [ ] W7. Later (not blocking): an og:image per edition; show the publishing state in the main window's status
+      line; Windows test of DPAPI on the PC (`test_access_key_is_stored_outside_the_repo_and_forgotten` runs
+      there in the self-test's pytest).
+- [x] W8. Outside review of the site (user, Oct 8; it described the OLD rc12 landing page, so it was written before
+      91d14bc went live or the deploy did not run): RSS `feed.xml` + `sitemap.xml` written by the publisher in the
+      same commit as the index (`index_files`), `robots.txt`, feed links; source counts made consistent (strip
+      "10 of 10 kinds of source", About lists them; README 114 -> 112 feeds); README's personal paths made generic.
+- [~] W9. From the same review, ordered by the user on Oct 8: (a) [~] PR of rc13 into the default branch (GitHub
+      visitors still see the rc12 README); (b) [ ] story timelines on the site, AFTER Phase 2 makes event matching
+      across editions reliable; (c) [x] archive search (monthly search files written by the publisher, `/search/`);
+      (d) NOT NOW (user): a one-click Windows installer and GitHub Releases.
+
 ## Phase 1: "Report a problem with this story" (the feedback loop)
 
 Goal: every morning can produce precise test material with one click, so Phases 2-4 are driven by real
@@ -164,12 +206,20 @@ stories reuse their labels (faster refreshes). Acceptance: the strict xfails
 `test_the_lead_story_survives_the_next_refresh` pass (remove their marks), and churn metrics below improve
 on every fixture pair.
 
-- [ ] 2.0 Resolve 0.5 (the existing events.py/identity.py work). If it is available, review it against this
-      plan and adopt what fits; do not build a second, parallel design.
-- [ ] 2.1 Measure first: `tests/churn_report.py` (or a test helper) computes for each fixture pair:
-      stories matched by URL overlap, by `changes._match`, "new"/"gone" counts, and whether each Top Story
-      survives. Record the baseline numbers in the Progress log (r1->r2 on Oct 7: 20 of 35 matched, 3
-      identical headlines; selftest2: the #1 story vanished).
+- [x] 2.0 Resolve 0.5 (the existing events.py/identity.py work): not in this repository; the user deleted it on
+      Oct 7 ("no longer needed"). Phase 2 builds on rc12's within-run gate (`pipeline/event_identity.py`) instead.
+- [x] 2.1 Measure first (Oct 8): `tests/cross_edition.py` + `fixtures/real/cross_edition_gold.json`, an answer key
+      for the 12 Oct 7 editions (536 stories, 256 events, 108 in more than one edition; built from shared reports
+      on top of the per-edition gold, plus 9 hand-checked splits, 12 joins, 16 'related' pairs).
+      `python -m tests.cross_edition` scores a matcher. **Baseline, today's `changes._match`:** consecutive
+      editions P 0.967 R 0.954 (7 false continuations, e.g. Trump's golf-club "retreat" continued as the forces'
+      "retreat"; Cornell/Yates as the Maine debate); **6 h+ apart P 0.966 R 0.752** (56 missed: the same event
+      with all-new articles and new wording, e.g. Apple + LG, Decisions API, French protests); Top Stories still
+      listed in the next edition 73/100, 6 h+ apart 111/288 (selection churn: 2.2/2.6).
+      `tests/test_cross_edition.py`: floor test + strict xfail target (6 h+ apart P >= 0.99, R >= 0.90).
+      Gap: all 12 editions are one day; day-to-day pairs need real editions from consecutive days (2.1b).
+- [ ] 2.1b Real editions from several consecutive days: the self-test zip carries only today's two; add the
+      last 7 days of editions (news only, checked for personal data) so the answer key can span days.
 - [ ] 2.2 Find the cause of churn on the fixtures before designing: how much comes from (a) which ~260 of
       ~1,450 items are selected for clustering (`cleaner.select_for_llm` budget, per-feed floors), (b)
       HDBSCAN grouping differences, (c) story selection caps/ranking (`edition.select_stories`), (d) model
@@ -272,3 +322,7 @@ Each rule starts from quotes in `docs/REAL-EDITION-FINDINGS.md`; each gets a fix
 - 2026-10-07 | rc12 H7c | f631426, d9cb362, (this commit) | round 3 (16:29): 12 false merges in the live rc12d editions; attach rule needs a scarce name, 'war' everyday, three-field prize round-ups; self-test keeps the second grouping file; corpus 11 editions, 1 false merge offline, no recall lost | H7d: user deletes the stray tests, runs the self-test on rc12e
 - 2026-10-07 | website | (this commit), site a34517e | `--export-sample` (public edition sample, no publisher excerpts); getagentreach.dev demo shows 5 real stories of the Oct 7 rc12d edition instead of fictional events | H7d: user runs the self-test on rc12e
 - 2026-10-08 | rc12 H7d | 83d9dd6, 7b93072, (this commit) | round 4 (18:16, rc12d): Setup unblocks downloaded files + self-test explains a held launch; scarce name + one word needs strong cosine with vectors (Pitt State/Artemis II); MIT license and website (Oct 8); corpus 13 editions, no recall lost | H7e: user installs rc12f, runs the self-test
+- 2026-10-08 | W1-W5 | (this commit), site 91d14bc | rc13: website redesign + opt-in automatic publishing (one GitHub commit per edition, withdraw, story removal, key in DPAPI); site seeded with the real Oct 7 r2 edition | W6: user saves the key and runs a refresh
+- 2026-10-08 | W8 | (this commit), site 5ad9ae3 | 499 passed (Tk, xvfb), pyflakes clean; review follow-ups: RSS feed + sitemap rebuilt with every publication (tests extended), robots.txt, consistent source counts, generic README paths | W6: user saves the key and runs a refresh; W9 waits for the user
+- 2026-10-08 | W9c search | (this commit), site 8161be5 | archive search: publisher writes search/YYYY-MM.json in the edition commit (self-repairing, withdraw-aware, 1 new test); /search/ page (newest 6 months first, accents ignored, phrases, section filter); Playwright 1440/390 on a 10-month copy | PR of rc13 to the default branch; then Phase 2 (event identity across editions)
+- 2026-10-08 | Phase 2.0-2.1 | (this commit) | cross-edition answer key (12 editions, 256 events) + churn report; baseline changes._match: near P 0.967 R 0.954, 6h+ apart P 0.966 R 0.752, top stories kept 111/288 far apart; floor test + strict xfail target | 2.1b multi-day editions from the self-test; 2.2 causes; 2.4 matcher

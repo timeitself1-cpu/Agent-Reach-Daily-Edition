@@ -6,6 +6,9 @@
     python -m agent_reach.daily --check               # Ollama + model prerequisites
     python -m agent_reach.daily --export-html out.html [--date 2026-10-01]
     python -m agent_reach.daily --export-sample sample.json [--stories 1,2,3]   # public sample for a website
+    python -m agent_reach.daily --publish [--date 2026-10-01]     # publish to the website (one-time setup in the window)
+    python -m agent_reach.daily --publish-to-folder SITE        # the same files into a local copy of the website
+    python -m agent_reach.daily --withdraw 2026-10-01 | --publish-status
     python -m agent_reach.daily --install-task | --uninstall-task [--dry-run] | --task-status
     python -m agent_reach.daily --gui                 # open the desktop window
 
@@ -39,6 +42,11 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     mode.add_argument("--export-html", type=Path, metavar="PATH", help="export an edition as standalone HTML")
     mode.add_argument("--export-sample", type=Path, metavar="PATH",
                       help="export a public sample of an edition as JSON (no publisher excerpts)")
+    mode.add_argument("--publish", action="store_true", help="publish an edition (latest, or --date) to the website")
+    mode.add_argument("--publish-to-folder", type=Path, metavar="SITE",
+                      help="write the website files of an edition into a local copy of the website (preview)")
+    mode.add_argument("--withdraw", type=date.fromisoformat, metavar="DATE", help="take a date off the website")
+    mode.add_argument("--publish-status", action="store_true", help="print the website publishing status")
     mode.add_argument("--install-task", action="store_true", help="install/update the current-user scheduled task")
     mode.add_argument("--uninstall-task", action="store_true", help="remove the scheduled task (cached news is kept)")
     mode.add_argument("--task-status", action="store_true", help="show the scheduled task status")
@@ -50,7 +58,7 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     p.add_argument("--allow-extractive", action="store_true",
                    help="publish with extractive summaries if the local model is unavailable")
     p.add_argument("--date", type=date.fromisoformat,
-                   help="edition date for --export-html / --export-sample / --podcast (default: latest)")
+                   help="edition date for --export-html / --export-sample / --podcast / --publish (default: latest)")
     p.add_argument("--stories", type=lambda v: [int(x) for x in v.split(",") if x.strip()], metavar="RANKS",
                    help="story numbers for --export-sample, e.g. 1,2,3,4,9 (default: the first 5 Top Stories)")
     p.add_argument("--data-dir", type=Path, help="data folder (default %%LOCALAPPDATA%%\\AgentReachDaily)")
@@ -155,6 +163,27 @@ def main(argv: list[str] | None = None) -> int:
         args.export_sample.write_text(json.dumps(sample, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
         print(f"Exported {len(sample['stories'])} stories of {edition.edition_date.isoformat()} to {args.export_sample}")
         return 0
+
+    if args.publish or args.publish_to_folder or args.withdraw or args.publish_status:
+        from agent_reach.daily import publish
+        from agent_reach.daily.store import EditionStore
+
+        if args.publish_status:
+            print(json.dumps(publish.status_lines(paths), indent=2, ensure_ascii=False))
+            return 0
+        target = publish.FolderTarget(args.publish_to_folder) if args.publish_to_folder else None
+        if args.withdraw:
+            result = publish.withdraw(paths, args.withdraw.isoformat(), target)
+        else:
+            store = EditionStore(paths)
+            edition = store.load_date(args.date)[0] if args.date else store.load_latest().edition
+            if edition is None:
+                print("No cached edition found for that date." if args.date else "No cached edition yet.",
+                      file=sys.stderr)
+                return EXIT_USAGE
+            result = publish.publish_edition(paths, edition, target)
+        print(result.message)
+        return 0 if result.ok else 1
 
     if args.podcast:
         from agent_reach.daily.podcast import make_podcast

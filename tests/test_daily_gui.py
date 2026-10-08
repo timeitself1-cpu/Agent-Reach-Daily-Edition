@@ -446,3 +446,42 @@ def test_cancel_returns_the_window_to_normal(root, daily_paths, monkeypatch):
         root.update()
         _time.sleep(0.05)
     assert not w._cancelling and w.refresh_btn.cget("text") == "Refresh"
+
+
+def _wait_idle(root, dialog, limit=20.0):
+    # A deadline, not a count of loop turns: the background publish took over 4 s on a busy CI runner (Oct 8).
+    end = time.monotonic() + limit
+    while time.monotonic() < end:
+        root.update()
+        if not dialog.busy:
+            return
+        time.sleep(0.02)
+
+
+def test_website_publishing_dialog_and_story_correction(root, daily_paths, monkeypatch, tmp_path):
+    from agent_reach.daily import gui as G, publish
+
+    monkeypatch.delenv(publish.TOKEN_ENV, raising=False)
+    monkeypatch.setattr(publish, "live_edition", lambda site_url=publish.SITE_URL, client=None: (None, None))
+    stories = [make_story(headline="Norvale Ferry Strike Halts Island Service"),
+               make_story(2, headline="Port Calder Earthquake Damages Roads")]
+    EditionStore(daily_paths).publish(make_edition(stories))
+    w, _ = _window(root, daily_paths)
+    assert "Remove from the website..." not in [label for label, _ in w.story_menu_items(stories[0])]  # not set up
+    d = G.PublishDialog(w)
+    root.update()
+    assert d.headline_var.get().startswith("Not set up") and str(d.publish_btn.cget("state")) == "disabled"
+    d.auto_var.set(True)
+    d._toggle_auto()
+    assert publish.load_settings(daily_paths).enabled and "Save an access key" in d.message_var.get()
+    monkeypatch.setattr(publish, "github_target", lambda paths, settings=None, client=None: publish.FolderTarget(tmp_path / "site"))
+    d.key_var.set("github_pat_example")
+    d.save_key()
+    _wait_idle(root, d)
+    assert d.key_var.get() == "" and "Connected" in d.message_var.get()
+    d.publish_now()
+    _wait_idle(root, d)
+    assert d.headline_var.get() == "Published successfully", d.message_var.get()
+    assert (tmp_path / "site/editions/index.json").exists()
+    d.top.destroy()
+    assert "Remove from the website..." in [label for label, _ in w.story_menu_items(stories[0])]
