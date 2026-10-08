@@ -58,7 +58,7 @@ Search has visible labels, a submit button, responsive field layout and query gu
 - Multi-month batching, partial failure and pagination use copies of the existing fixture with dates adapted **in memory**. No fixture files or data contracts were edited.
 - Browser layout checks at 320, 390, 768 and 1440px on Home, Search, Archive, Technology, story detail and About. Additional 641px boundary checks after fixing clipped tablet navigation. Final checks found no horizontal page overflow and no clipped section navigation on the tested widths. Desktop and mobile screenshots are included in the handoff.
 - Browser keyboard checks: skip to main retains the story; Sources moves focus to evidence without changing its URL; next-story and browser Back focus the correct article title. Browser search section and relevance controls preserve URL state and return expected fixture results.
-- `editions/`, monthly search JSON, every existing HTML shell, RSS, sitemap, robots, fonts and `wrangler.jsonc` are unchanged. No new runtime dependency, build step or publishing change.
+- `editions/`, monthly search JSON, every existing HTML shell, RSS, sitemap, robots and fonts are unchanged. The frontend polish introduced no runtime dependency, build step or publishing change. A later preview-hosting correction is documented below.
 
 This is a focused browser/DOM review, not a full screen-reader certification or Safari/Firefox/device lab audit. Only one real edition is available; long-history behavior was simulated locally. Production event timelines and the cross-edition registry remain deferred.
 
@@ -75,3 +75,17 @@ git diff --check
 ```
 
 For visual review, run `python -m http.server 8765 --bind 127.0.0.1` from the repository root and visit `http://127.0.0.1:8765/`. The test harness is development-only; it neither runs on the website nor writes data.
+
+## Cloudflare preview check — diagnosed October 8, 2026
+
+The supplied build log identifies a command-line error before deployment: `wrangler preview` in version 4.148.0 rejects `--assets`. Assets are already declared at the top level of `wrangler.jsonc`. The documented preview configuration also requires a `previews` block, so this branch adds `"previews": {}`. Existing production settings, asset directory, 404 handling, and all Daily publishing/data contracts remain unchanged.
+
+In Cloudflare's non-production/preview deploy command setting, replace the failing command with:
+
+```sh
+npx wrangler@4.148.0 preview --config wrangler.jsonc --worker-name agent-reach-website
+```
+
+Then retry the branch build after the configuration commit is available. The CLI version is pinned to the version shown in the supplied log. This command creates a branch Preview and leaves production deployment to its existing command.
+
+Verified against the installed Wrangler 4.148.0 help and [Cloudflare's preview configuration documentation](https://developers.cloudflare.com/workers/previews/configuration/). This diagnoses the reported argument error; successful remote deployment still requires updating the dashboard command and retrying the build.
