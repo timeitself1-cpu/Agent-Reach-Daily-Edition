@@ -2,6 +2,7 @@ const {readFileSync, writeFileSync, mkdirSync, rmSync, cpSync, readdirSync, lsta
 const {resolve, dirname, sep} = require('node:path');
 const {JSDOM, VirtualConsole} = require('jsdom');
 const {checkEditions} = require('./check-editions.cjs');
+const {dedupeOutlets} = require('../assets/site.js');
 const root = resolve(__dirname, '..');
 const out = resolve(root, 'dist');
 function renderShell(html, path, index, edition) {
@@ -26,7 +27,7 @@ function renderShell(html, path, index, edition) {
       const article = d.getElementById('story-' + story.id);
       if (!article || article.querySelector('details.src')) continue;
       const details = d.createElement('details'); details.className = 'src';
-      const summary = d.createElement('summary'); summary.textContent = `View ${story.sources.length} sources`;
+      const summary = d.createElement('summary'); summary.textContent = `View ${story.sources.filter(s => s.url).length} source links`;
       const list = d.createElement('ul');
       for (const source of story.sources) {
         const item = d.createElement('li');
@@ -34,7 +35,7 @@ function renderShell(html, path, index, edition) {
         title.textContent = source.title;
         if (source.url) { title.href = source.url; title.rel = 'noopener noreferrer'; }
         const meta = d.createElement('small');
-        meta.textContent = `${source.outlet} · ${source.published_utc || 'time not stated'} · ${source.kind}`;
+        meta.textContent = `${dedupeOutlets([source.outlet])[0] || source.outlet} · ${source.published_utc || 'time not stated'} · ${source.kind}${source.via === 'Google News' ? ' · via Google News' : ''}`;
         item.append(title, meta); list.append(item);
       }
       details.append(summary, list); article.append(details);

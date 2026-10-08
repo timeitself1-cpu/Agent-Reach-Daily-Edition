@@ -1,3 +1,32 @@
+// Shared by the browser and the publication validator (no browser runtime dependency).
+const OUTLET_ALIASES = {
+  ap: 'AP News', apnews: 'AP News', associatedpress: 'AP News', reuters: 'Reuters',
+  cnbc: 'CNBC', twitter: 'X', x: 'X', nytimes: 'The New York Times',
+  newyorktimes: 'The New York Times', thenewyorktimes: 'The New York Times',
+  bbc: 'BBC News', bbcnews: 'BBC News', nasa: 'NASA', dw: 'DW',
+  pbs: 'PBS NewsHour', pbsnewshour: 'PBS NewsHour', wired: 'Wired',
+  tomshardware: "Tom's Hardware", github: 'GitHub', guardian: 'The Guardian',
+  theguardian: 'The Guardian', washingtonpost: 'The Washington Post',
+  thewashingtonpost: 'The Washington Post'
+};
+function normOutlet(name) {
+  let key = String(name || '').toLowerCase().trim().replace(/^www\./, '')
+    .replace(/\s*\([^)]*\)$/, '').replace(/\.(?:co|com|org|net)\.[a-z]{2}$/, '')
+    .replace(/\.[a-z]{2,}$/, '').replace(/[^a-z0-9]/g, '');
+  return (OUTLET_ALIASES[key] || key).toLowerCase().replace(/[^a-z0-9]/g, '');
+}
+function dedupeOutlets(names) {
+  const out = new Map();
+  for (const name of names || []) {
+    const key = normOutlet(name);
+    if (!key) continue;
+    const alias = Object.values(OUTLET_ALIASES).find(n => normOutlet(n) === key);
+    const readable = alias || String(name).replace(/\s*\([^)]*\)$/, '').trim();
+    if (!out.has(key) || (/\.[a-z]{2,}$/i.test(out.get(key)) && !/\.[a-z]{2,}$/i.test(readable))) out.set(key, readable);
+  }
+  return [...out.values()];
+}
+if (typeof module !== 'undefined') module.exports = {normOutlet, dedupeOutlets};
 // Agent Reach Daily website. Every page is rendered from the editions the app publishes:
 //   /editions/index.json        the archive list (newest first, "latest" = newest date)
 //   /editions/YYYY-MM-DD.json   one public edition (written by agent_reach/daily/publish.py)
@@ -6,13 +35,14 @@
 // http(s) links become links.
 (() => {
   'use strict';
+  if (typeof document === 'undefined') return;
   const REPO = 'https://github.com/timeitself1-cpu/Agent-Reach-Daily-Edition';
   const MAIL = 'hello@getagentreach.dev';
   const NAV = [['Home', '/', 'home'], ['Latest News', '/latest/', 'latest'], ['Technology', '/technology/', 'Tech'],
-    ['Science & AI', '/science/', 'Science & AI'], ['World', '/world/', 'News'], ['Archive', '/archive/', 'archive'],
+    ['Science & AI', '/science/', 'Science & AI'], ['World & Nation', '/world/', 'News'], ['Archive', '/archive/', 'archive'],
     ['About', '/about/', 'about']];
   const SECTION = {
-    'News': {label: 'World & Nation', path: '/world/', title: 'World', blurb: 'World and national news: politics, courts, conflict, the economy and public safety.'},
+    'News': {label: 'World & Nation', path: '/world/', title: 'World & Nation', blurb: 'World and national news: politics, courts, conflict, the economy and public safety.'},
     'Tech': {label: 'Technology', path: '/technology/', title: 'Technology', blurb: 'Companies, products, security and the business of technology.'},
     'Science & AI': {label: 'Science & AI', path: '/science/', title: 'Science & AI', blurb: 'Research, space, health, climate and artificial intelligence.'},
     'Sports': {label: 'Sports'}, 'Entertainment': {label: 'Entertainment'}, 'Internet Culture': {label: 'Internet Culture'},
@@ -45,7 +75,7 @@
   const dayOf = d => new Date(d + 'T12:00:00Z');
   const longDate = d => dayOf(d).toLocaleDateString('en-US', {weekday: 'long', month: 'long', day: 'numeric', year: 'numeric', timeZone: 'UTC'});
   const shortDate = d => dayOf(d).toLocaleDateString('en-US', {month: 'short', day: 'numeric', year: 'numeric', timeZone: 'UTC'});
-  const stamp = iso => new Date(iso).toLocaleString('en-US', {month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit'});
+  const stamp = iso => new Date(iso).toLocaleString('en-US', {year: new Date(iso).getFullYear() !== new Date(Date.now()).getFullYear() ? 'numeric' : undefined, month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit', timeZoneName: 'short'});
   const fullStamp = iso => new Date(iso).toLocaleString('en-US', {year: 'numeric', month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit', timeZoneName: 'short'});
   function ago(iso) {
     if (!iso) return null;
@@ -55,6 +85,17 @@
     if (min < 60 * 24) return `${Math.round(min / 60)} h ago`;
     return stamp(iso);
   }
+  let relativeTimer = null;
+  function refreshTimes() {
+    for (const time of document.querySelectorAll('time[data-relative]')) time.textContent = ago(time.getAttribute('datetime'));
+  }
+  function scheduleTimes() {
+    if (relativeTimer !== null) clearInterval(relativeTimer);
+    relativeTimer = null;
+    if (document.visibilityState === 'visible') { refreshTimes(); relativeTimer = setInterval(refreshTimes, 60000); }
+  }
+  document.addEventListener('visibilitychange', scheduleTimes);
+  scheduleTimes();
   const storyUrl = (ed, s) => `/daily/${ed.edition_date}/#story-${s.id}`;
   const editionUrl = d => `/daily/${d}/`;
   const catLabel = c => (SECTION[c] && SECTION[c].label) || c;
@@ -97,14 +138,17 @@
   }
   function covMeter(s, big) {
     const c = s.coverage || {level: 'limited', independent_reports: 0};
-    const n = c.independent_reports || 0;
+    const n = independentCount(s);
     return h('span', {class: `cov ${c.level}`, title: `${plural(n, 'independent outlet')} reported this. Coverage is not a fact check.`},
       h('span', {class: 'bars', 'aria-hidden': 'true'}, h('i'), h('i'), h('i')), big ? null : coverage(c));
   }
+  function publisherList(s) {
+    return dedupeOutlets(s.coverage?.publishers?.length ? s.coverage.publishers : s.sources.filter(x => x.kind === 'report').map(x => x.outlet));
+  }
+  const independentCount = s => Math.min(s.coverage?.independent_reports || 0, publisherList(s).length);
+  const sourceLinks = s => s.sources.filter(x => webUrl(x.url)).length;
   function outlets(s) {
-    const names = [];
-    for (const src of s.sources) if (src.kind === 'report' && !names.includes(src.outlet)) names.push(src.outlet);
-    if (!names.length) for (const src of s.sources) if (!names.includes(src.outlet)) names.push(src.outlet);
+    const names = publisherList(s);
     return names.length > 2 ? `${names.slice(0, 2).join(', ')} +${names.length - 2}` : names.join(', ');
   }
   function badges(s) {
@@ -118,18 +162,18 @@
   function meta(s, opts = {}) {
     const when = ago(s.newest_published_utc);
     return h('div', {class: 'meta'},
-      when ? h('time', {datetime: s.newest_published_utc, title: 'Newest report: ' + stamp(s.newest_published_utc), text: when}) : null,
+      when ? h('time', {datetime: s.newest_published_utc, 'data-relative': 'true', title: 'Newest report: ' + stamp(s.newest_published_utc), text: when}) : null,
       opts.noOutlets ? null : h('span', {class: 'outlets', text: outlets(s)}), covMeter(s));
   }
   function sourceList(s) {
-    const n = s.sources.length;
-    return h('details', {class: 'src'}, h('summary', {text: `View ${plural(n, 'source')}`}),
+    const n = sourceLinks(s);
+    return h('details', {class: 'src'}, h('summary', {text: `View ${plural(n, 'source link')}`}),
       h('ul', null, s.sources.map(src => {
         const url = webUrl(src.url);
         const when = src.published_utc ? stamp(src.published_utc) : 'time not stated';
         const kind = src.kind === 'signal' ? ' · social/search signal' : src.kind === 'repeat' ? ' · repeat or syndicated copy' : '';
         return h('li', null, url ? h('a', {href: url, rel: 'noopener noreferrer', target: '_blank', text: src.title}) : h('span', {text: src.title}),
-          h('small', {text: `${src.outlet} · ${when}${kind}`}));
+          h('small', {text: `${dedupeOutlets([src.outlet])[0] || src.outlet} · ${when}${kind}${src.via === 'Google News' ? ' · via Google News' : ''}`}));
       })));
   }
   function card(ed, s, variant, heading = 'h3') {
@@ -142,7 +186,7 @@
   // ------------------------------------------------------------------ chrome
   function masthead(current, ed) {
     const today = ed ? longDate(ed.edition_date) : new Date().toLocaleDateString('en-US', {weekday: 'long', month: 'long', day: 'numeric', year: 'numeric'});
-    return h('header', {class: 'masthead'}, h('div', {class: 'wrap'},
+    return h('header', {class: 'masthead'}, skipLink(), h('div', {class: 'wrap'},
       h('div', {class: 'mast-top'},
         h('div', {class: 'mast-date'}, h('strong', {text: ed ? 'Edition of ' : 'Today, '}), today),
         h('a', {class: 'brand', href: '/', 'aria-label': 'Agent Reach Daily, home'}, h('span', {class: 'brand-mark', 'aria-hidden': 'true'}),
@@ -180,7 +224,7 @@
     const wasInMain = active.closest && active.closest('main');
     const main = h('main', {id: 'main', tabindex: '-1', 'aria-busy': 'false'}, content);
     const app = document.getElementById('app');
-    const nodes = [skipLink(), masthead(current, ed), main, footer()];
+    const nodes = [masthead(current, ed), main, footer()];
     if (app) app.replaceChildren(...nodes); else body.replaceChildren(...nodes, pageStatus);
     if (!active.isConnected) {
       const newScope = scope && document.querySelector(scope.classList.contains('masthead') ? '.masthead' : '.footer');
@@ -205,7 +249,7 @@
   function chrome(current) { // static pages (About): header and footer around the page's own content
     const main = document.getElementById('main');
     if (main) main.setAttribute('tabindex', '-1');
-    body.prepend(skipLink(), masthead(current, null));
+    body.prepend(masthead(current, null));
     if (main) main.after(footer()); else body.append(footer());
   }
   function failed(current, what, withdrawn = false) {
@@ -233,6 +277,15 @@
         ed.revision > 1 ? h('span', {text: `Update ${ed.revision}`}) : null,
         h('time', {datetime: ed.generated_utc, title: ed.generated_utc, text: `Generated ${fullStamp(ed.generated_utc)}`})),
       h('span', {class: 'edition-stats'}, `${plural(ed.stories.length, 'story', 'stories')} from ${plural(ed.reports_read || 0, 'report')} · ${ed.sources_answered || 0} of ${ed.sources_tried || 0} source types responded · AI-generated summaries`));
+    if (ed.compared_with) {
+      const count = kind => ed.stories.filter(s => s.change === kind).length;
+      details.append(h('p', {class: 'edition-changes', text: `Compared with update ${ed.compared_with.revision}: ${count('new')} new · ${count('updated')} updated`}));
+    }
+    if (ed.changes) {
+      const dropped = ed.changes.dropped || [];
+      details.append(h('p', {text: `${dropped.length} no longer listed`}), h('ul', {class: 'dropped-stories'}, dropped.map(s =>
+        h('li', null, h('a', {href: '/search/?q=' + encodeURIComponent('"' + s.headline + '"'), text: s.headline})))));
+    }
     details.hidden = true;
     const toggle = h('button', {type: 'button', class: 'edition-toggle', 'aria-expanded': 'false', 'aria-controls': 'edition-details', 'aria-label': 'Show full edition details'},
       h('span', {text: `${shortDate(ed.edition_date)} · ${latest ? 'Latest' : 'Archived'}${ed.revision > 1 ? ` · Update ${ed.revision}` : ''} · ${plural(ed.stories.length, 'story', 'stories')}`}),
@@ -261,7 +314,7 @@
       h('div', {class: 'lead-foot'}, meta(s), h('a', {class: 'readmore', href: storyUrl(ed, s), text: 'Read the story and its sources'})));
   }
   function rail(ed, stories) {
-    return h('aside', {class: 'rail', 'aria-label': 'More top stories'}, h('h2', {class: 'rail-title'}, h('span', {text: 'Top stories'})),
+    return h('section', {class: 'rail', 'aria-label': 'More top stories'}, h('h2', {class: 'rail-title'}, h('span', {text: 'Top stories'})),
       stories.map((s, i) => h('article', {class: 'rail-item', id: 'story-' + s.id, 'data-cat': s.category}, h('span', {class: 'rail-num', text: String(i + 2)}),
         kicker(s), h('h3', {class: 'hl'}, h('a', {href: storyUrl(ed, s), text: s.headline})),
         h('p', {class: 'dek', text: s.summary.join(' ')}), meta(s, {noOutlets: true}))));
@@ -286,7 +339,7 @@
         if (expanding) grid.children[5].querySelector('.hl a').focus({preventScroll: true});
       });
     }
-    return h('section', {class: 'band', 'data-cat': cat, 'aria-label': title || catLabel(cat)}, h('div', {class: 'wrap'},
+    return h('section', {class: 'band', id: cat ? sectionId(cat) : 'band-top', 'data-cat': cat, 'aria-label': title || catLabel(cat)}, h('div', {class: 'wrap'},
       h('div', {class: 'band-head'}, h('h2', {class: 'band-title', text: title || catLabel(cat)}),
         sec.path ? h('a', {class: 'band-link', href: sec.path, text: `All ${sec.title}`}) : toggle), grid));
   }
@@ -310,16 +363,21 @@
         h('li', null, h('b', {text: 'Write'}), 'A local model (no cloud AI) writes the summary; unsupported sentences are removed.'),
         h('li', null, h('b', {text: 'Publish'}), 'A failed run never replaces the last good edition.')));
   }
+  const sectionId = cat => 'band-' + cat.toLowerCase().replace(/[^a-z]+/g, '-');
+  function sectionShortcuts(ed) {
+    return h('nav', {class: 'section-shortcuts', 'aria-label': 'Jump to a section'}, (ed.sections || []).map(sec =>
+      h('a', {class: 'pill', href: '#' + sectionId(sec.category), text: `${catLabel(sec.category)} ${sec.ids.length}`})));
+  }
   function renderFront(ed, idx, current, storyNotice) {
     const top = ed.topStories;
     const used = new Set(top.slice(0, 8).map(s => s.id));
-    const content = [h('div', {class: 'wrap'}, strip(ed, idx), notices(ed, idx),
+    const content = [h('div', {class: 'wrap'}, strip(ed, idx), sectionShortcuts(ed), notices(ed, idx),
       storyNotice ? h('p', {class: 'notice story-recovery', text: storyNotice}) : null,
       h('div', {class: 'front'}, lead(ed, top[0]), rail(ed, top.slice(1, 4))))];
     if (top.length > 4) content.push(sectionBand(ed, null, top.slice(4, 8), 'More top stories'));
     for (const sec of ed.sections || []) {
       const stories = sec.ids.map(id => ed.byId[id]).filter(s => s && !used.has(s.id));
-      if (stories.length) content.push(sectionBand(ed, sec.category, stories));
+      content.push(sectionBand(ed, sec.category, stories));
     }
     if (idx) content.push(archiveBand(idx, ed.edition_date));
     content.push(aboutBand());
@@ -330,6 +388,13 @@
 
   // ------------------------------------------------------------------ story page
   function sourcesBlock(s) {
+    const seen = new Set();
+    const sources = s.sources.map(src => {
+      const key = normOutlet(src.outlet);
+      if (src.kind !== 'report') return src;
+      if (seen.has(key)) return {...src, kind: 'repeat'};
+      seen.add(key); return src;
+    });
     const groups = [
       ['report', 'Independent reports', 'Each from a different outlet.'],
       ['repeat', 'Repeats and syndicated copies', 'The same outlet again, or the same headline carried by another outlet (a wire story). Counted once.'],
@@ -337,12 +402,12 @@
     ];
     return h('section', {class: 'sources', id: 'sources', tabindex: '-1', 'aria-labelledby': 'sources-title'},
       h('h2', {id: 'sources-title', text: 'Sources'}), groups.map(([kind, title, hint]) => {
-      const list = s.sources.filter(x => x.kind === kind);
+      const list = sources.filter(x => x.kind === kind);
       if (!list.length) return null;
       return h('div', null, h('h3', {text: `${title} (${list.length})`}), h('p', {class: 'hint', text: hint}),
         list.map(src => {
           const url = webUrl(src.url);
-          return h('div', {class: 'source'}, h('span', {class: 'outlet', text: src.outlet}),
+          return h('div', {class: 'source'}, h('span', {class: 'outlet', text: dedupeOutlets([src.outlet])[0] || src.outlet}),
             src.published_utc ? h('time', {class: 'when', datetime: src.published_utc, text: fullStamp(src.published_utc)}) : h('span', {class: 'when', text: 'Time not stated'}),
             url ? h('a', {class: 'title', href: url, rel: 'noopener noreferrer', target: '_blank', text: src.title}) : h('span', {class: 'title', text: src.title}),
             src.via && src.via !== src.outlet ? h('span', {class: 'via', text: 'Found via ' + src.via}) : null);
@@ -350,7 +415,7 @@
     }));
   }
   function coveragePanel(s) {
-    const c = s.coverage;
+    const c = {...s.coverage, independent_reports: independentCount(s), publishers: publisherList(s)};
     const facts = [h('li', {text: `${plural(c.independent_reports, 'independent outlet')}${c.publishers.length ? ': ' + c.publishers.join(', ') : ''}`})];
     if (c.repeats) facts.push(h('li', {text: `${plural(c.repeats, 'repeat or syndicated copy', 'repeats or syndicated copies')}, counted once`}));
     if (c.signals) facts.push(h('li', {text: `${plural(c.signals, 'social or search signal')} (attention, not reporting)`}));
@@ -377,7 +442,7 @@
         h('div', {class: 'meta'}, when ? h('time', {datetime: when, text: `Newest report ${fullStamp(when)}`}) : h('span', {text: 'Publication time not stated'}),
           h('span', {class: 'outlets', text: outlets(s)}), covMeter(s)),
         h('div', {class: 'story-actions'},
-          h('button', {class: 'source-jump', type: 'button', text: `Read ${plural(s.sources.length, 'source')} ↓`}),
+          h('button', {class: 'source-jump', type: 'button', text: `Read ${plural(sourceLinks(s), 'source link')} ↓`}),
           h('button', {class: 'pill share-story', type: 'button', text: 'Share'}),
           h('button', {class: 'pill copy-story', type: 'button', text: 'Copy link'})),
         h('p', {class: 'share-status sr', role: 'status', 'aria-live': 'polite'}),
@@ -387,7 +452,7 @@
         h('p', {class: 'ai-note'}, h('b', {text: 'How this was written. '}),
           `This summary was written automatically by a local AI model (${(ed.models && ed.models.summaries) || 'a local model'}) from the reports below, and each sentence was checked against them before publication. Nobody edited it. It can still be wrong or out of date: read the sources for the full story.`),
         sourcesBlock(s)),
-      h('aside', {class: 'aside'}, coveragePanel(s),
+      h('section', {class: 'aside', 'aria-labelledby': 'story-context-title'}, h('h2', {id: 'story-context-title', class: 'sr', text: 'Story context'}), coveragePanel(s),
         same.length ? h('section', {class: 'panel', 'aria-label': 'More in this section'}, h('h2', {text: `More in ${catLabel(s.category)}`}),
           h('div', {class: 'compact'}, same.map(x => h('div', {class: 'item'}, h('h3', {class: 'hl'}, h('a', {href: storyUrl(ed, x), text: x.headline})), meta(x, {noOutlets: true}))))) : null),
       h('nav', {class: 'story-nav', 'aria-label': 'Previous and next story'},
@@ -682,7 +747,7 @@
     if (page === 'about') { chrome('about'); return; }
     if (page === 'notfound') {
       if (/^\/daily\/\d{4}-\d{2}-\d{2}\/$/.test(location.pathname)) {
-        failed('edition', 'This edition was taken off the site.', true);
+        failed('edition', "This edition isn't available. It may have been withdrawn.", true);
         return;
       }
       mount(null, null, h('div', {class: 'wrap state'}, h('h1', {text: 'Page not found'}),
@@ -707,7 +772,7 @@
       ed = embedded ? embedded.ed : result ? result.ed : await loadEdition(date);
     } catch (e) {
       if (body.dataset.date && e.message === '404') {
-        failed(current, 'This edition was taken off the site.', true);
+        failed(current, "This edition isn't available. It may have been withdrawn.", true);
         return;
       }
       failed(current, body.dataset.date ? `The edition of ${longDate(date)} is not available.` : null);

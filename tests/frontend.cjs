@@ -6,6 +6,8 @@ const test = require('node:test');
 const root = resolve(__dirname, '..');
 const fixtures = resolve(__dirname, 'fixtures');
 const script = readFileSync(resolve(root, 'assets/site.js'), 'utf8');
+const {normOutlet} = require('../assets/site.js');
+const roadmapEdition = JSON.parse(readFileSync(resolve(fixtures, 'roadmap-2026-10-08.json')));
 const edition = JSON.parse(readFileSync(resolve(fixtures, 'editions/2026-10-07.json')));
 const index = JSON.parse(readFileSync(resolve(fixtures, 'editions/index.json')));
 const monthly = JSON.parse(readFileSync(resolve(fixtures, 'search/2026-10.json')));
@@ -24,6 +26,7 @@ async function open(path = '/', opts = {}) {
   w.scrollTo = () => {};
   w.HTMLElement.prototype.scrollIntoView = () => {};
   w.Date.now = () => Date.parse(opts.now || '2026-10-08T16:00:00Z');
+  if (opts.setup) opts.setup(w, d);
   if (opts.clipboard) Object.defineProperty(w.navigator, 'clipboard', {value: opts.clipboard});
   if (opts.share) Object.defineProperty(w.navigator, 'share', {value: opts.share});
   w.fetch = async url => {
@@ -174,8 +177,106 @@ test('latest river and category pages retain every fixture story', async () => {
     assert.equal(q.d.querySelectorAll('.card').length, edition.sections.find(s=>s.category===cat).ids.length);
     assert.equal(q.d.querySelectorAll('.card h2').length,q.d.querySelectorAll('.card').length);
     assert.equal(q.d.querySelectorAll('.card h3').length,0);
-    assert.equal(q.d.querySelector('.nav [aria-current="page"]').textContent, path === 'science' ? 'Science & AI' : path[0].toUpperCase()+path.slice(1));
+    assert.equal(q.d.querySelector('.nav [aria-current="page"]').textContent, path === 'world' ? 'World & Nation' : path === 'science' ? 'Science & AI' : path[0].toUpperCase()+path.slice(1));
     q.close();
+  }
+});
+
+test('roadmap lead deduplicates publishers and labels links separately', async () => {
+  const ed = roadmapEdition, story = ed.stories[0];
+  const p = await open('/daily/2026-10-07/#story-' + story.id, {fetch: u => u.includes('/editions/2026-10-07') ? ed : undefined});
+  assert.match(p.d.querySelector('.outlets').textContent, /^AP News, BBC News \+5$/);
+  assert.match(p.d.querySelector('.facts').textContent, /7 independent outlets/);
+  assert.doesNotMatch(p.d.querySelector('.facts').textContent, /apnews\.com|reuters\.com/);
+  assert.match(p.d.querySelector('.source-jump').textContent, /8 source links/);
+  const group = [...p.d.querySelectorAll('.sources h3')].find(h => h.textContent.startsWith('Independent'));
+  const outlets = [...group.parentElement.querySelectorAll('.outlet')].map(n => normOutlet(n.textContent));
+  assert.equal(outlets.length, new Set(outlets).size);
+  assert.notEqual(p.d.activeElement, p.d.querySelector('h1'), 'direct arrival does not focus headline');
+  p.close();
+});
+
+test('World & Nation label is consistent in route metadata and search', async () => {
+  const p = await open('/world/');
+  assert.equal(p.d.querySelector('h1').textContent, 'World & Nation');
+  assert.equal(p.d.title, 'World & Nation | Agent Reach Daily');
+  assert.match(p.d.querySelector('meta[name="description"]').content, /World & Nation/);
+  p.close();
+  const q = await open('/search/');
+  assert.equal(q.d.querySelector('option[value="News"]').textContent, 'World & Nation');
+  q.close();
+});
+
+test('update details count changes and optionally link dropped headlines as plain text', async () => {
+  const ed = structuredClone(edition);
+  ed.compared_with = {edition_date: ed.edition_date, revision: 1};
+  ed.stories[0].change = 'new'; ed.stories[1].change = 'updated';
+  const p = await open('/', {fetch: u => u.endsWith('2026-10-07.json') ? ed : undefined});
+  assert.match(p.d.querySelector('.edition-changes').textContent, new RegExp(`Compared with update 1: ${ed.stories.filter(s=>s.change==='new').length} new · ${ed.stories.filter(s=>s.change==='updated').length} updated`));
+  assert.equal(p.d.querySelector('.dropped-stories'), null); p.close();
+  ed.changes = {dropped: [{headline: '<b>Removed headline</b>', category: 'News'}]};
+  const q = await open('/', {fetch: u => u.endsWith('2026-10-07.json') ? ed : undefined});
+  const a = q.d.querySelector('.dropped-stories a');
+  assert.equal(a.textContent, '<b>Removed headline</b>');
+  assert.equal(a.querySelector('b'), null);
+  assert.equal(new URL(a.href).searchParams.get('q'), '"<b>Removed headline</b>"');
+  assert.match(q.d.querySelector('.edition-full').textContent, /1 no longer listed/); q.close();
+});
+
+test('Home and Daily shortcuts resolve every section, including static HTML', async () => {
+  const {renderShell} = require('../scripts/build.cjs');
+  for (const path of ['/', '/daily/']) {
+    const p = await open(path);
+    const links = [...p.d.querySelectorAll('.section-shortcuts a')];
+    assert.equal(links.length, edition.sections.length);
+    links.forEach((a, i) => {
+      assert.ok(p.d.getElementById(a.hash.slice(1)));
+      assert.ok(a.textContent.endsWith(' ' + edition.sections[i].ids.length));
+      a.focus(); assert.equal(p.d.activeElement, a);
+    }); p.close();
+    const shell = readFileSync(resolve(root, path === '/' ? 'index.html' : 'daily/index.html'), 'utf8');
+    const dom = new JSDOM(renderShell(shell, path, index, structuredClone(edition)));
+    assert.equal(dom.window.document.querySelectorAll('.section-shortcuts a').length, edition.sections.length);
+    dom.window.close();
+  }
+});
+
+test('relative timestamps refresh at 60 seconds and pause when hidden', async () => {
+  let tick, stopped = 0, visible = 'visible';
+  const ed = structuredClone(edition); ed.stories[0].newest_published_utc = '2026-10-08T15:41:00Z';
+  const p = await open('/', {fetch: u => u.endsWith('2026-10-07.json') ? ed : undefined, setup(w, d) {
+    Object.defineProperty(d, 'visibilityState', {get: () => visible});
+    w.setInterval = (fn, ms) => {assert.equal(ms, 60000); tick = fn; return 1;};
+    w.clearInterval = () => {stopped++; tick = null;};
+  }});
+  const time = p.d.querySelector('.lead time[data-relative]');
+  assert.equal(time.textContent, '19 min ago');
+  p.w.Date.now = () => Date.parse('2026-10-08T16:01:00Z'); tick();
+  assert.equal(time.textContent, '20 min ago');
+  visible = 'hidden'; p.d.dispatchEvent(new p.w.Event('visibilitychange'));
+  assert.equal(tick, null); assert.equal(stopped, 1);
+  visible = 'visible'; p.d.dispatchEvent(new p.w.Event('visibilitychange'));
+  assert.equal(typeof tick, 'function'); p.close();
+});
+
+test('source times include historical year and local timezone', async () => {
+  const ed = structuredClone(edition); ed.stories[0].sources[0].published_utc = '2025-10-08T12:00:00Z';
+  const p = await open('/', {fetch: u => u.endsWith('2026-10-07.json') ? ed : undefined});
+  // The lead source disclosure exists in static rendering; exercise a card disclosure too.
+  for (const story of ed.stories) for (const source of story.sources) source.published_utc = '2025-10-08T12:00:00Z'; p.close();
+  const q = await open('/latest/', {fetch: u => u.endsWith('2026-10-07.json') ? ed : undefined});
+  const text = q.d.querySelector('.src small').textContent;
+  assert.match(text, /2025/); assert.match(text, /(?:[A-Z]{2,5}|GMT[+-]\d+)$/); q.close();
+});
+
+test('axe 4.10 reports no region or nested complementary landmarks', async () => {
+  const axe = require('axe-core');
+  assert.match(axe.version, /^4\.10\./);
+  for (const path of ['/', '/world/', '/latest/', '/search/', '/archive/', '/about/', '/daily/2026-10-07/#story-' + edition.top[0]]) {
+    const p = await open(path); p.w.eval(axe.source);
+    const results = await p.w.axe.run(p.d, {runOnly: {type: 'rule', values: ['region', 'landmark-complementary-is-top-level']}});
+    assert.equal(results.violations.length, 0, path + ': ' + results.violations.map(v => v.id).join(', '));
+    assert.ok(p.d.querySelector('header .skip')); p.close();
   }
 });
 
@@ -201,12 +302,19 @@ test('story sources and source groups match fixture, jump preserves URL', async 
     assert.equal(p.d.querySelector('h1').textContent,story.headline);
     assert.equal(p.d.querySelectorAll('.sources .source').length,story.sources.length);
     assert.deepEqual([...p.d.querySelectorAll('.sources a.title')].map(a=>a.href).sort(), story.sources.map(s=>s.url).sort());
+    const seen = new Set();
+    const grouped = story.sources.map(s => {
+      if (s.kind !== 'report') return s;
+      const key = normOutlet(s.outlet);
+      if (seen.has(key)) return {...s, kind: 'repeat'};
+      seen.add(key); return s;
+    });
     for (const [kind, title] of [['report','Independent reports'],['repeat','Repeats and syndicated copies'],['signal','Social and search signals']]) {
-      const count=story.sources.filter(s=>s.kind===kind).length;
+      const count=grouped.filter(s=>s.kind===kind).length;
       const heading=[...p.d.querySelectorAll('.sources h3')].find(h=>h.textContent===`${title} (${count})`);
       if(count) {
         assert.ok(heading,`${story.id}: ${kind}`);
-        assert.deepEqual([...heading.parentElement.querySelectorAll('a.title')].map(a=>a.href).sort(),story.sources.filter(s=>s.kind===kind).map(s=>s.url).sort());
+        assert.deepEqual([...heading.parentElement.querySelectorAll('a.title')].map(a=>a.href).sort(),grouped.filter(s=>s.kind===kind).map(s=>s.url).sort());
       } else assert.equal([...p.d.querySelectorAll('.sources h3')].some(h=>h.textContent.startsWith(title)),false);
     }
     const hash = p.w.location.hash;
@@ -555,7 +663,7 @@ test('missing story recovery never guesses on ties, weak matches, or absent head
 
 test('withdrawn edition JSON and dated 404 shells provide archive recovery',async()=>{
   const removed=await open('/daily/2026-10-07/#story-'+edition.top[0],{fetch:u=>u.includes('/editions/2026')?{ok:false,status:404}:undefined});
-  assert.match(removed.d.querySelector('h1').textContent,/This edition was taken off/);
+  assert.match(removed.d.querySelector('h1').textContent,/This edition isn't available\. It may have been withdrawn\./);
   assert.ok(removed.d.querySelector('main a[href="/archive/"]'));
   removed.close();
   const p=await open('/daily/2026-10-07/#story-'+edition.top[0],{fetch:u=>u.includes('/editions/2026')?false:undefined});
@@ -563,7 +671,7 @@ test('withdrawn edition JSON and dated 404 shells provide archive recovery',asyn
   assert.doesNotMatch(p.d.querySelector('h1').textContent,/taken off/);
   p.close();
   const withdrawn=await open('/daily/2026-10-06/',{shell:'/404.html'});
-  assert.match(withdrawn.d.querySelector('h1').textContent,/This edition was taken off/);
+  assert.match(withdrawn.d.querySelector('h1').textContent,/This edition isn't available\. It may have been withdrawn\./);
   assert.ok(withdrawn.d.querySelector('main a[href="/archive/"]'));
   assert.equal(withdrawn.d.querySelector('#page-status').textContent,withdrawn.d.querySelector('h1').textContent);
   withdrawn.close();

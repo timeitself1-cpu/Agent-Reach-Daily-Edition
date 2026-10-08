@@ -2,6 +2,32 @@ const assert = require('node:assert/strict');
 const {readFileSync, readdirSync} = require('node:fs');
 const {resolve} = require('node:path');
 const {JSDOM} = require('jsdom');
+const {normOutlet} = require('../assets/site.js');
+const STOP_WORDS = new Set('a an the of to in on for and or with at by from as is are was be not before after says said us new'.split(' '));
+function headlineWords(headline) {
+  return new Set((headline.toLowerCase().match(/[a-z0-9]+/g) || []).filter(w => !STOP_WORDS.has(w)).map(w => w.replace(/s$/, '')));
+}
+function headlineSimilarity(a, b) {
+  const x = headlineWords(a), y = headlineWords(b);
+  return [...x].filter(w => y.has(w)).length / Math.max(1, new Set([...x, ...y]).size);
+}
+function editionWarnings(ed) {
+  const warnings = [];
+  for (const story of ed.stories) {
+    const names = story.coverage.publishers;
+    if (new Set(names.map(normOutlet)).size < names.length) warnings.push(`${ed.edition_date} story ${story.id}: duplicate normalised outlets`);
+    for (const source of story.sources) {
+      try {
+        if (new URL(source.url).hostname.toLowerCase() === 'news.google.com') warnings.push(`${ed.edition_date} story ${story.id}: Google News URL ${source.url}`);
+      } catch (_) { /* Null/invalid URLs are handled by contract validation. */ }
+    }
+  }
+  for (let i = 0; i < ed.stories.length; i++) for (let j = i + 1; j < ed.stories.length; j++) {
+    const a = ed.stories[i], b = ed.stories[j], overlap = headlineSimilarity(a.headline, b.headline);
+    if (overlap >= 0.4) warnings.push(`${ed.edition_date}: matching headlines ${a.id} / ${b.id} (${overlap.toFixed(2)}): ${a.headline} / ${b.headline}`);
+  }
+  return warnings;
+}
 const readJson = (root, file) => JSON.parse(readFileSync(resolve(root, file), 'utf8'));
 const sameSet = (actual, expected, message) => assert.deepEqual([...actual].sort(), [...expected].sort(), message);
 const datePattern = /^\d{4}-\d{2}-\d{2}$/;
@@ -95,9 +121,11 @@ function checkEditions(root) {
       }
     } finally { dom.window.close(); }
   }
-  return {index, editions};
+  const warnings = [...editions.values()].flatMap(editionWarnings);
+  for (const warning of warnings) console.warn('WARN ' + warning);
+  return {index, editions, warnings};
 }
-module.exports = {checkEditions};
+module.exports = {checkEditions, editionWarnings, headlineSimilarity};
 if (require.main === module) {
   try {
     const {editions} = checkEditions(resolve(process.argv[2] || resolve(__dirname, '..')));

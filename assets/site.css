@@ -405,3 +405,6 @@ details.src small{color:var(--faint);font-size:12px}
   .search-tools{grid-template-columns:minmax(0,1fr) auto}
   .search-tools .search-field:first-child{grid-column:1/-1}
 }
+
+.section-shortcuts{display:flex;flex-wrap:wrap;gap:8px;padding:12px 0 20px;min-width:0}
+.section-shortcuts a{display:inline-flex;align-items:center;min-height:44px;max-width:100%;white-space:normal;overflow-wrap:anywhere}
