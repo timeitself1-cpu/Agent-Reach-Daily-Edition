@@ -159,13 +159,39 @@ test('search live query, section, sort, submit focus and clear', async () => {
 test('unavailable search month can be retried without reloading', async () => {
   let attempts=0;
   const p=await open('/search/?q=Hamilton',{fetch:u=>u.startsWith('/search/') && ++attempts===1 ? false : undefined});
-  assert.match(p.d.querySelector('[role="status"]').textContent,/incomplete/);
+  assert.match(p.d.querySelector('[role="status"]').textContent,/unavailable.*No editions could be searched/);
+  assert.match(p.d.querySelector('.search-recovery').textContent,/October 2026/);
+  assert.ok(p.d.querySelector('.search-recovery a[href="/archive/"]'));
   assert.doesNotMatch(p.d.querySelector('.hits').textContent,/No matching stories/);
   p.d.querySelector('[data-act="retry"]').click(); await settle();
   assert.equal(attempts,2);
   assert.ok(p.d.querySelectorAll('.hit').length>0);
   assert.equal(p.d.querySelector('[data-act="retry"]'),null);
+  assert.equal(p.d.querySelector('.search-recovery').textContent,'');
   assert.equal(p.d.activeElement,p.d.querySelector('[role="status"]'));
+  p.close();
+});
+
+test('a failed prefetched month stays retryable after repeated failures',async()=>{
+  let attempts=0;
+  const p=await open('/search/',{fetch:u=>u.startsWith('/search/') && ++attempts<=2 ? false : undefined});
+  assert.equal(attempts,1);
+  const input=p.d.querySelector('input'); input.value='Hamilton';
+  const cat=p.d.querySelector('select'); cat.value='Tech'; cat.dispatchEvent(new p.w.Event('change'));
+  p.d.querySelector('[data-sort="best"]').click(); await settle();
+  assert.equal(attempts,1);
+  assert.match(p.d.querySelector('[role="status"]').textContent,/unavailable/);
+  p.d.querySelector('[data-act="retry"]').click(); await settle();
+  assert.equal(attempts,2);
+  assert.ok(p.d.querySelector('[data-act="retry"]'));
+  assert.equal(p.d.activeElement,p.d.querySelector('[role="status"]'));
+  p.d.querySelector('[data-act="retry"]').click(); await settle();
+  assert.equal(attempts,3);
+  assert.equal(p.d.querySelectorAll('.hit').length,1);
+  assert.equal(new URLSearchParams(p.w.location.search).get('q'),'Hamilton');
+  assert.equal(new URLSearchParams(p.w.location.search).get('cat'),'Tech');
+  assert.equal(new URLSearchParams(p.w.location.search).get('sort'),'best');
+  assert.equal(p.d.querySelector('[data-act="retry"]'),null);
   p.close();
 });
 
@@ -183,14 +209,78 @@ test('monthly batching, partial failure, older search and pagination remain inta
   assert.equal(p.requests.filter(u=>u.startsWith('/search/')).length,6);
   assert.equal(p.d.querySelectorAll('.hit').length,40);
   assert.match(p.d.querySelector('[role="status"]').textContent,/incomplete/);
+  assert.match(p.d.querySelector('[role="status"]').textContent,/5 searched editions/);
+  assert.match(p.d.querySelector('.search-recovery').textContent,/September 2026/);
   p.d.querySelector('[data-act="more"]').click(); await settle();
   assert.ok(p.d.querySelectorAll('.hit').length>40);
   fail=false; p.d.querySelector('[data-act="retry"]').click(); await settle();
   assert.doesNotMatch(p.d.querySelector('[role="status"]').textContent,/incomplete/);
+  assert.match(p.d.querySelector('[role="status"]').textContent,/6 searched editions/);
   p.d.querySelector('[data-act="older"]').click(); await settle();
   assert.ok(p.requests.includes('/search/2026-04.json'));
   assert.equal(p.d.querySelector('[data-act="older"]'),null);
   p.close();
+});
+
+test('section and sort actions use the latest input before its debounce finishes', async()=>{
+  for(const action of ['section','sort']) {
+    const p=await open('/search/?q=zzzznoresults');
+    const input=p.d.querySelector('input');
+    input.value='Hamilton'; input.dispatchEvent(new p.w.Event('input'));
+    if(action==='section') {
+      const cat=p.d.querySelector('select'); cat.value='Tech'; cat.dispatchEvent(new p.w.Event('change'));
+    } else p.d.querySelector('[data-sort="best"]').click();
+    await settle();
+    assert.equal(p.d.querySelectorAll('.hit').length,1);
+    assert.equal(new URLSearchParams(p.w.location.search).get('q'),'Hamilton');
+    assert.match(p.d.querySelector('.hit h2').textContent,/Hamilton/);
+    p.close();
+  }
+});
+
+test('invalid section links recover to all sections; filtered empty results can broaden',async()=>{
+  for(const cat of ['bogus','toString','__proto__']) {
+    const p=await open('/search/?q=Hamilton&cat='+cat+'&sort=best');
+    assert.equal(p.d.querySelector('select').value,'');
+    assert.equal(p.d.querySelectorAll('.hit').length,1);
+    assert.equal(new URLSearchParams(p.w.location.search).has('cat'),false);
+    assert.equal(new URLSearchParams(p.w.location.search).get('sort'),'best');
+    p.close();
+  }
+  const p=await open('/search/?q=Hamilton&cat=Sports&sort=best');
+  assert.equal(p.d.querySelectorAll('.hit').length,0);
+  assert.match(p.d.querySelector('.search-empty').textContent,/No matching stories/);
+  p.d.querySelector('[data-act="all-sections"]').click(); await settle();
+  assert.equal(p.d.querySelectorAll('.hit').length,1);
+  assert.equal(p.d.querySelector('select').value,'');
+  assert.equal(new URLSearchParams(p.w.location.search).get('q'),'Hamilton');
+  assert.equal(new URLSearchParams(p.w.location.search).get('sort'),'best');
+  assert.equal(p.d.activeElement,p.d.querySelector('[role="status"]'));
+  p.close();
+});
+
+test('invalid monthly data is retryable; valid empty data remains a true empty result',async()=>{
+  const p=await open('/search/?q=Hamilton',{fetch:u=>u.startsWith('/search/')?{}:undefined});
+  assert.match(p.d.querySelector('[role="status"]').textContent,/unavailable/);
+  assert.ok(p.d.querySelector('[data-act="retry"]'));
+  assert.equal(p.d.querySelector('.search-empty'),null);
+  p.close();
+  const empty=await open('/search/?q=Hamilton',{fetch:u=>u.startsWith('/search/')?{...monthly,stories:[]}:undefined});
+  assert.match(empty.d.querySelector('[role="status"]').textContent,/0 stories found across 1 searched edition/);
+  assert.match(empty.d.querySelector('.search-empty').textContent,/No matching stories/);
+  assert.equal(empty.d.querySelector('[data-act="retry"]'),null);
+  empty.close();
+});
+
+test('empty search scope and punctuation guidance stay distinct from unavailable data',async()=>{
+  const p=await open('/search/?q=zzzznoresults',{fetch:u=>u==='/editions/index.json'?{...index,editions:Array.from({length:7},(_,i)=>({...index.editions[0],date:`2026-${String(10-i).padStart(2,'0')}-07`}))}:u.startsWith('/search/')?monthly:undefined});
+  assert.match(p.d.querySelector('.search-empty').textContent,/No matches in the searched editions/);
+  assert.ok(p.d.querySelector('[data-act="older"]'));
+  p.close();
+  const punctuation=await open('/search/?q=!!!');
+  assert.match(punctuation.d.querySelector('[role="status"]').textContent,/Enter a word or phrase/);
+  assert.equal(punctuation.d.querySelector('.search-empty'),null);
+  punctuation.close();
 });
 
 test('a delayed earlier search cannot overwrite the current query', async()=>{
