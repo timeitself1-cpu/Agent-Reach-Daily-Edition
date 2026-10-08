@@ -109,6 +109,8 @@ test('skip and regular anchors never remount a story; next/back focus title', as
   assert.equal(p.w.location.hash,'#story-'+edition.top[0]);
   p.w.location.hash='#sources'; await settle();
   assert.equal(p.d.querySelector('main'),main);
+  p.w.location.hash='#story-'+edition.top[0]; await settle();
+  assert.equal(p.d.querySelector('main'),main);
   p.w.location.hash='#story-'+edition.top[1]; await settle();
   assert.notEqual(p.d.querySelector('h1').textContent,headline);
   assert.equal(p.d.activeElement,p.d.querySelector('h1'));
@@ -116,6 +118,53 @@ test('skip and regular anchors never remount a story; next/back focus title', as
   assert.equal(p.d.querySelector('h1').textContent,headline);
   assert.equal(p.d.activeElement,p.d.querySelector('h1'));
   assert.deepEqual(p.errors,[]);
+  p.close();
+});
+
+test('delayed page loading retains keyboard focus and a persistent status region',async()=>{
+  for(const selector of ['.brand','.nav a[href="/"]','.skip','main']) {
+    let release; const deferred=new Promise(r=>release=r);
+    const p=await open('/',{fetch:u=>u==='/editions/index.json'?deferred:undefined});
+    const status=p.d.querySelector('#page-status');
+    assert.match(status.textContent,/Loading the edition/);
+    assert.equal(p.d.querySelector('main').getAttribute('aria-busy'),'true');
+    p.d.querySelector(selector).focus(); release(index); await settle();
+    assert.equal(p.d.activeElement,p.d.querySelector(selector),selector);
+    assert.equal(p.d.querySelector('#page-status'),status);
+    assert.match(status.textContent,/Edition loaded.*44 stories/);
+    assert.equal(p.d.querySelector('main').getAttribute('aria-busy'),'false');
+    p.close();
+  }
+  const p=await open('/latest/');
+  const main=p.d.querySelector('main');
+  p.w.location.hash='#main'; await settle();
+  p.w.location.hash=''; await settle();
+  assert.equal(p.d.querySelector('main'),main);
+  assert.notEqual(p.d.activeElement,p.d.querySelector('main h1'));
+  p.close();
+});
+
+test('search recovery has a stable pending focus target without stealing later focus',async()=>{
+  let release,attempts=0; const deferred=new Promise(r=>release=r);
+  const p=await open('/search/?q=Hamilton',{fetch:u=>u.startsWith('/search/')?(++attempts===1?false:deferred):undefined});
+  const status=p.d.querySelector('#search-status'),input=p.d.querySelector('input');
+  p.d.querySelector('[data-act="retry"]').click();
+  assert.equal(p.d.activeElement,status);
+  assert.equal(p.d.querySelector('#search-results').getAttribute('aria-busy'),'true');
+  assert.equal(p.d.querySelector('#search-results').getAttribute('aria-describedby'),'search-status');
+  assert.equal(p.d.querySelector('#search-results').getAttribute('aria-label'),'Search results');
+  input.focus(); release(monthly); await settle();
+  assert.equal(p.d.activeElement,input);
+  assert.equal(p.d.querySelector('#search-results').getAttribute('aria-busy'),'false');
+  assert.match(status.textContent,/1 story found/);
+  p.close();
+});
+
+test('Show more continues keyboard reading at the first newly revealed result',async()=>{
+  const p=await open('/search/?q=the',{fetch:u=>u==='/editions/index.json'?{...index,editions:[index.editions[0],{...index.editions[0],date:'2026-09-07'}]}:u.includes('/search/2026-09')?{...monthly,stories:monthly.stories.map(s=>({...s,d:'2026-09-07'}))}:undefined});
+  assert.equal(p.d.querySelectorAll('.hit').length,40);
+  p.d.querySelector('[data-act="more"]').click(); await settle();
+  assert.equal(p.d.activeElement,p.d.querySelectorAll('.hit h2 a')[40]);
   p.close();
 });
 

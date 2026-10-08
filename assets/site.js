@@ -57,6 +57,8 @@
   const storyUrl = (ed, s) => `/daily/${ed.edition_date}/#story-${s.id}`;
   const editionUrl = d => `/daily/${d}/`;
   const catLabel = c => (SECTION[c] && SECTION[c].label) || c;
+  const pageStatus = h('p', {class: 'sr', id: 'page-status', role: 'status', 'aria-live': 'polite', 'aria-atomic': 'true'});
+  body.append(pageStatus); // Keep load status mounted while the page content changes.
 
   async function getJson(url) {
     const r = await fetch(url, {cache: 'no-cache'});
@@ -158,10 +160,23 @@
         h('span', {text: 'No cookies, no tracking, no ads.'}))));
   }
   function mount(current, ed, ...content) {
-    const main = h('main', {id: 'main', tabindex: '-1'}, content);
+    const active = document.activeElement;
+    const scope = active.closest && active.closest('.masthead, .footer');
+    const focusedLink = scope && active.closest('a[href]');
+    const linkIndex = focusedLink ? [...scope.querySelectorAll('a[href]')].filter(a => a.getAttribute('href') === focusedLink.getAttribute('href')).indexOf(focusedLink) : -1;
+    const wasSkip = active.matches && active.matches('.skip');
+    const wasInMain = active.closest && active.closest('main');
+    const main = h('main', {id: 'main', tabindex: '-1', 'aria-busy': 'false'}, content);
     const app = document.getElementById('app');
     const nodes = [skipLink(), masthead(current, ed), main, footer()];
-    if (app) app.replaceChildren(...nodes); else body.replaceChildren(...nodes);
+    if (app) app.replaceChildren(...nodes); else body.replaceChildren(...nodes, pageStatus);
+    if (!active.isConnected) {
+      const newScope = scope && document.querySelector(scope.classList.contains('masthead') ? '.masthead' : '.footer');
+      const target = wasSkip ? document.querySelector('.skip') : focusedLink && newScope
+        ? [...newScope.querySelectorAll('a[href]')].filter(a => a.getAttribute('href') === focusedLink.getAttribute('href'))[linkIndex]
+        : wasInMain ? main : null;
+      if (target) target.focus({preventScroll: true});
+    }
     return main;
   }
   function skipLink() {
@@ -182,12 +197,17 @@
     if (main) main.after(footer()); else body.append(footer());
   }
   function failed(current, what) {
-    mount(current, null, h('div', {class: 'wrap state'}, h('h1', {text: what || 'The news could not be loaded.'}),
+    const message = what || 'The news could not be loaded.';
+    mount(current, null, h('div', {class: 'wrap state'}, h('h1', {text: message}),
       h('p', null, 'Please reload the page. If it keeps happening, the newest edition may still be on its way: ', h('a', {href: '/archive/', text: 'see the archive'}), '.')));
+    document.title = message + ' | Agent Reach Daily';
+    pageStatus.textContent = message;
   }
   function loading(current) {
-    mount(current, null, h('div', {class: 'wrap'}, h('p', {class: 'sr', role: 'status', text: 'Loading the edition…'}),
+    pageStatus.textContent = current === 'search' ? 'Loading archive search…' : current === 'archive' ? 'Loading the archive…' : 'Loading the edition…';
+    const main = mount(current, null, h('div', {class: 'wrap'},
       h('div', {class: 'skeleton', 'aria-hidden': 'true'}, h('div', {style: 'height:440px'}), h('div', {style: 'height:440px'}))));
+    main.setAttribute('aria-busy', 'true');
   }
 
   // ------------------------------------------------------------------ front page / edition
@@ -445,9 +465,9 @@
       h('label', {class: 'search-field'}, h('span', {text: 'Section'}), cat),
       h('button', {class: 'pill solid', type: 'submit', text: 'Search'}));
     form.addEventListener('submit', e => { e.preventDefault(); st.shown = SEARCH_PAGE; syncQuery(); run(); });
-    const status = h('p', {class: 'search-status', role: 'status', 'aria-live': 'polite', 'aria-atomic': 'true', tabindex: '-1'});
+    const status = h('p', {class: 'search-status', id: 'search-status', role: 'status', 'aria-live': 'polite', 'aria-atomic': 'true', tabindex: '-1'});
     const recovery = h('div', {class: 'search-recovery'});
-    const results = h('div', {class: 'hits', 'aria-busy': 'false'});
+    const results = h('div', {class: 'hits', id: 'search-results', role: 'region', 'aria-label': 'Search results', 'aria-describedby': 'search-status', 'aria-busy': 'false'});
     const more = h('div', {class: 'search-more'});
     const first = (idx.editions || []).length ? idx.editions[idx.editions.length - 1].date : null;
     mount('search', null, h('div', {class: 'wrap'},
@@ -472,7 +492,7 @@
       st.q = q;
       remember();
     }
-    async function run(focusAfter) {
+    async function run(focusAfter, firstNewResult) {
       const ticket = ++st.run;
       const terms = parseQuery(st.q);
       const reach = months.slice(0, st.horizon);
@@ -486,6 +506,8 @@
       }
       if (reach.some(m => !data.has(m))) status.textContent = 'Searching…';
       results.setAttribute('aria-busy', 'true');
+      // Give a removed recovery button a stable successor while the request runs.
+      if (focusAfter) status.focus({preventScroll: true});
       await Promise.all(reach.map(load));
       if (ticket !== st.run) return;
       const hits = [];
@@ -527,7 +549,12 @@
         h('p', {text: st.horizon < months.length ? 'No matches in the searched editions. Try fewer or shorter words, or search older editions below.' : 'Try fewer or shorter words, or choose another section.'}),
         st.cat ? h('button', {class: 'pill', type: 'button', 'data-act': 'all-sections', text: 'Search all sections'}) : null,
         h('a', {href: '/archive/', text: 'Browse editions by date →'})));
-      if (focusAfter) status.focus({preventScroll: true});
+      // A reader may have moved on while data loaded; never take their focus back.
+      if (focusAfter && document.activeElement === status) {
+        const target = firstNewResult == null ? status : results.querySelectorAll('.hit h2 a')[firstNewResult] || status;
+        target.focus({preventScroll: true});
+        target.scrollIntoView({block: 'nearest'});
+      }
     }
     function hit(x, terms) {
       return h('article', {class: 'hit', 'data-cat': x.c},
@@ -547,7 +574,7 @@
       const act = e.target.closest('button') && e.target.closest('button').dataset.act;
       if (!act) return;
       syncQuery();
-      if (act === 'more') { st.shown += SEARCH_PAGE; run(true); }
+      if (act === 'more') { const previousShown = st.shown; st.shown += SEARCH_PAGE; run(true, previousShown); }
       if (act === 'older') { st.horizon = Math.min(months.length, st.horizon + SEARCH_BATCH); run(true); }
       if (act === 'retry') {
         for (const m of months.slice(0, st.horizon)) if (data.get(m) === null) { data.delete(m); pending.delete(m); }
@@ -574,8 +601,8 @@
     loading(current);
     let idx;
     try { idx = await loadIndex(); } catch (e) { failed(current); return; }
-    if (page === 'archive') { renderArchive(idx); return; }
-    if (page === 'search') { renderSearch(idx); return; }
+    if (page === 'archive') { renderArchive(idx); pageStatus.textContent = `Archive loaded. ${plural((idx.editions || []).length, 'edition')}.`; return; }
+    if (page === 'search') { renderSearch(idx); pageStatus.textContent = 'Archive search ready.'; return; }
     const date = body.dataset.date || idx.latest;
     if (!date) { failed(current, 'No edition has been published yet.'); return; }
     let ed;
@@ -583,19 +610,24 @@
       failed(current, body.dataset.date ? `The edition of ${longDate(date)} is not available.` : null);
       return;
     }
+    let renderedView = null;
     const route = () => {
       const m = /^#story-([0-9a-f]{6,40})$/.exec(location.hash);
       const s = m && ed.byId[m[1]];
+      const view = s ? s.id : page;
+      if (view === renderedView) return false;
+      renderedView = view;
       if (s) return renderStory(ed, idx, s);
       if (page === 'latest') return renderLatest(ed, idx);
       if (page === 'section') return renderSection(ed, idx, body.dataset.section);
       return renderFront(ed, idx, page === 'home' ? 'home' : 'edition');
     };
     route();
+    pageStatus.textContent = `Edition loaded. ${plural(ed.stories.length, 'story', 'stories')}.`;
     window.addEventListener('hashchange', () => {
       // Ordinary page anchors must not remount the news or discard keyboard focus.
       if (location.hash && !/^#story-/.test(location.hash)) return;
-      route();
+      if (route() === false) return;
       const title = document.querySelector('main h1');
       if (title) { title.setAttribute('tabindex', '-1'); title.focus({preventScroll: true}); }
       window.scrollTo(0, 0);
