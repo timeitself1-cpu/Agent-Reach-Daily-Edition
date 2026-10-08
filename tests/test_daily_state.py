@@ -18,8 +18,8 @@ UTC = timezone.utc
 def test_default_prefs_are_general_news_with_daily_momentum(daily_paths):
     prefs, warning = P.load_prefs(daily_paths)
     assert warning is None
-    assert prefs.ollama_model == "llama3.1:8b" and prefs.embed_model == "embeddinggemma-2:270m"
-    assert prefs.embed_fallback_models == ["nomic-embed-text"]
+    assert prefs.ollama_model == "llama3.1:8b" and prefs.embed_model == "nomic-embed-text"
+    assert prefs.embed_fallback_models == []
     assert {"google_news", "news_rss"} <= set(prefs.enabled_sources)
     assert not {"github", "producthunt", "arxiv"} & set(prefs.enabled_sources)  # tech-only feeds are opt-in
     s = P.build_settings(prefs, daily_paths)
@@ -27,15 +27,14 @@ def test_default_prefs_are_general_news_with_daily_momentum(daily_paths):
     assert s.velocity_window_tolerance == 0.25
     assert s.db_path == daily_paths.db
     assert s.retention_days >= P.MIN_DB_RETENTION_DAYS  # the 7-day window always has history
-    assert s.embed_model == "embeddinggemma-2:270m" and s.embed_fallback_models == ["nomic-embed-text"]
+    assert s.embed_model == "nomic-embed-text" and s.embed_fallback_models == []
     assert s.semantic_log_dir == daily_paths.diagnostics_dir / "semantic"  # developer pair log, outside the repo
 
 
-def test_v9_moves_grouping_to_embeddinggemma_and_keeps_a_chosen_model():
-    """rc12: settings from rc11 (version 8) used nomic-embed-text; it becomes the fallback. A model the user
-    picked themselves stays."""
+def test_v10_uses_installed_nomic_and_keeps_a_chosen_model():
+    """Older default settings migrate to the installed Windows model; custom choices stay."""
     old = P.DailyPrefs.model_validate({"prefs_version": 8, "embed_model": "nomic-embed-text", "max_stories": 9})
-    assert (old.embed_model, old.embed_fallback_models, old.max_stories) == ("embeddinggemma-2:270m", ["nomic-embed-text"], 9)
+    assert (old.embed_model, old.embed_fallback_models, old.max_stories) == ("nomic-embed-text", [], 9)
     chosen = P.DailyPrefs.model_validate({"prefs_version": 8, "embed_model": "mxbai-embed-large"})
     assert chosen.embed_model == "mxbai-embed-large"
     current = P.DailyPrefs.model_validate({"prefs_version": 9, "embed_model": "nomic-embed-text"})

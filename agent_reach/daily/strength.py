@@ -24,9 +24,9 @@ from __future__ import annotations
 import re
 from datetime import datetime, timezone
 from typing import Literal
-from urllib.parse import urlsplit
 
 from pydantic import BaseModel, Field
+from agent_reach.outlets import outlet_key, outlet_name
 
 #: Channels whose items are attention signals (searches, posts, page views), not reports.
 SIGNAL_SOURCES = frozenset({"google_trends", "x_trends24", "reddit", "wikipedia", "tiktok", "bluesky", "mastodon"})
@@ -52,15 +52,7 @@ class EvidenceStrength(BaseModel):
 
 def origin(publisher: str | None, url: str | None) -> str | None:
     """Publisher organisation key: 'BBC News - World' -> 'bbc news'; else the article host."""
-    if publisher:
-        name = _DEMO_RX.sub("", _SECTION_RX.sub("", publisher.strip())).strip().lower()
-        if name:
-            return name
-    try:
-        host = (urlsplit(url or "").hostname or "").lower().removeprefix("www.")
-    except ValueError:
-        host = ""
-    return host or None
+    return outlet_key(publisher, url)
 
 
 def _title_key(title: str) -> str:
@@ -91,7 +83,7 @@ def assess(evidence: list, reference: datetime) -> EvidenceStrength:
         if key in origins or (owner is not None and owner != key):
             duplicates += 1  # same publisher again, or a syndicated copy of a headline already counted
             continue
-        origins[key] = _DEMO_RX.sub("", _SECTION_RX.sub("", (e.publisher or key).strip())) or key
+        origins[key] = outlet_name(e.publisher, e.url) or key
         if tkey:
             title_owner[tkey] = key
     independent = len(origins)
@@ -126,4 +118,18 @@ def assess(evidence: list, reference: datetime) -> EvidenceStrength:
 
 def strength_of(story, generated_at: datetime) -> EvidenceStrength:
     """Stored strength, or computed now for editions written before strength existed."""
-    return story.evidence_strength or assess(story.evidence, generated_at)
+    stored = story.evidence_strength
+    if stored is None:
+        return assess(story.evidence, generated_at)
+    # Stored strength was assessed over ALL reports before the reader evidence list was capped at eight.
+    # Preserve that scope while correcting aliases in pre-roadmap editions.
+    publishers = sorted({outlet_name(name) for name in stored.publishers if name})
+    independent = min(stored.independent_reports, len(publishers))
+    points = stored.points - {0: 0, 1: 0, 2: 2, 3: 3}.get(stored.independent_reports, 4)
+    points += {0: 0, 1: 0, 2: 2, 3: 3}.get(independent, 4)
+    level = 'limited' if independent < 2 else ('strong' if points >= 5 else 'moderate')
+    reasons = [f"{independent} independent report{'s' if independent != 1 else ''} ({', '.join(publishers)})"]
+    reasons.extend(stored.reasons[1:])
+    return stored.model_copy(update={'publishers': publishers, 'independent_reports': independent, 'points': points,
+                                     'level': level, 'reasons': reasons,
+                                     'duplicates_collapsed': stored.duplicates_collapsed + stored.independent_reports - independent})

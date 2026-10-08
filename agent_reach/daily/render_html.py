@@ -233,10 +233,12 @@ def render_edition_html(edition: DailyEdition) -> str:
 {body}
 <div class="more">
 {_changes(edition)}
+<details class="run-details"><summary>Run details</summary>
 {notes_html}
 {grouping_html}
 <details><summary>Source health</summary>
 <table><tr><th>Source</th><th>Status</th><th>Items</th><th>Notes</th></tr>{rows}</table></details>
+</details>
 </div>
 <footer>Agent Reach Daily &middot; edition {_e(edition.edition_date.isoformat())} (America/Chicago) &middot;
 run {_e(edition.run_id)} &middot; model {_e(edition.model.llm_model)} / {_e(embed_used)}
