@@ -338,6 +338,13 @@ details.src small{color:var(--faint);font-size:12px}
 .search-empty h2{font-family:var(--serif);font-size:28px;font-weight:600;margin:0 0 8px;color:var(--ink)}
 .search-empty p{margin:0 0 12px}
 .search-empty a{color:var(--accent2);text-decoration:underline;text-underline-offset:4px}
+.search-empty .pill{margin:0 12px 12px 0;white-space:normal}
+.search-recovery:empty{display:none}
+.search-recovery{margin:20px 0 4px;padding:20px;border:1px solid var(--line2);border-left:3px solid var(--upd);border-radius:8px;background:var(--card);max-width:880px;color:var(--ink2)}
+.search-recovery h2{font-size:17px;font-weight:600;color:var(--ink);margin:0 0 8px}
+.search-recovery p{font-size:14px;margin:0 0 16px}
+.search-recovery-actions{display:flex;flex-wrap:wrap;gap:10px}
+.search-recovery .pill{white-space:normal;text-align:left}
 @media(max-width:640px){
   .search-tools{grid-template-columns:minmax(0,1fr) auto}
   .search-tools .search-field:first-child{grid-column:1/-1}
