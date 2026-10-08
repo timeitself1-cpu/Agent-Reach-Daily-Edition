@@ -251,3 +251,64 @@ def test_refresh_records_feed_health_for_the_feed_doctor(daily_env):
     world = next(r for r in health.feeds.values() if r.name == "Wire One - World")
     assert arts.failures_in_row == 1 and arts.failing_since_utc is not None and "503" in arts.last_error
     assert world.failures_in_row == 0 and world.last_ok_utc is not None
+
+
+def test_a_cache_repair_error_does_not_stop_the_refresh(daily_env, monkeypatch):
+    """Windows can refuse to move a damaged file (a virus scanner holds it open): the refresh still runs."""
+    def locked(self):
+        raise PermissionError("[WinError 32] The process cannot access the file")
+
+    monkeypatch.setattr(EditionStore, "repair", locked)
+    out = _refresh(daily_env)
+    assert out.code == R.EXIT_PUBLISHED, out.message
+    assert load_state(daily_env.paths)[0].last_attempt_outcome == "success"
+
+
+def test_settings_or_history_held_by_another_program_are_never_reset(daily_env, monkeypatch):
+    """A virus scanner, OneDrive or a backup tool can hold settings.json for a moment. Earlier versions
+    renamed it to .corrupt and ran on default settings (the reader's feeds and topics were lost)."""
+    from agent_reach.daily import fsutil
+    from agent_reach.daily.prefs import load_prefs as lp
+
+    assert _refresh(daily_env).code == R.EXIT_PUBLISHED
+    settings_before = daily_env.paths.settings.read_bytes()
+    state_before = daily_env.paths.state_file.read_bytes()
+    real_read = fsutil.read_json
+    held = {daily_env.paths.settings}
+
+    def read_json(path):
+        if path in held:
+            raise PermissionError(13, "The process cannot access the file because it is being used by another process")
+        return real_read(path)
+
+    monkeypatch.setattr(fsutil, "READ_RETRY_S", 0.1)
+    for mod in ("agent_reach.daily.prefs", "agent_reach.daily.state"):
+        monkeypatch.setattr(f"{mod}.read_json", read_json)
+    prefs, warn = lp(daily_env.paths)
+    assert warn and "could not be read just now" in warn and "not changed" in warn
+    out = _refresh(daily_env)
+    assert out.code == R.EXIT_FAILED and "could not be read" in out.message
+    held.add(daily_env.paths.state_file)
+    out = _refresh(daily_env)
+    assert out.code == R.EXIT_FAILED
+    held.clear()
+    assert daily_env.paths.settings.read_bytes() == settings_before  # untouched, never renamed
+    assert daily_env.paths.state_file.read_bytes() == state_before
+    assert not list(daily_env.paths.root.glob("settings.json.corrupt-*"))
+    assert not list(daily_env.paths.state_dir.glob("refresh_state.json.corrupt-*"))
+    assert _refresh(daily_env).code == R.EXIT_PUBLISHED
+
+
+def test_an_edition_file_held_open_fails_the_refresh_in_plain_words(daily_env, monkeypatch):
+    from agent_reach.daily import store as S
+
+    first = _refresh(daily_env).edition
+
+    def held(path, text):
+        raise PermissionError(13, "The process cannot access the file because it is being used by another process")
+
+    monkeypatch.setattr(S, "atomic_write_text", held)
+    out = _refresh(daily_env)
+    assert out.code == R.EXIT_FAILED and "could not be saved" in out.message and "open in another program" in out.message
+    assert "Unexpected error" not in out.message
+    assert EditionStore(daily_env.paths).load_latest().edition.run_id == first.run_id

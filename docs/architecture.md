@@ -8,7 +8,8 @@ public sources (RSS / APIs / pages)
       v
   enrich                 pipeline/enricher  page title + description + lead paragraphs (SSRF-safe)
       v
-  embed / group          pipeline/density   nomic-embed-text + HDBSCAN; outliers are noise
+  embed / group          pipeline/embeddings + event_identity   EmbeddingGemma 2 neighbours -> same-event gate;
+                         unconfirmed reports are noise (rc12; HDBSCAN only with cluster_method=density)
       v
   label + coherence      pipeline/clusterer local model NAMES groups only; evidence decides membership
       v
@@ -307,7 +308,9 @@ dropped on load.
 | `ingestion/news.py` | Publisher RSS/Atom feeds (`news_rss_feeds`, `Category|URL`); a failing feed is reported as partial coverage |
 | `pipeline/cleaner.py` | ASCII normalisation, hashtag splitting, engagement thresholds, noise regexes, de-dup, heuristic score, output sanitisers |
 | `pipeline/enricher.py` | Stage 2b: fetches each candidate's page (or Wikipedia summary API) and keeps title + meta description + 1-2 lead paragraphs (trafilatura, BeautifulSoup fallback) |
-| `pipeline/density.py` | Stage 3a: `nomic-embed-text` embeddings -> HDBSCAN (leaf selection) -> cosine-to-centroid gate; outliers are noise |
+| `pipeline/embeddings.py` | Stage 3a input: deterministic event representation (`event_repr_v2`), model task prompt, L2-normalised vectors, SQLite cache keyed by model + Ollama digest + dims + representation version, fallback chain (`embed_model` -> `embed_fallback_models` -> lexical) |
+| `pipeline/event_identity.py` | Stage 3a decision: kNN candidates, `IdentityGate` (accept / refuse / neutral with reasons, cosine and shared evidence), `cohesive_groups` (no single-link chaining, no merge across a refused pair, strict majority support) |
+| `pipeline/density.py` | Legacy stage 3a (`cluster_method=density`): HDBSCAN (leaf selection) -> cosine-to-centroid gate; its groups still pass the identity gate |
 | `pipeline/clusterer.py` | Stage 3b-e: LLM labelling only (never grouping), `[INSUFFICIENT_DATA]` flag, entity isolation + orphan re-homing, merge, drop rules, guardrails |
 | `pipeline/scorer.py` | Relevance 1-10 (LLM + heuristics), velocity 0-100 vs earlier runs (CLI 1h/6h/24h, Daily 24h/48h/7d) |
 | `storage/db.py` | SQLite WAL: `runs` (health/config/validity), `raw_items`, `cleaned_evidence`, `clusters`, `entity_snapshots` |
@@ -326,7 +329,7 @@ See [the v2.1 contract and replay benchmark](reliability-v2.1.md) for membership
    - arXiv and Product Hunt use their feed text.
    - X and TikTok have no article page, so their items get no context.
 4. **Cluster (3a-3e).**
-   - **3a density:** embed `title + context`, run HDBSCAN (`min_cluster_size=2`, leaf selection), then apply a cosine-to-centroid gate. Outliers are noise and are dropped. They are never forced into a mixed bucket.
+   - **3a identity (rc12):** embed each report's event representation (title without outlet suffix + first factual page sentences) with `embeddinggemma-2:270m` (fallback `nomic-embed-text`, then lexical candidates). Each report's 12 nearest neighbours above cosine 0.45 are candidates only. The identity gate decides each pair: refused for a roundup, events far apart in time, different event families or exclusive qualifiers; accepted only with specific shared evidence (two distinctive phrases, or a strong embedding match plus specific words); dates, weekdays, broad technology words and names alone never count. Stories form only through accepted pairs, never across a refused pair, and only when a strict majority of cross pairs support the merge, so A~B and B~C never make A=C. Reports left alone are noise and are dropped (or kept as single-report stories by `outlier_policy`). They are never forced into a mixed bucket. Every decision is in `ClusterOutcome.pair_log` (written to `semantic_log_dir`); `PipelineReport.semantic` holds the compact counts.
    - **3b label:** the LLM only names groups (headline, category, entities, two sentences, relevance). Groups whose signals can't explain what happened and why get `[INSUFFICIENT_DATA]`.
    - **3c event coherence:** groups require event evidence and compatible timestamps. Model labels never create membership edges. Ambiguous fragments remain unassigned; deterministic reassignment requires exactly one coherent home.
    - **3d merge:** combined membership must pass event coherence; entity or cluster ID equality never triggers a merge.

@@ -81,9 +81,27 @@ class Settings(BaseSettings):
     llm_max_retries: int = Field(default=2, ge=0, le=5)
 
     # ------------------------------------------------------ embeddings / density
-    embed_model: str = "nomic-embed-text"  # `ollama pull nomic-embed-text` (274 MB)
-    embed_prefix: str = "clustering: "  # nomic task prefix; set "" for other embedding models
+    # Google DeepMind EmbeddingGemma 2, text-only size (`ollama pull embeddinggemma-2:270m`, ~380 MB, 768 dims).
+    # Each exact model tag (and Ollama digest) is its own embedding space: vectors are cached per model.
+    embed_model: str = "embeddinggemma-2:270m"
+    # tried in order when the model above is missing or fails; then lexical grouping (pipeline/embeddings.py)
+    embed_fallback_models: list[str] = Field(default_factory=lambda: ["nomic-embed-text"])
+    # "auto" = the model's documented clustering prompt ('task: clustering | query: ' for EmbeddingGemma,
+    # 'clustering: ' for nomic-embed-text, none otherwise); any other value is used as given ("" = none)
+    embed_prefix: str = "auto"
+    embed_dims: int = Field(default=0, ge=0, le=8192)  # 0 = native size; >0 = Matryoshka truncation + re-normalise
     embed_batch_size: int = Field(default=64, ge=1, le=512)
+    embed_cache_path: Path | None = None  # None = next to db_path ('<db>.embeddings.sqlite'); '' = no cache
+    # "identity" = embedding neighbours + the event-identity gate + cohesive clusters (pipeline/event_identity.py);
+    # "density" = the rc11 grouping (HDBSCAN + centroid gate), kept for the benchmark comparison
+    cluster_method: str = "identity"
+    identity_neighbors: int = Field(default=12, ge=1, le=100)  # candidate neighbours per report
+    # a candidate pair needs at least this cosine; it is never enough on its own (the identity gate decides)
+    identity_candidate_cosine: float = Field(default=0.45, ge=-1.0, le=1.0)
+    # ...and with at least this cosine plus a shared specific word (never a name alone) a pair is accepted
+    # without further lexical evidence. Calibrate per model with `python -m tests.embedding_benchmark`.
+    identity_strong_cosine: float = Field(default=0.80, ge=-1.0, le=1.0)
+    semantic_log_dir: Path | None = None  # developer artifact: every candidate pair and the gate's decision
     hdbscan_min_cluster_size: int = Field(default=2, ge=2, le=20)
     hdbscan_min_samples: int = Field(default=1, ge=1, le=20)
     hdbscan_selection: str = "leaf"  # "leaf" = many small tight clusters (entity isolation); "eom" = larger
@@ -266,6 +284,13 @@ class Settings(BaseSettings):
     def _selection(cls, v: str) -> str:
         if v not in ("leaf", "eom"):
             raise ValueError("hdbscan_selection must be 'leaf' or 'eom'")
+        return v
+
+    @field_validator("cluster_method")
+    @classmethod
+    def _method(cls, v: str) -> str:
+        if v not in ("identity", "density"):
+            raise ValueError("cluster_method must be 'identity' or 'density'")
         return v
 
     @field_validator("outlier_policy")

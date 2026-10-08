@@ -7,14 +7,15 @@ the same result:
 * **Independent reports.** Article-like evidence is grouped by origin publisher (Google News items
   count as the publisher they point to). Repeats from one publisher count once, and syndicated
   copies (the same headline from different publishers, e.g. a wire story) count once.
-* **Trend signals.** Search, social and Wikipedia evidence shows attention, not reporting; it adds
-  to source diversity but never to the independent-report count.
-* **Source diversity.** The number of distinct collection channels.
-* **Recency.** Age of the newest *stated* publication time relative to the edition. Unknown times
-  earn nothing and are never guessed.
+* **Trend signals.** Search, social and Wikipedia evidence shows attention, not reporting: it is
+  listed, but it never counts as a report, as channel diversity or as recency (rc12: a Google Trends
+  phrase plus three articles from one channel read "Strong evidence").
+* **Source diversity.** The number of distinct channels that carried reports.
+* **Recency.** Age of the newest *stated* publication time of a report relative to the edition.
+  Unknown times earn nothing and are never guessed.
 
-Rule points: corroboration (2 reports = 2, 3 = 3, 4+ = 4) + 1 for two or more channels + 1 for a
-report stated within 24 hours. Fewer than two independent reports is always "limited" (nothing
+Rule points: corroboration (2 reports = 2, 3 = 3, 4+ = 4) + 1 for reports from two or more channels +
+1 for a report stated within 24 hours. Fewer than two independent reports is always "limited" (nothing
 corroborates it); otherwise 5+ points is "strong" and the rest "moderate".
 """
 
@@ -28,7 +29,7 @@ from urllib.parse import urlsplit
 from pydantic import BaseModel, Field
 
 #: Channels whose items are attention signals (searches, posts, page views), not reports.
-SIGNAL_SOURCES = frozenset({"google_trends", "x_trends24", "reddit", "wikipedia", "tiktok", "bluesky"})
+SIGNAL_SOURCES = frozenset({"google_trends", "x_trends24", "reddit", "wikipedia", "tiktok", "bluesky", "mastodon"})
 _SECTION_RX = re.compile(r"\s+[-–—|:]\s+.*$")
 _DEMO_RX = re.compile(r"\s*\(demo\)\s*$", re.IGNORECASE)
 
@@ -77,11 +78,11 @@ def assess(evidence: list, reference: datetime) -> EvidenceStrength:
     signals = 0
     newest: datetime | None = None
     for e in evidence:
-        if e.published_at_utc is not None and e.published_at_utc <= reference:
-            newest = e.published_at_utc if newest is None else max(newest, e.published_at_utc)
         if e.source in SIGNAL_SOURCES:
             signals += 1
             continue
+        if e.published_at_utc is not None and e.published_at_utc <= reference:
+            newest = e.published_at_utc if newest is None else max(newest, e.published_at_utc)
         key = origin(e.publisher, e.url)
         if key is None:
             continue
@@ -94,7 +95,7 @@ def assess(evidence: list, reference: datetime) -> EvidenceStrength:
         if tkey:
             title_owner[tkey] = key
     independent = len(origins)
-    channels = len({e.source for e in evidence})
+    channels = len({e.source for e in evidence if e.source not in SIGNAL_SOURCES})  # channels that carried reports
     age = round((reference - newest).total_seconds() / 3600, 1) if newest is not None else None
 
     points = {0: 0, 1: 0, 2: 2, 3: 3}.get(independent, 4)
@@ -110,7 +111,7 @@ def assess(evidence: list, reference: datetime) -> EvidenceStrength:
         reasons.append(f"{duplicates} repeat or syndicated cop{'ies' if duplicates != 1 else 'y'} counted once")
     if signals:
         reasons.append(f"{signals} trend/social signal{'s' if signals != 1 else ''} (attention, not reporting)")
-    reasons.append(f"{channels} collection channel{'s' if channels != 1 else ''}")
+    reasons.append(f"{channels} reporting channel{'s' if channels != 1 else ''}")
     if age is None:
         reasons.append("no stated publication time")
     else:

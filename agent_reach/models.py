@@ -252,6 +252,10 @@ class PipelineReport(BaseModel):
     valid: bool = True
     effective_config: dict[str, Any] = Field(default_factory=dict)
     diagnostics: list[str] = Field(default_factory=list)
+    label_calls: int = Field(default=0, description="model labelling calls (batches) made in stage 3")
+    label_calls_failed: int = Field(default=0, description="labelling batches that fell back to heuristic labels")
+    semantic: dict[str, Any] = Field(default_factory=dict, description="semantic-pipeline diagnostics: embedding "
+                                     "model actually used, cache hits, fallbacks, identity-gate counts (rc12)")
 
     @model_validator(mode="after")
     def _validate_report(self) -> "PipelineReport":

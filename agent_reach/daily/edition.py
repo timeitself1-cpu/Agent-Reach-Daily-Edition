@@ -30,6 +30,7 @@ from agent_reach.daily.prefs import GENERAL_NEWS_SOURCES, TECH_SOURCES, DailyPre
 from agent_reach.daily.timeutil import CENTRAL_TZ_NAME, central_date, parse_utc
 from agent_reach.daily.changes import EditionChanges
 from agent_reach.daily.strength import EvidenceStrength, assess
+from agent_reach.pipeline.cleaner import MONTH_DAY_GUARD, significant_tokens
 from agent_reach.models import PUBLISHED_FUTURE_TOLERANCE, CategoryEnum, CleanedTrendItem, MacroCluster, PipelineReport, RawTrendItem
 
 EDITION_SCHEMA = "agent_reach.daily_edition"
@@ -57,10 +58,11 @@ META_SENTENCE_RX = re.compile(
 )
 #: A sentence ends at . ! ? (also when a closing quote follows), never after a title such as 'St.' or 'Dr.'.
 SENTENCE_SPLIT_RX = re.compile(
-    r"(?:(?<=[.!?])|(?<=[.!?][\"'\u2019\u201d]))"
+    r"(?:(?<=[.!?])|(?<=[.!?][\"'\u2019\u201d]))" + MONTH_DAY_GUARD +
     r"(?<!\bSt\.)(?<!\bMr\.)(?<!\bMs\.)(?<!\bDr\.)(?<!\bJr\.)(?<!\bSr\.)(?<!\bMrs\.)(?<!\bGen\.)"
     r"(?<!\bSen\.)(?<!\bRep\.)(?<!\bGov\.)(?<!\bvs\.)(?<!\bU\.S\.)(?<!\bU\.K\.)(?<!\bU\.N\.)(?<!\bE\.U\.)(?<!\bNo\.)"
     r"(?<!\bBros\.)(?<!\bInc\.)(?<!\bCorp\.)(?<!\bCo\.)(?<!\bLtd\.)"
+    r"(?<![\s(\"][A-Z]\.)"  # a middle initial: 'Biologist James D. Watson' (a real edition, October 7)
     r"\s+(?=[A-Z0-9\"'(\u2018\u201c])"
 )
 #: Sentences that say nothing about what happened (seen in real editions): dropped from summaries.
@@ -184,11 +186,41 @@ class Coverage(BaseModel):
     warnings: list[str] = Field(default_factory=list)
 
 
+def grouping_summary(semantic: dict) -> dict:
+    """The few numbers a reader can use to judge how stories were grouped (the full pair log stays in the
+    diagnostics folder): which embedding model grouped them, why another was not used, and how many
+    candidate pairs the identity check accepted or refused."""
+    if not semantic:
+        return {}
+    gate = semantic.get("gate") or {}
+    emb = semantic.get("embedding") or {}
+    return {"model_used": semantic.get("model_used", ""), "fallback": semantic.get("fallback", ""),
+            "dims": emb.get("dims") or None, "cache_hits": emb.get("cache_hits", 0), "reports": emb.get("items", 0),
+            "candidate_pairs": gate.get("candidate_pairs", 0), "accepted_pairs": gate.get("accepted_pairs", 0),
+            "refused_pairs": gate.get("rejected_pairs", 0), "roundups": semantic.get("roundups_in_run", 0),
+            "merges_blocked": gate.get("merges_blocked_conflict", 0) + gate.get("merges_blocked_cohesion", 0)}
+
+
 class ModelInfo(BaseModel):
     llm_model: str
-    embed_model: str
+    embed_model: str  # the model the settings asked for
     pipeline_mode: str
+    embed_model_used: str = ""  # the model that actually grouped the stories ("" in editions before rc12)
+    grouping: dict = Field(default_factory=dict)  # compact semantic diagnostics (``grouping_summary``)
     summaries: Literal["local_model", "extractive"]
+    label_calls: int = 0  # model labelling batches; failed ones used the reports' own titles
+    label_calls_failed: int = 0
+    brief_calls: int = 0  # 'why it matters' batches; failed ones added nothing
+    brief_calls_failed: int = 0
+
+    @property
+    def model_stopped(self) -> bool:
+        """The model answered at first and then stopped (or never answered the labelling calls)."""
+        return bool(self.label_calls_failed or self.brief_calls_failed) or "unreachable" in self.pipeline_mode
+
+
+#: Labelling batches that may fall back to the reports' own titles before the edition counts as extractive.
+MAX_LABEL_FALLBACK_SHARE = 0.5
 
 
 class AccountingSummary(BaseModel):
@@ -437,18 +469,26 @@ def numbers_anchored(sentence: str, source: str) -> bool:
 #: Quoted speech: a person quoted saying 'we' or 'you' is reporting, not the page talking to the reader.
 QUOTED_RX = re.compile(r"\"[^\"]*\"|“[^”]*”|‘[^’]*’|(?<!\w)'[^']*'(?!\w)")
 PAGE_VOICE_RX = re.compile(r"\b(?:you|your|yours|yourself|we|our|ours|ourselves)\b", re.IGNORECASE)
+#: 'our own solar system', 'our galaxy': how science reports name the place everyone shares, not the page talking
+#: to its reader (October 7 export, story #3: the Webb debris-disk lead was refused, so no fallback was left).
+SHARED_PLACE_RX = re.compile(r"\bour\s+(?:own\s+)?(?:solar\s+system|galaxy|planet|moon|sun|universe|species|"
+                             r"home\s+galaxy|cosmic\s+neighbou?rhood)\b", re.IGNORECASE)
 
 
 def page_voice(sentence: str) -> bool:
     """True for text in the page's own voice outside quotes ('Every time you ask ChatGPT a question',
     'as our industry stepped into'): copied page text, not a summary. Lower-case 'us' counts; 'US' does not."""
-    bare = QUOTED_RX.sub(" ", sentence)
+    bare = SHARED_PLACE_RX.sub(" ", QUOTED_RX.sub(" ", sentence))
     return bool(PAGE_VOICE_RX.search(bare) or re.search(r"\bus\b", bare))
 
 
 SUBORDINATE_OPENER_RX = re.compile(
     r"^(?:(?:over|in|during|for|after|within|throughout|across)\b[^,]{0,80},\s*)?"
     r"(?:as|while|when|whereas|although|though|because|since|unless)\b", re.IGNORECASE)
+#: An introductory phrase with no main clause after it: 'By studying 21 rare.' (the export of October 7, story #3:
+#: the model's summary was cut at a quotation mark), 'After the vote.', 'Following months of talks.'.
+INTRO_ONLY_RX = re.compile(r"^(?:by|after|before|following|despite|amid|with|without|while|when|in order to|"
+                           r"according to|thanks to|due to)\b[^,;:]*[.!?]?$", re.IGNORECASE)
 IRREGULAR_PAST = frozenset("""won lost made took gave became began fell rose left met ran told found held kept led
 paid put set sent sold spent struck saw came went got hit cut beat broke chose drew drove flew fled grew knew spoke
 stole wore woke shut quit""".split())
@@ -489,6 +529,22 @@ def _repeats_itself(text: str) -> bool:
 #: Words a finished sentence never ends on ('Clayton will lead the government's new.').
 DANGLING_END_WORDS = frozenset("""a an the and or but nor of to for with from by via vs its their his her our your
 my this these those new""".split())
+
+
+def truncated_copy(sentence: str, source: str | None) -> bool:
+    """The sentence is a source sentence cut off just before a quotation mark: 'By studying 21 rare.' where the
+    report says 'By studying 21 rare "extreme debris disks" around young stars, researchers found ...' (a model
+    writing JSON ends its text at an unescaped double quote). Copying a whole clause is fine."""
+    if not source:
+        return False
+    body = re.sub(r"[.!?]+$", "", sentence.strip()).strip()
+    if len(body.split()) < 2:
+        return False
+    for m in re.finditer(re.escape(body), source, flags=re.IGNORECASE):
+        rest = source[m.end():].lstrip()
+        if rest[:1] in ('"', "\u201c", "\u201d") or rest[:2] == "''":
+            return True
+    return False
 
 
 def ends_dangling(sentence: str) -> bool:
@@ -558,6 +614,32 @@ PRONOUN_START_RX = re.compile(r"^(?:he|she|they|it|his|her|their|its|but|and|yet
                               r"spring|fall|autumn|time\b)\w+", re.IGNORECASE)
 
 
+#: The model talking about its input instead of the news ('Meta's Muse is a privacy and security dumpster fire,
+#: but the context is not specified.', 'NASA is bringing 7,500 contractors back ..., but the reason is not
+#: specified.': a real edition of October 7). Reporters write 'not disclosed' or 'not known'; those are facts.
+UNSTATED_RX = re.compile(
+    r"(?:,?\s*(?:but|although|though|and|while|however,?)\s+)?(?:the\s+|its\s+|their\s+|any\s+)?"
+    r"(?:exact\s+|specific\s+|further\s+|additional\s+|more\s+)?"
+    r"(?:context|reasons?|details?|cause|specifics|motive|purpose|nature|information|outcome|explanation)\s+"
+    r"(?:is|are|was|were|has|have|remains?)\s+(?:been\s+)?(?:not|un)\s*"
+    r"(?:specified|mentioned|provided|given|stated|included|available)\b"
+    r"(?:\s+(?:in|from|by)\s+the\s+(?:provided\s+|given\s+)?(?:text|sources?|evidence|articles?|excerpts?|reports?))?"
+    r"(?=\s*[.!?]?\s*$)",  # only a remark that ends the sentence ('Details were not provided by police' is news)
+    re.IGNORECASE)
+
+
+def without_unstated(sentence: str, source: str | None) -> str:
+    """The sentence without the model's remark that something is 'not specified' (unless the sources say it)."""
+    m = UNSTATED_RX.search(sentence)
+    if not m or (source and m.group(0).strip(" ,").lower() in source.lower()):
+        return sentence
+    out = (sentence[:m.start()] + sentence[m.end():]).strip()
+    out = re.sub(r"\s+([.,;:!?])", r"\1", out).rstrip(" ,;:")
+    if out and out[-1] not in ".!?":
+        out += "."
+    return out if len(out.split()) >= 3 else ""
+
+
 def body_sentences(summary: str, source: str | None = None, headline: str | None = None) -> list[str]:
     """Up to two summary sentences, without meta lines, empty filler, repeats of what was already said,
     sentences that repeat themselves, non-English text, the page's own voice ('you', 'our'), verbless
@@ -568,11 +650,12 @@ def body_sentences(summary: str, source: str | None = None, headline: str | None
     out: list[str] = []
     restated: list[str] = []  # sound sentences left out only because they restate the headline
     for s in (p.strip() for p in SENTENCE_SPLIT_RX.split(summary or "")):
-        s = LEAD_PREFIX_RX.sub("", s)
+        s = without_unstated(LEAD_PREFIX_RX.sub("", s), source)
         s = without_self_repeat(s[:1].upper() + s[1:]) if s else None
         if (s and not META_SENTENCE_RX.match(s) and not WEAK_SENTENCE_RX.search(s) and not repeats(s, out)
                 and not (out and restates(s, out, NOVEL_SHARE)) and looks_english(s)
                 and not page_voice(s) and not is_fragment(s) and not ends_dangling(s)
+                and not INTRO_ONLY_RX.match(s) and not truncated_copy(s, source)
                 and (stems is None or (support(s, stems) >= SUPPORT_SHARE and numbers_in(s) <= numbers
                                        and numbers_anchored(s, source or "")))):
             if headline and restates(s, [headline], 1.0):
@@ -605,6 +688,56 @@ def lead_sentence(cluster: MacroCluster, items: dict[int, CleanedTrendItem], hea
                         and not is_fragment(s) and not ends_dangling(s) and not PRONOUN_START_RX.match(s)
                         and not (headline and restates(s, [headline], 1.0))):
                     return s
+    return None
+
+
+_WEEKDAYS = ("monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday")
+_WEEKDAY_RX = re.compile(r"\b(" + "|".join(_WEEKDAYS) + r"|yesterday|today)\b", re.IGNORECASE)
+DEVELOPING_LABEL = "Developing"
+
+
+def stated_day(sentence: str, today: int) -> int | None:
+    """The weekday (0 = Monday) a sentence says it is about, when it names exactly one ('yesterday' and
+    'today' count relative to ``today``)."""
+    days = set()
+    for m in _WEEKDAY_RX.finditer(sentence):
+        word = m.group(1).lower()
+        days.add(today if word == "today" else (today - 1) % 7 if word == "yesterday" else _WEEKDAYS.index(word))
+    return days.pop() if len(days) == 1 else None
+
+
+def newest_state(sentences: list[str], cluster: MacroCluster, items: dict[int, CleanedTrendItem],
+                 reference: datetime) -> str | None:
+    """A source sentence about TODAY for a summary that only says what happened on an earlier day.
+
+    The export of October 7 (a Wednesday), story #2 'Stock Markets Hit Record High Despite Inflation, High
+    Fuel Prices': the summary said 'US stock markets hit a record high Tuesday', while the story's newest
+    report said 'Stocks fell on Wednesday as pressure continued to build in the bond market'. The newest
+    reliable evidence controls the current state: that sentence leads, the earlier one stays as what came
+    before. Only page text of the story's own reports is used, newest stated publication first, with the
+    same sentence checks as ``lead_sentence`` and at least two words in common with the story."""
+    today = central_date(reference).weekday()
+    days = [stated_day(x, today) for x in sentences]
+    if not any(d is not None and (today - d) % 7 in (1, 2) for d in days) or today in days:
+        return None
+    topic = {t[:5] for t in significant_tokens(" ".join([cluster.headline, *sentences]))}
+    epoch = datetime.min.replace(tzinfo=timezone.utc)
+
+    def stated(m: CleanedTrendItem) -> datetime:  # newest publication time a source stated; unknown sorts last
+        times = [parse_utc(o.metadata.get("published_at")) for o in [m, *m.observations]]
+        return max((t for t in times if t is not None and t <= reference), default=epoch)
+
+    members = sorted((items[i] for i in cluster.member_item_ids if i in items and items[i].context_source == "page"),
+                     key=stated, reverse=True)
+    for m in members:
+        for segment in (m.context or "").split(" | "):
+            for x in SENTENCE_SPLIT_RX.split(segment.strip()):
+                x = re.sub(r"\s+([.,;:!?])", r"\1", x.strip())
+                if (stated_day(x, today) == today and len(x) >= 40 and x.endswith((".", "!", "?"))
+                        and looks_english(x) and not page_voice(x) and not is_fragment(x) and not ends_dangling(x)
+                        and not PRONOUN_START_RX.match(x)
+                        and len({t[:5] for t in significant_tokens(x)} & topic) >= 2):
+                    return x
     return None
 
 
@@ -932,6 +1065,11 @@ def build_story(rank: int, cluster: MacroCluster, items: dict[int, CleanedTrendI
         sentences = [lead] if lead else body_sentences(cluster.summary, source or None)
     if not sentences or not evidence:
         return None
+    labels = story_labels(cluster)
+    latest = newest_state(sentences, cluster, items, reference or datetime.now(timezone.utc))
+    if latest:
+        sentences = [latest, *sentences[:3]]
+        labels.append(DEVELOPING_LABEL)
     return Story(
         rank=rank,
         story_id=cluster.event_id or cluster.cluster_id,
@@ -939,7 +1077,7 @@ def build_story(rank: int, cluster: MacroCluster, items: dict[int, CleanedTrendI
         headline=cluster.headline,
         category=cluster.category,
         sentences=sentences,
-        labels=story_labels(cluster),
+        labels=labels,
         momentum=cluster.momentum,
         velocity_basis=cluster.velocity_basis,
         momentum_note=cluster.momentum_note,
@@ -1036,9 +1174,22 @@ def build_coverage(health: list[SourceHealth], stories: list[Story], selection: 
     if partial:
         warnings.append(f"Partial or empty coverage: {', '.join(partial)}.")
     # A YouTube channel with no new upload answered normally; only failures and empty article feeds count.
-    all_feeds = [(h, f) for h in health for f in h.feeds]
-    bad_feeds = [f.name for h, f in all_feeds
-                 if f.status == "failed" or (f.status == "empty" and h.source != "youtube")]
+    # A channel that (nearly) all failed at once is one outage, said once ('YouTube did not answer for 21 of
+    # 22 channels'), not 21 broken feeds named like the publishers' working article feeds.
+    from agent_reach.daily.feedhealth import OUTAGE_OK_SHARE
+
+    unit = {"youtube": "channels", "google_news": "sections"}
+    all_feeds, bad_feeds = [], []
+    for h in health:
+        down = [f for f in h.feeds if f.status == "failed"]
+        if len(h.feeds) >= 5 and len(h.feeds) - len(down) < OUTAGE_OK_SHARE * len(h.feeds):
+            warnings.append(f"{h.name} did not answer for {len(down)} of {len(h.feeds)} "
+                            f"{unit.get(h.source, 'feeds')} (an outage or a block on that site; it usually passes).")
+            continue
+        all_feeds += h.feeds
+        suffix = f" ({h.name})" if h.source == "youtube" else ""
+        bad_feeds += [f.name + suffix for f in h.feeds
+                      if f.status == "failed" or (f.status == "empty" and h.source != "youtube")]
     if bad_feeds:
         shown = ", ".join(bad_feeds[:6]) + (f" and {len(bad_feeds) - 6} more" if len(bad_feeds) > 6 else "")
         warnings.append(f"{len(bad_feeds)} of {len(all_feeds)} feeds returned nothing: {shown}.")
@@ -1080,6 +1231,7 @@ def assemble_edition(
     config_fingerprint: str,
     revision: int = 1,
     previous_revisions: list[Revision] | None = None,
+    brief_stats: dict[str, int] | None = None,
 ) -> DailyEdition:
     if not report.valid or report.accounting is None:
         raise ValueError("only a valid report can become an edition")
@@ -1089,8 +1241,16 @@ def assemble_edition(
     health = source_health(report, stories)
     coverage = build_coverage(health, stories, selection, report)
     acct = report.accounting
-    summaries = "extractive" if report.llm_mode.startswith("heuristic") else "local_model"
-    notes = edition_notes(selection, prefs, extractive=summaries == "extractive")
+    labels, labels_failed = report.label_calls, report.label_calls_failed
+    mostly_fallback = bool(labels) and labels_failed >= MAX_LABEL_FALLBACK_SHARE * labels
+    summaries = "extractive" if report.llm_mode.startswith("heuristic") or mostly_fallback else "local_model"
+    brief = brief_stats or {}
+    semantic = report.semantic or {}
+    model = ModelInfo(llm_model=prefs.ollama_model, embed_model=prefs.embed_model, pipeline_mode=report.llm_mode,
+                      embed_model_used=str(semantic.get("model_used") or ""), grouping=grouping_summary(semantic),
+                      summaries=summaries, label_calls=labels, label_calls_failed=labels_failed,
+                      brief_calls=brief.get("calls", 0), brief_calls_failed=brief.get("failed_calls", 0))
+    notes = edition_notes(selection, prefs, extractive=summaries == "extractive", model=model)
     return DailyEdition(
         edition_date=central_date(started),
         revision=revision,
@@ -1099,8 +1259,7 @@ def assemble_edition(
         trigger=trigger,
         generation_started_utc=started.astimezone(timezone.utc),
         generation_completed_utc=completed.astimezone(timezone.utc),
-        model=ModelInfo(llm_model=prefs.ollama_model, embed_model=prefs.embed_model,
-                        pipeline_mode=report.llm_mode, summaries=summaries),
+        model=model,
         config_fingerprint=config_fingerprint,
         pipeline_schema_version=report.schema_version,
         accounting=AccountingSummary(ingested=acct.ingested, passed_filters=acct.passed_filters,
@@ -1115,7 +1274,8 @@ def assemble_edition(
     )
 
 
-def edition_notes(selection: Selection, prefs: DailyPrefs, *, extractive: bool = False) -> list[str]:
+def edition_notes(selection: Selection, prefs: DailyPrefs, *, extractive: bool = False,
+                  model: ModelInfo | None = None) -> list[str]:
     """Plain-language notes on what the edition left out or could not measure (each said once)."""
     stories = selection.stories
     notes = list(selection.notes)
@@ -1146,8 +1306,17 @@ def edition_notes(selection: Selection, prefs: DailyPrefs, *, extractive: bool =
     if selection.dropped_live_blog:
         notes.append(f"{plural(selection.dropped_live_blog, 'live blog was', 'live blogs were')} left out (a running "
                      "page of many updates is not one story).")
-    if extractive:
+    if extractive and model is not None and model.model_stopped:
+        notes.append("The local model stopped answering during this refresh, so summaries are lead sentences from "
+                     "the sources.")
+    elif extractive:
         notes.append("Summaries are extractive (lead sentences from the sources) because the local model was not used.")
+    elif model is not None and model.label_calls_failed:
+        notes.append(f"The local model stopped answering partway through: "
+                     f"{plural(model.label_calls_failed, 'group of stories was', 'groups of stories were')} titled "
+                     "from the reports themselves.")
+    if model is not None and model.brief_calls and model.brief_calls_failed == model.brief_calls and not extractive:
+        notes.append("No 'why it matters' notes this time: the local model stopped answering before writing them.")
     return notes
 
 
@@ -1170,7 +1339,11 @@ def evaluate_publication(edition: DailyEdition, prefs: DailyPrefs, *, allow_extr
         reasons.append(f"Only {plural(len(edition.stories), 'useful story was', 'useful stories were')} found; at least "
                        f"{prefs.min_useful_stories} are required for a daily edition.")
     if edition.model.summaries == "extractive" and prefs.require_llm and not allow_extractive:
-        reasons.append("The local model was not used, and AI summaries are required by your settings.")
+        if edition.model.model_stopped:
+            reasons.append("The local model (Ollama) stopped answering during the refresh, and AI summaries are "
+                           "required by your settings.")
+        else:
+            reasons.append("The local model was not used, and AI summaries are required by your settings.")
     return PublishDecision(publishable=not reasons, reasons=reasons)
 
 

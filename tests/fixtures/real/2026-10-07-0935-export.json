@@ -1,0 +1,1456 @@
+{
+ "source": "html_export",
+ "subtitle": "Updated October 7, 2026 at 9:35 AM CDT · revision 2",
+ "footer": "Agent Reach Daily · edition 2026-10-07 (America/Chicago) · run 20261007T142958Z-791c98 · model llama3.1:8b / nomic-embed-text (local_model) · refresh started October 7, 2026 at 9:29 AM CDT. Summaries are generated locally from the cited evidence; open the sources to verify.",
+ "stories": [
+  {
+   "card": 1,
+   "anchor": "story-1",
+   "section": "Top Stories",
+   "category": "News",
+   "tag": "",
+   "headline": "Nobel Prize in Chemistry Awarded to Kagan and Soai",
+   "url": "https://www.npr.org/2026/10/07/g-s1-146849/nobel-prize-chemistry",
+   "summary": "Kagan and Kenso Soai have been awarded the Nobel Prize in Chemistry for their discovery of non-linear effects and autocatalysis in asymmetric organic synthesis.",
+   "why_it_matters": null,
+   "strength": "Strong evidence: 5 independent reports (BBC News, DW, NPR, Reuters, ...); 3 collection channels; newest report 2 h before this edition.",
+   "evidence": [
+    {
+     "source_name": "News feeds",
+     "title": "Henri B. Kagan and Kenso Soai win Nobel Prize in chemistry",
+     "url": "https://www.npr.org/2026/10/07/g-s1-146849/nobel-prize-chemistry",
+     "publisher": "NPR - Science",
+     "published_at_utc": "2026-10-07T10:05:00Z",
+     "retrieved_at_utc": null,
+     "excerpt": "Henri B. Kagan and Kenso Soai won the Nobel Prize in chemistry Wednesday for their discovery of non-linear effects and autocatalysis in asymmetric organic synthesis. | STOCKHOLM - Henri B. Kagan and Kenso Soai won the Nobel Prize in chemistry Wednesday for their discovery of non-linear effects and autocatalysis in..."
+    },
+    {
+     "source_name": "Google News",
+     "title": "Nobel chemistry prize goes to pair who solved mystery of 'mirror image' molecules",
+     "url": "https://news.google.com/rss/articles/CBMiiwFBVV95cUxNWHBIX2xmcllqcXMxOGEzOGJjMGhKT08wX2h1YkdmLXpOcXZobkVxal90dkpYMmFiQXRQRS13VWtJbE1rVklCOXljNzhUUW93bE9DMWo1YUl5OTllcFM4cHBFUnJlQXd4bURGMi1xTVFWam5UZnBCeVMza2wyVkZ5QXY1YzJhZkV2ZWpv?oc=5",
+     "publisher": "Reuters",
+     "published_at_utc": "2026-10-07T12:28:00Z",
+     "retrieved_at_utc": null,
+     "excerpt": null
+    },
+    {
+     "source_name": "Hacker News",
+     "title": "Nobel Prize in Chemistry 2026 to Henri B. Kagan and Kenso Soai",
+     "url": "https://www.nobelprize.org/prizes/chemistry/2026/press-release/",
+     "publisher": "nobelprize.org",
+     "published_at_utc": "2026-10-07T09:51:00Z",
+     "retrieved_at_utc": null,
+     "excerpt": "Nobel Prize in Chemistry 2026 | The Nobel Prize in Chemistry 2026 was awarded to Henri B. Kagan and Kenso Soai \"for the discovery of non-linear effects and autocatalysis in asymmetric organic synthesis.\" | The Royal Swedish Academy of Sciences has decided to award the Nobel Prize in Chemistry 2026 to | \"for the..."
+    },
+    {
+     "source_name": "News feeds",
+     "title": "Nobel Prize in Chemistry goes to Henri B. Kagan and Kenso Soai",
+     "url": "https://www.dw.com/en/nobel-prize-in-chemistry-goes-to-henri-b-kagan-and-kenso-soai/a-79573924?maca=en-rss-en-all-1573-rdf",
+     "publisher": "DW - English",
+     "published_at_utc": "2026-10-07T09:51:00Z",
+     "retrieved_at_utc": null,
+     "excerpt": null
+    },
+    {
+     "source_name": "News feeds",
+     "title": "Chemistry Nobel awarded for solving mystery of life's asymmetry",
+     "url": "https://www.bbc.co.uk/news/articles/c6ly038jg0d4o?at_medium=RSS&at_campaign=rss",
+     "publisher": "BBC News - Science",
+     "published_at_utc": "2026-10-07T11:51:00Z",
+     "retrieved_at_utc": null,
+     "excerpt": "Nobel Prize in Chemistry awarded to Kagan and Soai | The prize was given to the French and Japanese scientists for solving the mystery of life's asymmetry. | The Nobel Prize in Chemistry has been awarded to French scientist Henri B. Kagan and Japan's Kenso Soai for providing a solution to the chemical mystery of..."
+    }
+   ]
+  },
+  {
+   "card": 2,
+   "anchor": "story-2",
+   "section": "Top Stories",
+   "category": "News",
+   "tag": "new",
+   "headline": "Stock Markets Hit Record High Despite Inflation, High Fuel Prices",
+   "url": "https://www.cnbc.com/2026/10/06/stock-market-today-live-updates.html",
+   "summary": "U.S. stock markets hit a record high Tuesday amid major inflation and skyrocketing fuel prices. The S&P 500 reached a new high Tuesday as tech stocks rallied.",
+   "why_it_matters": null,
+   "strength": "Strong evidence: 3 independent reports (Bloomberg, CBS News, CNBC); 2 trend/social signals (attention, not reporting); 2 collection channels; newest report under an hour before this edition.",
+   "evidence": [
+    {
+     "source_name": "Google Trends",
+     "title": "why is the stock market down today",
+     "url": "https://www.cnbc.com/2026/10/06/stock-market-today-live-updates.html",
+     "publisher": "cnbc.com",
+     "published_at_utc": "2026-10-07T14:00:00Z",
+     "retrieved_at_utc": null,
+     "excerpt": "Dow falls 500 points as 10-year yield rises to highest level in 24 years: Live updates | The S&P 500 reached a new high Tuesday as tech stocks rallied. | U.S. equities fell on Wednesday, a day after the S&P 500 reached a fresh all-time high, as oil prices moved higher alongside Treasury yields. | The Dow Jones..."
+    },
+    {
+     "source_name": "Google Trends",
+     "title": "why is the market down today",
+     "url": "https://www.bloomberg.com/news/articles/2026-10-07/bitcoin-btc-falls-as-550-million-in-risky-crypto-bets-wiped-out",
+     "publisher": "bloomberg.com",
+     "published_at_utc": "2026-10-07T14:10:00Z",
+     "retrieved_at_utc": null,
+     "excerpt": null
+    },
+    {
+     "source_name": "News feeds",
+     "title": "Stock markets hit record high despite inflation, high fuel prices",
+     "url": "https://www.cbsnews.com/video/stock-markets-hit-record-high-despite-inflation-high-fuel-prices/",
+     "publisher": "CBS News - Latest",
+     "published_at_utc": "2026-10-07T14:09:00Z",
+     "retrieved_at_utc": null,
+     "excerpt": "U.S. stock markets hit a record high Tuesday amid major inflation and skyrocketing fuel prices. CBS News business analyst Jill Schlesinger breaks down how you can respond."
+    },
+    {
+     "source_name": "News feeds",
+     "title": "10-year Treasury note yield hits highest level since 2002 as traders brace for key bond sale",
+     "url": "https://www.cnbc.com/2026/10/07/treasury-yields-auction-fomc-minutes.html",
+     "publisher": "CNBC - Top News",
+     "published_at_utc": "2026-10-07T12:41:00Z",
+     "retrieved_at_utc": null,
+     "excerpt": "U.S. Treasury yields climbed Wednesday after retreating in the previous session, as oil prices moved higher. | U.S. Treasury yields climbed Wednesday, trading back around multiyear highs, as traders braced for the sale of 10-year notes at a time when rising yields have rattled investors around the world. | The..."
+    },
+    {
+     "source_name": "News feeds",
+     "title": "Stocks, Bonds Fall on Inflation Worry as Oil Rises: Markets Wrap",
+     "url": "https://www.bloomberg.com/news/articles/2026-10-06/stock-market-today-dow-s-p-live-updates",
+     "publisher": "Bloomberg - Markets",
+     "published_at_utc": "2026-10-06T22:12:00Z",
+     "retrieved_at_utc": null,
+     "excerpt": "S&P 500 to Slide From Record as Yields Push Higher: Markets Wrap | A record-breaking run in stocks hit a wall as higher oil prices lifted bond yields, stoking concerns that potential inflationary pressures could trigger Federal Reserve rate hikes. | Those worries sent the S&P 500 down from an all-time high and halted..."
+    }
+   ]
+  },
+  {
+   "card": 3,
+   "anchor": "story-3",
+   "section": "Top Stories",
+   "category": "Science & AI",
+   "tag": "new",
+   "headline": "James Webb Space Telescope Investigates Planetary Collisions",
+   "url": "https://www.sciencedaily.com/releases/2026/10/261007042108.htm",
+   "summary": "By studying 21 rare.",
+   "why_it_matters": null,
+   "strength": "Strong evidence: 3 independent reports (Mashable, ScienceDaily, Space); 1 repeat or syndicated copy counted once; 2 collection channels; newest report 1 h before this edition.",
+   "evidence": [
+    {
+     "source_name": "Google News",
+     "title": "Worlds collide! James Webb Space Telescope investigates what happens when planets crash together",
+     "url": "https://news.google.com/rss/articles/CBMi1AFBVV95cUxOZklGX2k2OXl1cjdwVUNvWllqY05iOEp4STRiOE5zX040OHlKczBNc1ZTcEIzem9hMld1QlJaR3BGc1QxWjhPNGtlTTkzbFJtOTZxenJlbGJVVWxwSXJkQlRTVWpWRTdxRGZmVGhRSVh4dU9oakNTM3FPRkVpTkVhcm4yZzAzNm9LS2xJcVVTWjBoRi11UTZhMDM3MzFLcGNLblFEdWhuWGQzTkZ6RjJNMWpYcnFodS1PMDVXWFA3NnM4VTJRS21sc0JOUzE4Mk1USllYZw?oc=5",
+     "publisher": "Space",
+     "published_at_utc": "2026-10-06T10:00:00Z",
+     "retrieved_at_utc": null,
+     "excerpt": null
+    },
+    {
+     "source_name": "News feeds",
+     "title": "NASA’s Webb finds signs of Mars-sized worlds smashing together",
+     "url": "https://www.sciencedaily.com/releases/2026/10/261007042108.htm",
+     "publisher": "ScienceDaily - Top Science",
+     "published_at_utc": "2026-10-07T13:09:00Z",
+     "retrieved_at_utc": null,
+     "excerpt": "NASA's James Webb Space Telescope is giving astronomers a glimpse of the kinds of violent collisions that may have shaped our own solar system, including the giant impact thought to have created the Moon. By studying 21 rare \"extreme debris disks\" around young stars, researchers found that their dust can reveal the..."
+    },
+    {
+     "source_name": "Google News",
+     "title": "NASA’s Webb finds signs of Mars-sized worlds smashing together",
+     "url": "https://news.google.com/rss/articles/CBMib0FVX3lxTFA1RlhNSHJLLW11U3ZqZVUweElrb3VpT3oyOEJmeDJXMzZRV29URlFDOXlFZXBXQzdQemZkQjRVd2JheTk3Uzh1ZmpHRnRCVzdjSzc0c0IteWdXa1B6OXI5SkRrSnNWbmZMM0hfZ2hDOA?oc=5",
+     "publisher": "ScienceDaily",
+     "published_at_utc": "2026-10-07T13:10:00Z",
+     "retrieved_at_utc": null,
+     "excerpt": null
+    },
+    {
+     "source_name": "Google News",
+     "title": "NASA's Prima space telescope would aim to see what James Webb can't",
+     "url": "https://news.google.com/rss/articles/CBMib0FVX3lxTE9aUUp1TVJpM2pGSXE4X1NmcnctUkR0MlNlQVN3bHRKTHh4RUdSRWpLQkMzRU43YVlkQV9VTkZVZmNrbDlLYkJfcF84M0p4OXlyUnZiNkI2RDFYNXF5NGgyQm5rQ01XcWYtT0c1eC1Hdw?oc=5",
+     "publisher": "Mashable",
+     "published_at_utc": "2026-10-07T11:52:00Z",
+     "retrieved_at_utc": null,
+     "excerpt": null
+    }
+   ]
+  },
+  {
+   "card": 4,
+   "anchor": "story-4",
+   "section": "Top Stories",
+   "category": "Science & AI",
+   "tag": "updated",
+   "headline": "Nobel Physics Prize Awarded for Detection of Cosmic Neutrinos",
+   "url": "https://www.theguardian.com/science/video/2026/oct/06/nobel-prize-in-physics-2026-high-energy-cosmic-neutrinos",
+   "summary": "The Nobel Prize in physics has been awarded to Francis Halzen for his work on the IceCube detector, which observes ghostly particles called neutrinos. Halzen's research dates back to the 1980s.",
+   "why_it_matters": null,
+   "strength": "Strong evidence: 3 independent reports (NPR, Nature, The Guardian); 2 collection channels; newest report 12 h before this edition.",
+   "evidence": [
+    {
+     "source_name": "Google News",
+     "title": "Nobel physics prize awarded for detection of cosmic neutrinos",
+     "url": "https://news.google.com/rss/articles/CBMiX0FVX3lxTE85OTdHeEtJZTI1OUwzYzJDMjFxZ0F2S3JsWXpvdUpGZTdNMWdwZjFTaXRQcjhJRFA0ODRLeEg0ckMwQlZIbzVxckhhOUdibE52bjNDZzhNQ05zQ3Q0UEpr?oc=5",
+     "publisher": "Nature",
+     "published_at_utc": "2026-10-07T03:02:00Z",
+     "retrieved_at_utc": null,
+     "excerpt": null
+    },
+    {
+     "source_name": "News feeds",
+     "title": "Nobel prize in physics 2026: high energy cosmic neutrinos",
+     "url": "https://www.theguardian.com/science/video/2026/oct/06/nobel-prize-in-physics-2026-high-energy-cosmic-neutrinos",
+     "publisher": "The Guardian - Science",
+     "published_at_utc": "2026-10-06T18:44:00Z",
+     "retrieved_at_utc": null,
+     "excerpt": "Second up for the 2026 Nobel Prizes was the award for physics. And this year it went to just one scientist, Francis Halzen. The Belgian physicist won the prize based on his work on the IceCube detector that observes ghostly particles called neutrinos. Science editor Ian Sample tells host Madeleine Finlay how Halzen..."
+    },
+    {
+     "source_name": "News feeds",
+     "title": "Francis Halzen wins Nobel Prize in physics for work on high-energy neutrinos from space",
+     "url": "https://www.npr.org/2026/10/06/g-s1-146622/nobel-prize-physics",
+     "publisher": "NPR - Science",
+     "published_at_utc": "2026-10-06T10:16:00Z",
+     "retrieved_at_utc": null,
+     "excerpt": "The 82-year-old scientist, originally from Belgium, is affiliated with the University of Wisconsin-Madison. His research into capturing neutrinos at the South Pole dates back to the 1980s. | STOCKHOLM - Francis Halzen won the Nobel Prize in physics on Tuesday for his contributions to the IceCube Neutrino Observatory..."
+    }
+   ]
+  },
+  {
+   "card": 5,
+   "anchor": "story-5",
+   "section": "Top Stories",
+   "category": "News",
+   "tag": "new",
+   "headline": "Russian Strikes on Ukrainian Cities Kill at Least 21",
+   "url": "https://www.youtube.com/watch?v=GwiOYSbKzOg",
+   "summary": "Russian strikes on Ukrainian cities have killed at least 21 people, in a major attack that Kyiv saw coming. Buildings, cars, and warehouses were damaged.",
+   "why_it_matters": "The attack has caused significant damage and loss of life in Ukrainian cities.",
+   "strength": "Moderate evidence: 2 independent reports (AP News, Al Jazeera English); 2 collection channels; newest report 3 h before this edition.",
+   "evidence": [
+    {
+     "source_name": "Google News",
+     "title": "Russian strikes on Ukrainian cities kill at least 21 in a major attack that Kyiv saw coming",
+     "url": "https://news.google.com/rss/articles/CBMilAFBVV95cUxQdm1KQ2ZLdTNrZ2FXVlpWRW8xV29SZ2dhcElNXzlDQkdGSnZ6RU05VThHSFhuVmtBUkRTeUdZazFDSXFUYUhQdDdON2Q3bE1DNFFSeDRUQUp4OGNzYkRHczNQOVkyQzVyVndNOUJmdGxCLUJjdjBNR01Jb2Fnc3FJSXIzeTctcnprakRZcmxFN0xJTXNN?oc=5",
+     "publisher": "AP News",
+     "published_at_utc": "2026-10-07T11:47:00Z",
+     "retrieved_at_utc": null,
+     "excerpt": null
+    },
+    {
+     "source_name": "YouTube",
+     "title": "At least two killed in Kyiv as Russia launches ‘massive’ strike on Ukraine",
+     "url": "https://www.youtube.com/watch?v=GwiOYSbKzOg",
+     "publisher": "Al Jazeera English",
+     "published_at_utc": "2026-10-07T07:45:00Z",
+     "retrieved_at_utc": null,
+     "excerpt": "At least two people have been killed by Russian drone and missile attacks on the Ukrainian capital. Buildings, cars and warehouses were damaged."
+    }
+   ]
+  },
+  {
+   "card": 6,
+   "anchor": "story-6",
+   "section": "Top Stories",
+   "category": "News",
+   "tag": "updated",
+   "headline": "Collins Distances Herself from Trump in Maine Senate Debate",
+   "url": "https://www.pbs.org/newshour/politics/what-happened-in-the-first-maine-senate-debate-between-collins-and-jackson",
+   "summary": "Republican Sen. Susan Collins distanced herself from President Donald Trump during her first Maine Senate debate with Democrat Troy Jackson, arguing she has maintained her political independence by repeatedly voting against Trump's agenda. She said she's 'not exactly his favorite senator'.",
+   "why_it_matters": null,
+   "strength": "Strong evidence: 5 independent reports (AP News, NBC News, PBS News, PBS NewsHour, ...); 2 repeat or syndicated copies counted once; 3 collection channels; newest report under an hour before this edition.",
+   "evidence": [
+    {
+     "source_name": "News feeds",
+     "title": "What happened in the first Maine Senate debate between Collins and Jackson",
+     "url": "https://www.pbs.org/newshour/politics/what-happened-in-the-first-maine-senate-debate-between-collins-and-jackson",
+     "publisher": "PBS News - Headlines",
+     "published_at_utc": "2026-10-07T14:13:00Z",
+     "retrieved_at_utc": null,
+     "excerpt": "Republican Sen. Susan Collins distanced herself from President Donald Trump during her first Maine Senate debate with Democrat Troy Jackson, arguing she has maintained her political independence by repeatedly voting against Trump's agenda and saying that she's \"not exactly his favorite senator.\""
+    },
+    {
+     "source_name": "Google News",
+     "title": "Reports of sexual violence are up. Data from Cornell and other colleges in 8 charts.",
+     "url": "https://news.google.com/rss/articles/CBMitwFBVV95cUxNck1UQ1dSNk9VSzlETURxNTJMN3NhRmRyVWJISkVWUGpRTHhscEExMlo3eEhSWHZHODNiMlE4RXpTZmRIX1FsZlBDLUMtUjlPbnpFbFVqcTdZZEk4R3VlajQwclRpNjhUaGRfeC1nTnRlNjI5TG5ickd6RlMzNUtLN1Z3WnBGS3k1VTRDMzhTVXktOU1vTC1WN3c1MXZtREoybzZ4V0VyMTYzR0kzcXpBUDRXWXkwcEU?oc=5",
+     "publisher": "The Washington Post",
+     "published_at_utc": "2026-10-07T13:36:00Z",
+     "retrieved_at_utc": null,
+     "excerpt": null
+    },
+    {
+     "source_name": "Google News",
+     "title": "In first Maine Senate debate, Collins seeks to distance herself from Trump",
+     "url": "https://news.google.com/rss/articles/CBMikgFBVV95cUxQbXVlNk81Q3JJY3I1a2o3UmRKTklQZnNxYzh3OHc1d0ZaRkU3RXNqT0txLWgwV0kxYzR5cGlyMTBnY0RKY054bTg0WkRXeUliaHJfME1EWHNTY1hFcTM5Q2xkbUhDd3JSbEJoUGRjcTd5cHBkNUhUVGxLc3h0MWllZkE1ZDdwb055dWJPZ2JDZzg0QQ?oc=5",
+     "publisher": "AP News",
+     "published_at_utc": "2026-10-07T01:48:00Z",
+     "retrieved_at_utc": null,
+     "excerpt": null
+    },
+    {
+     "source_name": "News feeds",
+     "title": "Susan Collins and Troy Jackson clash over Trump and seniority in Maine’s first Senate debate",
+     "url": "https://www.nbcnews.com/politics/2026-election/susan-collins-troy-jackson-clash-trump-seniority-maines-first-senate-d-rcna601346",
+     "publisher": "NBC News - Top Stories",
+     "published_at_utc": "2026-10-07T00:35:00Z",
+     "retrieved_at_utc": null,
+     "excerpt": "The two candidates clashed repeatedly over their records and national politics in the first of four debates in the key battleground race. | Republican Sen. Susan Collins and Democratic challenger Troy Jackson debated for the first time Tuesday in Maine, trading attacks over President Donald Trump, the cost of living..."
+    },
+    {
+     "source_name": "Google News",
+     "title": "Battleground candidates clash over Trump and Cornell allegations reignite debate over campus assault: Morning Rundown",
+     "url": "https://news.google.com/rss/articles/CBMirgFBVV95cUxPT3ZnQnhybTJRZ1FfY3kzSlg2WlZjbE1QM2piMkVGeUNhQnlmaVlBeTk4bWNlY0lxNGVlXzNZaWlpdG1tbUVoaE90ZXpjWGYwQkVmSTZUcXhyYUhGSkxkOVZ4UUp1Wk03M3l6Y3JOVU1wby0zUWxtamRNWDI4bG04dlo0cG5OcVlfeEVQb01UeGV6bVhBczJvc1ljbmlyamNocEdhQmxIVm5rUzBOSkE?oc=5",
+     "publisher": "NBC News",
+     "published_at_utc": "2026-10-07T11:04:00Z",
+     "retrieved_at_utc": null,
+     "excerpt": null
+    },
+    {
+     "source_name": "YouTube",
+     "title": "News Wrap: Cornell says Sally Yates will review handling of sexual assault reports",
+     "url": "https://www.youtube.com/watch?v=4rJstfmMCkM",
+     "publisher": "PBS NewsHour",
+     "published_at_utc": "2026-10-06T22:20:00Z",
+     "retrieved_at_utc": null,
+     "excerpt": "In our news wrap Tuesday, Cornell named former Deputy Attorney General Sally Yates to lead an independent review of how the school handles sexual assault reports on campus, lawyers for Christa Pike said she's awake and speaking after surviving a botched execution attempt last week and President Trump is facing..."
+    },
+    {
+     "source_name": "News feeds",
+     "title": "News Wrap: Cornell says Sally Yates will review handling of sexual assault reports",
+     "url": "https://www.pbs.org/newshour/show/news-wrap-cornell-says-sally-yates-will-review-handling-of-sexual-assault-reports",
+     "publisher": "PBS News - Headlines",
+     "published_at_utc": "2026-10-06T22:45:00Z",
+     "retrieved_at_utc": null,
+     "excerpt": null
+    }
+   ]
+  },
+  {
+   "card": 7,
+   "anchor": "story-7",
+   "section": "Top Stories",
+   "category": "News",
+   "tag": "new",
+   "headline": "Scars from Oct. 7 Fuel Divisions in Israeli Election",
+   "url": "https://www.france24.com/en/video/20261007-scars-from-oct-7-fuel-deep-divisions-over-netanyahu-ahead-of-israeli-election",
+   "summary": "7 attack fuel deep divisions in the Israeli election, with Netanyahu facing a reckoning over his handling of the situation.",
+   "why_it_matters": null,
+   "strength": "Moderate evidence: 2 independent reports (Axios, France 24); 1 repeat or syndicated copy counted once; 2 collection channels; newest report under an hour before this edition.",
+   "evidence": [
+    {
+     "source_name": "News feeds",
+     "title": "Scars from Oct. 7 fuel deep divisions over Netanyahu ahead of Israeli election",
+     "url": "https://www.france24.com/en/video/20261007-scars-from-oct-7-fuel-deep-divisions-over-netanyahu-ahead-of-israeli-election",
+     "publisher": "France 24 - English",
+     "published_at_utc": "2026-10-07T14:23:00Z",
+     "retrieved_at_utc": null,
+     "excerpt": "As Israel gears up for its first elections since Hamas' Oct. 7, 2023, attack, Prime Minister Benjamin Netanyahu and his opponents are putting it at the heart of their campaigns. Three years on, the worst. | One of your browser extensions seems to be blocking the video player from loading. To watch this content, you..."
+    },
+    {
+     "source_name": "News feeds",
+     "title": "3 years later, Netanyahu faces reckoning over Oct. 7 in Israeli election",
+     "url": "https://www.axios.com/2026/10/07/netanyahu-oct-7-warning-israel-election-polls",
+     "publisher": "Axios",
+     "published_at_utc": "2026-10-07T09:00:00Z",
+     "retrieved_at_utc": null,
+     "excerpt": "Israel is marking the third anniversary of the Oct. 7 terror attacks three weeks before an election where Prime Minister Benjamin Netanyahu's personal culpability for the country's worst-ever security failure will be a central issue. Why it matters: Netanyahu has never looked more politically vulnerable than in the..."
+    },
+    {
+     "source_name": "Google News",
+     "title": "3 years later, Netanyahu faces reckoning over Oct. 7 in Israeli election",
+     "url": "https://news.google.com/rss/articles/CBMihAFBVV95cUxQWml0TTIxb0hNWGRaeW5uZldrVmpMMFJJYWRQaWZHMnc1bkVrTkQ1OWFhcktUa3Q0N2wtRjcwWHNjT0pLaloteTdYeTh0bWRHTUFHZXBvSm5aa0NRck1fYnR0NDQ0eU5MT1JteU85enZ5dWtEa1k5aWk4UDZQdkNZc09qMlk?oc=5",
+     "publisher": "Axios",
+     "published_at_utc": "2026-10-07T12:16:00Z",
+     "retrieved_at_utc": null,
+     "excerpt": null
+    }
+   ]
+  },
+  {
+   "card": 8,
+   "anchor": "story-8",
+   "section": "Top Stories",
+   "category": "Entertainment",
+   "tag": "",
+   "headline": "Paramount Takes over Warner Bros in $110bn Hollywood Merger",
+   "url": "https://arstechnica.com/tech-policy/2026/10/paramount-completes-111b-warner-merger-creating-skydance-behemoth/",
+   "summary": "Paramount has completed its $111B merger with Warner Bros. Discovery, creating a media behemoth. The merger comes after months of legal disputes and concern over competition.",
+   "why_it_matters": null,
+   "strength": "Moderate evidence: 2 independent reports (BBC News, arstechnica.com); 2 collection channels; newest report 18 h before this edition.",
+   "evidence": [
+    {
+     "source_name": "Hacker News",
+     "title": "Paramount Skydance has completed its $111B merger with Warner Bros. Discovery",
+     "url": "https://arstechnica.com/tech-policy/2026/10/paramount-completes-111b-warner-merger-creating-skydance-behemoth/",
+     "publisher": "arstechnica.com",
+     "published_at_utc": "2026-10-06T20:33:00Z",
+     "retrieved_at_utc": null,
+     "excerpt": "Paramount completes $111B Warner merger, creating \"Skydance\" behemoth | Paramount now owns Warner Bros. as last-ditch effort to stop $111B merger fails. | Paramount Skydance completed its $111 billion merger with Warner Bros. Discovery today, after a last-ditch effort to block the deal was rejected by Supreme Court..."
+    },
+    {
+     "source_name": "News feeds",
+     "title": "Paramount takes over Warner Bros in $110bn Hollywood merger",
+     "url": "https://www.bbc.co.uk/news/articles/cxj0604d33qzo?at_medium=RSS&at_campaign=rss",
+     "publisher": "BBC News - Entertainment & Arts",
+     "published_at_utc": "2026-10-06T20:18:00Z",
+     "retrieved_at_utc": null,
+     "excerpt": "The merger of two of Hollywood's biggest movie studios comes after months of legal disputes and concern over competition. | Paramount Skydance has officially taken over Warner Bros Discovery in a $110bn merger that is set to reshape Hollywood and the media landscape. | The takeover - merging two of the biggest studios..."
+    }
+   ]
+  },
+  {
+   "card": 9,
+   "anchor": "story-11",
+   "section": "Top Stories",
+   "category": "Tech",
+   "tag": "",
+   "headline": "Google DeepMind Releases EmbeddingGemma 2, a 740M Open Multimodal Embedding Model",
+   "url": "https://blog.google/innovation-and-ai/technology/developers-tools/embeddinggemma-2/",
+   "summary": "The model maps 5 input types into one 768d space and is available under Apache 2.0.",
+   "why_it_matters": null,
+   "strength": "Moderate evidence: 2 independent reports (MarkTechPost, blog.google); 1 repeat or syndicated copy counted once; 2 collection channels; newest report 18 h before this edition.",
+   "evidence": [
+    {
+     "source_name": "Hacker News",
+     "title": "EmbeddingGemma 2: An open, lightweight multimodal embedding model",
+     "url": "https://blog.google/innovation-and-ai/technology/developers-tools/embeddinggemma-2/",
+     "publisher": "blog.google",
+     "published_at_utc": "2026-10-06T16:03:00Z",
+     "retrieved_at_utc": null,
+     "excerpt": "Introducing EmbeddingGemma 2, an open multimodal embedding model optimized for privacy-first use cases | We introduced EmbeddingGemma last year to provide a lightweight option for high-quality text embeddings, to help your apps organize, search, and connect information directly on consumer hardware. The developer..."
+    },
+    {
+     "source_name": "News feeds",
+     "title": "EmbeddingGemma 2: an open, lightweight multimodal embedding model",
+     "url": "https://deepmind.google/blog/embeddinggemma-2-an-open-lightweight-multimodal-embedding-model/",
+     "publisher": "Google DeepMind - Blog",
+     "published_at_utc": "2026-10-06T19:57:00Z",
+     "retrieved_at_utc": null,
+     "excerpt": null
+    },
+    {
+     "source_name": "News feeds",
+     "title": "Google DeepMind Releases EmbeddingGemma 2, a 740M Open Multimodal Embedding Model Built on Gemma 4",
+     "url": "https://www.marktechpost.com/2026/10/06/google-deepmind-releases-embeddinggemma-2-a-740m-open-multimodal-embedding-model-built-on-gemma-4/",
+     "publisher": "MarkTechPost",
+     "published_at_utc": "2026-10-06T18:36:00Z",
+     "retrieved_at_utc": null,
+     "excerpt": "Google DeepMind's EmbeddingGemma 2 maps 5 input types into one 768d space and ships today under Apache 2.0. The post Google DeepMind Releases EmbeddingGemma 2, a 740M Open Multimodal Embedding Model Built on Gemma 4 appeared first on MarkTechPost ."
+    }
+   ]
+  },
+  {
+   "card": 10,
+   "anchor": "story-15",
+   "section": "Top Stories",
+   "category": "Science & AI",
+   "tag": "new",
+   "headline": "NASA Features Supernova Remnant Pa 30 and Satellite Puzzler",
+   "url": "https://science.nasa.gov/image-article/apod-2026-october-7-supernova-remnant-pa-30/",
+   "summary": "NASA features a supernova remnant and a satellite image, challenging viewers to identify the location and significance of the image.",
+   "why_it_matters": null,
+   "strength": "Moderate evidence: 2 independent reports (NASA, The Atlantic); 1 repeat or syndicated copy counted once; 1 trend/social signal (attention, not reporting); 2 collection channels; newest report 2 h before this edition.",
+   "evidence": [
+    {
+     "source_name": "News feeds",
+     "title": "APOD: 2026 October 7 – Supernova Remnant Pa 30",
+     "url": "https://science.nasa.gov/image-article/apod-2026-october-7-supernova-remnant-pa-30/",
+     "publisher": "NASA - News",
+     "published_at_utc": "2026-10-07T04:05:00Z",
+     "retrieved_at_utc": null,
+     "excerpt": "APOD: 2026 October 7 - Supernova Remnant Pa 30 - NASA Science | Discover the cosmos! Each day a different image or photograph of our fascinating universe is featured, along with a brief explanation written by a professional astronomer. | Explanation: \"Happy New Year!\" No, wait, this is not a fireworks display. This..."
+    },
+    {
+     "source_name": "News feeds",
+     "title": "Why You Should Watch <em>Fauda</em>’s October 7 Episodes",
+     "url": "https://www.theatlantic.com/culture/2026/10/why-you-should-watch-fauda-october-7-episodes/688905/?utm_source=feed",
+     "publisher": "The Atlantic",
+     "published_at_utc": "2026-10-07T12:00:00Z",
+     "retrieved_at_utc": null,
+     "excerpt": "Three years after the Hamas attack, the Israeli show Fauda revisits the day in detail."
+    },
+    {
+     "source_name": "X (trends24)",
+     "title": "#October7",
+     "url": "https://x.com/search?q=%23October7",
+     "publisher": "x.com",
+     "published_at_utc": null,
+     "retrieved_at_utc": "2026-10-07T14:29:00Z",
+     "excerpt": null
+    },
+    {
+     "source_name": "News feeds",
+     "title": "October 2026 Satellite Puzzler",
+     "url": "https://science.nasa.gov/earth/earth-observatory/october-2026-satellite-puzzler/",
+     "publisher": "NASA - News",
+     "published_at_utc": "2026-10-06T18:27:00Z",
+     "retrieved_at_utc": null,
+     "excerpt": "October 2026 Satellite Puzzler - NASA Science | Your challenge is to tell us the location of the satellite image and why it is interesting. | Every month, NASA Earth Observatory features a puzzling satellite image. The October 2026 puzzler appears above. | Identify the location shown in this satellite image. Share..."
+    }
+   ]
+  },
+  {
+   "card": 11,
+   "anchor": "story-9",
+   "section": "News",
+   "category": "News",
+   "tag": "updated",
+   "headline": "Tropical Storm Isaias Forms in Gulf, Could Reach US as Hurricane",
+   "url": "https://www.bbc.co.uk/weather/articles/cw146l6pnvx0o?at_medium=RSS&at_campaign=rss",
+   "summary": "Tropical Storm Isaias has formed in the Gulf of Mexico and is expected to become a hurricane by Thursday before approaching the U.S. northern Gulf Coast on Friday.",
+   "why_it_matters": null,
+   "strength": "Strong evidence: 4 independent reports (BBC News, CBS News, CNBC, USA Today); 1 trend/social signal (attention, not reporting); 3 collection channels; newest report under an hour before this edition.",
+   "evidence": [
+    {
+     "source_name": "Google News",
+     "title": "Tropical Storm Isaias forms in the Gulf, could reach US as hurricane",
+     "url": "https://news.google.com/rss/articles/CBMiswFBVV95cUxPMWVSM2N3TDNVX1RWMklDbC1WbjQzcWNVOXBtMG54UUhORWtFUE1OQkdpaWtvQ05JLWdMYkF2dV9jNW94aVVmT0dPU1YySU9FTFJwT2VvNmlPS2YxN2NaOE1vTjUxZE04TDJaLXl3ZjRHNWQ1NDRsU0JCSjEyX1djblhqUnN4c1NiNFYzNE1saE5UTkhjLV9mUVF0WGcxRml2SVRkbklyYVFtTHBoT2ljLUtKSQ?oc=5",
+     "publisher": "USA Today",
+     "published_at_utc": "2026-10-07T12:14:00Z",
+     "retrieved_at_utc": null,
+     "excerpt": null
+    },
+    {
+     "source_name": "Google News",
+     "title": "Tropical Storm Isaias forms, forecast to become a hurricane and hit the U.S. Gulf Coast this week",
+     "url": "https://news.google.com/rss/articles/CBMifEFVX3lxTE9TV2hOaUVLZlgyYkd6bFdQQVpJMFZmN3RHYU4xYzBzQkh2NTlYbEZTcjJ3aDVYZEFmQWFBenFKVkpZTzZPbUJ4bHozY2gzTS1IbWtjd3I0UFZzcjdjX1doUDRzYTk3djNxY0ZHOVVnMzQ0bm1RQURHOEFWS3DSAYIBQVVfeXFMT1MwSHhMcFg5RjNOVGJwbmdUM2FncWU3UUZjRldZcm02UWRjU09fUWJrNlBubXdrNi1oUWFEdlNDMmZzZFl5SDBTMlBkNG02TWFDY2V3bzZMcWJHQXdLZzU0RDRtZFhBMDViT09mdUVHWlRFeG1HcUZiX2k0eGdETll2dw?oc=5",
+     "publisher": "CNBC",
+     "published_at_utc": "2026-10-07T10:53:00Z",
+     "retrieved_at_utc": null,
+     "excerpt": null
+    },
+    {
+     "source_name": "News feeds",
+     "title": "Tropical Storm Isaias forecast to become first Atlantic hurricane of 2026",
+     "url": "https://www.bbc.co.uk/weather/articles/cw146l6pnvx0o?at_medium=RSS&at_campaign=rss",
+     "publisher": "BBC News - Science",
+     "published_at_utc": "2026-10-07T13:21:00Z",
+     "retrieved_at_utc": null,
+     "excerpt": "El Nino has led to an eerily quiet season so far but the first Atlantic hurricane of the year is now set to impact the southern USA. | Tropical Storm Isaias has formed in the Gulf of Mexico and looks likely to strengthen into the first Atlantic hurricane of this year. | It is expected to reach hurricane strength late..."
+    },
+    {
+     "source_name": "X (trends24)",
+     "title": "Tropical Storm Isaias",
+     "url": "https://x.com/search?q=Tropical%20Storm%20Isaias",
+     "publisher": "x.com",
+     "published_at_utc": null,
+     "retrieved_at_utc": "2026-10-07T14:29:00Z",
+     "excerpt": null
+    },
+    {
+     "source_name": "News feeds",
+     "title": "Tropical Storm Isaias forms in Gulf, could reach U.S. as hurricane this weekend",
+     "url": "https://www.cbsnews.com/news/hurricane-season-tropical-threat-gulf-us/",
+     "publisher": "CBS News - Latest",
+     "published_at_utc": "2026-10-07T13:53:00Z",
+     "retrieved_at_utc": null,
+     "excerpt": "Tropical Storm Isaias has formed in the Gulf and is expected to become a hurricane by Thursday before approaching the U.S. northern Gulf Coast on Friday, according to forecasters. | Isaias would be the Atlantic Basin's first hurricane of the season and is its ninth named storm. continues to bring a more active season..."
+    }
+   ]
+  },
+  {
+   "card": 12,
+   "anchor": "story-10",
+   "section": "News",
+   "category": "News",
+   "tag": "new",
+   "headline": "French Students Protest and Government Defends Handling",
+   "url": "https://www.lemonde.fr/en/politics/article/2026/10/07/french-government-defends-handling-of-high-school-protests-as-controversies-grow_6758350_5.html",
+   "summary": "Thousands of French students protest, and the government defends its handling of the situation, denying police repression.",
+   "why_it_matters": null,
+   "strength": "Strong evidence: 3 independent reports (AP News, Le Monde, The New York Times); 2 collection channels; newest report 1 h before this edition.",
+   "evidence": [
+    {
+     "source_name": "Google News",
+     "title": "The School Near Paris That Shows Why French Students Are Protesting",
+     "url": "https://news.google.com/rss/articles/CBMijwFBVV95cUxOT0hTTWx0Ty1rVjRmSjltUHNUbTNuS1pnMXhZRjFLWWFBY1pQRXE2MlV5ZW9oQmptTWJfVkN6RUxzT2dYc2NfWjVSUkxIbmNvZUJiZ2NoTnB1SWlnNWhHWVBFLS01dHF4WE8tSEs5OTdnX25qMFdXcnRndXFURHl2aWJTT2kxUUtLOGV3UDVZWQ?oc=5",
+     "publisher": "The New York Times",
+     "published_at_utc": "2026-10-07T13:19:00Z",
+     "retrieved_at_utc": null,
+     "excerpt": null
+    },
+    {
+     "source_name": "Google News",
+     "title": "French riot police fire tear gas as more than 250,000 rally nationwide for school funding",
+     "url": "https://news.google.com/rss/articles/CBMioAFBVV95cUxPUnN2bXRwby0zM25GY1BlLXJKNW5CVzJ0SDNaSTdySmR6Y2pGa1o0dDJBY2NGVFNONjk2UDFqaVRlcnhKNmw5T3pncWNhMWpyYVNuMVZyRzVOYzdkZmRYeXRGUUxpSjNqdHpJQVFYcHR0WHl1RllNZGZEdEZicG5xdW1JemhvYkpSUlVSbjc0dnFYblpzbkMtUEloUy0wMGEz?oc=5",
+     "publisher": "AP News",
+     "published_at_utc": "2026-10-06T23:37:00Z",
+     "retrieved_at_utc": null,
+     "excerpt": null
+    },
+    {
+     "source_name": "News feeds",
+     "title": "French government defends handling of high school protests as controversies grow",
+     "url": "https://www.lemonde.fr/en/politics/article/2026/10/07/french-government-defends-handling-of-high-school-protests-as-controversies-grow_6758350_5.html",
+     "publisher": "Le Monde - English",
+     "published_at_utc": "2026-10-07T11:00:00Z",
+     "retrieved_at_utc": null,
+     "excerpt": "As thousands of people took to the streets across France on Tuesday, Prime Minister Sebastien Lecornu denied there had been any 'police repression.'"
+    }
+   ]
+  },
+  {
+   "card": 13,
+   "anchor": "story-12",
+   "section": "News",
+   "category": "News",
+   "tag": "updated",
+   "headline": "France Halts Use of Stun Grenades After Boy's Hand Blown Off",
+   "url": "https://www.bbc.co.uk/news/articles/cqzjx7z2r4gko?at_medium=RSS&at_campaign=rss",
+   "summary": "France has suspended the use of stun grenades for policing student protests after a 15-year-old's hand was blown off. The device has been provisionally withdrawn.",
+   "why_it_matters": null,
+   "strength": "Moderate evidence: 2 independent reports (BBC News, Le Monde); 1 collection channel; newest report 2 h before this edition.",
+   "evidence": [
+    {
+     "source_name": "News feeds",
+     "title": "France halts use of stun grenades after boy's hand blown off in student protests",
+     "url": "https://www.bbc.co.uk/news/articles/cqzjx7z2r4gko?at_medium=RSS&at_campaign=rss",
+     "publisher": "BBC News - World",
+     "published_at_utc": "2026-10-07T12:16:00Z",
+     "retrieved_at_utc": null,
+     "excerpt": "The step comes after several groups complained of police using disproportionate force towards teenagers. | France has suspended the use of stun grenades for policing student protests that have swept the country, after a 15-year-old's hand was blown off earlier this week. | Interior Minister Laurent Nunez said he had..."
+    },
+    {
+     "source_name": "News feeds",
+     "title": "What is the EF-SON stun grenade France has suspended after it mutilated a high schooler?",
+     "url": "https://www.lemonde.fr/en/france/article/2026/10/07/what-is-the-ef-son-stun-grenade-france-has-suspended-after-it-mutilated-a-high-schooler_6758348_7.html",
+     "publisher": "Le Monde - English",
+     "published_at_utc": "2026-10-07T10:00:00Z",
+     "retrieved_at_utc": null,
+     "excerpt": "The device, used by French police since 2025, has been provisionally withdrawn after a 15-year-old student had his hand torn off."
+    }
+   ]
+  },
+  {
+   "card": 14,
+   "anchor": "story-13",
+   "section": "News",
+   "category": "News",
+   "tag": "updated",
+   "headline": "South Korea Signals Military Exemption Cuts for Athletes After Asian Games Backlash",
+   "url": "https://timesofindia.indiatimes.com/sports/asian-games-2026/im-not-going-to-the-military-what-is-military-exemption-why-south-korea-weighs-cuts-after-asian-games-backlash/articleshow/134767801.cms",
+   "summary": "South Korea is reconsidering a decades-old military service benefit for elite athletes after controversial comments by Asian Games gold medallists. The government will review the military service exemption for gold-medal-winning athletes.",
+   "why_it_matters": null,
+   "strength": "Moderate evidence: 2 independent reports (Al Jazeera, Times of India); 1 collection channel; newest report under an hour before this edition.",
+   "evidence": [
+    {
+     "source_name": "News feeds",
+     "title": "What is military exemption? Why South Korea weighs cuts after Asian Games backlash",
+     "url": "https://timesofindia.indiatimes.com/sports/asian-games-2026/im-not-going-to-the-military-what-is-military-exemption-why-south-korea-weighs-cuts-after-asian-games-backlash/articleshow/134767801.cms",
+     "publisher": "Times of India - Top Stories",
+     "published_at_utc": "2026-10-07T13:56:00Z",
+     "retrieved_at_utc": null,
+     "excerpt": "'I'm not going to the military': What is military exemption? Why South Korea weighs cuts after Asian Games backlash | South Korea is reconsidering a decades-old military service benefit for elite athletes after controversial comments by Asian Games gold medallists triggered a fresh public debate over whether sporting..."
+    },
+    {
+     "source_name": "News feeds",
+     "title": "South Korea signals military exemption cuts for athletes after Asian Games",
+     "url": "https://www.aljazeera.com/sports/2026/10/7/south-korea-signals-military-exemption-cuts-for-gold-medallists-after-backlash-at-athletes-asian-games-comments?traffic_source=rss",
+     "publisher": "Al Jazeera - All",
+     "published_at_utc": "2026-10-07T13:38:00Z",
+     "retrieved_at_utc": null,
+     "excerpt": "South Korea signals cuts to military exemptions for gold medallists after backlash over athletes' Asian Games comments. | South Korea's sports minister says the government will review the military service exemption for gold-medal-winning athletes after public backlash to some controversial comments from winners at the..."
+    }
+   ]
+  },
+  {
+   "card": 15,
+   "anchor": "story-14",
+   "section": "News",
+   "category": "News",
+   "tag": "updated",
+   "headline": "Russia Says It Properly Informed WHO of Plague Institute Worker's Death",
+   "url": "https://www.businessinsider.com/russia-pneumonic-plague-outbreak-risk-symptoms-2026-10",
+   "summary": "Russian officials are attempting to calm fears of a pneumonic plague outbreak after an Irkutsk lab employee's death last week, saying the risk is low.",
+   "why_it_matters": null,
+   "strength": "Strong evidence: 4 independent reports (Business Insider, CBS News, Reuters, Sky News); 1 trend/social signal (attention, not reporting); 4 collection channels; newest report under an hour before this edition.",
+   "evidence": [
+    {
+     "source_name": "News feeds",
+     "title": "Everything we know about the suspected plague case in Russia so far",
+     "url": "https://www.businessinsider.com/russia-pneumonic-plague-outbreak-risk-symptoms-2026-10",
+     "publisher": "Business Insider",
+     "published_at_utc": "2026-10-07T14:26:00Z",
+     "retrieved_at_utc": null,
+     "excerpt": "Fears of a pneumonic plague outbreak follow an Irkutsk lab employee's death last week. But the World Health Organization (WHO) says the risk is low. | After a technician at an anti-plague laboratory in Siberia died, Russian officials are attempting to calm global concerns. | Daria Shipilova, a 28-year-old employee at..."
+    },
+    {
+     "source_name": "Google News",
+     "title": "Russia says it properly informed WHO of plague institute worker's death, blasts media coverage",
+     "url": "https://news.google.com/rss/articles/CBMi5wFBVV95cUxQZjdYWlVHd0loV2ppTV8yblVkRTVOd2VTYXRlUGM5Qm5jQXZTaVVxUkhXblRPaWJBUTk4YzFobTR0OEtvaWlNcWVyS1BNSTViaGYtSWdNVEM0MEI4ZlJ6SkNMd3NMbm5PSmtfU0tOLWpyemxtRl9lSXlCLUppeTJWTmdhc1hlUkwzUEs5MTh0dF84ak1pbThMcnFnUS1oSGZvemxiTm5pSG0tRzJqZElLQk85WkgybnJhV2EtV0FKeW1ZS1B5cG14YXFudmxzNXJEOWdURy1vMWo3UG40Z1g3cDZhZ3UwZGs?oc=5",
+     "publisher": "Reuters",
+     "published_at_utc": "2026-10-07T10:21:00Z",
+     "retrieved_at_utc": null,
+     "excerpt": null
+    },
+    {
+     "source_name": "Bluesky",
+     "title": "Plague death reported in Siberia",
+     "url": "https://bsky.app/profile/did:plc:qrz3lhbyuxbeilrc6nekdqme/feed/37678c174695",
+     "publisher": "bsky.app",
+     "published_at_utc": null,
+     "retrieved_at_utc": "2026-10-07T14:29:00Z",
+     "excerpt": null
+    },
+    {
+     "source_name": "YouTube",
+     "title": "Medical experts on plague risks after reported death of lab worker in Russia",
+     "url": "https://www.youtube.com/watch?v=42MmV10fB5k",
+     "publisher": "CBS News",
+     "published_at_utc": "2026-10-07T02:36:00Z",
+     "retrieved_at_utc": null,
+     "excerpt": "A scientist in Siberia died after possible exposure to the plague bacteria during a lab accident, according to Russian media. Russian officials downplayed the reports, saying she died of a \"pneumonia of unknown origin.\" Health experts spoke with CBS News to discuss the risks posed to the public and what people should..."
+    },
+    {
+     "source_name": "News feeds",
+     "title": "Russia claims there is no epidemic risk after death of plague institute worker",
+     "url": "https://news.sky.com/story/russia-claims-there-is-no-epidemic-risk-after-death-of-plague-institute-worker-13596157",
+     "publisher": "Sky News - World",
+     "published_at_utc": "2026-10-07T13:26:00Z",
+     "retrieved_at_utc": null,
+     "excerpt": "Russia's health watchdog has claimed there is no risk of an epidemic following the death of a plague institute worker in Siberia - as the Kremlin accuses the media of providing false information about the case."
+    }
+   ]
+  },
+  {
+   "card": 16,
+   "anchor": "story-18",
+   "section": "Tech",
+   "category": "Tech",
+   "tag": "new",
+   "headline": "Privacy Watchdog Launches Investigation into China-Based Company",
+   "url": "https://www.theguardian.com/technology/2026/oct/07/privacy-regulator-probe-kmart-anko-meta-smartglasses-australia",
+   "summary": "The Australian privacy regulator launches an investigation into a China-based company behind a smartglasses app.",
+   "why_it_matters": null,
+   "strength": "Moderate evidence: 2 independent reports (The Guardian, WSJ); 2 collection channels; newest report 4 h before this edition.",
+   "evidence": [
+    {
+     "source_name": "Google News",
+     "title": "The Mulleted, Meme-Loving Billionaire Behind Meta’s Hit AI App",
+     "url": "https://news.google.com/rss/articles/CBMibEFVX3lxTE5YX3laMUtZSWRNdXl6TlhHZVVsZjdDWEJrd3ZJUU92UnJYV1VhekVKeTJ5VjN2Vk4teU9OZWVSSDVsYVBnR1BMaW1laFI3NE1hSDBpdm1pZWZwOXozVlZhamlWR2FXc2t2eW5mMg?oc=5",
+     "publisher": "WSJ",
+     "published_at_utc": "2026-10-07T11:02:00Z",
+     "retrieved_at_utc": null,
+     "excerpt": null
+    },
+    {
+     "source_name": "News feeds",
+     "title": "Privacy watchdog launches investigation into China-based company behind Kmart ‘pervert glasses’ app",
+     "url": "https://www.theguardian.com/technology/2026/oct/07/privacy-regulator-probe-kmart-anko-meta-smartglasses-australia",
+     "publisher": "The Guardian - Technology",
+     "published_at_utc": "2026-10-07T02:00:00Z",
+     "retrieved_at_utc": null,
+     "excerpt": "Commissioner says Shenzhen Qingcheng, the app maker behind the HeyCyan app in the smartglasses, failed to respond to her inquiries | The Australian privacy regulator has opened an investigation into the China-based software company behind the HeyCyan app in Kmart's $89 smartglasses, following public outrage over the..."
+    }
+   ]
+  },
+  {
+   "card": 17,
+   "anchor": "story-24",
+   "section": "Tech",
+   "category": "Tech",
+   "tag": "",
+   "headline": "State of Devs 2026",
+   "url": "https://2026.stateofdevs.com/en-US/",
+   "summary": "Nearly half of survey respondents experienced job insecurity and insufficient wages, with a quarter laid off at some point in their career. Nearly 1 in 10 had been laid off within the last 9 months.",
+   "why_it_matters": null,
+   "strength": "Limited evidence: 1 independent report (2026.stateofdevs.com); 1 collection channel; newest report 15 h before this edition; not corroborated by a second independent publisher.",
+   "evidence": [
+    {
+     "source_name": "Hacker News",
+     "title": "State of Devs 2026",
+     "url": "https://2026.stateofdevs.com/en-US/",
+     "publisher": "2026.stateofdevs.com",
+     "published_at_utc": "2026-10-06T23:26:00Z",
+     "retrieved_at_utc": null,
+     "excerpt": "Nearly half of this year's survey respondents had experienced job insecurity and insufficient wages. A quarter had been laid off at some point in their career, and nearly 1 in 10 had been laid off within the last 9 months. Over a quarter anticipated needing to change careers altogether within the next 5 years. | This..."
+    }
+   ]
+  },
+  {
+   "card": 18,
+   "anchor": "story-29",
+   "section": "Tech",
+   "category": "Tech",
+   "tag": "",
+   "headline": "Rainmakers: The Drones Used to Seed Clouds",
+   "url": "https://www.bbc.co.uk/news/articles/c64g71j4lgyjo?at_medium=RSS&at_campaign=rss",
+   "summary": "Drones are being used to seed clouds, potentially boosting rainfall, with countries looking to boost rainfall.",
+   "why_it_matters": null,
+   "strength": "Limited evidence: 1 independent report (BBC News); 1 collection channel; newest report 7 h before this edition; not corroborated by a second independent publisher.",
+   "evidence": [
+    {
+     "source_name": "News feeds",
+     "title": "Rainmakers: The drones used to seed clouds",
+     "url": "https://www.bbc.co.uk/news/articles/c64g71j4lgyjo?at_medium=RSS&at_campaign=rss",
+     "publisher": "BBC News - Technology",
+     "published_at_utc": "2026-10-07T07:09:00Z",
+     "retrieved_at_utc": null,
+     "excerpt": "Rainmakers: Will drones make cloud seeding more effective? | Cloud seeding is gaining attention as countries look to boost rainfall - will drones help? | On 23 August, Cooper Freeman had no idea clouds above his head were being filled with a silver compound in order to cause rainfall. | Neither did thousands of other..."
+    }
+   ]
+  },
+  {
+   "card": 19,
+   "anchor": "story-31",
+   "section": "Tech",
+   "category": "Tech",
+   "tag": "",
+   "headline": "PS5 Binaries Ported to PC Without Emulation",
+   "url": "https://github.com/boykopovar/AnyPS5",
+   "summary": "A tool called AnyPS5 has successfully ported PS5 binaries to PC without emulation, with 87% system libraries mapped.",
+   "why_it_matters": null,
+   "strength": "Limited evidence: 1 independent report (github.com); 1 collection channel; newest report 15 h before this edition; not corroborated by a second independent publisher.",
+   "evidence": [
+    {
+     "source_name": "Hacker News",
+     "title": "AnyPS5: Port PS5 binaries to PC without emulation (87% system libraries mapped)",
+     "url": "https://github.com/boykopovar/AnyPS5",
+     "publisher": "github.com",
+     "published_at_utc": "2026-10-06T23:28:00Z",
+     "retrieved_at_utc": null,
+     "excerpt": "GitHub - boykopovar/AnyPS5: Tool for automatic PS5 executables porting to Linux and Windows | Tool for automatic executables porting to Linux and Windows. | Includes a relinker that converts executable to the target system's native format and implementations of system prx libraries suitable for dynamic linking. No..."
+    }
+   ]
+  },
+  {
+   "card": 20,
+   "anchor": "story-34",
+   "section": "Tech",
+   "category": "Tech",
+   "tag": "new",
+   "headline": "CoreWeave Plans First India Data Centres with 240MW from AdaniConneX",
+   "url": "https://thenextweb.com/news/coreweave-india-adaniconnex-240mw-navi-mumbai",
+   "summary": "CoreWeave will open its first data centres in India, using 240MW from AdaniConneX's Navi Mumbai campus.",
+   "why_it_matters": null,
+   "strength": "Limited evidence: 1 independent report (The Next Web); 1 collection channel; newest report under an hour before this edition; not corroborated by a second independent publisher.",
+   "evidence": [
+    {
+     "source_name": "News feeds",
+     "title": "CoreWeave plans its first India data centres with 240MW from AdaniConneX",
+     "url": "https://thenextweb.com/news/coreweave-india-adaniconnex-240mw-navi-mumbai",
+     "publisher": "The Next Web",
+     "published_at_utc": "2026-10-07T13:43:00Z",
+     "retrieved_at_utc": null,
+     "excerpt": "CoreWeave enters India with 240MW at AdaniConneX's Navi Mumbai campus | \"India has the talent, developers, and ambition to become a major center of AI innovation,\" says CoreWeave as it enters India. | CoreWeave will open its first data centres in India, using 240 megawatts of capacity at an AdaniConneX campus in Navi..."
+    }
+   ]
+  },
+  {
+   "card": 21,
+   "anchor": "story-35",
+   "section": "Tech",
+   "category": "Tech",
+   "tag": "new",
+   "headline": "Seagate and Toshiba Battle for TDK's HDD Head Business, a Critical Hard Drive Component",
+   "url": "https://www.tomshardware.com/pc-components/hdds/seagate-and-toshiba-battle-for-tdks-hdd-head-business-a-critical-hard-drive-component-multi-billion-dollar-deal-threatens-sole-independent-supplier-as-shortages-intensify",
+   "summary": "Seagate and Toshiba are competing for TDK's HDD head business, a critical component in hard drive manufacturing.",
+   "why_it_matters": null,
+   "strength": "Limited evidence: 1 independent report (Tom's Hardware); 1 collection channel; newest report under an hour before this edition; not corroborated by a second independent publisher.",
+   "evidence": [
+    {
+     "source_name": "News feeds",
+     "title": "Seagate and Toshiba battle for TDK's HDD head business, a critical hard drive component",
+     "url": "https://www.tomshardware.com/pc-components/hdds/seagate-and-toshiba-battle-for-tdks-hdd-head-business-a-critical-hard-drive-component-multi-billion-dollar-deal-threatens-sole-independent-supplier-as-shortages-intensify",
+     "publisher": "Tom's Hardware",
+     "published_at_utc": "2026-10-07T14:20:00Z",
+     "retrieved_at_utc": null,
+     "excerpt": "Seagate and Toshiba battle for TDK's HDD head business, a critical hard drive component - multi-billion-dollar deal threatens sole independent supplier as shortages intensify | What if Toshiba loses the bid? | Seagate Technology and Toshiba are reportedly competing to acquire TDK's hard disk drive magnetic head..."
+    }
+   ]
+  },
+  {
+   "card": 22,
+   "anchor": "story-36",
+   "section": "Tech",
+   "category": "Tech",
+   "tag": "new",
+   "headline": "That Time I Worked with a Laptop Thief (2025)",
+   "url": "https://blog.pipetogrep.org/2025/07/27/that-time-i-worked-with-a-laptop-thief/",
+   "summary": "An IT contractor was stealing laptops and reselling them for over a year.",
+   "why_it_matters": null,
+   "strength": "Limited evidence: 1 independent report (Lobsters); 1 collection channel; newest report 18 h before this edition; not corroborated by a second independent publisher.",
+   "evidence": [
+    {
+     "source_name": "News feeds",
+     "title": "That Time I Worked With a Laptop Thief (2025)",
+     "url": "https://blog.pipetogrep.org/2025/07/27/that-time-i-worked-with-a-laptop-thief/",
+     "publisher": "Lobsters",
+     "published_at_utc": "2026-10-06T20:16:00Z",
+     "retrieved_at_utc": null,
+     "excerpt": "That Time I Worked With a Laptop Thief | Please don't be like this guy. | I used to worked at a place where they had an IT contractor that was stealing laptops and reselling them for over a year. This post is the story of how he got caught. Real names of people and companies will not be used, but the tale and..."
+    }
+   ]
+  },
+  {
+   "card": 23,
+   "anchor": "story-38",
+   "section": "Tech",
+   "category": "Tech",
+   "tag": "new",
+   "headline": "GitHub Refuses to Remove Cracked Copies of Software",
+   "url": "https://news.ycombinator.com/item?id=49982498",
+   "summary": "GitHub is refusing to remove cracked copies of a software after a month, despite the developer's request.",
+   "why_it_matters": null,
+   "strength": "Limited evidence: 1 independent report (news.ycombinator.com); 1 collection channel; newest report 20 h before this edition; not corroborated by a second independent publisher.",
+   "evidence": [
+    {
+     "source_name": "Hacker News",
+     "title": "Tell HN: GitHub refuses to remove cracked copies of my software after a month",
+     "url": "https://news.ycombinator.com/item?id=49982498",
+     "publisher": "news.ycombinator.com",
+     "published_at_utc": "2026-10-06T18:54:00Z",
+     "retrieved_at_utc": null,
+     "excerpt": null
+    }
+   ]
+  },
+  {
+   "card": 24,
+   "anchor": "story-39",
+   "section": "Tech",
+   "category": "Tech",
+   "tag": "new",
+   "headline": "Claude Code's Suggested Message Feature",
+   "url": "https://www.zohaib.cc/blog/smartest-claude-code-feature",
+   "summary": "Claude Code has suggested a message feature, stating that the real customer is the model.",
+   "why_it_matters": null,
+   "strength": "Limited evidence: 1 independent report (zohaib.cc); 1 collection channel; newest report 20 h before this edition; not corroborated by a second independent publisher.",
+   "evidence": [
+    {
+     "source_name": "Hacker News",
+     "title": "Claude Code’s suggested message feature: I think the real customer is the model",
+     "url": "https://www.zohaib.cc/blog/smartest-claude-code-feature",
+     "publisher": "zohaib.cc",
+     "published_at_utc": "2026-10-06T18:00:00Z",
+     "retrieved_at_utc": null,
+     "excerpt": null
+    }
+   ]
+  },
+  {
+   "card": 25,
+   "anchor": "story-16",
+   "section": "Science & AI",
+   "category": "Science & AI",
+   "tag": "new",
+   "headline": "OpenAI Releases Hundreds of Math Breakthroughs",
+   "url": "https://thehill.com/policy/technology/6133481-openai-releases-math-breakthroughs/",
+   "summary": "OpenAI has released 377 math breakthroughs, including 372 AI-generated mathematical results on GitHub.",
+   "why_it_matters": null,
+   "strength": "Moderate evidence: 3 independent reports (Engadget, The Decoder, The Hill); 1 collection channel; newest report under an hour before this edition.",
+   "evidence": [
+    {
+     "source_name": "News feeds",
+     "title": "OpenAI releases new batch of math breakthroughs",
+     "url": "https://thehill.com/policy/technology/6133481-openai-releases-math-breakthroughs/",
+     "publisher": "The Hill",
+     "published_at_utc": "2026-10-07T14:06:00Z",
+     "retrieved_at_utc": null,
+     "excerpt": "OpenAI released a new batch of mathematics breakthroughs on Tuesday following calls from AI researchers and developers to slow the growth of the technology. The company released 377 results that co. | The company released 377 results that cover different physics, mathematical and other scientific problems solved by an..."
+    },
+    {
+     "source_name": "News feeds",
+     "title": "OpenAI dumps 372 AI-generated math proofs on GitHub, telling the academic world to keep up",
+     "url": "https://the-decoder.com/openai-dumps-372-ai-generated-math-proofs-on-github-telling-the-academic-world-to-keep-up/",
+     "publisher": "The Decoder",
+     "published_at_utc": "2026-10-07T08:54:00Z",
+     "retrieved_at_utc": null,
+     "excerpt": "OpenAI has published 372 AI-generated mathematical results on GitHub, including Lean formalizations for machine verification. Each result consumed about three hours of ChatGPT Pro compute on average. But 25 Fields Medal winners warn that mass-producing mathematical truths could destroy fertile ground rather than bring..."
+    },
+    {
+     "source_name": "News feeds",
+     "title": "OpenAI just posted hundreds more results on major math problems",
+     "url": "https://www.engadget.com/2279815/openai-just-posted-hundreds-more-results-on-major-math-problems/",
+     "publisher": "Engadget",
+     "published_at_utc": "2026-10-07T13:08:00Z",
+     "retrieved_at_utc": null,
+     "excerpt": "The company said that most results were produced in a response to a single prompt given to a single AI agent. | The new results are likely to expand AI controversy roiling the mathematics community."
+    }
+   ]
+  },
+  {
+   "card": 26,
+   "anchor": "story-17",
+   "section": "Science & AI",
+   "category": "Science & AI",
+   "tag": "new",
+   "headline": "Google Rolls Out Improved SynthID AI Content Detector",
+   "url": "https://arstechnica.com/ai/2026/10/google-rolls-out-improved-synthid-ai-content-detector-now-available-globally/",
+   "summary": "Google has rolled out an improved SynthID AI content detector, now available globally.",
+   "why_it_matters": null,
+   "strength": "Moderate evidence: 2 independent reports (Ars Technica, Techmeme); 1 collection channel; newest report under an hour before this edition.",
+   "evidence": [
+    {
+     "source_name": "News feeds",
+     "title": "Google rolls out improved SynthID AI content detector, now available globally",
+     "url": "https://arstechnica.com/ai/2026/10/google-rolls-out-improved-synthid-ai-content-detector-now-available-globally/",
+     "publisher": "Ars Technica - AI",
+     "published_at_utc": "2026-10-07T14:00:00Z",
+     "retrieved_at_utc": null,
+     "excerpt": "The new SynthID website can now identify AI content from Google, OpenAI, and more. | Every piece of AI content from Google's Gemini models has a hidden SynthID label, which makes it very difficult to pass the content off as authentic. SynthID has also gotten buy-in from other major AI players, but actually checking..."
+    },
+    {
+     "source_name": "News feeds",
+     "title": "Google launches SynthID Detector, a website that lets users detect AI-generated image, video, and audio media across dozens of common file formats (Ivan Mehta/TechCrunch)",
+     "url": "https://www.techmeme.com/261007/p21#a261007p21",
+     "publisher": "Techmeme",
+     "published_at_utc": "2026-10-07T14:10:00Z",
+     "retrieved_at_utc": null,
+     "excerpt": "Google launches SynthID Detector, a website that lets users detect AI-generated image, video, and audio media across dozens of common file formats | By Ivan Mehta / TechCrunch. View the full context on Techmeme. | Protecting your Cloud Applications Data - Backing up Office 365, Google Workspace, Dropbox & Salesforce..."
+    }
+   ]
+  },
+  {
+   "card": 27,
+   "anchor": "story-21",
+   "section": "Science & AI",
+   "category": "Science & AI",
+   "tag": "new",
+   "headline": "NASA's SpaceX Crew-12 Mission Returns to Earth",
+   "url": "https://www.youtube.com/watch?v=dGSqblvgLIE",
+   "summary": "NASA's SpaceX Crew-12 mission returns to Earth, with four astronauts on board the SpaceX Dragon spacecraft.",
+   "why_it_matters": null,
+   "strength": "Limited evidence: 1 independent report (NASA); 1 repeat or syndicated copy counted once; 1 collection channel; newest report 2 h before this edition; not corroborated by a second independent publisher.",
+   "evidence": [
+    {
+     "source_name": "YouTube",
+     "title": "NASA's SpaceX Crew-12 Undocking",
+     "url": "https://www.youtube.com/watch?v=dGSqblvgLIE",
+     "publisher": "NASA",
+     "published_at_utc": "2026-10-07T12:32:00Z",
+     "retrieved_at_utc": null,
+     "excerpt": "Watch the four members of NASA's SpaceX Crew-12 mission - NASA astronauts Jessica Meir and Jack Hathaway, ESA (European Space Agency) astronaut Sophie Adenot, and Roscosmos cosmonaut Andrey Fedyaev - set off to return to Earth. The SpaceX Dragon spacecraft will undock from the International Space Station at..."
+    },
+    {
+     "source_name": "YouTube",
+     "title": "NASA's SpaceX Crew-12 Hatch Close",
+     "url": "https://www.youtube.com/watch?v=JB5HKi8Pxqs",
+     "publisher": "NASA",
+     "published_at_utc": "2026-10-07T10:40:00Z",
+     "retrieved_at_utc": null,
+     "excerpt": "Watch as NASA astronauts Jessica Meir and Jack Hathaway, ESA (European Space Agency) astronaut Sophie Adenot, and Roscosmos cosmonaut Andrey Fedyaev begin final preparations for their return to Earth aboard a SpaceX Dragon spacecraft. After the four enter the spacecraft, the hatch is scheduled to close at 6:20 a.m."
+    }
+   ]
+  },
+  {
+   "card": 28,
+   "anchor": "story-25",
+   "section": "Science & AI",
+   "category": "Science & AI",
+   "tag": "new",
+   "headline": "Nuclear Traces in Whales' Teeth Help Scientists Reconstruct Their Life Stories",
+   "url": "https://phys.org/news/2026-10-nuclear-whales-teeth-scientists-reconstruct.html",
+   "summary": "New analysis of radioactive fallout from nuclear weapons testing trapped in whales' teeth has helped scientists reconstruct their life stories.",
+   "why_it_matters": null,
+   "strength": "Limited evidence: 1 independent report (Phys.org); 1 collection channel; newest report under an hour before this edition; not corroborated by a second independent publisher.",
+   "evidence": [
+    {
+     "source_name": "News feeds",
+     "title": "Nuclear traces in whales' teeth help scientists reconstruct their life stories",
+     "url": "https://phys.org/news/2026-10-nuclear-whales-teeth-scientists-reconstruct.html",
+     "publisher": "Phys.org",
+     "published_at_utc": "2026-10-07T14:20:00Z",
+     "retrieved_at_utc": null,
+     "excerpt": "New analysis of traces of radioactive fallout from nuclear weapons testing trapped in the teeth of stranded whales has helped scientists reconstruct their life stories."
+    }
+   ]
+  },
+  {
+   "card": 29,
+   "anchor": "story-26",
+   "section": "Science & AI",
+   "category": "Science & AI",
+   "tag": "new",
+   "headline": "Scientists Change How Zoo Lions Eat",
+   "url": "https://www.sciencedaily.com/releases/2026/10/261005071535.htm",
+   "summary": "Scientists changed how zoo lions eat, giving them whole carcasses on a feast-and-fast schedule. This brought out more natural behavior, with lions spending nearly three times longer feeding and resting more heavily after meals.",
+   "why_it_matters": null,
+   "strength": "Limited evidence: 1 independent report (ScienceDaily); 1 collection channel; newest report 2 h before this edition; not corroborated by a second independent publisher.",
+   "evidence": [
+    {
+     "source_name": "News feeds",
+     "title": "Scientists changed how zoo lions eat. Their wild side came out",
+     "url": "https://www.sciencedaily.com/releases/2026/10/261005071535.htm",
+     "publisher": "ScienceDaily - Top Science",
+     "published_at_utc": "2026-10-07T12:46:00Z",
+     "retrieved_at_utc": null,
+     "excerpt": "Giving zoo lions whole carcasses on a feast-and-fast schedule appears to bring out more natural behavior. The lions spent nearly three times longer feeding, engaged in more tearing and manipulating of food, and rested more heavily after meals. Their activity then increased gradually during the fasting period, closely..."
+    }
+   ]
+  },
+  {
+   "card": 30,
+   "anchor": "story-28",
+   "section": "Science & AI",
+   "category": "Science & AI",
+   "tag": "new",
+   "headline": "Atlassian and OpenAI Expand Partnership to Turn Enterprise Knowledge into Action",
+   "url": "https://openai.com/index/atlassian-partnership",
+   "summary": "Atlassian and OpenAI are expanding their partnership to connect frontier models with enterprise knowledge. The partnership aims to help teams plan, build, and deliver work.",
+   "why_it_matters": null,
+   "strength": "Limited evidence: 1 independent report (OpenAI); 1 collection channel; newest report 22 h before this edition; not corroborated by a second independent publisher.",
+   "evidence": [
+    {
+     "source_name": "News feeds",
+     "title": "Atlassian and OpenAI expand partnership to turn enterprise knowledge into action",
+     "url": "https://openai.com/index/atlassian-partnership",
+     "publisher": "OpenAI - News",
+     "published_at_utc": "2026-10-06T16:00:00Z",
+     "retrieved_at_utc": null,
+     "excerpt": "Atlassian and OpenAI are expanding their partnership to connect frontier models with enterprise knowledge and help teams plan, build, and deliver work."
+    }
+   ]
+  },
+  {
+   "card": 31,
+   "anchor": "story-42",
+   "section": "Science & AI",
+   "category": "Science & AI",
+   "tag": "new",
+   "headline": "PFAS May Raise Blood Pressure During Pregnancy. Who Is at Risk?",
+   "url": "https://phys.org/news/2026-10-pfas-blood-pressure-pregnancy.html",
+   "summary": "PFAS exposure may increase blood pressure during pregnancy.",
+   "why_it_matters": null,
+   "strength": "Limited evidence: 1 independent report (Phys.org); 1 collection channel; newest report under an hour before this edition; not corroborated by a second independent publisher.",
+   "evidence": [
+    {
+     "source_name": "News feeds",
+     "title": "PFAS may raise blood pressure during pregnancy. Who is at risk?",
+     "url": "https://phys.org/news/2026-10-pfas-blood-pressure-pregnancy.html",
+     "publisher": "Phys.org",
+     "published_at_utc": "2026-10-07T14:00:00Z",
+     "retrieved_at_utc": null,
+     "excerpt": "Say no to sushi and steer clear of raw sprouts. Skip Bikram yoga. And keep your hands off that cat litter box."
+    }
+   ]
+  },
+  {
+   "card": 32,
+   "anchor": "story-19",
+   "section": "Sports",
+   "category": "Sports",
+   "tag": "",
+   "headline": "Lionel Messi Scores Final Goal in Emotional Farewell to Argentina",
+   "url": "https://www.abc.net.au/news/2026-10-07/lionel-messi-final-argentina-international-benin/107238572",
+   "summary": "Lionel Messi scored his 126th international goal in his final cap for Argentina, giving fans one last moment of joy.",
+   "why_it_matters": "The farewell match provided a moment of joy for fans.",
+   "strength": "Limited evidence: 1 independent report (ABC News Australia); 1 collection channel; newest report 12 h before this edition; not corroborated by a second independent publisher.",
+   "evidence": [
+    {
+     "source_name": "News feeds",
+     "title": "Lionel Messi scores final goal in emotional farewell to Argentina",
+     "url": "https://www.abc.net.au/news/2026-10-07/lionel-messi-final-argentina-international-benin/107238572",
+     "publisher": "ABC News Australia - Top Stories",
+     "published_at_utc": "2026-10-07T02:56:00Z",
+     "retrieved_at_utc": null,
+     "excerpt": "Lionel Messi gives Argentina fans one last moment of joy as he signs off with his 126th international goal in his final cap for the nation. | Lionel Messi scores penalty in final Argentina game against Benin | Lionel Messi has played his final match for Argentina, scoring a penalty and setting up two other goals in a..."
+    }
+   ]
+  },
+  {
+   "card": 33,
+   "anchor": "story-23",
+   "section": "Sports",
+   "category": "Sports",
+   "tag": "new",
+   "headline": "EuroLeague Members Reject NBA Offer to Merge",
+   "url": "https://www.espn.com/nba/story/_/id/50121620/sources-euroleague-teams-reject-offer-merge-nba-europe",
+   "summary": "Members of the EuroLeague rejected a formal offer from the NBA to merge and create a single NBA Europe operation.",
+   "why_it_matters": null,
+   "strength": "Limited evidence: 1 independent report (ESPN); 1 collection channel; no stated publication time; not corroborated by a second independent publisher.",
+   "evidence": [
+    {
+     "source_name": "News feeds",
+     "title": "Sources: EuroLeague members reject NBA offer to merge into NBA Europe",
+     "url": "https://www.espn.com/nba/story/_/id/50121620/sources-euroleague-teams-reject-offer-merge-nba-europe",
+     "publisher": "ESPN - NBA",
+     "published_at_utc": null,
+     "retrieved_at_utc": "2026-10-07T14:30:00Z",
+     "excerpt": "Members of the EuroLeague rejected a formal offer from the NBA this week to merge and create a single NBA Europe operation, sources told ESPN."
+    }
+   ]
+  },
+  {
+   "card": 34,
+   "anchor": "story-30",
+   "section": "Sports",
+   "category": "Sports",
+   "tag": "new",
+   "headline": "Latest Intel on NFL Week 5: What We're Hearing on Key Injuries, Potential Trades, Early Coaching Buzz",
+   "url": "https://www.espn.com/nfl/story/_/id/50116787/week-5-buzz-fantasy-predictions-graziano-fowler-2026",
+   "summary": "The NFL is dealing with key injuries, potential trades, and early coaching buzz.",
+   "why_it_matters": null,
+   "strength": "Limited evidence: 1 independent report (ESPN); 1 collection channel; no stated publication time; not corroborated by a second independent publisher.",
+   "evidence": [
+    {
+     "source_name": "News feeds",
+     "title": "Latest intel on NFL Week 5: What we're hearing on key injuries, potential trades, early coaching buzz",
+     "url": "https://www.espn.com/nfl/story/_/id/50116787/week-5-buzz-fantasy-predictions-graziano-fowler-2026",
+     "publisher": "ESPN - Top Headlines",
+     "published_at_utc": null,
+     "retrieved_at_utc": "2026-10-07T14:30:00Z",
+     "excerpt": "Could injuries to Saquon Barkley, Lamar Jackson and others derail their teams? Which AFC teams should trade for a WR? Which coordinators could get head coach interest?"
+    }
+   ]
+  },
+  {
+   "card": 35,
+   "anchor": "story-41",
+   "section": "Sports",
+   "category": "Sports",
+   "tag": "new",
+   "headline": "USMNT Player Ratings: Freeman Earns 8/10 in Win over Canada",
+   "url": "https://www.espn.com/soccer/story/_/id/50121769/usmnt-player-ratings-alex-freemans-two-way-play-earns-8-win-canada",
+   "summary": "Alex Freeman delivered an assist and solidified a back line that kept a second straight clean sheet in the USMNT's 1-0 win over Canada.",
+   "why_it_matters": null,
+   "strength": "Limited evidence: 1 independent report (ESPN); 1 collection channel; newest report 8 h before this edition; not corroborated by a second independent publisher.",
+   "evidence": [
+    {
+     "source_name": "News feeds",
+     "title": "USMNT player ratings: Freeman's two-way play earns him 8/10 in win over Canada",
+     "url": "https://www.espn.com/soccer/story/_/id/50121769/usmnt-player-ratings-alex-freemans-two-way-play-earns-8-win-canada",
+     "publisher": "ESPN - Soccer",
+     "published_at_utc": "2026-10-07T06:27:00Z",
+     "retrieved_at_utc": null,
+     "excerpt": "Alex Freeman delivered an assist and solidified a back line that kept a second straight clean sheet in the USMNT's 1-0 win over Canada on Tuesday."
+    }
+   ]
+  },
+  {
+   "card": 36,
+   "anchor": "story-43",
+   "section": "Sports",
+   "category": "Sports",
+   "tag": "new",
+   "headline": "Coco Gauff Says Online Racist Abuse During China Open Was 'Draining' After Loss to Mertens",
+   "url": "https://www.theguardian.com/sport/2026/oct/07/coco-gauff-racist-abuse-online-china-open-disputed-point",
+   "summary": "Coco Gauff experienced racist abuse during the China Open, which left her feeling drained.",
+   "why_it_matters": null,
+   "strength": "Limited evidence: 1 independent report (The Guardian); 1 collection channel; newest report 3 h before this edition; not corroborated by a second independent publisher.",
+   "evidence": [
+    {
+     "source_name": "News feeds",
+     "title": "Coco Gauff says online racist abuse during China Open was ‘draining’ after loss to Mertens",
+     "url": "https://www.theguardian.com/sport/2026/oct/07/coco-gauff-racist-abuse-online-china-open-disputed-point",
+     "publisher": "The Guardian - Sport",
+     "published_at_utc": "2026-10-07T11:39:00Z",
+     "retrieved_at_utc": null,
+     "excerpt": "Coco Gauff said she had been left drained by the racist abuse she experienced during the China Open after losing in the last 16 to Elise Mertens | The American was dismayed earlier this week after an incident during her match against Chinese teenager Sun Xinran. The 16-year-old thought she had hit a winner late in the..."
+    }
+   ]
+  },
+  {
+   "card": 37,
+   "anchor": "story-45",
+   "section": "Sports",
+   "category": "Sports",
+   "tag": "new",
+   "headline": "Pidcock Angry After Team-Mates Hit by Police Vehicle",
+   "url": "https://www.bbc.co.uk/sport/cycling/articles/ckpdgv8nv436o?at_medium=RSS&at_campaign=rss",
+   "summary": "Tom Pidcock's team-mates were hit by a police vehicle during the Tre Valli Varesine. Pidcock was angry and wanted to stop racing.",
+   "why_it_matters": null,
+   "strength": "Limited evidence: 1 independent report (BBC Sport); 1 collection channel; newest report 7 h before this edition; not corroborated by a second independent publisher.",
+   "evidence": [
+    {
+     "source_name": "News feeds",
+     "title": "Pidcock angry after team-mates hit by police vehicle",
+     "url": "https://www.bbc.co.uk/sport/cycling/articles/ckpdgv8nv436o?at_medium=RSS&at_campaign=rss",
+     "publisher": "BBC Sport",
+     "published_at_utc": "2026-10-07T07:46:00Z",
+     "retrieved_at_utc": null,
+     "excerpt": "Tom Pidcock 'mad' after team-mates hit by vehicle during Tre Valli Varesine | Tom Pidcock wanted to \"stop racing\" after he says two of his team-mates were hit by a police vehicle travelling the wrong way down the course at the Tre Valli Varesine. | Tom Pidcock wanted to \"stop racing\" after saying that two of his..."
+    }
+   ]
+  },
+  {
+   "card": 38,
+   "anchor": "story-20",
+   "section": "Entertainment",
+   "category": "Entertainment",
+   "tag": "new",
+   "headline": "Warhammer 40,000: Dawn of War 4 Has Massive Single-Player Campaign",
+   "url": "https://www.ign.com/articles/warhammer-40000-dawn-of-war-4-dev-says-its-got-more-single-player-content-than-any-other-rts-ever-at-launch",
+   "summary": "Warhammer 40,000: Dawn of War 4 has a massive single-player campaign, with developer King Art Games saying it's the biggest ever at launch.",
+   "why_it_matters": null,
+   "strength": "Limited evidence: 1 independent report (IGN); 1 collection channel; newest report 4 h before this edition; not corroborated by a second independent publisher.",
+   "evidence": [
+    {
+     "source_name": "News feeds",
+     "title": "Warhammer 40,000: Dawn of War 4 Dev Says It's Got More Single-Player Content Than Any Other RTS Ever at Launch",
+     "url": "https://www.ign.com/articles/warhammer-40000-dawn-of-war-4-dev-says-its-got-more-single-player-content-than-any-other-rts-ever-at-launch",
+     "publisher": "IGN",
+     "published_at_utc": "2026-10-07T10:09:00Z",
+     "retrieved_at_utc": null,
+     "excerpt": "'If You're a Single-Player Fan, This Is Really a Game for You' - Warhammer 40,000: Dawn of War 4 Dev Says the Campaign Is Absolutely Massive | How big is the Warhammer 40,000: Dawn of War 4 campaign? According to developer King Art Games, it's so big it dwarfs the campaigns from all the previous games in the series..."
+    }
+   ]
+  },
+  {
+   "card": 39,
+   "anchor": "story-22",
+   "section": "Entertainment",
+   "category": "Entertainment",
+   "tag": "new",
+   "headline": "Olivia Rodrigo Finds Her Happy Place",
+   "url": "https://www.hollywoodreporter.com/music/music-features/olivia-rodrigo-interview-daisy-chain-festival-album-stardom-1236723322/",
+   "summary": "Olivia Rodrigo has spent years turning heartbreak into hits, but with a massive new album and sold-out tour, she is finally enjoying the view from the top.",
+   "why_it_matters": null,
+   "strength": "Limited evidence: 1 independent report (The Hollywood Reporter); 1 repeat or syndicated copy counted once; 2 collection channels; newest report 2 h before this edition; not corroborated by a second independent publisher.",
+   "evidence": [
+    {
+     "source_name": "News feeds",
+     "title": "Olivia Rodrigo: The Queen of Sad Finds Her Happy Place",
+     "url": "https://www.hollywoodreporter.com/music/music-features/olivia-rodrigo-interview-daisy-chain-festival-album-stardom-1236723322/",
+     "publisher": "The Hollywood Reporter",
+     "published_at_utc": "2026-10-07T13:00:00Z",
+     "retrieved_at_utc": null,
+     "excerpt": "She has spent years turning heartbreak into hits - and wrestling with the fame that followed. But with a massive new album, sold-out tour and her very own feminist music festival, the 23-year-old pop sensation is finally enjoying the view from the top. | It's only been 40 hours since Olivia Rodrigo played the biggest..."
+    },
+    {
+     "source_name": "Google News",
+     "title": "Olivia Rodrigo: The Queen of Sad Finds Her Happy Place",
+     "url": "https://news.google.com/rss/articles/CBMixAFBVV95cUxNOW1CWVlCRVZRS1kwdlBxNVc2bmF6LWh4VnVnYmxYeDdnM3NCdkpsWk9PeHRfS0FOdGFCbkFGaE5zSko1NXJEM0JRZ1Q5R1RsU3FWelJaYTVVUFpiRHRDeE1KVjljUldNaWh2QUE5c2RWeTI4cHJ3cjdxU1VCSVFTVzZzNUFpWWIwNU1DRjUzUmtRd1RMNWRZcG5XT0ZIQ1hxc1pqQVNTeW5SOVRBMm9xa29IUlJRSGpXSFVNWHBSYzFuRWw4?oc=5",
+     "publisher": "The Hollywood Reporter",
+     "published_at_utc": "2026-10-07T13:00:00Z",
+     "retrieved_at_utc": null,
+     "excerpt": null
+    }
+   ]
+  },
+  {
+   "card": 40,
+   "anchor": "story-27",
+   "section": "Entertainment",
+   "category": "Entertainment",
+   "tag": "new",
+   "headline": "Michael Douglas Talks Abuse, Addiction, and the Nepo Baby Myth",
+   "url": "https://www.rollingstone.com/tv-movies/tv-movie-features/michael-douglas-memoir-interview-1235637370/",
+   "summary": "Michael Douglas talks about physical abuse by his dad, drug and alcohol addiction, and the nepo baby myth in his new memoir.",
+   "why_it_matters": null,
+   "strength": "Limited evidence: 1 independent report (Rolling Stone); 1 collection channel; newest report under an hour before this edition; not corroborated by a second independent publisher.",
+   "evidence": [
+    {
+     "source_name": "News feeds",
+     "title": "‘I Had to Be Honest About the Abuse’: Michael Douglas on His Dad, Drugs, and the Nepo Baby Myth",
+     "url": "https://www.rollingstone.com/tv-movies/tv-movie-features/michael-douglas-memoir-interview-1235637370/",
+     "publisher": "Rolling Stone",
+     "published_at_utc": "2026-10-07T14:00:00Z",
+     "retrieved_at_utc": null,
+     "excerpt": "Michael Douglas talks his new memoir, 'One Helluva Ride,' including stories of physical abuse by his dad, drug and alcohol addiction, affairs and more | M ichael Douglas, firmly in his smooth silver-fox era, has opened the door into secret compartments of his life. Douglas, 82, has just published an incredibly dishy..."
+    }
+   ]
+  },
+  {
+   "card": 41,
+   "anchor": "story-33",
+   "section": "Entertainment",
+   "category": "Entertainment",
+   "tag": "new",
+   "headline": "Tim McGraw Celebrates 30th Anniversary with Faith Hill",
+   "url": "https://www.billboard.com/music/country/tim-mcgraw-celebrates-30th-anniversary-faith-hill-1236355900/",
+   "summary": "Tim McGraw celebrated his 30th anniversary with wife Faith Hill, calling her the 'center of gravity to my life'.",
+   "why_it_matters": null,
+   "strength": "Limited evidence: 1 independent report (Billboard); 1 collection channel; newest report 1 h before this edition; not corroborated by a second independent publisher.",
+   "evidence": [
+    {
+     "source_name": "News feeds",
+     "title": "Tim McGraw Celebrates 30th Anniversary With Faith Hill: ‘She Is the Center of Gravity to My Life’",
+     "url": "https://www.billboard.com/music/country/tim-mcgraw-celebrates-30th-anniversary-faith-hill-1236355900/",
+     "publisher": "Billboard",
+     "published_at_utc": "2026-10-07T13:06:00Z",
+     "retrieved_at_utc": null,
+     "excerpt": "Tim McGraw celebrated his 30th anniversary with wife Faith Hill in a sweet Instagram post in which he called her the \"center of gravity to my life.\" | Tim McGraw shared a loving tribute to his wife, fellow country icon Faith Hill, to mark the couple's 30th anniversary on Tuesday (Oct. 6). \"30 years, today. 30 years of..."
+    }
+   ]
+  },
+  {
+   "card": 42,
+   "anchor": "story-37",
+   "section": "Entertainment",
+   "category": "Entertainment",
+   "tag": "new",
+   "headline": "PlayStation Bringing Back Ape Escape with Ex-Sonic Devs, Report Says",
+   "url": "https://www.polygon.com/ape-escape-new-game-sonic-mania/",
+   "summary": "PlayStation is reportedly working on a new Ape Escape game with the team behind 'Sonic Mania'. The game is being developed by Evening Star.",
+   "why_it_matters": null,
+   "strength": "Limited evidence: 1 independent report (Polygon); 1 collection channel; newest report under an hour before this edition; not corroborated by a second independent publisher.",
+   "evidence": [
+    {
+     "source_name": "News feeds",
+     "title": "PlayStation Bringing Back Ape Escape With Ex-Sonic Devs, Report Says",
+     "url": "https://www.polygon.com/ape-escape-new-game-sonic-mania/",
+     "publisher": "Polygon",
+     "published_at_utc": "2026-10-07T14:02:00Z",
+     "retrieved_at_utc": null,
+     "excerpt": "Sources say the team behind 'Sonic Mania' is working on a new Ape Escape game. | After more than 15 years, it seems that more Ape Escape may finally be on the way. According to VGC and former Giant Bomb journalist Jeff Gerstmann, developer Evening Star is working on a revival of Ape Escape for Sony Interactive..."
+    }
+   ]
+  },
+  {
+   "card": 43,
+   "anchor": "story-40",
+   "section": "Entertainment",
+   "category": "Entertainment",
+   "tag": "new",
+   "headline": "Undead Labs Speaks About Its Split from Xbox",
+   "url": "https://www.eurogamer.net/undead-labs-xbox-layoffs-state-of-decay-3",
+   "summary": "Undead Labs has downsized following its departure from Xbox, and that's meant making some changes to the State of Decay 3 game.",
+   "why_it_matters": null,
+   "strength": "Limited evidence: 1 independent report (Eurogamer); 1 collection channel; newest report under an hour before this edition; not corroborated by a second independent publisher.",
+   "evidence": [
+    {
+     "source_name": "News feeds",
+     "title": "Undead Labs speaks about its split from Xbox, revealing it has to \"make some changes\" to State of Decay 3 following layoffs",
+     "url": "https://www.eurogamer.net/undead-labs-xbox-layoffs-state-of-decay-3",
+     "publisher": "Eurogamer",
+     "published_at_utc": "2026-10-07T13:56:00Z",
+     "retrieved_at_utc": null,
+     "excerpt": "Undead Labs speaks about its split from Xbox, revealing it has to \"make some changes\" to State of Decay 3 following layoffs | State of Decay 3 studio Undead Labs has downsized following its departure from Xbox, and that's meant making some changes to the game. | State of Decay studio Undead Labs has spoken out after..."
+    }
+   ]
+  },
+  {
+   "card": 44,
+   "anchor": "story-44",
+   "section": "Entertainment",
+   "category": "Entertainment",
+   "tag": "new",
+   "headline": "Tony DiNozzo's 'NCIS' Comeback Just Took a Very Unexpected Turn",
+   "url": "https://collider.com/ncis-season-24-tony-dinozzo-new-director-return/",
+   "summary": "Tony DiNozzo has returned to NCIS and received a promotion after getting shot. The character's comeback has taken an unexpected turn.",
+   "why_it_matters": null,
+   "strength": "Limited evidence: 1 independent report (Collider); 1 collection channel; newest report under an hour before this edition; not corroborated by a second independent publisher.",
+   "evidence": [
+    {
+     "source_name": "News feeds",
+     "title": "Tony DiNozzo’s ‘NCIS’ Comeback Just Took a Very Unexpected Turn",
+     "url": "https://collider.com/ncis-season-24-tony-dinozzo-new-director-return/",
+     "publisher": "Collider",
+     "published_at_utc": "2026-10-07T13:51:00Z",
+     "retrieved_at_utc": null,
+     "excerpt": "Tony DiNozzo is back on NCIS - and after getting shot, he gets the biggest promotion of his career. | Editor's Note: The following contains spoilers for NCIS, Season 24, Episode 1For a character who spent 13 seasons making a habit of barging into trouble, Tony DiNozzo's return to NCIS feels appropriately chaotic...."
+    }
+   ]
+  },
+  {
+   "card": 45,
+   "anchor": "story-32",
+   "section": "Internet Culture",
+   "category": "Internet Culture",
+   "tag": "new",
+   "headline": "Reddit Expands Lead Gen Ads Options",
+   "url": "https://www.socialmediatoday.com/news/reddit-launches-updated-lead-gen-ads-options/832296/",
+   "summary": "Reddit has updated its Lead Gen Ads offerings to make it easier for marketers to gather leads. The platform has also added a test of in-market audiences and a new HubSpot integration.",
+   "why_it_matters": null,
+   "strength": "Limited evidence: 1 independent report (Social Media Today); 1 collection channel; newest report 20 h before this edition; not corroborated by a second independent publisher.",
+   "evidence": [
+    {
+     "source_name": "News feeds",
+     "title": "Reddit launches updated lead gen ads options",
+     "url": "https://www.socialmediatoday.com/news/reddit-launches-updated-lead-gen-ads-options/832296/",
+     "publisher": "Social Media Today",
+     "published_at_utc": "2026-10-06T18:59:00Z",
+     "retrieved_at_utc": null,
+     "excerpt": "Other new additions include a test of in-market audiences and a new HubSpot integration as the platform expands its partnerships. | Reddit announced some enhancements to its Lead Gen Ads offerings, which aim to make it easier for marketers to gather leads from their in-app promotions, and feed those back to their CRM...."
+    }
+   ]
+  }
+ ]
+}

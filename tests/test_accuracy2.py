@@ -10,6 +10,7 @@ import random
 
 from agent_reach.models import CleanedTrendItem, RawTrendItem, SourceName
 from agent_reach.pipeline.clusterer import LinkIndex
+from agent_reach.pipeline.event_identity import IdentityGate, cohesive_groups
 from tests.test_accuracy import NOW, REAL
 
 #: (source, title, context) as they appeared in the edition
@@ -92,6 +93,12 @@ def _groups(ids: list[int]) -> list[list[int]]:
     return sorted((sorted(g) for g in INDEX.components(ids, [])), key=lambda g: (-len(g), g))
 
 
+def _groups_embedded(ids: list[int]) -> list[list[int]]:
+    """Grouping when the embedding model agrees that the reports are close (identical vectors)."""
+    gate = IdentityGate(INDEX, {i: [1.0] for i in ids})
+    return sorted((sorted(g) for g in cohesive_groups(ids, gate)), key=lambda g: (-len(g), g))
+
+
 def test_one_shared_institution_does_not_make_one_story():
     assert _groups([1, 2, 3, 4, 5, 6]) == [[1, 2, 3], [4, 5], [6]]
 
@@ -113,8 +120,17 @@ def test_a_trend_fragment_must_not_name_someone_else():
 
 
 def test_real_stories_stay_together():
-    for ids in ([21, 22], [23, 24], [25, 26, 27], [28, 29, 30], [31, 32]):
+    for ids in ([21, 22], [23, 24], [26, 27], [31, 32]):
         assert _groups(ids) == [ids]
+    # rc12: 'Get rid of Apple's AI bloatware and reclaim 12 GB of storage' shares only 'storage' with the
+    # macOS 27 tool reports by title and page text: without an embedding nothing confirms it (one shared word),
+    # with an agreeing embedding it joins
+    assert _groups([28, 29, 30]) == [[28, 30], [29]]
+    assert _groups_embedded([28, 29, 30]) == [[28, 29, 30]]
+    # rc12: 'Trump approval ratings plummet to new low' shares 'approval ... new low' with the Hispanic-voters
+    # poll but nothing with 'Trump's gains among Latino voters slip': a report linked to one member of a story
+    # only is not chained in (no single-link bridges); it stands alone.
+    assert _groups([25, 26, 27]) == [[26, 27], [25]]
 
 
 # ---------------------------------------------------------------- story text

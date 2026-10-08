@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import time
+
 import pytest
 
 tk = pytest.importorskip("tkinter")
@@ -16,7 +18,15 @@ def root():
     try:
         r = tk.Tk()
     except tk.TclError as exc:
-        pytest.skip(f"no display: {exc}")
+        # once on Windows (October 7, PC) one of the window tests could not read tk.tcl, which every other test
+        # and the launchers read fine: a file briefly held by another program. A second try settles that.
+        if "couldn't read file" not in str(exc):
+            pytest.skip(f"no display: {exc}")
+        time.sleep(1.0)
+        try:
+            r = tk.Tk()
+        except tk.TclError as exc2:
+            pytest.skip(f"no display: {exc2}")
     r.withdraw()
     yield r
     r.destroy()
@@ -381,3 +391,58 @@ def test_listen_records_then_plays_the_podcast(root, daily_paths, monkeypatch):
     dialog.save()
     prefs, _ = load_prefs(daily_paths)
     assert prefs.podcast_auto is False and prefs.podcast_rate == -2 and prefs.podcast_voice == ""
+
+
+def test_follow_and_mute_edge_cases_and_persistence(root, daily_paths, monkeypatch):
+    from agent_reach.daily import gui as G
+    from agent_reach.daily.gui import SettingsDialog
+    from agent_reach.daily.prefs import load_prefs
+
+    EditionStore(daily_paths).publish(make_edition([make_story(headline="Norvale Ferry Strike Halts Island Service"),
+                                                    make_story(headline="Riverton Hawks Win Championship Final")]))
+    w, _ = _window(root, daily_paths)
+    w.set_topic("Norvale", "follow", True)
+    w.set_topic("NORVALE", "follow", True)  # the same topic in other capitals replaces it
+    w.set_topic("  ", "follow", True)  # blank: ignored
+    w.set_topic("x" * 90, "mute", True)  # over-long: kept at 60 characters
+    prefs, _ = load_prefs(daily_paths)
+    assert prefs.follow_topics == ["NORVALE"] and prefs.mute_topics == ["x" * 60]
+    assert "★ NORVALE" in _text(w)  # matching ignores capitals
+    w.set_topic("NORVALE", "follow", False)
+    w.set_topic("riverton hawks", "mute", True)
+    assert "Riverton Hawks" not in _text(w) and "★" not in _text(w)
+    dialog = SettingsDialog(w, load_prefs(daily_paths)[0])  # unmute in Settings > Topics
+    root.update()
+    assert dialog.mute_text.get("1.0", "end").splitlines()[1] == "riverton hawks"
+    dialog.mute_text.delete("1.0", "end")
+    dialog.save()
+    root.update()
+    assert "Riverton Hawks" in _text(w)
+    assert load_prefs(daily_paths)[0].mute_topics == []  # saved: a restarted window reads the same file
+
+    def read_only(*a, **k):
+        raise PermissionError("[Errno 13] Permission denied: 'settings.json'")
+
+    shown = []
+    monkeypatch.setattr(G, "save_prefs", read_only)
+    monkeypatch.setattr(G.messagebox, "showerror", lambda *a, **k: shown.append(a[1]))
+    w.set_topic("Norvale", "follow", True)  # a read-only settings file: a message, never a crash
+    assert shown and "Could not save your topics" in shown[0]
+
+
+def test_cancel_returns_the_window_to_normal(root, daily_paths, monkeypatch):
+    import time as _time
+
+    from agent_reach.daily import gui as G
+
+    w, _ = _window(root, daily_paths)
+    monkeypatch.setattr(G.messagebox, "askyesno", lambda *a, **k: True)
+    monkeypatch.setattr(w.ctrl, "cancel_refresh", lambda: _time.sleep(0.3) or True)
+    w.cancel_refresh()
+    root.update()
+    assert w._cancelling and w.refresh_btn.cget("text") == "Refreshing..."
+    end = _time.monotonic() + 5
+    while w._cancelling and _time.monotonic() < end:
+        root.update()
+        _time.sleep(0.05)
+    assert not w._cancelling and w.refresh_btn.cget("text") == "Refresh"

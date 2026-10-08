@@ -191,9 +191,10 @@ class BaseIngester(abc.ABC):
         if self.min_request_interval_s <= 0:
             return
         async with self._pace_lock:
-            wait = self._last_request_at + self.min_request_interval_s - time.monotonic()
-            if wait > 0:
-                await asyncio.sleep(wait)
+            # re-check after each sleep: on Windows asyncio.sleep can wake up to one clock tick (~16 ms) early
+            # (October 7, PC: a 0.3 s spacing measured 0.282 s between two requests)
+            while (wait := self._last_request_at + self.min_request_interval_s - time.monotonic()) > 0:
+                await asyncio.sleep(wait + 0.002)
             self._last_request_at = time.monotonic()
 
     # ------------------------------------------------------------ headers
@@ -299,7 +300,10 @@ class BaseIngester(abc.ABC):
         if not raw:
             return None
         try:
-            return min(float(raw), self.settings.http_backoff_max_s)
+            seconds = float(raw)
+            if seconds != seconds:  # NaN
+                return None
+            return max(0.0, min(seconds, self.settings.http_backoff_max_s))
         except ValueError:
             try:
                 dt = parsedate_to_datetime(raw)

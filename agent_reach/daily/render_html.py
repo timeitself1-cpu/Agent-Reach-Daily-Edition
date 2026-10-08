@@ -172,6 +172,27 @@ def _section(title: str, stories: list[Story], edition: DailyEdition, shown: set
             f'<h2 id="{_slug(title)}-h">{_e(title)}</h2><p class="count">{count}</p>{"".join(parts)}{also_html}</section>')
 
 
+def _grouping(edition: DailyEdition) -> str:
+    """How stories were grouped, in a few plain lines (rc12): the embedding model that grouped them, why another
+    one was not used, and how many candidate pairs the same-event check accepted or refused."""
+    g = edition.model.grouping
+    if not g:
+        return ""
+    used = g.get("model_used") or "none"
+    lines = [f"Grouping model: {used}" + (f" ({g['dims']} dimensions)" if g.get("dims") else "")]
+    if g.get("fallback"):
+        lines.append("Fallback: " + str(g["fallback"]))
+    lines.append(f"Same-event check: {g.get('candidate_pairs', 0)} candidate pairs, {g.get('accepted_pairs', 0)} accepted, "
+                 f"{g.get('refused_pairs', 0)} refused (different events, roundups or dates only); "
+                 f"{g.get('merges_blocked', 0)} merges blocked")
+    if g.get("roundups"):
+        lines.append(f"{g['roundups']} multi-story roundups (newsletters, live blogs) were kept out of every story")
+    if g.get("reports"):
+        lines.append(f"Embeddings reused from earlier refreshes: {g.get('cache_hits', 0)} of {g['reports']} reports")
+    return ("<details><summary>How stories were grouped</summary><ul>"
+            + "".join(f"<li>{_e(x)}</li>" for x in lines) + "</ul></details>")
+
+
 def render_edition_html(edition: DailyEdition) -> str:
     title = edition_heading(edition.edition_date)
     banners = []
@@ -197,6 +218,8 @@ def render_edition_html(edition: DailyEdition) -> str:
         "<p>No stories in this edition.</p>"
     notes_html = ("<details><summary>Coverage notes ({0})</summary><ul>{1}</ul></details>".format(
         len(notes), "".join(f"<li>{_e(n)}</li>" for n in notes)) if notes else "")
+    grouping_html = _grouping(edition)
+    embed_used = edition.model.embed_model_used or edition.model.embed_model
     return f"""<!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; img-src 'none'">
@@ -211,11 +234,12 @@ def render_edition_html(edition: DailyEdition) -> str:
 <div class="more">
 {_changes(edition)}
 {notes_html}
+{grouping_html}
 <details><summary>Source health</summary>
 <table><tr><th>Source</th><th>Status</th><th>Items</th><th>Notes</th></tr>{rows}</table></details>
 </div>
 <footer>Agent Reach Daily &middot; edition {_e(edition.edition_date.isoformat())} (America/Chicago) &middot;
-run {_e(edition.run_id)} &middot; model {_e(edition.model.llm_model)} / {_e(edition.model.embed_model)}
+run {_e(edition.run_id)} &middot; model {_e(edition.model.llm_model)} / {_e(embed_used)}
 ({_e(edition.model.summaries)}) &middot; refresh started {_e(format_central(edition.generation_started_utc))}.
 Summaries are generated locally from the cited evidence; open the sources to verify.</footer>
 </main></body></html>

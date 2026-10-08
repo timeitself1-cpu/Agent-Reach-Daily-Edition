@@ -2,7 +2,7 @@ name: tests
 
 # Offline test suite and lint on every push and pull request. No Ollama or live
 # data: the suite uses mock HTTP and a fake Ollama (tests/fakes.py, tests/daily_fakes.py).
-# Tk window tests skip without a display.
+# Tk window tests run on a virtual display (Xvfb).
 
 on:
   push:
@@ -43,14 +43,17 @@ jobs:
       - name: pyflakes
         run: python -m pyflakes agent_reach tests
 
-      - name: pytest
-        run: python -m pytest
+      - name: pytest (window tests on Xvfb)
+        run: xvfb-run -a python -m pytest -rs
 
       - name: Offline reliability replay
         run: python -m tests.replay_benchmark
 
       - name: CLI smoke test
         run: python -m agent_reach --no-llm --help
+
+      - name: Self-test harness dry run (fake world)
+        run: xvfb-run -a python -m tests.daily_selftest --world --skip-pytest --quick --out "$RUNNER_TEMP"
 
       - name: Daily CLI smoke test
         run: |

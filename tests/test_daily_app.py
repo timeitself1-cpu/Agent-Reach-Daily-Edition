@@ -115,7 +115,8 @@ def test_refreshing_state_and_no_double_workers(daily_paths):
                                                   "started_utc": "2026-10-01T13:00:00Z"})
     snap = ctrl.snapshot()
     assert snap.status_kind == "refreshing"
-    assert snap.status == "Refreshing (started 8:00 AM CDT): Grouping and summarizing stories"
+    assert snap.status == ("Refreshing (started 8:00 AM CDT, 5 min so far), step 4 of 7: Grouping and "
+                           "summarizing stories")
     spawner.children[0].running = False
     daily_paths.progress_file.unlink()
     assert ctrl.snapshot().status_kind == "empty"
@@ -124,6 +125,27 @@ def test_refreshing_state_and_no_double_workers(daily_paths):
 def test_stale_progress_file_from_a_dead_worker_is_not_refreshing(daily_paths):
     atomic_write_json(daily_paths.progress_file, {"pid": 2 ** 22 + 12345, "stage": "ingest", "message": "x"})
     assert not _ctrl(daily_paths)[0].snapshot().activity.running
+
+
+def test_progress_file_whose_pid_was_reused_is_not_refreshing(daily_paths):
+    """A worker that died (power loss) leaves progress.json; after a reboot its pid can belong to any process.
+    Only the OS lock says a refresh is running, so Cancel can never stop an unrelated process."""
+    from agent_reach.daily.lock import RefreshLock
+
+    atomic_write_json(daily_paths.progress_file, {"pid": os.getpid(), "trigger": "scheduled", "stage": "cluster",
+                                                  "message": "Grouping and summarizing stories"})
+    ctrl, spawner = _ctrl(daily_paths)
+    assert not ctrl.snapshot().activity.running
+    assert not ctrl.cancel_refresh()
+    assert ctrl.start_refresh(manual=True) and len(spawner.calls) == 1  # Refresh is not blocked
+    spawner.children[0].running = False
+    worker = RefreshLock(daily_paths.lock_file, daily_paths.lock_info)
+    worker.acquire({"trigger": "scheduled"})
+    try:
+        snap = ctrl.snapshot()
+        assert snap.activity.running and snap.activity.stage == "cluster"
+    finally:
+        worker.release()
 
 
 def test_launch_refresh_only_when_due(daily_paths):
@@ -288,6 +310,10 @@ def test_cli_status_export_and_reset(daily_paths, tmp_path):
     assert status["latest_edition"] == "2026-10-01" and status["editions"] == ["2026-10-01"]
     out = tmp_path / "exports dir" / "today.html"
     assert run("--export-html", str(out)).returncode == 0 and "Trending news for" in out.read_text()
+    sample = tmp_path / "site" / "daily-sample.json"
+    assert run("--export-sample", str(sample), "--stories", "1").returncode == 0
+    assert [s["rank"] for s in json.loads(sample.read_text(encoding="utf-8"))["stories"]] == [1]
+    assert run("--export-sample", str(sample), "--stories", "99").returncode == 2
     refused = run("--reset-cache")
     assert refused.returncode == 2 and "--yes" in refused.stderr
     assert EditionStore(daily_paths).list_dates()

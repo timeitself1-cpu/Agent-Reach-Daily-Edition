@@ -161,6 +161,31 @@ def test_each_story_has_one_accessible_collapsible_evidence_section():
     assert "<details open" not in page  # collapsed by default; native disclosure, no script needed
 
 
+def test_html_says_which_model_grouped_the_stories_and_keeps_details_compact():
+    """rc12: the footer names the embedding model that actually grouped the stories; a collapsed section gives a
+    few plain numbers (the full pair log stays in the diagnostics folder, never in the page)."""
+    from agent_reach.daily.edition import grouping_summary
+
+    semantic = {"model_used": "nomic-embed-text", "fallback": "embeddinggemma-2:270m was not used: "
+                "embeddinggemma-2:270m: model \"embeddinggemma-2:270m\" not found <b>", "roundups_in_run": 2,
+                "embedding": {"dims": 768, "cache_hits": 40, "items": 260},
+                "gate": {"candidate_pairs": 900, "accepted_pairs": 120, "rejected_pairs": 75,
+                         "merges_blocked_conflict": 3, "merges_blocked_cohesion": 4}}
+    ed = make_edition([make_story(headline="One"), make_story(headline="Two"), make_story(headline="Three")])
+    ed.model.embed_model, ed.model.embed_model_used = "embeddinggemma-2:270m", "nomic-embed-text"
+    ed.model.grouping = grouping_summary(semantic)
+    page = render_edition_html(ed)
+    assert "llama3.1:8b / nomic-embed-text" in page  # the model actually used, not the one asked for
+    section = re.search(r"<details><summary>How stories were grouped</summary>.*?</details>", page, re.S).group(0)
+    assert "Grouping model: nomic-embed-text (768 dimensions)" in section
+    assert "900 candidate pairs, 120 accepted, 75 refused" in section and "7 merges blocked" in section
+    assert "2 multi-story roundups" in section and "40 of 260 reports" in section
+    assert "&lt;b&gt;" in section  # model text is escaped
+    assert "shared_evidence" not in page and "<b>" not in section
+    legacy = make_edition([make_story(headline="One")])  # editions before rc12: no section, the asked-for model
+    assert "How stories were grouped" not in render_edition_html(legacy)
+
+
 # ====================================================================== 3. evidence strength
 def _ev(publisher, title, *, source="news_rss", hours=3.0, url=None):
     return EvidenceLink(item_id=1, source=source, source_name=source, title=title, publisher=publisher,
@@ -192,11 +217,25 @@ def test_aggregator_items_count_as_their_publisher():
     assert assess(ev, T0).independent_reports == 1
 
 
-def test_trend_signals_add_diversity_but_never_corroborate():
+def test_trend_signals_never_corroborate():
     ev = [_ev(None, "ferry strike", source="google_trends", hours=None),
           _ev(None, "Ferry strike thread", source="reddit", hours=1)]
     st = assess(ev, T0)
     assert st.independent_reports == 0 and st.trend_signals == 2 and st.level == "limited"
+    assert st.channels == 0 and st.newest_age_hours is None  # attention is neither a channel nor recency
+
+
+def test_attention_never_lifts_a_story_to_strong():
+    """rc12: three articles from one channel plus a Google Trends phrase and a Bluesky post read as 'Strong
+    evidence' (the trend channel added the diversity point). Attention is shown, not counted."""
+    reports = [_ev("Wire One", "Quake hits Port Calder", hours=30), _ev("Daily Two", "Port Calder quake damages roads", hours=30),
+               _ev("Third Paper", "Roads damaged in Calder earthquake", hours=30)]
+    attention = [_ev(None, "port calder quake", source="google_trends", hours=None),
+                 _ev(None, "Port Calder quake post", source="bluesky", hours=1)]
+    st = assess(reports + attention, T0)
+    assert (st.level, st.independent_reports, st.channels, st.trend_signals) == ("moderate", 3, 1, 2)
+    assert st.newest_age_hours == 30  # the fresh post is attention, not a newer report
+    assert assess(reports, T0).points == st.points
 
 
 def test_recency_uses_stated_times_only_and_is_deterministic():
@@ -270,6 +309,26 @@ def test_new_updated_signal_and_gone_stories_are_identified():
     assert [c.headline for c in ch.signals_down] == ["Kestrel Marathon Record Falls"]
     assert ch.unchanged == 1 and ch.compared_run_id == "prev"
     assert ch.summary() == "1 new, 1 updated, 1 growing, 1 fading, 1 no longer listed"
+
+
+def test_a_story_split_from_an_earlier_false_merge_is_not_new():
+    """rc12: an earlier edition merged two events into one card (the smart-glasses privacy probe carried WSJ's
+    profile of Meta's AI-app billionaire). When the next edition shows them apart, both continue that card:
+    neither is 'new', the half with fewer reports is not 'fading', and the best URL overlap wins."""
+    mixed = _story("Privacy Watchdog Launches Investigation into China-Based Company", sid="mixed",
+                   url="https://w.test/oaic", pubs=("Reuters", "WSJ", "ABC"), items=6)
+    mixed.evidence[1] = mixed.evidence[1].model_copy(update={"url": "https://w.test/wsj-meta"})
+    other = _story("Lumen Summit Agrees Methane Pledge", sid="lumen", url="https://w.test/lumen")
+    other.evidence.append(mixed.evidence[0].model_copy(update={"url": "https://w.test/oaic?p=2"}))
+    probe = _story("Privacy Watchdog Launches Investigation into China-Based Company", sid="probe",
+                   url="https://w.test/oaic", pubs=("Reuters", "ABC"), items=4)
+    probe.evidence[1] = probe.evidence[1].model_copy(update={"url": "https://w.test/oaic?p=2"})
+    wsj = _story("The Mulleted, Meme-Loving Billionaire Behind Meta's Hit AI App", sid="wsj",
+                 url="https://w.test/wsj-meta", pubs=("WSJ",), items=1)
+    ch = compare_editions(make_edition([mixed, other], run_id="p"),
+                          make_edition([probe, wsj, other.model_copy(deep=True)], run_id="c"))
+    assert ch.new == [] and ch.gone == [] and ch.signals_down == []
+    assert ch.unchanged == 3
 
 
 def test_small_or_cosmetic_differences_are_not_reported():

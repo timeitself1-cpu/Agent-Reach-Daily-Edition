@@ -1,16 +1,22 @@
-# Handoff: Agent Reach Daily (state after 1.0.0rc10)
+# Handoff: Agent Reach Daily (state after 1.0.0rc12)
 
 For a new Claude session picking up this project. Read `CLAUDE.md` first (commands, invariants,
-conventions), then this file. `README.md` is the user guide; `docs/architecture.md` the internals.
+conventions, workflow), then **`docs/PLAN.md` (the live roadmap: continue at its first unchecked
+sub-task)**. This file is the history and background. `README.md` is the user guide;
+`docs/architecture.md` the internals.
 
 ## Where things stand
 
-- **Branch:** `claude/loving-darwin-a7rqvs` (all work is pushed there; no PR has been opened, and
-  none should be unless the user asks). Version `agent_reach/daily/__init__.py` = `1.0.0rc10`.
-- **CI:** `tests.yml` is green on rc10 (Python 3.10 and 3.12; the 15 GUI tests skip there without a
-  display). On the user's Windows PC: 371 tests, 370 pass and 1 skips (SIGKILL semantics; a Reddit
-  pacing test can fail by milliseconds when the PC is busy); the GUI
-  tests run against the real display, and Tk start-up there occasionally fails and skips one of them.
+- **Branch:** rc10 was developed on `claude/loving-darwin-a7rqvs`; rc11 is on
+  `claude/affectionate-galileo-isxik1` (no PR has been opened, and none should be unless the user asks).
+  rc12 continues there. Version `agent_reach/daily/__init__.py` = `1.0.0rc12`. Release notes:
+  `docs/RELEASE-NOTES.md`.
+- **CI:** `tests.yml` is green on rc11 (Python 3.10 and 3.12, pytest under `xvfb-run` so the GUI tests
+  really run, plus a dry run of the self-test harness). Up to rc10 the GUI tests silently skipped in CI.
+- **Windows:** rc11 has been validated on the user's PC with two self-test rounds (October 7): the offline
+  suite passes there (404 passed, 1 skipped, 4 xfailed), shortcuts and `.cmd` open the window, real Ollama
+  checks, cancel, a full real refresh (~6 min), the model drop (ends in 9 s) and repeated use all pass.
+  Details: "Open items" item 0 below and `docs/RELEASE-NOTES.md`.
 - **The user** runs the app on Windows from `C:\Users\downt\Downloads\Agent Reach\src\Agent-Reach`,
   with Ollama (`llama3.1:8b`, `nomic-embed-text`) on their PC. A refresh takes about 5 minutes there.
   They receive each release as a zip (`git archive --format=zip --prefix=Agent-Reach/ HEAD`),
@@ -30,6 +36,66 @@ filler, headlines, feed doctor, TikTok off). rc7 In brief, NEW/UPDATED/DAY tags,
 follow/mute. rc8 daily podcast (Windows System.Speech via PowerShell, espeak-ng fallback).
 rc9 second accuracy pass from the real October 5 evening edition. rc10 third accuracy pass from the
 real October 6 morning edition, and a cloud runner that fits a Daily refresh (below).
+rc11 stabilization pass (six robustness fixes from a code review; see below). rc12 story identity:
+EmbeddingGemma 2 neighbours + an explicit same-event gate (below).
+
+## rc12 in short (event identity; the user's priority over Phase 1)
+
+- **Why:** five real October 7 editions published 52 false merges (13 mixed stories). HDBSCAN plus
+  single-link `LinkIndex.components` chained A~B, B~C into A=C through roundups, dates and broad words.
+- **Measured on:** `tests/event_corpus.py` + `tests/fixtures/real/event_gold.json` (427 reports, 225 gold
+  events). `python -m tests.embedding_benchmark` writes `docs/eval/identity-eval.md`: rc11 52 false merges;
+  rc12 0 with no embeddings (recall 0.635), 0 with replayed rc11 neighbourhoods (0.762), 0 with every
+  cosine forced to 1. Real-model numbers (nomic vs `embeddinggemma-2:270m` vs the full model) need the
+  user's PC: `Benchmark-Embeddings.ps1 -PullModels`. NOT run yet; no Ollama in the cloud sandbox.
+- **Design:** `pipeline/embeddings.py` (event representation `event_repr_v2`, task prompts, model+digest
+  aware SQLite cache, fallback chain) proposes kNN candidates; `pipeline/event_identity.py`
+  (`IdentityGate`: ACCEPT/REJECT/NEUTRAL with reasons; `cohesive_groups`: accepted edge + no conflict +
+  strict majority support) decides. `LinkIndex.components` uses the same gate. `cluster_method=density`
+  keeps HDBSCAN as the candidate source if ever needed. Pair log: `diagnostics\semantic\`.
+- **Thresholds** (`identity_candidate_cosine=0.45`, `identity_strong_cosine=0.80`) are untuned guesses
+  for EmbeddingGemma: read the benchmark's cosine distributions from the user's PC before changing them.
+- Also: summary gates (quote-truncated copies, intro-only phrases, month abbreviations), newest report
+  sets the current state ("Developing"), attention signals never raise strength, what-changed by best
+  URL overlap with split-aware continuity, prefs v9.
+- **rc12b (first PC round, Oct 7 12:07):** EmbeddingGemma 2 could not be pulled on Ollama 0.40.0 (404), so
+  everything ran on nomic. The benchmark had 2 false merges, the two live editions 26 (the merge pass after
+  labelling grew stories one lone report at a time; 'agents'+'hack', 'France'+'protests', 'storm'+'possible').
+  All fixed; both live editions are fixtures (`RC12_EDITIONS`, 7 labelled editions, 0 false merges offline,
+  recall 0.620 lexical / 0.688 replay). Also: label calls of <= 12 stories with cut-off answers split, pair log
+  keeps accepted pairs, grouping model optional in the model check, pull errors shown, self-test FAIL rule.
+  Details: `docs/REAL-EDITION-FINDINGS.md`. Next: the user updates Ollama and reruns the benchmark (PLAN H7).
+- **rc12c (same afternoon):** with the newest Ollama, the pull says "this model requires MLX support, but the MLX
+  runtime is not available": EmbeddingGemma 2 is Mac-only in Ollama for now. Messages say so (no "update Ollama"),
+  the self-test reports it as INFO, and the benchmark compares `embeddinggemma:300m` (runs on Windows) with nomic.
+- **rc12d (round 2, 13:36):** `embeddinggemma:300m` downloads but Ollama 0.40.0 cannot open it on Windows (manifest
+  written as a symlink, "untrusted mount point", ollama/ollama#18847), so still no Gemma numbers. The two live
+  editions had 26 false merges in 8 stories (Saint/Mancuso obituaries, Kimmel in Trump Accounts, three polls, two
+  'retreats', Belgium/France, two RTX Spark laptops). Five gate rules tightened (lone-report attachment needs a title
+  link to every member; "don't"; legislature names; a common name + one word needs strong embedding agreement; a
+  two-word phrase is one piece of evidence); laptops open as a strict xfail. Corpus 9 editions (`RC12C_EDITIONS`):
+  1 false merge, R 0.620; real nomic vectors replayed: 0 false merges, R 0.679. Also the Windows-only
+  `progress.json` delete race (retried now) and the self-test FAIL for the expected fallback.
+- **rc12e (round 3, 16:29):** 29 PASS, 1 FAIL (stray test files, which the user deletes: no longer needed). Live editions
+  12 false merges in 5 stories: the golf 'retreat' again (the lone-report attach rule still called 'Trump' rare at
+  6%; now 2% as in the pair rule), 'Gaza' + 'war' (now an everyday word), Nature's three-prize Nobel round-up (now
+  a round-up). Corpus 11 editions (`RC12D_EDITIONS`), no recall lost; the self-test keeps both grouping files.
+
+## rc11 stabilization pass (bugs found by reading the Daily code, no new features)
+
+- The window trusted the pid in `state/progress.json` / `refresh.lock.json`. After a crash or power
+  loss that pid can belong to another process: the window showed "Refreshing" forever, Refresh was
+  blocked, and Cancel would terminate the unrelated process. `AppController.activity` now confirms with
+  a non-blocking probe of the OS refresh lock (skipped while the worker is the window's own child).
+- A run stopped by the Daily time limit stayed `running` in SQLite (cancellation is not an
+  `Exception`); `run_once` marks it invalid.
+- A cache-repair `OSError` (Windows refusing to move a damaged file a scanner holds open) escaped the
+  worker before the attempt was recorded; it is now logged and the refresh continues.
+- `check_ollama` crashed on another program answering on port 11434; a negative or NaN `Retry-After`
+  is clamped; Follow / Mute from the story menu is validated like the Topics tab.
+- Line endings: 22 files were stored with CRLF, which made the two `.ps1` files show as modified in
+  every fresh clone. `.gitattributes` now has `* text=auto` and the repository stores LF (CRLF is still
+  checked out for `.ps1`, `.cmd`, `.bat`).
 
 ## rc10 in short (see the commit message and `tests/test_accuracy3.py`)
 
@@ -124,7 +190,13 @@ real October 6 morning edition, and a cloud runner that fits a Daily refresh (be
 
 ## Validating with real data
 
-A cloud sandbox has no Ollama and no news access. Three ways to see real output:
+A cloud sandbox has no Ollama and no news access. Four ways to see real output:
+
+0. **The self-test zip (rc11+).** `Test-AgentReachDaily.ps1` on the user's PC writes
+   `AgentReach-selftest-<time>.zip`: `report.txt` (PASS/FAIL per check), the real editions
+   (`edition.json`, `edition.txt`, `edition-2.*`), an automatic read-through of them (candidate
+   duplicates, odd text, old reports: regression-fixture material), the scratch `refresh.log`s, the
+   model-drop run, `pytest-output.txt` from Windows, and the launcher checks. Read `report.txt` first.
 
 1. **The user's export.** They send `AgentReachDaily-YYYY-MM-DD.html` (the ... menu > Export) and
    `logs\refresh.log`. Convert the HTML to text (strip tags) and read it story by story: mixed
@@ -147,6 +219,22 @@ A cloud sandbox has no Ollama and no news access. Three ways to see real output:
    stability and the settings migration (their settings.json is still version 1) are exercised too.
 
 ## Open items, in the order I would take them
+
+0. **rc11 Windows validation.** Round 1 (October 7, self-test zip on the user's PC: Windows 11, Python 3.12,
+   Ollama 0.35.1, 2560x1440 at 100%): 24 pass, 3 fail; all three fixed (`docs/RELEASE-NOTES.md` items 17-22).
+   Round 2 (Ollama 0.40.0): the offline suite runs on Windows (404 passed, 1 skipped, 4 xfailed; real file
+   locks, TerminateProcess), shortcuts and `.cmd` open the window, the model drop ends in 9 s. Still open:
+   the `.pyw` double-click (the harness now records the `.pyw` association), the by-hand checklist answers,
+   a morning with the scheduled task.
+   The user's project folder holds `agent_reach/daily/events.py`, `agent_reach/pipeline/identity.py`,
+   `tests/test_event_contract.py` and `tests/test_event_identity.py`, which are NOT in this repository (an
+   event-registry / story-identity layer from other work; they import `edition.story_from_event` and
+   `cleaner.ABBREVIATION_GUARD`, which rc11 does not have). Ask the user where that work lives before the
+   event-layer phase. Real-edition findings for that phase: `docs/REAL-EDITION-FINDINGS.md`.
+   Known residual risks: the window's lock probe can, in a millisecond window, make a scheduled worker that
+   starts at that instant exit as "busy" (it retries at the next hourly check; only when a stale progress
+   file exists); a worker killed while publishing can leave a newer edition with an older pointer (repaired
+   at the next refresh).
 
 1. **Seen in the rc10 real runs, not fixed yet:**
    - A shared phrase that is itself generic still links two items: "Trump Rallies for Republicans Ahead
@@ -192,12 +280,15 @@ A cloud sandbox has no Ollama and no news access. Three ways to see real output:
 
 - Run tests quietly: `python -m pytest -o addopts="" -q 2>&1 | tail -2` (pytest.ini adds `-q`;
   the refresh tests print INFO logs on failure, so always `tail`/`grep` the output).
-- GUI tests need Xvfb: `Xvfb :99 &` then `DISPLAY=:99 python -m pytest ...` (restart Xvfb if GUI tests
-  suddenly skip). `/opt/pwsh/pwsh` can parse-check `.ps1` files.
+- GUI tests need Tk AND a display: the cloud image's default Python 3.13 has no tkinter, so the GUI file is
+  skipped as a whole ("1 skipped"). `apt-get install -y python3-tk`, then a venv from `/usr/bin/python3.12`
+  (or `uv python install 3.10`, which has Tk) and `xvfb-run -a <venv>/bin/python -m pytest -rs`.
+  Screenshots: `xvfb-run -a -s "-screen 0 1366x768x24"` and ImageMagick `import -window root shot.png`.
+  `.ps1` files can be parse-checked with PowerShell 7 (download the linux-x64 tarball from the PowerShell
+  GitHub releases into /opt/pwsh) and `[System.Management.Automation.Language.Parser]::ParseFile`.
 - On the user's Windows PC: Python 3.9/3.11/3.12 only (no 3.10; CI covers 3.10). PowerShell 5.1:
   `[IO.File]` calls resolve relative paths against the process folder (the user's install), not the
-  shell location, so always pass absolute paths. A fresh clone shows the two `.ps1` files as modified
-  (CRLF normalisation); stage files by name.
+  shell location, so always pass absolute paths.
 - Read large files by line range (`gui.py` is ~2,000 lines, `edition.py` ~1,100, `clusterer.py` ~1,300);
   use `grep -n` to find the place first.
 - Screenshots are expensive: take one only to check a visual change, at a modest size.

@@ -1,0 +1,138 @@
+{
+ "about": "Gold event labels for the real October 7, 2026 editions (tests/event_corpus.py). By default every report of a published story belongs to that story's event. 'split' moves reports (matched by the start of their title) to another event; 'unassigned' reports cover several stories (newsletter roundups, a bare hashtag) and belong to no event; 'same_event' joins two published stories that are one event; 'related' pairs are different occurrences of one ongoing topic: merging them is neither counted as right nor as a false merge. Every split is a false merge a reader saw in that edition.",
+ "editions": {
+  "2026-10-07-0935-export.json": {
+   "split": {
+    "James Webb Space Telescope Investigates": {"NASA's Prima space telescope": "prima-telescope"},
+    "Collins Distances Herself": {
+     "Reports of sexual violence are up": "cornell-campus-data",
+     "News Wrap: Cornell says Sally Yates": "cornell-yates-review"
+    },
+    "NASA Features Supernova Remnant": {
+     "Why You Should Watch": "fauda-october-7-episodes",
+     "October 2026 Satellite Puzzler": "nasa-satellite-puzzler"
+    },
+    "Privacy Watchdog Launches Investigation": {"The Mulleted, Meme-Loving Billionaire": "wsj-meta-ai-app-billionaire"}
+   },
+   "unassigned": ["Battleground candidates clash over Trump and Cornell", "#October7"],
+   "related": [["cornell-campus-data", "cornell-yates-review"]]
+  },
+  "2026-10-07-selftest-r1.json": {
+   "split": {
+    "Paramount Completes $111B": {"Skydance To Make Paramount": "skydance-studio-lots"}
+   },
+   "same_event": [["Lionel Messi Bids Farewell", "Messi Signs Off in Tears"]],
+   "related": [["Paramount Completes $111B", "skydance-studio-lots"]]
+  },
+  "2026-10-07-selftest-r2.json": {
+   "split": {
+    "More Than 500 U.S. Citizens Detained": {"ABC and Trump's FCC battle": "abc-fcc-court", "Disney, ABC battle Trump's FCC": "abc-fcc-court"},
+    "Google Releases EmbeddingGemma 2": {"Claude launches Google Docs": "claude-google-docs"},
+    "Skydance to Make Paramount": {"From films to streaming prices": "warner-deal-explainer"}
+   },
+   "related": [["Skydance to Make Paramount", "warner-deal-explainer"]]
+  },
+  "2026-10-07-selftest2-r1.json": {
+   "split": {
+    "Dead Star Likely Birthed": {"Star Moles Signs to Dead Oceans": "star-moles-record-deal"},
+    "James Webb Space Telescope Investigates": {"NASA's Prima space telescope": "prima-telescope"},
+    "Collins and Jackson Clash": {"News Wrap: Cornell says Sally Yates": "cornell-yates-review"},
+    "Privacy Watchdog Launches Investigation": {"The Mulleted, Meme-Loving Billionaire": "wsj-meta-ai-app-billionaire"}
+   },
+   "unassigned": ["Battleground candidates clash over Trump and Cornell"],
+   "related": [["Azerbaijan Denies Link", "Germany's Former Foreign Intelligence Chief"]]
+  },
+  "2026-10-07-selftest2-r2.json": {
+   "split": {
+    "NASA's James Webb Space Telescope Investigates": {"NASA's Prima space telescope": "prima-telescope"},
+    "Google Launches AI-Powered Gaming Platform": {
+     "Google invests millions in Mark Zuckerberg": "virtual-cell",
+     "\"The beginning of a new scientific paradigm\"": "virtual-cell"
+    },
+    "Susan Collins Distances Herself": {"News Wrap: Cornell says Sally Yates": "cornell-yates-review"}
+   },
+   "unassigned": ["Battleground candidates clash over Trump and Cornell"]
+  },
+  "2026-10-07-rc12-r1.json": {
+   "split": {
+    "France Halts Use of Stun Grenades": {"Belgian students rally": "belgian-student-protests"},
+    "Paxton Privately Blames": {
+     "Michigan": "rogers-canada-trade",
+     "Hegseth's handling": "hegseth-iran-war",
+     "DIY fertilizer": "fertilizer-prices-iran-war"
+    },
+    "Tropical Storm Isaias Forms": {"G2 geomagnetic storm": "g2-geomagnetic-storm"},
+    "OpenAI Agents Attempted to Hack": {"South Korea says AI agents": "south-korea-bank-hacks"},
+    "Gears of War: E-Day Studio Boss": {"Xbox bets on Gears of War": "xbox-gears-feature"}
+   },
+   "unassigned": ["cam jurgens", "cam.jurgens"],
+   "related": [["Gears of War: E-Day Studio Boss", "xbox-gears-feature"]]
+  },
+  "2026-10-07-rc12-r2.json": {
+   "split": {
+    "France Halts Use of Stun Grenades": {"Belgian students rally": "belgian-student-protests"},
+    "OpenAI Agents Tried to Hack": {"South Korea says AI agents": "south-korea-bank-hacks"},
+    "Gears of War: E-Day Studio Boss": {"Xbox bets on Gears of War": "xbox-gears-feature"},
+    "Andrew Garfield Stopped Using ChatGPT": {"Andrew Garfield Could Win an Oscar": "garfield-oscar-profile"}
+   },
+   "related": [["Gears of War: E-Day Studio Boss", "xbox-gears-feature"],
+               ["Andrew Garfield Stopped Using ChatGPT", "garfield-oscar-profile"]]
+  },
+  "2026-10-07-rc12c-r1.json": {
+   "split": {
+    "Trump's Retreat: From the Gulf": {"Trump wants to turn": "trump-golf-retreat"},
+    "France Suspends Use of Stun Grenades": {
+     "France summons Iranian ambassador": "france-iran-ambassador",
+     "🔴 Live: France summons": "france-iran-ambassador",
+     "Over 100 arrested in Belgium": "belgian-student-protests"
+    },
+    "Trump Announces Automatic Enrollment": {"Jimmy Kimmel on Trump": "kimmel-trump-iran-joke"},
+    "Nvidia RTX Spark for $2,999.99": {"Microsoft and Nvidia launch Surface": "surface-laptop-ultra"},
+    "Eva Marie Saint and Frank": {"Oscar-winning actress Eva Marie Saint": "eva-marie-saint-dies"},
+    "US Voters Concerned About AI Risks": {
+     "As voters weigh incumbents": "term-limits-research",
+     "Americans don't want taxpayer": "campaign-ads-poll"
+    }
+   },
+   "same_event": [["France Suspends Use of Stun Grenades", "French Riot Police Fire Tear Gas"]],
+   "related": [["France Suspends Use of Stun Grenades", "france-iran-ambassador"]]
+  },
+  "2026-10-07-rc12c-r2.json": {
+   "split": {
+    "Trump's Military Retreats Globally": {"Trump wants to turn": "trump-golf-retreat"},
+    "France Suspends Use of Stun Grenades": {
+     "France summons Iranian ambassador": "france-iran-ambassador",
+     "🔴 Live: France summons": "france-iran-ambassador"
+    },
+    "Trump Announces Automatic Enrollment": {"Jimmy Kimmel on Trump": "kimmel-trump-iran-joke"},
+    "Jon Rahm Quits LIV Golf": {"LIV Golf Gets Potential Lifeline": "liv-golf-financing"}
+   },
+   "same_event": [["France Suspends Use of Stun Grenades", "French Riot Police Fire Tear Gas"]],
+   "related": [["France Suspends Use of Stun Grenades", "france-iran-ambassador"],
+               ["Jon Rahm Quits LIV Golf", "liv-golf-financing"]]
+  },
+  "2026-10-07-rc12d-r1.json": {
+   "split": {
+    "Trump's Forces Pull Back Globally": {"Trump wants to turn": "trump-golf-retreat"},
+    "Christa Pike Survives Botched Execution": {
+     "Texas set to carry out first US execution": "texas-execution",
+     "Lawyers looking to block Texas man": "texas-execution"
+    }
+   },
+   "unassigned": ["Nobel Prizes 2026: brain switches"],
+   "related": [["Christa Pike Survives Botched Execution", "texas-execution"]]
+  },
+  "2026-10-07-rc12d-r2.json": {
+   "split": {
+    "Trump's Retreat: From the Gulf": {"Trump wants to turn": "trump-golf-retreat"},
+    "Christa Pike Survives Botched Execution": {
+     "Texas set to carry out first US execution": "texas-execution",
+     "Lawyers looking to block Texas man": "texas-execution"
+    },
+    "Israelis Mourn Oct. 7 Attack": {"Gaza child": "gaza-child-autoimmune"}
+   },
+   "unassigned": ["Nobel Prizes 2026: brain switches"],
+   "related": [["Christa Pike Survives Botched Execution", "texas-execution"]]
+  }
+ }
+}

@@ -1,6 +1,8 @@
 """Full five-stage dry run: mock HTTP + fake Ollama, REAL HDBSCAN + trafilatura + SQLite."""
 import asyncio
 
+import pytest
+
 from agent_reach import main as M
 
 
@@ -49,3 +51,23 @@ def test_no_llm_mode_balances(mock_http, fake_ollama, settings):
     r = _run(settings, use_llm=False)
     assert r.accounting.balanced
     assert r.llm_mode.startswith("heuristic")
+
+
+def test_a_run_stopped_by_a_time_limit_is_marked_invalid(mock_http, fake_ollama, settings, monkeypatch):
+    """asyncio.wait_for cancels run_once (CancelledError is not an Exception): the run must not stay 'running'."""
+    import sqlite3
+
+    from agent_reach.pipeline.clusterer import SemanticClusterer
+
+    async def slow_cluster(self, *a, **kw):
+        await asyncio.sleep(30)
+
+    monkeypatch.setattr(SemanticClusterer, "cluster", slow_cluster)
+
+    async def limited():
+        await asyncio.wait_for(M.run_once(settings, use_llm=True), timeout=0.5)
+
+    with pytest.raises(asyncio.TimeoutError):
+        asyncio.run(limited())
+    with sqlite3.connect(settings.db_path) as conn:
+        assert [r[0] for r in conn.execute("SELECT status FROM runs")] == ["invalid"]

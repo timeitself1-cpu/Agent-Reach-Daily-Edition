@@ -6,7 +6,8 @@
     1. Finds Python 3.10+ with tkinter (the py launcher or python on PATH).
     2. Creates or reuses the project environment .venv in this folder and installs requirements.txt.
     3. Checks the Daily app imports and its command line.
-    4. Checks Ollama and the two local models (llama3.1:8b, nomic-embed-text).
+    4. Checks Ollama and the local models (llama3.1:8b; embeddinggemma-2:270m groups the stories,
+       nomic-embed-text is its fallback).
        Missing models are only downloaded with -PullModels (several GB; you are told first).
     5. Creates the data folder %LOCALAPPDATA%\AgentReachDaily with default settings.
     6. Creates "Agent Reach" shortcuts on the Desktop and in the Start menu (skip with -NoShortcut).
@@ -143,6 +144,21 @@ if (-not $installed) {
     }
 }
 
+# The project folder on the environment's import path, so "python -m agent_reach.daily" also works
+# when started from another folder (a shortcut, Task Scheduler or a terminal elsewhere).
+if ((Test-Path -LiteralPath $VenvPython) -and -not $DryRun) {
+    $sitePackages = & $VenvPython -c "import sysconfig; print(sysconfig.get_paths()['purelib'])" 2>$null
+    if ($LASTEXITCODE -eq 0 -and $sitePackages) {
+        $pth = Join-Path ($sitePackages | Select-Object -First 1).Trim() "agent_reach_project.pth"
+        [IO.File]::WriteAllText($pth, $Root + "`r`n", (New-Object System.Text.UTF8Encoding $false))
+        Write-Ok "Agent Reach can be started from any folder (project path registered in .venv)"
+    } else {
+        Write-Warn2 "Could not find the environment's site-packages; start the app from this folder or its shortcuts."
+    }
+} elseif ($DryRun) {
+    Write-Dry "register $Root in .venv (agent_reach_project.pth) so the app starts from any folder"
+}
+
 # ------------------------------------------------------------------ 4. validate the app
 Write-Step "Checking Agent Reach Daily"
 $haveVenv = Test-Path -LiteralPath $VenvPython
@@ -176,7 +192,7 @@ else {
     $warnings.Add("Install Ollama from https://ollama.com/download")
 }
 
-$models = @("llama3.1:8b", "nomic-embed-text")
+$models = @("llama3.1:8b", "embeddinggemma-2:270m", "nomic-embed-text")
 $names = @()
 $reachable = $false
 try {
@@ -188,6 +204,29 @@ try {
     Write-Warn2 "Ollama is not answering at $OllamaHost. Start the Ollama app (Start menu > Ollama)."
     $warnings.Add("Start Ollama before refreshing (the app also tries to start it automatically)")
 }
+$ollamaVersion = "version unknown"
+if ($reachable) {
+    try { $ollamaVersion = "version " + (Invoke-RestMethod -Uri "$OllamaHost/api/version" -TimeoutSec 5 -ErrorAction Stop).version }
+    catch { $ollamaVersion = "version unknown" }
+    Write-Ok "Ollama $ollamaVersion"
+}
+
+function Get-PullError([string]$model) {
+    # Ask the Ollama server itself why: its answer names the reason ('ollama pull' prints it only on screen).
+    # Returns $null when this second try downloads the model after all.
+    try {
+        $body = @{ model = $model; stream = $false } | ConvertTo-Json -Compress
+        Invoke-RestMethod -Method Post -Uri "$OllamaHost/api/pull" -Body $body -ContentType "application/json" -TimeoutSec 600 -ErrorAction Stop | Out-Null
+        return $null
+    } catch {
+        if ($_.ErrorDetails -and $_.ErrorDetails.Message) {
+            $msg = $_.ErrorDetails.Message
+            try { $j = $msg | ConvertFrom-Json -ErrorAction Stop; if ($j.error) { return [string]$j.error } } catch { }
+            return $msg
+        }
+        return $_.Exception.Message
+    }
+}
 
 function Test-ModelPresent([string]$wanted, [string[]]$have) {
     if ($have -contains $wanted -or $have -contains "$($wanted):latest") { return $true }
@@ -198,14 +237,29 @@ function Test-ModelPresent([string]$wanted, [string[]]$have) {
 if ($reachable) {
     foreach ($m in $models) {
         if (Test-ModelPresent $m $names) { Write-Ok "Model $m is available"; continue }
-        $size = if ($m -like "llama3.1*") { "about 4.9 GB" } else { "about 274 MB" }
+        $size = if ($m -like "llama3.1*") { "about 4.9 GB" } elseif ($m -like "embeddinggemma*") { "a few hundred MB" } else { "about 274 MB" }
         if ($PullModels -and $ollamaExe) {
             if ($DryRun) { Write-Dry "download model $m ($size): ollama pull $m" }
             else {
                 Write-Note "Downloading model $m ($size). This can take a while..."
                 & $ollamaExe pull $m
-                if ($LASTEXITCODE -ne 0) { Write-Warn2 "Downloading $m failed."; $warnings.Add("Run: ollama pull $m") }
-                else { Write-Ok "Model $m downloaded" }
+                if ($LASTEXITCODE -eq 0) { Write-Ok "Model $m downloaded" }
+                else {
+                    $why = Get-PullError $m
+                    if ($null -eq $why) { Write-Ok "Model $m downloaded (second try)" }
+                    elseif ($m -like "embeddinggemma-2*" -and $why -match "MLX") {
+                        # Oct 7 on Windows, newest Ollama: "this model requires MLX support, but the MLX runtime is not available"
+                        Write-Note "Ollama can run $m only on Mac computers so far (it needs Apple's MLX). Nothing to do: the app groups stories with nomic-embed-text, and this script tries again each time you run it with -PullModels."
+                    }
+                    elseif ($m -like "embeddinggemma*") {
+                        Write-Warn2 "Downloading $m failed: $why"
+                        Write-Warn2 "EmbeddingGemma 2 is new (October 2026) and may need a newer Ollama than this one ($ollamaVersion). Update Ollama from https://ollama.com/download (or choose 'Restart to update' in the Ollama tray menu), then run this again. Until then the app groups stories with nomic-embed-text."
+                        $warnings.Add("Optional (better story grouping): update Ollama, then run: ollama pull $m")
+                    } else {
+                        Write-Warn2 "Downloading $m failed: $why"
+                        $warnings.Add("Run: ollama pull $m")
+                    }
+                }
             }
         } else {
             Write-Warn2 "Model $m is missing ($size). Download it with:  ollama pull $m   (or re-run with -PullModels)"

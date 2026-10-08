@@ -12,6 +12,7 @@ import random
 
 from agent_reach.models import CleanedTrendItem, RawTrendItem, SourceName
 from agent_reach.pipeline.clusterer import LinkIndex
+from agent_reach.pipeline.event_identity import IdentityGate, cohesive_groups
 from tests.test_accuracy import NOW, REAL
 
 #: (source, title, context) as they appeared in the edition
@@ -125,6 +126,12 @@ def _groups(ids: list[int]) -> list[list[int]]:
     return sorted((sorted(g) for g in INDEX.components(ids, [])), key=lambda g: (-len(g), g))
 
 
+def _groups_embedded(ids: list[int]) -> list[list[int]]:
+    """Grouping when the embedding model agrees that the reports are close (identical vectors)."""
+    gate = IdentityGate(INDEX, {i: [1.0] for i in ids})
+    return sorted((sorted(g) for g in cohesive_groups(ids, gate)), key=lambda g: (-len(g), g))
+
+
 # ---------------------------------------------------------------- story membership
 def test_an_everyday_word_does_not_link_two_stories():
     assert _groups([1, 2, 3, 4, 5, 6, 7]) == [[2, 3, 6, 7], [1, 4], [5]]
@@ -153,7 +160,9 @@ def test_currency_signs_keep_their_meaning_in_ascii():
 
 
 def test_different_nobel_prizes_are_different_stories():
-    assert _groups([31, 32, 33, 34, 35, 36]) == [[31, 32, 33], [34, 35, 36]]
+    # rc12: 'California scientist wins a Nobel Prize, then makes school lunches' does not say which prize; it
+    # shares only the name 'Nobel Prize' with the medicine reports, so it is not chained into either story.
+    assert _groups([31, 32, 33, 34, 35, 36]) == [[34, 35, 36], [31, 32], [33]]
 
 
 def test_titles_with_no_name_in_common_link_only_through_rare_words():
@@ -179,8 +188,17 @@ def test_one_shared_key_name_is_not_the_same_story():
 
 def test_corroborated_stories_of_the_edition_stay_together():
     # (the BBC Quebec title, 18, shares only names with the others and never linked by title alone)
-    for ids in ([11, 12, 13, 14], [15, 16, 17], [19, 20], [21, 22, 23]):
+    for ids in ([11, 12, 13, 14], [19, 20], [21, 22]):
         assert _groups(ids) == [ids]
+    # rc12: 'What to know about Spain's housing protests ...' shares only 'housing' with the snap-election
+    # reports: without an embedding nothing confirms it, with an agreeing embedding it joins
+    assert _groups([15, 16, 17]) == [[15, 16], [17]]
+    assert _groups_embedded([15, 16, 17]) == [[15, 16, 17]]
+    # rc12, precision first: "Trump says 'threat' led US to pull bombers from RAF Fairford" shares 'bombers' +
+    # 'threat' with the B-1 report but only the word 'led' with 'Potential Iranian Drone Attack Led to Exit of
+    # U.S. Aircraft From British Air Base'; linked to one of two members, it is not chained in by title alone
+    # (in a real run its page text and the embedding can still support it)
+    assert _groups([21, 22, 23]) == [[21, 22], [23]]
 
 
 # ---------------------------------------------------------------- Top Stories and sections
@@ -910,7 +928,7 @@ def test_version_6_settings_replace_yahoo_finance():
     prefs = DailyPrefs.model_validate({"prefs_version": 6, "feeds": [
         {"name": "Yahoo Finance", "url": yahoo, "category": "News", "enabled": False},
         {"name": "My Paper", "url": "https://paper.test/rss", "category": "News"}]})
-    assert prefs.prefs_version == PREFS_VERSION == 8
+    assert prefs.prefs_version == PREFS_VERSION == 9
     by_name = {f.name: f for f in prefs.feeds}
     assert "Yahoo Finance" not in by_name and not by_name["Bloomberg - Markets"].enabled and by_name["My Paper"].enabled
     assert yahoo not in {f.url for f in default_feeds()}

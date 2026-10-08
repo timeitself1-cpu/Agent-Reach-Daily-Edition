@@ -27,7 +27,7 @@ from datetime import datetime, timedelta
 
 from pydantic import BaseModel, ConfigDict, ValidationError
 
-from agent_reach.daily.fsutil import atomic_write_json, read_json
+from agent_reach.daily.fsutil import FileUnavailable, atomic_write_json, read_json
 from agent_reach.daily.paths import DataPaths
 from agent_reach.daily.prefs import DailyPrefs
 from agent_reach.daily.timeutil import ensure_utc, next_fixed_time_after, parse_hhmm
@@ -56,13 +56,20 @@ class RefreshState(BaseModel):
     next_retry_utc: datetime | None = None
 
 
-def load_state(paths: DataPaths) -> tuple[RefreshState, str | None]:
+def load_state(paths: DataPaths, *, strict: bool = False) -> tuple[RefreshState, str | None]:
+    """A damaged file is moved aside; one that cannot be read right now is left alone (the refresh
+    worker, ``strict``, then stops instead of overwriting the history)."""
     path = paths.state_file
     if not path.exists():
         return RefreshState(), None
     try:
         return RefreshState.model_validate(read_json(path)), None
-    except (OSError, ValueError, ValidationError) as exc:
+    except OSError as exc:
+        log.warning("refresh state cannot be read right now (%s); the file is left unchanged", exc)
+        if strict:
+            raise FileUnavailable(f"refresh history cannot be read: {exc}") from exc
+        return RefreshState(), "Refresh history could not be read just now; it was not changed."
+    except (ValueError, ValidationError) as exc:
         backup = path.with_name(f"{path.name}.corrupt-{int(time.time())}")
         try:
             path.replace(backup)

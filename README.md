@@ -7,7 +7,8 @@ desktop window: what happened, why it matters, whether it is new or continuing, 
 fact came from.
 
 - **Local AI, no subscriptions.** Summaries are written by [Ollama](https://ollama.com) on your
-  own PC (`llama3.1:8b` + `nomic-embed-text`). No paid or cloud AI API is used or needed.
+  own PC (`llama3.1:8b` writes; `embeddinggemma-2:270m` groups reports into stories, with
+  `nomic-embed-text` as its fallback). No paid or cloud AI API is used or needed.
 - **Evidence first.** The model only words what the collected sources say. Every "why it
   matters" note is checked against the evidence: invented names, numbers or vague filler are
   dropped rather than shown.
@@ -31,11 +32,19 @@ powershell -ExecutionPolicy Bypass -File .\Setup-AgentReachDaily.ps1 -PullModels
 ```
 
 The setup script creates the project environment (`.venv`), installs the requirements, checks
-Ollama and downloads the two models when `-PullModels` is given, creates your data folder,
+Ollama and downloads the models when `-PullModels` is given, creates your data folder,
 puts an **Agent Reach** shortcut on the Desktop and in the Start menu, and (with `-RegisterTask`)
 registers the background refresh task. It never deletes anything. Add `-DryRun` to see every step
-first. Leave out `-PullModels` if you already ran `ollama pull llama3.1:8b` and
-`ollama pull nomic-embed-text`.
+first. Leave out `-PullModels` if you already ran `ollama pull llama3.1:8b`,
+`ollama pull embeddinggemma-2:270m` and `ollama pull nomic-embed-text`. Without EmbeddingGemma the app
+still works: it groups stories with `nomic-embed-text` and says so under "How stories were grouped".
+EmbeddingGemma 2 is new (October 2026): if its download fails, setup shows the reason Ollama gave. As of
+October 7, Ollama runs EmbeddingGemma 2 only on Mac computers ("this model requires MLX support"), so on
+Windows the download fails and the app uses nomic-embed-text; nothing to do. If another reason is shown,
+update Ollama (https://ollama.com/download, or "Restart to update" in the Ollama tray menu) and run setup
+with `-PullModels` again. Embedding models never appear in the Ollama app's chat model list. (Ollama 0.40.0 on
+Windows can also download a model and then fail to open it, "The path cannot be traversed because it contains an
+untrusted mount point": an Ollama bug, ollama/ollama issue 18847. The app is not affected; it uses nomic-embed-text.)
 
 Then **double-click "Agent Reach"** on the Desktop. The first time, choose
 **Collect today's news now**; on a PC without a graphics card the first edition takes roughly
@@ -76,8 +85,13 @@ Command line (from the project folder):
 .\.venv\Scripts\python.exe -m agent_reach.daily --status        # due / last success / backoff, as JSON
 .\.venv\Scripts\python.exe -m agent_reach.daily --check         # is Ollama running with both models?
 .\.venv\Scripts\python.exe -m agent_reach.daily --export-html today.html
+.\.venv\Scripts\python.exe -m agent_reach.daily --export-sample daily-sample.json --stories 1,2,3,4,9
 .\.venv\Scripts\python.exe -m agent_reach.daily --help          # everything else (task, reset, exit codes)
 ```
+
+`--export-sample` writes a few stories of an edition (headlines, the app's summaries, source names and links,
+no publisher article text) for the demo on getagentreach.dev: replace `daily-sample.json` in the website's
+repository with it. Read the chosen stories first; only stories grouped correctly belong on the site.
 
 ## How refreshing works
 
@@ -178,17 +192,20 @@ account or cloud service. Each podcast is saved as `podcasts\YYYY-MM-DD.wav` wit
 | Symptom | What to do |
 |---|---|
 | "Ollama is not running" | Start **Ollama** from the Start menu (the app also tries to start it). Check with `--check`. |
-| "model(s) ... are missing" | `ollama pull llama3.1:8b` and `ollama pull nomic-embed-text`, or re-run setup with `-PullModels`. |
+| "model(s) ... are missing" | `ollama pull llama3.1:8b`, `ollama pull embeddinggemma-2:270m` and `ollama pull nomic-embed-text`, or re-run setup with `-PullModels`. |
+| "The story-grouping model embeddinggemma-2:270m is not installed" | Refreshes still work (stories are grouped with nomic-embed-text). On Windows, Ollama cannot run it yet ("requires MLX support"): nothing to do. On a Mac: `ollama pull embeddinggemma-2:270m`; if that fails, update Ollama first. |
 | "No news source responded" | You are offline or a firewall blocks the feeds. The previous edition is kept; it retries automatically. |
 | A source shows PARTIAL or FAILED (Details) | Normal from time to time (Reddit and X often rate-limit automated readers). The edition is built from the rest and says what was missing. Expand "News feeds", "YouTube" or "Google News" in Details to see which feed, channel or section failed and why. |
 | A publisher feed keeps failing | Feed addresses move. Settings > Publisher feeds > select it > **Test**; then Edit the address or turn the feed off. |
 | TikTok, Bluesky or Mastodon shows FAILED | TikTok blocks many automated readers (it is off by default; turn it on in Settings > Sources to try); the Bluesky and Mastodon public APIs occasionally change or rate-limit. Nothing is lost: viral and TikTok news still arrives through the Google News "TikTok / viral" section. |
 | "N feeds have not worked for 3 days or more" | The feed doctor noticed feeds that failed in every refresh for 3+ days. Open Settings > Publisher feeds: failing feeds say "Failing since ..."; **Test** one, Edit its address, or press **Turn off failing feeds**. |
 | A refresh takes too long | Each refresh groups and summarizes up to 260 articles. On a PC without a graphics card, lower "Articles grouped and summarized per refresh" in Settings > Sources (for example to 150), or turn off feeds you do not read. |
-| "found too little news to publish" | Fewer than 3 good stories or fewer than 2 working sources. Wait for the automatic retry or press Refresh later. |
+| "did not publish a new edition" | The banner says why: fewer than 3 good stories, fewer than 2 working sources, or the local model stopped answering partway. The previous edition is kept; wait for the automatic retry or press Refresh later. |
+| "stopped responding and was ended" | A refresh hung (for example a stuck network or disk call) and was ended after the time limit plus 25 minutes. `diagnostics\*-watchdog.json` shows where it hung; send it with `logs\refresh.log`. |
 | Wrong date or time zone | Times are US Central (CST/CDT) on purpose. If times look wrong by hours, re-run setup: it installs `tzdata`, which Windows needs. |
 | Background refresh never happens | Settings > Schedule shows the task status; **Enable / update** re-registers it. Check `logs\scheduler.log`. The task only runs while you are logged on. |
-| "saved edition files are damaged" | Nothing to do: damaged files are skipped and moved to `cache\quarantine` at the next refresh; the newest good edition is shown. |
+| "saved edition files could not be read" | Usually nothing to do: damaged files are skipped and moved to `cache\quarantine` at the next refresh, and the newest good edition is shown. A file that is only open in another program (a backup or sync tool) is left alone and read again later. |
+| "settings could not be read just now" | Another program (OneDrive, a backup tool, an editor) holds `settings.json`. Nothing was changed; close that program or wait a minute. Refreshes wait until the file can be read. |
 | The window does not open | Run `.\.venv\Scripts\python.exe -m agent_reach.daily` in PowerShell to see the error, and check `logs\gui.log`. |
 | Where are the logs? | In the app: **...** menu > **Open logs folder**. Or paste `%LOCALAPPDATA%\AgentReachDaily\logs` into the File Explorer address bar (the AppData folder is hidden by default). Refreshes write `refresh.log`; the window writes `gui.log`. |
 | Start completely fresh | Settings > Storage > **Delete all cached editions**, or `--reset-cache --yes`. |
@@ -235,7 +252,14 @@ checks do), never sees the web, and its output is checked before it is shown. De
 .\.venv\Scripts\python.exe -m tests.replay_benchmark
 ```
 
+On your own PC, `powershell -ExecutionPolicy Bypass -File .\Test-AgentReachDaily.ps1` runs the self-test
+with the real Ollama and real news in a scratch folder (your data folder is only read) and leaves a zip of
+the results on the Desktop; see [docs/WINDOWS-TEST-RC11.md](docs/WINDOWS-TEST-RC11.md).
+`powershell -ExecutionPolicy Bypass -File .\Benchmark-Embeddings.ps1 -PullModels` first compares the embedding
+models for story grouping (nomic-embed-text, EmbeddingGemma 2 270M and the full model) on labelled real
+editions, then runs the same self-test; send back both zips from the Desktop.
+
 Tests never touch the network or a real Ollama. `tests/daily_fakes.py` holds synthetic publisher
 feeds (fictional places on `.test` hosts) and a deterministic fake model; `samples/DEMO-edition.json`
-is the clearly labelled demo edition. Version: Agent Reach Daily 1.0 release candidate 10
-(`python -m agent_reach.daily --version`).
+is the clearly labelled demo edition. Version: Agent Reach Daily 1.0 release candidate 12
+(`python -m agent_reach.daily --version`). What changed in each release: `docs/RELEASE-NOTES.md`.

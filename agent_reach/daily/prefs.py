@@ -28,7 +28,7 @@ from agent_reach.daily.feeds import (
     default_feeds,
     feeds_from_entries,
 )
-from agent_reach.daily.fsutil import atomic_write_json, read_json
+from agent_reach.daily.fsutil import FileUnavailable, atomic_write_json, read_json
 from agent_reach.daily.paths import DataPaths
 from agent_reach.daily.timeutil import parse_hhmm
 
@@ -43,7 +43,7 @@ GENERAL_NEWS_SOURCES = frozenset({"google_news", "news_rss"})
 SOURCE_NOTES = {
     "google_news": "Google News: top stories and one section per category (RSS)",
     "news_rss": "Publisher feeds (Publisher feeds tab)",
-    "youtube": "YouTube: most-watched new videos of the channels in Publisher feeds",
+    "youtube": "YouTube: popular new videos",
     "google_trends": "Google Trends daily searches (RSS)",
     "wikipedia": "Wikipedia: most-read articles and 'In the news'",
     "mastodon": "Mastodon: news links people are sharing (mastodon.social)",
@@ -56,7 +56,7 @@ SOURCE_NOTES = {
     "producthunt": "Product Hunt launches (tech)",
     "arxiv": "arXiv AI/ML papers (research)",
 }
-PREFS_VERSION = 8
+PREFS_VERSION = 9
 DAILY_VELOCITY_WINDOWS = [24.0, 48.0, 168.0]
 DAILY_VELOCITY_WEIGHTS = [0.5, 0.3, 0.2]
 DAILY_VELOCITY_TOLERANCE = 0.25
@@ -90,7 +90,8 @@ class DailyPrefs(BaseModel):
 
     ollama_host: str = "http://localhost:11434"
     ollama_model: str = "llama3.1:8b"
-    embed_model: str = "nomic-embed-text"
+    embed_model: str = "embeddinggemma-2:270m"
+    embed_fallback_models: list[str] = Field(default_factory=lambda: ["nomic-embed-text"])
     require_llm: bool = True  # no edition from heuristic labels unless the user explicitly allows it
     why_it_matters: bool = True
     start_ollama_if_down: bool = True
@@ -146,7 +147,10 @@ class DailyPrefs(BaseModel):
           (``REPLACED_IN_V6``);
         * version 6 -> 7: Yahoo Finance (HTTP 404) replaced by Bloomberg's markets feed (``REPLACED_IN_V7``);
         * version 7 -> 8: The Independent's world feed (HTTP 429 for every automated reader) replaced by
-          CBS News's (``REPLACED_IN_V8``).
+          CBS News's (``REPLACED_IN_V8``);
+        * version 8 -> 9: story grouping uses EmbeddingGemma 2 (``embeddinggemma-2:270m``) instead of
+          nomic-embed-text, which stays as the fallback when the new model is not installed. A model the
+          user chose themselves is kept.
         """
         if not isinstance(data, dict):
             return data
@@ -189,6 +193,9 @@ class DailyPrefs(BaseModel):
             data["feeds"] = _replace_feeds(data["feeds"], REPLACED_IN_V7)
         if version < 8 and isinstance(data.get("feeds"), list):
             data["feeds"] = _replace_feeds(data["feeds"], REPLACED_IN_V8)
+        if version < 9 and data.get("embed_model", "nomic-embed-text") in ("nomic-embed-text", "nomic-embed-text:latest"):
+            data["embed_model"] = "embeddinggemma-2:270m"
+            data.setdefault("embed_fallback_models", ["nomic-embed-text"])
         data["prefs_version"] = PREFS_VERSION
         return data
 
@@ -249,11 +256,13 @@ class DailyPrefs(BaseModel):
         return v
 
 
-def load_prefs(paths: DataPaths) -> tuple[DailyPrefs, str | None]:
-    """Load preferences; never fails. Returns (prefs, warning for the UI or None).
+def load_prefs(paths: DataPaths, *, strict: bool = False) -> tuple[DailyPrefs, str | None]:
+    """Load preferences. Returns (prefs, warning for the UI or None).
 
     A corrupt file is kept as ``settings.json.corrupt-<time>``. Invalid individual values are
-    reset to defaults while the remaining valid values are kept.
+    reset to defaults while the remaining valid values are kept. A file that cannot be read right now
+    (another program holds it) is left exactly as it is: the window shows defaults with a warning, and
+    with ``strict`` (the refresh worker) ``FileUnavailable`` is raised so no refresh runs on defaults.
     """
     path = paths.settings
     if not path.exists():
@@ -262,7 +271,13 @@ def load_prefs(paths: DataPaths) -> tuple[DailyPrefs, str | None]:
         raw = read_json(path)
         if not isinstance(raw, dict):
             raise ValueError("settings file is not a JSON object")
-    except (OSError, ValueError) as exc:
+    except OSError as exc:
+        log.warning("settings cannot be read right now (%s); the file is left unchanged", exc)
+        if strict:
+            raise FileUnavailable(f"settings file cannot be read: {exc}") from exc
+        return DailyPrefs(), ("Your settings could not be read just now (the file is open in another program "
+                              "or not readable), so defaults are shown. The file was not changed.")
+    except ValueError as exc:
         backup = path.with_name(f"{path.name}.corrupt-{int(time.time())}")
         try:
             path.replace(backup)
@@ -320,6 +335,9 @@ def build_settings(prefs: DailyPrefs, paths: DataPaths, **overrides: Any):
         ollama_host=prefs.ollama_host,
         ollama_model=prefs.ollama_model,
         embed_model=prefs.embed_model,
+        embed_fallback_models=list(prefs.embed_fallback_models),
+        # developer artifact: every candidate pair of the run with the identity gate's verdict and reasons
+        semantic_log_dir=paths.diagnostics_dir / "semantic" if hasattr(paths, "diagnostics_dir") else None,
         velocity_windows_hours=list(DAILY_VELOCITY_WINDOWS),
         velocity_window_weights=list(DAILY_VELOCITY_WEIGHTS),
         velocity_window_tolerance=DAILY_VELOCITY_TOLERANCE,

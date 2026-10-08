@@ -20,7 +20,7 @@ from datetime import date, datetime
 from agent_reach.daily import VERSION_LABEL
 from agent_reach.daily.edition import DailyEdition, Story, health_summary, newest_published, safe_url
 from agent_reach.daily.fsutil import atomic_write_json, read_json
-from agent_reach.daily.lock import pid_alive, read_holder_info
+from agent_reach.daily.lock import LockBusy, RefreshLock, pid_alive, read_holder_info
 from agent_reach.daily.paths import PROJECT_ROOT, DataPaths
 from agent_reach.daily.prefs import DailyPrefs, load_prefs
 from agent_reach.daily.state import DueInfo, RefreshState, check_due, load_state
@@ -39,6 +39,11 @@ from agent_reach.daily.timeutil import (
 
 log = logging.getLogger(__name__)
 CREATE_NO_WINDOW = 0x08000000
+
+
+#: The worker's progress stages as the steps a reader sees ('Refreshing, step 4 of 7: Grouping ...').
+REFRESH_STEPS = {"prereq": 1, "ingest": 2, "clean": 3, "enrich": 3, "cluster": 4, "score": 5, "persist": 5,
+                 "edition": 5, "brief": 6, "publish": 7, "podcast": 7}
 
 
 @dataclass
@@ -147,11 +152,27 @@ class AppController:
         alive = pid_alive(pid) if pid else False
         if not (running_child or alive):
             return RefreshActivity(False)
+        if not running_child and not self._lock_held():
+            # files left by a worker that died (crash, power loss): its pid may now belong to another
+            # process, which must never be shown as a refresh (or stopped by Cancel)
+            return RefreshActivity(False)
         prog = prog or {}
         return RefreshActivity(True, stage=str(prog.get("stage", "starting")),
                                message=str(prog.get("message", "Starting refresh")),
                                trigger=str(prog.get("trigger") or (holder or {}).get("trigger") or ""),
                                pid=pid, started=parse_utc(prog.get("started_utc")))
+
+    def _lock_held(self) -> bool:
+        """True when a refresh worker holds the OS lock (the only reliable sign one is running)."""
+        lock = RefreshLock(self.paths.lock_file, None)
+        try:
+            lock.acquire()
+        except LockBusy:
+            return True
+        except OSError:
+            return True  # cannot tell: trust the pid check
+        lock.release()
+        return False
 
     def list_dates(self) -> list[date]:
         return self.store.list_dates()
@@ -167,6 +188,13 @@ class AppController:
             state.last_success_utc = latest.generation_completed_utc
         due = check_due(state, prefs, now)
         activity = self.activity()
+        if state.last_attempt_outcome == "running" and not activity.running:
+            # the worker ended without recording an outcome (killed, crashed, PC turned off); the next
+            # refresh records it as interrupted, the window says so now
+            state = state.model_copy(update={
+                "last_attempt_outcome": "interrupted",
+                "last_attempt_finished_utc": state.last_attempt_started_utc,
+                "last_attempt_message": "It was closed, crashed, or the PC turned off. Choose Refresh to try again."})
 
         shown, viewing_latest = latest, True
         if self.demo is not None:
@@ -210,8 +238,10 @@ class AppController:
                                           f"{'them' if len(failing) != 1 else 'it'} off in Settings > Publisher feeds."))
         if latest_res.corrupt:
             n = len(latest_res.corrupt)
-            banners.append(Banner("warn", f"{n} saved edition {'file is' if n == 1 else 'files are'} damaged and "
-                                          f"{'was' if n == 1 else 'were'} skipped; set aside at the next refresh."))
+            banners.append(Banner("warn", f"{n} saved edition {'file' if n == 1 else 'files'} could not be read "
+                                          "(damaged, or open in another program) and "
+                                          f"{'was' if n == 1 else 'were'} skipped. A damaged file is set aside "
+                                          "at the next refresh."))
 
         details: list[str] = []
         coverage_line = ""
@@ -227,7 +257,7 @@ class AppController:
         last_success = (f"Last successful refresh {format_brief(state.last_success_utc, now)}"
                         if state.last_success_utc else "No successful refresh yet")
         next_refresh = self._next_refresh_text(due, now, prefs)
-        status = self._status_text(state, activity, latest, today, failed_since_success)
+        status = self._status_text(state, activity, latest, today, failed_since_success, now)
         if not activity.running and shown is not None and shown.demo:
             status = "Showing the DEMO edition (sample content, not real news)"
         elif not activity.running and shown is not None and not viewing_latest:
@@ -253,14 +283,20 @@ class AppController:
 
     @staticmethod
     def _status_text(state: RefreshState, activity: RefreshActivity, latest: DailyEdition | None, today: date,
-                     failed_since_success: bool) -> str:
+                     failed_since_success: bool, now: datetime | None = None) -> str:
         if activity.running:
             who = {"scheduled": "Scheduled refresh", "gui_launch": "Automatic refresh",
                    "manual": "Refreshing"}.get(activity.trigger, "Refreshing")
-            since = f" (started {format_clock(activity.started)})" if activity.started else ""
-            return f"{who}{since}: {activity.message}"
+            since = ""
+            if activity.started:
+                minutes = int((now - activity.started).total_seconds() // 60) if now else -1
+                so_far = f", {minutes} min so far" if 0 < minutes < 24 * 60 else ""
+                since = f" (started {format_clock(activity.started)}{so_far})"
+            step = REFRESH_STEPS.get(activity.stage)
+            where = f", step {step} of {max(REFRESH_STEPS.values())}" if step else ""
+            return f"{who}{since}{where}: {activity.message}"
         if failed_since_success:
-            label = {"failed": "Last refresh failed", "no_update": "Last refresh found too little news to publish",
+            label = {"failed": "Last refresh failed", "no_update": "Last refresh did not publish a new edition",
                      "interrupted": "Last refresh was interrupted"}[state.last_attempt_outcome or "failed"]
             return f"{label}; showing the last good edition" if latest else label
         if state.last_attempt_outcome == "cancelled" and latest is None:
@@ -300,15 +336,16 @@ class AppController:
     def cancel_refresh(self) -> bool:
         """Stop the running worker (blocks for up to ~15 s: call it from a background thread)."""
         act = self.activity()
-        if not act.running or not act.pid:
+        pid = act.pid or getattr(self.child, "pid", None)  # our own worker, before it wrote its progress
+        if not act.running or not pid:
             return False
         import os
         import signal
 
         try:
-            os.kill(int(act.pid), signal.SIGTERM)
+            os.kill(int(pid), signal.SIGTERM)
         except OSError as exc:
-            log.warning("could not stop refresh worker %s: %s", act.pid, exc)
+            log.warning("could not stop refresh worker %s: %s", pid, exc)
             return False
         if self.child is not None:
             try:
@@ -397,7 +434,7 @@ def failure_text(state: RefreshState, *, has_edition: bool) -> str:
         if reason.startswith(prefix):
             reason = reason[len(prefix):].strip()
     reason = reason.replace(" The previous edition is kept.", "")
-    head = {"no_update": "The refresh at {when} found too little news to publish.",
+    head = {"no_update": "The refresh at {when} did not publish a new edition.",
             "interrupted": "The refresh at {when} stopped before finishing."}.get(
         state.last_attempt_outcome or "", "The refresh at {when} did not finish.").format(when=when)
     keep = " Your last good edition is still shown." if has_edition else ""
@@ -507,7 +544,8 @@ def details_report(snap: Snapshot, paths: DataPaths) -> list[tuple[str, list[tup
             ("Edition generated", t(ed.generation_completed_utc)),
             ("Stories", str(len(ed.stories))),
             ("Summaries", "local model" if ed.model.summaries == "local_model" else "extractive (lead sentences)"),
-            ("Models", f"{ed.model.llm_model} / {ed.model.embed_model}"),
+            ("Models", f"{ed.model.llm_model} / {ed.model.embed_model_used or ed.model.embed_model}"),
+            *([("Grouping fallback", ed.model.grouping["fallback"])] if ed.model.grouping.get("fallback") else []),
             ("Pipeline", ed.model.pipeline_mode),
             ("Items", f"{acct.ingested} collected, {acct.passed_filters} passed filters, {acct.clustered} in stories"),
             ("Coverage balanced", "yes" if ed.coverage.balanced else "no"),

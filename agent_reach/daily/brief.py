@@ -52,7 +52,7 @@ from agent_reach.daily.edition import (
 )
 from agent_reach.models import _coerce_ids
 from agent_reach.pipeline.cleaner import STOPWORDS, dedupe_key, sanitize_summary, significant_tokens
-from agent_reach.pipeline.clusterer import FILLER_RX, INSUFFICIENT_RX, extract_json
+from agent_reach.pipeline.clusterer import FILLER_RX, INSUFFICIENT_RX, connection_lost, extract_json
 
 log = logging.getLogger(__name__)
 
@@ -316,6 +316,9 @@ async def enrich_stories(stories: list[Story], settings, *, client=None, budget_
         except Exception as exc:  # noqa: BLE001 - optional enrichment never fails the edition
             stats["failed_calls"] += 1
             log.warning("brief pass call failed: %s: %s", type(exc).__name__, str(exc)[:160])
+            if connection_lost(exc):
+                log.info("brief pass: the model is not answering; the remaining stories keep their summaries")
+                break
             continue
         by_id = {b.id: b for b in parsed.stories}
         for i, story in enumerate(chunk, start=1):

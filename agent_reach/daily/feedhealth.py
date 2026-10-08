@@ -22,6 +22,15 @@ log = logging.getLogger(__name__)
 
 FAILING_DAYS = 3.0
 FAILING_RUNS = 2
+#: A channel where fewer than this share of feeds answered had an outage (YouTube answered 1 of 22 channel
+#: feeds in a real refresh on October 7): no single feed is blamed for it.
+OUTAGE_OK_SHARE = 0.2
+
+
+def channel_outage(feeds: list) -> bool:
+    """Every feed failed, or (with 5 or more feeds) fewer than ``OUTAGE_OK_SHARE`` of them answered."""
+    ok = sum(1 for f in feeds if f.ok)
+    return not ok or (len(feeds) >= 5 and ok < OUTAGE_OK_SHARE * len(feeds))
 
 
 class FeedRecord(BaseModel):
@@ -60,8 +69,8 @@ def record_run(paths: DataPaths, source_stats: list, now: datetime) -> FeedHealt
     health = load_feed_health(paths)
     for stat in source_stats:
         feeds = list(getattr(stat, "feeds", []) or [])
-        if not feeds or not any(f.ok for f in feeds):
-            continue  # every feed of the channel failed at once: an outage, not a broken feed
+        if not feeds or channel_outage(feeds):
+            continue  # (nearly) every feed of the channel failed at once: an outage, not a broken feed
         for f in feeds:
             rec = health.feeds.get(f.url) or FeedRecord(name=f.name, url=f.url, source=stat.source)
             rec.name, rec.source = f.name, stat.source

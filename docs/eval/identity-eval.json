@@ -1,0 +1,899 @@
+{
+ "generated_utc": "2026-10-07T23:12:05+00:00",
+ "corpus": {
+  "editions": [
+   "2026-10-07-selftest-r1.json",
+   "2026-10-07-selftest-r2.json",
+   "2026-10-07-selftest2-r1.json",
+   "2026-10-07-selftest2-r2.json",
+   "2026-10-07-0935-export.json",
+   "2026-10-07-rc12-r1.json",
+   "2026-10-07-rc12-r2.json",
+   "2026-10-07-rc12c-r1.json",
+   "2026-10-07-rc12c-r2.json",
+   "2026-10-07-rc12d-r1.json",
+   "2026-10-07-rc12d-r2.json"
+  ],
+  "reports": 931,
+  "gold_events": 528
+ },
+ "settings": {
+  "identity_neighbors": 12,
+  "identity_candidate_cosine": 0.45,
+  "identity_strong_cosine": 0.8,
+  "event_max_age_hours": 72.0
+ },
+ "ollama": false,
+ "rows": [
+  {
+   "name": "rc11 published (nomic + HDBSCAN + single-link; 5 rc11 editions)",
+   "precision": 0.885,
+   "recall": 0.976,
+   "f1": 0.928,
+   "false_merges": 52,
+   "missed_merges": 10,
+   "mixed_stories": 13,
+   "true_pairs": 411,
+   "predicted_pairs": 453,
+   "editions": {
+    "2026-10-07-selftest-r1.json": {
+     "precision": 1.0,
+     "recall": 0.915,
+     "f1": 0.955,
+     "false_merges": 0,
+     "missed_merges": 10,
+     "mixed_stories": 0,
+     "multi_report_stories": 20,
+     "true_pairs": 117,
+     "predicted_pairs": 107
+    },
+    "2026-10-07-selftest-r2.json": {
+     "precision": 0.947,
+     "recall": 1.0,
+     "f1": 0.973,
+     "false_merges": 6,
+     "missed_merges": 0,
+     "mixed_stories": 2,
+     "multi_report_stories": 17,
+     "true_pairs": 108,
+     "predicted_pairs": 114
+    },
+    "2026-10-07-selftest2-r1.json": {
+     "precision": 0.864,
+     "recall": 1.0,
+     "f1": 0.927,
+     "false_merges": 11,
+     "missed_merges": 0,
+     "mixed_stories": 4,
+     "multi_report_stories": 24,
+     "true_pairs": 70,
+     "predicted_pairs": 81
+    },
+    "2026-10-07-selftest2-r2.json": {
+     "precision": 0.786,
+     "recall": 1.0,
+     "f1": 0.88,
+     "false_merges": 15,
+     "missed_merges": 0,
+     "mixed_stories": 3,
+     "multi_report_stories": 17,
+     "true_pairs": 55,
+     "predicted_pairs": 70
+    },
+    "2026-10-07-0935-export.json": {
+     "precision": 0.753,
+     "recall": 1.0,
+     "f1": 0.859,
+     "false_merges": 20,
+     "missed_merges": 0,
+     "mixed_stories": 4,
+     "multi_report_stories": 19,
+     "true_pairs": 61,
+     "predicted_pairs": 81
+    }
+   }
+  },
+  {
+   "name": "rc12 published on the PC (nomic + identity gate before rc12b; 2 rc12 editions)",
+   "precision": 0.816,
+   "recall": 1.0,
+   "f1": 0.898,
+   "false_merges": 26,
+   "missed_merges": 0,
+   "mixed_stories": 6,
+   "true_pairs": 115,
+   "predicted_pairs": 141,
+   "editions": {
+    "2026-10-07-rc12-r1.json": {
+     "precision": 0.736,
+     "recall": 1.0,
+     "f1": 0.848,
+     "false_merges": 19,
+     "missed_merges": 0,
+     "mixed_stories": 4,
+     "multi_report_stories": 15,
+     "true_pairs": 53,
+     "predicted_pairs": 72
+    },
+    "2026-10-07-rc12-r2.json": {
+     "precision": 0.899,
+     "recall": 1.0,
+     "f1": 0.947,
+     "false_merges": 7,
+     "missed_merges": 0,
+     "mixed_stories": 2,
+     "multi_report_stories": 21,
+     "true_pairs": 62,
+     "predicted_pairs": 69
+    }
+   }
+  },
+  {
+   "name": "rc12c published on the PC (nomic + rc12b identity gate; 2 rc12c editions)",
+   "precision": 0.872,
+   "recall": 0.917,
+   "f1": 0.894,
+   "false_merges": 26,
+   "missed_merges": 16,
+   "mixed_stories": 8,
+   "true_pairs": 193,
+   "predicted_pairs": 203,
+   "editions": {
+    "2026-10-07-rc12c-r1.json": {
+     "precision": 0.816,
+     "recall": 0.913,
+     "f1": 0.862,
+     "false_merges": 19,
+     "missed_merges": 8,
+     "mixed_stories": 6,
+     "multi_report_stories": 19,
+     "true_pairs": 92,
+     "predicted_pairs": 103
+    },
+    "2026-10-07-rc12c-r2.json": {
+     "precision": 0.93,
+     "recall": 0.921,
+     "f1": 0.925,
+     "false_merges": 7,
+     "missed_merges": 8,
+     "mixed_stories": 2,
+     "multi_report_stories": 20,
+     "true_pairs": 101,
+     "predicted_pairs": 100
+    }
+   }
+  },
+  {
+   "name": "rc12d published on the PC (nomic + rc12d identity gate; 2 rc12d editions)",
+   "precision": 0.887,
+   "recall": 1.0,
+   "f1": 0.94,
+   "false_merges": 12,
+   "missed_merges": 0,
+   "mixed_stories": 5,
+   "true_pairs": 94,
+   "predicted_pairs": 106,
+   "editions": {
+    "2026-10-07-rc12d-r1.json": {
+     "precision": 0.912,
+     "recall": 1.0,
+     "f1": 0.954,
+     "false_merges": 5,
+     "missed_merges": 0,
+     "mixed_stories": 2,
+     "multi_report_stories": 15,
+     "true_pairs": 52,
+     "predicted_pairs": 57
+    },
+    "2026-10-07-rc12d-r2.json": {
+     "precision": 0.857,
+     "recall": 1.0,
+     "f1": 0.923,
+     "false_merges": 7,
+     "missed_merges": 0,
+     "mixed_stories": 3,
+     "multi_report_stories": 15,
+     "true_pairs": 42,
+     "predicted_pairs": 49
+    }
+   }
+  },
+  {
+   "name": "identity gate, no embeddings (fallback)",
+   "precision": 0.996,
+   "recall": 0.568,
+   "f1": 0.724,
+   "false_merges": 2,
+   "missed_merges": 351,
+   "mixed_stories": 2,
+   "true_pairs": 813,
+   "predicted_pairs": 464,
+   "editions": {
+    "2026-10-07-selftest-r1.json": {
+     "precision": 1.0,
+     "recall": 0.436,
+     "f1": 0.607,
+     "false_merges": 0,
+     "missed_merges": 66,
+     "mixed_stories": 0,
+     "multi_report_stories": 20,
+     "true_pairs": 117,
+     "predicted_pairs": 51
+    },
+    "2026-10-07-selftest-r2.json": {
+     "precision": 1.0,
+     "recall": 0.435,
+     "f1": 0.606,
+     "false_merges": 0,
+     "missed_merges": 61,
+     "mixed_stories": 0,
+     "multi_report_stories": 19,
+     "true_pairs": 108,
+     "predicted_pairs": 47
+    },
+    "2026-10-07-selftest2-r1.json": {
+     "precision": 1.0,
+     "recall": 0.971,
+     "f1": 0.986,
+     "false_merges": 0,
+     "missed_merges": 2,
+     "mixed_stories": 0,
+     "multi_report_stories": 20,
+     "true_pairs": 70,
+     "predicted_pairs": 68
+    },
+    "2026-10-07-selftest2-r2.json": {
+     "precision": 1.0,
+     "recall": 0.891,
+     "f1": 0.942,
+     "false_merges": 0,
+     "missed_merges": 6,
+     "mixed_stories": 0,
+     "multi_report_stories": 19,
+     "true_pairs": 55,
+     "predicted_pairs": 49
+    },
+    "2026-10-07-0935-export.json": {
+     "precision": 1.0,
+     "recall": 0.787,
+     "f1": 0.881,
+     "false_merges": 0,
+     "missed_merges": 13,
+     "mixed_stories": 0,
+     "multi_report_stories": 17,
+     "true_pairs": 61,
+     "predicted_pairs": 48
+    },
+    "2026-10-07-rc12-r1.json": {
+     "precision": 1.0,
+     "recall": 0.528,
+     "f1": 0.691,
+     "false_merges": 0,
+     "missed_merges": 25,
+     "mixed_stories": 0,
+     "multi_report_stories": 13,
+     "true_pairs": 53,
+     "predicted_pairs": 28
+    },
+    "2026-10-07-rc12-r2.json": {
+     "precision": 1.0,
+     "recall": 0.5,
+     "f1": 0.667,
+     "false_merges": 0,
+     "missed_merges": 31,
+     "mixed_stories": 0,
+     "multi_report_stories": 18,
+     "true_pairs": 62,
+     "predicted_pairs": 31
+    },
+    "2026-10-07-rc12c-r1.json": {
+     "precision": 0.974,
+     "recall": 0.413,
+     "f1": 0.58,
+     "false_merges": 1,
+     "missed_merges": 54,
+     "mixed_stories": 1,
+     "multi_report_stories": 19,
+     "true_pairs": 92,
+     "predicted_pairs": 39
+    },
+    "2026-10-07-rc12c-r2.json": {
+     "precision": 1.0,
+     "recall": 0.505,
+     "f1": 0.671,
+     "false_merges": 0,
+     "missed_merges": 50,
+     "mixed_stories": 0,
+     "multi_report_stories": 20,
+     "true_pairs": 101,
+     "predicted_pairs": 51
+    },
+    "2026-10-07-rc12d-r1.json": {
+     "precision": 1.0,
+     "recall": 0.558,
+     "f1": 0.716,
+     "false_merges": 0,
+     "missed_merges": 23,
+     "mixed_stories": 0,
+     "multi_report_stories": 12,
+     "true_pairs": 52,
+     "predicted_pairs": 29
+    },
+    "2026-10-07-rc12d-r2.json": {
+     "precision": 0.957,
+     "recall": 0.524,
+     "f1": 0.677,
+     "false_merges": 1,
+     "missed_merges": 20,
+     "mixed_stories": 1,
+     "multi_report_stories": 15,
+     "true_pairs": 42,
+     "predicted_pairs": 23
+    }
+   }
+  },
+  {
+   "name": "identity gate, replayed rc11 neighbourhoods",
+   "precision": 0.994,
+   "recall": 0.645,
+   "f1": 0.782,
+   "false_merges": 3,
+   "missed_merges": 289,
+   "mixed_stories": 2,
+   "true_pairs": 813,
+   "predicted_pairs": 527,
+   "editions": {
+    "2026-10-07-selftest-r1.json": {
+     "precision": 1.0,
+     "recall": 0.607,
+     "f1": 0.755,
+     "false_merges": 0,
+     "missed_merges": 46,
+     "mixed_stories": 0,
+     "multi_report_stories": 19,
+     "true_pairs": 117,
+     "predicted_pairs": 71
+    },
+    "2026-10-07-selftest-r2.json": {
+     "precision": 1.0,
+     "recall": 0.454,
+     "f1": 0.624,
+     "false_merges": 0,
+     "missed_merges": 59,
+     "mixed_stories": 0,
+     "multi_report_stories": 19,
+     "true_pairs": 108,
+     "predicted_pairs": 49
+    },
+    "2026-10-07-selftest2-r1.json": {
+     "precision": 1.0,
+     "recall": 0.986,
+     "f1": 0.993,
+     "false_merges": 0,
+     "missed_merges": 1,
+     "mixed_stories": 0,
+     "multi_report_stories": 21,
+     "true_pairs": 70,
+     "predicted_pairs": 69
+    },
+    "2026-10-07-selftest2-r2.json": {
+     "precision": 1.0,
+     "recall": 0.891,
+     "f1": 0.942,
+     "false_merges": 0,
+     "missed_merges": 6,
+     "mixed_stories": 0,
+     "multi_report_stories": 19,
+     "true_pairs": 55,
+     "predicted_pairs": 49
+    },
+    "2026-10-07-0935-export.json": {
+     "precision": 1.0,
+     "recall": 0.852,
+     "f1": 0.92,
+     "false_merges": 0,
+     "missed_merges": 9,
+     "mixed_stories": 0,
+     "multi_report_stories": 17,
+     "true_pairs": 61,
+     "predicted_pairs": 52
+    },
+    "2026-10-07-rc12-r1.json": {
+     "precision": 1.0,
+     "recall": 0.566,
+     "f1": 0.723,
+     "false_merges": 0,
+     "missed_merges": 23,
+     "mixed_stories": 0,
+     "multi_report_stories": 13,
+     "true_pairs": 53,
+     "predicted_pairs": 30
+    },
+    "2026-10-07-rc12-r2.json": {
+     "precision": 1.0,
+     "recall": 0.548,
+     "f1": 0.708,
+     "false_merges": 0,
+     "missed_merges": 28,
+     "mixed_stories": 0,
+     "multi_report_stories": 19,
+     "true_pairs": 62,
+     "predicted_pairs": 34
+    },
+    "2026-10-07-rc12c-r1.json": {
+     "precision": 0.977,
+     "recall": 0.457,
+     "f1": 0.622,
+     "false_merges": 1,
+     "missed_merges": 50,
+     "mixed_stories": 1,
+     "multi_report_stories": 19,
+     "true_pairs": 92,
+     "predicted_pairs": 43
+    },
+    "2026-10-07-rc12c-r2.json": {
+     "precision": 1.0,
+     "recall": 0.554,
+     "f1": 0.713,
+     "false_merges": 0,
+     "missed_merges": 45,
+     "mixed_stories": 0,
+     "multi_report_stories": 22,
+     "true_pairs": 101,
+     "predicted_pairs": 56
+    },
+    "2026-10-07-rc12d-r1.json": {
+     "precision": 1.0,
+     "recall": 0.788,
+     "f1": 0.882,
+     "false_merges": 0,
+     "missed_merges": 11,
+     "mixed_stories": 0,
+     "multi_report_stories": 13,
+     "true_pairs": 52,
+     "predicted_pairs": 41
+    },
+    "2026-10-07-rc12d-r2.json": {
+     "precision": 0.939,
+     "recall": 0.738,
+     "f1": 0.827,
+     "false_merges": 2,
+     "missed_merges": 11,
+     "mixed_stories": 1,
+     "multi_report_stories": 16,
+     "true_pairs": 42,
+     "predicted_pairs": 33
+    }
+   }
+  },
+  {
+   "name": "identity gate, every pair cosine 1",
+   "precision": 1.0,
+   "recall": 0.157,
+   "f1": 0.272,
+   "false_merges": 0,
+   "missed_merges": 685,
+   "mixed_stories": 0,
+   "true_pairs": 813,
+   "predicted_pairs": 128,
+   "editions": {
+    "2026-10-07-selftest-r1.json": {
+     "precision": 1.0,
+     "recall": 0.145,
+     "f1": 0.254,
+     "false_merges": 0,
+     "missed_merges": 100,
+     "mixed_stories": 0,
+     "multi_report_stories": 4,
+     "true_pairs": 117,
+     "predicted_pairs": 17
+    },
+    "2026-10-07-selftest-r2.json": {
+     "precision": 1.0,
+     "recall": 0.102,
+     "f1": 0.185,
+     "false_merges": 0,
+     "missed_merges": 97,
+     "mixed_stories": 0,
+     "multi_report_stories": 4,
+     "true_pairs": 108,
+     "predicted_pairs": 11
+    },
+    "2026-10-07-selftest2-r1.json": {
+     "precision": 1.0,
+     "recall": 0.343,
+     "f1": 0.511,
+     "false_merges": 0,
+     "missed_merges": 46,
+     "mixed_stories": 0,
+     "multi_report_stories": 3,
+     "true_pairs": 70,
+     "predicted_pairs": 24
+    },
+    "2026-10-07-selftest2-r2.json": {
+     "precision": 1.0,
+     "recall": 0.218,
+     "f1": 0.358,
+     "false_merges": 0,
+     "missed_merges": 43,
+     "mixed_stories": 0,
+     "multi_report_stories": 5,
+     "true_pairs": 55,
+     "predicted_pairs": 12
+    },
+    "2026-10-07-0935-export.json": {
+     "precision": 1.0,
+     "recall": 0.213,
+     "f1": 0.351,
+     "false_merges": 0,
+     "missed_merges": 48,
+     "mixed_stories": 0,
+     "multi_report_stories": 4,
+     "true_pairs": 61,
+     "predicted_pairs": 13
+    },
+    "2026-10-07-rc12-r1.json": {
+     "precision": 1.0,
+     "recall": 0.075,
+     "f1": 0.14,
+     "false_merges": 0,
+     "missed_merges": 49,
+     "mixed_stories": 0,
+     "multi_report_stories": 2,
+     "true_pairs": 53,
+     "predicted_pairs": 4
+    },
+    "2026-10-07-rc12-r2.json": {
+     "precision": 1.0,
+     "recall": 0.081,
+     "f1": 0.149,
+     "false_merges": 0,
+     "missed_merges": 57,
+     "mixed_stories": 0,
+     "multi_report_stories": 3,
+     "true_pairs": 62,
+     "predicted_pairs": 5
+    },
+    "2026-10-07-rc12c-r1.json": {
+     "precision": 1.0,
+     "recall": 0.12,
+     "f1": 0.214,
+     "false_merges": 0,
+     "missed_merges": 81,
+     "mixed_stories": 0,
+     "multi_report_stories": 4,
+     "true_pairs": 92,
+     "predicted_pairs": 11
+    },
+    "2026-10-07-rc12c-r2.json": {
+     "precision": 1.0,
+     "recall": 0.139,
+     "f1": 0.243,
+     "false_merges": 0,
+     "missed_merges": 87,
+     "mixed_stories": 0,
+     "multi_report_stories": 4,
+     "true_pairs": 101,
+     "predicted_pairs": 14
+    },
+    "2026-10-07-rc12d-r1.json": {
+     "precision": 1.0,
+     "recall": 0.212,
+     "f1": 0.349,
+     "false_merges": 0,
+     "missed_merges": 41,
+     "mixed_stories": 0,
+     "multi_report_stories": 5,
+     "true_pairs": 52,
+     "predicted_pairs": 11
+    },
+    "2026-10-07-rc12d-r2.json": {
+     "precision": 1.0,
+     "recall": 0.143,
+     "f1": 0.25,
+     "false_merges": 0,
+     "missed_merges": 36,
+     "mixed_stories": 0,
+     "multi_report_stories": 4,
+     "true_pairs": 42,
+     "predicted_pairs": 6
+    }
+   }
+  }
+ ],
+ "models": [],
+ "false_merge_examples": {
+  "rc11 published (nomic + HDBSCAN + single-link; 5 rc11 editions)": {
+   "2026-10-07-selftest-r1.json": [],
+   "2026-10-07-selftest-r2.json": [
+    [
+     "Federal Agents Have Detained More Than 500 American Citizens in Trump's Immigration Crackdown",
+     "ABC and Trump's FCC battle in federal court over free speech and jurisdiction issues"
+    ],
+    [
+     "Federal Agents Have Detained More Than 500 American Citizens in Trump's Immigration Crackdown",
+     "Disney, ABC battle Trump's FCC in court over free speech protections"
+    ],
+    [
+     "EmbeddingGemma 2: An open, lightweight multimodal embedding model",
+     "Claude launches Google Docs, Sheets, and Slides integration with sidebar and more"
+    ],
+    [
+     "Google claims EmbeddingGemma 2 outperforms rival embedding models twice its size",
+     "Claude launches Google Docs, Sheets, and Slides integration with sidebar and more"
+    ],
+    [
+     "Claude launches Google Docs, Sheets, and Slides integration with sidebar and more",
+     "Google DeepMind Releases EmbeddingGemma 2, a 740M Open Multimodal Embedding Model Built on Gemma 4"
+    ]
+   ],
+   "2026-10-07-selftest2-r1.json": [
+    [
+     "Star Moles Signs to Dead Oceans, Readies 2027 Tour",
+     "Dead star likely birthed a new planet, in astronomical first"
+    ],
+    [
+     "Worlds collide! James Webb Space Telescope investigates what happens when planets crash together",
+     "NASA's Prima space telescope would aim to see what James Webb can't"
+    ],
+    [
+     "NASA's Webb finds signs of Mars-sized worlds smashing together",
+     "NASA's Prima space telescope would aim to see what James Webb can't"
+    ],
+    [
+     "What happened in the first Maine Senate debate between Collins and Jackson",
+     "Battleground candidates clash over Trump and Cornell allegations reignite debate over campus assault: Morning Rundown"
+    ],
+    [
+     "What happened in the first Maine Senate debate between Collins and Jackson",
+     "News Wrap: Cornell says Sally Yates will review handling of sexual assault reports"
+    ]
+   ],
+   "2026-10-07-selftest2-r2.json": [
+    [
+     "Worlds collide! James Webb Space Telescope investigates what happens when planets crash together",
+     "NASA's Prima space telescope would aim to see what James Webb can't"
+    ],
+    [
+     "NASA's Webb finds signs of Mars-sized worlds smashing together",
+     "NASA's Prima space telescope would aim to see what James Webb can't"
+    ],
+    [
+     "Google launches platform to create video games from text prompts",
+     "Google invests millions in Mark Zuckerberg's efforts to create a 'virtual cell'"
+    ],
+    [
+     "Google launches platform to create video games from text prompts",
+     "\"The beginning of a new scientific paradigm\": Zuckerberg's Biohub, U.S. and Google build virtual cell"
+    ],
+    [
+     "Google invests millions in Mark Zuckerberg's efforts to create a 'virtual cell'",
+     "Google, Unity Launch Platform to Create Video Games From Prompts"
+    ]
+   ],
+   "2026-10-07-0935-export.json": [
+    [
+     "Worlds collide! James Webb Space Telescope investigates what happens when planets crash together",
+     "NASA's Prima space telescope would aim to see what James Webb can't"
+    ],
+    [
+     "NASA's Webb finds signs of Mars-sized worlds smashing together",
+     "NASA's Prima space telescope would aim to see what James Webb can't"
+    ],
+    [
+     "What happened in the first Maine Senate debate between Collins and Jackson",
+     "Reports of sexual violence are up. Data from Cornell and other colleges in 8 charts."
+    ],
+    [
+     "What happened in the first Maine Senate debate between Collins and Jackson",
+     "Battleground candidates clash over Trump and Cornell allegations reignite debate over campus assault: Morning Rundown"
+    ],
+    [
+     "What happened in the first Maine Senate debate between Collins and Jackson",
+     "News Wrap: Cornell says Sally Yates will review handling of sexual assault reports"
+    ]
+   ]
+  },
+  "rc12 published on the PC (nomic + identity gate before rc12b; 2 rc12 editions)": {
+   "2026-10-07-rc12-r1.json": [
+    [
+     "France halts use of stun grenades after boy's hand blown off in student protests",
+     "Belgian students rally over education costs in protests echoing France"
+    ],
+    [
+     "France suspends the use of stun grenades after student protester loses hand",
+     "Belgian students rally over education costs in protests echoing France"
+    ],
+    [
+     "Photos: The Student Protests in France",
+     "Belgian students rally over education costs in protests echoing France"
+    ],
+    [
+     "Belgian students rally over education costs in protests echoing France",
+     "French government defends handling of high school protests as controversies grow"
+    ],
+    [
+     "Belgian students rally over education costs in protests echoing France",
+     "What France's student protesters want - and what the government is offering"
+    ]
+   ],
+   "2026-10-07-rc12-r2.json": [
+    [
+     "France halts use of stun grenades after boy's hand blown off in student protests",
+     "Belgian students rally over education costs in protests echoing France"
+    ],
+    [
+     "France suspends the use of stun grenades after student protester loses hand",
+     "Belgian students rally over education costs in protests echoing France"
+    ],
+    [
+     "Photos: The Student Protests in France",
+     "Belgian students rally over education costs in protests echoing France"
+    ],
+    [
+     "French government defends handling of high school protests as controversies grow",
+     "Belgian students rally over education costs in protests echoing France"
+    ],
+    [
+     "What France's student protesters want - and what the government is offering",
+     "Belgian students rally over education costs in protests echoing France"
+    ]
+   ]
+  },
+  "rc12c published on the PC (nomic + rc12b identity gate; 2 rc12c editions)": {
+   "2026-10-07-rc12c-r1.json": [
+    [
+     "From Iran to the U.K., Trump Is Being Forced Into Retreat",
+     "Trump wants to turn Florida golf course into presidential retreat"
+    ],
+    [
+     "From Iran to the U.K., Trump Is Being Forced Into Retreat",
+     "Trump wants to turn his private golf club into a presidential retreat"
+    ],
+    [
+     "Trump wants to turn Florida golf course into presidential retreat",
+     "Trump's Retreat: From the Gulf to Britain, American Forces Pull Back"
+    ],
+    [
+     "Trump's Retreat: From the Gulf to Britain, American Forces Pull Back",
+     "Trump wants to turn his private golf club into a presidential retreat"
+    ],
+    [
+     "France suspends use of stun grenades to police student protests",
+     "Over 100 arrested in Belgium student protests over education costs"
+    ]
+   ],
+   "2026-10-07-rc12c-r2.json": [
+    [
+     "From Iran to the U.K., Trump Is Being Forced Into Retreat",
+     "Trump wants to turn Florida golf course into presidential retreat"
+    ],
+    [
+     "From Iran to the U.K., Trump Is Being Forced Into Retreat",
+     "Trump wants to turn his private golf club into a presidential retreat"
+    ],
+    [
+     "Trump wants to turn Florida golf course into presidential retreat",
+     "Trump's Retreat: From the Gulf to Britain, American Forces Pull Back"
+    ],
+    [
+     "Trump's Retreat: From the Gulf to Britain, American Forces Pull Back",
+     "Trump wants to turn his private golf club into a presidential retreat"
+    ],
+    [
+     "WATCH: Trump announces eligible U.S. children automatically enrolled in Trump accounts",
+     "Jimmy Kimmel on Trump's joke about Iran bombing LA: 'Our own president wishing death to America'"
+    ]
+   ]
+  },
+  "rc12d published on the PC (nomic + rc12d identity gate; 2 rc12d editions)": {
+   "2026-10-07-rc12d-r1.json": [
+    [
+     "Nobel Prize in Chemistry 2026 to Henri B. Kagan and Kenso Soai",
+     "Nobel Prizes 2026: brain switches, 'ghost' particle hunter, and 'the chemistry of life'"
+    ],
+    [
+     "Nobel prize in chemistry awarded for work on mirror-image molecules",
+     "Nobel Prizes 2026: brain switches, 'ghost' particle hunter, and 'the chemistry of life'"
+    ],
+    [
+     "Nobel Prizes 2026: brain switches, 'ghost' particle hunter, and 'the chemistry of life'",
+     "Henri B. Kagan and Kenso Soai win Nobel Prize in chemistry"
+    ],
+    [
+     "From Iran to the U.K., Trump Is Being Forced Into Retreat",
+     "Trump wants to turn his private golf club into a presidential retreat"
+    ],
+    [
+     "Trump's Retreat: From the Gulf to Britain, American Forces Pull Back",
+     "Trump wants to turn his private golf club into a presidential retreat"
+    ]
+   ],
+   "2026-10-07-rc12d-r2.json": [
+    [
+     "Israelis mourn Oct. 7 attack as Palestinians in Gaza languish in ruins of the war it sparked",
+     "Gaza child's autoimmune condition triggered amid Israel's war"
+    ],
+    [
+     "Israelis mourn 7 October attack victims three years after deadly Hamas raid",
+     "Gaza child's autoimmune condition triggered amid Israel's war"
+    ],
+    [
+     "Nobel Prize in Chemistry 2026 to Henri B. Kagan and Kenso Soai",
+     "Nobel Prizes 2026: brain switches, 'ghost' particle hunter, and 'the chemistry of life'"
+    ],
+    [
+     "Nobel prize in chemistry awarded for work on mirror-image molecules",
+     "Nobel Prizes 2026: brain switches, 'ghost' particle hunter, and 'the chemistry of life'"
+    ],
+    [
+     "Nobel Prizes 2026: brain switches, 'ghost' particle hunter, and 'the chemistry of life'",
+     "Henri B. Kagan and Kenso Soai win Nobel Prize in chemistry"
+    ]
+   ]
+  },
+  "identity gate, no embeddings (fallback)": {
+   "2026-10-07-selftest-r1.json": [],
+   "2026-10-07-selftest-r2.json": [],
+   "2026-10-07-selftest2-r1.json": [],
+   "2026-10-07-selftest2-r2.json": [],
+   "2026-10-07-0935-export.json": [],
+   "2026-10-07-rc12-r1.json": [],
+   "2026-10-07-rc12-r2.json": [],
+   "2026-10-07-rc12c-r1.json": [
+    [
+     "Microsoft and Nvidia launch Surface Laptop Ultra with RTX Spark",
+     "Nvidia RTX Spark for $2,999.99: HP leak reveals RTX Spark laptop pricing ahead of launch"
+    ]
+   ],
+   "2026-10-07-rc12c-r2.json": [],
+   "2026-10-07-rc12d-r1.json": [],
+   "2026-10-07-rc12d-r2.json": [
+    [
+     "From Iran to the U.K., Trump Is Being Forced Into Retreat",
+     "Trump wants to turn his private golf club into a presidential retreat"
+    ]
+   ]
+  },
+  "identity gate, replayed rc11 neighbourhoods": {
+   "2026-10-07-selftest-r1.json": [],
+   "2026-10-07-selftest-r2.json": [],
+   "2026-10-07-selftest2-r1.json": [],
+   "2026-10-07-selftest2-r2.json": [],
+   "2026-10-07-0935-export.json": [],
+   "2026-10-07-rc12-r1.json": [],
+   "2026-10-07-rc12-r2.json": [],
+   "2026-10-07-rc12c-r1.json": [
+    [
+     "Microsoft and Nvidia launch Surface Laptop Ultra with RTX Spark",
+     "Nvidia RTX Spark for $2,999.99: HP leak reveals RTX Spark laptop pricing ahead of launch"
+    ]
+   ],
+   "2026-10-07-rc12c-r2.json": [],
+   "2026-10-07-rc12d-r1.json": [],
+   "2026-10-07-rc12d-r2.json": [
+    [
+     "From Iran to the U.K., Trump Is Being Forced Into Retreat",
+     "Trump wants to turn his private golf club into a presidential retreat"
+    ],
+    [
+     "Trump's Retreat: From the Gulf to Britain, American Forces Pull Back",
+     "Trump wants to turn his private golf club into a presidential retreat"
+    ]
+   ]
+  },
+  "identity gate, every pair cosine 1": {
+   "2026-10-07-selftest-r1.json": [],
+   "2026-10-07-selftest-r2.json": [],
+   "2026-10-07-selftest2-r1.json": [],
+   "2026-10-07-selftest2-r2.json": [],
+   "2026-10-07-0935-export.json": [],
+   "2026-10-07-rc12-r1.json": [],
+   "2026-10-07-rc12-r2.json": [],
+   "2026-10-07-rc12c-r1.json": [],
+   "2026-10-07-rc12c-r2.json": [],
+   "2026-10-07-rc12d-r1.json": [],
+   "2026-10-07-rc12d-r2.json": []
+  }
+ }
+}

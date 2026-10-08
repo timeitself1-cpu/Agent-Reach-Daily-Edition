@@ -13,6 +13,9 @@ from agent_reach.pipeline import density as D
 from agent_reach.pipeline import enricher as EN
 from tests.fakes import PAGES, FakeOllama, RealAsyncClient, fake_vec
 
+#: Resolution of time.monotonic() at worst (Windows, Python 3.12: GetTickCount64, 15.6 ms).
+MONOTONIC_TICK = 0.016
+
 
 def test_bs4_fallback_extracts_lead_and_skips_boilerplate(monkeypatch):
     monkeypatch.setattr(EN, "trafilatura", None)
@@ -114,7 +117,9 @@ def test_reddit_retries_pacing_and_budget():
 
     items, stat, dt = asyncio.run(go())
     assert stat.ok and items
-    assert min(b - a for a, b in zip(stamps, stamps[1:])) >= 0.29
+    # 0.3 s spacing; the stamps are taken in the handler, after pacing, and time.monotonic() on Windows with
+    # Python 3.12 ticks every ~16 ms, so one tick of slack (October 7, PC: 0.282 s measured before pacing re-checked)
+    assert min(b - a for a, b in zip(stamps, stamps[1:])) >= 0.3 - MONOTONIC_TICK
     assert dt < 4.5
 
 
@@ -133,4 +138,88 @@ def test_tiktok_paced_retries_then_clean_fail():
 
     items, stat = asyncio.run(go())
     assert not stat.ok and items == [] and len(stamps) == 3
-    assert min(b - a for a, b in zip(stamps, stamps[1:])) >= 0.29
+    assert min(b - a for a, b in zip(stamps, stamps[1:])) >= 0.3 - MONOTONIC_TICK
+
+
+def test_retry_after_is_never_negative_or_nan():
+    from agent_reach.ingestion.base import BaseIngester
+
+    class Probe(BaseIngester):
+        source = SourceName.REDDIT
+
+        async def fetch(self):
+            return []
+
+    ing = Probe(None, Settings(http_backoff_max_s=8.0), asyncio.Semaphore(1))
+    wait = lambda value: ing._retry_after(httpx.Response(429, headers={"Retry-After": value}))  # noqa: E731
+    assert wait("-5") == 0.0 and wait("nan") is None and wait("120") == 8.0 and wait("2") == 2.0
+
+
+def test_ollama_check_survives_a_server_that_is_not_ollama(monkeypatch):
+    """Another program on port 11434 (or a proxy page) answers with JSON of another shape: 'not reachable'
+    with a reason, never an AttributeError that crashes the refresh or the setup check."""
+    from agent_reach.daily import prereqs
+
+    real_client = httpx.Client
+    answers = {"/api/tags": ["not", "a", "dict"], "/api/version": ["x"]}
+    monkeypatch.setattr(prereqs.httpx, "Client", lambda **kw: real_client(
+        transport=httpx.MockTransport(lambda req: httpx.Response(200, json=answers[req.url.path])), **kw))
+    status = prereqs.check_ollama("http://localhost:11434", ["llama3.1:8b"])
+    assert not status.reachable and "not like an Ollama server" in status.error
+    assert status.describe().startswith("Another program answers at http://localhost:11434, not Ollama")
+    real_client2 = real_client
+    monkeypatch.setattr(prereqs.httpx, "Client", lambda **kw: real_client2(transport=httpx.MockTransport(
+        lambda req: httpx.Response(200, text="<html>Router admin page</html>")), **kw))
+    page = prereqs.check_ollama("http://localhost:11434", ["llama3.1:8b"])  # a web page (as seen on Windows)
+    assert not page.reachable and page.describe().startswith("Another program answers")
+    monkeypatch.setattr(prereqs.httpx, "Client", lambda **kw: real_client2(transport=httpx.MockTransport(
+        lambda req: httpx.Response(404, text="Not Found")), **kw))
+    assert prereqs.check_ollama("http://localhost:11434", ["x"]).describe().startswith("Another program answers")
+    monkeypatch.setattr(prereqs.httpx, "Client", lambda **kw: real_client(
+        transport=httpx.MockTransport(lambda req: httpx.Response(200, json=answers[req.url.path])), **kw))
+    answers["/api/tags"] = {"models": [{"name": "llama3.1:8b"}, "junk"]}
+    status = prereqs.check_ollama("http://localhost:11434", ["llama3.1:8b"])
+    assert status.ready and status.version is None
+
+
+def test_missing_grouping_model_is_named_but_never_blocks(monkeypatch):
+    """October 7 on the user's PC: Ollama 0.40.0 had no embeddinggemma-2:270m. Refreshes worked on nomic-embed-text,
+    but the 'model missing' message listed the grouping model beside the chat model as if it stopped refreshes."""
+    from agent_reach.daily import prereqs
+    from agent_reach.daily.prefs import DailyPrefs
+    from tests.daily_selftest import expected_fallback
+
+    real_client = httpx.Client
+    answers = {"/api/tags": {"models": [{"name": "llama3.1:8b"}, {"name": "nomic-embed-text:latest"}]},
+               "/api/version": {"version": "0.40.0"}}
+    monkeypatch.setattr(prereqs.httpx, "Client", lambda **kw: real_client(
+        transport=httpx.MockTransport(lambda req: httpx.Response(200, json=answers[req.url.path])), **kw))
+    prefs = DailyPrefs()
+    status = prereqs.check_prefs(prefs)
+    assert status.ready and status.missing == []
+    assert status.grouping_missing == prefs.embed_model and status.grouping_fallback == "nomic-embed-text"
+    text = status.describe()
+    assert text.startswith("Ollama 0.40.0 is running.") and f"'ollama pull {prefs.embed_model}'" in text
+    assert "grouped with nomic-embed-text" in text
+    # EmbeddingGemma 2 is Mac-only in Ollama so far: updating Ollama is no advice on Windows (October 7)
+    monkeypatch.setattr(prereqs.sys, "platform", "win32")
+    assert "only on Mac computers" in status.describe() and "update Ollama" not in status.describe()
+    monkeypatch.setattr(prereqs.sys, "platform", "darwin")
+    assert "update Ollama" in status.describe()
+    status.grouping_missing = "some-embedder:1b"
+    monkeypatch.setattr(prereqs.sys, "platform", "win32")
+    assert "update Ollama" in status.describe() and "Mac" not in status.describe()
+    # the self-test's real-refresh row: INFO, not FAIL
+    assert expected_fallback(prefs, "nomic-embed-text", "win32")
+    assert expected_fallback(prefs, "nomic-embed-text:latest", "win32")
+    assert not expected_fallback(prefs, "nomic-embed-text", "darwin") and not expected_fallback(prefs, None, "win32")
+    assert not expected_fallback(prefs, prefs.embed_model, "win32")
+    answers["/api/tags"] = {"models": [{"name": "nomic-embed-text:latest"}]}  # the chat model is what blocks
+    status = prereqs.check_prefs(prefs)
+    assert not status.ready and status.missing == [prefs.ollama_model]
+    assert status.describe().startswith(f"Ollama is running but model(s) {prefs.ollama_model} are missing.")
+    answers["/api/tags"] = {"models": [{"name": "llama3.1:8b"}, {"name": f"{prefs.embed_model}"}]}
+    status = prereqs.check_prefs(prefs)
+    assert status.ready and status.grouping_missing is None and "required models" in status.describe()
+    answers["/api/tags"] = {"models": [{"name": "llama3.1:8b"}]}
+    assert "grouped by shared words" in prereqs.check_prefs(prefs).describe()
