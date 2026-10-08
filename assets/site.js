@@ -109,7 +109,7 @@
   }
   function sourceList(s) {
     const n = s.sources.length;
-    return h('details', {class: 'src'}, h('summary', {text: `${plural(n, 'source')}`}),
+    return h('details', {class: 'src'}, h('summary', {text: `View ${plural(n, 'source')}`}),
       h('ul', null, s.sources.map(src => {
         const url = webUrl(src.url);
         const when = src.published_utc ? stamp(src.published_utc) : 'time not stated';
@@ -181,10 +181,13 @@
   function strip(ed, idx) {
     const latest = idx && idx.latest === ed.edition_date;
     const ageH = (Date.now() - Date.parse(ed.generated_utc)) / 3.6e6;
-    return h('div', {class: 'strip'},
-      h('span', {class: 'live' + (latest && ageH < 30 ? '' : ' old')}, h('b', {text: latest ? 'Latest edition' : 'Archived edition'}),
-        ` · ${longDate(ed.edition_date)}`, ed.revision > 1 ? ` · update ${ed.revision}` : '', ` · made ${clock(ed.generated_utc)}`),
-      h('span', null, `${plural(ed.stories.length, 'story', 'stories')} from ${plural(ed.reports_read || 0, 'report')} (${ed.sources_answered || 0} of ${ed.sources_tried || 0} kinds of source answered) · summaries by a local AI model`));
+    return h('div', {class: 'strip', 'aria-label': 'Edition details'},
+      h('div', {class: 'edition-meta'},
+        h('span', {class: 'live' + (latest && ageH < 30 ? '' : ' old')}, h('b', {text: latest ? 'Latest edition' : 'Archived edition'})),
+        h('time', {datetime: ed.edition_date, text: longDate(ed.edition_date)}),
+        ed.revision > 1 ? h('span', {text: `Update ${ed.revision}`}) : null,
+        h('time', {datetime: ed.generated_utc, title: stamp(ed.generated_utc), text: `Published ${clock(ed.generated_utc)}`})),
+      h('span', {class: 'edition-stats'}, `${plural(ed.stories.length, 'story', 'stories')} from ${plural(ed.reports_read || 0, 'report')} · ${ed.sources_answered || 0} of ${ed.sources_tried || 0} source types responded · AI-generated summaries`));
   }
   function notices(ed, idx) {
     const out = [];
@@ -259,7 +262,8 @@
       ['repeat', 'Repeats and syndicated copies', 'The same outlet again, or the same headline carried by another outlet (a wire story). Counted once.'],
       ['signal', 'Social and search signals', 'Trending searches and posts show attention, not reporting. They never count as a source.'],
     ];
-    return h('section', {class: 'sources', 'aria-label': 'Sources'}, groups.map(([kind, title, hint]) => {
+    return h('section', {class: 'sources', id: 'sources', tabindex: '-1', 'aria-labelledby': 'sources-title'},
+      h('h2', {id: 'sources-title', text: 'Sources'}), groups.map(([kind, title, hint]) => {
       const list = s.sources.filter(x => x.kind === kind);
       if (!list.length) return null;
       return h('div', null, h('h3', {text: `${title} (${list.length})`}), h('p', {class: 'hint', text: hint}),
@@ -294,9 +298,10 @@
       h('nav', {class: 'crumbs', 'aria-label': 'Breadcrumb'}, h('a', {href: editionUrl(ed.edition_date), text: `Edition of ${shortDate(ed.edition_date)}`}),
         h('span', {'aria-hidden': 'true', text: '/'}), SECTION[s.category] && SECTION[s.category].path ? h('a', {href: SECTION[s.category].path, text: catLabel(s.category)}) : h('span', {text: catLabel(s.category)}),
         s.top_rank ? h('span', {text: `· Top story ${s.top_rank} of ${ed.topStories.length}`}) : null),
-      h('div', {class: 'story-main'}, kicker(s), h('h1', {class: 'hl', text: s.headline}),
+      h('div', {class: 'story-main'}, kicker(s), h('h1', {class: 'hl', tabindex: '-1', text: s.headline}),
         h('div', {class: 'meta'}, when ? h('span', {text: `Newest report ${stamp(when)}`}) : h('span', {text: 'Publication time not stated'}),
           h('span', {class: 'outlets', text: outlets(s)}), covMeter(s)),
+        h('button', {class: 'source-jump', type: 'button', text: `Read ${plural(s.sources.length, 'source')} ↓`}),
         h('div', {class: 'story-body'}, s.summary.map(t => h('p', {text: t}))),
         s.why_it_matters ? h('div', {class: 'why-box'}, h('h2', {text: 'Why it matters'}), h('p', {text: s.why_it_matters})) : null,
         h('p', {class: 'ai-note'}, h('b', {text: 'How this was written. '}),
@@ -309,6 +314,11 @@
         prev ? h('a', {href: storyUrl(ed, prev)}, h('small', {text: '← Previous story'}), h('span', {text: prev.headline})) : h('span'),
         next ? h('a', {class: 'next', href: storyUrl(ed, next)}, h('small', {text: 'Next story →'}), h('span', {text: next.headline})) : h('span')))));
     document.title = `${s.headline} | Agent Reach Daily`;
+    main.querySelector('.source-jump').addEventListener('click', () => {
+      const sources = main.querySelector('#sources');
+      sources.focus({preventScroll: true});
+      sources.scrollIntoView({block: 'start'});
+    });
     window.scrollTo(0, 0);
     return main;
   }
