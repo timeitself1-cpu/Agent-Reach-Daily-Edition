@@ -6,13 +6,17 @@ history. When a convention or instruction changes, change it HERE in the same co
 
 ## Start of every session (do this first)
 
-1. Read **`docs/PLAN.md`**: the roadmap, the current phase and the first unchecked sub-task. Continue
-   from there unless the user asks for something else.
-2. Skim `docs/HANDOFF.md` ("Where things stand") for history and context, and `docs/REAL-EDITION-FINDINGS.md`
-   when the work touches edition quality.
+1. Read **`HANDOFF.md`** (current state, branch, what is NOT done, how to resume), then **`BUILD.md`** (the
+   four-phase roadmap with status, acceptance criteria and definitions of done), then the current phase's
+   sub-tasks in **`docs/PLAN.md`**. Continue from the first unchecked sub-task unless the user asks otherwise.
+2. Background when needed: `docs/HISTORY.md` (history up to rc12, older open quality items, working tips),
+   `docs/EVENT-IDENTITY.md` (event identity), `docs/REAL-EDITION-FINDINGS.md` (edition quality).
 3. Work one sub-task at a time. **After each sub-task: tick it in `docs/PLAN.md`, add a line to its Progress
-   log (date, commit, result, what is next), then commit and push.** A new session must be able to resume
-   from PLAN.md alone.
+   log (date, commit, result, what is next), then commit and push.** At the end of a session (or a phase
+   step), also update the status marks in `BUILD.md` and rewrite `HANDOFF.md` to the new state. A new session
+   must be able to resume from these files alone.
+   Roles, so nothing is written twice: CLAUDE.md = permanent rules; BUILD.md = roadmap; HANDOFF.md = current
+   state; PLAN.md = sub-tasks and progress log; RELEASE-NOTES.md = what changed for the user.
 4. If the user sends files (a self-test zip, an HTML export, logs), unzip into the scratchpad, read the
    report first, and record real-data findings in `docs/REAL-EDITION-FINDINGS.md` + fixtures (below).
 
@@ -41,9 +45,11 @@ category sections), a grounded "why it matters" pass, an HTML export and a spoke
   Docker or new frameworks. "Finish the application we already have, do not turn it into a research
   project." **Never claim untested results**: say what ran where (sandbox, CI, the user's PC). Never
   simulate success for something that needs their machine; prepare the harness, give the exact command.
-- **Branch:** `claude/affectionate-galileo-isxik1` (rc11-rc12); rc13 (website publishing, Oct 8) was made on
-  `claude/sweet-ramanujan-xj36o5` and merged as PR #4 (Oct 8); rc14 continues on that branch, restarted from the
-  default branch. Committing and pushing to the session's branch is authorized.
+- **Branch:** use the branch the session is given (HANDOFF.md names the current one). History:
+  `claude/affectionate-galileo-isxik1` (rc11-rc12); `claude/sweet-ramanujan-xj36o5` (rc13, merged as PR #4 on
+  Oct 8; rc14 continues there, restarted from the default branch, NOT merged). After a PR of the branch is
+  merged, restart the branch from the default branch before new work. Committing and pushing to the session's
+  branch is authorized; never merge unreviewed work, and merge a PR only when the user asks and CI is green.
   No pull requests unless asked; nothing else remote without asking. The repository's default branch is
   `claude/loving-darwin-a7rqvs` (what visitors download): PR #1 (rc12e), #3 (rc12f) and #4 (rc13c, squash-merged by
   Claude at the user's request once CI was green, Oct 8) are in it.
@@ -57,7 +63,8 @@ category sections), a grounded "why it matters" pass, an HTML export and a spoke
 - **Real-data validation on the user's PC:** `powershell -ExecutionPolicy Bypass -File .\Test-AgentReachDaily.ps1`
   (`tests/daily_selftest.py`) leaves `AgentReach-selftest-<time>.zip` on their Desktop: `report.txt`
   (PASS/FAIL per check, written after every check), real editions (`edition.json`, `edition-2.json`, `.txt`,
-  `.html`), refresh logs, the model-drop log, `pytest-output.txt` from Windows. Guide and by-hand checklist:
+  `.html`), refresh logs, the model-drop log, `pytest-output.txt` from Windows, and since rc14 `history/` (the
+  newest 14 dated editions of the real data folder + `events.json`, the registry's decisions). Guide and by-hand checklist:
   `docs/WINDOWS-TEST-RC11.md`.
 - **Real editions are the test material.** Do not tune thresholds blindly. Each problem seen in a real
   edition goes into `docs/REAL-EDITION-FINDINGS.md` (edition, story number, quote) and, when concrete, into
@@ -75,8 +82,8 @@ category sections), a grounded "why it matters" pass, an HTML export and a spoke
   `archive/`, `search/`, `about/`, `404.html`), `assets/site.js` (renders everything as text), `assets/site.css`, self-hosted
   OFL fonts. News first; app download and methodology live on `/about/`. Every claim must match the app. The user
   asked for site changes to go straight to `main` (Oct 7); check the page at phone width before pushing
-  (Playwright + `python -m http.server`; the sandbox cannot reach getagentreach.dev: verify a deploy through the
-  Cloudflare check on the pushed commit).
+  (Playwright + `python -m http.server`). The sandbox cannot reach getagentreach.dev and the pushed commits show
+  no Cloudflare check: never claim a deploy is live; ask the user to look.
 - User-facing text (banners, notes, release notes) is plain English for a non-developer: what happened and
   what to do, no stack traces, no internal names.
 
@@ -159,8 +166,9 @@ tests/
   embedding_benchmark.py    rc11 vs gate (offline) and nomic vs EmbeddingGemma (--ollama); Benchmark-Embeddings.ps1
   html_fixture.py      exported edition HTML -> fixture JSON
   daily_selftest.py    the self-test the user runs (Test-AgentReachDaily.ps1); --world = dry run here
-docs/  EVENT-IDENTITY.md (cross-edition answer key, diagnosis, registry design, results)
-       PLAN.md (roadmap, live)  HANDOFF.md (history, state)  RELEASE-NOTES.md  REAL-EDITION-FINDINGS.md
+BUILD.md (four-phase roadmap)  HANDOFF.md (current state, how to resume)  CLAUDE.md (this file)
+docs/  EVENT-IDENTITY.md (cross-edition answer key, diagnosis, registry design, results)  PUBLISHING.md
+       PLAN.md (sub-tasks + progress log)  HISTORY.md (up to rc12)  RELEASE-NOTES.md  REAL-EDITION-FINDINGS.md
        WINDOWS-TEST-RC11.md  architecture.md  reliability-v2.1.md  eval/identity-eval.{md,json}
 Setup-AgentReachDaily.ps1  Test-AgentReachDaily.ps1  Benchmark-Embeddings.ps1  Uninstall-AgentReachDaily.ps1
 AgentReachDaily.cmd/.pyw
@@ -228,10 +236,11 @@ AgentReachDaily.cmd/.pyw
   benchmark compares nomic with `embeddinggemma:300m` (first EmbeddingGemma) instead, once Ollama can open it on
   Windows; it joins the fallback chain only if its numbers beat nomic. Real numbers so far are nomic only; thresholds `identity_candidate_cosine` /
   `identity_strong_cosine` stay untuned until gemma's cosines are measured (`--replay` the saved vectors here).
-- **Story identity across refreshes** is the biggest quality gap: editions minutes apart disagree (the #1
-  story can vanish), NEW/"what changed" is mostly noise, one event can appear in two sections. Other work on
-  this left `agent_reach/daily/events.py`, `agent_reach/pipeline/identity.py` and `tests/test_event_*.py` in the
-  user's folder (not in this repository); the user said on Oct 7 the tests are no longer needed and deletes them.
+- **Event identity across editions** (BUILD.md Phase 2, current): the registry (rc14) observes only; Oct 7
+  held-out 6 h+ apart P 0.991 R 0.898, target P >= 0.99 R >= 0.90 not met and measured on ONE day; the multi-day
+  answer key waits on the user's rc14 self-test zip. Until then NEW/"what changed" still use `changes._match`,
+  and selection churn (the #1 story can vanish; carry-over 16% 6 h+ apart) is a separate, undiagnosed problem
+  (PLAN 2.2). Never move event identity into editions or build timelines before Phase 2's definition of done.
 - Thin single-outlet and promotional/evergreen items fill the category sections; some leads do not say what
   happened; "why it matters" is accepted for 0-2 of ~18 stories.
 - Momentum is uncertain for a day after any feed-list change (the scorer compares the whole configuration).
@@ -243,6 +252,8 @@ AgentReachDaily.cmd/.pyw
 
 ## Roadmap
 
-`docs/PLAN.md` is the live, step-by-step plan. Longer term: **Module 2, Agent Depth** (reads `PipelineReport`
+`BUILD.md` holds the four phases (1 publishing/search: done but for the user's key setup; 2 event identity:
+current; 3 timelines, event history and JSON exports; 4 installer, GitHub Releases, production readiness: not
+before the user says so). `docs/PLAN.md` is the live, step-by-step plan. Longer term: **Module 2, Agent Depth** (reads `PipelineReport`
 JSON only, fetches 3-5 sources per top trend, checks agreement, writes cited `TrendBrief` records; never
 imports Agent Reach), **Module 3** delivery and watchlists, **Module 4** actions.

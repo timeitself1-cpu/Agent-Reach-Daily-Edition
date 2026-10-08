@@ -3,7 +3,7 @@
 Each release candidate is delivered as a zip of the repository. Extract it over the old folder, rerun
 `powershell -ExecutionPolicy Bypass -File .\Setup-AgentReachDaily.ps1 -RegisterTask`, and reopen the app.
 Your editions, settings and history (`%LOCALAPPDATA%\AgentReachDaily`) are kept. Earlier releases are
-summarised in `docs/HANDOFF.md` ("Release history").
+summarised in `docs/HISTORY.md` ("Release history").
 
 ## 1.0.0rc14 (zip rc14): the app starts recognising the same event across days (behind the scenes)
 

@@ -1,7 +1,8 @@
 # Agent Reach Daily: plan
 
-The live roadmap. **A new session starts here** (after `CLAUDE.md`): find the current phase, take the first
-unchecked sub-task, do it, then update this file.
+The live step-by-step plan and progress log. **A new session reads `CLAUDE.md`, `HANDOFF.md` (current state) and
+`BUILD.md` (the four-phase roadmap: its Phase 1 = Phase W here, Phase 2 = Phase 2 here) first**, then takes the
+first unchecked sub-task of the current phase here, does it, and updates this file.
 
 ## How to use and update this file
 
@@ -343,3 +344,4 @@ Each rule starts from quotes in `docs/REAL-EDITION-FINDINGS.md`; each gets a fix
 - 2026-10-08 | W9c search | (this commit), site 8161be5 | archive search: publisher writes search/YYYY-MM.json in the edition commit (self-repairing, withdraw-aware, 1 new test); /search/ page (newest 6 months first, accents ignored, phrases, section filter); Playwright 1440/390 on a 10-month copy | PR of rc13 to the default branch; then Phase 2 (event identity across editions)
 - 2026-10-08 | Phase 2.0-2.1 | (this commit) | cross-edition answer key (12 editions, 256 events) + churn report; baseline changes._match: near P 0.967 R 0.954, 6h+ apart P 0.966 R 0.752, top stories kept 111/288 far apart; floor test + strict xfail target | 2.1b multi-day editions from the self-test; 2.2 causes; 2.4 matcher
 - 2026-10-08 | PR #4, Phase 2.1b-2.4 | 9674c46 (merge), (this commit) | rc13c merged; rc14: matching vs carry-over vs Top Stories reported apart; diagnosis (false continuations = URL overlap with mixed stories + entity sets; misses = new articles, one shared name); daily/registry.py observing in the refresh; Oct 7 held-out 6h+: P 0.991 R 0.898 (was 0.989/0.703); self-test brings 14 days + events.json | user runs the self-test on rc14; extend the answer key to >= 7 days
+- 2026-10-08 | handoff | (this commit) | BUILD.md (roadmap, 4 phases), HANDOFF.md (state), CLAUDE.md updated; docs/HANDOFF.md -> docs/HISTORY.md; rc14 self-test NOT run yet | user sends the rc14 self-test zip; then 2.1b multi-day answer key

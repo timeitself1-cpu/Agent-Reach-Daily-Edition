@@ -57,7 +57,7 @@ on top, and YouTube answered again (the October 7 night outage was transient).
    NEW tag is only useful once stories have an identity across editions (event layer).
 2. **No Hot or Rising labels** ("the sources or settings changed since the refresh used for comparison"): the
    settings v8 feed change after the 8:03 AM refresh. Momentum is lost for a day after any feed change because
-   the scorer compares the whole configuration (HANDOFF open item).
+   the scorer compares the whole configuration (docs/HISTORY.md open item).
 3. **Thin single-outlet filler in the category sections**: 8 of 9 Tech stories, 5 of 6 Science & AI and 6 of 7
    Entertainment stories are one outlet each, including a shopping deal ("LG Evo B6 4K 120Hz OLED TV Drops to
    Under $1,000 for Prime Day" passed the promotional filter), a TV listing ("MLB Playoff Games on TV Today:
