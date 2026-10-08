@@ -205,11 +205,20 @@ Goal: the step that feeds the live site is as safe as the rest. One commit and o
       B2's test runs the real `--refresh-if-due` command in-process with a fake GitHub (not a separate process).
 - [ ] B8. `docs/PUBLIC-DATA.md` + `docs/schema/` (edition, index, search month) + a real example; a test validates
       the publisher's output for all fixtures (F4). Share with the front end; F9/F12 only if it agrees.
-- [ ] B8b. Search entries carry their edition's revision (`v`, optional field) so the site can refetch a stale
+- [-] B8b. (dropped Oct 8: the website revalidates search files instead) Search entries carry their edition's revision (`v`, optional field) so the site can refetch a stale
       cached month (search recovery, docs/BACKEND-AUDIT.md). Acceptance: publish test expects `v`; a revision rewrites it.
 - [ ] B9. With Phase 2.5/3: publish the registry's event id per story + an `aliases` map from old story ids (F3).
 - [ ] B11. The window's Test connection replaces the last failure's reason with "Connected..." while the headline
       still says "Publication failed" (seen on the PC, Oct 8): keep the reason visible (or say it is an old result).
+- [ ] B12. (audit round 2, N1, HIGH) A later same-day refresh with fewer than half the sources answered or half the
+      stories of the day's current revision is "no new edition" (locally and on the site); a manual refresh may still
+      publish it. Acceptance: the 44-story fixture is not replaced by a 3-story revision from 2 of 10 sources.
+- [ ] B13. (N5) The hourly catch-up pauses after 401/403/"newer revision" until a new key or a new edition.
+- [ ] B14. (N3) A signal source names its platform ("Mastodon (link to theguardian.com)"), never a news outlet as
+      a signal. Counting linked articles as reports is a separate decision for the user (rc12 D kept them out).
+- [ ] B15. (N2) The publisher keeps New/Updated only when `compared_with` is the edition on the site.
+- [ ] B16. (N4) Dated pages from a template file the website owns; then F9 (pre-rendered story text).
+- [ ] B17. (N6) Scheduled task limit = refresh limit + 25 min (or cap the setting at 95 min).
 - [ ] B10. `windows-latest` CI job (F7); `constraints.txt` with the CI-tested versions for Setup and CI (F8).
 
 ## Phase 1: "Report a problem with this story" (the feedback loop)
@@ -379,3 +388,4 @@ Each rule starts from quotes in `docs/REAL-EDITION-FINDINGS.md`; each gets a fix
 - 2026-10-08 | B1-B4, B7 | bcf298a, 30cf56e, 8ec5bf0, 0f44921, (this commit) | rc15: removed stories stay off in later revisions (0 of 144 back, was 28), hourly catch-up of a failed upload, website before podcast, key-expiry warning; full suite with Tk green | user installs rc15 (and runs the rc14/rc15 self-test); then B5-B6 or Phase 2.1b
 - 2026-10-08 | rc15b | 90eba6d, (this commit) | CI on rc15 failed once on 3.10 (publishing window test busy > 20 s: Tk finalizer in a worker thread); window-test fixture collects garbage on the Tk thread; CI green on 3.10 and 3.12; zip rc15b | user installs rc15b; then B5-B6 or Phase 2.1b
 - 2026-10-08 | W6 | site 90e605c | first publication from the user's PC (rc15, by hand after saving the key): Oct 8 r2, 53 stories, one commit with index, feed, sitemap, search; automatic publishing now on | first automatic publication after the next refresh; B11 (window message)
+- 2026-10-08 | backend audit round 2 | (this commit) | rc15 + first live edition (site 90e605c): publishing proven; N1 HIGH (thin same-day revision replaces a full one, reproduced), N2 New badges vs unpublished revision (40/53), N3 newspapers as signals, N4-N6 low; B12-B17 | user decides: rc16 (B12, B5-B6, B13, B11) next

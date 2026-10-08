@@ -77,3 +77,22 @@ bookmarks. Suggested fallback for the site, in order:
 4. If nothing matches, open the date's page with a note that the story was updated in a later edition of the day.
 5. Treat the index's `revision` per date as a cache key: newer than the revision a cached search month was built
    from means fetch that month again. Search entries do not carry the revision yet (PLAN B8b adds `v`).
+
+## Round 2 (October 8, evening, rc15 `e6a612e` + the first live publication, website `90e605c`)
+
+Shared as a Claude doc ("Agent Reach backend audit, round 2"). Sandbox: 515 passed with Tk, pyflakes clean.
+F1, F2, F5, F6 fixed in rc15; the front end (website `docs/backend-coordination.md`) links every story as
+`date#story-id` (F3 matters more), accepts pre-rendered text in `#app` (F9 unblocked), revalidates search files
+(B8b dropped). New:
+
+| # | Sev. | Finding | Evidence |
+|---|---|---|---|
+| N1 | High | A thin later refresh replaces a full edition of the same day, on the site too: 2 of 10 sources and 3 stories pass `evaluate_publication`. | Reproduced: a real 44-story edition on a folder site replaced by a 3-story automatic revision. |
+| N2 | Medium | New/Updated badges compare with the PC's previous refresh, not what the site showed: Oct 8, 40 of 53 New against revision 1, never published. | `public_edition` copies `edition.changes`. |
+| N3 | Medium | Real newspapers shown as "social/search signal" (Oct 8 #6: Guardian, NYT, BBC via Mastodon); the site says signals never count as a source. | `public_edition` names the linked outlet, keeps the platform's kind. |
+| N4 | Low | Dated pages use the publisher's own template; the front end's shell changes (font preload on `/daily/`) never reach them. | `edition_page`. |
+| N5 | Low | The hourly retry repeats failures that cannot heal (401, 403, newer revision on the site) forever. | `catch_up`. |
+| N6 | Low | The scheduled task stops after 2 h; the refresh limit can be set up to 6 h. | `ExecutionTimeLimit PT2H`, `max_run_minutes <= 360`. |
+
+Plan (PLAN Phase B, B12-B17): A) N1 guard + Step 2 hardening + N5 + B11 (rc16); B) N3 signal labels, N2 badges;
+C) `docs/PUBLIC-DATA.md` + schema test, one page shell (N4) then F9; D) F7, F8, N6.
