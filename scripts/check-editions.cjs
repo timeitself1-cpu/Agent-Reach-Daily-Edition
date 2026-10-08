@@ -1,0 +1,106 @@
+const assert = require('node:assert/strict');
+const {readFileSync, readdirSync} = require('node:fs');
+const {resolve} = require('node:path');
+const {JSDOM} = require('jsdom');
+const readJson = (root, file) => JSON.parse(readFileSync(resolve(root, file), 'utf8'));
+const sameSet = (actual, expected, message) => assert.deepEqual([...actual].sort(), [...expected].sort(), message);
+const datePattern = /^\d{4}-\d{2}-\d{2}$/;
+function checkEditions(root) {
+  const index = readJson(root, 'editions/index.json');
+  assert.equal(index.schema_version, 1, 'supported index schema');
+  assert.ok(Array.isArray(index.editions), 'archive list');
+  const dates = index.editions.map(e => e.date);
+  assert.equal(new Set(dates).size, dates.length, 'unique archive dates');
+  assert.ok(dates.every(d => datePattern.test(d)), 'valid edition filenames');
+  assert.deepEqual(dates, dates.slice().sort().reverse(), 'newest edition first');
+  assert.equal(index.latest, dates[0] || null, 'latest matches archive');
+  sameSet(readdirSync(resolve(root, 'editions')).filter(f => datePattern.test(f.slice(0, -5)) && f.endsWith('.json')).map(f => f.slice(0, -5)), dates, 'no withdrawn/orphan edition JSON');
+  sameSet(readdirSync(resolve(root, 'daily')).filter(f => datePattern.test(f)), dates, 'no withdrawn/orphan dated pages');
+  const editions = new Map();
+  for (const entry of index.editions) {
+    const ed = readJson(root, `editions/${entry.date}.json`);
+    const context = entry.date;
+    assert.equal(ed.schema_version, 1, context + ': supported edition schema');
+    assert.equal(ed.edition_date, entry.date, context + ': filename/date');
+    assert.equal(ed.revision, entry.revision, context + ': revision matches index');
+    assert.ok(Number.isInteger(ed.revision) && ed.revision > 0, context + ': positive revision');
+    assert.equal(ed.generated_utc, entry.generated_utc, context + ': generation matches index');
+    assert.ok(Number.isFinite(Date.parse(ed.generated_utc)), context + ': generation timestamp');
+    assert.ok(Array.isArray(ed.stories) && ed.stories.length, context + ': nonempty stories');
+    assert.equal(ed.stories.length, entry.stories, context + ': story count matches index');
+    const byId = new Map();
+    for (const s of ed.stories) {
+      assert.match(s.id, /^[0-9a-f]{6,40}$/, context + ': routable story ID');
+      assert.ok(!byId.has(s.id), context + ': unique story ID');
+      byId.set(s.id, s);
+      assert.ok(typeof s.headline === 'string' && s.headline.trim(), context + ': headline');
+      assert.ok(typeof s.category === 'string' && s.category, context + ': category');
+      assert.ok(Array.isArray(s.summary) && s.summary.every(t => typeof t === 'string'), context + ': plain summary sentences');
+      assert.ok(Array.isArray(s.sources), context + ': source list');
+      assert.ok(s.coverage && Array.isArray(s.coverage.publishers), context + ': coverage publishers');
+      assert.ok(['strong', 'moderate', 'limited'].includes(s.coverage.level), context + ': coverage level');
+      for (const src of s.sources) {
+        assert.ok(typeof src.title === 'string' && typeof src.outlet === 'string', context + ': source text');
+        assert.ok(['report', 'repeat', 'signal'].includes(src.kind), context + ': source kind');
+        if (src.url != null) assert.match(src.url, /^https?:\/\//, context + ': absolute source URL');
+        if (src.published_utc) assert.ok(Number.isFinite(Date.parse(src.published_utc)), context + ': source timestamp');
+      }
+    }
+    sameSet(ed.stories.map(s => s.rank), Array.from({length: ed.stories.length}, (_, i) => i + 1), context + ': contiguous unique ranks');
+    assert.equal(new Set(ed.top).size, ed.top.length, context + ': unique top IDs');
+    assert.ok(ed.top.every(id => byId.has(id)), context + ': top IDs resolve');
+    const sections = new Map();
+    for (const section of ed.sections) {
+      assert.ok(!sections.has(section.category), context + ': unique sections');
+      sections.set(section.category, section.ids.length);
+      sameSet(section.ids, ed.stories.filter(s => s.category === section.category).map(s => s.id), context + ': section membership ' + section.category);
+    }
+    sameSet(ed.sections.flatMap(s => s.ids), byId.keys(), context + ': every story belongs to a section');
+    assert.deepEqual(Object.fromEntries(sections), entry.sections, context + ': index section counts');
+    const dom = new JSDOM(readFileSync(resolve(root, `daily/${entry.date}/index.html`), 'utf8'));
+    try {
+      assert.equal(dom.window.document.body.dataset.date, entry.date, context + ': shell date');
+      assert.equal(dom.window.document.body.dataset.page, 'edition', context + ': shell route');
+      assert.ok(dom.window.document.querySelector('#app'), context + ': mount target');
+      assert.equal(dom.window.document.querySelector('link[rel="canonical"]').href, `https://getagentreach.dev/daily/${entry.date}/`, context + ': canonical URL');
+    } finally { dom.window.close(); }
+    editions.set(entry.date, ed);
+  }
+  const months = [...new Set(dates.map(d => d.slice(0, 7)))];
+  sameSet(readdirSync(resolve(root, 'search')).filter(f => /^\d{4}-\d{2}\.json$/.test(f)).map(f => f.slice(0, -5)), months, 'search months match archive');
+  for (const month of months) {
+    const doc = readJson(root, `search/${month}.json`);
+    assert.equal(doc.schema_version, 1, month + ': supported search schema');
+    assert.equal(doc.month, month, month + ': filename/month');
+    assert.ok(Array.isArray(doc.stories), month + ': search stories');
+    sameSet(doc.stories.map(s => `${s.d}/${s.id}`), [...editions.values()].filter(e => e.edition_date.startsWith(month)).flatMap(e => e.stories.map(s => `${e.edition_date}/${s.id}`)), month + ': exact search membership');
+    for (const hit of doc.stories) {
+      const story = editions.get(hit.d).stories.find(s => s.id === hit.id);
+      assert.equal(hit.h, story.headline, month + ': search headline');
+      assert.equal(hit.c, story.category, month + ': search category');
+      assert.equal(hit.r, story.rank, month + ': search rank');
+      assert.equal(hit.l, story.coverage.level, month + ': search coverage');
+      assert.ok(typeof hit.s === 'string' && Array.isArray(hit.o), month + ': searchable summary/outlets');
+    }
+  }
+  for (const [file, selector] of [['feed.xml', 'item > link'], ['sitemap.xml', 'url > loc']]) {
+    const dom = new JSDOM(readFileSync(resolve(root, file), 'utf8'), {contentType: 'text/xml'});
+    try {
+      const listedDates = [...dom.window.document.querySelectorAll(selector)].map(n => /^https:\/\/getagentreach\.dev\/daily\/(\d{4}-\d{2}-\d{2})\/$/.exec(n.textContent)?.[1]).filter(Boolean);
+      // RSS may eventually be capped; every linked date must remain available.
+      if (file === 'sitemap.xml') sameSet(listedDates, dates, 'sitemap edition membership');
+      else {
+        assert.ok(listedDates.every(d => editions.has(d)), 'RSS contains no withdrawn dates');
+        if (dates.length) assert.equal(listedDates[0], index.latest, 'RSS newest edition');
+      }
+    } finally { dom.window.close(); }
+  }
+  return {index, editions};
+}
+module.exports = {checkEditions};
+if (require.main === module) {
+  try {
+    const {editions} = checkEditions(resolve(process.argv[2] || resolve(__dirname, '..')));
+    console.log(`Validated ${editions.size} published editions and their search, HTML, RSS and sitemap files.`);
+  } catch (error) { console.error(error.message); process.exitCode = 1; }
+}

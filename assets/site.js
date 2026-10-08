@@ -68,14 +68,25 @@
   }
   let indexPromise = null;
   const loadIndex = () => (indexPromise = indexPromise || getJson('/editions/index.json'));
-  async function loadEdition(d) {
-    const ed = await getJson(`/editions/${d}.json`);
+  function prepareEdition(ed) {
     if (!ed || !Array.isArray(ed.stories) || !ed.stories.length) throw new Error('empty edition');
     ed.byId = Object.fromEntries(ed.stories.map(s => [s.id, s]));
     ed.ordered = ed.stories.slice().sort((a, b) => a.rank - b.rank);
     ed.topStories = (ed.top || []).map(id => ed.byId[id]).filter(Boolean);
     if (!ed.topStories.length) ed.topStories = ed.ordered.slice(0, 8);
     return ed;
+  }
+  async function loadEdition(d) {
+    return prepareEdition(await getJson(`/editions/${d}.json`));
+  }
+  // The website build embeds the existing public JSON; no publisher field is required.
+  function embeddedData() {
+    try {
+      const data = JSON.parse(document.getElementById('edition-data').textContent);
+      const date = body.dataset.date || data.index.latest;
+      if (data.edition.edition_date !== date) return null;
+      return {idx: data.index, ed: prepareEdition(data.edition)};
+    } catch (_) { return null; }
   }
 
   // ------------------------------------------------------------------ story atoms
@@ -123,7 +134,7 @@
   }
   function card(ed, s, variant, heading = 'h3') {
     const cls = 'card' + (variant === 'feature' ? ' feature' : '');
-    return h('article', {class: cls, 'data-cat': s.category}, kicker(s),
+    return h('article', {class: cls, id: 'story-' + s.id, 'data-cat': s.category}, kicker(s),
       h(heading, {class: 'hl'}, h('a', {href: storyUrl(ed, s), text: s.headline})),
       h('p', {class: 'dek', text: s.summary.join(' ')}), meta(s), sourceList(s));
   }
@@ -215,13 +226,23 @@
   function strip(ed, idx) {
     const latest = idx && idx.latest === ed.edition_date;
     const ageH = (Date.now() - Date.parse(ed.generated_utc)) / 3.6e6;
-    return h('div', {class: 'strip', 'aria-label': 'Edition details'},
+    const details = h('div', {class: 'edition-full', id: 'edition-details'},
       h('div', {class: 'edition-meta'},
         h('span', {class: 'live' + (latest && ageH < 30 ? '' : ' old')}, h('b', {text: latest ? 'Latest edition' : 'Archived edition'})),
         h('time', {datetime: ed.edition_date, text: longDate(ed.edition_date)}),
         ed.revision > 1 ? h('span', {text: `Update ${ed.revision}`}) : null,
         h('time', {datetime: ed.generated_utc, title: ed.generated_utc, text: `Generated ${fullStamp(ed.generated_utc)}`})),
       h('span', {class: 'edition-stats'}, `${plural(ed.stories.length, 'story', 'stories')} from ${plural(ed.reports_read || 0, 'report')} · ${ed.sources_answered || 0} of ${ed.sources_tried || 0} source types responded · AI-generated summaries`));
+    details.hidden = true;
+    const toggle = h('button', {type: 'button', class: 'edition-toggle', 'aria-expanded': 'false', 'aria-controls': 'edition-details', 'aria-label': 'Show full edition details'},
+      h('span', {text: `${shortDate(ed.edition_date)} · ${latest ? 'Latest' : 'Archived'}${ed.revision > 1 ? ` · Update ${ed.revision}` : ''} · ${plural(ed.stories.length, 'story', 'stories')}`}),
+      h('span', {class: 'edition-toggle-label', text: 'Details'}));
+    toggle.addEventListener('click', () => {
+      details.hidden = !details.hidden;
+      toggle.setAttribute('aria-expanded', String(!details.hidden));
+      toggle.setAttribute('aria-label', `${details.hidden ? 'Show' : 'Hide'} full edition details`);
+    });
+    return h('div', {class: 'strip', 'aria-label': 'Edition details'}, toggle, details);
   }
   function notices(ed, idx) {
     const out = [];
@@ -232,7 +253,7 @@
     return out;
   }
   function lead(ed, s) {
-    return h('article', {class: 'lead', 'data-cat': s.category},
+    return h('article', {class: 'lead', id: 'story-' + s.id, 'data-cat': s.category},
       h('span', {class: 'rank-label', text: 'Top story'}), kicker(s),
       h('h1', {class: 'hl'}, h('a', {href: storyUrl(ed, s), text: s.headline})),
       h('p', {class: 'dek', text: s.summary.join(' ')}),
@@ -241,16 +262,33 @@
   }
   function rail(ed, stories) {
     return h('aside', {class: 'rail', 'aria-label': 'More top stories'}, h('h2', {class: 'rail-title'}, h('span', {text: 'Top stories'})),
-      stories.map((s, i) => h('article', {class: 'rail-item', 'data-cat': s.category}, h('span', {class: 'rail-num', text: String(i + 2)}),
+      stories.map((s, i) => h('article', {class: 'rail-item', id: 'story-' + s.id, 'data-cat': s.category}, h('span', {class: 'rail-num', text: String(i + 2)}),
         kicker(s), h('h3', {class: 'hl'}, h('a', {href: storyUrl(ed, s), text: s.headline})),
         h('p', {class: 'dek', text: s.summary.join(' ')}), meta(s, {noOutlets: true}))));
   }
   function sectionBand(ed, cat, stories, title) {
     const sec = SECTION[cat] || {};
+    const visible = stories;
+    const grid = h('div', {class: 'grid', id: 'section-' + (cat || title).toLowerCase().replace(/[^a-z]+/g, '-')},
+      visible.map((s, i) => {
+        const node = card(ed, s, i === 0 && visible.length >= 5 ? 'feature' : '');
+        node.hidden = i >= 5;
+        return node;
+      }));
+    let toggle = null;
+    if (!sec.path && stories.length > 5) {
+      toggle = h('button', {class: 'band-link section-toggle', type: 'button', 'aria-expanded': 'false', 'aria-controls': grid.id, text: `Show all ${stories.length}`});
+      toggle.addEventListener('click', () => {
+        const expanding = toggle.getAttribute('aria-expanded') === 'false';
+        [...grid.children].forEach((node, i) => { node.hidden = !expanding && i >= 5; });
+        toggle.setAttribute('aria-expanded', String(expanding));
+        toggle.textContent = expanding ? 'Show fewer' : `Show all ${stories.length}`;
+        if (expanding) grid.children[5].querySelector('.hl a').focus({preventScroll: true});
+      });
+    }
     return h('section', {class: 'band', 'data-cat': cat, 'aria-label': title || catLabel(cat)}, h('div', {class: 'wrap'},
       h('div', {class: 'band-head'}, h('h2', {class: 'band-title', text: title || catLabel(cat)}),
-        sec.path ? h('a', {class: 'band-link', href: sec.path, text: `All ${sec.title}`}) : null),
-      h('div', {class: 'grid'}, stories.map((s, i) => card(ed, s, i === 0 && stories.length >= 5 ? 'feature' : '')))));
+        sec.path ? h('a', {class: 'band-link', href: sec.path, text: `All ${sec.title}`}) : toggle), grid));
   }
   function archiveBand(idx, current) {
     const others = (idx.editions || []).filter(e => e.date !== current).slice(0, 4);
@@ -274,13 +312,13 @@
   }
   function renderFront(ed, idx, current, storyNotice) {
     const top = ed.topStories;
-    const used = new Set(top.map(s => s.id));
+    const used = new Set(top.slice(0, 8).map(s => s.id));
     const content = [h('div', {class: 'wrap'}, strip(ed, idx), notices(ed, idx),
       storyNotice ? h('p', {class: 'notice story-recovery', text: storyNotice}) : null,
       h('div', {class: 'front'}, lead(ed, top[0]), rail(ed, top.slice(1, 4))))];
     if (top.length > 4) content.push(sectionBand(ed, null, top.slice(4, 8), 'More top stories'));
     for (const sec of ed.sections || []) {
-      const stories = sec.ids.map(id => ed.byId[id]).filter(s => s && !used.has(s.id)).slice(0, 5);
+      const stories = sec.ids.map(id => ed.byId[id]).filter(s => s && !used.has(s.id));
       if (stories.length) content.push(sectionBand(ed, sec.category, stories));
     }
     if (idx) content.push(archiveBand(idx, ed.edition_date));
@@ -338,7 +376,12 @@
       h('div', {class: 'story-main'}, kicker(s), h('h1', {class: 'hl', tabindex: '-1', text: s.headline}),
         h('div', {class: 'meta'}, when ? h('time', {datetime: when, text: `Newest report ${fullStamp(when)}`}) : h('span', {text: 'Publication time not stated'}),
           h('span', {class: 'outlets', text: outlets(s)}), covMeter(s)),
-        h('button', {class: 'source-jump', type: 'button', text: `Read ${plural(s.sources.length, 'source')} ↓`}),
+        h('div', {class: 'story-actions'},
+          h('button', {class: 'source-jump', type: 'button', text: `Read ${plural(s.sources.length, 'source')} ↓`}),
+          h('button', {class: 'pill share-story', type: 'button', text: 'Share'}),
+          h('button', {class: 'pill copy-story', type: 'button', text: 'Copy link'})),
+        h('p', {class: 'share-status sr', role: 'status', 'aria-live': 'polite'}),
+        h('label', {class: 'share-fallback', hidden: true}, 'Copy this story link', h('input', {type: 'url', readonly: true})),
         h('div', {class: 'story-body'}, s.summary.map(t => h('p', {text: t}))),
         s.why_it_matters ? h('div', {class: 'why-box'}, h('h2', {text: 'Why it matters'}), h('p', {text: s.why_it_matters})) : null,
         h('p', {class: 'ai-note'}, h('b', {text: 'How this was written. '}),
@@ -355,6 +398,28 @@
       const sources = main.querySelector('#sources');
       sources.focus({preventScroll: true});
       sources.scrollIntoView({block: 'start'});
+    });
+    const shareUrl = new URL(storyUrl(ed, s), location.origin);
+    shareUrl.searchParams.set('headline', s.headline);
+    const status = main.querySelector('.share-status');
+    const copy = async () => {
+      try {
+        await navigator.clipboard.writeText(shareUrl.href);
+        status.textContent = 'Story link copied.';
+      } catch (_) {
+        const fallback = main.querySelector('.share-fallback');
+        fallback.hidden = false;
+        const input = fallback.querySelector('input');
+        input.value = shareUrl.href;
+        input.focus(); input.select();
+        status.textContent = 'Select and copy the story link below.';
+      }
+    };
+    main.querySelector('.copy-story').addEventListener('click', copy);
+    main.querySelector('.share-story').addEventListener('click', async () => {
+      if (!navigator.share) { await copy(); return; }
+      try { await navigator.share({title: s.headline, url: shareUrl.href}); }
+      catch (error) { if (error.name !== 'AbortError') await copy(); }
     });
     window.scrollTo(0, 0);
     return main;
@@ -625,15 +690,22 @@
       return;
     }
     const current = page === 'section' ? body.dataset.section : page;
-    loading(current);
+    const embedded = embeddedData();
+    if (!embedded) loading(current);
+    // Start a known dated edition alongside its index, and handle its rejection immediately.
+    const dated = !embedded && body.dataset.date ? loadEdition(body.dataset.date).then(ed => ({ed}), error => ({error})) : null;
     let idx;
-    try { idx = await loadIndex(); } catch (e) { failed(current); return; }
+    try { idx = embedded ? embedded.idx : await loadIndex(); } catch (e) { failed(current); return; }
     if (page === 'archive') { renderArchive(idx); pageStatus.textContent = `Archive loaded. ${plural((idx.editions || []).length, 'edition')}.`; return; }
     if (page === 'search') { renderSearch(idx); pageStatus.textContent = 'Archive search ready.'; return; }
     const date = body.dataset.date || idx.latest;
     if (!date) { failed(current, 'No edition has been published yet.'); return; }
     let ed;
-    try { ed = await loadEdition(date); } catch (e) {
+    try {
+      const result = dated && await dated;
+      if (result && result.error) throw result.error;
+      ed = embedded ? embedded.ed : result ? result.ed : await loadEdition(date);
+    } catch (e) {
       if (body.dataset.date && e.message === '404') {
         failed(current, 'This edition was taken off the site.', true);
         return;

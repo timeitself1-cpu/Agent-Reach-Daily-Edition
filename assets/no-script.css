@@ -1,0 +1,5 @@
+/* Full static edition remains browsable when JavaScript is disabled. */
+.band .card[hidden]{display:flex!important}
+.edition-full[hidden]{display:flex!important}
+.section-toggle,.edition-toggle{display:none!important}
+.card .dek,.rail-item .dek{display:block;-webkit-line-clamp:unset;overflow:visible}

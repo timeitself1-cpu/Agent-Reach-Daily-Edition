@@ -4,24 +4,28 @@ const {resolve} = require('node:path');
 const assert = require('node:assert/strict');
 const test = require('node:test');
 const root = resolve(__dirname, '..');
+const fixtures = resolve(__dirname, 'fixtures');
 const script = readFileSync(resolve(root, 'assets/site.js'), 'utf8');
-const edition = JSON.parse(readFileSync(resolve(root, 'editions/2026-10-07.json')));
-const index = JSON.parse(readFileSync(resolve(root, 'editions/index.json')));
-const monthly = JSON.parse(readFileSync(resolve(root, 'search/2026-10.json')));
+const edition = JSON.parse(readFileSync(resolve(fixtures, 'editions/2026-10-07.json')));
+const index = JSON.parse(readFileSync(resolve(fixtures, 'editions/index.json')));
+const monthly = JSON.parse(readFileSync(resolve(fixtures, 'search/2026-10.json')));
 const settle = () => new Promise(r => setTimeout(r, 25));
 async function open(path = '/', opts = {}) {
   const pathname = new URL(path, 'https://example.test').pathname;
   const file = opts.shell || (pathname.endsWith('/') ? pathname + 'index.html' : pathname);
+  const shellRoot = !opts.shell && /^\/daily\/\d{4}-\d{2}-\d{2}\//.test(file) ? fixtures : root;
   const errors = [];
   const vc = new VirtualConsole();
   vc.on('jsdomError', e => errors.push(e.message));
-  const dom = new JSDOM(readFileSync(resolve(root, '.' + file), 'utf8'), {
+  const dom = new JSDOM(opts.html || readFileSync(resolve(shellRoot, '.' + file), 'utf8'), {
     url: 'https://example.test' + path, runScripts: 'outside-only', virtualConsole: vc,
   });
   const w = dom.window, d = w.document, requests = [];
   w.scrollTo = () => {};
   w.HTMLElement.prototype.scrollIntoView = () => {};
   w.Date.now = () => Date.parse(opts.now || '2026-10-08T16:00:00Z');
+  if (opts.clipboard) Object.defineProperty(w.navigator, 'clipboard', {value: opts.clipboard});
+  if (opts.share) Object.defineProperty(w.navigator, 'share', {value: opts.share});
   w.fetch = async url => {
     requests.push(url);
     const override = opts.fetch && await opts.fetch(url, requests);
@@ -30,7 +34,7 @@ async function open(path = '/', opts = {}) {
       if (override && override.ok === false) return override;
       return {ok:true,json:async()=>structuredClone(override)};
     }
-    return {ok:true,json:async()=>JSON.parse(readFileSync(resolve(root, '.' + url)))};
+    return {ok:true,json:async()=>JSON.parse(readFileSync(resolve(fixtures, '.' + url)))};
   };
   w.eval(script);
   await settle();
@@ -47,6 +51,118 @@ test('all public route shells render and keep RSS discovery', async () => {
     assert.deepEqual(p.errors, [], path);
     p.close();
   }
+});
+
+test('Home reveals every story in sections without a dedicated page and continues keyboard reading', async () => {
+  const p = await open('/');
+  for (const cat of ['Sports', 'Entertainment']) {
+    const band = p.d.querySelector(`.band[data-cat="${cat}"]`);
+    const cards = [...band.querySelectorAll('.card')];
+    const toggle = band.querySelector('.section-toggle');
+    assert.ok(cards.length > 5);
+    assert.equal(cards.filter(c => !c.hidden).length, 5);
+    assert.equal(toggle.getAttribute('aria-controls'), band.querySelector('.grid').id);
+    toggle.click();
+    assert.equal(cards.filter(c => !c.hidden).length, cards.length);
+    assert.equal(toggle.getAttribute('aria-expanded'), 'true');
+    assert.equal(p.d.activeElement, cards[5].querySelector('.hl a'));
+    toggle.focus(); toggle.click();
+    assert.equal(cards.filter(c => !c.hidden).length, 5);
+    assert.equal(p.d.activeElement, toggle);
+  }
+  p.close();
+});
+
+test('edition disclosure preserves all metadata with accessible state', async () => {
+  const p = await open('/');
+  const toggle = p.d.querySelector('.edition-toggle'), details = p.d.querySelector('.edition-full');
+  assert.equal(details.hidden, true);
+  assert.match(toggle.textContent, /Oct 7, 2026.*Latest.*Update 2.*44 stories/);
+  assert.ok(details.querySelector('time[datetime="'+edition.generated_utc+'"]'));
+  toggle.click();
+  assert.equal(details.hidden, false);
+  assert.equal(toggle.getAttribute('aria-expanded'), 'true');
+  toggle.click();
+  assert.equal(details.hidden, true);
+  p.close();
+});
+
+test('copy and native share use a dated link with its headline, preserving the reading URL', async () => {
+  let copied, shared;
+  const story = edition.stories[0];
+  const p = await open('/daily/2026-10-07/#story-'+story.id, {clipboard: {writeText: async value => {copied = value;}}, share: async value => {shared = value;}});
+  const before = p.w.location.href;
+  p.d.querySelector('.copy-story').click(); await settle();
+  assert.equal(new URL(copied).searchParams.get('headline'), story.headline);
+  assert.equal(new URL(copied).pathname, '/daily/2026-10-07/');
+  assert.equal(new URL(copied).hash, '#story-'+story.id);
+  assert.match(p.d.querySelector('.share-status').textContent, /copied/);
+  assert.equal(p.w.location.href, before);
+  p.d.querySelector('.share-story').click(); await settle();
+  assert.equal(shared.title, story.headline);
+  assert.equal(shared.url, copied);
+  p.close();
+});
+
+test('unavailable clipboard exposes a selected link; cancelled sharing keeps reading focus', async () => {
+  const p = await open('/daily/2026-10-07/#story-'+edition.top[0], {share: async () => {throw new p.w.DOMException('Cancelled', 'AbortError');}});
+  const share = p.d.querySelector('.share-story'); share.focus(); share.click(); await settle();
+  assert.equal(p.d.activeElement, share);
+  assert.equal(p.d.querySelector('.share-fallback').hidden, true);
+  p.d.querySelector('.copy-story').click(); await settle();
+  const input = p.d.querySelector('.share-fallback input');
+  assert.equal(p.d.querySelector('.share-fallback').hidden, false);
+  assert.equal(p.d.activeElement, input);
+  assert.equal(new URL(input.value).searchParams.get('headline'), edition.stories[0].headline);
+  p.close();
+});
+
+test('dated edition request starts before the archive index finishes', async () => {
+  let release; const deferred = new Promise(r => release = r);
+  const p = await open('/daily/2026-10-07/', {fetch: u => u === '/editions/index.json' ? deferred : undefined});
+  assert.deepEqual(p.requests.slice().sort(), ['/editions/2026-10-07.json', '/editions/index.json']);
+  assert.ok(p.d.querySelector('main[aria-busy="true"]'));
+  release(index); await settle();
+  assert.equal(p.d.querySelector('h1').textContent, edition.stories[0].headline);
+  p.close();
+});
+
+test('embedded edition renders without a loading skeleton or data requests; bad embed falls back', async () => {
+  const {renderShell} = require('../scripts/build.cjs');
+  const html = renderShell(readFileSync(resolve(root, 'index.html'), 'utf8'), '/', index, edition);
+  const staticPage = new JSDOM(html);
+  assert.equal(staticPage.window.document.querySelectorAll('main [id^="story-"]').length, edition.stories.length);
+  for (const story of edition.stories) assert.equal(staticPage.window.document.getElementById('story-'+story.id).querySelectorAll('details.src li').length, story.sources.length);
+  staticPage.window.close();
+  const p = await open('/', {html});
+  assert.deepEqual(p.requests, []);
+  assert.equal(p.d.querySelector('.skeleton'), null);
+  assert.equal(p.d.querySelectorAll('#page-status').length, 1);
+  assert.equal(p.d.querySelector('h1').textContent, edition.stories[0].headline);
+  p.close();
+  const malformed = html.replace(/(<script id="edition-data"[^>]*>)[\s\S]*?(<\/script>)/, '$1invalid$2');
+  const fallback = await open('/', {html: malformed});
+  assert.ok(fallback.requests.includes('/editions/index.json'));
+  assert.equal(fallback.d.querySelector('h1').textContent, edition.stories[0].headline);
+  fallback.close();
+});
+
+test('static rendering escapes news text and script terminators in embedded JSON', async () => {
+  const {renderShell, addPreview} = require('../scripts/build.cjs');
+  const ed = structuredClone(edition);
+  ed.stories[0].headline = '</script><script>window.attacked=true</script><img src=x>';
+  ed.stories[0].summary = ['<b>Plain text summary</b>'];
+  const html = addPreview(renderShell(readFileSync(resolve(root, 'index.html'), 'utf8'), '/', index, ed));
+  const staticDom = new JSDOM(html);
+  assert.equal(staticDom.window.document.querySelector('h1').textContent, ed.stories[0].headline);
+  assert.equal(staticDom.window.document.querySelector('h1 img'), null);
+  assert.ok(staticDom.window.document.querySelector('noscript link[href="/assets/no-script.css"]'));
+  staticDom.window.close();
+  const p = await open('/', {html});
+  assert.equal(p.w.attacked, undefined);
+  assert.equal(p.d.querySelector('h1').textContent, ed.stories[0].headline);
+  assert.deepEqual(p.requests, []);
+  p.close();
 });
 
 test('latest river and category pages retain every fixture story', async () => {
