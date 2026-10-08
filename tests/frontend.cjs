@@ -55,6 +55,8 @@ test('latest river and category pages retain every fixture story', async () => {
   for (const [path, cat] of [['technology','Tech'], ['science','Science & AI'], ['world','News']]) {
     const q = await open('/'+path+'/');
     assert.equal(q.d.querySelectorAll('.card').length, edition.sections.find(s=>s.category===cat).ids.length);
+    assert.equal(q.d.querySelectorAll('.card h2').length,q.d.querySelectorAll('.card').length);
+    assert.equal(q.d.querySelectorAll('.card h3').length,0);
     assert.equal(q.d.querySelector('.nav [aria-current="page"]').textContent, path === 'science' ? 'Science & AI' : path[0].toUpperCase()+path.slice(1));
     q.close();
   }

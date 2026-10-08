@@ -120,10 +120,10 @@
           h('small', {text: `${src.outlet} · ${when}${kind}`}));
       })));
   }
-  function card(ed, s, variant) {
+  function card(ed, s, variant, heading = 'h3') {
     const cls = 'card' + (variant === 'feature' ? ' feature' : '');
     return h('article', {class: cls, 'data-cat': s.category}, kicker(s),
-      h('h3', {class: 'hl'}, h('a', {href: storyUrl(ed, s), text: s.headline})),
+      h(heading, {class: 'hl'}, h('a', {href: storyUrl(ed, s), text: s.headline})),
       h('p', {class: 'dek', text: s.summary.join(' ')}), meta(s), sourceList(s));
   }
 
@@ -379,7 +379,7 @@
       h('header', {class: 'page-head', 'data-cat': cat}, h('h1', {text: sec.title}), h('p', {text: `${sec.blurb} From the ${longDate(ed.edition_date)} edition.`})),
       notices(ed, idx)),
       stories.length ? h('section', {class: 'band', 'data-cat': cat, 'aria-label': sec.title}, h('div', {class: 'wrap'},
-        h('div', {class: 'grid'}, stories.map((s, i) => card(ed, s, i === 0 && stories.length >= 3 ? 'feature' : '')))))
+        h('div', {class: 'grid'}, stories.map((s, i) => card(ed, s, i === 0 && stories.length >= 3 ? 'feature' : '', 'h2')))))
         : h('div', {class: 'wrap state'}, h('p', {text: 'No stories in this section in the latest edition.'})));
     document.title = `${sec.title} | Agent Reach Daily`;
   }

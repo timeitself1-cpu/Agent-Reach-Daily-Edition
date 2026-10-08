@@ -148,8 +148,10 @@ details.src small{color:var(--faint);font-size:12px}
 .crumbs a:hover{color:var(--accent2)}
 .crumbs span[aria-hidden]{color:var(--faint)}
 .story-main{display:flex;flex-direction:column;gap:22px;min-width:0}
-.story-main .hl{font-size:clamp(34px,4.4vw,58px);line-height:1.05;letter-spacing:-.022em;font-variation-settings:"opsz" 72}
-.story-body p{font-family:var(--serif);font-size:clamp(19px,1.5vw,21px);line-height:1.62;color:var(--ink);margin:0 0 18px;max-width:68ch}
+.story-main .hl{font-size:clamp(34px,4.4vw,58px);line-height:1.12;letter-spacing:-.022em;font-variation-settings:"opsz" 72}
+.story-body{font-family:var(--serif);font-size:clamp(19px,1.5vw,21px);line-height:1.7;max-width:65ch}
+.story-body p{color:var(--ink);margin:0 0 20px}
+.story-body p:last-child{margin-bottom:0}
 .why-box{border-radius:12px;background:var(--accent-bg);border:1px solid rgba(106,165,255,.25);padding:16px 18px;max-width:68ch}
 .why-box h2{margin:0 0 6px;font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent2)}
 .why-box p{margin:0;font-family:var(--serif);font-size:18px;line-height:1.5}
@@ -192,7 +194,7 @@ details.src small{color:var(--faint);font-size:12px}
 .river-time{font-size:13px;color:var(--muted);padding-top:4px;line-height:1.4}
 .river-time b{display:block;color:var(--ink2);font-size:15px;font-weight:600}
 .river-item .hl{font-size:clamp(20px,1.8vw,25px);margin:6px 0 8px}
-.river-item .dek{max-width:74ch}
+.river-item .dek{max-width:70ch;line-height:1.65}
 .river-item .meta{margin-top:10px}
 .archive{display:flex;flex-direction:column;gap:34px;padding:30px 0 56px}
 .month h2{font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin:0 0 12px;font-weight:700}
@@ -291,6 +293,8 @@ details.src small{color:var(--faint);font-size:12px}
   .source .when{text-align:left;white-space:normal}
   .grid,.grid.three{grid-template-columns:minmax(0,1fr)}
   .card.feature{grid-column:auto;padding:22px}
+  .card .dek,.rail-item .dek{display:block;-webkit-line-clamp:unset;overflow:visible}
+  .rail-item .dek{font-size:16px;line-height:1.6}
   .river-item{grid-template-columns:minmax(0,1fr);gap:4px}
   .river-time b{display:inline;margin-right:8px}
   .ed-row{grid-template-columns:minmax(0,1fr);gap:10px}
