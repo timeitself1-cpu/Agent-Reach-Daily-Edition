@@ -37,6 +37,11 @@ def test_lead_and_all_recorded_outlets_are_normalised_before_counting():
     assert lead.independent_reports == 7 and len(lead.publishers) == 7
     assert 'AP News' in lead.publishers and 'apnews.com' not in lead.publishers
     assert 'Reuters' in lead.publishers and 'reuters.com' not in lead.publishers
+    cached = stories[0].model_copy(deep=True)
+    cached.evidence_strength = cached.evidence_strength.model_copy(update={
+        'publishers':['www.localpaper.com','Local Paper'], 'independent_reports':2})
+    generic = strength_of(cached, NOW)
+    assert generic.independent_reports == 1 and generic.publishers == ['Local Paper'] and generic.level == 'limited'
     for s in stories:
         strength = strength_of(s, NOW)
         assert len({origin(name, None) for name in strength.publishers}) == len(strength.publishers)

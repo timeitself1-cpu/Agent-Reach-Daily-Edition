@@ -123,7 +123,15 @@ def strength_of(story, generated_at: datetime) -> EvidenceStrength:
         return assess(story.evidence, generated_at)
     # Stored strength was assessed over ALL reports before the reader evidence list was capped at eight.
     # Preserve that scope while correcting aliases in pre-roadmap editions.
-    publishers = sorted({outlet_name(name) for name in stored.publishers if name})
+    normalized = {}
+    for name in stored.publishers:
+        key, readable = outlet_key(name), outlet_name(name)
+        if not key:
+            continue
+        if key not in normalized or (re.search(r'\.[a-z]{2,}$', normalized[key], re.I)
+                                     and not re.search(r'\.[a-z]{2,}$', readable, re.I)):
+            normalized[key] = readable
+    publishers = sorted(normalized.values())
     independent = min(stored.independent_reports, len(publishers))
     points = stored.points - {0: 0, 1: 0, 2: 2, 3: 3}.get(stored.independent_reports, 4)
     points += {0: 0, 1: 0, 2: 2, 3: 3}.get(independent, 4)
