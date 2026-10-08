@@ -328,8 +328,14 @@ def test_refresh_publishes_to_the_website_when_switched_on_and_a_website_failure
     publish.save_token(daily_env.paths, "test-key")
     site = tmp_path / "site"
     monkeypatch.setattr(publish, "github_target", lambda paths, settings=None, client=None: publish.FolderTarget(site))
+    stages: list[str] = []
+    original = R.ProgressWriter.__call__
+    monkeypatch.setattr(R.ProgressWriter, "__call__", lambda self, stage, message: (stages.append(stage),
+                                                                                   original(self, stage, message)))
     out = _refresh(daily_env)
     assert out.code == R.EXIT_PUBLISHED and "Published successfully" in out.message
+    # the website does not wait for the podcast recording (audit F6)
+    assert stages.index("publish") < stages.index("website") < stages.index("podcast")
     d = out.edition.edition_date.isoformat()
     assert json.loads((site / "editions/index.json").read_text())["latest"] == d
     assert len(json.loads((site / f"editions/{d}.json").read_text())["stories"]) == len(out.edition.stories)

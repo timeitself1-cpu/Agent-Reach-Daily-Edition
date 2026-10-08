@@ -6,6 +6,7 @@
     ->  pipeline run_once (ingest, clean, enrich, cluster, score, persist; validated ledger)
     ->  stories from validated clusters + cited evidence  ->  optional grounded brief pass
     ->  DailyEdition  ->  publication eligibility  ->  atomic publish + retention
+    ->  event registry (observe only)  ->  website (opt-in)  ->  podcast (optional)
     ->  state: success, or failure/no-update with backoff and saved diagnostics
 
 The previous good edition is never modified by a failed, invalid or no-update attempt.
@@ -439,6 +440,15 @@ async def _attempt(paths: DataPaths, prefs: DailyPrefs, store: EditionStore, *, 
     if final.revision > 1:
         msg += f" (revision {final.revision}, replaces the earlier edition for this date)"
     msg += "."
+    from agent_reach.daily.publish import load_settings as publish_settings, publish_after_refresh
+
+    if publish_settings(paths).enabled:
+        # opt-in: the edition is already saved here, so a website problem never fails the refresh. Before the
+        # podcast, which can take minutes: the website should not wait for a recording (audit F6, Oct 8)
+        progress("website", "Publishing to the website")
+        result = await asyncio.to_thread(publish_after_refresh, paths, final)
+        if result is not None:
+            msg += f" {result.message}"
     if prefs.podcast_auto:
         # the edition is already published: a podcast problem is reported, never a failed refresh
         progress("podcast", "Recording the daily podcast")
@@ -449,14 +459,6 @@ async def _attempt(paths: DataPaths, prefs: DailyPrefs, store: EditionStore, *, 
             msg += f" {pod.message}"
         except Exception:  # noqa: BLE001
             log.exception("podcast failed")
-    from agent_reach.daily.publish import load_settings as publish_settings, publish_after_refresh
-
-    if publish_settings(paths).enabled:
-        # opt-in: the edition is already saved here, so a website problem never fails the refresh
-        progress("website", "Publishing to the website")
-        result = await asyncio.to_thread(publish_after_refresh, paths, final)
-        if result is not None:
-            msg += f" {result.message}"
     return RefreshOutcome(EXIT_PUBLISHED, "published", msg, final)
 
 
