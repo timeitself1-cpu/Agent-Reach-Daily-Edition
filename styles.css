@@ -44,6 +44,9 @@ h1{font-size:clamp(42px,4.6vw,64px);letter-spacing:-2.6px;margin-bottom:24px}
 .app-shot figcaption{font-size:13px;color:var(--muted);margin-top:12px}
 .app-shot figcaption a{border-bottom:1px solid #8d9a86;white-space:nowrap}
 
+.hero-note a{border-bottom:1px solid #8d9a86}
+.contact-links{display:flex;flex-wrap:wrap;gap:12px 28px}
+
 /* numbers */
 .numbers{display:grid;grid-template-columns:repeat(4,1fr);gap:0;border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:28px 0 18px}
 .numbers>div{padding:0 22px;border-left:1px solid var(--line)}
