@@ -127,11 +127,28 @@ def test_public_edition_carries_the_news_and_nothing_private():
     assert P.public_edition(ed) == pub  # deterministic: a retry produces the same bytes
 
 
-def test_text_that_looks_like_a_local_path_is_never_published():
+def test_text_that_looks_like_a_local_path_is_never_published(daily_paths, tmp_path):
+    """Such a story is left out and named in the result; the rest of the day still goes up (audit F10: one
+    headline about "AppData" kept the whole edition off the site)."""
     ed = real_edition()
     ed.stories[3].sentences[0] = r"Saved to C:\Users\someone\AppData\Local\AgentReachDaily\cache."
+    left_out: list[int] = []
+    pub = P.public_edition(ed, left_out=left_out)
+    assert left_out == [ed.stories[3].rank] and len(pub["stories"]) == 43 and "AppData" not in json.dumps(pub)
+    r = P.publish_edition(daily_paths, ed, P.FolderTarget(tmp_path / "site"))
+    assert r.state == "published" and f"Left out: story {ed.stories[3].rank}," in r.message
+    assert "AppData" not in (tmp_path / "site/search/2026-10.json").read_text()
+    # outside the stories there is nothing to leave out: the edition is refused
+    ed.model.llm_model = r"C:\Users\someone\models\llama"
     with pytest.raises(P.PublishError, match="file path"):
         P.public_edition(ed)
+
+
+def test_withdraw_takes_only_a_date(daily_paths):
+    gh = FakeGitHub()
+    r = P.withdraw(daily_paths, "../index", gh.target())
+    assert r.state == "failed" and "not a date" in r.message and gh.calls == []
+    assert P.withdraw(daily_paths, "2026-02-30", gh.target()).state == "failed" and gh.calls == []
 
 
 def test_demo_editions_are_never_published():
@@ -195,6 +212,9 @@ def test_github_publication_is_one_commit_and_a_retry_makes_none(daily_paths):
     assert set(gh.files) == {"index.html", "editions/2026-10-07.json", "editions/index.json",
                              "daily/2026-10-07/index.html", "feed.xml", "sitemap.xml", "search/2026-10.json"}
     assert sum(c.startswith("PATCH") for c in gh.calls) == 1
+    # each file is read once per attempt (audit F11: the index and search month were read twice)
+    reads = [c for c in gh.calls if c.startswith("GET /contents/")]
+    assert len(reads) == len(set(reads)) == 6  # was 8
     before = gh.head
     r = P.publish_edition(daily_paths, real_edition(), gh.target())
     assert r.state == "unchanged" and gh.head == before  # no duplicate commit

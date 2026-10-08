@@ -299,12 +299,16 @@ def _text_values(obj, key: str = ""):
         yield obj
 
 
+def looks_local(obj) -> bool:
+    """Does any text in ``obj`` look like a path on this PC?"""
+    return any(_LOCAL_RX.search(text) for text in _text_values(obj))
+
+
 def assert_public(obj) -> None:
     """Refuse to publish text that looks like a path on this PC (defence in depth: no field should carry one)."""
-    for text in _text_values(obj):
-        if _LOCAL_RX.search(text):
-            raise PublishError("The edition contains text that looks like a file path on this computer, so it was "
-                               "not published. Please report this.")
+    if looks_local(obj):
+        raise PublishError("The edition contains text that looks like a file path on this computer, so it was "
+                           "not published. Please report this.")
 
 
 def _utc(value: datetime | None) -> str | None:
@@ -386,12 +390,20 @@ def is_removed(story: Story, hidden_ids: set[str], hidden_reports: dict[str, lis
 
 
 def public_edition(edition: DailyEdition, hidden: list[str] | None = None,
-                   hidden_reports: dict[str, list[list[str]]] | None = None) -> dict:
-    """The public copy of an edition (deterministic: the same edition always gives the same bytes)."""
+                   hidden_reports: dict[str, list[list[str]]] | None = None, left_out: list[int] | None = None) -> dict:
+    """The public copy of an edition (deterministic: the same edition always gives the same bytes).
+
+    A story whose text looks like a path on this PC is left out (its rank goes into ``left_out``) instead of
+    stopping the whole edition: one headline about "AppData" used to keep the day off the site (audit F10)."""
     if edition.demo:
         raise PublishError("This is the demo edition (made-up stories); it is never published.")
     hidden_ids = {h[:12] for h in hidden or []}
     hidden_ids |= {s.story_id[:12] for s in edition.stories if is_removed(s, hidden_ids, hidden_reports)}
+    local = [s for s in edition.stories
+             if s.story_id[:12] not in hidden_ids and looks_local(_public_story(s, edition, "", None))]
+    hidden_ids |= {s.story_id[:12] for s in local}
+    if left_out is not None:
+        left_out.extend(s.rank for s in local)
     stories = [s for s in edition.stories if s.story_id[:12] not in hidden_ids]
     if not stories:
         raise PublishError("Every story of this edition was removed from the website; nothing to publish.")
@@ -610,6 +622,8 @@ class Target:
     def commit(self, changes: dict[str, bytes | None], message: str) -> str:
         raise NotImplementedError
 
+    def close(self) -> None: ...
+
 
 class FolderTarget(Target):
     """A local copy of the website (preview, tests). The archive list is written last, so the site never lists a
@@ -654,12 +668,14 @@ class GitHubTarget(Target):
 
         self.repo, self.branch = repo, branch
         self.description = f"github.com/{repo} ({branch})"
+        self.own_client = client is None  # a client made here is closed here
         self.client = client or httpx.Client(timeout=HTTP_TIMEOUT_S, follow_redirects=True)
         self.headers = {"Authorization": f"Bearer {token}", "Accept": "application/vnd.github+json",
                         "X-GitHub-Api-Version": "2022-11-28", "User-Agent": f"AgentReachDaily/{__version__}"}
         self.head: str | None = None
         self.tree: str | None = None
         self.key_expires: datetime | None = None  # from GitHub's answers (fine-grained keys expire)
+        self._files: dict[str, bytes | None] = {}  # what was read at the pinned version (each file read once)
 
     def _call(self, method: str, path: str, *, ok=(200, 201), allow=(), **kw):
         import httpx
@@ -686,6 +702,11 @@ class GitHubTarget(Target):
         ref = self._call("GET", f"/git/ref/heads/{self.branch}").json()
         self.head = ref["object"]["sha"]
         self.tree = self._call("GET", f"/git/commits/{self.head}").json()["tree"]["sha"]
+        self._files = {}
+
+    def close(self) -> None:
+        if self.own_client:
+            self.client.close()
 
     def check(self) -> str:
         """Read access to the repository and branch (the write permission shows on the first publication)."""
@@ -693,6 +714,13 @@ class GitHubTarget(Target):
         return self.head or ""
 
     def read(self, path: str) -> bytes | None:
+        """The file at the pinned version; each file is fetched once per version (the plan and the comparison of
+        what changed both read the index and the search month: audit F11)."""
+        if path not in self._files:
+            self._files[path] = self._fetch(path)
+        return self._files[path]
+
+    def _fetch(self, path: str) -> bytes | None:
         r = self._call("GET", f"/contents/{path}?ref={self.head}", allow=(404,))
         if r.status_code == 404:
             return None
@@ -752,10 +780,11 @@ def _read_json(target: Target, path: str) -> dict | None:
     return obj if isinstance(obj, dict) else None
 
 
-def site_files(edition: DailyEdition, settings: PublishSettings, current_index: dict | None) -> tuple[dict, dict]:
+def site_files(edition: DailyEdition, settings: PublishSettings, current_index: dict | None,
+               left_out: list[int] | None = None) -> tuple[dict, dict]:
     """(public edition, {path: bytes}) for one edition."""
     d = edition.edition_date.isoformat()
-    public = public_edition(edition, settings.hidden_stories.get(d), settings.hidden_reports.get(d))
+    public = public_edition(edition, settings.hidden_stories.get(d), settings.hidden_reports.get(d), left_out)
     files = {edition_json_path(d): _dumps(public), edition_page_path(d): edition_page(public, settings.site_url),
              **index_files(merge_index(current_index, index_entry(public)), settings.site_url)}
     return public, files
@@ -806,17 +835,21 @@ def publish_edition(paths: DataPaths, edition: DailyEdition, target: Target | No
             if on_site and int(on_site.get("revision") or 0) > edition.revision:
                 raise PublishError(f"The website already has a newer revision ({on_site['revision']}) of the {label} "
                                    "edition; nothing was changed.")
-            public, files = site_files(edition, settings, current)
-            published["public"] = public
+            left_out: list[int] = []
+            public, files = site_files(edition, settings, current, left_out)
+            published["public"], published["left_out"] = public, left_out
             files.update(search_files(t, merge_index(current, index_entry(public)), d, search_entries(public)))
             return files
 
+        own = target is None
         try:
             target = target or github_target(paths, settings)
             try:
                 commit, changed = _with_target(target, plan, f"Publish the {d} edition (revision {edition.revision})")
             finally:
                 _note_key(paths, target)
+                if own:
+                    target.close()
         except PublishError as exc:
             msg = f"Publication failed: {exc} The website still shows the previous edition.{again}"
             _record(paths, state="failed", message=msg, failed_action="publish")
@@ -841,6 +874,9 @@ def publish_edition(paths: DataPaths, edition: DailyEdition, target: Target | No
             return PublishResult("unchanged", msg)
         msg = (f"Published successfully: the {label} edition ({stories} stories) at {format_central(now)}. "
                "The website shows it within a few minutes.")
+        if published["left_out"]:
+            msg += (f" Left out: story {', '.join(str(r) for r in published['left_out'])}, because its text looks like "
+                    "a file path on this computer. Please report this.")
         _record(paths, state="published", message=msg, success_utc=now, edition_date=d, revision=edition.revision,
                 failed_action=None,
                 stories=stories, commit=commit)
@@ -852,6 +888,12 @@ def publish_edition(paths: DataPaths, edition: DailyEdition, target: Target | No
 
 def withdraw(paths: DataPaths, d: str, target: Target | None = None) -> PublishResult:
     """Take one date's edition off the website (the archive and /daily/ then show the next newest date)."""
+    try:
+        if not re.fullmatch(r"\d{4}-\d{2}-\d{2}", d):
+            raise ValueError(d)
+        date.fromisoformat(d)  # the date names the files to delete: never anything else (audit F13)
+    except ValueError:
+        return PublishResult("failed", f"'{d}' is not a date (YYYY-MM-DD); nothing was changed.")
     settings = load_settings(paths)
     lock = RefreshLock(_dir(paths) / "publish.lock")
     try:
@@ -870,12 +912,15 @@ def withdraw(paths: DataPaths, d: str, target: Target | None = None) -> PublishR
             return files
 
         try:
+            own = target is None
             target = target or github_target(paths, settings)
             try:
                 on_site = _read_json_at(target, d)
                 commit, _ = _with_target(target, plan, f"Withdraw the {d} edition")
             finally:
                 _note_key(paths, target)
+                if own:
+                    target.close()
         except PublishError as exc:
             msg = f"Could not take the edition off the website: {exc}"
             _record(paths, state="failed", message=msg, attempt_utc=utcnow(), failed_action="withdraw")
@@ -906,6 +951,7 @@ def check_connection(paths: DataPaths) -> str:
         return target.check()
     finally:
         _note_key(paths, target)
+        target.close()
 
 
 def _read_json_at(target: Target, d: str) -> int | None:
@@ -1005,6 +1051,8 @@ def live_edition(site_url: str = SITE_URL, client=None) -> tuple[str | None, int
         c = client or httpx.Client(timeout=10.0, follow_redirects=True)
         r = c.get(f"{site_url.rstrip('/')}/{INDEX_PATH}", params={"t": int(utcnow().timestamp())},
                   headers={"Cache-Control": "no-cache", "User-Agent": f"AgentReachDaily/{__version__}"})
+        if client is None:
+            c.close()
         body = r.json() if r.status_code == 200 else {}
         latest = body.get("latest")
         entry = next((e for e in body.get("editions", []) if e.get("date") == latest), {})
