@@ -158,15 +158,27 @@
         h('span', {text: 'No cookies, no tracking, no ads.'}))));
   }
   function mount(current, ed, ...content) {
-    const main = h('main', {id: 'main'}, content);
+    const main = h('main', {id: 'main', tabindex: '-1'}, content);
     const app = document.getElementById('app');
-    const nodes = [h('a', {class: 'skip', href: '#main', text: 'Skip to content'}), masthead(current, ed), main, footer()];
+    const nodes = [skipLink(), masthead(current, ed), main, footer()];
     if (app) app.replaceChildren(...nodes); else body.replaceChildren(...nodes);
     return main;
   }
+  function skipLink() {
+    const link = h('a', {class: 'skip', href: '#main', text: 'Skip to content'});
+    link.addEventListener('click', e => {
+      const main = document.getElementById('main');
+      if (!main) return;
+      e.preventDefault(); // Keep the story hash and the mounted content intact.
+      main.focus({preventScroll: true});
+      main.scrollIntoView({block: 'start'});
+    });
+    return link;
+  }
   function chrome(current) { // static pages (About): header and footer around the page's own content
     const main = document.getElementById('main');
-    body.prepend(h('a', {class: 'skip', href: '#main', text: 'Skip to content'}), masthead(current, null));
+    if (main) main.setAttribute('tabindex', '-1');
+    body.prepend(skipLink(), masthead(current, null));
     if (main) main.after(footer()); else body.append(footer());
   }
   function failed(current, what) {
@@ -174,7 +186,8 @@
       h('p', null, 'Please reload the page. If it keeps happening, the newest edition may still be on its way: ', h('a', {href: '/archive/', text: 'see the archive'}), '.')));
   }
   function loading(current) {
-    mount(current, null, h('div', {class: 'wrap'}, h('div', {class: 'skeleton', 'aria-hidden': 'true'}, h('div', {style: 'height:440px'}), h('div', {style: 'height:440px'}))));
+    mount(current, null, h('div', {class: 'wrap'}, h('p', {class: 'sr', role: 'status', text: 'Loading the edition…'}),
+      h('div', {class: 'skeleton', 'aria-hidden': 'true'}, h('div', {style: 'height:440px'}), h('div', {style: 'height:440px'}))));
   }
 
   // ------------------------------------------------------------------ front page / edition
@@ -420,21 +433,25 @@
       }).catch(() => data.set(m, null)));
       return pending.get(m);
     }
-    const input = h('input', {type: 'search', value: st.q, placeholder: 'A name, place or topic', 'aria-label': 'Search the archive', autocomplete: 'off', enterkeyhint: 'search', autofocus: true});
+    const input = h('input', {id: 'archive-query', type: 'search', value: st.q, placeholder: 'A name, place or topic', 'aria-label': 'Search the archive', 'aria-describedby': 'search-help', autocomplete: 'off', enterkeyhint: 'search'});
     const cat = h('select', {'aria-label': 'Section'}, h('option', {value: '', text: 'All sections'}),
       Object.keys(SECTION).map(c => h('option', {value: c, text: catLabel(c), selected: c === st.cat})));
     const sortBtns = [['new', 'Newest first'], ['best', 'Best match']].map(([k, label]) =>
       h('button', {type: 'button', class: 'seg', 'data-sort': k, 'aria-pressed': String(st.sort === k), text: label}));
-    const form = h('form', {class: 'search-form', role: 'search'}, h('span', {class: 'glass', 'aria-hidden': 'true'}), input, cat);
-    form.addEventListener('submit', e => { e.preventDefault(); clearTimeout(timer); st.q = input.value.trim(); st.shown = SEARCH_PAGE; remember(); run(); input.blur(); });
-    const status = h('p', {class: 'search-status', 'aria-live': 'polite'});
-    const results = h('div', {class: 'hits'});
+    const form = h('form', {class: 'search-form search-tools', role: 'search'},
+      h('label', {class: 'search-field'}, h('span', {text: 'Search the archive'}), input),
+      h('label', {class: 'search-field'}, h('span', {text: 'Section'}), cat),
+      h('button', {class: 'pill solid', type: 'submit', text: 'Search'}));
+    form.addEventListener('submit', e => { e.preventDefault(); clearTimeout(timer); st.q = input.value.trim(); st.shown = SEARCH_PAGE; remember(); run(); });
+    const status = h('p', {class: 'search-status', role: 'status', 'aria-live': 'polite', 'aria-atomic': 'true', tabindex: '-1'});
+    const results = h('div', {class: 'hits', 'aria-busy': 'false'});
     const more = h('div', {class: 'search-more'});
     const first = (idx.editions || []).length ? idx.editions[idx.editions.length - 1].date : null;
     mount('search', null, h('div', {class: 'wrap'},
       h('header', {class: 'page-head'}, h('h1', {text: 'Search'}),
-        h('p', {text: first ? `Every story of every edition since ${longDate(first)}: ${plural((idx.editions || []).length, 'edition')}. Words match the start of a word; put a phrase in "quotes".` : 'No editions have been published yet.'}),
+        h('p', {text: first ? `Search headlines, summaries and outlets across ${plural((idx.editions || []).length, 'edition')}, since ${longDate(first)}.` : 'No editions have been published yet.'}),
         form,
+        h('p', {class: 'search-help', id: 'search-help', text: 'Results appear as you type. Words match the start of a word; use "quotes" to match a phrase.'}),
         h('div', {class: 'segs', role: 'group', 'aria-label': 'Order'}, sortBtns)),
       status, results, more));
     document.title = (st.q ? `${st.q}: search` : 'Search') + ' | Agent Reach Daily';
@@ -445,17 +462,19 @@
       history.replaceState(null, '', '/search/' + (p.toString() ? '?' + p : ''));
       document.title = (st.q ? `${st.q}: search` : 'Search') + ' | Agent Reach Daily';
     }
-    async function run() {
+    async function run(focusAfter) {
       const ticket = ++st.run;
       const terms = parseQuery(st.q);
       const reach = months.slice(0, st.horizon);
       results.replaceChildren(); more.replaceChildren();
+      results.setAttribute('aria-busy', 'false');
       if (!terms.length) {
         status.textContent = months.length ? 'Type to search. Results appear as you type.' : '';
         if (months.length) load(months[0]);
         return;
       }
       if (reach.some(m => !data.has(m))) status.textContent = 'Searching…';
+      results.setAttribute('aria-busy', 'true');
       await Promise.all(reach.map(load));
       if (ticket !== st.run) return;
       const hits = [];
@@ -477,13 +496,20 @@
         : b[1].d.localeCompare(a[1].d) || a[1].r - b[1].r);
       const searched = reach.reduce((n, m) => n + (editionsIn.get(m) || 0), 0);
       const span = reach.length ? (reach.length === 1 ? monthName(reach[0]) : `${monthName(reach[reach.length - 1])} to ${monthName(reach[0])}`) : '';
-      status.textContent = `${plural(hits.length, 'story', 'stories')} in ${plural(searched, 'edition')} (${span}).` +
-        (missing ? ` ${plural(missing, 'month')} could not be loaded; try again later.` : '');
+      status.textContent = `${plural(hits.length, 'story', 'stories')} found${span ? ` across ${plural(searched, 'edition')} (${span})` : ''}.` +
+        (missing ? ` Results are incomplete: ${plural(missing, 'month')} could not be loaded.` : '');
       results.replaceChildren(...hits.slice(0, st.shown).map(([, x]) => hit(x, terms)));
+      results.setAttribute('aria-busy', 'false');
+      if (missing) more.append(h('button', {class: 'pill', type: 'button', 'data-act': 'retry', text: 'Retry unavailable months'}));
       if (hits.length > st.shown) more.append(h('button', {class: 'pill', type: 'button', text: `Show more results (${(hits.length - st.shown).toLocaleString('en-US')} more)`, 'data-act': 'more'}));
       if (st.horizon < months.length) more.append(h('button', {class: 'pill', type: 'button', 'data-act': 'older',
         text: `Search older editions (before ${monthName(months[st.horizon - 1])})`}));
-      if (!hits.length && st.horizon >= months.length) results.append(h('p', {class: 'state', text: 'Nothing found. Try fewer or shorter words, or another section.'}));
+      if (!hits.length && missing) results.append(h('p', {class: 'search-empty', text: 'Some editions are unavailable. Retry to complete your search.'}));
+      else if (!hits.length) results.append(h('div', {class: 'search-empty'},
+        h('h2', {text: 'No matching stories'}),
+        h('p', {text: 'Try fewer or shorter words, or choose another section.'}),
+        h('a', {href: '/archive/', text: 'Browse editions by date →'})));
+      if (focusAfter) status.focus({preventScroll: true});
     }
     function hit(x, terms) {
       return h('article', {class: 'hit', 'data-cat': x.c},
@@ -501,11 +527,14 @@
     });
     more.addEventListener('click', e => {
       const act = e.target.closest('button') && e.target.closest('button').dataset.act;
-      if (act === 'more') { st.shown += SEARCH_PAGE; run(); }
-      if (act === 'older') { st.horizon = Math.min(months.length, st.horizon + SEARCH_BATCH); run(); }
+      if (act === 'more') { st.shown += SEARCH_PAGE; run(true); }
+      if (act === 'older') { st.horizon = Math.min(months.length, st.horizon + SEARCH_BATCH); run(true); }
+      if (act === 'retry') {
+        for (const m of months.slice(0, st.horizon)) if (data.get(m) === null) { data.delete(m); pending.delete(m); }
+        run(true);
+      }
     });
     run();
-    if (!st.q) input.focus();
   }
 
   // ------------------------------------------------------------------ routing
@@ -538,7 +567,14 @@
       return renderFront(ed, idx, page === 'home' ? 'home' : 'edition');
     };
     route();
-    window.addEventListener('hashchange', () => { route(); if (!location.hash) window.scrollTo(0, 0); });
+    window.addEventListener('hashchange', () => {
+      // Ordinary page anchors must not remount the news or discard keyboard focus.
+      if (location.hash && !/^#story-/.test(location.hash)) return;
+      route();
+      const title = document.querySelector('main h1');
+      if (title) { title.setAttribute('tabindex', '-1'); title.focus({preventScroll: true}); }
+      window.scrollTo(0, 0);
+    });
   }
   start();
 })();
