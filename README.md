@@ -263,3 +263,8 @@ Tests never touch the network or a real Ollama. `tests/daily_fakes.py` holds syn
 feeds (fictional places on `.test` hosts) and a deterministic fake model; `samples/DEMO-edition.json`
 is the clearly labelled demo edition. Version: Agent Reach Daily 1.0 release candidate 12
 (`python -m agent_reach.daily --version`). What changed in each release: `docs/RELEASE-NOTES.md`.
+
+## License and contact
+
+Agent Reach is open source under the MIT License (see `LICENSE`). Website: https://getagentreach.dev.
+Questions: hello@getagentreach.dev or GitHub issues.

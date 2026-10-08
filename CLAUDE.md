@@ -61,6 +61,7 @@ category sections), a grounded "why it matters" pass, an HTML export and a spoke
   `tests/fixtures/real/*.json` + `tests/test_real_editions.py` (a regression test when fixed, a
   `pytest.mark.xfail(strict=True)` test when open, so a fix flips it). Strip nothing but check fixtures for
   personal data first (`grep -iE "downt|@gmail"`).
+- **License** MIT (`LICENSE`, Michael Brown, 2026; added Oct 8). Contact address: hello@getagentreach.dev.
 - **Website** getagentreach.dev: repository `timeitself1-cpu/Agent-Reach-Website` (static `index.html`, `app.js`,
   `styles.css`, served by Cloudflare from `main`; `index.html` has CRLF line endings). Its demo loads
   `daily-sample.json` from `--export-sample`. Since Oct 7 the whole page is about Agent Reach Daily (hero preview,
