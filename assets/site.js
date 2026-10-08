@@ -199,7 +199,7 @@
         h('span', {class: 'live' + (latest && ageH < 30 ? '' : ' old')}, h('b', {text: latest ? 'Latest edition' : 'Archived edition'})),
         h('time', {datetime: ed.edition_date, text: longDate(ed.edition_date)}),
         ed.revision > 1 ? h('span', {text: `Update ${ed.revision}`}) : null,
-        h('time', {datetime: ed.generated_utc, title: stamp(ed.generated_utc), text: `Published ${clock(ed.generated_utc)}`})),
+        h('time', {datetime: ed.generated_utc, title: stamp(ed.generated_utc), text: `Generated ${clock(ed.generated_utc)}`})),
       h('span', {class: 'edition-stats'}, `${plural(ed.stories.length, 'story', 'stories')} from ${plural(ed.reports_read || 0, 'report')} · ${ed.sources_answered || 0} of ${ed.sources_tried || 0} source types responded · AI-generated summaries`));
   }
   function notices(ed, idx) {
