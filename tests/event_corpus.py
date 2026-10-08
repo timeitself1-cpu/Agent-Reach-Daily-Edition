@@ -35,7 +35,9 @@ RC12_EDITIONS = ("2026-10-07-rc12-r1.json", "2026-10-07-rc12-r2.json")
 RC12C_EDITIONS = ("2026-10-07-rc12c-r1.json", "2026-10-07-rc12c-r2.json")
 #: ... and the rc12d editions (16:35 and 16:43, rc12d gate on nomic-embed-text): the golf club still with the
 #: forces' retreat, a Gaza child's illness in the October 7 anniversary, Texas's next execution in Christa Pike's.
-RC12D_EDITIONS = ("2026-10-07-rc12d-r1.json", "2026-10-07-rc12d-r2.json")
+RC12D_EDITIONS = ("2026-10-07-rc12d-r1.json", "2026-10-07-rc12d-r2.json",
+                  # 18:26 and 18:34, rc12d again: a Pitt State profile in NASA's Artemis II data story ('NASA' + 'lunar')
+                  "2026-10-07-rc12d2-r1.json", "2026-10-07-rc12d2-r2.json")
 EDITIONS = RC11_EDITIONS + RC12_EDITIONS + RC12C_EDITIONS + RC12D_EDITIONS
 _SOURCE_BY_NAME = {"News feeds": SourceName.NEWS_RSS, "Google News": SourceName.GOOGLE_NEWS,
                    "Google Trends": SourceName.GOOGLE_TRENDS, "Hacker News": SourceName.HACKERNEWS,

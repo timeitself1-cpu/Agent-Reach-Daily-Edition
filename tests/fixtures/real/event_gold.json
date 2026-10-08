@@ -133,6 +133,21 @@
    },
    "unassigned": ["Nobel Prizes 2026: brain switches"],
    "related": [["Christa Pike Survives Botched Execution", "texas-execution"]]
+  },
+  "2026-10-07-rc12d2-r1.json": {
+   "split": {
+    "NASA Releases Artemis II Lunar Science Data": {"From Pitt State to lunar research": "pitt-state-lunar-research"},
+    "Christa Pike's Botched Execution Raises Concerns": {"Request to halt Texas execution": "texas-execution"}
+   },
+   "unassigned": ["Nobel Prizes 2026: brain switches"],
+   "related": [["Christa Pike's Botched Execution Raises Concerns", "texas-execution"]]
+  },
+  "2026-10-07-rc12d2-r2.json": {
+   "split": {
+    "Christa Pike's Botched Execution Raises Concerns": {"Request to halt Texas execution": "texas-execution"}
+   },
+   "unassigned": ["Nobel Prizes 2026: brain switches"],
+   "related": [["Christa Pike's Botched Execution Raises Concerns", "texas-execution"]]
   }
  }
 }

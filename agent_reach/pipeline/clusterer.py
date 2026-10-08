@@ -47,7 +47,7 @@ from agent_reach.models import (
 )
 from agent_reach.pipeline.density import density_cluster
 from agent_reach.pipeline.embeddings import EmbeddingRun, EmbeddingUnavailable, embed_reports
-from agent_reach.pipeline.event_identity import (COMMON_NAME_AND_PHRASE, cohesive_groups, lexical_candidates,
+from agent_reach.pipeline.event_identity import (COMMON_NAME_AND_PHRASE, NAME_AND_PHRASE, cohesive_groups, lexical_candidates,
                                                  nearest_candidates)
 from agent_reach.pipeline.cleaner import (
     MONTH_DAY_GUARD,
@@ -649,9 +649,14 @@ class LinkIndex:
             # strongly too (IdentityGate): at 6% of a real run (79 of 1,329) 'Trump' was rare, and 'Trump' +
             # 'retreat' joined US forces pulling back from the Gulf to Trump's golf-club 'presidential retreat'
             # (October 7, rc12c on the PC; cosine 0.69), while 'Russia' + 'plague' is one event
-            common = [u for u in what if u <= self.name_words and min(self.df[t] for t in u) > self.name_cap]
+            names = [u for u in what if u <= self.name_words]
+            common = [u for u in names if min(self.df[t] for t in u) > self.name_cap]
             if len(what) - len(common) < 2:
                 return False, [" ".join(sorted(u)) for u in rare_units], COMMON_NAME_AND_PHRASE
+            # ...and a name few reports write plus one word says who, not yet what: the gate asks the embedding
+            # too ('NASA' + 'lunar', cosine 0.79: a Pitt State profile and NASA's Artemis II data, October 7, PC)
+            if len(what) - len(names) < 2:
+                return True, [" ".join(sorted(u)) for u in rare_units], NAME_AND_PHRASE
             return True, [" ".join(sorted(u)) for u in rare_units], "two distinctive phrases in common"
         # short trend fragments ('Packers', 'Bijan') link to a fuller title via one distinctive name
         short = a if len(ta) <= len(tb) else b

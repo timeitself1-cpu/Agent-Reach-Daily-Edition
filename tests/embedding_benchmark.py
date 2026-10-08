@@ -234,7 +234,7 @@ async def run(models: list[str], use_ollama: bool, host: str, client=None, repla
         lambda n, c: recorded_groups(c), only=RC12_EDITIONS)
     add("rc12c published on the PC (nomic + rc12b identity gate; 2 rc12c editions)",
         lambda n, c: recorded_groups(c), only=RC12C_EDITIONS)
-    add("rc12d published on the PC (nomic + rc12d identity gate; 2 rc12d editions)",
+    add("rc12d published on the PC (nomic + rc12d identity gate; 4 rc12d editions)",
         lambda n, c: recorded_groups(c), only=RC12D_EDITIONS)
     add("identity gate, no embeddings (fallback)", lambda n, c: identity_groups(c, settings, None)[0])
     add("identity gate, replayed rc11 neighbourhoods", lambda n, c: identity_groups(c, settings, replay_vectors(c))[0])

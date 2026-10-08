@@ -1,5 +1,5 @@
 {
- "generated_utc": "2026-10-07T23:12:05+00:00",
+ "generated_utc": "2026-10-08T00:37:49+00:00",
  "corpus": {
   "editions": [
    "2026-10-07-selftest-r1.json",
@@ -12,10 +12,12 @@
    "2026-10-07-rc12c-r1.json",
    "2026-10-07-rc12c-r2.json",
    "2026-10-07-rc12d-r1.json",
-   "2026-10-07-rc12d-r2.json"
+   "2026-10-07-rc12d-r2.json",
+   "2026-10-07-rc12d2-r1.json",
+   "2026-10-07-rc12d2-r2.json"
   ],
-  "reports": 931,
-  "gold_events": 528
+  "reports": 1085,
+  "gold_events": 626
  },
  "settings": {
   "identity_neighbors": 12,
@@ -164,15 +166,15 @@
    }
   },
   {
-   "name": "rc12d published on the PC (nomic + rc12d identity gate; 2 rc12d editions)",
-   "precision": 0.887,
+   "name": "rc12d published on the PC (nomic + rc12d identity gate; 4 rc12d editions)",
+   "precision": 0.903,
    "recall": 1.0,
-   "f1": 0.94,
-   "false_merges": 12,
+   "f1": 0.949,
+   "false_merges": 20,
    "missed_merges": 0,
-   "mixed_stories": 5,
-   "true_pairs": 94,
-   "predicted_pairs": 106,
+   "mixed_stories": 8,
+   "true_pairs": 187,
+   "predicted_pairs": 207,
    "editions": {
     "2026-10-07-rc12d-r1.json": {
      "precision": 0.912,
@@ -195,19 +197,41 @@
      "multi_report_stories": 15,
      "true_pairs": 42,
      "predicted_pairs": 49
+    },
+    "2026-10-07-rc12d2-r1.json": {
+     "precision": 0.904,
+     "recall": 1.0,
+     "f1": 0.949,
+     "false_merges": 5,
+     "missed_merges": 0,
+     "mixed_stories": 2,
+     "multi_report_stories": 18,
+     "true_pairs": 47,
+     "predicted_pairs": 52
+    },
+    "2026-10-07-rc12d2-r2.json": {
+     "precision": 0.939,
+     "recall": 1.0,
+     "f1": 0.968,
+     "false_merges": 3,
+     "missed_merges": 0,
+     "mixed_stories": 1,
+     "multi_report_stories": 15,
+     "true_pairs": 46,
+     "predicted_pairs": 49
     }
    }
   },
   {
    "name": "identity gate, no embeddings (fallback)",
-   "precision": 0.996,
-   "recall": 0.568,
-   "f1": 0.724,
-   "false_merges": 2,
-   "missed_merges": 351,
-   "mixed_stories": 2,
-   "true_pairs": 813,
-   "predicted_pairs": 464,
+   "precision": 0.994,
+   "recall": 0.571,
+   "f1": 0.725,
+   "false_merges": 3,
+   "missed_merges": 389,
+   "mixed_stories": 3,
+   "true_pairs": 906,
+   "predicted_pairs": 520,
    "editions": {
     "2026-10-07-selftest-r1.json": {
      "precision": 1.0,
@@ -329,19 +353,41 @@
      "multi_report_stories": 15,
      "true_pairs": 42,
      "predicted_pairs": 23
+    },
+    "2026-10-07-rc12d2-r1.json": {
+     "precision": 0.962,
+     "recall": 0.532,
+     "f1": 0.685,
+     "false_merges": 1,
+     "missed_merges": 22,
+     "mixed_stories": 1,
+     "multi_report_stories": 16,
+     "true_pairs": 47,
+     "predicted_pairs": 26
+    },
+    "2026-10-07-rc12d2-r2.json": {
+     "precision": 1.0,
+     "recall": 0.652,
+     "f1": 0.789,
+     "false_merges": 0,
+     "missed_merges": 16,
+     "mixed_stories": 0,
+     "multi_report_stories": 12,
+     "true_pairs": 46,
+     "predicted_pairs": 30
     }
    }
   },
   {
    "name": "identity gate, replayed rc11 neighbourhoods",
-   "precision": 0.994,
-   "recall": 0.645,
-   "f1": 0.782,
-   "false_merges": 3,
-   "missed_merges": 289,
-   "mixed_stories": 2,
-   "true_pairs": 813,
-   "predicted_pairs": 527,
+   "precision": 0.993,
+   "recall": 0.651,
+   "f1": 0.787,
+   "false_merges": 4,
+   "missed_merges": 316,
+   "mixed_stories": 3,
+   "true_pairs": 906,
+   "predicted_pairs": 594,
    "editions": {
     "2026-10-07-selftest-r1.json": {
      "precision": 1.0,
@@ -463,19 +509,41 @@
      "multi_report_stories": 16,
      "true_pairs": 42,
      "predicted_pairs": 33
+    },
+    "2026-10-07-rc12d2-r1.json": {
+     "precision": 0.968,
+     "recall": 0.638,
+     "f1": 0.769,
+     "false_merges": 1,
+     "missed_merges": 17,
+     "mixed_stories": 1,
+     "multi_report_stories": 18,
+     "true_pairs": 47,
+     "predicted_pairs": 31
+    },
+    "2026-10-07-rc12d2-r2.json": {
+     "precision": 1.0,
+     "recall": 0.783,
+     "f1": 0.878,
+     "false_merges": 0,
+     "missed_merges": 10,
+     "mixed_stories": 0,
+     "multi_report_stories": 13,
+     "true_pairs": 46,
+     "predicted_pairs": 36
     }
    }
   },
   {
    "name": "identity gate, every pair cosine 1",
    "precision": 1.0,
-   "recall": 0.157,
-   "f1": 0.272,
+   "recall": 0.173,
+   "f1": 0.295,
    "false_merges": 0,
-   "missed_merges": 685,
+   "missed_merges": 749,
    "mixed_stories": 0,
-   "true_pairs": 813,
-   "predicted_pairs": 128,
+   "true_pairs": 906,
+   "predicted_pairs": 157,
    "editions": {
     "2026-10-07-selftest-r1.json": {
      "precision": 1.0,
@@ -597,6 +665,28 @@
      "multi_report_stories": 4,
      "true_pairs": 42,
      "predicted_pairs": 6
+    },
+    "2026-10-07-rc12d2-r1.json": {
+     "precision": 1.0,
+     "recall": 0.213,
+     "f1": 0.351,
+     "false_merges": 0,
+     "missed_merges": 37,
+     "mixed_stories": 0,
+     "multi_report_stories": 4,
+     "true_pairs": 47,
+     "predicted_pairs": 10
+    },
+    "2026-10-07-rc12d2-r2.json": {
+     "precision": 1.0,
+     "recall": 0.413,
+     "f1": 0.585,
+     "false_merges": 0,
+     "missed_merges": 27,
+     "mixed_stories": 0,
+     "multi_report_stories": 3,
+     "true_pairs": 46,
+     "predicted_pairs": 19
     }
    }
   }
@@ -786,7 +876,7 @@
     ]
    ]
   },
-  "rc12d published on the PC (nomic + rc12d identity gate; 2 rc12d editions)": {
+  "rc12d published on the PC (nomic + rc12d identity gate; 4 rc12d editions)": {
    "2026-10-07-rc12d-r1.json": [
     [
      "Nobel Prize in Chemistry 2026 to Henri B. Kagan and Kenso Soai",
@@ -830,6 +920,42 @@
      "Nobel Prizes 2026: brain switches, 'ghost' particle hunter, and 'the chemistry of life'",
      "Henri B. Kagan and Kenso Soai win Nobel Prize in chemistry"
     ]
+   ],
+   "2026-10-07-rc12d2-r1.json": [
+    [
+     "Nobel Prize in Chemistry 2026 to Henri B. Kagan and Kenso Soai",
+     "Nobel Prizes 2026: brain switches, 'ghost' particle hunter, and 'the chemistry of life'"
+    ],
+    [
+     "Nobel prize in chemistry awarded for work on mirror-image molecules",
+     "Nobel Prizes 2026: brain switches, 'ghost' particle hunter, and 'the chemistry of life'"
+    ],
+    [
+     "Nobel Prizes 2026: brain switches, 'ghost' particle hunter, and 'the chemistry of life'",
+     "Chemistry Nobel awarded for solving mystery of life's asymmetry"
+    ],
+    [
+     "Nobel Prizes 2026: brain switches, 'ghost' particle hunter, and 'the chemistry of life'",
+     "Nobel Prize in chemistry awarded for discoveries about mirrored molecules that led to many drugs"
+    ],
+    [
+     "NASA Releases Artemis II Lunar Science Data, Images",
+     "From Pitt State to lunar research at NASA Johnson Space Center"
+    ]
+   ],
+   "2026-10-07-rc12d2-r2.json": [
+    [
+     "Nobel Prize in Chemistry 2026 to Henri B. Kagan and Kenso Soai",
+     "Nobel Prizes 2026: brain switches, 'ghost' particle hunter, and 'the chemistry of life'"
+    ],
+    [
+     "Nobel prize in chemistry awarded for work on mirror-image molecules",
+     "Nobel Prizes 2026: brain switches, 'ghost' particle hunter, and 'the chemistry of life'"
+    ],
+    [
+     "Nobel Prizes 2026: brain switches, 'ghost' particle hunter, and 'the chemistry of life'",
+     "Nobel Prize in chemistry awarded for discoveries about mirrored molecules that led to many drugs"
+    ]
    ]
   },
   "identity gate, no embeddings (fallback)": {
@@ -853,7 +979,14 @@
      "From Iran to the U.K., Trump Is Being Forced Into Retreat",
      "Trump wants to turn his private golf club into a presidential retreat"
     ]
-   ]
+   ],
+   "2026-10-07-rc12d2-r1.json": [
+    [
+     "NASA Releases Artemis II Lunar Science Data, Images",
+     "From Pitt State to lunar research at NASA Johnson Space Center"
+    ]
+   ],
+   "2026-10-07-rc12d2-r2.json": []
   },
   "identity gate, replayed rc11 neighbourhoods": {
    "2026-10-07-selftest-r1.json": [],
@@ -880,7 +1013,14 @@
      "Trump's Retreat: From the Gulf to Britain, American Forces Pull Back",
      "Trump wants to turn his private golf club into a presidential retreat"
     ]
-   ]
+   ],
+   "2026-10-07-rc12d2-r1.json": [
+    [
+     "NASA Releases Artemis II Lunar Science Data, Images",
+     "From Pitt State to lunar research at NASA Johnson Space Center"
+    ]
+   ],
+   "2026-10-07-rc12d2-r2.json": []
   },
   "identity gate, every pair cosine 1": {
    "2026-10-07-selftest-r1.json": [],
@@ -893,7 +1033,9 @@
    "2026-10-07-rc12c-r1.json": [],
    "2026-10-07-rc12c-r2.json": [],
    "2026-10-07-rc12d-r1.json": [],
-   "2026-10-07-rc12d-r2.json": []
+   "2026-10-07-rc12d-r2.json": [],
+   "2026-10-07-rc12d2-r1.json": [],
+   "2026-10-07-rc12d2-r2.json": []
   }
  }
 }

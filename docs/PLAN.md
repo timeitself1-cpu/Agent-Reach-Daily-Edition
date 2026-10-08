@@ -19,12 +19,14 @@ unchecked sub-task, do it, then update this file.
 
 ## Where we are (October 7, 2026)
 
-- Version **1.0.0rc12** (zip rc12e) on branch `claude/affectionate-galileo-isxik1`: EmbeddingGemma 2 + event
+- Version **1.0.0rc12** (zip rc12f) on branch `claude/affectionate-galileo-isxik1`: EmbeddingGemma 2 + event
   identity. PC round 1 (Oct 7 12:07) fixed in rc12b (H1-H6), round 2 (13:36) in rc12d (H7b), round 3 (16:29) in
   rc12e (H7c): live false merges 26, 26, then 12 in 5 stories (golf 'retreat' again, Gaza/anniversary, a Nobel
-  round-up); now 1 open (two RTX Spark laptops) on the 11-edition labelled corpus offline. No Gemma model has run on the PC: EmbeddingGemma 2 is MLX-only in Ollama, and Ollama
+  round-up); round 4 (18:16, still rc12d: rc12e was not installed yet) in rc12f (H7d): a Pitt State profile in
+  NASA's Artemis II story, the .cmd launcher held by Windows' security prompt. 1 open false merge (two RTX Spark
+  laptops) on the 13-edition labelled corpus offline. No Gemma model has run on the PC: EmbeddingGemma 2 is MLX-only in Ollama, and Ollama
   0.40.0 cannot open `embeddinggemma:300m` after downloading it (Windows symlink bug, ollama/ollama#18847).
-  **Next:** the user runs the self-test on rc12e (H7d), then Phase 1; H7 waits for an Ollama that can run a Gemma
+  **Next:** the user installs rc12f and runs the self-test (H7e), then Phase 1; H7 waits for an Ollama that can run a Gemma
   embedding model on Windows. rc11 was zip rc11d.
 - Reliability is proven on the user's Windows PC (self-test round 2): offline suite 404 passed on Windows,
   launchers (shortcuts, .cmd), real Ollama checks, cancel at once/halfway, full real refresh (~6 min, 46-51
@@ -118,8 +120,14 @@ recall >= 0.6; fallback tested; evaluation artifact; real benchmark command for 
         is a round-up (Nature's 'Nobel Prizes 2026'). Texas's next execution with Christa Pike's labelled related.
         Self-test keeps the second refresh's gate decisions. Corpus 11 editions; no recall lost on any edition;
         real nomic replay 0/0.679.
-  - [ ] H7d. The user deletes the two stray test files and runs `Test-AgentReachDaily.ps1` on rc12e: expect
-        ALL PASSED, and check both live editions (and both grouping files) for mixed stories.
+  - [x] H7d. Round 4 on the PC (18:16): the stray tests are gone (Windows suite 476 passed), but the run was still
+        rc12d (no second grouping file, Nature's round-up still in the chemistry story). 1 FAIL: AgentReachDaily.cmd,
+        os.startfile held 250 s by Windows' security prompt for a file from a downloaded zip; Setup now clears the
+        Zone.Identifier mark and the self-test explains a held launch. One new false merge: 'NASA' + 'lunar' (scarce
+        name + one word, cosine 0.79) joined a Pitt State profile to NASA's Artemis II data; with vectors that now
+        needs the strong cosine. Real nomic replay unchanged (0/0.679), lexical unchanged (0.568). Corpus 13 editions.
+  - [ ] H7e. The user extracts rc12f over the folder, runs Setup, then `Test-AgentReachDaily.ps1`: expect ALL PASSED
+        and a second grouping file in the zip (proof rc12e/f is installed); check both editions for mixed stories.
   - [ ] H7. **Blocked on Ollama:** nomic vs a Gemma embedding model on the PC (`embeddinggemma:300m` downloads but
         Ollama 0.40.0 cannot open it, ollama/ollama#18847; EmbeddingGemma 2 is MLX-only). When a later Ollama runs
         one: `Benchmark-Embeddings.ps1 -PullModels`, replay here with `--replay <vectors-*.json.gz>`, put it in the
@@ -263,3 +271,4 @@ Each rule starts from quotes in `docs/REAL-EDITION-FINDINGS.md`; each gets a fix
 - 2026-10-07 | rc12 H7b | f224575 | round 2 (13:36): 26 false merges in the live rc12c editions; five gate rules fixed, laptops open (xfail); progress.json delete retry; self-test INFO for fallback; Ollama symlink bug explained; corpus 9 editions, 1 false merge, R 0.620 | H7c: user runs the self-test on rc12d
 - 2026-10-07 | rc12 H7c | f631426, d9cb362, (this commit) | round 3 (16:29): 12 false merges in the live rc12d editions; attach rule needs a scarce name, 'war' everyday, three-field prize round-ups; self-test keeps the second grouping file; corpus 11 editions, 1 false merge offline, no recall lost | H7d: user deletes the stray tests, runs the self-test on rc12e
 - 2026-10-07 | website | (this commit), site a34517e | `--export-sample` (public edition sample, no publisher excerpts); getagentreach.dev demo shows 5 real stories of the Oct 7 rc12d edition instead of fictional events | H7d: user runs the self-test on rc12e
+- 2026-10-08 | rc12 H7d | 83d9dd6, 7b93072, (this commit) | round 4 (18:16, rc12d): Setup unblocks downloaded files + self-test explains a held launch; scarce name + one word needs strong cosine with vectors (Pitt State/Artemis II); MIT license and website (Oct 8); corpus 13 editions, no recall lost | H7e: user installs rc12f, runs the self-test

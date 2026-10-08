@@ -223,3 +223,17 @@ def test_missing_grouping_model_is_named_but_never_blocks(monkeypatch):
     assert status.ready and status.grouping_missing is None and "required models" in status.describe()
     answers["/api/tags"] = {"models": [{"name": "llama3.1:8b"}]}
     assert "grouped by shared words" in prereqs.check_prefs(prefs).describe()
+
+
+def test_a_launch_windows_holds_is_explained_and_setup_clears_the_mark():
+    """October 7, 18:16 on the user's PC: double-clicking AgentReachDaily.cmd took 250 s before anything started
+    (Windows' security prompt for a file from a downloaded zip). The self-test says so, and setup clears the mark."""
+    from pathlib import Path
+
+    from tests.daily_selftest import launch_held_note
+
+    assert launch_held_note(3.0) == ""
+    note = launch_held_note(249.7)
+    assert "250 s" in note and "Security Warning" in note and "Setup-AgentReachDaily.ps1" in note
+    setup = (Path(__file__).resolve().parents[1] / "Setup-AgentReachDaily.ps1").read_text(encoding="ascii")
+    assert "Zone.Identifier" in setup and "Unblock-File" in setup and "\\.venv\\" in setup

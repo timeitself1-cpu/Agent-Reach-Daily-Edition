@@ -80,6 +80,10 @@ EmbeddingGemma 2 neighbours + an explicit same-event gate (below).
   12 false merges in 5 stories: the golf 'retreat' again (the lone-report attach rule still called 'Trump' rare at
   6%; now 2% as in the pair rule), 'Gaza' + 'war' (now an everyday word), Nature's three-prize Nobel round-up (now
   a round-up). Corpus 11 editions (`RC12D_EDITIONS`), no recall lost; the self-test keeps both grouping files.
+- **rc12f (round 4, 18:16, run on rc12d):** the .cmd launcher was held 250 s by Windows' security prompt for
+  downloaded files (Setup now unblocks the project's files); 'NASA' + 'lunar' joined a Pitt State profile to the
+  Artemis II story (a scarce name + one word now needs the strong cosine when vectors exist). Corpus 13 editions.
+  MIT license and a rebuilt getagentreach.dev the same day.
 
 ## rc11 stabilization pass (bugs found by reading the Daily code, no new features)
 

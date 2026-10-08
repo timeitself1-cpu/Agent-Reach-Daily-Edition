@@ -117,6 +117,29 @@ Text:
   headline itself still comes from the model and can stay stale: open.
 - The same story was "Strong evidence" partly because a Google Trends query added a channel. Fixed (rc12 D).
 
+## October 7, 2026, 6:16 PM: self-test on the user's PC (round 4, still rc12d)
+
+Self-test `AgentReach-selftest-20261007-1816.zip`: 28 PASS, 1 FAIL, 11 INFO in 26 min. The two real editions
+(`2026-10-07-rc12d2-r1.json` 18:26, 51 stories; `-r2.json` 18:34, 44 stories) are fixtures with gold events: the
+labelled corpus now has 13 editions.
+
+- **Still rc12d.** The rc12e zip arrived two minutes before this run: the zip has no `edition-2-semantic-*.json`
+  (rc12e adds it) and Nature's three-prize "Nobel Prizes 2026" round-up is still in the chemistry story in both
+  editions (rc12e makes it a round-up). The rc12e fixes are still untested live.
+- **Stray tests gone:** the Windows suite loads cleanly, 476 passed, 1 skipped, 6 xfailed.
+- **The one FAIL: AgentReachDaily.cmd, 250 s.** The check waits 90 s for the window, but `os.startfile` itself
+  did not return for about 250 s: Windows' "Open File - Security Warning" dialog for a `.cmd` extracted from a
+  downloaded zip (the shortcuts and the `.pyw` opened in 5 s). Fix: Setup clears the Zone.Identifier mark from
+  the project's own files; the self-test explains a launch Windows held for 20 s or more.
+- **One new false merge:** r1 #19 "NASA Releases Artemis II Lunar Science Data" carried "From Pitt State to lunar
+  research at NASA Johnson Space Center" (a university alumnus profile). 'NASA' + 'lunar' counted as two
+  distinctive phrases (NASA in under 2% of the run), cosine 0.788 just under the strong 0.8. Fix: with vectors, a
+  scarce name plus one phrase is accepted only at the strong cosine; without vectors it still links (lexical
+  fallback recall unchanged). Real nomic replay: recall 0.679 unchanged, and the Warner Bros deal / Skydance film
+  heads pair (different events) now stays apart too. Test: `test_a_rare_name_and_one_word_need_the_embedding_when_there_is_one`.
+- Golf 'retreat' and US forces were two stories this time (the golf report was not alone). Texas's next
+  execution is labelled related to Christa Pike's. Real refresh 429 s, 51 stories, 2 'why it matters' of 21.
+
 ## October 7, 2026, 4:29 PM: rc12d self-test on the user's PC (round 3)
 
 Self-test `AgentReach-selftest-20261007-1629.zip`: 29 PASS, 1 FAIL, 11 INFO in 21 min. The two real editions
