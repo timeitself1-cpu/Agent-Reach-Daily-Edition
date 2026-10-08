@@ -64,3 +64,9 @@ and bookmarks. Suggested fallback, in order:
 - Search links can carry the existing `h` headline as a frontend URL hint for recovery, consumed when the edition loads and removed from the current address. This introduces no backend field or stable event ID. Matching is confined to the requested edition; ties and weak word matches fall back to its full page.
 
 The supplied contract above is preserved as the coordination record. The response describes frontend decisions; it does not change the publishing contract or certify the backend's ID-match accuracy.
+
+## Website build integration — October 8, 2026
+
+The website now adds a deployment build step that consumes only the files and fields above. It writes escaped story HTML into `dist/` and embeds the existing public edition/index JSON for immediate browser rendering. This works with the publisher's current one-commit publication and withdrawal behavior, without requiring a publisher change or a new JSON field. The source dated shells remain publisher-owned; generated HTML is never committed back over them. Every deploy validates the index, editions, search months, dated shells, RSS and sitemap before building.
+
+Native Share and Copy link carry the existing headline hint. Stable IDs and dedicated per-story preview pages remain backend follow-up work.

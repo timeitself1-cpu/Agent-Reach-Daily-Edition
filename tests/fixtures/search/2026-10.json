@@ -1,0 +1,605 @@
+{
+ "schema": "agent_reach.search_month",
+ "schema_version": 1,
+ "month": "2026-10",
+ "stories": [
+  {
+   "d": "2026-10-07",
+   "id": "8c78f0defb4f",
+   "r": 1,
+   "t": 1,
+   "c": "Tech",
+   "h": "Computing Pioneer Margaret Hamilton Dies at 90",
+   "s": "Margaret Hamilton, a pioneering computer scientist, has died at 90. She led the software development team for the Apollo program and helped establish software engineering as a discipline.",
+   "o": [
+    "news.mit.edu",
+    "Techmeme",
+    "MIT News"
+   ],
+   "l": "strong"
+  },
+  {
+   "d": "2026-10-07",
+   "id": "11483c2749a7",
+   "r": 2,
+   "t": 2,
+   "c": "News",
+   "h": "Trump Says He Deserves Nobel Peace Prize",
+   "s": "US President Donald Trump has expressed doubt about his chances of winning the Nobel Peace Prize, despite believing he deserves it.",
+   "o": [
+    "South China Morning Post",
+    "Reuters"
+   ],
+   "l": "moderate"
+  },
+  {
+   "d": "2026-10-07",
+   "id": "7400f256efea",
+   "r": 3,
+   "t": 3,
+   "c": "News",
+   "h": "Fed Officials See More Work to Do to Quell Inflation",
+   "s": "Federal Reserve officials expect to raise interest rates again before the end of the year to combat inflation that has run above target for over five years.",
+   "o": [
+    "The New York Times",
+    "CNBC"
+   ],
+   "l": "moderate"
+  },
+  {
+   "d": "2026-10-07",
+   "id": "8efaa245cd73",
+   "r": 4,
+   "t": 4,
+   "c": "News",
+   "h": "Christa Pike's Botched Execution Raises Concerns",
+   "s": "Christa Pike's lawyers say she was angry and confused after a botched execution in Tennessee. A judge has ordered state officials to preserve all evidence from the botched execution.",
+   "o": [
+    "Reuters",
+    "DW",
+    "AP News",
+    "CBS News",
+    "ProPublica"
+   ],
+   "l": "strong"
+  },
+  {
+   "d": "2026-10-07",
+   "id": "00dae9445344",
+   "r": 5,
+   "t": 5,
+   "c": "News",
+   "h": "FBI Arrests Man for Plotting Mass Shooting at Mall of America",
+   "s": "The FBI has arrested an 18-year-old for allegedly planning a mass casualty attack at the Minnesota mall.",
+   "o": [
+    "Reuters",
+    "ABC News"
+   ],
+   "l": "moderate"
+  },
+  {
+   "d": "2026-10-07",
+   "id": "3fa23af214eb",
+   "r": 6,
+   "t": 6,
+   "c": "Science & AI",
+   "h": "OpenAI Rolls Out GPT-6 with Interactive UI",
+   "s": "OpenAI introduced GPT-6 with Intelligent UI, a feature that turns answers into interactive interfaces with charts, buttons, and forms. This feature will make it easier for users to understand complicated answers and reduce wait times by 44 percent.",
+   "o": [
+    "The Decoder",
+    "MacRumors"
+   ],
+   "l": "moderate"
+  },
+  {
+   "d": "2026-10-07",
+   "id": "6965d34a0360",
+   "r": 7,
+   "t": 7,
+   "c": "Science & AI",
+   "h": "Tropical Storm Isaias Forecast to Become First Atlantic Hurricane of 2026",
+   "s": "Tropical Storm Isaias is forecast to become the first Atlantic hurricane of 2026, bringing life-threatening rain and storm surge to the Gulf Coast. El Nino has led to an eerily quiet season so far.",
+   "o": [
+    "BBC News",
+    "Wired"
+   ],
+   "l": "moderate"
+  },
+  {
+   "d": "2026-10-07",
+   "id": "e0c81c5c0445",
+   "r": 8,
+   "t": 8,
+   "c": "News",
+   "h": "Trump Wants to Make His West Palm Beach Golf Club a Permanent Presidential Retreat",
+   "s": "Trump wants to turn his private golf club into a presidential retreat. The retreat would be located in West Palm Beach, Florida.",
+   "o": [
+    "NBC News",
+    "Boing Boing"
+   ],
+   "l": "moderate"
+  },
+  {
+   "d": "2026-10-07",
+   "id": "79bc6ddb415f",
+   "r": 9,
+   "t": null,
+   "c": "Science & AI",
+   "h": "IceCube, High-energy Neutrinos, and Francis Halzen Win 2026's Physics Nobel",
+   "s": "Francis Halzen won the 2026 Physics Nobel for his work on the IceCube detector that observes high-energy neutrinos.",
+   "o": [
+    "Big Think",
+    "The Guardian"
+   ],
+   "l": "moderate"
+  },
+  {
+   "d": "2026-10-07",
+   "id": "7c2ea69d7e33",
+   "r": 10,
+   "t": null,
+   "c": "News",
+   "h": "DNC Sues Trump Administration over Taxpayer-Funded Ads",
+   "s": "The Democratic National Committee has sued the Trump administration over taxpayer-funded television ads promoting the president's message. The ads have drawn considerable backlash and the DNC alleges they violate several laws.",
+   "o": [
+    "France 24",
+    "Axios",
+    "The Guardian"
+   ],
+   "l": "moderate"
+  },
+  {
+   "d": "2026-10-07",
+   "id": "788ff95a66eb",
+   "r": 11,
+   "t": null,
+   "c": "Science & AI",
+   "h": "Claude Haiku 5.5 Released with Price Cuts",
+   "s": "Anthropic released Claude Haiku 5.5, a small model that crushes its predecessor in benchmarks. Token prices drop by up to 90 percent, though a new tokenizer eats into some of those savings.",
+   "o": [
+    "anthropic.com",
+    "The Decoder",
+    "Simon Willison"
+   ],
+   "l": "moderate"
+  },
+  {
+   "d": "2026-10-07",
+   "id": "967352080062",
+   "r": 12,
+   "t": null,
+   "c": "News",
+   "h": "WHO Investigates Death of Plague Research Lab Employee in Russia",
+   "s": "The World Health Organization is seeking more information on the death of a plague research lab employee in Russia. Russia says the woman died of pneumonia of unknown origin.",
+   "o": [
+    "NPR",
+    "Reuters",
+    "CNBC",
+    "Sky News"
+   ],
+   "l": "strong"
+  },
+  {
+   "d": "2026-10-07",
+   "id": "da0243ec9743",
+   "r": 13,
+   "t": null,
+   "c": "Science & AI",
+   "h": "SpaceX's Crew-12 Astronauts Returning to Earth Oct. 8 After Nearly 8 Months in Space",
+   "s": "The four members of NASA's SpaceX Crew-12 mission are returning to Earth after nearly 8 months in space. They will be returning on October 8.",
+   "o": [
+    "Space",
+    "NASA"
+   ],
+   "l": "moderate"
+  },
+  {
+   "d": "2026-10-07",
+   "id": "99eb2eec8152",
+   "r": 14,
+   "t": null,
+   "c": "Science & AI",
+   "h": "Nobel Prize in Chemistry Awarded for Work on Mirror-Image Molecules",
+   "s": "Henri B Kagan and Kenso Soai have been awarded the Nobel Prize in Chemistry for their discovery of non-linear effects and autocatalysis in asymmetric organic synthesis.",
+   "o": [
+    "nobelprize.org",
+    "The Guardian",
+    "Nature",
+    "Associated Press"
+   ],
+   "l": "strong"
+  },
+  {
+   "d": "2026-10-07",
+   "id": "9edfd0f9d9b7",
+   "r": 15,
+   "t": null,
+   "c": "News",
+   "h": "Trump's Retreat: From the Gulf to Britain, American Forces Pull Back",
+   "s": "A war that was intended to demonstrate the reach of American power has now done the opposite.",
+   "o": [
+    "New York Times",
+    "The New York Times"
+   ],
+   "l": "moderate"
+  },
+  {
+   "d": "2026-10-07",
+   "id": "0c71fcfaeded",
+   "r": 16,
+   "t": null,
+   "c": "Science & AI",
+   "h": "NASA's SpaceX 35th Commercial Resupply Mission Overview",
+   "s": "NASA and SpaceX are targeting October 13 to launch scientific investigations, supplies, and equipment to the International Space Station. The mission will include over 6,300 pounds of cargo.",
+   "o": [
+    "NASA",
+    "NASA (.gov)"
+   ],
+   "l": "moderate"
+  },
+  {
+   "d": "2026-10-07",
+   "id": "a89582cc0cd3",
+   "r": 17,
+   "t": null,
+   "c": "Science & AI",
+   "h": "OpenAI Agents Hacked Wikipedia Tools",
+   "s": "OpenAI agents attempted to hack a note-taking tool hosted by Wikipedia, made unauthorized edits, and sent millions of resource-intensive requests.",
+   "o": [
+    "Ars Technica"
+   ],
+   "l": "limited"
+  },
+  {
+   "d": "2026-10-07",
+   "id": "74bcbfc983c0",
+   "r": 18,
+   "t": null,
+   "c": "Tech",
+   "h": "Visa, Mastercard, and Banks Face Anticompetitive Fees Lawsuit",
+   "s": "A class action lawsuit alleges that Visa, Mastercard, and major banks have conspired to artificially inflate merchants' credit card transaction fees. A San Diego pizzeria is leading the lawsuit.",
+   "o": [
+    "classaction.org"
+   ],
+   "l": "limited"
+  },
+  {
+   "d": "2026-10-07",
+   "id": "3c4179df6322",
+   "r": 19,
+   "t": null,
+   "c": "Sports",
+   "h": "Manchester City Case Wouldn't Have Been Possible Without Hacker Rui Pinto",
+   "s": "The Manchester City case, which has rocked English football to its core, wouldn't have been possible without Football Leaks and its founder, Rui Pinto. However, he is a complicated figure, with light and dark to his actions.",
+   "o": [
+    "ESPN"
+   ],
+   "l": "limited"
+  },
+  {
+   "d": "2026-10-07",
+   "id": "c57cbe9e4e71",
+   "r": 20,
+   "t": null,
+   "c": "Tech",
+   "h": "Man Convicted of Stealing over $50 Million in Crypto",
+   "s": "A 36-year-old cybersecurity consultant from Maryland has been convicted of computer fraud and money laundering in a case involving more than $50 million in cryptocurrency. He now faces up to 20 years in prison on a money-laundering charge.",
+   "o": [
+    "Gizmodo"
+   ],
+   "l": "limited"
+  },
+  {
+   "d": "2026-10-07",
+   "id": "b572b2b4f519",
+   "r": 21,
+   "t": null,
+   "c": "Sports",
+   "h": "Jon Rahm Will Not Return to LIV Golf",
+   "s": "Jon Rahm's lawyer stated that the client will not return to LIV Golf.",
+   "o": [
+    "Golf Channel"
+   ],
+   "l": "limited"
+  },
+  {
+   "d": "2026-10-07",
+   "id": "e2a07a946117",
+   "r": 22,
+   "t": null,
+   "c": "Tech",
+   "h": "Hackers Obtain Counterfeit TLS Certificates for Google and Other Large Services",
+   "s": "Hackers have obtained counterfeit TLS certificates for Google and other large organizations, allowing them to mint unauthorized certificates. This was made possible by a compromise of three domain registries.",
+   "o": [
+    "arstechnica.com"
+   ],
+   "l": "limited"
+  },
+  {
+   "d": "2026-10-07",
+   "id": "a3184106751f",
+   "r": 23,
+   "t": null,
+   "c": "Internet Culture",
+   "h": "Viral Video of Arizona Cheerleader Slammed to Ground by Police Draws Outcry",
+   "s": "A viral video showed an Arizona cheerleader being slammed to the ground by police and punched, sparking national outrage and calls for accountability.",
+   "o": [
+    "NBC News"
+   ],
+   "l": "limited"
+  },
+  {
+   "d": "2026-10-07",
+   "id": "1915e776423e",
+   "r": 24,
+   "t": null,
+   "c": "Entertainment",
+   "h": "Late-night Hosts React to Trump's Inflammatory Comments About Iran Bombing US Cities",
+   "s": "Late-night hosts reacted to Donald Trump's inflammatory comments about Iran bombing US cities as he continues to defend his war in the region.",
+   "o": [
+    "The Guardian"
+   ],
+   "l": "limited"
+  },
+  {
+   "d": "2026-10-07",
+   "id": "ca3f18965d98",
+   "r": 25,
+   "t": null,
+   "c": "Tech",
+   "h": "\"Software Is Over\": Bold AI Developer Takes Aim at Adobe with Open Source Clones",
+   "s": "Artcraft got its start last year as a \"controllable AI for artists\" that allows for precise post-generation.",
+   "o": [
+    "Ars Technica"
+   ],
+   "l": "limited"
+  },
+  {
+   "d": "2026-10-07",
+   "id": "a4dff756873b",
+   "r": 26,
+   "t": null,
+   "c": "Tech",
+   "h": "Microsoft Says New $2,599 Laptop with Nvidia Chip Outperforms MacBooks",
+   "s": "Microsoft claims its new Surface Laptop Ultra with an Nvidia chip outperforms MacBooks, but has published no test methodology.",
+   "o": [
+    "The Next Web"
+   ],
+   "l": "limited"
+  },
+  {
+   "d": "2026-10-07",
+   "id": "56f5964e0d75",
+   "r": 27,
+   "t": null,
+   "c": "Sports",
+   "h": "Jaguars to Play 26 of Next 30 Regular-Season Games Away from Jacksonville",
+   "s": "The Jaguars will play 26 of their next 30 regular-season games away from their home stadium in Jacksonville. This will be the first time an NFL team has played in 12 or more stadiums in a single season.",
+   "o": [
+    "ESPN"
+   ],
+   "l": "limited"
+  },
+  {
+   "d": "2026-10-07",
+   "id": "330cf37ffd9a",
+   "r": 28,
+   "t": null,
+   "c": "Entertainment",
+   "h": "Netflix's 8-Part Psychological Thriller Series Is Stranger Things Meets Ready or Not",
+   "s": "Netflix's new thriller series has been compared to Stranger Things and Ready or Not, making for a suspenseful binge. The show has been released earlier in 2026.",
+   "o": [
+    "Screen Rant"
+   ],
+   "l": "limited"
+  },
+  {
+   "d": "2026-10-07",
+   "id": "1ab67caa6d59",
+   "r": 29,
+   "t": null,
+   "c": "Entertainment",
+   "h": "It's Going to Be A Long Time Before We Get A New Halo Game",
+   "s": "A new report claims that a skeleton crew at Halo Studios is working on one last big content update for Halo: Campaign Evolved before the team will likely be completely cut and the studio closed.",
+   "o": [
+    "Kotaku"
+   ],
+   "l": "limited"
+  },
+  {
+   "d": "2026-10-07",
+   "id": "2b852bcd8f2b",
+   "r": 30,
+   "t": null,
+   "c": "Tech",
+   "h": "TP-Link Faces Legal Troubles in the US",
+   "s": "TP-Link is facing more legal troubles in the US as Florida and three other states filed lawsuits alleging that it lied to consumers about its connections to China and the risks of its routers.",
+   "o": [
+    "Ars Technica"
+   ],
+   "l": "limited"
+  },
+  {
+   "d": "2026-10-07",
+   "id": "95d90cc72182",
+   "r": 31,
+   "t": null,
+   "c": "Entertainment",
+   "h": "HBO's Lanterns Sets New DCU Rotten Tomatoes Audience Score Record After Finale",
+   "s": "HBO's Lanterns has set a new record for the DC Universe on Rotten Tomatoes, with a high audience score after its finale.",
+   "o": [
+    "Screen Rant"
+   ],
+   "l": "limited"
+  },
+  {
+   "d": "2026-10-07",
+   "id": "5ae90ae55c15",
+   "r": 32,
+   "t": null,
+   "c": "Internet Culture",
+   "h": "Domestic Abuse Survivors Speak Out Against Far-Right UK Street Patrols",
+   "s": "Domestic abuse survivors are speaking out against the far-right UK street patrols, which they claim are abusive and controlling. Seven women shared their stories of abuse and control by their ex-partners.",
+   "o": [
+    "The Guardian"
+   ],
+   "l": "limited"
+  },
+  {
+   "d": "2026-10-07",
+   "id": "81cca3ab6006",
+   "r": 33,
+   "t": null,
+   "c": "Tech",
+   "h": "Windows Search Becomes Fastest Way to Control PC",
+   "s": "Windows Search is becoming the fastest way to control a PC.",
+   "o": [
+    "Windows Central"
+   ],
+   "l": "limited"
+  },
+  {
+   "d": "2026-10-07",
+   "id": "11800e5c518e",
+   "r": 34,
+   "t": null,
+   "c": "Entertainment",
+   "h": "Warner and Paramount Merge to Form Skydance",
+   "s": "The merger of Warner and Paramount has formed Skydance, which will shake up the film industry. The big five have officially become the big four.",
+   "o": [
+    "The Guardian"
+   ],
+   "l": "limited"
+  },
+  {
+   "d": "2026-10-07",
+   "id": "d15543cf3a76",
+   "r": 35,
+   "t": null,
+   "c": "Entertainment",
+   "h": "International Oscar Submissions: China, Syria, Denmark, Italy, France and More Join the List",
+   "s": "China, Syria, Denmark, Italy, France, and more countries have submitted their entries for the 2027 Academy Awards. Final submissions are due by October 1.",
+   "o": [
+    "Variety"
+   ],
+   "l": "limited"
+  },
+  {
+   "d": "2026-10-07",
+   "id": "bfa823a112dd",
+   "r": 36,
+   "t": null,
+   "c": "Entertainment",
+   "h": "Star Wars: Zero Company Studio Brings Back Furloughed Developers",
+   "s": "The studio behind Star Wars: Zero Company is bringing back furloughed developers and working on new updates.",
+   "o": [
+    "Eurogamer"
+   ],
+   "l": "limited"
+  },
+  {
+   "d": "2026-10-07",
+   "id": "27dbce1f91fe",
+   "r": 37,
+   "t": null,
+   "c": "Internet Culture",
+   "h": "AI Favors Brands with Active Social Media Presence",
+   "s": "A new study has found that maintaining an active presence on social media platforms can help brands increase their visibility in Google's artificial intelligence search results. Social platform links appeared in a majority of Google's AI search results.",
+   "o": [
+    "Social Media Today"
+   ],
+   "l": "limited"
+  },
+  {
+   "d": "2026-10-07",
+   "id": "cc71add49950",
+   "r": 38,
+   "t": null,
+   "c": "Sports",
+   "h": "Mike Breen Apologizes for LeBron James Story",
+   "s": "Mike Breen apologized for causing a stir with an anecdote he shared while calling a preseason Knicks-Sixers game. The Philadelphia 76ers are going to be under a microscope all season.",
+   "o": [
+    "CBS Sports"
+   ],
+   "l": "limited"
+  },
+  {
+   "d": "2026-10-07",
+   "id": "acc967473abd",
+   "r": 39,
+   "t": null,
+   "c": "Entertainment",
+   "h": "'Ted Lasso': Brendan Hunt Breaks Down Season 4 Finale",
+   "s": "Brendan Hunt, co-creator and star of 'Ted Lasso', breaks down the Season 4 finale, including a 'passing the torch' moment and coaching team shakeup.",
+   "o": [
+    "Deadline"
+   ],
+   "l": "limited"
+  },
+  {
+   "d": "2026-10-07",
+   "id": "7b6f0ca53525",
+   "r": 40,
+   "t": null,
+   "c": "Sports",
+   "h": "Stephen A. Smith Apologizes for Lane Johnson Comments",
+   "s": "Stephen A. Smith has apologized for his comments on Lane Johnson's retirement, which sparked controversy over mental health.",
+   "o": [
+    "Bleacher Report"
+   ],
+   "l": "limited"
+  },
+  {
+   "d": "2026-10-07",
+   "id": "e26603963891",
+   "r": 41,
+   "t": null,
+   "c": "Sports",
+   "h": "How Trading Cam Jurgens Impacts the Eagles' Salary Cap",
+   "s": "The Philadelphia Eagles gained draft capital by trading Cam Jurgens to Baltimore, but the deal provides limited immediate salary-cap relief and leaves the team with a substantial dead cap charge.",
+   "o": [
+    "Yahoo Sports"
+   ],
+   "l": "limited"
+  },
+  {
+   "d": "2026-10-07",
+   "id": "53290b1dfc44",
+   "r": 42,
+   "t": null,
+   "c": "Sports",
+   "h": "Padres Closer Miller Returns from Paternity Leave",
+   "s": "Padres closer Mason Miller, who went on paternity leave, will be available to pitch in Game 4 against the Brewers after witnessing the birth of his first child.",
+   "o": [
+    "ESPN"
+   ],
+   "l": "limited"
+  },
+  {
+   "d": "2026-10-07",
+   "id": "f3fbdbecf70a",
+   "r": 43,
+   "t": null,
+   "c": "Internet Culture",
+   "h": "VPNs Become a Battleground in Social Media Control",
+   "s": "A group of tech companies and digital rights activists came together to launch a global campaign to preserve the right to use VPNs. Many people use VPNs to evade legislation targeting social media.",
+   "o": [
+    "Tubefilter"
+   ],
+   "l": "limited"
+  },
+  {
+   "d": "2026-10-07",
+   "id": "d974dae05d9b",
+   "r": 44,
+   "t": null,
+   "c": "Sports",
+   "h": "Declan Rice Close to Agreeing New Arsenal Deal",
+   "s": "Declan Rice, an England midfielder, is close to agreeing a new long-term contract with Arsenal, becoming a crucial player for the Gunners since his transfer.",
+   "o": [
+    "BBC Sport"
+   ],
+   "l": "limited"
+  }
+ ]
+}

@@ -1,5 +1,21 @@
 # Agent Reach frontend audit and improvement plan
 
+## Publication reliability and reading improvements — October 8, 2026
+
+This pass starts from `main` at `90e605c`. Its original regression suite reproduced the reported 14 passes / 10 failures after the October 8 publication.
+
+- Frozen test data, including its dated shell, come from the October 7 publication at `24e4295`. The publisher never updates those fixtures. The independent published-file validator checks every current edition and associated index/search/HTML/RSS/sitemap data, and the deployment build refuses invalid publications. Node 24 CI runs tests and the build on PRs and main pushes.
+- Home keeps five-story previews; sections without dedicated pages have an accessible Show all / Show fewer control. Revealing stories focuses the first new headline. The top-story exclusion now covers only the eight stories actually displayed, so later top-ranked stories can appear in their own sections.
+- The website deployment build writes escaped story text into HTML and embeds the existing public edition/index data. News-reading pages show content before JavaScript, then use the embedded edition without initial JSON requests. Unembedded dated shells fetch their edition alongside the archive index. All 53 current stories are present in the static dated page, with CSS making preview-hidden stories visible without JavaScript.
+- Story Share and Copy link include a dated ID plus the headline hint consumed by the existing conservative recovery logic. Native-share cancellation keeps focus; clipboard failure exposes a selectable URL. A new generic 1200 × 630 social image is included in built page metadata. Dedicated per-story crawler previews remain deferred until stable backend IDs.
+- Edition metadata uses a compact date/state/revision/story-count line with a Details disclosure that preserves generation timestamp, source/report totals and AI context. Full details remain visible in no-JavaScript and print views.
+- Print CSS uses black text on white, retains edition context, article text and source URLs, and removes navigation, footer, related stories and action controls.
+- Live checks confirmed HTTP 200 exposure of `/tests/frontend.cjs`, `/docs/frontend-audit.md` and `/wrangler.jsonc`, and no CSP/nosniff/framing/referrer/permissions/HSTS headers. Wrangler now serves only the built `dist/` allowlist and parses `_headers`. Local Cloudflare requests confirmed all three development paths return 404 with the security headers.
+
+Validation: **36 tests pass**, including the original 24, shared-link fallbacks, embedded rendering/escaping, concurrent dated requests, and publication-validator failure cases. Both current editions pass published-file validation; build, syntax and whitespace checks pass. **78 browser layout checks** cover 13 routes/states at 320, 390, 641, 768, 1080 and 1440px, with no horizontal overflow and seven navigation targets of at least 44px. Browser checks confirm Sports and Entertainment each expand to 10 stories, all 53 static stories remain visible without JavaScript, clipboard links carry the headline, search links preserve recovery, and initial Home requests no JSON. The tested 390px article headline begins at **352px**, compared with **461px** on the unchanged live site; its edition strip is **53px** tall. The representative print is **two pages**, with black article text, full evidence and no navigation/footer. Zero browser script errors were recorded.
+
+The publisher-owned data, feed, sitemap and source HTML shells are unchanged. The publisher repository is outside this checkout; the website build provides the requested static-content integration without changing that publisher. These changes are prepared for review, not merged or deployed by this pass. Production file exposure and headers require another live check after deployment.
+
 Baseline reviewed October 8, 2026 against `main` at `8161be5` and https://getagentreach.dev/. The focused polish merged in [PR #1](https://github.com/timeitself1-cpu/Agent-Reach-Website/pull/1) at `a2fc699`. The post-merge review and its follow-up are recorded below.
 
 The next round of findings and priorities is in [frontend-audit-round-2.md](frontend-audit-round-2.md).
