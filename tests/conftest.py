@@ -1,9 +1,15 @@
+import os
+
 import pytest
 
 from agent_reach import main as M
 from agent_reach.config import Settings
 from agent_reach.pipeline import clusterer as C
 from tests.fakes import FakeOllama, MockAsyncClient
+
+# The suite also runs inside the user's installed folder (the self-test), where the app may update itself: no test,
+# and no app process a test starts, ever checks for or installs an update (tests/test_daily_updater.py lifts this).
+os.environ["AGENT_REACH_NO_UPDATE"] = "1"
 
 
 @pytest.fixture

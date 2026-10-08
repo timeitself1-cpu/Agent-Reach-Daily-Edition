@@ -55,12 +55,17 @@ category sections), a grounded "why it matters" pass, an HTML export and a spoke
   `claude/loving-darwin-a7rqvs` (what visitors download): PR #1 (rc12e), #3 (rc12f) and #4 (rc13c, squash-merged by
   Claude at the user's request once CI was green, Oct 8) are in it.
   Start new work from the default branch; a new PR is needed to bring later releases there.
-- **Delivery:** each release goes to the user as a zip of the repository:
-  `git archive --format=zip --prefix=Agent-Reach/ -o <scratchpad>/Agent-Reach-Daily-v1.0rcNN<letter>.zip HEAD`
-  sent with SendUserFile (display "attach"). Letters (rc11b, rc11c, rc11d) mark rebuilds of the same
-  version; bump `agent_reach/daily/__init__.py` (`__version__`, `VERSION_LABEL`), README and
-  RELEASE-NOTES for a new rc. The user extracts it over the folder and runs
-  `powershell -ExecutionPolicy Bypass -File .\Setup-AgentReachDaily.ps1 -RegisterTask`.
+- **Delivery (since rc17, Oct 8): silent updates from the `stable` branch** (`daily/updater.py`). The user asked for
+  it and authorized pushing `stable`. A release: bump `agent_reach/daily/__init__.py` (`__version__`,
+  `VERSION_LABEL`) AND `release.json` (same version; `notes` = one plain-English sentence the window shows;
+  `setup_required` = what to run when a release needs Setup, e.g. a new Ollama model, else ""), README and
+  RELEASE-NOTES; commit and push the session branch; wait for CI green; then move the channel:
+  `git push origin <release commit>:refs/heads/stable` (fast-forward only; never force, never a commit CI has not
+  passed). The user's app installs it the next time the window opens or at the hourly check. Rebuilds need no
+  letter any more (the build is the commit, `build.txt` via export-subst); a release is never older than the one
+  before. A zip (`git archive --format=zip --prefix=Agent-Reach/ -o <scratchpad>/Agent-Reach-Daily-v1.0rcNN.zip
+  HEAD`, SendUserFile "attach") is only for a fresh install or a PC without the updater (before rc17); Setup
+  (`powershell -ExecutionPolicy Bypass -File .\Setup-AgentReachDaily.ps1 -RegisterTask`) is then run once.
 - **Real-data validation on the user's PC:** `powershell -ExecutionPolicy Bypass -File .\Test-AgentReachDaily.ps1`
   (`tests/daily_selftest.py`) leaves `AgentReach-selftest-<time>.zip` on their Desktop: `report.txt`
   (PASS/FAIL per check, written after every check), real editions (`edition.json`, `edition-2.json`, `.txt`,
@@ -152,6 +157,8 @@ agent_reach/
     registry.py        event registry (state/events.json): stable event ids across editions and days, explainable
                        matching (shared-report share, tf-idf wording, names never alone, undecided -> kept apart);
                        recorded after each refresh, OBSERVING ONLY so far (docs/EVENT-IDENTITY.md)
+    updater.py         silent updates from branch `stable` (check, GitHub zip of the commit, verify, copy only what
+                       changed with backup + rollback, pip only if requirements changed); window launch + hourly check
     prereqs.py         Ollama checks/start   scheduler.py  Task Scheduler XML   timeutil.py  Central time, DST
 tests/
   fakes.py, daily_fakes.py   mock sources + fake Ollama; synthetic feeds on .test hosts + fake daily model
@@ -168,6 +175,7 @@ tests/
   html_fixture.py      exported edition HTML -> fixture JSON
   daily_selftest.py    the self-test the user runs (Test-AgentReachDaily.ps1); --world = dry run here
 BUILD.md (four-phase roadmap)  HANDOFF.md (current state, how to resume)  CLAUDE.md (this file)
+release.json (version + one-line note of the release on `stable`)  agent_reach/daily/build.txt (commit, export-subst)
 docs/  EVENT-IDENTITY.md (cross-edition answer key, diagnosis, registry design, results)  PUBLISHING.md
        BACKEND-AUDIT.md (Oct 8 audit: findings F1-F14, plan = PLAN Phase B)
        PLAN.md (sub-tasks + progress log)  HISTORY.md (up to rc12)  RELEASE-NOTES.md  REAL-EDITION-FINDINGS.md
@@ -217,6 +225,11 @@ AgentReachDaily.cmd/.pyw
     reports) and rare non-name wording; names alone never match; a close second candidate means "kept apart";
     no model decides. It observes only until it meets its targets on a held-out multi-day answer key; every
     change to it is scored with `python -m tests.cross_edition` (matching apart from carry-over/Top Stories).
+
+18. **An update never leaves a broken app.** `daily/updater.py` installs only a newer release of branch `stable`
+    (verified version and build), under the refresh lock, never while a window runs the old code (hourly path),
+    never in a `.git` checkout, never touching `.venv`, `.git` or the data folder; a version that does not start is
+    rolled back. Tests and the self-test set `AGENT_REACH_NO_UPDATE=1` for every process they start.
 
 ## Conventions
 

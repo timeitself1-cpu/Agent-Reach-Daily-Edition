@@ -2320,6 +2320,50 @@ def _smoke_report(root: tk.Tk | None, window: "DailyWindow | None", target: Path
             root.destroy()
 
 
+def run_with_notice(work):
+    """Run ``work(announce)`` in a background thread and return its result. Nothing is shown unless ``work`` calls
+    ``announce(text)`` (an update was found): then a small window shows that text until the work ends. Tk is
+    only touched here, on this thread; the worker reports through a queue."""
+    messages: queue.Queue = queue.Queue()
+    result: dict = {}
+
+    def run() -> None:
+        try:
+            result["value"] = work(messages.put)
+        except Exception:  # noqa: BLE001 - the caller opens the app either way
+            log.exception("background work before the window failed")
+            result["value"] = None
+
+    worker = threading.Thread(target=run, name="update", daemon=True)
+    worker.start()
+    while worker.is_alive():
+        worker.join(0.05)
+        try:
+            text = messages.get_nowait()
+        except queue.Empty:
+            continue
+        try:
+            note = tk.Tk()
+        except tk.TclError:
+            worker.join()
+            break
+        note.title(APP_NAME)
+        note.resizable(False, False)
+        ttk.Label(note, text=text, padding=(24, 18, 24, 6)).pack()
+        ttk.Label(note, text="This takes a moment; the app opens by itself.", padding=(24, 0, 24, 18)).pack()
+
+        def poll() -> None:
+            if worker.is_alive():
+                note.after(100, poll)
+            else:
+                note.destroy()
+
+        note.after(100, poll)
+        note.mainloop()
+        worker.join()
+    return result.get("value")
+
+
 def run_gui(paths: DataPaths | None = None) -> int:
     from agent_reach.daily.logs import setup_logging
 

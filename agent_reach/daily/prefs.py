@@ -115,6 +115,8 @@ class DailyPrefs(BaseModel):
     # a later refresh of the same day replaces that day's edition (and its page on the website) only when at least
     # this share of the sources and of the stories of the edition it replaces came through; 0 turns the check off
     min_share_of_same_day: float = Field(default=0.5, ge=0.0, le=1.0)
+    # install new releases of the app by itself (daily/updater.py): when the window opens and at the hourly check
+    auto_update: bool = True
     max_story_age_hours: float = Field(default=48.0, ge=6.0, le=336.0)  # older publication times are not "today"
     # processing budget: articles grouped and labelled per refresh (more = broader but slower on CPU)
     max_items_for_llm: int = Field(default=260, ge=40, le=400)

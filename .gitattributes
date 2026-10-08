@@ -4,3 +4,5 @@
 *.ps1 text eol=crlf
 *.cmd text eol=crlf
 *.bat text eol=crlf
+# The commit a zip of this repository was made from (git archive and GitHub's zip fill it in; see daily/updater.py).
+agent_reach/daily/build.txt export-subst

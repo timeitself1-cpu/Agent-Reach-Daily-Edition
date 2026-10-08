@@ -191,6 +191,9 @@ design and numbers: `docs/EVENT-IDENTITY.md`.)
 **Remaining (not started; the user said "do not begin the Windows installer yet", Oct 8):**
 - [ ] A **Windows installer**: one download, no Python or PowerShell steps, Start-menu entry, uninstall entry.
   Ollama stays a separate, documented prerequisite (local-first).
+- [x] **Automatic updates** (rc17, Oct 8, user's request): the app installs new releases from branch `stable`
+  by itself (window launch + hourly check), verified, with backup and rollback. A real update on the PC is the
+  acceptance test (not yet run).
 - [ ] **GitHub Releases** with versioned assets and release notes taken from `docs/RELEASE-NOTES.md`. Tags
   per release candidate, then 1.0.
 - [ ] **Production readiness:**

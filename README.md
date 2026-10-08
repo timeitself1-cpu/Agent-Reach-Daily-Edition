@@ -129,6 +129,23 @@ Everything lives in `%LOCALAPPDATA%\AgentReachDaily` (for example
 | `diagnostics\` | details of the last 30 failed or unpublished refreshes |
 | `exports\` | default folder for exported HTML editions |
 | `publish\` | website publishing: settings, last result, the encrypted access key (only if you set it up) |
+| `updates\` | automatic updates: what the last check found, the files of the installed version, a backup of the files the last update replaced |
+
+## Updates
+
+From version 1.0 rc17 the app keeps itself up to date. When you open it, it asks GitHub whether a newer version
+is out (a second or two; offline it simply opens). If there is one, a small window says "Updating Agent Reach
+Daily..." while it installs, and the app opens on the new version with a line saying what changed. While the app
+is closed, the hourly scheduled check does the same. Your editions, settings and website key are never touched.
+
+- Only changed files are replaced; the previous ones are kept in the data folder's `updates\backup` until the next
+  update. If the new version does not start, the old one is put back and the app opens as before.
+- Python packages are installed only when a version needs new ones; if a version needs Setup to run once (for
+  example a new local model), the app says so.
+- **Turn it off:** set `"auto_update": false` in `settings.json` (or the environment variable
+  `AGENT_REACH_NO_UPDATE=1`). Details (**...** > **Details**) show when the last check ran and what it found.
+- Updates come from the `stable` branch of the app's GitHub repository, which moves only to releases that passed
+  their tests.
 
 ## The daily podcast
 
@@ -296,7 +313,7 @@ editions, then runs the same self-test; send back both zips from the Desktop.
 
 Tests never touch the network or a real Ollama. `tests/daily_fakes.py` holds synthetic publisher
 feeds (fictional places on `.test` hosts) and a deterministic fake model; `samples/DEMO-edition.json`
-is the clearly labelled demo edition. Version: Agent Reach Daily 1.0 release candidate 16
+is the clearly labelled demo edition. Version: Agent Reach Daily 1.0 release candidate 17
 (`python -m agent_reach.daily --version`). What changed in each release: `docs/RELEASE-NOTES.md`.
 
 ## License and contact

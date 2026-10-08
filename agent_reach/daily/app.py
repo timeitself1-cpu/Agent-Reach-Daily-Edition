@@ -120,6 +120,9 @@ class AppController:
         self.selected_date: date | None = None  # None = follow the latest edition
         self.demo: DailyEdition | None = None
         self._developing: tuple[str, dict] | None = None  # (run_id, rank -> first-seen date)
+        from agent_reach.daily.updater import take_notice
+
+        self.update_notice = take_notice(paths)  # (kind, text) once after an automatic update, for this window
 
     def developing(self, edition: DailyEdition) -> dict:
         """rank -> date first seen, for stories carried over from earlier editions (cached per edition)."""
@@ -214,6 +217,8 @@ class AppController:
         )
 
         banners: list[Banner] = []
+        if self.update_notice is not None:
+            banners.append(Banner(*self.update_notice))
         if shown is not None and shown.demo:
             banners.append(Banner("demo", "DEMO EDITION - synthetic sample stories to preview the layout. These are NOT "
                                           "real news. Choose Refresh to collect a real edition."))
@@ -572,8 +577,27 @@ def details_report(snap: Snapshot, paths: DataPaths) -> list[tuple[str, list[tup
         ("Exports", str(paths.exports_dir)),
         ("History database", str(paths.db)),
         ("App version", VERSION_LABEL),
+        ("Updates", _updates_line(paths)),
     ]))
     return sections
+
+
+def _updates_line(paths: DataPaths) -> str:
+    """How the app updates itself, and what the last check found (daily/updater.py)."""
+    from agent_reach.daily import updater
+    from agent_reach.daily.paths import PROJECT_ROOT
+    from agent_reach.daily.timeutil import format_central
+
+    from agent_reach.daily.prefs import load_prefs
+
+    off = updater.why_not(PROJECT_ROOT, load_prefs(paths)[0].auto_update)
+    if off:
+        return f"Off: {off}."
+    status = updater.load_status(paths)
+    head = "Automatic: when the app opens, and with the hourly check while it is closed."
+    if status.last_check_utc is None:
+        return head + " Not checked yet."
+    return f"{head} Last check {format_central(status.last_check_utc)}: {status.last_result}"
 
 
 # ====================================================================== window state
