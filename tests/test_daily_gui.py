@@ -448,6 +448,16 @@ def test_cancel_returns_the_window_to_normal(root, daily_paths, monkeypatch):
     assert not w._cancelling and w.refresh_btn.cget("text") == "Refresh"
 
 
+def _wait_idle(root, dialog, limit=20.0):
+    # A deadline, not a count of loop turns: the background publish took over 4 s on a busy CI runner (Oct 8).
+    end = time.monotonic() + limit
+    while time.monotonic() < end:
+        root.update()
+        if not dialog.busy:
+            return
+        time.sleep(0.02)
+
+
 def test_website_publishing_dialog_and_story_correction(root, daily_paths, monkeypatch, tmp_path):
     from agent_reach.daily import gui as G, publish
 
@@ -467,18 +477,10 @@ def test_website_publishing_dialog_and_story_correction(root, daily_paths, monke
     monkeypatch.setattr(publish, "github_target", lambda paths, settings=None, client=None: publish.FolderTarget(tmp_path / "site"))
     d.key_var.set("github_pat_example")
     d.save_key()
-    for _ in range(100):
-        root.update()
-        if not d.busy:
-            break
-        time.sleep(0.02)
+    _wait_idle(root, d)
     assert d.key_var.get() == "" and "Connected" in d.message_var.get()
     d.publish_now()
-    for _ in range(200):
-        root.update()
-        if not d.busy:
-            break
-        time.sleep(0.02)
+    _wait_idle(root, d)
     assert d.headline_var.get() == "Published successfully", d.message_var.get()
     assert (tmp_path / "site/editions/index.json").exists()
     d.top.destroy()
