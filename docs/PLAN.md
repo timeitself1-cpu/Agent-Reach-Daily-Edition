@@ -225,7 +225,9 @@ Goal: the step that feeds the live site is as safe as the rest. One commit and o
 
 - [x] U1. `daily/updater.py` + `release.json` + `build.txt` (export-subst); window launch and hourly check; banner,
       Details line; tests and self-test never update (rc17).
-- [ ] U2. The user installs rc17 by hand (the last zip); `stable` points at rc17.
+- [~] U2. `stable` = aaef839 (rc17, CI green), pushed Oct 8. Real round trip from the sandbox against GitHub: an
+      installed copy with another build updated itself (GitHub's zip carried build.txt = aaef839; 2 files changed, a
+      user file kept, new version started, notice). NEEDS: the user installs the rc17 zip (made from aaef839) by hand.
 - [ ] U3. First real update on the PC: the next release (rc18) arrives by itself; check `updates\status.json` and the
       "Updated to" banner. Until then the round trip has only run here against GitHub.
 
@@ -399,3 +401,4 @@ Each rule starts from quotes in `docs/REAL-EDITION-FINDINGS.md`; each gets a fix
 - 2026-10-08 | backend audit round 2 | (this commit) | rc15 + first live edition (site 90e605c): publishing proven; N1 HIGH (thin same-day revision replaces a full one, reproduced), N2 New badges vs unpublished revision (40/53), N3 newspapers as signals, N4-N6 low; B12-B17 | user decides: rc16 (B12, B5-B6, B13, B11) next
 - 2026-10-08 | B12, B5-B6, B13, B11 (round 2 Step A) | a3af246, fcd024d, 7d9bb1c, 260a032, (this commit) | rc16: thin same-day refresh refused (fixture: 44-story edition kept), one bad story left out not the day, dates checked, reads once (6 not 8), hopeless failures not retried hourly, connection test keeps the failure reason | user installs rc16; then Step B (B14 signals, B15 badges)
 - 2026-10-08 | U1 | 5a0be23, (this commit) | rc17: silent updates from branch stable (verify, copy changed files with backup, rollback if the new version does not start, pip only on new requirements); 16 updater tests; full suite 535 passed | push stable after CI; user installs rc17; U3 with the next release
+- 2026-10-08 | U2 | stable -> aaef839 | real update round trip from the sandbox against GitHub's stable branch passed | user installs the rc17 zip; U3 with rc18
