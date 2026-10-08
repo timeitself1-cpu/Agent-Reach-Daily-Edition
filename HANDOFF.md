@@ -19,10 +19,10 @@ tracks each real-world event over time (timelines), and later feeds structured e
 
 ## Release and repository state
 
-- **Current release: rc16** (`agent_reach/daily/__init__.py`: `1.0.0rc16`), zip `Agent-Reach-Daily-v1.0rc16.zip`
-  delivered Oct 8. rc16 = rc15 + backend audit round 2 Step A (PLAN B5, B6, B11-B13): a thin same-day refresh
-  never replaces a full edition, one bad story is left out instead of the day, the hourly retry stops on hopeless
-  failures. rc15 (audit Step 1) runs on the PC since Oct 8; rc16 not yet.
+- **Current release: rc17** (`1.0.0rc17`): the app updates itself from branch `stable` (`daily/updater.py`); the
+  user installs this one zip by hand (`Agent-Reach-Daily-v1.0rc17.zip`), later releases arrive by themselves
+  (release rule in CLAUDE.md "Delivery"). rc16 = audit round 2 Step A; rc15 runs on the PC since Oct 8.
+- **Update channel:** branch `stable` of this repository = the newest released commit (moved only after CI green).
 - **Branch:** `claude/great-hawking-t1h2cl` (rc15; fast-forwarded from rc14's `claude/sweet-ramanujan-xj36o5`).
 - **Code commit (rc14):** `7cd47e7`, CI green. rc15's commits are on the branch (`git log`).
 - **Front end:** the user has ChatGPT changing the website (mobile layout, search clarity and recovery) since

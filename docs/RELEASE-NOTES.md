@@ -5,6 +5,16 @@ Each release candidate is delivered as a zip of the repository. Extract it over 
 Your editions, settings and history (`%LOCALAPPDATA%\AgentReachDaily`) are kept. Earlier releases are
 summarised in `docs/HISTORY.md` ("Release history").
 
+## 1.0.0rc17 (zip rc17): the app updates itself
+
+1. **No more zips.** When you open Agent Reach Daily it checks for a newer version and installs it by itself (a
+   small "Updating..." window appears for a moment), then opens on the new version and says what changed. While
+   the app is closed, the hourly scheduled check does the same. This is the last version you install by hand.
+2. **Safe updates.** Only files that changed are replaced; the old ones are kept, and if the new version does not
+   start, the old one is put back. Your editions, settings and website key are never touched. Updates come only
+   from the app's own GitHub repository (its `stable` branch).
+3. **Your choice.** Details show the last update check; `"auto_update": false` in `settings.json` turns it off.
+
 ## 1.0.0rc16 (zip rc16): the website never gets thinner
 
 From the second backend audit of October 8 (`docs/BACKEND-AUDIT.md`, round 2, Step A).
