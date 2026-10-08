@@ -22,6 +22,7 @@
 
   // ------------------------------------------------------------------ helpers
   function webUrl(u) {
+    if (typeof u !== 'string' || !u.trim()) return null;
     try { const x = new URL(u, location.origin); return (x.protocol === 'https:' || x.protocol === 'http:') ? x.href : null; }
     catch (e) { return null; }
   }
@@ -44,8 +45,8 @@
   const dayOf = d => new Date(d + 'T12:00:00Z');
   const longDate = d => dayOf(d).toLocaleDateString('en-US', {weekday: 'long', month: 'long', day: 'numeric', year: 'numeric', timeZone: 'UTC'});
   const shortDate = d => dayOf(d).toLocaleDateString('en-US', {month: 'short', day: 'numeric', year: 'numeric', timeZone: 'UTC'});
-  const clock = iso => new Date(iso).toLocaleTimeString('en-US', {hour: 'numeric', minute: '2-digit', timeZoneName: 'short'});
   const stamp = iso => new Date(iso).toLocaleString('en-US', {month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit'});
+  const fullStamp = iso => new Date(iso).toLocaleString('en-US', {year: 'numeric', month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit', timeZoneName: 'short'});
   function ago(iso) {
     if (!iso) return null;
     const min = (Date.now() - Date.parse(iso)) / 60000;
@@ -57,6 +58,8 @@
   const storyUrl = (ed, s) => `/daily/${ed.edition_date}/#story-${s.id}`;
   const editionUrl = d => `/daily/${d}/`;
   const catLabel = c => (SECTION[c] && SECTION[c].label) || c;
+  const pageStatus = h('p', {class: 'sr', id: 'page-status', role: 'status', 'aria-live': 'polite', 'aria-atomic': 'true'});
+  body.append(pageStatus); // Keep load status mounted while the page content changes.
 
   async function getJson(url) {
     const r = await fetch(url, {cache: 'no-cache'});
@@ -118,10 +121,10 @@
           h('small', {text: `${src.outlet} · ${when}${kind}`}));
       })));
   }
-  function card(ed, s, variant) {
+  function card(ed, s, variant, heading = 'h3') {
     const cls = 'card' + (variant === 'feature' ? ' feature' : '');
     return h('article', {class: cls, 'data-cat': s.category}, kicker(s),
-      h('h3', {class: 'hl'}, h('a', {href: storyUrl(ed, s), text: s.headline})),
+      h(heading, {class: 'hl'}, h('a', {href: storyUrl(ed, s), text: s.headline})),
       h('p', {class: 'dek', text: s.summary.join(' ')}), meta(s), sourceList(s));
   }
 
@@ -158,10 +161,23 @@
         h('span', {text: 'No cookies, no tracking, no ads.'}))));
   }
   function mount(current, ed, ...content) {
-    const main = h('main', {id: 'main', tabindex: '-1'}, content);
+    const active = document.activeElement;
+    const scope = active.closest && active.closest('.masthead, .footer');
+    const focusedLink = scope && active.closest('a[href]');
+    const linkIndex = focusedLink ? [...scope.querySelectorAll('a[href]')].filter(a => a.getAttribute('href') === focusedLink.getAttribute('href')).indexOf(focusedLink) : -1;
+    const wasSkip = active.matches && active.matches('.skip');
+    const wasInMain = active.closest && active.closest('main');
+    const main = h('main', {id: 'main', tabindex: '-1', 'aria-busy': 'false'}, content);
     const app = document.getElementById('app');
     const nodes = [skipLink(), masthead(current, ed), main, footer()];
-    if (app) app.replaceChildren(...nodes); else body.replaceChildren(...nodes);
+    if (app) app.replaceChildren(...nodes); else body.replaceChildren(...nodes, pageStatus);
+    if (!active.isConnected) {
+      const newScope = scope && document.querySelector(scope.classList.contains('masthead') ? '.masthead' : '.footer');
+      const target = wasSkip ? document.querySelector('.skip') : focusedLink && newScope
+        ? [...newScope.querySelectorAll('a[href]')].filter(a => a.getAttribute('href') === focusedLink.getAttribute('href'))[linkIndex]
+        : wasInMain ? main : null;
+      if (target) target.focus({preventScroll: true});
+    }
     return main;
   }
   function skipLink() {
@@ -181,13 +197,18 @@
     body.prepend(skipLink(), masthead(current, null));
     if (main) main.after(footer()); else body.append(footer());
   }
-  function failed(current, what) {
-    mount(current, null, h('div', {class: 'wrap state'}, h('h1', {text: what || 'The news could not be loaded.'}),
-      h('p', null, 'Please reload the page. If it keeps happening, the newest edition may still be on its way: ', h('a', {href: '/archive/', text: 'see the archive'}), '.')));
+  function failed(current, what, withdrawn = false) {
+    const message = what || 'The news could not be loaded.';
+    mount(current, null, h('div', {class: 'wrap state'}, h('h1', {text: message}),
+      h('p', null, withdrawn ? 'This dated edition is no longer available. ' : 'Please reload the page. If it keeps happening, the newest edition may still be on its way: ', h('a', {href: '/archive/', text: 'see the archive'}), '.')));
+    document.title = message + ' | Agent Reach Daily';
+    pageStatus.textContent = message;
   }
   function loading(current) {
-    mount(current, null, h('div', {class: 'wrap'}, h('p', {class: 'sr', role: 'status', text: 'Loading the edition…'}),
+    pageStatus.textContent = current === 'search' ? 'Loading archive search…' : current === 'archive' ? 'Loading the archive…' : 'Loading the edition…';
+    const main = mount(current, null, h('div', {class: 'wrap'},
       h('div', {class: 'skeleton', 'aria-hidden': 'true'}, h('div', {style: 'height:440px'}), h('div', {style: 'height:440px'}))));
+    main.setAttribute('aria-busy', 'true');
   }
 
   // ------------------------------------------------------------------ front page / edition
@@ -199,7 +220,7 @@
         h('span', {class: 'live' + (latest && ageH < 30 ? '' : ' old')}, h('b', {text: latest ? 'Latest edition' : 'Archived edition'})),
         h('time', {datetime: ed.edition_date, text: longDate(ed.edition_date)}),
         ed.revision > 1 ? h('span', {text: `Update ${ed.revision}`}) : null,
-        h('time', {datetime: ed.generated_utc, title: stamp(ed.generated_utc), text: `Generated ${clock(ed.generated_utc)}`})),
+        h('time', {datetime: ed.generated_utc, title: ed.generated_utc, text: `Generated ${fullStamp(ed.generated_utc)}`})),
       h('span', {class: 'edition-stats'}, `${plural(ed.stories.length, 'story', 'stories')} from ${plural(ed.reports_read || 0, 'report')} · ${ed.sources_answered || 0} of ${ed.sources_tried || 0} source types responded · AI-generated summaries`));
   }
   function notices(ed, idx) {
@@ -251,10 +272,11 @@
         h('li', null, h('b', {text: 'Write'}), 'A local model (no cloud AI) writes the summary; unsupported sentences are removed.'),
         h('li', null, h('b', {text: 'Publish'}), 'A failed run never replaces the last good edition.')));
   }
-  function renderFront(ed, idx, current) {
+  function renderFront(ed, idx, current, storyNotice) {
     const top = ed.topStories;
     const used = new Set(top.map(s => s.id));
     const content = [h('div', {class: 'wrap'}, strip(ed, idx), notices(ed, idx),
+      storyNotice ? h('p', {class: 'notice story-recovery', text: storyNotice}) : null,
       h('div', {class: 'front'}, lead(ed, top[0]), rail(ed, top.slice(1, 4))))];
     if (top.length > 4) content.push(sectionBand(ed, null, top.slice(4, 8), 'More top stories'));
     for (const sec of ed.sections || []) {
@@ -283,7 +305,7 @@
         list.map(src => {
           const url = webUrl(src.url);
           return h('div', {class: 'source'}, h('span', {class: 'outlet', text: src.outlet}),
-            h('span', {class: 'when', text: src.published_utc ? stamp(src.published_utc) : 'time not stated'}),
+            src.published_utc ? h('time', {class: 'when', datetime: src.published_utc, text: fullStamp(src.published_utc)}) : h('span', {class: 'when', text: 'Time not stated'}),
             url ? h('a', {class: 'title', href: url, rel: 'noopener noreferrer', target: '_blank', text: src.title}) : h('span', {class: 'title', text: src.title}),
             src.via && src.via !== src.outlet ? h('span', {class: 'via', text: 'Found via ' + src.via}) : null);
         }));
@@ -299,20 +321,22 @@
     return h('section', {class: 'panel', 'aria-label': 'Coverage'}, h('h2', {text: 'Coverage'}),
       h('div', {class: `cov-big cov ${c.level}`}, h('span', {class: 'bars', 'aria-hidden': 'true'}, h('i'), h('i'), h('i')), coverage(c)),
       h('ul', {class: 'facts'}, facts),
-      h('p', {class: 'fine'}, 'Coverage counts independent outlets that reported this story. It is not a fact check: several outlets can repeat the same claim. ', h('a', {href: '/about/#coverage', text: 'More'})));
+      h('p', {class: 'fine'}, 'Coverage counts independent outlets that reported this story. It is not a fact check: several outlets can repeat the same claim. ', h('a', {href: '/about/#coverage', text: 'How coverage is measured'})));
   }
-  function renderStory(ed, idx, s) {
+  function renderStory(ed, idx, s, storyNotice) {
     const order = ed.ordered;
     const i = order.indexOf(s);
     const prev = order[i - 1], next = order[i + 1];
     const same = order.filter(x => x.category === s.category && x !== s).slice(0, 4);
     const when = s.newest_published_utc;
-    const main = mount('edition', ed, h('div', {class: 'wrap'}, notices(ed, idx), h('article', {class: 'story', 'data-cat': s.category},
+    const main = mount('edition', ed, h('div', {class: 'wrap'}, strip(ed, idx), notices(ed, idx),
+      storyNotice ? h('p', {class: 'notice story-recovery', text: storyNotice}) : null,
+      h('article', {class: 'story', 'data-cat': s.category},
       h('nav', {class: 'crumbs', 'aria-label': 'Breadcrumb'}, h('a', {href: editionUrl(ed.edition_date), text: `Edition of ${shortDate(ed.edition_date)}`}),
         h('span', {'aria-hidden': 'true', text: '/'}), SECTION[s.category] && SECTION[s.category].path ? h('a', {href: SECTION[s.category].path, text: catLabel(s.category)}) : h('span', {text: catLabel(s.category)}),
         s.top_rank ? h('span', {text: `· Top story ${s.top_rank} of ${ed.topStories.length}`}) : null),
       h('div', {class: 'story-main'}, kicker(s), h('h1', {class: 'hl', tabindex: '-1', text: s.headline}),
-        h('div', {class: 'meta'}, when ? h('span', {text: `Newest report ${stamp(when)}`}) : h('span', {text: 'Publication time not stated'}),
+        h('div', {class: 'meta'}, when ? h('time', {datetime: when, text: `Newest report ${fullStamp(when)}`}) : h('span', {text: 'Publication time not stated'}),
           h('span', {class: 'outlets', text: outlets(s)}), covMeter(s)),
         h('button', {class: 'source-jump', type: 'button', text: `Read ${plural(s.sources.length, 'source')} ↓`}),
         h('div', {class: 'story-body'}, s.summary.map(t => h('p', {text: t}))),
@@ -343,7 +367,7 @@
     mount('latest', ed, h('div', {class: 'wrap'},
       h('header', {class: 'page-head'}, h('h1', {text: 'Latest News'}),
         h('p', {text: `Every story of the ${longDate(ed.edition_date)} edition, newest report first. Times are when the newest source says it was published, in your time zone.`})),
-      notices(ed, idx),
+      strip(ed, idx), notices(ed, idx),
       h('div', {class: 'river'}, known.concat(rest).map(s => h('article', {class: 'river-item', 'data-cat': s.category},
         h('div', {class: 'river-time'}, s.newest_published_utc ? [h('b', {text: new Date(s.newest_published_utc).toLocaleTimeString('en-US', {hour: 'numeric', minute: '2-digit'})}),
           new Date(s.newest_published_utc).toLocaleDateString('en-US', {month: 'short', day: 'numeric'})] : h('b', {text: 'Time not stated'})),
@@ -357,9 +381,9 @@
     const stories = ids.map(id => ed.byId[id]).filter(Boolean);
     mount(cat, ed, h('div', {class: 'wrap'},
       h('header', {class: 'page-head', 'data-cat': cat}, h('h1', {text: sec.title}), h('p', {text: `${sec.blurb} From the ${longDate(ed.edition_date)} edition.`})),
-      notices(ed, idx)),
+      strip(ed, idx), notices(ed, idx)),
       stories.length ? h('section', {class: 'band', 'data-cat': cat, 'aria-label': sec.title}, h('div', {class: 'wrap'},
-        h('div', {class: 'grid'}, stories.map((s, i) => card(ed, s, i === 0 && stories.length >= 3 ? 'feature' : '')))))
+        h('div', {class: 'grid'}, stories.map((s, i) => card(ed, s, i === 0 && stories.length >= 3 ? 'feature' : '', 'h2')))))
         : h('div', {class: 'wrap state'}, h('p', {text: 'No stories in this section in the latest edition.'})));
     document.title = `${sec.title} | Agent Reach Daily`;
   }
@@ -372,7 +396,7 @@
     }
     mount('archive', null, h('div', {class: 'wrap'},
       h('header', {class: 'page-head'}, h('h1', {text: 'Archive'}),
-        h('p', {text: 'Every edition published here, newest first. Each date keeps its own permanent page; when an edition was updated during the day, the page shows the last update.'}),
+        h('p', {text: 'Available editions, newest first. Each has its own dated page; when an edition was updated during the day, the page shows the last update. Withdrawn editions are removed from the archive.'}),
         searchForm('')),
       h('div', {class: 'archive'}, months.size ? [...months].map(([m, list]) => h('section', {class: 'month'}, h('h2', {text: m}),
         list.map(e => h('a', {class: 'ed-row', href: editionUrl(e.date)},
@@ -391,6 +415,25 @@
   const COVER = {strong: 'Strong coverage', moderate: 'Moderate coverage', limited: 'Limited coverage'};
   const fold = t => String(t || '').normalize('NFKD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
   const norm = t => ' ' + fold(t).replace(/[^\p{L}\p{N}]+/gu, ' ').trim() + ' ';
+  const commonHeadlineWords = new Set('a about an and are as at be by for from has have how in is it of on or that the this to was were what will with you your'.split(' '));
+  function recoverHeadline(ed, hint) {
+    if (!hint) return null;
+    const key = norm(hint).trim();
+    if (!key) return null;
+    const exact = ed.stories.filter(s => norm(s.headline).trim() === key);
+    if (exact.length) return exact.length === 1 ? exact[0] : null;
+    const words = new Set(key.split(' ').filter(w => !commonHeadlineWords.has(w)));
+    if (words.size < 3) return null;
+    const candidates = ed.stories.map(story => {
+      const own = new Set(norm(story.headline).trim().split(' ').filter(w => !commonHeadlineWords.has(w)));
+      const shared = [...words].filter(w => own.has(w)).length;
+      return {story, shared, size: own.size};
+    }).sort((a, b) => b.shared - a.shared);
+    const best = candidates[0], runnerUp = candidates[1];
+    // Require substantial overlap on both headlines and a clear margin; never guess on a tie.
+    return best && best.shared >= 3 && best.shared / words.size >= 0.6 && best.shared / best.size >= 0.6 &&
+      (!runnerUp || best.shared - runnerUp.shared >= 2) ? best.story : null;
+  }
   const monthOf = d => d.slice(0, 7);
   const monthName = m => dayOf(m + '-15').toLocaleDateString('en-US', {month: 'long', year: 'numeric', timeZone: 'UTC'});
   function searchForm(q) {
@@ -445,9 +488,9 @@
       h('label', {class: 'search-field'}, h('span', {text: 'Section'}), cat),
       h('button', {class: 'pill solid', type: 'submit', text: 'Search'}));
     form.addEventListener('submit', e => { e.preventDefault(); st.shown = SEARCH_PAGE; syncQuery(); run(); });
-    const status = h('p', {class: 'search-status', role: 'status', 'aria-live': 'polite', 'aria-atomic': 'true', tabindex: '-1'});
+    const status = h('p', {class: 'search-status', id: 'search-status', role: 'status', 'aria-live': 'polite', 'aria-atomic': 'true', tabindex: '-1'});
     const recovery = h('div', {class: 'search-recovery'});
-    const results = h('div', {class: 'hits', 'aria-busy': 'false'});
+    const results = h('div', {class: 'hits', id: 'search-results', role: 'region', 'aria-label': 'Search results', 'aria-describedby': 'search-status', 'aria-busy': 'false'});
     const more = h('div', {class: 'search-more'});
     const first = (idx.editions || []).length ? idx.editions[idx.editions.length - 1].date : null;
     mount('search', null, h('div', {class: 'wrap'},
@@ -472,7 +515,7 @@
       st.q = q;
       remember();
     }
-    async function run(focusAfter) {
+    async function run(focusAfter, firstNewResult) {
       const ticket = ++st.run;
       const terms = parseQuery(st.q);
       const reach = months.slice(0, st.horizon);
@@ -486,6 +529,8 @@
       }
       if (reach.some(m => !data.has(m))) status.textContent = 'Searching…';
       results.setAttribute('aria-busy', 'true');
+      // Give a removed recovery button a stable successor while the request runs.
+      if (focusAfter) status.focus({preventScroll: true});
       await Promise.all(reach.map(load));
       if (ticket !== st.run) return;
       const hits = [];
@@ -527,13 +572,18 @@
         h('p', {text: st.horizon < months.length ? 'No matches in the searched editions. Try fewer or shorter words, or search older editions below.' : 'Try fewer or shorter words, or choose another section.'}),
         st.cat ? h('button', {class: 'pill', type: 'button', 'data-act': 'all-sections', text: 'Search all sections'}) : null,
         h('a', {href: '/archive/', text: 'Browse editions by date →'})));
-      if (focusAfter) status.focus({preventScroll: true});
+      // A reader may have moved on while data loaded; never take their focus back.
+      if (focusAfter && document.activeElement === status) {
+        const target = firstNewResult == null ? status : results.querySelectorAll('.hit h2 a')[firstNewResult] || status;
+        target.focus({preventScroll: true});
+        target.scrollIntoView({block: 'nearest'});
+      }
     }
     function hit(x, terms) {
       return h('article', {class: 'hit', 'data-cat': x.c},
         h('div', {class: 'hit-meta'}, h('time', {datetime: x.d, text: shortDate(x.d)}), h('span', {class: 'kicker', 'data-cat': x.c, text: catLabel(x.c)}),
           x.t ? h('span', {class: 'badge trend', text: `Top story ${x.t}`}) : null),
-        h('h2', {class: 'hl'}, h('a', {href: `/daily/${x.d}/#story-${x.id}`}, marked(x.h, terms))),
+        h('h2', {class: 'hl'}, h('a', {href: `/daily/${x.d}/?headline=${encodeURIComponent(x.h)}#story-${x.id}`}, marked(x.h, terms))),
         x.s ? h('p', {class: 'dek'}, marked(x.s, terms)) : null,
         h('div', {class: 'meta'}, (x.o || []).length ? h('span', {class: 'outlets'}, marked((x.o || []).join(', '), terms)) : null,
           h('span', {class: `cov ${x.l || 'limited'}`}, h('span', {class: 'bars', 'aria-hidden': 'true'}, h('i'), h('i'), h('i')), COVER[x.l] || COVER.limited)));
@@ -547,7 +597,7 @@
       const act = e.target.closest('button') && e.target.closest('button').dataset.act;
       if (!act) return;
       syncQuery();
-      if (act === 'more') { st.shown += SEARCH_PAGE; run(true); }
+      if (act === 'more') { const previousShown = st.shown; st.shown += SEARCH_PAGE; run(true, previousShown); }
       if (act === 'older') { st.horizon = Math.min(months.length, st.horizon + SEARCH_BATCH); run(true); }
       if (act === 'retry') {
         for (const m of months.slice(0, st.horizon)) if (data.get(m) === null) { data.delete(m); pending.delete(m); }
@@ -566,6 +616,10 @@
   async function start() {
     if (page === 'about') { chrome('about'); return; }
     if (page === 'notfound') {
+      if (/^\/daily\/\d{4}-\d{2}-\d{2}\/$/.test(location.pathname)) {
+        failed('edition', 'This edition was taken off the site.', true);
+        return;
+      }
       mount(null, null, h('div', {class: 'wrap state'}, h('h1', {text: 'Page not found'}),
         h('p', null, 'That page does not exist. ', h('a', {href: '/', text: 'Go to today’s news'}), ' or ', h('a', {href: '/archive/', text: 'browse the archive'}), '.')));
       return;
@@ -574,28 +628,49 @@
     loading(current);
     let idx;
     try { idx = await loadIndex(); } catch (e) { failed(current); return; }
-    if (page === 'archive') { renderArchive(idx); return; }
-    if (page === 'search') { renderSearch(idx); return; }
+    if (page === 'archive') { renderArchive(idx); pageStatus.textContent = `Archive loaded. ${plural((idx.editions || []).length, 'edition')}.`; return; }
+    if (page === 'search') { renderSearch(idx); pageStatus.textContent = 'Archive search ready.'; return; }
     const date = body.dataset.date || idx.latest;
     if (!date) { failed(current, 'No edition has been published yet.'); return; }
     let ed;
     try { ed = await loadEdition(date); } catch (e) {
+      if (body.dataset.date && e.message === '404') {
+        failed(current, 'This edition was taken off the site.', true);
+        return;
+      }
       failed(current, body.dataset.date ? `The edition of ${longDate(date)} is not available.` : null);
       return;
     }
+    let renderedView = null;
     const route = () => {
       const m = /^#story-([0-9a-f]{6,40})$/.exec(location.hash);
-      const s = m && ed.byId[m[1]];
-      if (s) return renderStory(ed, idx, s);
+      let s = m && ed.byId[m[1]];
+      const hint = new URLSearchParams(location.search);
+      let storyNotice = null;
+      if (m && !s) {
+        s = recoverHeadline(ed, hint.get('headline'));
+        storyNotice = s ? 'The original story link no longer exists in this revision. Showing the closest clear headline match.'
+          : 'This story was updated in a later edition of the day; here is the full edition.';
+      }
+      if (hint.has('headline')) {
+        hint.delete('headline');
+        history.replaceState(null, '', location.pathname + (hint.toString() ? '?' + hint : '') + (s ? '#story-' + s.id : location.hash));
+      }
+      const view = s ? s.id : page + (storyNotice ? ':missing-story' : '');
+      if (view === renderedView) return false;
+      renderedView = view;
+      if (s) return renderStory(ed, idx, s, storyNotice);
+      if (storyNotice) return renderFront(ed, idx, page === 'home' ? 'home' : 'edition', storyNotice);
       if (page === 'latest') return renderLatest(ed, idx);
       if (page === 'section') return renderSection(ed, idx, body.dataset.section);
       return renderFront(ed, idx, page === 'home' ? 'home' : 'edition');
     };
     route();
+    pageStatus.textContent = document.querySelector('.story-recovery')?.textContent || `Edition loaded. ${plural(ed.stories.length, 'story', 'stories')}.`;
     window.addEventListener('hashchange', () => {
       // Ordinary page anchors must not remount the news or discard keyboard focus.
       if (location.hash && !/^#story-/.test(location.hash)) return;
-      route();
+      if (route() === false) return;
       const title = document.querySelector('main h1');
       if (title) { title.setAttribute('tabindex', '-1'); title.focus({preventScroll: true}); }
       window.scrollTo(0, 0);

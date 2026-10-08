@@ -11,7 +11,7 @@ const monthly = JSON.parse(readFileSync(resolve(root, 'search/2026-10.json')));
 const settle = () => new Promise(r => setTimeout(r, 25));
 async function open(path = '/', opts = {}) {
   const pathname = new URL(path, 'https://example.test').pathname;
-  const file = pathname.endsWith('/') ? pathname + 'index.html' : pathname;
+  const file = opts.shell || (pathname.endsWith('/') ? pathname + 'index.html' : pathname);
   const errors = [];
   const vc = new VirtualConsole();
   vc.on('jsdomError', e => errors.push(e.message));
@@ -27,6 +27,7 @@ async function open(path = '/', opts = {}) {
     const override = opts.fetch && await opts.fetch(url, requests);
     if (override !== undefined) {
       if (override === false) return {ok:false,status:503};
+      if (override && override.ok === false) return override;
       return {ok:true,json:async()=>structuredClone(override)};
     }
     return {ok:true,json:async()=>JSON.parse(readFileSync(resolve(root, '.' + url)))};
@@ -55,6 +56,8 @@ test('latest river and category pages retain every fixture story', async () => {
   for (const [path, cat] of [['technology','Tech'], ['science','Science & AI'], ['world','News']]) {
     const q = await open('/'+path+'/');
     assert.equal(q.d.querySelectorAll('.card').length, edition.sections.find(s=>s.category===cat).ids.length);
+    assert.equal(q.d.querySelectorAll('.card h2').length,q.d.querySelectorAll('.card').length);
+    assert.equal(q.d.querySelectorAll('.card h3').length,0);
     assert.equal(q.d.querySelector('.nav [aria-current="page"]').textContent, path === 'science' ? 'Science & AI' : path[0].toUpperCase()+path.slice(1));
     q.close();
   }
@@ -109,6 +112,8 @@ test('skip and regular anchors never remount a story; next/back focus title', as
   assert.equal(p.w.location.hash,'#story-'+edition.top[0]);
   p.w.location.hash='#sources'; await settle();
   assert.equal(p.d.querySelector('main'),main);
+  p.w.location.hash='#story-'+edition.top[0]; await settle();
+  assert.equal(p.d.querySelector('main'),main);
   p.w.location.hash='#story-'+edition.top[1]; await settle();
   assert.notEqual(p.d.querySelector('h1').textContent,headline);
   assert.equal(p.d.activeElement,p.d.querySelector('h1'));
@@ -116,6 +121,53 @@ test('skip and regular anchors never remount a story; next/back focus title', as
   assert.equal(p.d.querySelector('h1').textContent,headline);
   assert.equal(p.d.activeElement,p.d.querySelector('h1'));
   assert.deepEqual(p.errors,[]);
+  p.close();
+});
+
+test('delayed page loading retains keyboard focus and a persistent status region',async()=>{
+  for(const selector of ['.brand','.nav a[href="/"]','.skip','main']) {
+    let release; const deferred=new Promise(r=>release=r);
+    const p=await open('/',{fetch:u=>u==='/editions/index.json'?deferred:undefined});
+    const status=p.d.querySelector('#page-status');
+    assert.match(status.textContent,/Loading the edition/);
+    assert.equal(p.d.querySelector('main').getAttribute('aria-busy'),'true');
+    p.d.querySelector(selector).focus(); release(index); await settle();
+    assert.equal(p.d.activeElement,p.d.querySelector(selector),selector);
+    assert.equal(p.d.querySelector('#page-status'),status);
+    assert.match(status.textContent,/Edition loaded.*44 stories/);
+    assert.equal(p.d.querySelector('main').getAttribute('aria-busy'),'false');
+    p.close();
+  }
+  const p=await open('/latest/');
+  const main=p.d.querySelector('main');
+  p.w.location.hash='#main'; await settle();
+  p.w.location.hash=''; await settle();
+  assert.equal(p.d.querySelector('main'),main);
+  assert.notEqual(p.d.activeElement,p.d.querySelector('main h1'));
+  p.close();
+});
+
+test('search recovery has a stable pending focus target without stealing later focus',async()=>{
+  let release,attempts=0; const deferred=new Promise(r=>release=r);
+  const p=await open('/search/?q=Hamilton',{fetch:u=>u.startsWith('/search/')?(++attempts===1?false:deferred):undefined});
+  const status=p.d.querySelector('#search-status'),input=p.d.querySelector('input');
+  p.d.querySelector('[data-act="retry"]').click();
+  assert.equal(p.d.activeElement,status);
+  assert.equal(p.d.querySelector('#search-results').getAttribute('aria-busy'),'true');
+  assert.equal(p.d.querySelector('#search-results').getAttribute('aria-describedby'),'search-status');
+  assert.equal(p.d.querySelector('#search-results').getAttribute('aria-label'),'Search results');
+  input.focus(); release(monthly); await settle();
+  assert.equal(p.d.activeElement,input);
+  assert.equal(p.d.querySelector('#search-results').getAttribute('aria-busy'),'false');
+  assert.match(status.textContent,/1 story found/);
+  p.close();
+});
+
+test('Show more continues keyboard reading at the first newly revealed result',async()=>{
+  const p=await open('/search/?q=the',{fetch:u=>u==='/editions/index.json'?{...index,editions:[index.editions[0],{...index.editions[0],date:'2026-09-07'}]}:u.includes('/search/2026-09')?{...monthly,stories:monthly.stories.map(s=>({...s,d:'2026-09-07'}))}:undefined});
+  assert.equal(p.d.querySelectorAll('.hit').length,40);
+  p.d.querySelector('[data-act="more"]').click(); await settle();
+  assert.equal(p.d.activeElement,p.d.querySelectorAll('.hit h2 a')[40]);
   p.close();
 });
 
@@ -306,4 +358,97 @@ test('failed edition load keeps archive recovery and safe text rendering', async
   assert.equal(q.d.querySelector('h1').textContent,unsafe.stories[0].headline);
   assert.equal(q.d.querySelector('h1 img'),null);
   q.close();
+});
+
+test('generation and source times remain explicit on every news-reading view',async()=>{
+  for(const path of ['/', '/daily/2026-10-07/', '/latest/', '/technology/', '/science/', '/world/', '/daily/2026-10-07/#story-'+edition.top[0]]) {
+    const p=await open(path);
+    const generated=p.d.querySelector('.strip time[datetime="'+edition.generated_utc+'"]');
+    assert.ok(generated,path);
+    assert.match(generated.textContent,/Generated.*2026/);
+    assert.match(p.d.querySelector('.strip').textContent,/Latest edition.*Update 2/);
+    if(path.includes('#story')) {
+      assert.ok(p.d.querySelector('.sources time[datetime]'));
+      assert.equal(p.d.querySelector('.story-main .meta time').getAttribute('datetime'),edition.stories[0].newest_published_utc);
+    }
+    p.close();
+  }
+});
+
+test('null source URLs and empty optional values remain readable plain text',async()=>{
+  const ed=structuredClone(edition),story=ed.stories[0];
+  story.sources[0].url=null; story.sources[0].published_utc=null;
+  story.sources[0].title='<b>Source title is plain text</b>';
+  story.why_it_matters=''; story.top_rank=null; story.summary=['A short summary.']; ed.compared_with=null;
+  const p=await open('/daily/2026-10-07/#story-'+story.id,{fetch:u=>u.includes('/editions/2026')?ed:undefined});
+  const source=p.d.querySelector('.source');
+  assert.equal(source.querySelector('a'),null);
+  assert.equal(source.querySelector('.title').textContent,story.sources[0].title);
+  assert.equal(source.querySelector('b'),null);
+  assert.equal(source.querySelector('time'),null);
+  assert.match(source.textContent,/Time not stated/);
+  assert.equal(p.d.querySelector('.why-box'),null);
+  assert.equal(p.d.querySelectorAll('.story-body p').length,1);
+  p.close();
+  const card=await open('/technology/',{fetch:u=>u.includes('/editions/2026')?ed:undefined});
+  assert.equal(card.d.querySelectorAll('.card').length,8);
+  assert.equal(card.d.querySelector('details.src a[href$="/null"]'),null);
+  assert.ok([...card.d.querySelectorAll('details.src li')].some(li=>li.textContent.includes(story.sources[0].title)&&!li.querySelector('a')));
+  card.close();
+});
+
+test('search links recover changed IDs by exact or clearly shared headlines on the same date',async()=>{
+  const original=edition.stories[0], ed=structuredClone(edition), replacement='abcdef123456';
+  ed.stories[0].id=replacement; ed.revision=3;
+  ed.top=ed.top.map(id=>id===original.id?replacement:id);
+  ed.sections.forEach(sec=>sec.ids=sec.ids.map(id=>id===original.id?replacement:id));
+  for(const hint of [original.headline.toUpperCase()+'!', 'Computing Pioneer Margaret Hamilton Dies Aged 90']) {
+    const p=await open('/daily/2026-10-07/?headline='+encodeURIComponent(hint)+'#story-'+original.id,{fetch:u=>u.includes('/editions/2026')?ed:undefined});
+    assert.equal(p.d.querySelector('h1').textContent,original.headline);
+    assert.equal(p.w.location.hash,'#story-'+replacement);
+    assert.equal(p.w.location.search,'');
+    assert.match(p.d.querySelector('.story-recovery').textContent,/headline match/);
+    assert.equal(p.d.querySelectorAll('.sources .source').length,original.sources.length);
+    p.close();
+  }
+  const search=await open('/search/?q=Hamilton');
+  const href=new URL(search.d.querySelector('.hit h2 a').href);
+  assert.equal(href.searchParams.get('headline'),original.headline);
+  assert.equal(href.hash,'#story-'+original.id);
+  search.close();
+});
+
+test('missing story recovery never guesses on ties, weak matches, or absent headline hints',async()=>{
+  const ed=structuredClone(edition);
+  ed.stories[0].headline='Alpha beta gamma delta'; ed.stories[1].headline='Alpha beta gamma epsilon';
+  for(const hint of ['Alpha beta gamma zeta', 'Alpha beta gamma delta', 'Alpha unknown unrelated', '']) {
+    const doc=structuredClone(ed);
+    if(hint==='Alpha beta gamma delta') doc.stories[1].headline=doc.stories[0].headline;
+    const p=await open('/daily/2026-10-07/'+(hint?'?headline='+encodeURIComponent(hint):'')+'#story-abcdef123456',{fetch:u=>u.includes('/editions/2026')?doc:undefined});
+    assert.ok(p.d.querySelector('.front'));
+    assert.equal(p.d.querySelector('.story'),null);
+    assert.match(p.d.querySelector('.story-recovery').textContent,/full edition/);
+    p.close();
+  }
+  ed.stories[0].headline='What You Need To Know About Alpha';
+  const boilerplate=await open('/daily/2026-10-07/?headline=What+You+Need+To+Know+About+Beta#story-abcdef123456',{fetch:u=>u.includes('/editions/2026')?ed:undefined});
+  assert.equal(boilerplate.d.querySelector('.story'),null);
+  assert.match(boilerplate.d.querySelector('.story-recovery').textContent,/full edition/);
+  boilerplate.close();
+});
+
+test('withdrawn edition JSON and dated 404 shells provide archive recovery',async()=>{
+  const removed=await open('/daily/2026-10-07/#story-'+edition.top[0],{fetch:u=>u.includes('/editions/2026')?{ok:false,status:404}:undefined});
+  assert.match(removed.d.querySelector('h1').textContent,/This edition was taken off/);
+  assert.ok(removed.d.querySelector('main a[href="/archive/"]'));
+  removed.close();
+  const p=await open('/daily/2026-10-07/#story-'+edition.top[0],{fetch:u=>u.includes('/editions/2026')?false:undefined});
+  // A temporary server failure is not described as a withdrawal.
+  assert.doesNotMatch(p.d.querySelector('h1').textContent,/taken off/);
+  p.close();
+  const withdrawn=await open('/daily/2026-10-06/',{shell:'/404.html'});
+  assert.match(withdrawn.d.querySelector('h1').textContent,/This edition was taken off/);
+  assert.ok(withdrawn.d.querySelector('main a[href="/archive/"]'));
+  assert.equal(withdrawn.d.querySelector('#page-status').textContent,withdrawn.d.querySelector('h1').textContent);
+  withdrawn.close();
 });
