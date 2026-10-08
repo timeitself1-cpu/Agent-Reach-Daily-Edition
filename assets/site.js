@@ -146,7 +146,8 @@
         h('div', null, h('h3', {text: 'Read'}), h('ul', null,
           h('li', null, h('a', {href: '/daily/', text: 'Latest edition'})), h('li', null, h('a', {href: '/latest/', text: 'Latest News'})),
           h('li', null, h('a', {href: '/archive/', text: 'Archive'})), h('li', null, h('a', {href: '/about/#method', text: 'How it works'})),
-          h('li', null, h('a', {href: '/about/#coverage', text: 'Reading coverage strength'})))),
+          h('li', null, h('a', {href: '/about/#coverage', text: 'Reading coverage strength'})),
+          h('li', null, h('a', {href: '/feed.xml', text: 'RSS feed'})))),
         h('div', null, h('h3', {text: 'Project'}), h('ul', null,
           h('li', null, h('a', {href: '/about/#app', text: 'The Windows app'})), h('li', null, h('a', {href: REPO, text: 'Source code on GitHub'})),
           h('li', null, h('a', {href: '/about/#corrections', text: 'Corrections'})), h('li', null, h('a', {href: 'mailto:' + MAIL, text: MAIL}))))),
@@ -180,7 +181,7 @@
     return h('div', {class: 'strip'},
       h('span', {class: 'live' + (latest && ageH < 30 ? '' : ' old')}, h('b', {text: latest ? 'Latest edition' : 'Archived edition'}),
         ` · ${longDate(ed.edition_date)}`, ed.revision > 1 ? ` · update ${ed.revision}` : '', ` · made ${clock(ed.generated_utc)}`),
-      h('span', null, `${plural(ed.stories.length, 'story', 'stories')} from ${plural(ed.reports_read || 0, 'report')} and ${plural(ed.sources_answered || 0, 'source')} · summaries by a local AI model`));
+      h('span', null, `${plural(ed.stories.length, 'story', 'stories')} from ${plural(ed.reports_read || 0, 'report')} (${ed.sources_answered || 0} of ${ed.sources_tried || 0} kinds of source answered) · summaries by a local AI model`));
   }
   function notices(ed, idx) {
     const out = [];
@@ -223,7 +224,7 @@
   function aboutBand() {
     return h('section', {class: 'wrap about-band', 'aria-label': 'About Agent Reach Daily'},
       h('div', null, h('h2', {text: 'The day’s news, from public reporting, summarized by a local AI.'}),
-        h('p', {text: 'Agent Reach Daily reads around 1,500 reports a day from news outlets, feeds and trend sources, keeps each event as one story, and checks every summary sentence against the story’s own sources. It runs on one Windows PC and publishes here automatically. Coverage strength shows how many independent outlets reported a story; it is not a fact check.'}),
+        h('p', {text: 'Agent Reach Daily reads around 1,500 reports a day from 112 publisher feeds, 22 YouTube news channels and eight other kinds of source, keeps each event as one story, and checks every summary sentence against the story’s own sources. It runs on one Windows PC and publishes here automatically. Coverage strength shows how many independent outlets reported a story; it is not a fact check.'}),
         h('div', {class: 'links'}, h('a', {class: 'pill', href: '/about/#method', text: 'How it works'}), h('a', {class: 'pill', href: '/about/#app', text: 'Make your own edition'}))),
       h('ol', {class: 'howlist'},
         h('li', null, h('b', {text: 'Collect'}), 'News feeds, Google News, Hacker News, Wikipedia, YouTube, Bluesky, Mastodon and trend lists.'),
