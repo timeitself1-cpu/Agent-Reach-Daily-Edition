@@ -5,22 +5,22 @@
  "editions": [
   {
    "date": "2026-10-08",
-   "revision": 2,
-   "generated_utc": "2026-10-08T19:48:01Z",
-   "stories": 53,
-   "lead": "USS Abraham Lincoln Returns Home to San Diego After Record Deployment",
+   "revision": 3,
+   "generated_utc": "2026-10-08T20:48:04Z",
+   "stories": 52,
+   "lead": "Trump Administration Suspends Microsoft from Green Card Program",
    "headlines": [
-    "OpenAI's Revenue Is Reportedly $20 Billion Less Than Previously Projected",
-    "US Charges Maduro with Ordering Torture of Opponents and Americans",
-    "Trump Administration Suspends Microsoft from Green Card Program"
+    "Margaret Hamilton, Pioneering Computer Scientist, Dies at 90",
+    "Arizona Congressional Candidate Says She Was Raped While Fixing Campaign Sign",
+    "Hurricane Isaias Strengthens as It Heads to US Gulf Coast"
    ],
    "sections": {
     "News": 10,
     "Tech": 10,
     "Science & AI": 10,
     "Sports": 10,
-    "Entertainment": 10,
-    "Internet Culture": 3
+    "Entertainment": 8,
+    "Internet Culture": 4
    }
   },
   {
