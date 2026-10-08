@@ -440,6 +440,16 @@ def file_association(ext: str) -> str:
     return "; ".join(x for x in out if x) or "unknown"
 
 
+def launch_held_note(held_s: float) -> str:
+    """Windows held the double-click itself (October 7, 18:16: 250 s for AgentReachDaily.cmd, with the window
+    never asked to open): almost always the 'Open File - Security Warning' dialog for a file from a downloaded zip."""
+    if held_s < 20:
+        return ""
+    return (f"\nWindows held the launch for {held_s:.0f} s before starting it. That is usually the 'Open File - "
+            "Security Warning' dialog Windows shows for files from a downloaded zip. Run "
+            "Setup-AgentReachDaily.ps1 again: it clears that mark from the project's files.")
+
+
 def part_launchers(report: Report, args, base: Path) -> None:
     P = "2. launchers"
     if not WIN:
@@ -474,6 +484,7 @@ def part_launchers(report: Report, args, base: Path) -> None:
         os.environ.update(AGENT_REACH_DAILY_SMOKE_FILE=str(result), AGENT_REACH_DAILY_HOME=str(home))
         try:
             os.startfile(str(target), cwd=tempfile.gettempdir())  # type: ignore[attr-defined]
+            held = time.monotonic() - started
         finally:
             for k, v in saved.items():
                 if v is None:
@@ -484,6 +495,7 @@ def part_launchers(report: Report, args, base: Path) -> None:
             time.sleep(0.5)
         if not result.exists():
             detail = "the window did not report within 90 s"
+            detail += launch_held_note(held)
             if target.suffix.lower() == ".pyw":
                 detail += "\n.pyw files open with: " + file_association(".pyw")
             report.check(P, name, False, detail, time.monotonic() - started)

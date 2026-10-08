@@ -73,6 +73,20 @@ if (-not (Test-Path -LiteralPath (Join-Path $Root "agent_reach\daily\__main__.py
 }
 if (-not (Test-Path -LiteralPath $Requirements)) { Fail "requirements.txt is missing in $Root." }
 Write-Ok "Agent Reach source found"
+# Files extracted from a downloaded zip carry Windows' "from the internet" mark, so double-clicking
+# AgentReachDaily.cmd stops at an "Open File - Security Warning" dialog (the self-test waited 4 minutes on it,
+# October 7). The files are this project's own: clear the mark once here.
+$marked = @(Get-ChildItem -LiteralPath $Root -Recurse -File -ErrorAction SilentlyContinue |
+    Where-Object { $_.FullName -notlike "*\.venv\*" -and $_.FullName -notlike "*\.git\*" -and
+        (Get-Item -LiteralPath $_.FullName -Stream Zone.Identifier -ErrorAction SilentlyContinue) })
+if ($marked.Count -eq 0) {
+    Write-Ok "No downloaded-file warnings to clear"
+} elseif ($DryRun) {
+    Write-Dry "clear the downloaded-from-the-internet mark on $($marked.Count) project files (no more security warnings)"
+} else {
+    $marked | Unblock-File -ErrorAction SilentlyContinue
+    Write-Ok "Cleared the downloaded-from-the-internet mark on $($marked.Count) project files (no security warnings when you double-click them)"
+}
 
 # ------------------------------------------------------------------ 2. python
 Write-Step "Finding Python 3.10 or newer (with tkinter)"
