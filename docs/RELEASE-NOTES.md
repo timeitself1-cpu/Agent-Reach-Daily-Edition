@@ -5,6 +5,21 @@ Each release candidate is delivered as a zip of the repository. Extract it over 
 Your editions, settings and history (`%LOCALAPPDATA%\AgentReachDaily`) are kept. Earlier releases are
 summarised in `docs/HISTORY.md` ("Release history").
 
+## 1.0.0rc15 (zip rc15): the website stays correct and up to date on its own
+
+From the backend audit of October 8 (`docs/BACKEND-AUDIT.md`, Step 1).
+
+1. **A story you remove from the website stays removed.** Before, a second refresh on the same day could put
+   it back, because the story got a new internal id when it gained or lost an article (on the October 7
+   editions this would have happened to 28 of 144 stories). The app now recognises the story by its articles.
+2. **A failed upload is tried again within the hour.** If GitHub or your internet connection is down when the
+   refresh publishes, the hourly scheduled check sends the edition as soon as it can, instead of waiting for
+   the next day's refresh. A date you took off the website is never put back this way.
+3. **The website no longer waits for the podcast.** The edition goes to the website first; the spoken edition
+   is recorded after it.
+4. **A warning before your access key expires.** GitHub keys have an end date. A week before it, the
+   publishing window and the refresh message tell you the date, so you can paste a new key in time.
+
 ## 1.0.0rc14 (zip rc14): the app starts recognising the same event across days (behind the scenes)
 
 1. **Event registry, observing only.** After each successful refresh the app records which earlier event each

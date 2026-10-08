@@ -166,9 +166,12 @@ previous edition preserved") and what the live site shows. Details: [docs/PUBLIS
   and each source's outlet, headline, link and time. Never publisher excerpts, logs, settings, file paths or
   anything about your PC. The PC only makes outgoing requests to GitHub; nothing listens for connections.
 - **A failed upload changes nothing on the site**: an edition goes up as one commit or not at all, and the
-  website keeps the previous edition. Retrying never creates duplicates.
-- **Corrections:** right-click a story > **Remove from the website...**; or **Take this edition off the
-  website...** in the publishing window.
+  website keeps the previous edition. Retrying never creates duplicates. The app tries again by itself at its
+  next hourly check (the scheduled task), so a short outage does not leave the site a day behind.
+- **Corrections:** right-click a story > **Remove from the website...** (it stays off when a later refresh the
+  same day finds that story again); or **Take this edition off the website...** in the publishing window.
+- **Key expiry:** a week before the access key expires, the publishing window and the refresh message say so;
+  make a new key the same way and paste it.
 - The key is stored encrypted for your Windows account in `publish\access-key.dat` in the data folder (never in
   the project folder). **Forget key** deletes it; revoke it on github.com if it may have leaked.
 
@@ -290,7 +293,7 @@ editions, then runs the same self-test; send back both zips from the Desktop.
 
 Tests never touch the network or a real Ollama. `tests/daily_fakes.py` holds synthetic publisher
 feeds (fictional places on `.test` hosts) and a deterministic fake model; `samples/DEMO-edition.json`
-is the clearly labelled demo edition. Version: Agent Reach Daily 1.0 release candidate 14
+is the clearly labelled demo edition. Version: Agent Reach Daily 1.0 release candidate 15
 (`python -m agent_reach.daily --version`). What changed in each release: `docs/RELEASE-NOTES.md`.
 
 ## License and contact

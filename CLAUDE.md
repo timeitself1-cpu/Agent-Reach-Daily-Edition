@@ -47,7 +47,8 @@ category sections), a grounded "why it matters" pass, an HTML export and a spoke
   simulate success for something that needs their machine; prepare the harness, give the exact command.
 - **Branch:** use the branch the session is given (HANDOFF.md names the current one). History:
   `claude/affectionate-galileo-isxik1` (rc11-rc12); `claude/sweet-ramanujan-xj36o5` (rc13, merged as PR #4 on
-  Oct 8; rc14 continues there, restarted from the default branch, NOT merged). After a PR of the branch is
+  Oct 8; rc14 continues there, restarted from the default branch, NOT merged); `claude/great-hawking-t1h2cl`
+  (backend audit + rc15, Oct 8, from rc14, NOT merged). After a PR of the branch is
   merged, restart the branch from the default branch before new work. Committing and pushing to the session's
   branch is authorized; never merge unreviewed work, and merge a PR only when the user asks and CI is green.
   No pull requests unless asked; nothing else remote without asking. The repository's default branch is

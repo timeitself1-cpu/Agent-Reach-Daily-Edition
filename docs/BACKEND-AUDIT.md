@@ -9,6 +9,8 @@ version of this document is a Claude doc; this file is the repository copy, and 
 5 Windows-only skips, 7 strict xfails; pyflakes clean; CI green on the last 4 runs. Measurements on the 12 real
 October 7 editions in `tests/fixtures/real/`. Nothing ran on the Windows PC or against the live site.
 
+**Status:** Step 1 (F1, F2, F5, F6) shipped in rc15 on Oct 8 (PLAN B1-B4); the rest is open.
+
 ## Summary
 
 The backend is sound: a failed run never replaces a good edition, the site only moves by one complete

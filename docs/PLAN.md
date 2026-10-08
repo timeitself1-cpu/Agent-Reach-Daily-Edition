@@ -190,17 +190,18 @@ new agents, new LLM infrastructure, accounts, databases, pipeline changes.
 
 Goal: the step that feeds the live site is as safe as the rest. One commit and one test per item; no new services.
 
-- [ ] B1. Removed stories stay removed (F1): `hidden_stories` also keeps each removed story's report keys (URL,
+- [x] B1. Removed stories stay removed (F1): `hidden_stories` also keeps each removed story's report keys (URL,
       normalized title); a story is left out when more than half of its reports were removed (the registry's rule).
       Acceptance: fixture test (remove every r1 story, publish r2): 0 come back (today 28 of 144).
-- [ ] B2. Retry publication on the hourly check (F2): when not due, `--refresh-if-due` publishes the latest edition
+- [x] B2. Retry publication on the hourly check (F2): when not due, `--refresh-if-due` publishes the latest edition
       if publishing is on and the site lacks it (status failed or older revision), at most once an hour.
       Acceptance: fake-world process test: first upload 503, next tick publishes, third makes no commit.
-- [ ] B3. Publish before the podcast (F6). Acceptance: refresh test asserts the stage order.
-- [ ] B4. Access-key expiry warning (F5) from GitHub's `github-authentication-token-expiration` header, 7 days ahead.
+- [x] B3. Publish before the podcast (F6). Acceptance: refresh test asserts the stage order.
+- [x] B4. Access-key expiry warning (F5) from GitHub's `github-authentication-token-expiration` header, 7 days ahead.
 - [ ] B5. One bad story, not the whole day (F10): `assert_public` per story; the status names what was left out.
 - [ ] B6. Validate dates in publish/withdraw/hide (F13); read each file once per pinned head, close clients (F11).
-- [ ] B7. Release rc15 (B1-B6), zip to the user.
+- [x] B7. Release rc15 = Step 1 (B1-B4), zip to the user (Oct 8). B5-B6 (Step 2) go into the next build.
+      B2's test runs the real `--refresh-if-due` command in-process with a fake GitHub (not a separate process).
 - [ ] B8. `docs/PUBLIC-DATA.md` + `docs/schema/` (edition, index, search month) + a real example; a test validates
       the publisher's output for all fixtures (F4). Share with the front end; F9/F12 only if it agrees.
 - [ ] B8b. Search entries carry their edition's revision (`v`, optional field) so the site can refetch a stale
@@ -372,3 +373,4 @@ Each rule starts from quotes in `docs/REAL-EDITION-FINDINGS.md`; each gets a fix
 - 2026-10-08 | PR #4, Phase 2.1b-2.4 | 9674c46 (merge), (this commit) | rc13c merged; rc14: matching vs carry-over vs Top Stories reported apart; diagnosis (false continuations = URL overlap with mixed stories + entity sets; misses = new articles, one shared name); daily/registry.py observing in the refresh; Oct 7 held-out 6h+: P 0.991 R 0.898 (was 0.989/0.703); self-test brings 14 days + events.json | user runs the self-test on rc14; extend the answer key to >= 7 days
 - 2026-10-08 | handoff | (this commit) | BUILD.md (roadmap, 4 phases), HANDOFF.md (state), CLAUDE.md updated; docs/HANDOFF.md -> docs/HISTORY.md; rc14 self-test NOT run yet | user sends the rc14 self-test zip; then 2.1b multi-day answer key
 - 2026-10-08 | backend audit | (this commit) | audit of rc14 (pipeline, worker, store, publisher): 510 passed (Tk, xvfb), pyflakes clean; 14 findings, 2 high (removed stories return after a revision: 28/144 on fixtures; failed upload waits a day); Phase B + docs/BACKEND-AUDIT.md | user decides: Phase B (rc15) now, or wait for the rc14 self-test zip (Phase 2.1b)
+- 2026-10-08 | B1-B4, B7 | bcf298a, 30cf56e, 8ec5bf0, 0f44921, (this commit) | rc15: removed stories stay off in later revisions (0 of 144 back, was 28), hourly catch-up of a failed upload, website before podcast, key-expiry warning; full suite with Tk green | user installs rc15 (and runs the rc14/rc15 self-test); then B5-B6 or Phase 2.1b

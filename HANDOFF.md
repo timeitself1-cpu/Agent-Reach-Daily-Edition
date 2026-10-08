@@ -19,16 +19,19 @@ tracks each real-world event over time (timelines), and later feeds structured e
 
 ## Release and repository state
 
-- **Current release: rc14** (`agent_reach/daily/__init__.py`: `1.0.0rc14`). The zip
-  `Agent-Reach-Daily-v1.0rc14.zip` was delivered to the user.
-- **Branch:** `claude/sweet-ramanujan-xj36o5`. Restarted from the default branch after PR #4 merged.
-- **Code commit (rc14):** `7cd47e7`, CI green. The commit that adds this file is reported in the session's
-  final message (`git log -1` on the branch).
+- **Current release: rc15** (`agent_reach/daily/__init__.py`: `1.0.0rc15`), zip `Agent-Reach-Daily-v1.0rc15.zip`
+  delivered Oct 8. rc15 = rc14 + the backend audit's Step 1 (`docs/BACKEND-AUDIT.md`, PLAN Phase B1-B4): removed
+  stories stay off the site in later revisions, the hourly check retries a failed upload, website before podcast,
+  access-key expiry warning. Not yet run on the PC.
+- **Branch:** `claude/great-hawking-t1h2cl` (rc15; fast-forwarded from rc14's `claude/sweet-ramanujan-xj36o5`).
+- **Code commit (rc14):** `7cd47e7`, CI green. rc15's commits are on the branch (`git log`).
+- **Front end:** the user has ChatGPT changing the website (mobile layout, search clarity and recovery) since
+  Oct 8. The data contract it builds on is in `docs/BACKEND-AUDIT.md` (PLAN B8 writes `docs/PUBLIC-DATA.md`).
 - **Default branch** `claude/loving-darwin-a7rqvs` (what GitHub visitors download): **PR #4 merged** on
   Oct 8 as `9674c46` (squash). It brought rc13c: publishing, RSS, sitemap, search data, and the Phase 2.1
   answer key.
-  - **rc14 is NOT on the default branch.** Its three commits (self-test history, registry, refresh hook) need
-    a new PR when the user asks. Do not merge unreviewed work.
+  - **rc14 and rc15 are NOT on the default branch.** They need a new PR when the user asks. Do not merge
+    unreviewed work.
 - **Website repo** `timeitself1-cpu/Agent-Reach-Website`, branch `main`, head `8161be5` (archive search). The
   user reported the news-first site live (Oct 8). This sandbox cannot reach getagentreach.dev.
 
@@ -39,8 +42,9 @@ refresh worker (daily/refresh.py, holds the OS lock)
   -> pipeline (agent_reach/main.py: ingest -> clean -> enrich -> group [embeddings + identity gate] -> label [LLM] -> score)
   -> edition (daily/edition.py) -> saved atomically (daily/store.py, one file per date, last revision wins)
   -> registry.record_edition  (daily/registry.py: observe only, never fails the refresh)        [rc14]
-  -> podcast (optional)
   -> publish_after_refresh    (daily/publish.py: opt-in, one GitHub commit, never fails the refresh)
+  -> podcast (optional)                                                     [rc15: after the website]
+scheduled check every hour (--refresh-if-due): refresh when due, else publish.catch_up        [rc15]
 window (daily/gui.py, view only) <- daily/app.py (all logic the window shows)
 ```
 
