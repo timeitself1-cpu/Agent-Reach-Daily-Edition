@@ -423,11 +423,13 @@
     const editionsIn = new Map(); for (const e of idx.editions || []) editionsIn.set(monthOf(e.date), (editionsIn.get(monthOf(e.date)) || 0) + 1);
     const data = new Map();   // month -> entries with folded text, or null when it could not be loaded
     const pending = new Map();
-    const st = {q: params.get('q') || '', cat: params.get('cat') || '', sort: params.get('sort') === 'best' ? 'best' : 'new',
+    const requestedCat = params.get('cat') || '';
+    const st = {q: params.get('q') || '', cat: Object.hasOwn(SECTION, requestedCat) ? requestedCat : '', sort: params.get('sort') === 'best' ? 'best' : 'new',
       horizon: Math.min(SEARCH_BATCH, months.length), shown: SEARCH_PAGE, run: 0};
     function load(m) {
       if (!pending.has(m)) pending.set(m, getJson(`/search/${m}.json`).then(doc => {
-        const list = Array.isArray(doc && doc.stories) ? doc.stories : [];
+        if (!Array.isArray(doc && doc.stories)) throw new Error('unavailable search data');
+        const list = doc.stories;
         data.set(m, list.filter(x => x && x.d && x.id && x.h).map(x => Object.assign(x, {
           _h: norm(x.h), _all: norm([x.h, x.s, (x.o || []).join(' '), catLabel(x.c)].join(' | '))})));
       }).catch(() => data.set(m, null)));
@@ -442,8 +444,9 @@
       h('label', {class: 'search-field'}, h('span', {text: 'Search the archive'}), input),
       h('label', {class: 'search-field'}, h('span', {text: 'Section'}), cat),
       h('button', {class: 'pill solid', type: 'submit', text: 'Search'}));
-    form.addEventListener('submit', e => { e.preventDefault(); clearTimeout(timer); st.q = input.value.trim(); st.shown = SEARCH_PAGE; remember(); run(); });
+    form.addEventListener('submit', e => { e.preventDefault(); st.shown = SEARCH_PAGE; syncQuery(); run(); });
     const status = h('p', {class: 'search-status', role: 'status', 'aria-live': 'polite', 'aria-atomic': 'true', tabindex: '-1'});
+    const recovery = h('div', {class: 'search-recovery'});
     const results = h('div', {class: 'hits', 'aria-busy': 'false'});
     const more = h('div', {class: 'search-more'});
     const first = (idx.editions || []).length ? idx.editions[idx.editions.length - 1].date : null;
@@ -453,7 +456,7 @@
         form,
         h('p', {class: 'search-help', id: 'search-help', text: 'Results appear as you type. Words match the start of a word; use "quotes" to match a phrase.'}),
         h('div', {class: 'segs', role: 'group', 'aria-label': 'Order'}, sortBtns)),
-      status, results, more));
+      status, recovery, results, more));
     document.title = (st.q ? `${st.q}: search` : 'Search') + ' | Agent Reach Daily';
 
     function remember() {
@@ -462,15 +465,23 @@
       history.replaceState(null, '', '/search/' + (p.toString() ? '?' + p : ''));
       document.title = (st.q ? `${st.q}: search` : 'Search') + ' | Agent Reach Daily';
     }
+    function syncQuery() {
+      clearTimeout(timer);
+      const q = input.value.trim();
+      if (q !== st.q) st.shown = SEARCH_PAGE;
+      st.q = q;
+      remember();
+    }
     async function run(focusAfter) {
       const ticket = ++st.run;
       const terms = parseQuery(st.q);
       const reach = months.slice(0, st.horizon);
-      results.replaceChildren(); more.replaceChildren();
+      results.replaceChildren(); more.replaceChildren(); recovery.replaceChildren();
       results.setAttribute('aria-busy', 'false');
       if (!terms.length) {
-        status.textContent = months.length ? 'Type to search. Results appear as you type.' : '';
+        status.textContent = months.length ? (st.q ? 'Enter a word or phrase to search.' : 'Type to search. Results appear as you type.') : '';
         if (months.length) load(months[0]);
+        if (focusAfter) status.focus({preventScroll: true});
         return;
       }
       if (reach.some(m => !data.has(m))) status.textContent = 'Searching…';
@@ -478,10 +489,10 @@
       await Promise.all(reach.map(load));
       if (ticket !== st.run) return;
       const hits = [];
-      let missing = 0;
+      const missing = [];
       for (const m of reach) {
         const list = data.get(m);
-        if (!list) { missing++; continue; }
+        if (!list) { missing.push(m); continue; }
         for (const x of list) {
           if (st.cat && x.c !== st.cat) continue;
           let score = 0, ok = true;
@@ -494,20 +505,27 @@
       }
       hits.sort((a, b) => st.sort === 'best' ? (b[0] - a[0]) || b[1].d.localeCompare(a[1].d) || a[1].r - b[1].r
         : b[1].d.localeCompare(a[1].d) || a[1].r - b[1].r);
-      const searched = reach.reduce((n, m) => n + (editionsIn.get(m) || 0), 0);
+      const searched = reach.reduce((n, m) => n + (data.get(m) ? editionsIn.get(m) || 0 : 0), 0);
       const span = reach.length ? (reach.length === 1 ? monthName(reach[0]) : `${monthName(reach[reach.length - 1])} to ${monthName(reach[0])}`) : '';
-      status.textContent = `${plural(hits.length, 'story', 'stories')} found${span ? ` across ${plural(searched, 'edition')} (${span})` : ''}.` +
-        (missing ? ` Results are incomplete: ${plural(missing, 'month')} could not be loaded.` : '');
+      status.textContent = missing.length === reach.length && missing.length
+        ? 'Search is unavailable. No editions could be searched.'
+        : `${plural(hits.length, 'story', 'stories')} found across ${plural(searched, 'searched edition')}${span ? ` (${span})` : ''}.` +
+          (missing.length ? ` Results are incomplete: ${plural(missing.length, 'month')} could not be loaded.` : '');
       results.replaceChildren(...hits.slice(0, st.shown).map(([, x]) => hit(x, terms)));
       results.setAttribute('aria-busy', 'false');
-      if (missing) more.append(h('button', {class: 'pill', type: 'button', 'data-act': 'retry', text: 'Retry unavailable months'}));
+      if (missing.length) recovery.append(
+        h('h2', {text: missing.length === reach.length ? 'Search temporarily unavailable' : 'Some editions could not be searched'}),
+        h('p', {text: `Unavailable: ${missing.map(monthName).join(', ')}. Retry to search these editions; your query and filters are kept.`}),
+        h('div', {class: 'search-recovery-actions'},
+          h('button', {class: 'pill', type: 'button', 'data-act': 'retry', text: 'Retry unavailable months'}),
+          h('a', {class: 'pill', href: '/archive/', text: 'Browse editions by date'})));
       if (hits.length > st.shown) more.append(h('button', {class: 'pill', type: 'button', text: `Show more results (${(hits.length - st.shown).toLocaleString('en-US')} more)`, 'data-act': 'more'}));
       if (st.horizon < months.length) more.append(h('button', {class: 'pill', type: 'button', 'data-act': 'older',
         text: `Search older editions (before ${monthName(months[st.horizon - 1])})`}));
-      if (!hits.length && missing) results.append(h('p', {class: 'search-empty', text: 'Some editions are unavailable. Retry to complete your search.'}));
-      else if (!hits.length) results.append(h('div', {class: 'search-empty'},
+      if (!hits.length && !missing.length) results.append(h('div', {class: 'search-empty'},
         h('h2', {text: 'No matching stories'}),
-        h('p', {text: 'Try fewer or shorter words, or choose another section.'}),
+        h('p', {text: st.horizon < months.length ? 'No matches in the searched editions. Try fewer or shorter words, or search older editions below.' : 'Try fewer or shorter words, or choose another section.'}),
+        st.cat ? h('button', {class: 'pill', type: 'button', 'data-act': 'all-sections', text: 'Search all sections'}) : null,
         h('a', {href: '/archive/', text: 'Browse editions by date →'})));
       if (focusAfter) status.focus({preventScroll: true});
     }
@@ -520,20 +538,27 @@
         h('div', {class: 'meta'}, (x.o || []).length ? h('span', {class: 'outlets'}, marked((x.o || []).join(', '), terms)) : null,
           h('span', {class: `cov ${x.l || 'limited'}`}, h('span', {class: 'bars', 'aria-hidden': 'true'}, h('i'), h('i'), h('i')), COVER[x.l] || COVER.limited)));
     }
-    input.addEventListener('input', () => { clearTimeout(timer); timer = setTimeout(() => { st.q = input.value.trim(); st.shown = SEARCH_PAGE; remember(); run(); }, 140); });
-    cat.addEventListener('change', () => { st.cat = cat.value; st.shown = SEARCH_PAGE; remember(); run(); });
+    input.addEventListener('input', () => { clearTimeout(timer); timer = setTimeout(() => { st.shown = SEARCH_PAGE; syncQuery(); run(); }, 140); });
+    cat.addEventListener('change', () => { st.cat = cat.value; st.shown = SEARCH_PAGE; syncQuery(); run(); });
     for (const b of sortBtns) b.addEventListener('click', () => {
-      st.sort = b.dataset.sort; for (const x of sortBtns) x.setAttribute('aria-pressed', String(x === b)); remember(); run();
+      st.sort = b.dataset.sort; for (const x of sortBtns) x.setAttribute('aria-pressed', String(x === b)); syncQuery(); run();
     });
-    more.addEventListener('click', e => {
+    function recover(e) {
       const act = e.target.closest('button') && e.target.closest('button').dataset.act;
+      if (!act) return;
+      syncQuery();
       if (act === 'more') { st.shown += SEARCH_PAGE; run(true); }
       if (act === 'older') { st.horizon = Math.min(months.length, st.horizon + SEARCH_BATCH); run(true); }
       if (act === 'retry') {
         for (const m of months.slice(0, st.horizon)) if (data.get(m) === null) { data.delete(m); pending.delete(m); }
         run(true);
       }
-    });
+      if (act === 'all-sections') { st.cat = ''; cat.value = ''; st.shown = SEARCH_PAGE; remember(); run(true); }
+    }
+    more.addEventListener('click', recover);
+    recovery.addEventListener('click', recover);
+    results.addEventListener('click', recover);
+    if (requestedCat !== st.cat) remember();
     run();
   }
 
