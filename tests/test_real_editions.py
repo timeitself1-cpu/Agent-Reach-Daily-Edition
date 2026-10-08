@@ -278,3 +278,18 @@ def test_selftest_reports_a_failed_offline_suite_as_fail(tmp_path, monkeypatch):
     status = {c.name: c.status for c in report.checks}  # only the stray files: the suite itself passed
     assert status["full offline suite (window, Windows locks, process kill/cancel, pipeline)"] == "PASS"
     assert "window tests ran inside the test suite" not in status
+
+
+def test_selftest_brings_back_the_recent_days_of_editions(daily_paths, tmp_path):
+    """Phase 2.1b: the answer key for event identity needs real editions from consecutive days. The self-test
+    copies the newest dated editions (read only) and skips a damaged file instead of touching it."""
+    import tests.daily_selftest as st
+
+    src = FIXTURES / "2026-10-07-rc12d2-r2.json"
+    for day in range(1, 18):
+        (daily_paths.editions_dir / f"2026-09-{day:02d}.json").write_bytes(src.read_bytes())
+    (daily_paths.editions_dir / "2026-09-18.json").write_text("{damaged", encoding="utf-8")
+    copied = st.copy_history(daily_paths, tmp_path / "history")
+    assert copied == [f"2026-09-{d:02d}" for d in range(4, 18)]  # 14 newest readable dates; 18 is damaged
+    assert (daily_paths.editions_dir / "2026-09-18.json").read_text(encoding="utf-8") == "{damaged"
+    assert sorted(p.name for p in (tmp_path / "history").iterdir())[0] == "2026-09-04.json"

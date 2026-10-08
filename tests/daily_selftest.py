@@ -413,6 +413,35 @@ def part_environment(report: Report, args) -> None:
                    f"latest edition {status['latest_edition']} rev {status['latest_revision']}; last attempt "
                    f"{status['last_attempt_outcome']}; failures in a row {status['consecutive_failures']}; "
                    f"damaged files {len(status['corrupt_files'])}")
+        copied = copy_history(DataPaths.resolve(real), report.out / "history")
+        report.add(P, "your recent editions (copied for the event-tracking answer key)", "INFO",
+                   f"{len(copied)} dated edition(s): {', '.join(copied) or 'none'}")
+
+
+#: Days of real editions the self-test brings back. Each date keeps only its last revision; these are the
+#: day-to-day material for event identity across editions (PLAN Phase 2.1b: an answer key of 7+ days).
+HISTORY_DAYS = 14
+
+
+def copy_history(paths: DataPaths, target: Path, days: int = HISTORY_DAYS) -> list[str]:
+    """Copy the newest ``days`` dated editions (read only; damaged files are skipped, never touched)."""
+    from agent_reach.daily.store import EditionStore
+
+    store = EditionStore(paths)
+    copied = []
+    for d in sorted(store.list_dates(), reverse=True):
+        if len(copied) >= days:
+            break
+        src = store.edition_path(d)
+        try:
+            data = src.read_bytes()
+            json.loads(data.decode("utf-8"))
+        except (OSError, UnicodeDecodeError, ValueError):
+            continue
+        target.mkdir(parents=True, exist_ok=True)
+        (target / src.name).write_bytes(data)
+        copied.append(d.isoformat())
+    return sorted(copied)
 
 
 def file_association(ext: str) -> str:
