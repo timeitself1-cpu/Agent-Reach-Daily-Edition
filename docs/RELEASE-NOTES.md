@@ -5,6 +5,14 @@ Each release candidate is delivered as a zip of the repository. Extract it over 
 Your editions, settings and history (`%LOCALAPPDATA%\AgentReachDaily`) are kept. Earlier releases are
 summarised in `docs/HISTORY.md` ("Release history").
 
+## 1.0.0rc19 (update): no Local section
+
+This version installs itself (no zip, no Setup).
+
+1. **The Local section is gone.** New editions no longer have a Local (Frisco & North Texas) section, and the
+   five Dallas-Fort Worth feeds and two Frisco searches that filled it are no longer read. A news feed you added
+   yourself stays. Older editions that had a Local section still show it as it was.
+
 ## 1.0.0rc18 (update): local news, and a more trustworthy edition
 
 This version installs itself (no zip, no Setup). It brings the website and quality work of October 8 and 9.

@@ -51,8 +51,7 @@ Then **double-click "Agent Reach"** on the Desktop. The first time, choose
 | Refresh now | the **Refresh** button, F5 or Ctrl+R |
 | Read the sources of a story | click **Sources (N)** under the story to expand its articles |
 | Older editions | the edition date list next to Search (30 days are kept) |
-| Top 10 overall, then the top 10 of each category | the **Sections** sidebar: Top Stories, News, Local, Tech, Science & AI, Sports, Entertainment, Internet Culture (Ctrl+1 to Ctrl+8) |
-| Local news | the **Local** section: Frisco, Texas, Collin and Denton counties and North Texas, from the City of Frisco, four Dallas-Fort Worth newsrooms and two Google News searches. A story is Local only when its reports name a town of the area (pro sports stay in Sports). `"local_area": ""` in `settings.json` turns the section off |
+| Top 10 overall, then the top 10 of each category | the **Sections** sidebar: Top Stories, News, Tech, Science & AI, Sports, Entertainment, Internet Culture (Ctrl+1 to Ctrl+7) |
 | Everything else (demo, data folder, model check, help) | the **...** button at the right of the toolbar |
 | Listen to the news | **Listen** in the toolbar (or P): a 5-8 minute podcast of the top stories, recorded after every refresh. Settings > **Podcast** sets the voice, speed and length or turns it off |
 | The day in ten seconds | **In brief** at the top of Top Stories: the lead sentence of the first five stories (click one to jump to it) |

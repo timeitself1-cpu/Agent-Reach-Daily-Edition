@@ -164,8 +164,6 @@ class Settings(BaseSettings):
     # extra Google News sections (see DEFAULT_GOOGLE_NEWS_SECTIONS); empty = top stories only
     google_news_sections: list[str] = Field(default_factory=list)
     google_news_items_per_section: int = Field(default=20, ge=1, le=100)
-    # the reader's own area for the Local section (agent_reach/pipeline/local.py AREAS); empty = no Local section
-    local_area: str = ""
     enabled_sources: list[str] = Field(
         default_factory=lambda: [
             "x_trends24",

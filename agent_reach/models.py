@@ -36,7 +36,8 @@ class CategoryEnum(str, Enum):
     NEWS = "News"
     INTERNET_CULTURE = "Internet Culture"
     SCIENCE_AI = "Science & AI"
-    #: news of the reader's own area; set by a fixed rule (agent_reach/pipeline/local.py), never by the model
+    #: the Local section of rc18 (Oct 9, 2026, removed in rc19): kept only so editions saved with it still load.
+    #: Nothing assigns it any more, and the labelling model is never offered it.
     LOCAL = "Local"
 
     @classmethod
@@ -45,7 +46,7 @@ class CategoryEnum(str, Enum):
 
     @classmethod
     def model_values(cls) -> list[str]:
-        """The categories the labelling model may choose (Local is decided by rule)."""
+        """The categories the labelling model may choose (Local is historical only)."""
         return [c.value for c in cls if c is not cls.LOCAL]
 
 
