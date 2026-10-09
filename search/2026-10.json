@@ -5,228 +5,257 @@
  "stories": [
   {
    "d": "2026-10-08",
-   "id": "0317f2df6bc9",
+   "id": "beb800cd85aa",
    "r": 1,
    "t": 1,
-   "c": "Tech",
-   "h": "US Suspends Microsoft from Green Card Program",
-   "s": "The Trump administration has suspended Microsoft and other tech firms from a green card program for their foreign workers. The program has been blocked due to alleged fraud, and major tech companies including Microsoft and Adobe are affected.",
+   "c": "News",
+   "h": "Hurricane Isaias Strengthens, Threatens US Gulf Coast",
+   "s": "Hurricane Isaias has strengthened into a Category 2 hurricane and is heading towards the US Gulf Coast, threatening millions of people with storm surge, heavy rains, and damaging winds.",
    "o": [
-    "apnews.com",
     "AP News",
-    "Reuters",
+    "The Guardian",
+    "CBS News",
     "BBC News",
-    "DW"
-   ],
-   "l": "strong"
-  },
-  {
-   "d": "2026-10-08",
-   "id": "cccf90f18bb4",
-   "r": 2,
-   "t": 2,
-   "c": "News",
-   "h": "USS Abraham Lincoln Returns Home After Long and Grueling Deployment",
-   "s": "The USS Abraham Lincoln, an aircraft carrier, has returned home to San Diego after a nearly 11-month deployment, during which its crew endured food shortages and spent much of its time in combat without a day off. The ship and its crew of over 4,500 sailors and Marines have…",
-   "o": [
-    "CBS News",
-    "New York Times",
-    "NPR",
-    "AP News",
-    "NBC News"
-   ],
-   "l": "strong"
-  },
-  {
-   "d": "2026-10-08",
-   "id": "5741f1eaaf58",
-   "r": 3,
-   "t": 3,
-   "c": "News",
-   "h": "Hurricane Isaias Strengthens to Category 2, Threatens Gulf Coast",
-   "s": "Hurricane Isaias has strengthened to a Category 2 storm and is threatening the Gulf Coast with rain, flooding, and storm surge. The hurricane is expected to make landfall over the coming days, bringing damaging winds and heavy rains to parts of the US.",
-   "o": [
-    "BBC News",
-    "AP News",
-    "CBS News",
-    "FOX Weather",
-    "NPR"
-   ],
-   "l": "strong"
-  },
-  {
-   "d": "2026-10-08",
-   "id": "e4a50cff38c1",
-   "r": 4,
-   "t": 4,
-   "c": "News",
-   "h": "Trump Promises Not to Resume Iran Strikes Before Midterm Elections",
-   "s": "President Trump announced that the US will not attack Iran before the midterm elections, causing a drop in crude oil prices. Crude oil prices had shot up on Thursday after reports President Trump was considering more strikes.",
-   "o": [
-    "Reuters",
-    "CBS News",
-    "Bloomberg"
-   ],
-   "l": "strong"
-  },
-  {
-   "d": "2026-10-08",
-   "id": "7bb838f20b58",
-   "r": 5,
-   "t": 5,
-   "c": "Science & AI",
-   "h": "SpaceX Announces Plan to Become a 'Major Mobile Carrier'",
-   "s": "SpaceX has acquired a portfolio of low-band spectrum licenses to help its Starlink Mobile service become a major US carrier. The company says it will deploy its Starlink Mobile service when the Federal Communications Commission signs off on the deal.",
-   "o": [
-    "The Verge",
-    "Techmeme",
-    "CNBC"
-   ],
-   "l": "moderate"
-  },
-  {
-   "d": "2026-10-08",
-   "id": "24fa086bb2b4",
-   "r": 6,
-   "t": 6,
-   "c": "News",
-   "h": "Arizona Congressional Candidate Says She Was Raped",
-   "s": "A Democratic congressional candidate in Arizona has alleged that she was raped while fixing a campaign sign. She was trying to repair a campaign sign in the middle of the night.",
-   "o": [
-    "ABC News",
-    "The Washington Post",
-    "CBS News"
-   ],
-   "l": "strong"
-  },
-  {
-   "d": "2026-10-08",
-   "id": "e15037d9d9ee",
-   "r": 7,
-   "t": 7,
-   "c": "News",
-   "h": "Pete Hegseth Says Public Can Watch Fort Hood Shooter's Execution",
-   "s": "Defense Secretary Pete Hegseth announced that the public will be able to watch the execution of Fort Hood shooter Nidal Hasan by firing squad.",
-   "o": [
-    "Axios",
     "ABC News"
    ],
-   "l": "moderate"
+   "l": "strong"
   },
   {
    "d": "2026-10-08",
-   "id": "0d8ae34dadf1",
-   "r": 8,
-   "t": 8,
+   "id": "8c09a5856ef7",
+   "r": 2,
+   "t": 2,
    "c": "Science & AI",
-   "h": "NASA's SpaceX Crew-12 Returns to Earth After Nearly Eight Months in Space",
-   "s": "Four astronauts and a cosmonaut from NASA's Crew-12 mission have returned to Earth after spending nearly eight months in space, conducting spacewalks, science experiments, and research. The crew members splashed down off the coast of California at 11:34 a.m.",
+   "h": "NASA Crew Returns to Earth After 8 Months in Space",
+   "s": "Four astronauts and a cosmonaut from NASA's Crew-12 mission have returned to Earth after spending nearly eight months in space. They conducted spacewalks, science experiments, and research.",
    "o": [
     "NPR",
     "Space",
-    "Houston Public Media",
-    "NASA (.gov)",
     "NASA"
    ],
    "l": "strong"
   },
   {
    "d": "2026-10-08",
-   "id": "3d6512711f03",
-   "r": 9,
-   "t": null,
+   "id": "888b2550cc20",
+   "r": 3,
+   "t": 3,
    "c": "News",
-   "h": "Spain Mourns Maricarmen Abascal, Whose Eviction Sparked Housing Protests",
-   "s": "An 87-year-old woman, Maricarmen Abascal, was evicted from her home in Spain, sparking protests and anger across the country.",
+   "h": "USS Abraham Lincoln Returns Home After Record-Breaking Deployment",
+   "s": "The USS Abraham Lincoln aircraft carrier has returned home to San Diego after a record-breaking deployment of over 300 days at sea.",
+   "o": [
+    "NPR",
+    "PBS News",
+    "Al Jazeera",
+    "AP News"
+   ],
+   "l": "strong"
+  },
+  {
+   "d": "2026-10-08",
+   "id": "5404dfbae986",
+   "r": 4,
+   "t": 4,
+   "c": "News",
+   "h": "Russian Strike on Buses Kills at Least 30 in Ukraine",
+   "s": "A Russian guided bomb has exploded next to public buses in eastern Ukraine, killing at least 30 people. The attack is part of a wave of deadly attacks on Ukraine, which has worsened power outages in the capital.",
+   "o": [
+    "BBC News",
+    "Associated Press"
+   ],
+   "l": "moderate"
+  },
+  {
+   "d": "2026-10-08",
+   "id": "1229155df44c",
+   "r": 5,
+   "t": 5,
+   "c": "News",
+   "h": "Pentagon to Livestream Execution of Fort Hood Shooter",
+   "s": "The Pentagon will livestream the execution of Fort Hood shooter Nidal Malik Hasan by firing squad. The execution will be the first by the US military since 1961.",
+   "o": [
+    "AP News",
+    "The Verge",
+    "ABC News",
+    "DW",
+    "Rolling Stone"
+   ],
+   "l": "strong"
+  },
+  {
+   "d": "2026-10-08",
+   "id": "d67294c7e10c",
+   "r": 6,
+   "t": 6,
+   "c": "News",
+   "h": "Maricarmen, 87, Dies; Her Eviction Sparked Spain Housing Protests",
+   "s": "Maricarmen Abascal, an 87-year-old woman, died in hospital two weeks after her eviction from her apartment in Spain. Her eviction sparked protests over housing issues.",
    "o": [
     "Democracy Now!",
-    "France 24",
-    "BBC News"
+    "The Japan Times"
+   ],
+   "l": "moderate"
+  },
+  {
+   "d": "2026-10-08",
+   "id": "0874f914828b",
+   "r": 7,
+   "t": 7,
+   "c": "Tech",
+   "h": "US Suspends Microsoft from Green Card Program",
+   "s": "The US has suspended Microsoft from a green card program due to alleged fraud, citing Microsoft's abuse of the system. The move affects not only Microsoft but also other tech companies.",
+   "o": [
+    "apnews.com",
+    "New York Times",
+    "AP News",
+    "BBC News",
+    "Tom's Hardware"
    ],
    "l": "strong"
   },
   {
    "d": "2026-10-08",
-   "id": "8924aab52128",
-   "r": 10,
+   "id": "912de6afcaaf",
+   "r": 8,
    "t": null,
    "c": "News",
-   "h": "Police Use Tear Gas and Water Cannons on Student Protestors in Paris",
-   "s": "Police in Paris used tear gas and water cannons to disperse student protesters demanding more funding and teachers, with 6,059 arrests made.",
+   "h": "ICE Agent Shoots Man in New York City",
+   "s": "An ICE agent shot a man in New York City, with the man being hospitalized. The incident has been condemned by the city's mayor.",
    "o": [
-    "Al Jazeera",
-    "Le Monde",
-    "Al Jazeera English"
+    "Reuters",
+    "CBS News",
+    "DW",
+    "New York Times",
+    "The Hill"
    ],
    "l": "strong"
   },
   {
    "d": "2026-10-08",
-   "id": "b6f8b398be25",
-   "r": 11,
-   "t": 9,
-   "c": "Science & AI",
-   "h": "ChatGPT for Teens Found to Be an 'Unacceptable Risk'",
-   "s": "Common Sense Media found ChatGPT for Teens to be an unacceptable risk after extensive testing. The chatbot failed in five key areas.",
+   "id": "80a154466a90",
+   "r": 9,
+   "t": 8,
+   "c": "Tech",
+   "h": "Margaret Hamilton, Computing Pioneer, Dies at 90",
+   "s": "Margaret Hamilton, a pioneering computer scientist, has died at 90. She led the team that created the onboard flight software for NASA's moon-bound Apollo program.",
    "o": [
-    "Engadget",
+    "Lobsters",
+    "ABC News",
+    "The Guardian",
+    "The New York Times",
     "BBC News"
    ],
    "l": "moderate"
   },
   {
    "d": "2026-10-08",
-   "id": "0374bdd4def7",
-   "r": 12,
-   "t": 10,
-   "c": "Tech",
-   "h": "Margaret Hamilton, Computing Pioneer Who Led Software Development for the Apollo Program, Dies at 90",
-   "s": "Margaret Hamilton, a pioneering computer scientist who led the development of software for the Apollo program, has died at the age of 90. She coined the term 'software engineering' and was awarded the Presidential Medal of Freedom for her contributions to the field.",
+   "id": "ecd89b1ba771",
+   "r": 10,
+   "t": 9,
+   "c": "Entertainment",
+   "h": "Anne Carson Wins Nobel Prize in Literature",
+   "s": "Anne Carson has been awarded the Nobel Prize in Literature for her genre-crossing works. The Canadian poet and essayist is celebrated for her bold and inventive writing style.",
    "o": [
-    "Ars Technica",
-    "Lobsters",
-    "BBC News",
-    "The Guardian",
-    "The New York Times"
+    "theguardian.com",
+    "The New York Times",
+    "BBC News"
+   ],
+   "l": "strong"
+  },
+  {
+   "d": "2026-10-08",
+   "id": "baf5deee3966",
+   "r": 11,
+   "t": 10,
+   "c": "Science & AI",
+   "h": "Anthropic Launches AI Policy Effort, Bans Cruel Behavior on Claude",
+   "s": "Anthropic is launching a 'presidential engagement' effort to advise candidates on AI policy ahead of the 2028 election. The company has also updated its usage policy to bar users from subjecting Claude to 'sustained and needless abusive or cruel behavior'.",
+   "o": [
+    "Fortune",
+    "MacRumors",
+    "bsky.app"
    ],
    "l": "moderate"
   },
   {
    "d": "2026-10-08",
-   "id": "c622f1618362",
+   "id": "9acff0c91162",
+   "r": 12,
+   "t": null,
+   "c": "Science & AI",
+   "h": "NASA Releases Moon Data from Artemis II Flight",
+   "s": "NASA has released a trove of Moon data from its historic Artemis II flight. The data could be used to build the first Moon base.",
+   "o": [
+    "Nature",
+    "ScienceDaily"
+   ],
+   "l": "moderate"
+  },
+  {
+   "d": "2026-10-08",
+   "id": "c66436ae05eb",
    "r": 13,
    "t": null,
    "c": "News",
-   "h": "Lawyers for Accused Man in Cornell Case Want Letitia James Removed as Prosecutor",
-   "s": "Lawyers for Gillio Lopes, accused in the Cornell case, are seeking to have New York Attorney General Letitia James removed as special prosecutor.",
+   "h": "OpenAI's Annualized Revenue Lower Than Expected",
+   "s": "OpenAI has reported that its annualized revenue is $20 billion less than previously signaled, sparking concerns among investors.",
    "o": [
-    "The Washington Post",
-    "NBC News"
+    "cnbc.com",
+    "Reuters"
    ],
    "l": "moderate"
   },
   {
    "d": "2026-10-08",
-   "id": "9e958ec862b0",
+   "id": "d13163320ebe",
    "r": 14,
    "t": null,
-   "c": "Science & AI",
-   "h": "Trump Declares AI 'The Enemy' If Not Called 'Super Intelligence'",
-   "s": "US President Donald Trump has declared that artificial intelligence should now be called 'super intelligence'.",
+   "c": "Sports",
+   "h": "Buccaneers' Longest Drive in 19 Years Baffles Cowboys' Defense",
+   "s": "The Buccaneers' longest drive in 19 years baffled the Cowboys' defense, with the Buccaneers scoring a rushing touchdown. The Cowboys' defense has struggled this season.",
    "o": [
-    "The Independent",
-    "New Scientist"
+    "Sporting News",
+    "NFL",
+    "x.com"
+   ],
+   "l": "moderate"
+  },
+  {
+   "d": "2026-10-08",
+   "id": "6e5a0d873b65",
+   "r": 15,
+   "t": null,
+   "c": "Tech",
+   "h": "Apple to Debut Touch-Screen MacBook and iPad Mini",
+   "s": "Apple is set to debut a touch-screen MacBook and a new iPad Mini in late October.",
+   "o": [
+    "Engadget",
+    "Bloomberg.com"
+   ],
+   "l": "moderate"
+  },
+  {
+   "d": "2026-10-08",
+   "id": "f72cc74938c9",
+   "r": 16,
+   "t": null,
+   "c": "News",
+   "h": "Nvidia-Backed Firmus IPO Collapses Amid AI Valuation Concerns",
+   "s": "Nvidia-backed Australian AI data center operator Firmus has withdrawn its planned IPO amid market volatility and concerns over AI valuation. The company cited market volatility as the reason for the withdrawal.",
+   "o": [
+    "Bloomberg.com",
+    "CNBC"
    ],
    "l": "moderate"
   },
   {
    "d": "2026-10-08",
    "id": "99dc15a56dfd",
-   "r": 15,
+   "r": 17,
    "t": null,
    "c": "Science & AI",
    "h": "OpenAI Withdraws 3 Math Papers",
-   "s": "The company has updated its GitHub math repository with new formalizations and withdrawals.",
+   "s": "OpenAI withdrew three mathematical results from its GitHub repository. The repository now has 6 new Lean formalizations, 19 modifications, and 3 withdrawals.",
    "o": [
     "twitter.com",
     "github.com"
@@ -235,65 +264,52 @@
   },
   {
    "d": "2026-10-08",
-   "id": "d8db94b41f75",
-   "r": 16,
+   "id": "74b2894dd08d",
+   "r": 18,
    "t": null,
    "c": "Sports",
-   "h": "A'ja Wilson Stands Alone with Record Fifth WNBA MVP Award",
-   "s": "A'ja Wilson has won a record fifth WNBA Most Valuable Player award, becoming the first player to win three straight MVPs. Wilson became the first player in league history to win three straight WNBA MVP awards, moving clear of Sheryl Swoopes, Lisa Leslie and Lauren Jackson.",
+   "h": "A'ja Wilson Wins Fifth WNBA MVP Award",
+   "s": "A'ja Wilson has become the first player to win three straight WNBA MVP awards, moving clear of Sheryl Swoopes, Lisa Leslie, and Lauren Jackson.",
    "o": [
-    "ESPN",
+    "Fox News",
     "The Guardian"
    ],
    "l": "moderate"
   },
   {
    "d": "2026-10-08",
-   "id": "589d19bb3d51",
-   "r": 17,
-   "t": null,
-   "c": "Tech",
-   "h": "OpenAI Annualized Revenues $20B Less Than Previously Signaled",
-   "s": "OpenAI has reported annualized revenues of $50 billion, which is $20 billion less than previously signaled. OpenAI has told investors that it hit roughly $50 billion in annualized revenue at the end of September.",
-   "o": [
-    "cnbc.com"
-   ],
-   "l": "limited"
-  },
-  {
-   "d": "2026-10-08",
-   "id": "657b3a4a298f",
-   "r": 18,
-   "t": null,
-   "c": "Science & AI",
-   "h": "Open-Weight Model Embarrassed by French",
-   "s": "A $6.3 billion open-weight model was embarrassed by the French, with KERNEL, Mistral, Reflection AI, and Moonshot making big moves in the open-weight race.",
-   "o": [
-    "Fireship"
-   ],
-   "l": "limited"
-  },
-  {
-   "d": "2026-10-08",
-   "id": "6558714c7b07",
+   "id": "54e1d83af61d",
    "r": 19,
    "t": null,
    "c": "News",
-   "h": "Trump Envoys to Discuss 'New Ideas' for Ukraine Peace in Miami",
-   "s": "US President Donald Trump's envoys will meet Ukrainian negotiators and European officials in Miami to discuss new proposals to end Russia's war in Ukraine.",
+   "h": "Iran Scales up Hormuz Attacks, Raising Pressure on Trump",
+   "s": "Iran is escalating attacks on oil shipments in the face of President Trump's celebration of restored flows. Such a level of violence has not been seen for months.",
    "o": [
-    "France 24"
+    "Washington Post"
    ],
    "l": "limited"
   },
   {
    "d": "2026-10-08",
-   "id": "6ad88a29845c",
+   "id": "aee80b84e923",
    "r": 20,
    "t": null,
+   "c": "News",
+   "h": "OpenAI Caught Russians and Iranians Using ChatGPT for Influence Campaigns",
+   "s": "OpenAI banned Russian and Iranian accounts that were using its AI chatbot for influence campaigns.",
+   "o": [
+    "NPR"
+   ],
+   "l": "limited"
+  },
+  {
+   "d": "2026-10-08",
+   "id": "2c5b437c9172",
+   "r": 21,
+   "t": null,
    "c": "Tech",
-   "h": "Inside Elon Musk's Midterm Spending Spree",
-   "s": "Elon Musk's PAC is spending millions on various initiatives. The latest ideology Trump claims is dangerous is also discussed.",
+   "h": "ICE Emails Discuss Using Palantir-Supported Tool to Investigate Voter Fraud",
+   "s": "ICE emails discussed using a Palantir-supported tool to investigate voter fraud, which is part of the Trump administration's effort to undermine the midterm elections. The tool is normally used to identify targets for deportation.",
    "o": [
     "Wired"
    ],
@@ -301,90 +317,25 @@
   },
   {
    "d": "2026-10-08",
-   "id": "4b928d99c763",
-   "r": 21,
-   "t": null,
-   "c": "Tech",
-   "h": "High-severity Nvidia Bug Could Crash GPU Monitoring",
-   "s": "Nvidia released a fix for a high-severity bug that could crash GPU monitoring on exposed servers. The bug is tracked as CVE-2026-47483.",
-   "o": [
-    "The Register"
-   ],
-   "l": "limited"
-  },
-  {
-   "d": "2026-10-08",
-   "id": "2b8fe6f3ecc9",
+   "id": "61c94ae2d668",
    "r": 22,
    "t": null,
-   "c": "News",
-   "h": "Trump Says US Will Not Strike Iran Before Midterms",
-   "s": "The U.S. military has drafted options for three days of strikes, but in recent months the president has repeatedly vetoed plans to restart the war.",
+   "c": "Science & AI",
+   "h": "Fired OpenAI Safety Researchers Dispute Misconduct Claims",
+   "s": "Three fired OpenAI safety researchers dispute allegations of mishandling sensitive information, warning of a chilling effect on the company's AI safety culture.",
    "o": [
-    "New York Times"
+    "TechCrunch"
    ],
    "l": "limited"
   },
   {
    "d": "2026-10-08",
-   "id": "8442e35832eb",
+   "id": "425238622281",
    "r": 23,
    "t": null,
    "c": "Science & AI",
-   "h": "As AI Closed in on 'Unique Games' Proof, Researchers Raced to Beat the Machines",
-   "s": "Researchers rushed to publish their own milestone result after hearing that AI was close to proving a major problem in their field.",
-   "o": [
-    "Quanta Magazine"
-   ],
-   "l": "limited"
-  },
-  {
-   "d": "2026-10-08",
-   "id": "84f1f58d5438",
-   "r": 24,
-   "t": null,
-   "c": "Science & AI",
-   "h": "JetBrains Releases Mellum2.1: A 12B MoE Open Model for Coding Agents",
-   "s": "JetBrains released Mellum2.1, an Apache 2.0, 12B mixture-of-experts thinking model with 2.5B active parameters. The model lifted its SWE-bench Verified score from 2.0 to 47.0.",
-   "o": [
-    "MarkTechPost"
-   ],
-   "l": "limited"
-  },
-  {
-   "d": "2026-10-08",
-   "id": "287bab4c4e7a",
-   "r": 25,
-   "t": null,
-   "c": "Science & AI",
-   "h": "Audacious Space Heist Aims to Bring Home Bits of Mysterious Martian Moon",
-   "s": "A space mission aims to bring back samples from Phobos, a mysterious moon of Mars, which could reveal how it formed.",
-   "o": [
-    "Science"
-   ],
-   "l": "limited"
-  },
-  {
-   "d": "2026-10-08",
-   "id": "dc04afd71754",
-   "r": 26,
-   "t": null,
-   "c": "Science & AI",
-   "h": "Scientists Discover Genetic Code That Breaks Life's Rules",
-   "s": "Scientists have accidentally discovered a genetic code that breaks a rule thought to be nearly universal.",
-   "o": [
-    "ScienceDaily"
-   ],
-   "l": "limited"
-  },
-  {
-   "d": "2026-10-08",
-   "id": "58848f228a4a",
-   "r": 27,
-   "t": null,
-   "c": "Tech",
-   "h": "Molly Russell's Father Blames Instagram for Her Death",
-   "s": "Molly Russell's father will show an advert blaming Instagram for her death, saying 'too little has changed' since her passing.",
+   "h": "2026 Nobel Prizes Celebrate Groundbreaking Scientific Discoveries",
+   "s": "This year's Nobel prizes in chemistry, physics and physiology or medicine have celebrated work that has been used to develop countless drugs and transform modern medicine, allowed physicists to observe one of the most mysterious particles, and provided a tool that could act as…",
    "o": [
     "The Guardian"
    ],
@@ -392,38 +343,12 @@
   },
   {
    "d": "2026-10-08",
-   "id": "36e5b284d9ed",
-   "r": 28,
-   "t": null,
-   "c": "Tech",
-   "h": "Magnetic USB-C Port Introduced",
-   "s": "Microsoft has introduced a magnetic USB-C port on its Surface Laptop Ultra, which is strong enough for the cable to practically plug itself in.",
-   "o": [
-    "The Verge"
-   ],
-   "l": "limited"
-  },
-  {
-   "d": "2026-10-08",
-   "id": "0452c40b5e91",
-   "r": 29,
-   "t": null,
-   "c": "Tech",
-   "h": "The People Holding up the Internet",
-   "s": "Teaches computer science at UCLA, and has been the official coordinator of the time zone file since 2012.",
-   "o": [
-    "sheets.works"
-   ],
-   "l": "limited"
-  },
-  {
-   "d": "2026-10-08",
    "id": "3726c6f479d0",
-   "r": 30,
+   "r": 24,
    "t": null,
    "c": "Sports",
    "h": "Clubs Fear Political Interference in Man City Appeal",
-   "s": "Premier League clubs are concerned about political interference in Manchester City's appeal, following comments from Prime Minister Andy Burnham.",
+   "s": "Premier League clubs are concerned about political interference in Manchester City's appeal after Prime Minister Andy Burnham's comments. The clubs fear bias in the appeal process.",
    "o": [
     "BBC Sport"
    ],
@@ -432,7 +357,7 @@
   {
    "d": "2026-10-08",
    "id": "8af12db5f163",
-   "r": 31,
+   "r": 25,
    "t": null,
    "c": "Tech",
    "h": "\"Math 2.0\" Will Need to Value Mathematical Progress More Holistically",
@@ -444,246 +369,77 @@
   },
   {
    "d": "2026-10-08",
-   "id": "f30dcf3a9286",
-   "r": 32,
+   "id": "51e63946beda",
+   "r": 26,
    "t": null,
    "c": "Tech",
-   "h": "Apple to Launch Touchscreen OLED MacBook Pro and iPad Mini on October 27",
-   "s": "Apple will introduce new OLED touchscreen MacBook Pro models and an OLED iPad mini on October 27. The launch will also include an M6 14-inch MacBook Pro and an M6 iMac.",
+   "h": "President Trump Awards Big Tech Donors with Nation's Highest Science Prizes",
+   "s": "President Trump awarded four Big Tech donors with the nation's highest science prizes, which have been donated nearly $6 billion to efforts tied to Trump and his administration. The awardees include Elon Musk, Jensen Huang, Sergey Brin, and AMD's Lisa Su.",
    "o": [
-    "MacRumors"
+    "TechCrunch"
    ],
    "l": "limited"
   },
   {
    "d": "2026-10-08",
-   "id": "a7da54a8161b",
-   "r": 33,
-   "t": null,
-   "c": "Internet Culture",
-   "h": "Trump Misnames Michigan Senate Nominee Abdul El-Sayed",
-   "s": "Trump labels Michigan Senate nominee Abdul El-Sayed a 'terrorist sympathizer'. He resorted to racially motivated name-calling.",
-   "o": [
-    "Boing Boing"
-   ],
-   "l": "limited"
-  },
-  {
-   "d": "2026-10-08",
-   "id": "ebc0e9a40f07",
-   "r": 34,
-   "t": null,
-   "c": "Sports",
-   "h": "Mina Kimes Calls Out Stephen A.'s Top-5 NFL Teams",
-   "s": "Mina Kimes has called out Stephen A.'s top-5 NFL teams, sparking a head-to-head debate on First Take.",
-   "o": [
-    "ESPN"
-   ],
-   "l": "limited"
-  },
-  {
-   "d": "2026-10-08",
-   "id": "9f3479d6b2d1",
-   "r": 35,
-   "t": null,
-   "c": "Sports",
-   "h": "MLB Proposes Shorter Regular Season, Best-of-7 Division Series",
-   "s": "Major League Baseball has proposed shortening the regular season to 154 games from 162 starting in 2029 and expanding the division series to best-of-seven.",
-   "o": [
-    "ESPN"
-   ],
-   "l": "limited"
-  },
-  {
-   "d": "2026-10-08",
-   "id": "9e27f3dded42",
-   "r": 36,
+   "id": "6f3d86ef6e30",
+   "r": 27,
    "t": null,
    "c": "Entertainment",
-   "h": "Disney's Former Top IP Lawyer Sues House of Mouse for Ageism & Wrongful Termination",
-   "s": "Disney's former top IP lawyer, Mary, is suing the company for ageism and wrongful termination. Mary Fossier employed the full force of the law against intellectual property infringers over decades at Disney.",
+   "h": "'Crazy Rich Asians' Series Greenlit. Constance Wu, Henry Golding, and Michelle Yeoh Returning",
+   "s": "The original stars of 'Crazy Rich Asians' are reprising their roles in a new series heading to HBO. The series will feature Constance Wu, Henry Golding, and Michelle Yeoh, among others. Eight years after the movie made history as the first film by a major Hollywood studio to…",
    "o": [
-    "Deadline"
+    "Rolling Stone"
    ],
    "l": "limited"
   },
   {
    "d": "2026-10-08",
-   "id": "27dbce1f91fe",
-   "r": 37,
+   "id": "5a514c61da91",
+   "r": 28,
    "t": null,
-   "c": "Internet Culture",
-   "h": "Study Finds Social Media Presence Boosts AI Visibility",
-   "s": "A new study found that maintaining an active presence on social media platforms can help brands increase their visibility in Google's artificial intelligence search results.",
+   "c": "Tech",
+   "h": "Amazon Builds 1,000th Satellite",
+   "s": "Amazon has built its 1,000th Leo satellite and says service is weeks away. It still has 396 in orbit, because the rockets have not kept up.",
    "o": [
-    "Social Media Today"
+    "The Next Web"
    ],
    "l": "limited"
   },
   {
    "d": "2026-10-08",
-   "id": "3ed30ed57b66",
-   "r": 38,
+   "id": "84f1f58d5438",
+   "r": 29,
    "t": null,
-   "c": "Entertainment",
-   "h": "David Zaslav Cashed Out More Than $600 Million in Warner Bros. Stock",
-   "s": "David Zaslav, the former CEO of Warner Bros. Discovery, has cashed out more than $600 million in Warner Bros. stock following the company's sale to Paramount. David Zaslav's total severance package will be more complex.",
+   "c": "Science & AI",
+   "h": "Mellum2.1 Released",
+   "s": "JetBrains released Mellum2.1, an Apache 2.0, 12B mixture-of-experts thinking model with 2.5B active parameters. It lifted its SWE-bench Verified score from 2.0 to 47.0.",
    "o": [
-    "The Hollywood Reporter"
+    "MarkTechPost"
    ],
    "l": "limited"
   },
   {
    "d": "2026-10-08",
-   "id": "3929b82fa1ed",
-   "r": 39,
+   "id": "287bab4c4e7a",
+   "r": 30,
    "t": null,
-   "c": "Entertainment",
-   "h": "Warhammer 40,000: Dawn of War 4 - Official Space Marines Faction Trailer",
-   "s": "The Space Marines Faction Trailer for Warhammer 40,000: Dawn of War 4 has been released, showcasing humanity's greatest warriors.",
+   "c": "Science & AI",
+   "h": "Audacious Space Heist Aims to Bring Home Bits of Mysterious Martian Moon",
+   "s": "Japan's MMX mission aims to bring back samples from Phobos, a mysterious martian moon, which may contain pieces of Mars. The mission could reveal how Phobos formed.",
    "o": [
-    "IGN"
+    "Science"
    ],
    "l": "limited"
   },
   {
    "d": "2026-10-08",
-   "id": "b71c86882356",
-   "r": 40,
+   "id": "58848f228a4a",
+   "r": 31,
    "t": null,
-   "c": "Entertainment",
-   "h": "Triple-i Initiative Returns",
-   "s": "The Triple-i Initiative returns with 40 announcements, including game reveals and new game announcements, such as Dave the Diver and Risk of Rain 2.",
-   "o": [
-    "IGN"
-   ],
-   "l": "limited"
-  },
-  {
-   "d": "2026-10-08",
-   "id": "ed9cdc57dfce",
-   "r": 41,
-   "t": null,
-   "c": "Sports",
-   "h": "Shaquille O'Neal Addresses Kelsey Mitchell's Remarks",
-   "s": "Shaquille O'Neal addressed Kelsey Mitchell's remarks on Caitlin Clark, advising her to leverage the spotlight.",
-   "o": [
-    "Fox News"
-   ],
-   "l": "limited"
-  },
-  {
-   "d": "2026-10-08",
-   "id": "0016795406cd",
-   "r": 42,
-   "t": null,
-   "c": "Sports",
-   "h": "Dak Prescott Breaks Down a Play",
-   "s": "Cowboys QB Dak Prescott processes dozens of elements before throwing a 21-yard TD. He breaks down a play from pre-snap to post-snap.",
-   "o": [
-    "ESPN"
-   ],
-   "l": "limited"
-  },
-  {
-   "d": "2026-10-08",
-   "id": "46b486d04321",
-   "r": 43,
-   "t": null,
-   "c": "Sports",
-   "h": "Aaron Judge Calls for Front Office to Go All-In This Offseason",
-   "s": "Aaron Judge has called on the Yankees' front office to go all-in this offseason.",
-   "o": [
-    "The New York Times"
-   ],
-   "l": "limited"
-  },
-  {
-   "d": "2026-10-08",
-   "id": "2082a5d95d17",
-   "r": 44,
-   "t": null,
-   "c": "Sports",
-   "h": "2027 NFL Mock Draft Includes Huge Trade for Arch Manning",
-   "s": "A 2027 NFL mock draft includes a huge trade that powers Arch Manning to the No. 1 spot.",
-   "o": [
-    "Yahoo Sports"
-   ],
-   "l": "limited"
-  },
-  {
-   "d": "2026-10-08",
-   "id": "eadb57d760f4",
-   "r": 45,
-   "t": null,
-   "c": "Entertainment",
-   "h": "Swiss Queer Film Fest Drops Israeli Film After Boycott Threats",
-   "s": "The film, 'Tell Me Everything,' was Israel's official Oscar submission.",
-   "o": [
-    "The Hollywood Reporter"
-   ],
-   "l": "limited"
-  },
-  {
-   "d": "2026-10-08",
-   "id": "1dc0ade035bc",
-   "r": 46,
-   "t": null,
-   "c": "Entertainment",
-   "h": "Marvel Announces New Disney Plus Series 'Zodiac'",
-   "s": "Marvel has announced a new Disney Plus series titled 'Zodiac'. The series is a live-action television show.",
-   "o": [
-    "Polygon"
-   ],
-   "l": "limited"
-  },
-  {
-   "d": "2026-10-08",
-   "id": "13f06e229fb1",
-   "r": 47,
-   "t": null,
-   "c": "Sports",
-   "h": "MLB Division Series: How Guardians Can Get Even, Plus Game 4 Lineups",
-   "s": "The Cleveland Guardians are trying to force a Game 5 in the MLB division series against the White Sox.",
-   "o": [
-    "ESPN"
-   ],
-   "l": "limited"
-  },
-  {
-   "d": "2026-10-08",
-   "id": "54985ef2a087",
-   "r": 48,
-   "t": null,
-   "c": "Sports",
-   "h": "What's Next for Man City: How Long Will Appeals, Punishments Take?",
-   "s": "Man City have appealed the Premier League's guilty verdict, while the sanctions board also begins its work on figuring out appropriate punishments.",
-   "o": [
-    "ESPN"
-   ],
-   "l": "limited"
-  },
-  {
-   "d": "2026-10-08",
-   "id": "25a295130158",
-   "r": 49,
-   "t": null,
-   "c": "Internet Culture",
-   "h": "P.T. Now Available on PC Without Remake",
-   "s": "The 2014 horror game P.T. Has been reverse-engineered into a native PC port, allowing players to experience the game without the need for a remake. The game was reverse-engineered from the original game.",
-   "o": [
-    "Boing Boing"
-   ],
-   "l": "limited"
-  },
-  {
-   "d": "2026-10-08",
-   "id": "7a88e2449fb3",
-   "r": 50,
-   "t": null,
-   "c": "Entertainment",
-   "h": "Israel Promotes Film Miming NAZA Documentary",
-   "s": "The Israeli government is promoting an online film project that mimics the style of the award-winning NAZA documentary.",
+   "c": "Tech",
+   "h": "Molly Russell's Father Blames Instagram for Her Death",
+   "s": "Molly Russell's father, Ian Russell, will show an advert blaming Instagram for his daughter's death in UK cinemas. The advert claims that 'too little has changed' since Molly's death at 14.",
    "o": [
     "The Guardian"
    ],
@@ -691,12 +447,77 @@
   },
   {
    "d": "2026-10-08",
-   "id": "d451bc07b25f",
-   "r": 51,
+   "id": "14159d2e3b1c",
+   "r": 32,
+   "t": null,
+   "c": "Science & AI",
+   "h": "Microsoft Debuts New AI-friendly Hardware and Windows Changes",
+   "s": "Microsoft announced new Surface laptop and changes coming to Windows 11, including more AI on the desktop. The company shared a vision of local-AI and agentic AI.",
+   "o": [
+    "Ars Technica"
+   ],
+   "l": "limited"
+  },
+  {
+   "d": "2026-10-08",
+   "id": "bc25c4c1dfde",
+   "r": 33,
+   "t": null,
+   "c": "Tech",
+   "h": "Ransomware Attack Disrupts Japan's IDCF Cloud",
+   "s": "A ransomware attack disrupted Japan's IDCF Cloud service, causing an outage at a data center cluster serving the eastern part of the country. The company says that the attack was targeted and caused significant disruption.",
+   "o": [
+    "BleepingComputer"
+   ],
+   "l": "limited"
+  },
+  {
+   "d": "2026-10-08",
+   "id": "910320537bb5",
+   "r": 34,
+   "t": null,
+   "c": "Science & AI",
+   "h": "Liquid Inference: Real-Time Auction for LLM Inference",
+   "s": "Architect Financial Technologies launched Liquid Inference, an LLM router that runs a live auction for every request. The buyer pays the lowest offer from providers, making it a marketplace for LLM inference.",
+   "o": [
+    "MarkTechPost"
+   ],
+   "l": "limited"
+  },
+  {
+   "d": "2026-10-08",
+   "id": "0452c40b5e91",
+   "r": 35,
+   "t": null,
+   "c": "Tech",
+   "h": "The People Holding up the Internet",
+   "s": "Billions of phones run on code looked after by a handful of people, who are responsible for maintaining the internet. A lecturer counted the rest from the code itself.",
+   "o": [
+    "sheets.works"
+   ],
+   "l": "limited"
+  },
+  {
+   "d": "2026-10-08",
+   "id": "601bae865142",
+   "r": 36,
+   "t": null,
+   "c": "Sports",
+   "h": "MLB Eyes Shorter Regular Season, Expanding Division Series to best-of-7",
+   "s": "Major League Baseball proposed shortening the regular season to 154 games from 162 and expanding the division series to best-of-seven in bargaining with players.",
+   "o": [
+    "ESPN"
+   ],
+   "l": "limited"
+  },
+  {
+   "d": "2026-10-08",
+   "id": "3bcf425c7700",
+   "r": 37,
    "t": null,
    "c": "Entertainment",
-   "h": "Elvis Costello Talks About His New Boxed Set",
-   "s": "Elvis Costello talks about his new five-disc set celebrating his music. The set includes the origins of his iconic name and glasses, and how he found a sound and persona that transformed rock forever.",
+   "h": "Michael Ovitz Ordered to Complete Deposition in Julia Ormond Case After Storming Out over Jeffrey Epstein Questions",
+   "s": "A judge ordered Michael Ovitz to complete his deposition in the Julia Ormond case, after he stormed out of the questioning session due to questions about Jeffrey Epstein.",
    "o": [
     "Variety"
    ],
@@ -704,25 +525,38 @@
   },
   {
    "d": "2026-10-08",
-   "id": "c61bf40d4ec2",
-   "r": 52,
+   "id": "49978a56e040",
+   "r": 38,
    "t": null,
    "c": "Entertainment",
-   "h": "'Heathens' Trailer: Non-Believers Defy Their Religious Backgrounds, Resolving \"To Reclaim Their Lives\"",
-   "s": "People are coming out as non-believers in defiance of their families, communities, and churches.",
+   "h": "Charlie Cox Confirms He's in an Unannounced Sega Game",
+   "s": "Charlie Cox has confirmed that he is starring in another video game, this one for Sega.",
    "o": [
-    "Deadline"
+    "IGN"
    ],
    "l": "limited"
   },
   {
    "d": "2026-10-08",
-   "id": "06a4dbfb2f54",
-   "r": 53,
+   "id": "5ef79ba02707",
+   "r": 39,
    "t": null,
    "c": "Entertainment",
-   "h": "Rainbow Six Siege Mobile Already Has A Shutdown Date",
-   "s": "Ubisoft's live service games continue to flop. Rainbow Six Mobile, a free-to-play tactical game, will be shut down just 7 months into its full release.",
+   "h": "Spider-Man 5 Could Get REALLY Dark",
+   "s": "Following the massive success of Spider-Man: Brand New Day, there are plenty of exciting possibilities for Tom Holland's Peter Parker and his future in the franchise.",
+   "o": [
+    "Screen Rant"
+   ],
+   "l": "limited"
+  },
+  {
+   "d": "2026-10-08",
+   "id": "45fb2fa3eb87",
+   "r": 40,
+   "t": null,
+   "c": "Entertainment",
+   "h": "GTA 6 Screenshot Leaked, Revealing New Details",
+   "s": "Rockstar Games shared new information about Grand Theft Auto 6, including new screenshots. The screenshots reveal details about the game's music and radio stations.",
    "o": [
     "Kotaku"
    ],
@@ -730,14 +564,209 @@
   },
   {
    "d": "2026-10-08",
-   "id": "304b129a201c",
-   "r": 54,
+   "id": "53f6fc8e18f3",
+   "r": 41,
    "t": null,
    "c": "Internet Culture",
-   "h": "AI Proves Useful in Election Advice",
-   "s": "A political junkie found that AI models, such as ChatGPT and Gemini, provided nonpartisan election advice when prompted.",
+   "h": "The FBI's Online Gallery of Stolen Art",
+   "s": "The FBI National Stolen Art File lists over 8,000 stolen paintings, sculptures, and other culturally significant property. The database aims to recover stolen art.",
+   "o": [
+    "Boing Boing"
+   ],
+   "l": "limited"
+  },
+  {
+   "d": "2026-10-08",
+   "id": "951b293e71ef",
+   "r": 42,
+   "t": null,
+   "c": "Internet Culture",
+   "h": "OpenAI Brought in Patreon's Co-Founder to Lead Creator Product Division",
+   "s": "OpenAI brought in Patreon's Co-Founder Sam Yam to lead its Creator Product division. He is teaming up with 'Office Drama' podcaster Chloe Shih to kick off his stint. Two weeks after OpenAI announced the hire, the Patreon Co-Founder is already hard at work.",
+   "o": [
+    "Tubefilter"
+   ],
+   "l": "limited"
+  },
+  {
+   "d": "2026-10-08",
+   "id": "07a0ddb88f84",
+   "r": 43,
+   "t": null,
+   "c": "Sports",
+   "h": "NFL Teams Ranked into Tiers: 49ers Among the Elite",
+   "s": "The NFL season is a quarter of the way through, with the 49ers among the elite teams, and some teams not as good as they seem.",
+   "o": [
+    "CBS Sports"
+   ],
+   "l": "limited"
+  },
+  {
+   "d": "2026-10-08",
+   "id": "79f1657a0cec",
+   "r": 44,
+   "t": null,
+   "c": "Sports",
+   "h": "Sean Payton Takes over Playcalling for Broncos",
+   "s": "Broncos coach Sean Payton is taking over the offensive playcalling, starting Sunday against the Chargers. The team aims to kick-start a sputtering offense.",
+   "o": [
+    "ESPN"
+   ],
+   "l": "limited"
+  },
+  {
+   "d": "2026-10-08",
+   "id": "9086d0b0a9a4",
+   "r": 45,
+   "t": null,
+   "c": "Sports",
+   "h": "Hunter Bell Celebrates in Team GB's 'Glam' Female Track Success",
+   "s": "Georgia Hunter Bell and other British female athletes celebrated their success in track events, delivering medals for Team GB.",
+   "o": [
+    "Sky Sports"
+   ],
+   "l": "limited"
+  },
+  {
+   "d": "2026-10-08",
+   "id": "48c1f6f57191",
+   "r": 46,
+   "t": null,
+   "c": "Sports",
+   "h": "Premier League: 10 Things to Look Out for This Weekend",
+   "s": "Declan Rice's future role in England's midfield was questioned by Gary Lineker after Alex Scott's impressive first senior international start in the 7-0 thrashing of Croatia.",
+   "o": [
+    "The Guardian"
+   ],
+   "l": "limited"
+  },
+  {
+   "d": "2026-10-08",
+   "id": "d29aa55c5932",
+   "r": 47,
+   "t": null,
+   "c": "Entertainment",
+   "h": "Phantom Blade Zero Becomes Most-Anticipated Action Game",
+   "s": "Action game fans have had no shortage of choice in 2026, but Phantom Blade Zero has become the most-anticipated game. It offers 'kungfupunk' combat.",
+   "o": [
+    "Polygon"
+   ],
+   "l": "limited"
+  },
+  {
+   "d": "2026-10-08",
+   "id": "0c133d8b2686",
+   "r": 48,
+   "t": null,
+   "c": "Internet Culture",
+   "h": "Server Left Alone to Deal with Cranky Customers",
+   "s": "A server shares how she was left alone with frustrating customers after her co-worker called out, sparking stories from other servers. Servers don't have an easy job dealing with customers who dine out.",
+   "o": [
+    "The Daily Dot"
+   ],
+   "l": "limited"
+  },
+  {
+   "d": "2026-10-08",
+   "id": "27ccfbfeaf26",
+   "r": 49,
+   "t": null,
+   "c": "Sports",
+   "h": "Warriors Rookie Becomes Key Piece",
+   "s": "Golden State has high hopes for No. 11 pick Yaxel Lendeborg after several failed lottery picks.",
+   "o": [
+    "ESPN"
+   ],
+   "l": "limited"
+  },
+  {
+   "d": "2026-10-08",
+   "id": "ddbbbdb8bbad",
+   "r": 50,
+   "t": null,
+   "c": "Sports",
+   "h": "Aces' Wilson Wins 5th MVP, Says She'll Nix Pregame Ceremony to Focus on Game 3",
+   "s": "A'ja Wilson won a record fifth WNBA Most Valuable Player award but will not participate in a pregame ceremony to focus on Game 3. She wants to concentrate on the game.",
+   "o": [
+    "ESPN"
+   ],
+   "l": "limited"
+  },
+  {
+   "d": "2026-10-08",
+   "id": "7a88e2449fb3",
+   "r": 51,
+   "t": null,
+   "c": "Entertainment",
+   "h": "Israel Promotes Film Miming NAZA Documentary",
+   "s": "The Israeli government is promoting an online film project that mimics the style of NAZA, the award-winning documentary about mass killings of Gaza civilians.",
+   "o": [
+    "The Guardian"
+   ],
+   "l": "limited"
+  },
+  {
+   "d": "2026-10-08",
+   "id": "1b76d4674faf",
+   "r": 52,
+   "t": null,
+   "c": "Entertainment",
+   "h": "Diddy Loses Two Months of Freedom as Federal Prison Perks Unravel",
+   "s": "Rapper Diddy will remain in federal lockup for an additional two months after his bid for a model-inmate image collapsed. He had been enjoying perks such as massages and home-cooked meals.",
+   "o": [
+    "The Hollywood Reporter"
+   ],
+   "l": "limited"
+  },
+  {
+   "d": "2026-10-08",
+   "id": "775df9fde774",
+   "r": 53,
+   "t": null,
+   "c": "Internet Culture",
+   "h": "An Online Black Market - for In-N-Out Double-doubles",
+   "s": "Scammers are now delivering In-N-Out burgers on Facebook Marketplace, exploiting the chain's delivery restrictions. Hustlers are also involved in the black market.",
    "o": [
     "Mashable"
+   ],
+   "l": "limited"
+  },
+  {
+   "d": "2026-10-08",
+   "id": "ad4a58bf12be",
+   "r": 54,
+   "t": null,
+   "c": "Entertainment",
+   "h": "Black Clover Season 2, Episode 2 Release Date & Time",
+   "s": "The upcoming Black Clover episode promises a desperate rescue run with two captains captured and a demonic gate slowly opening. The episode is part of the Spade Kingdom Raid arc.",
+   "o": [
+    "Screen Rant"
+   ],
+   "l": "limited"
+  },
+  {
+   "d": "2026-10-08",
+   "id": "088be47a9d38",
+   "r": 55,
+   "t": null,
+   "c": "Internet Culture",
+   "h": "LinkedIn Offers Insight into Battle Against AI Slop",
+   "s": "LinkedIn shared insight into its battle against AI slop, outlining how the company approaches detection and trains its artificial intelligence agents.",
+   "o": [
+    "Social Media Today"
+   ],
+   "l": "limited"
+  },
+  {
+   "d": "2026-10-08",
+   "id": "145121594a7f",
+   "r": 56,
+   "t": null,
+   "c": "Internet Culture",
+   "h": "TikToker Opens up About Falling Out with Best Friend",
+   "s": "A TikToker opens up about a falling out with her best friend after realizing the grace she gave her during a hard time wasn't returned.",
+   "o": [
+    "The Daily Dot"
    ],
    "l": "limited"
   },

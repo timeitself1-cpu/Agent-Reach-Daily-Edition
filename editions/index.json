@@ -5,14 +5,14 @@
  "editions": [
   {
    "date": "2026-10-08",
-   "revision": 6,
-   "generated_utc": "2026-10-08T21:49:17Z",
-   "stories": 54,
-   "lead": "US Suspends Microsoft from Green Card Program",
+   "revision": 7,
+   "generated_utc": "2026-10-09T01:50:34Z",
+   "stories": 56,
+   "lead": "Hurricane Isaias Strengthens, Threatens US Gulf Coast",
    "headlines": [
-    "USS Abraham Lincoln Returns Home After Long and Grueling Deployment",
-    "Hurricane Isaias Strengthens to Category 2, Threatens Gulf Coast",
-    "Trump Promises Not to Resume Iran Strikes Before Midterm Elections"
+    "NASA Crew Returns to Earth After 8 Months in Space",
+    "USS Abraham Lincoln Returns Home After Record-Breaking Deployment",
+    "Russian Strike on Buses Kills at Least 30 in Ukraine"
    ],
    "sections": {
     "News": 10,
@@ -20,7 +20,7 @@
     "Science & AI": 10,
     "Sports": 10,
     "Entertainment": 10,
-    "Internet Culture": 4
+    "Internet Culture": 6
    }
   },
   {
