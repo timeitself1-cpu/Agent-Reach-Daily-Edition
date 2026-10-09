@@ -1079,8 +1079,9 @@ def top_stories(edition: "DailyEdition") -> list[Story]:
     return list(edition.stories[:10])
 
 
-#: Reading order of the category sections (any category not listed follows in enum order).
-SECTION_ORDER = ["News", "Local", "Tech", "Science & AI", "Sports", "Entertainment", "Internet Culture"]
+#: Reading order of the category sections (any category not listed follows in enum order: an rc18 edition's
+#: Local section comes last).
+SECTION_ORDER = ["News", "Tech", "Science & AI", "Sports", "Entertainment", "Internet Culture"]
 
 
 def section_order() -> list[str]:
@@ -1415,4 +1416,5 @@ def evaluate_publication(edition: DailyEdition, prefs: DailyPrefs, *, allow_extr
 
 
 def all_categories() -> list[str]:
-    return CategoryEnum.values()
+    """The categories a feed can be filed under (not Local: historical since rc19)."""
+    return CategoryEnum.model_values()

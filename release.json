@@ -1,5 +1,5 @@
 {
- "version": "1.0.0rc18",
- "notes": "Local news for Frisco, Texas, website headlines that open the original article, and more accurate summaries and source counts.",
+ "version": "1.0.0rc19",
+ "notes": "The Local news section has been removed; older editions that had it still show it.",
  "setup_required": ""
 }

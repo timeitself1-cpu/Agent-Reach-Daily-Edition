@@ -46,7 +46,6 @@ from agent_reach.models import (
     _coerce_ids,
 )
 from agent_reach.pipeline.density import density_cluster
-from agent_reach.pipeline.local import area as local_area, is_local, ordinary
 from agent_reach.pipeline.embeddings import EmbeddingRun, EmbeddingUnavailable, embed_reports
 from agent_reach.pipeline.event_identity import (COMMON_NAME_AND_PHRASE, NAME_AND_PHRASE, cohesive_groups, lexical_candidates,
                                                  nearest_candidates)
@@ -243,13 +242,18 @@ class AnswerCutOff(ClusteringError):
 
 
 # ======================================================================= helpers
+def ordinary(category: CategoryEnum | None) -> CategoryEnum | None:
+    """A feed's Local hint (a feed the user still has with category Local, rc18) counts as general news."""
+    return CategoryEnum.NEWS if category is CategoryEnum.LOCAL else category
+
+
 def coerce_category(raw: str | None, fallback: CategoryEnum = CategoryEnum.NEWS) -> CategoryEnum:
     if not raw:
         return fallback
     key = normalize_text(str(raw)).strip().lower()
     for c in CategoryEnum:
         if key == c.value.lower():
-            return fallback if c is CategoryEnum.LOCAL else c  # Local is decided by rule (pipeline/local.py)
+            return fallback if c is CategoryEnum.LOCAL else c  # Local is historical (rc18), never assigned
     if key in CATEGORY_ALIASES:
         return CATEGORY_ALIASES[key]
     for alias, cat in CATEGORY_ALIASES.items():
@@ -1659,8 +1663,6 @@ class SemanticClusterer:
                 ordinary(m.category_hint) or m.inferred_category or CategoryEnum.NEWS for m in members
             ).most_common(1)[0][0]
             category = self._guard_category(coerce_category(d.category_raw, fallback), members)
-            if is_local(category, members, local_area(s.local_area)):
-                category = CategoryEnum.LOCAL
 
             headline = sanitize_headline(d.headline, HEADLINE_MAX_WORDS, HEADLINE_STRETCH_WORDS)
             if headline and not (quantities_grounded(headline, members) and headline_supported(headline, members)):
@@ -1715,8 +1717,6 @@ class SemanticClusterer:
             if m.category_hint:
                 votes[ordinary(m.category_hint)] += 2
         category = votes.most_common(1)[0][0] if votes else CategoryEnum.NEWS
-        if is_local(category, members, local_area(self.settings.local_area)):
-            category = CategoryEnum.LOCAL
         sources = platforms(members)
         subject = ", ".join(entities[:3]) or lead.normalized_title[:80]
         n = sum(m.raw_weight for m in members)
