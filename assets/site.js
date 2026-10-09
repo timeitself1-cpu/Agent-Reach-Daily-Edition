@@ -167,6 +167,7 @@ if (typeof module !== 'undefined') module.exports = {normOutlet, dedupeOutlets};
     const shown = names.slice(0, max), rest = names.length - shown.length;
     return h('span', {class: 'outlets outlet-tags', title: 'Reported independently by ' + names.join(', ')},
       h('span', {class: 'sr', text: `Reported independently by ${plural(names.length, 'outlet')}: `}),
+      h('span', {class: 'tally', 'aria-hidden': 'true', text: plural(names.length, 'outlet')}),
       shown.map((n, i) => [i ? h('span', {class: 'sr', text: ', '}) : null, h('span', {class: 'tag', text: n})]),
       rest ? [h('span', {class: 'sr', text: ' and '}), h('span', {class: 'tag more', text: `+${rest}`}), h('span', {class: 'sr', text: ' more'})] : null);
   }
@@ -208,12 +209,16 @@ if (typeof module !== 'undefined') module.exports = {normOutlet, dedupeOutlets};
     return h('a', {class: 'story-link', href: storyUrl(ed, s)}, n ? plural(n, 'source') : 'Details',
       h('span', {class: 'sr', text: ` and coverage: ${s.headline}`}));
   }
+  // Story footer: the outlet pills on their own row when several outlets reported it, then time, coverage
+  // and the link to the story page.
   function meta(s, opts = {}) {
     const when = ago(s.newest_published_utc);
-    return h('div', {class: 'meta'},
+    const tags = opts.noOutlets ? null : outletTags(s, opts.tags || 3);
+    const several = tags && tags.classList.contains('outlet-tags');
+    return [several ? h('div', {class: 'outlet-row'}, tags) : null, h('div', {class: 'meta'},
       when && !opts.noTime ? h('time', {datetime: s.newest_published_utc, 'data-relative': 'true', title: 'Newest report: ' + stamp(s.newest_published_utc), text: when}) : null,
-      opts.noOutlets ? null : outletTags(s, opts.tags || 3), covMeter(s),
-      opts.ed ? storyLink(opts.ed, s) : null);
+      several ? null : tags, covMeter(s),
+      opts.ed ? storyLink(opts.ed, s) : null)];
   }
   function card(ed, s, variant, tag = 'h3') {
     const cls = 'card' + (variant === 'feature' ? ' feature' : '');
@@ -396,7 +401,7 @@ if (typeof module !== 'undefined') module.exports = {normOutlet, dedupeOutlets};
       headline(ed, s, 'h1'),
       h('p', {class: 'dek', text: s.summary.join(' ')}),
       s.why_it_matters ? h('p', {class: 'why'}, h('b', {text: 'Why it matters: '}), s.why_it_matters) : null,
-      meta(s, {ed, tags: 5}));
+      meta(s, {ed, tags: 4}));
   }
   function rail(ed, stories) {
     return h('section', {class: 'rail', 'aria-labelledby': 'rail-title'}, h('h2', {class: 'rail-title', id: 'rail-title'}, h('span', {text: 'Top stories'})),

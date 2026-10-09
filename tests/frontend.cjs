@@ -265,7 +265,11 @@ test('roadmap lead deduplicates publishers and labels links separately', async (
   const tags = [...p.d.querySelectorAll('.story-main .outlet-tags .tag')].map(t => t.textContent);
   assert.deepEqual(tags.slice(0, 2), ['AP News', 'Reuters'], 'widely known newsrooms lead the tags');
   assert.equal(tags.length, 7); assert.equal(new Set(tags).size, 7);
-  assert.match(p.d.querySelector('.story-main .outlet-tags').textContent, /^Reported independently by 7 outlets: AP News, Reuters, /);
+  const tagged = p.d.querySelector('.story-main .outlet-tags');
+  assert.equal(tagged.querySelector('.tally').textContent, '7 outlets');
+  assert.equal(tagged.querySelector('.tally').getAttribute('aria-hidden'), 'true'); // the sentence below says it once
+  const spoken = [...tagged.childNodes].filter(n => !(n.getAttribute && n.getAttribute('aria-hidden'))).map(n => n.textContent).join('');
+  assert.match(spoken, /^Reported independently by 7 outlets: AP News, Reuters, /);
   assert.match(p.d.querySelector('.facts').textContent, /7 independent outlets/);
   assert.doesNotMatch(p.d.querySelector('.facts').textContent, /apnews\.com|reuters\.com/);
   assert.match(p.d.querySelector('.source-jump').textContent, /8 source links/);

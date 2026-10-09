@@ -143,9 +143,16 @@ they do not replace a week of production observation for quality and churn targe
   since the previous update (new, updated and, when the app sends `changes`, dropped) and how long ago it was
   generated, refreshed every minute. On phones it scrolls sideways inside itself; story pages keep the compact
   breadcrumb row instead.
-- **Not done: thumbnails.** Lead-story images would load from publishers' servers, which the About page's privacy
-  promise ("loads nothing from other servers") and the CSP (`img-src 'self'`) rule out; copying them to this site
-  raises copyright questions for news photos. Waiting on the owner's decision.
+- **No photos, by decision (October 9).** Publisher images would load from their servers (breaking the
+  no-tracking promise and the CSP), and copying them here invites agency copyright claims. The site stays
+  text-first and self-contained; structure comes from type and colour instead:
+  - every story card has a 4px top band in its section's colour (the lead too), and top stories and Latest
+    items a 4px left rule. Each section has its own hue: slate blue for World & Nation, coral Local, violet
+    Technology, emerald Science & AI, amber Sports, pink Entertainment, cyan Internet Culture, each with a
+    darker light-theme variant that passes contrast;
+  - the outlets are the visual hook: high-contrast pills on their own row, led by an accent pill with the count
+    ("6 outlets"); screen readers hear one sentence ("Reported independently by 6 outlets: ...");
+  - the lead headline is bolder (700) with slightly looser tracking.
 - **Local news for Frisco, Texas.** A `Local` section ("Frisco & North Texas", `/local/`, after World & Nation in
   the navigation). The app files a story there when its reports name a town of the area, from the City of Frisco,
   four Dallas–Fort Worth newsrooms and two Google News searches, all checked against the live sites in the app's
