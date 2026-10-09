@@ -24,7 +24,8 @@ tracks each real-world event over time (timelines), and later feeds structured e
   (stable -> 90f6e5a after CI green, at the user's go-ahead; the PC installs it at the next window start or hourly
   check; no real refresh with rc19 seen yet). The website side is on the site repo's branch
   `claude/sleepy-clarke-abilea` (nav Today / How it works, Local only in old editions, `/local/` deleted at the
-  user's request, archive update numbers), **not merged** (needs a PR + the site CI). Next: Phase 1 items 4-10,
+  user's request, archive update numbers), **merged** as site PR #12 (31150b0; PR checks and the `main` checks
+  green; whether Cloudflare serves the new navigation is for the user to look at). Next: Phase 1 items 4-10,
   mostly already on the site; confirm with the user what the live site shows. Most items of the user's Phase 1 list (archive,
   About, RSS, sitemap, share/copy links, corrections section, theme toggle, search) already exist on the site.
 - **Current release: rc18** (`1.0.0rc18`, Oct 9): Local section for Frisco, TX (`pipeline/local.py`), headline
