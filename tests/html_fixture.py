@@ -19,7 +19,7 @@ from datetime import datetime, timedelta, timezone
 from html.parser import HTMLParser
 from pathlib import Path
 
-CATEGORIES = ("Science & AI", "Internet Culture", "Entertainment", "Sports", "Tech", "News")
+CATEGORIES = ("Science & AI", "Internet Culture", "Entertainment", "Sports", "Tech", "News", "Local")
 _WHEN_RX = re.compile(r"(published|retrieved) ([A-Z][a-z]+ \d{1,2}, \d{4} at \d{1,2}:\d{2} [AP]M) (CDT|CST)")
 
 

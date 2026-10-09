@@ -46,6 +46,7 @@ from agent_reach.models import (
     _coerce_ids,
 )
 from agent_reach.pipeline.density import density_cluster
+from agent_reach.pipeline.local import area as local_area, is_local, ordinary
 from agent_reach.pipeline.embeddings import EmbeddingRun, EmbeddingUnavailable, embed_reports
 from agent_reach.pipeline.event_identity import (COMMON_NAME_AND_PHRASE, NAME_AND_PHRASE, cohesive_groups, lexical_candidates,
                                                  nearest_candidates)
@@ -178,7 +179,7 @@ def _relabel_schema() -> dict[str, Any]:
                     "properties": {
                         "group_id": {"type": "integer"},
                         "headline": {"type": "string"},
-                        "category": {"type": "string", "enum": CategoryEnum.values()},
+                        "category": {"type": "string", "enum": CategoryEnum.model_values()},
                         "primary_entities": {"type": "array", "items": {"type": "string"}},
                         "summary": {"type": "string"},
                         "relevance_score": {"type": "integer", "minimum": 1, "maximum": 10},
@@ -248,7 +249,7 @@ def coerce_category(raw: str | None, fallback: CategoryEnum = CategoryEnum.NEWS)
     key = normalize_text(str(raw)).strip().lower()
     for c in CategoryEnum:
         if key == c.value.lower():
-            return c
+            return fallback if c is CategoryEnum.LOCAL else c  # Local is decided by rule (pipeline/local.py)
     if key in CATEGORY_ALIASES:
         return CATEGORY_ALIASES[key]
     for alias, cat in CATEGORY_ALIASES.items():
@@ -1548,7 +1549,7 @@ class SemanticClusterer:
 
     # ....................................................... validation
     def _guard_category(self, proposed: CategoryEnum, members: list[CleanedTrendItem]) -> CategoryEnum:
-        hints = Counter(m.category_hint for m in members if m.category_hint)
+        hints = Counter(ordinary(m.category_hint) for m in members if m.category_hint)
         votes: Counter[CategoryEnum] = Counter()
         for m in members:
             votes.update(category_votes(f"{m.normalized_title} {m.description or ''}"))
@@ -1655,9 +1656,11 @@ class SemanticClusterer:
                     discards["weak_singleton"].extend(ids)
                     continue
             fallback = Counter(
-                m.category_hint or m.inferred_category or CategoryEnum.NEWS for m in members
+                ordinary(m.category_hint) or m.inferred_category or CategoryEnum.NEWS for m in members
             ).most_common(1)[0][0]
             category = self._guard_category(coerce_category(d.category_raw, fallback), members)
+            if is_local(category, members, local_area(s.local_area)):
+                category = CategoryEnum.LOCAL
 
             headline = sanitize_headline(d.headline, HEADLINE_MAX_WORDS, HEADLINE_STRETCH_WORDS)
             if headline and not (quantities_grounded(headline, members) and headline_supported(headline, members)):
@@ -1710,8 +1713,10 @@ class SemanticClusterer:
         for m in members:
             votes.update(category_votes(m.normalized_title))
             if m.category_hint:
-                votes[m.category_hint] += 2
+                votes[ordinary(m.category_hint)] += 2
         category = votes.most_common(1)[0][0] if votes else CategoryEnum.NEWS
+        if is_local(category, members, local_area(self.settings.local_area)):
+            category = CategoryEnum.LOCAL
         sources = platforms(members)
         subject = ", ".join(entities[:3]) or lead.normalized_title[:80]
         n = sum(m.raw_weight for m in members)

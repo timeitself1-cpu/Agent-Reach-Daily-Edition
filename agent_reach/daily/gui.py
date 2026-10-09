@@ -74,7 +74,7 @@ PALETTES: dict[str, dict] = {
         "categories": {
             "News": ("#e5f0ff", "#0060df"), "Sports": ("#e3f6e8", "#248a3d"), "Entertainment": ("#fdebf3", "#c41e6a"),
             "Tech": ("#eef0f3", "#5e5ce6"), "Science & AI": ("#fff4e0", "#b25000"),
-            "Internet Culture": ("#f4ecff", "#8944ab")},
+            "Internet Culture": ("#f4ecff", "#8944ab"), "Local": ("#e2f5f6", "#0a6d73")},
         "tags": {"new": "#248a3d", "updated": "#0060df", "day": "#b25000", "follow": "#a05a00"},
         "labels": {
             "Hot": ("#ffe5e3", "#d70015"), "Rising": ("#fff1dd", "#b25000"), "New": ("#e1f5f2", "#0b7a6b"),
@@ -91,7 +91,7 @@ PALETTES: dict[str, dict] = {
         "categories": {
             "News": ("#14243d", "#64a8ff"), "Sports": ("#14301d", "#4cd964"), "Entertainment": ("#3a1528", "#ff7eb6"),
             "Tech": ("#26263a", "#a5a3ff"), "Science & AI": ("#3a2a10", "#ffb340"),
-            "Internet Culture": ("#2c1a3a", "#d39bff")},
+            "Internet Culture": ("#2c1a3a", "#d39bff"), "Local": ("#10302f", "#5fd4d0")},
         "tags": {"new": "#30d158", "updated": "#64a8ff", "day": "#ffb340", "follow": "#ffd60a"},
         "labels": {
             "Hot": ("#3c1614", "#ff6961"), "Rising": ("#3a2a10", "#ffb340"), "New": ("#10302b", "#5edcc8"),

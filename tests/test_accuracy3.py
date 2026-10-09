@@ -928,7 +928,7 @@ def test_version_6_settings_replace_yahoo_finance():
     prefs = DailyPrefs.model_validate({"prefs_version": 6, "feeds": [
         {"name": "Yahoo Finance", "url": yahoo, "category": "News", "enabled": False},
         {"name": "My Paper", "url": "https://paper.test/rss", "category": "News"}]})
-    assert prefs.prefs_version == PREFS_VERSION == 10
+    assert prefs.prefs_version == PREFS_VERSION == 11
     by_name = {f.name: f for f in prefs.feeds}
     assert "Yahoo Finance" not in by_name and not by_name["Bloomberg - Markets"].enabled and by_name["My Paper"].enabled
     assert yahoo not in {f.url for f in default_feeds()}

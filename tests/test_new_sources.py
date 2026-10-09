@@ -226,7 +226,7 @@ def test_version_2_settings_gain_new_sources_once(daily_paths):
                feeds=[{"name": "Local Paper", "url": "https://local.test/rss", "category": "News"}])
     daily_paths.settings.write_text(json.dumps(old))
     prefs, warning = load_prefs(daily_paths)
-    assert warning is None and prefs.prefs_version == PREFS_VERSION == 10
+    assert warning is None and prefs.prefs_version == PREFS_VERSION == 11
     assert {"youtube", "mastodon", "bluesky"} <= set(prefs.enabled_sources) and prefs.max_items_for_llm == 260
     assert "tiktok" not in prefs.enabled_sources  # switched on in v3, off again from v5 (TikTok blocks readers)
     assert prefs.feeds[0].name == "Local Paper" and len(prefs.feeds) == 1 + len(ADDED_IN_V3) + len(ADDED_IN_V4)
@@ -243,7 +243,10 @@ def test_version_2_settings_gain_new_sources_once(daily_paths):
 def test_daily_settings_read_google_news_sections_and_skip_youtube_without_channels(daily_paths):
     prefs = DailyPrefs()
     s = build_settings(prefs, daily_paths)
-    assert s.google_news_sections == list(DEFAULT_GOOGLE_NEWS_SECTIONS) and "youtube" in s.enabled_sources
+    assert s.google_news_sections[:len(DEFAULT_GOOGLE_NEWS_SECTIONS)] == list(DEFAULT_GOOGLE_NEWS_SECTIONS) and "youtube" in s.enabled_sources
+    assert [e.split("|")[0] for e in s.google_news_sections[len(DEFAULT_GOOGLE_NEWS_SECTIONS):]] == ["Local", "Local"]
+    assert s.local_area == "frisco-tx"
+    assert build_settings(DailyPrefs(local_area=""), daily_paths).google_news_sections == list(DEFAULT_GOOGLE_NEWS_SECTIONS)
     assert s.youtube_channels and s.min_items_per_channel_feed_for_llm == 1
     no_channels = prefs.model_copy(update={"feeds": [f for f in prefs.feeds if f.kind != "YouTube"]})
     s2 = build_settings(no_channels, daily_paths)
