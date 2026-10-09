@@ -58,27 +58,28 @@ Owner: **P** = publisher (Windows app), **W** = website (this repository). Sizes
 
 ### Phase 1 — Trust fixes (this week)
 
-| Item | Owner | Size | Acceptance |
-| --- | --- | --- | --- |
-| Normalise outlets before counting (A1): map domains and aliases to one outlet (`apnews.com` → AP News, `NASA (.gov)` → NASA), then count independence on the normalised name. | P | S | No story's `coverage.publishers` contains two names for one outlet. Story 1 reports 7, not 9. |
-| Resolve Google News redirects to the publisher URL at fetch time (A6). If a link can't be resolved, keep it but label it "via Google News". | P | S–M | 0 `news.google.com` URLs in a published edition, or each one labelled. About › Privacy is accurate. |
-| Install `embeddinggemma-2:270m` or remove it as the fallback. Move diagnostics into a collapsed "Run details" in the export (A9). | P | S | No raw exception text in the reader-facing export. |
-| Website guardrails in `check-editions` (A1, A2, A6): **non-failing warnings** for duplicate normalised outlets, Google News URLs, and same-edition headline pairs with high word overlap. Print them in the CI log. | W | S | The warnings fire on revision 6 for stories 1 and 8, the Iran pair and the 21 redirect URLs. The build still passes. |
-| One section name (B1). Use "World & Nation" in the nav, page title, h1 and home band, and keep the `/world/` URL. | W | S | The same label appears everywhere; the test is updated. |
-| Display-time outlet dedupe and consistent counts (B2). Prefer the named outlet over its domain in bylines. Derive "+N" from the same list as the coverage panel. | W | S | The lead byline shows no duplicate outlet. The byline, the "Read N sources" link and the panel agree, or are labelled as different things. |
-| Close the round 2 minor items (B5) and the arrival focus box (B6). | W | S | axe shows 0 `region` or `landmark-complementary-is-top-level` violations. Missing-date wording is neutral. Source times show year and zone. Relative times refresh every minute while the tab is visible. |
+| Item | Owner | Size | Acceptance | Status |
+| --- | --- | --- | --- | --- |
+| Normalise outlets before counting (A1): map domains and aliases to one outlet (`apnews.com` → AP News, `NASA (.gov)` → NASA), then count independence on the normalised name. | P | S | No story's `coverage.publishers` contains two names for one outlet. Story 1 reports 7, not 9. | Implemented in the companion publisher PR; October 8 recorded tests pass. |
+| Resolve Google News redirects to the publisher URL at fetch time (A6). If a link can't be resolved, keep it but label it "via Google News". | P | S–M | 0 `news.google.com` URLs in a published edition, or each one labelled. About › Privacy is accurate. | Implemented in the companion publisher PR; October 8 recorded tests pass. |
+| Install `embeddinggemma-2:270m` or remove it as the fallback. Move diagnostics into a collapsed "Run details" in the export (A9). | P | S | No raw exception text in the reader-facing export. | Implemented in the companion publisher PR; October 8 recorded tests pass. |
+| Website guardrails in `check-editions` (A1, A2, A6): **non-failing warnings** for duplicate normalised outlets, Google News URLs, and same-edition headline pairs with high word overlap. Print them in the CI log. | W | S | The warnings fire on revision 6 for stories 1 and 8, the Iran pair and the 21 redirect URLs. The build still passes. | Implemented; hermetic tests and browser checks pass. |
+| One section name (B1). Use "World & Nation" in the nav, page title, h1 and home band, and keep the `/world/` URL. | W | S | The same label appears everywhere; the test is updated. | Implemented; hermetic tests and browser checks pass. |
+| Display-time outlet dedupe and consistent counts (B2). Prefer the named outlet over its domain in bylines. Derive "+N" from the same list as the coverage panel. | W | S | The lead byline shows no duplicate outlet. The byline, the "Read N sources" link and the panel agree, or are labelled as different things. | Implemented; hermetic tests and browser checks pass. |
+| Close the round 2 minor items (B5) and the arrival focus box (B6). | W | S | axe shows 0 `region` or `landmark-complementary-is-top-level` violations. Missing-date wording is neutral. Source times show year and zone. Relative times refresh every minute while the tab is visible. | Implemented; hermetic tests and browser checks pass. |
 
 ### Phase 2 — Edition quality and reader orientation (next 2–3 weeks)
 
-| Item | Owner | Size | Acceptance |
-| --- | --- | --- | --- |
-| Summary verification upgrades (A3). Every number and named entity in a summary must appear in a cited source, in the same context. Check that the headline agrees with the summary. Reject subjectless sentences. Repair quotes and title case. | P | M | Re-running revision 6 flags all the A3 examples. |
-| A newsworthiness bar for filling sections (A4). Allow sections shorter than 10. Exclude trailers, podcasts, mock drafts and video explainers unless they have a second source or a strong signal. | P | M | Fewer than 50% single-source stories on a typical day. No trailers or mock drafts unless corroborated. |
-| Stricter same-event merging (A2). Investigate the "merges blocked" cases. Merge same-actor, same-claim, same-day pairs. Keep the multi-topic videos out of single stories. | P | M | The Iran pair becomes one story; spot-check one week. |
-| Calmer revisions (A5). Set a minimum interval between revisions (for example 60 minutes, unless breaking news). Keep a story unless a clearly stronger one displaces it. Publish an optional `changes` block (`new`, `updated`, `fading`, `dropped` with headlines) in the edition JSON. Rule 4 of the contract allows new optional fields. | P | M | Fewer than 25% of stories dropped between same-day revisions. `changes` is documented in [backend-coordination.md](backend-coordination.md). |
-| "Since update N" summary in edition Details (B3). Use `compared_with` and the badges now. Add "No longer listed" headlines that link to search once `changes` ships. | W | S → M | Details shows the counts. Dropped headlines open a search for that headline. |
-| Section jump chips with counts on Home (B4), following the export's pattern. Make them sticky or place them under the edition line on phones. | W | S | Every section is reachable from the top of Home in one tap at 390px; no overflow at 320px. |
-| Automated post-deploy smoke check (B8). A GitHub Actions job runs after Cloudflare deploys: it checks the security headers, gets 404s for `/docs/…`, `/tests/…` and `/wrangler.jsonc`, and confirms the live `index.json` revision matches `main`. Also add `getagentreach.dev` to the cloud environment's allowed domains so reviews can test the real host. | W | S | The job is green on `main`; a failure names the missing header or exposed path. |
+| Item | Owner | Size | Acceptance | Status |
+| --- | --- | --- | --- | --- |
+| Summary verification upgrades (A3). Every number and named entity in a summary must appear in a cited source, in the same context. Check that the headline agrees with the summary. Reject subjectless sentences. Repair quotes and title case. | P | M | Re-running revision 6 flags all the A3 examples. | Implemented in the companion publisher PR; October 8 recorded tests pass. |
+| A newsworthiness bar for filling sections (A4). Allow sections shorter than 10. Exclude trailers, podcasts, mock drafts and video explainers unless they have a second source or a strong signal. | P | M | Fewer than 50% single-source stories on a typical day. No trailers or mock drafts unless corroborated. | Implemented in the companion publisher PR; October 8 recorded tests pass. Typical-day and week-long targets still need observation after rollout. |
+| Stricter same-event merging (A2). Investigate the "merges blocked" cases. Merge same-actor, same-claim, same-day pairs. Keep the multi-topic videos out of single stories. | P | M | The Iran pair becomes one story; spot-check one week. | Implemented in the companion publisher PR; October 8 recorded tests pass. |
+| Calmer revisions (A5). Set a minimum interval between revisions (for example 60 minutes, unless breaking news). Keep a story unless a clearly stronger one displaces it. Publish an optional `changes` block (`new`, `updated`, `fading`, `dropped` with headlines) in the edition JSON. Rule 4 of the contract allows new optional fields. | P | M | Fewer than 25% of stories dropped between same-day revisions. `changes` is documented in [backend-coordination.md](backend-coordination.md). | Implemented in the companion publisher PR; October 8 recorded tests pass. Typical-day and week-long targets still need observation after rollout. |
+| "Since update N" summary in edition Details (B3). Use `compared_with` and the badges now. Add "No longer listed" headlines that link to search once `changes` ships. | W | S → M | Details shows the counts. Dropped headlines open a search for that headline. | Implemented; hermetic tests and browser checks pass. |
+| Section jump chips with counts on Home (B4), following the export's pattern. Make them sticky or place them under the edition line on phones. | W | S | Every section is reachable from the top of Home in one tap at 390px; no overflow at 320px. | Implemented; hermetic tests and browser checks pass. |
+| Automated post-deploy smoke check (B8). A GitHub Actions job runs after Cloudflare deploys: it checks the security headers, gets 404s for `/docs/…`, `/tests/…` and `/wrangler.jsonc`, and confirms the live `index.json` revision matches `main`. Also add `getagentreach.dev` to the cloud environment's allowed domains so reviews can test the real host. | W | S | The job is green on `main`; a failure names the missing header or exposed path. | Implemented; current live revision 6 passes. Main workflow run after merge remains pending. No deployment settings changed. |
+
 
 ### Phase 3 — Later, or dependent on other work
 
@@ -93,3 +94,22 @@ Owner: **P** = publisher (Windows app), **W** = website (this repository). Sizes
 ## Preserve
 
 The publishing contract and JSON fields, URLs (including `#story-` addresses and the headline hint), monthly search batching, RSS, sitemap and robots, the coverage method, edition and revision indicators, plain-text rendering, self-hosted fonts, the no-tracking promise and reduced-motion support. Nothing here adds a runtime dependency, analytics or a third-party request.
+
+## Phase 1/2 implementation validation — October 8, 2026
+
+This implementation uses the attached roadmap prompt's acceptance rules. Phase 3 remains deferred.
+The website passes Node 24 installation, syntax, all 47 tests, edition validation and build.
+The frozen revision 6 fixture produces duplicate outlet warnings for the lead and Crew-12, the Iran
+pair's 0.50 overlap warning and exactly 21 Google News URL warnings. Warnings remain non-blocking.
+
+Chromium at 320, 390 and 1440px covers ten routes: no horizontal overflow, and zero axe-core 4.10
+`region` or `landmark-complementary-is-top-level` violations. Section links also work without JavaScript,
+have 44px minimum tap heights and visible keyboard focus. At 390px the same-browser Home measurement
+is 18,494px before and 18,674px after; the new shortcut row adds height while making every section
+reachable from the top. The audit's 18,469px came from a different measurement environment.
+The lead changes from 9 to 7 independent outlets, with 8 distinct source links labelled separately.
+
+The live checker passed against deployed revision 6 with all six headers and four private-path 404s.
+The new main-push/manual workflow will verify future deployment once these changes are merged.
+Neither PR is merged by this implementation. Recorded input tests exercise publisher fixes offline;
+they do not replace a week of production observation for quality and churn targets.

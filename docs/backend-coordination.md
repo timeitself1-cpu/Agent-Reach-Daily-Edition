@@ -35,7 +35,7 @@ The search file and the edition file are written in the same commit, so on a fre
 come from (a) a cached old search month, (b) a revision published after the result was shown, (c) external links
 and bookmarks. Suggested fallback, in order:
 
-1. Load `editions/<date>.json`. A 404 means the date was withdrawn: say "This edition was taken off the site" and
+1. Load `editions/<date>.json`. A 404 means the date was withdrawn: say "This edition isn't available. It may have been withdrawn." and
    link the archive.
 2. Find the story by `id`. If it is found, show it.
 3. If the id is missing, match by headline: an exact match after lowercasing and stripping punctuation, then the
@@ -70,3 +70,31 @@ The supplied contract above is preserved as the coordination record. The respons
 The website now adds a deployment build step that consumes only the files and fields above. It writes escaped story HTML into `dist/` and embeds the existing public edition/index JSON for immediate browser rendering. This works with the publisher's current one-commit publication and withdrawal behavior, without requiring a publisher change or a new JSON field. The source dated shells remain publisher-owned; generated HTML is never committed back over them. Every deploy validates the index, editions, search months, dated shells, RSS and sitemap before building.
 
 Native Share and Copy link carry the existing headline hint. Stable IDs and dedicated per-story preview pages remain backend follow-up work.
+
+## Optional Phase 2 changes block — October 8, 2026
+
+Public editions retain `schema_version: 1`. A publisher may add this optional top-level field:
+
+```json
+"changes": {
+  "compared_with": {"edition_date": "2026-10-08", "revision": 5},
+  "new": ["0317f2df6bc9"],
+  "updated": [],
+  "fading": [],
+  "dropped": [{"headline": "Earlier headline", "category": "News"}]
+}
+```
+
+The ID arrays use the same public IDs as `stories[].id`. The comparison pointer matches top-level
+`compared_with`. Dropped entries contain plain-text headlines and the previous category, never private
+IDs or evidence. Hidden website stories are excluded from the changes block too. Old cached changes
+may have an empty category; readers tolerate that. Omit the block when no comparison exists.
+This is revision context, not stable event identity or a promise to keep earlier revisions searchable.
+The frontend counts `story.change` for New/Updated, and renders optional dropped headlines as quoted
+search links. Without `changes`, only the existing comparison and badges are used.
+
+`sources[].via` already exists: unresolved `news.google.com` URLs now use `"Google News"`, which the
+frontend labels explicitly. Successful resolution retains the publisher URL. No required field changes.
+Publisher names and aliases normalize before independence counts; source-link count and independent
+publisher count are different measurements, and the reader labels each one. Schema 1 URLs, headline
+hints, feed and sitemap remain compatible.
