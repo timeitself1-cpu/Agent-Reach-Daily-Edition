@@ -2,11 +2,13 @@ const {readFileSync, writeFileSync, mkdirSync, rmSync, cpSync, readdirSync, lsta
 const {resolve, dirname, sep} = require('node:path');
 const {JSDOM, VirtualConsole} = require('jsdom');
 const {checkEditions} = require('./check-editions.cjs');
-const {dedupeOutlets} = require('../assets/site.js');
+const {dedupeOutlets, normalizeStory} = require('../assets/site.js');
 const root = resolve(__dirname, '..');
 const out = resolve(root, 'dist');
 const staticStamp = value => new Date(value).toLocaleString('en-US', {year: 'numeric', month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit', timeZone: 'UTC', timeZoneName: 'short'});
 function renderShell(html, path, index, edition) {
+  edition = structuredClone(edition);
+  edition.stories.forEach(normalizeStory);
   const errors = [];
   const vc = new VirtualConsole();
   vc.on('jsdomError', error => errors.push(error));
@@ -64,10 +66,12 @@ function renderShell(html, path, index, edition) {
         title.textContent = source.title;
         if (source.url) { title.href = source.url; title.rel = 'noopener noreferrer'; }
         const meta = d.createElement('small');
-        meta.textContent = `${dedupeOutlets([source.outlet])[0] || source.outlet} · ${source.published_utc ? staticStamp(source.published_utc) : 'Time not stated'} · ${source.kind}${source.via === 'Google News' ? ' · via Google News' : ''}`;
+        meta.textContent = `${dedupeOutlets([source.outlet])[0] || source.outlet} · ${source.published_utc ? staticStamp(source.published_utc) : 'Time not stated'} · ${source.kind}${source.url && new URL(source.url).hostname === 'news.google.com' ? ' · Google News redirect' : ''}`;
         item.append(title, meta); list.append(item);
       }
-      details.append(summary, list); container.append(details);
+      const totals = d.createElement('p');
+      totals.textContent = `Displayed evidence: ${story.coverage.source_links} source links · ${story.coverage.linked_outlets} newsrooms · ${story.coverage.linked_reporting_origins} reporting origins`;
+      details.append(summary, totals, list); container.append(details);
       // The native disclosure is the source control until the browser mounts the enhanced view.
       article.querySelector('.story-link')?.remove();
     }
@@ -115,6 +119,23 @@ function build() {
     rmSync(target, {recursive: true, force: true, maxRetries: 3});
   }
   for (const path of ['assets', 'editions', 'search', 'feed.xml', 'sitemap.xml', 'robots.txt', 'app-top-stories.webp', 'app-window.webp', '_headers']) cpSync(resolve(root, path), resolve(out, path), {recursive: true});
+  // Derive consistent legacy corrections for HTML, direct JSON readers and monthly search.
+  // The publisher-owned repository files remain the input; only dist is rewritten.
+  for (const [date, edition] of editions) {
+    edition.stories.forEach(normalizeStory);
+    writeFileSync(resolve(out, `editions/${date}.json`), JSON.stringify(edition));
+  }
+  for (const month of new Set([...editions.keys()].map(date => date.slice(0, 7)))) {
+    const file = resolve(out, `search/${month}.json`), data = JSON.parse(readFileSync(file, 'utf8'));
+    data.stories = data.stories.map(entry => {
+      const story = editions.get(entry.d).stories.find(s => s.id === entry.id);
+      const next = {...entry, o: dedupeOutlets(entry.o), l: story.coverage.level, coverage: story.coverage};
+      delete next.u;
+      if (story.url) next.u = story.url;
+      return next;
+    });
+    writeFileSync(file, JSON.stringify(data));
+  }
   const shells = ['index.html', 'daily/index.html', 'latest/index.html', 'technology/index.html', 'science/index.html', 'world/index.html', 'local/index.html', 'sports/index.html', 'entertainment/index.html', 'internet-culture/index.html', 'archive/index.html', 'search/index.html', 'about/index.html', '404.html', ...[...editions.keys()].map(date => `daily/${date}/index.html`)];
   for (const file of shells) {
     let html = readFileSync(resolve(root, file), 'utf8');

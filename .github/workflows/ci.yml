@@ -18,5 +18,8 @@ jobs:
       - run: npm ci
       - run: node --check assets/site.js
       - run: npm test
+      - run: npx playwright install --with-deps chromium
+      - run: npm run test:browser
       - name: Validate every published edition and build public files
         run: npm run build
+      - run: npm run check:built

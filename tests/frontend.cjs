@@ -6,11 +6,12 @@ const test = require('node:test');
 const root = resolve(__dirname, '..');
 const fixtures = resolve(__dirname, 'fixtures');
 const script = readFileSync(resolve(root, 'assets/site.js'), 'utf8');
-const {normOutlet} = require('../assets/site.js');
+const {normOutlet, normalizeStory} = require('../assets/site.js');
 const roadmapEdition = JSON.parse(readFileSync(resolve(fixtures, 'roadmap-2026-10-08.json')));
 const edition = JSON.parse(readFileSync(resolve(fixtures, 'editions/2026-10-07.json')));
 const index = JSON.parse(readFileSync(resolve(fixtures, 'editions/index.json')));
 const monthly = JSON.parse(readFileSync(resolve(fixtures, 'search/2026-10.json')));
+const trustEdition = require('./fixtures/trust-2026-10-08-r8.json');
 const settle = () => new Promise(r => setTimeout(r, 25));
 async function open(path = '/', opts = {}) {
   const pathname = new URL(path, 'https://example.test').pathname;
@@ -74,7 +75,6 @@ test('Home bands show up to five stories and link every section to a page that l
 });
 
 const NOT_ARTICLE = /^(?:[^/]+\.)?(?:news\.google\.com|google\.com|reddit\.com|x\.com|twitter\.com|bsky\.app|trends24\.in|news\.ycombinator\.com|tiktok\.com)$/;
-const expectedLink = s => s.url || (s.sources.find(x => x.url && !NOT_ARTICLE.test(new URL(x.url).hostname.replace(/^www\./, ''))) || s.sources.find(x => x.url) || {}).url;
 test('one click on a headline opens the publisher article in a new tab; a second link opens the story page', async () => {
   for (const path of ['/', '/latest/', '/technology/', '/sports/']) {
     const p = await open(path);
@@ -83,8 +83,11 @@ test('one click on a headline opens the publisher article in a new tab; a second
     for (const item of items) {
       const story = edition.stories.find(s => s.headline === item.querySelector('.hl').textContent);
       const a = item.querySelector('.hl a');
-      assert.equal(a.getAttribute('href'), expectedLink(story), path + ': ' + story.headline);
-      assert.equal(a.target, '_blank'); assert.match(a.rel, /noopener/); assert.equal(a.getAttribute('aria-describedby'), 'ext-note');
+      if (a.target === '_blank') {
+        assert.ok(story.sources.some(src => src.url === a.href && src.kind !== 'signal'));
+        assert.ok(!NOT_ARTICLE.test(new URL(a.href).hostname.replace(/^www\./, '')));
+        assert.match(a.rel, /noopener/); assert.equal(a.getAttribute('aria-describedby'), 'ext-note');
+      } else assert.equal(a.getAttribute('href'), `/daily/2026-10-07/#story-${story.id}`);
       const more = item.querySelector('.story-link');
       assert.equal(more.getAttribute('href'), `/daily/2026-10-07/#story-${story.id}`);
       assert.match(more.textContent, new RegExp(`^${story.sources.filter(x => x.url).length} sources? and coverage: `));
@@ -94,12 +97,15 @@ test('one click on a headline opens the publisher article in a new tab; a second
   }
   // Google News redirects and social pages are passed over while the story has a publisher's article.
   const ed = structuredClone(edition), story = ed.stories[0];
+  story.sources[0].title = story.headline;
   story.sources.unshift({outlet: 'Google News', via: 'Google News', title: 'x', url: 'https://news.google.com/rss/articles/abc', published_utc: null, kind: 'report'},
     {outlet: 'Reddit', via: 'Reddit', title: 'y', url: 'https://www.reddit.com/r/news/1', published_utc: null, kind: 'signal'});
   let p = await open('/', {fetch: u => u.endsWith('2026-10-07.json') ? ed : undefined});
   assert.equal(p.d.querySelector('.lead .hl a').getAttribute('href'), edition.stories[0].sources.find(x => x.url).url); p.close();
-  // The app's own choice wins when it sends one; a story without any link opens its page.
+  // A matching report wins; a story without a resolved matching link opens its evidence page.
+  story.sources[2].title = 'Unrelated story';
   story.url = 'https://example.org/chosen'; story.sources.push({outlet: 'Example', via: 'Example', title: 'z', url: story.url, published_utc: null, kind: 'report'});
+  story.sources.at(-1).title = story.headline;
   ed.stories[1].sources.forEach(x => { x.url = null; }); ed.stories[1].url = null;
   p = await open('/latest/', {fetch: u => u.endsWith('2026-10-07.json') ? ed : undefined});
   assert.equal(p.d.querySelector(`#story-${story.id}, .river-item`) && [...p.d.querySelectorAll('.river-item .hl a')].find(a => a.textContent === story.headline).getAttribute('href'), story.url);
@@ -121,6 +127,33 @@ test('search results open the article when the search data names it', async () =
   assert.equal(hit.querySelector('h2 a').getAttribute('href'), 'https://example.org/article');
   assert.equal(hit.querySelector('h2 a').target, '_blank');
   assert.match(hit.querySelector('.story-link').getAttribute('href'), /^\/daily\/2026-10-07\/\?headline=.*#story-/);
+  p.close();
+});
+
+test('cards, search and source panels agree on corrected NBC coverage and redirect labelling', async () => {
+  const ed = structuredClone(trustEdition);
+  ed.stories.forEach(normalizeStory);
+  const story = ed.stories.find(s => /Collin County/.test(s.headline));
+  const idx = {...index, latest: ed.edition_date, editions: [{...index.editions[0], date: ed.edition_date}]};
+  const doc = {stories: [{id: story.id, d: ed.edition_date, r: story.rank, c: story.category,
+    h: story.headline, s: story.summary.join(' '), o: story.coverage.publishers, l: story.coverage.level, coverage: story.coverage}]};
+  const fetch = url => url === '/editions/index.json' ? idx : url.startsWith('/editions/') ? ed : url.startsWith('/search/') ? doc : undefined;
+  let p = await open('/local/', {fetch});
+  assert.match(p.d.querySelector('.card .cov').textContent, /Single source/);
+  assert.match(p.d.querySelector('.card .cov').title, /1 independent outlet/);
+  p.close();
+  p = await open('/search/?q=Collin', {fetch});
+  assert.match(p.d.querySelector('.hit .cov').textContent, /Single source/);
+  assert.match(p.d.querySelector('.hit').textContent, /NBC DFW/);
+  assert.doesNotMatch(p.d.querySelector('.hit').textContent, /NBC 5 Dallas/);
+  p.close();
+  p = await open(`/daily/2026-10-08/#story-${story.id}`, {fetch, shell: '/daily/index.html',
+    setup(w, d) { d.body.dataset.date = ed.edition_date; }});
+  assert.match(p.d.querySelector('[aria-label="Coverage"]').textContent, /1 independent outlet: NBC DFW/);
+  assert.match(p.d.querySelector('.sources').textContent, /Independent reports shown \(1\)/);
+  for (const a of p.d.querySelectorAll('.source a')) if (new URL(a.href).hostname === 'news.google.com') {
+    assert.match(a.parentElement.textContent, /Google News redirect/);
+  }
   p.close();
 });
 
@@ -388,14 +421,8 @@ test('story sources and source groups match fixture, jump preserves URL', async 
     assert.equal(p.d.querySelector('h1').textContent,story.headline);
     assert.equal(p.d.querySelectorAll('.sources .source').length,story.sources.length);
     assert.deepEqual([...p.d.querySelectorAll('.sources a.title')].map(a=>a.href).sort(), story.sources.map(s=>s.url).sort());
-    const seen = new Set();
-    const grouped = story.sources.map(s => {
-      if (s.kind !== 'report') return s;
-      const key = normOutlet(s.outlet);
-      if (seen.has(key)) return {...s, kind: 'repeat'};
-      seen.add(key); return s;
-    });
-    for (const [kind, title] of [['report','Independent reports'],['repeat','Repeats and syndicated copies'],['signal','Social and search signals']]) {
+    const grouped = normalizeStory(structuredClone(story)).sources;
+    for (const [kind, title] of [['report','Independent reports shown'],['repeat','Repeats and syndicated copies'],['signal','Social and search signals']]) {
       const count=grouped.filter(s=>s.kind===kind).length;
       const heading=[...p.d.querySelectorAll('.sources h3')].find(h=>h.textContent===`${title} (${count})`);
       if(count) {
