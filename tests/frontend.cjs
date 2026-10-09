@@ -46,7 +46,7 @@ async function open(path = '/', opts = {}) {
 }
 
 test('all public route shells render and keep RSS discovery', async () => {
-  for (const path of ['/', '/daily/', '/daily/2026-10-07/', '/latest/', '/technology/', '/science/', '/world/', '/local/', '/sports/', '/entertainment/', '/internet-culture/', '/archive/', '/search/', '/about/', '/404.html']) {
+  for (const path of ['/', '/daily/', '/daily/2026-10-07/', '/latest/', '/technology/', '/science/', '/world/', '/sports/', '/entertainment/', '/internet-culture/', '/archive/', '/search/', '/about/', '/404.html']) {
     const p = await open(path);
     assert.ok(p.d.querySelector('main h1'), path);
     assert.ok(p.d.querySelector('link[rel="alternate"][href="/feed.xml"]'), path);
@@ -138,9 +138,10 @@ test('cards, search and source panels agree on corrected NBC coverage and redire
   const doc = {stories: [{id: story.id, d: ed.edition_date, r: story.rank, c: story.category,
     h: story.headline, s: story.summary.join(' '), o: story.coverage.publishers, l: story.coverage.level, coverage: story.coverage}]};
   const fetch = url => url === '/editions/index.json' ? idx : url.startsWith('/editions/') ? ed : url.startsWith('/search/') ? doc : undefined;
-  let p = await open('/local/', {fetch});
-  assert.match(p.d.querySelector('.card .cov').textContent, /Single source/);
-  assert.match(p.d.querySelector('.card .cov').title, /1 independent outlet/);
+  let p = await open('/', {fetch}); // a Local story of October 8: the retired section's band on that edition
+  const card = p.d.querySelector(`.band[data-cat="Local"] #story-${story.id}`);
+  assert.match(card.querySelector('.cov').textContent, /Single source/);
+  assert.match(card.querySelector('.cov').title, /1 independent outlet/);
   p.close();
   p = await open('/search/?q=Collin', {fetch});
   assert.match(p.d.querySelector('.hit .cov').textContent, /Single source/);
@@ -820,8 +821,8 @@ test('outlet tags show one outlet once and only for stories with several indepen
   p.close();
 });
 
-test('Local stories get a Frisco & North Texas band on Home and their own page', async () => {
-  const ed = structuredClone(edition);
+test('the retired Local section stays in old editions but has no navigation, page or search filter', async () => {
+  const ed = structuredClone(edition); // an edition published before October 9, 2026 with a Local section
   const moved = ed.sections.find(s => s.category === 'News').ids.filter(id => !ed.top.includes(id)).slice(0, 2);
   for (const id of moved) ed.stories.find(s => s.id === id).category = 'Local';
   ed.sections.forEach(sec => { sec.ids = sec.ids.filter(id => !moved.includes(id)); });
@@ -831,16 +832,28 @@ test('Local stories get a Frisco & North Texas band on Home and their own page',
   const band = home.d.querySelector('.band[data-cat="Local"]');
   assert.equal(band.querySelector('.band-title').textContent, 'Frisco & North Texas');
   assert.equal(band.querySelectorAll('.card').length, 2);
-  assert.equal(band.querySelector('.band-link').getAttribute('href'), '/local/');
+  assert.equal(band.querySelector('.band-link'), null); // no section page to send readers to
   assert.match(band.querySelector('.card .kicker').textContent, /^Local/);
-  assert.ok(home.d.querySelector('.section-shortcuts a[href$="#band-local"]'));
+  assert.equal(home.d.querySelector('.nav a[href="/local/"]'), null);
+  assert.deepEqual([...home.d.querySelectorAll('.nav a')].map(a => a.textContent),
+    ['Today', 'Latest', 'World & Nation', 'Technology', 'Science & AI', 'Sports', 'Entertainment', 'Internet Culture', 'Archive', 'About', 'How it works']);
+  assert.equal(home.d.querySelector('.nav a[href="/about/#method"]').textContent, 'How it works');
   home.close();
-  const page = await open('/local/', {fetch});
-  assert.equal(page.d.querySelector('h1').textContent, 'Frisco & North Texas');
-  assert.equal(page.d.querySelectorAll('.card').length, 2);
-  assert.equal(page.d.querySelector('.nav [aria-current="page"]').textContent, 'Local');
-  page.close();
-  const search = await open('/search/');
-  assert.equal(search.d.querySelector('option[value="Local"]').textContent, 'Local');
+  const search = await open('/search/?cat=Local');
+  assert.equal(search.d.querySelector('option[value="Local"]'), null);
+  assert.equal(search.d.querySelector('select[aria-label="Section"]').value, '');
   search.close();
+});
+
+test('the archive lists each edition with its update number and story count', async () => {
+  const idx = structuredClone(index);
+  idx.editions[0].revision = 3;
+  const p = await open('/archive/', {fetch: u => u.endsWith('index.json') ? idx : undefined});
+  const rows = [...p.d.querySelectorAll('.ed-row')];
+  assert.equal(rows.length, idx.editions.length);
+  assert.equal(rows[0].getAttribute('href'), `/daily/${idx.editions[0].date}/`);
+  assert.equal(rows[0].querySelector('.ed-count small').textContent, 'Update 3');
+  assert.match(rows[0].querySelector('.ed-count').textContent, new RegExp(`^${idx.editions[0].stories} stor`));
+  rows.forEach((row, i) => { if (!(idx.editions[i].revision > 1)) assert.equal(row.querySelector('.ed-count small'), null); });
+  p.close();
 });

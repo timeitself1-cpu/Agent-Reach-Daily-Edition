@@ -288,6 +288,7 @@ details.src small{color:var(--faint);font-size:12px}
 .ed-lead{font-family:var(--serif);font-size:22px;line-height:1.2;font-weight:600;margin:0 0 8px}
 .ed-more{margin:0;padding:0;list-style:none;color:var(--ink2);font-size:14.5px;display:flex;flex-direction:column;gap:3px}
 .ed-count{font-size:13px;color:var(--muted);text-align:right;white-space:nowrap}
+.ed-count small{display:block;margin-top:4px;font-size:12px}
 .chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px}
 .chip{font-size:12px;color:var(--muted);border:1px solid var(--line2);border-radius:999px;padding:2px 9px}
 .prose{max-width:760px;padding:36px 0 56px}
