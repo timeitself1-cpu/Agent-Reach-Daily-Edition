@@ -71,6 +71,10 @@ function checkEditions(root) {
         if (src.url != null) assert.match(src.url, /^https?:\/\//, context + ': absolute source URL');
         if (src.published_utc) assert.ok(Number.isFinite(Date.parse(src.published_utc)), context + ': source timestamp');
       }
+      if (s.url != null) { // optional: the article the headline opens, always one of the story's own sources
+        assert.match(s.url, /^https?:\/\//, context + ': absolute headline link');
+        assert.ok(s.sources.some(src => src.url === s.url), context + ': headline link is a story source');
+      }
     }
     sameSet(ed.stories.map(s => s.rank), Array.from({length: ed.stories.length}, (_, i) => i + 1), context + ': contiguous unique ranks');
     assert.equal(new Set(ed.top).size, ed.top.length, context + ': unique top IDs');
@@ -107,6 +111,7 @@ function checkEditions(root) {
       assert.equal(hit.r, story.rank, month + ': search rank');
       assert.equal(hit.l, story.coverage.level, month + ': search coverage');
       assert.ok(typeof hit.s === 'string' && Array.isArray(hit.o), month + ': searchable summary/outlets');
+      if (hit.u != null) assert.equal(hit.u, story.url, month + ': search headline link');
     }
   }
   for (const [file, selector] of [['feed.xml', 'item > link'], ['sitemap.xml', 'url > loc']]) {

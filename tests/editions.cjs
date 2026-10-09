@@ -86,3 +86,10 @@ test('live check polls revisions and names missing headers and exposed paths wit
   const stale = {...options, timeout: 30000, fetchImpl: async () => ({ok: true, json: async () => ({...index, latest: '2026-10-07'})})};
   await assert.rejects(liveCheck(index, stale), /did not match/);
 });
+test('published-file validator checks the optional headline link against the story sources', () => {
+  mutate('editions/2026-10-07.json', data => { data.stories[0].url = data.stories[0].sources.find(s => s.url).url; });
+  mutate('editions/2026-10-07.json', data => { data.stories[0].url = null; });
+  assert.throws(() => mutate('editions/2026-10-07.json', data => { data.stories[0].url = 'https://elsewhere.example/'; }), /headline link is a story source/);
+  assert.throws(() => mutate('editions/2026-10-07.json', data => { data.stories[0].url = 'javascript:alert(1)'; }), /absolute headline link/);
+  assert.throws(() => mutate('search/2026-10.json', data => { data.stories[0].u = 'https://elsewhere.example/'; }), /search headline link/);
+});
