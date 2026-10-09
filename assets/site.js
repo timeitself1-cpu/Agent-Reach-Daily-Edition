@@ -108,16 +108,19 @@ if (typeof module !== 'undefined') module.exports = {normOutlet, dedupeOutlets, 
   const MAIL = 'hello@getagentreach.dev';
   const SECTION = {
     'News': {label: 'World & Nation', path: '/world/', title: 'World & Nation', blurb: 'World and national news: politics, courts, conflict, the economy and public safety.'},
-    'Local': {label: 'Local', path: '/local/', title: 'Frisco & North Texas', blurb: 'Local news from Frisco, Collin and Denton counties and the rest of North Texas.'},
+    // Retired on October 9, 2026 (app rc19): no navigation, page link or search filter; editions published
+    // before then still show their Local stories under this label.
+    'Local': {label: 'Local', title: 'Frisco & North Texas', blurb: 'Local news from Frisco, Collin and Denton counties and the rest of North Texas.', retired: 'October 9, 2026'},
     'Tech': {label: 'Technology', path: '/technology/', title: 'Technology', blurb: 'Companies, products, security and the business of technology.'},
     'Science & AI': {label: 'Science & AI', path: '/science/', title: 'Science & AI', blurb: 'Research, space, health, climate and artificial intelligence.'},
     'Sports': {label: 'Sports', path: '/sports/', title: 'Sports', blurb: 'Games, results, trades and the business of sport.'},
     'Entertainment': {label: 'Entertainment', path: '/entertainment/', title: 'Entertainment', blurb: 'Film, television, music, games and the people who make them.'},
     'Internet Culture': {label: 'Internet Culture', path: '/internet-culture/', title: 'Internet Culture', blurb: 'What people are talking about online: platforms, creators and viral moments.'},
   };
-  const NAV = [['Home', '/', 'home'], ['Latest', '/latest/', 'latest'],
-    ...['News', 'Local', 'Tech', 'Science & AI', 'Sports', 'Entertainment', 'Internet Culture'].map(c => [SECTION[c].label, SECTION[c].path, c]),
-    ['Archive', '/archive/', 'archive'], ['About', '/about/', 'about']];
+  const CURRENT_SECTIONS = Object.keys(SECTION).filter(c => !SECTION[c].retired);
+  const NAV = [['Today', '/', 'home'], ['Latest', '/latest/', 'latest'],
+    ...CURRENT_SECTIONS.map(c => [SECTION[c].label, SECTION[c].path, c]),
+    ['Archive', '/archive/', 'archive'], ['About', '/about/', 'about'], ['How it works', '/about/#method', 'method']];
   const body = document.body;
   const page = body.dataset.page || 'home';
 
@@ -335,7 +338,7 @@ if (typeof module !== 'undefined') module.exports = {normOutlet, dedupeOutlets, 
       h('div', {class: 'foot-grid'},
         h('div', null, h('h3', {text: 'About Agent Reach Daily'}),
           h('p', {text: 'A daily news edition made by software: it reads public reporting from news outlets and feeds, groups the reports of one event into one story, and writes a short summary with a local AI model. It is published automatically, without an editor.'}),
-          h('p', {text: 'Summaries can contain mistakes. Always check the linked sources. Headlines and articles belong to their publishers; Agent Reach is not affiliated with the outlets it links to.'})),
+          h('p', {text: 'AI-generated summaries: they can contain mistakes. Always check the linked sources. Headlines and articles belong to their publishers; Agent Reach is not affiliated with the outlets it links to.'})),
         h('div', null, h('h3', {text: 'Read'}), h('ul', null,
           h('li', null, h('a', {href: '/daily/', text: 'Latest edition'})), h('li', null, h('a', {href: '/latest/', text: 'Latest News'})),
           h('li', null, h('a', {href: '/archive/', text: 'Archive'})), h('li', null, h('a', {href: '/search/', text: 'Search the archive'})),
@@ -646,6 +649,13 @@ if (typeof module !== 'undefined') module.exports = {normOutlet, dedupeOutlets, 
   }
   function renderSection(ed, idx, cat) {
     const sec = SECTION[cat];
+    if (sec.retired) { // an old link to a retired section: say so, and point to the editions that had it
+      mount(cat, ed, h('div', {class: 'wrap'}, h('header', {class: 'page-head', 'data-cat': cat}, h('h1', {text: sec.title}),
+        h('p', null, `This section was retired on ${sec.retired}. Editions published before then still show their ${sec.label} stories in `,
+          h('a', {href: '/archive/', text: 'the archive'}), '. ', h('a', {href: '/', text: 'Read today’s edition'}), '.'))));
+      document.title = `${sec.title} | Agent Reach Daily`;
+      return;
+    }
     const ids = ((ed.sections || []).find(x => x.category === cat) || {ids: []}).ids;
     const stories = ids.map(id => ed.byId[id]).filter(Boolean);
     mount(cat, ed, h('div', {class: 'wrap'}, strip(ed, idx),
@@ -654,7 +664,7 @@ if (typeof module !== 'undefined') module.exports = {normOutlet, dedupeOutlets, 
       stories.length ? h('section', {class: 'band', 'data-cat': cat, 'aria-label': sec.title}, h('div', {class: 'wrap'},
         h('div', {class: 'grid'}, stories.map((s, i) => card(ed, s, i === 0 && stories.length >= 3 ? 'feature' : '', 'h2')))))
         : h('div', {class: 'wrap state'}, h('h2', {text: `No ${sec.title} stories in this edition`}),
-          h('p', null, cat === 'Local' ? 'Local stories appear here when an edition has them. ' : 'Other sections may have more today. ',
+          h('p', null, 'Other sections may have more today. ',
             h('a', {href: '/', text: 'Read the full edition'}), '.')));
     document.title = `${sec.title} | Agent Reach Daily`;
   }
@@ -674,7 +684,7 @@ if (typeof module !== 'undefined') module.exports = {normOutlet, dedupeOutlets, 
           h('div', {class: 'ed-day'}, String(dayOf(e.date).getUTCDate()), h('small', {text: dayOf(e.date).toLocaleDateString('en-US', {weekday: 'long', timeZone: 'UTC'})})),
           h('div', null, h('p', {class: 'ed-lead', text: e.lead}), h('ul', {class: 'ed-more'}, (e.headlines || []).map(t => h('li', {text: t}))),
             h('div', {class: 'chips'}, Object.entries(e.sections || {}).map(([c, n]) => h('span', {class: 'chip', text: `${catLabel(c)} ${n}`})))),
-          h('div', {class: 'ed-count', text: plural(e.stories, 'story', 'stories')}))))) : h('p', {class: 'state', text: 'No editions have been published yet.'}))));
+          h('div', {class: 'ed-count'}, plural(e.stories, 'story', 'stories'), e.revision > 1 ? h('small', {text: `Update ${e.revision}`}) : null))))) : h('p', {class: 'state', text: 'No editions have been published yet.'}))));
     document.title = 'Archive | Agent Reach Daily';
   }
 
@@ -738,7 +748,7 @@ if (typeof module !== 'undefined') module.exports = {normOutlet, dedupeOutlets, 
     const data = new Map();   // month -> entries with folded text, or null when it could not be loaded
     const pending = new Map();
     const requestedCat = params.get('cat') || '';
-    const st = {q: params.get('q') || '', cat: Object.hasOwn(SECTION, requestedCat) ? requestedCat : '', sort: params.get('sort') === 'best' ? 'best' : 'new',
+    const st = {q: params.get('q') || '', cat: CURRENT_SECTIONS.includes(requestedCat) ? requestedCat : '', sort: params.get('sort') === 'best' ? 'best' : 'new',
       horizon: Math.min(SEARCH_BATCH, months.length), shown: SEARCH_PAGE, run: 0};
     function load(m) {
       if (!pending.has(m)) pending.set(m, getJson(`/search/${m}.json`).then(doc => {
@@ -755,7 +765,7 @@ if (typeof module !== 'undefined') module.exports = {normOutlet, dedupeOutlets, 
     }
     const input = h('input', {id: 'archive-query', type: 'search', value: st.q, placeholder: 'A name, place or topic', 'aria-label': 'Search the archive', 'aria-describedby': 'search-help', autocomplete: 'off', enterkeyhint: 'search'});
     const cat = h('select', {'aria-label': 'Section'}, h('option', {value: '', text: 'All sections'}),
-      Object.keys(SECTION).map(c => h('option', {value: c, text: catLabel(c), selected: c === st.cat})));
+      CURRENT_SECTIONS.map(c => h('option', {value: c, text: catLabel(c), selected: c === st.cat})));
     const sortBtns = [['new', 'Newest first'], ['best', 'Best match']].map(([k, label]) =>
       h('button', {type: 'button', class: 'seg', 'data-sort': k, 'aria-pressed': String(st.sort === k), text: label}));
     const form = h('form', {class: 'search-form search-tools', role: 'search'},
