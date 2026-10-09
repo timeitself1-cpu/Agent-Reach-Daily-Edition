@@ -239,7 +239,10 @@ DEFAULT_FEEDS = DEFAULT_FEEDS + ADDED_IN_V2 + ADDED_IN_V3 + ADDED_IN_V4
 
 #: Local news for the Local section (Frisco, Texas and North Texas; pipeline/local.py decides which stories
 #: are local). Candidates are checked against the live sites by `python -m tests.live_feeds` (CI workflow
-#: feed-check); only feeds that answered with articles there are in ADDED_IN_V11.
+#: feed-check); only feeds that answered with articles there are in ADDED_IN_V11. Oct 9, 2026: Community
+#: Impact (404), Frisco Enterprise (429), Local Profile (404), KERA (403) and The Dallas Morning News (invalid
+#: XML) failed; NBC DFW's main feed had not changed in 27 days; Fort Worth Report works but covers Fort Worth.
+#: Frisco's own outlets still arrive through the Google News searches in pipeline/local.py.
 LOCAL_CANDIDATES = [
     _f("City of Frisco - News", "https://www.friscotexas.gov/RSSFeed.aspx?ModID=1&CID=All-newsflash.xml", "Local"),
     _f("Community Impact - Frisco", "https://communityimpact.com/dallas-fort-worth/frisco/feed/", "Local"),
@@ -254,7 +257,9 @@ LOCAL_CANDIDATES = [
     _f("The Dallas Morning News", "https://www.dallasnews.com/arc/outboundfeeds/rss/?outputType=xml", "Local"),
     _f("Fort Worth Report", "https://fortworthreport.org/feed/", "Local"),
 ]
-ADDED_IN_V11: list[FeedSpec] = []
+_CHECKED_LOCAL = ("City of Frisco - News", "NBC DFW - Local", "WFAA - Local", "FOX 4 Dallas-Fort Worth - Local",
+                  "CBS News Texas")
+ADDED_IN_V11: list[FeedSpec] = [f for f in LOCAL_CANDIDATES if f.name in _CHECKED_LOCAL]
 DEFAULT_FEEDS = DEFAULT_FEEDS + ADDED_IN_V11
 
 #: Settings version 5: feeds that failed in real use, mapped to their replacement (None = removed).

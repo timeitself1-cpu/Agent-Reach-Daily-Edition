@@ -335,7 +335,7 @@ class DailyWindow:
         self.root.bind("<Control-comma>", lambda e: self.open_settings())
         self.root.bind("<Control-q>", lambda e: self._on_close())
         self.root.bind("<Control-f>", lambda e: self.search_entry.focus_set())
-        for n in range(1, 8):
+        for n in range(1, 10):  # Top Stories, then up to eight categories
             self.root.bind(f"<Control-Key-{n}>", lambda e, n=n: self._section_by_number(n))
         for key, step in (("j", 1), ("k", -1)):
             self.root.bind(f"<KeyPress-{key}>", lambda e, step=step: None if self._typing() else self.jump_story(step))
@@ -367,7 +367,7 @@ class DailyWindow:
             "O              open the story's main article\n"
             "S              show or hide the story's sources\n"
             "P              listen to the podcast\n"
-            "Ctrl+1 ... 7   Top Stories, then each category\n"
+            "Ctrl+1 ... 8   Top Stories, then each category\n"
             "Ctrl+F         search (Esc clears)\n"
             "F5 or Ctrl+R   refresh now\n"
             "Ctrl+D         details, sources and changes\n"

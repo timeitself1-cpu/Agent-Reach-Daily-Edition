@@ -10,7 +10,7 @@ import httpx
 import pytest
 
 from agent_reach.config import DEFAULT_GOOGLE_NEWS_SECTIONS, Settings
-from agent_reach.daily.feeds import ADDED_IN_V3, ADDED_IN_V4, FeedSpec, check_feed
+from agent_reach.daily.feeds import ADDED_IN_V3, ADDED_IN_V4, ADDED_IN_V11, FeedSpec, check_feed
 from agent_reach.daily.prefs import PREFS_VERSION, DailyPrefs, build_settings, load_prefs
 from agent_reach.ingestion import INGESTER_REGISTRY
 from agent_reach.ingestion.search import GoogleNewsIngester
@@ -229,7 +229,7 @@ def test_version_2_settings_gain_new_sources_once(daily_paths):
     assert warning is None and prefs.prefs_version == PREFS_VERSION == 11
     assert {"youtube", "mastodon", "bluesky"} <= set(prefs.enabled_sources) and prefs.max_items_for_llm == 260
     assert "tiktok" not in prefs.enabled_sources  # switched on in v3, off again from v5 (TikTok blocks readers)
-    assert prefs.feeds[0].name == "Local Paper" and len(prefs.feeds) == 1 + len(ADDED_IN_V3) + len(ADDED_IN_V4)
+    assert prefs.feeds[0].name == "Local Paper" and len(prefs.feeds) == 1 + len(ADDED_IN_V3) + len(ADDED_IN_V4) + len(ADDED_IN_V11)
 
     # a version-3 file is taken as it is: a source the user turned off stays off
     current = prefs.model_dump(mode="json")

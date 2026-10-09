@@ -723,7 +723,8 @@ def test_version_7_settings_replace_the_independent():
     indy = "https://www.independent.co.uk/news/world/rss"  # HTTP 429 for every automated reader, 5 runs in a row
     prefs = DailyPrefs.model_validate({"prefs_version": 7, "feeds": [
         {"name": "The Independent - World", "url": indy, "category": "News"}]})
-    assert [f.name for f in prefs.feeds] == ["CBS News - World"]
+    from agent_reach.daily.feeds import ADDED_IN_V11
+    assert [f.name for f in prefs.feeds] == ["CBS News - World"] + [f.name for f in ADDED_IN_V11]  # + version 11
     assert indy not in {f.url for f in default_feeds()}
 
 
