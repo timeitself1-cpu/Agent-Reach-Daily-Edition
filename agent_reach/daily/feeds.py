@@ -237,6 +237,31 @@ ADDED_IN_V4: list[FeedSpec] = [
 ]
 DEFAULT_FEEDS = DEFAULT_FEEDS + ADDED_IN_V2 + ADDED_IN_V3 + ADDED_IN_V4
 
+#: Local news for the Local section (Frisco, Texas and North Texas; pipeline/local.py decides which stories
+#: are local). Candidates are checked against the live sites by `python -m tests.live_feeds` (CI workflow
+#: feed-check); only feeds that answered with articles there are in ADDED_IN_V11. Oct 9, 2026: Community
+#: Impact (404), Frisco Enterprise (429), Local Profile (404), KERA (403) and The Dallas Morning News (invalid
+#: XML) failed; NBC DFW's main feed had not changed in 27 days; Fort Worth Report works but covers Fort Worth.
+#: Frisco's own outlets still arrive through the Google News searches in pipeline/local.py.
+LOCAL_CANDIDATES = [
+    _f("City of Frisco - News", "https://www.friscotexas.gov/RSSFeed.aspx?ModID=1&CID=All-newsflash.xml", "Local"),
+    _f("Community Impact - Frisco", "https://communityimpact.com/dallas-fort-worth/frisco/feed/", "Local"),
+    _f("Frisco Enterprise", "https://starlocalmedia.com/search/?f=rss&t=article&c=friscoenterprise&l=50&s=start_time&sd=desc", "Local"),
+    _f("Local Profile", "https://localprofile.com/feed/", "Local"),
+    _f("NBC DFW - Local", "https://www.nbcdfw.com/news/local/feed/", "Local"),
+    _f("NBC DFW", "https://www.nbcdfw.com/feed/", "Local"),
+    _f("WFAA - Local", "https://www.wfaa.com/feeds/syndication/rss/news/local", "Local"),
+    _f("KERA News", "https://www.keranews.org/news.rss", "Local"),
+    _f("FOX 4 Dallas-Fort Worth - Local", "https://www.fox4news.com/rss/category/local-news", "Local"),
+    _f("CBS News Texas", "https://www.cbsnews.com/texas/latest/rss/main", "Local"),
+    _f("The Dallas Morning News", "https://www.dallasnews.com/arc/outboundfeeds/rss/?outputType=xml", "Local"),
+    _f("Fort Worth Report", "https://fortworthreport.org/feed/", "Local"),
+]
+_CHECKED_LOCAL = ("City of Frisco - News", "NBC DFW - Local", "WFAA - Local", "FOX 4 Dallas-Fort Worth - Local",
+                  "CBS News Texas")
+ADDED_IN_V11: list[FeedSpec] = [f for f in LOCAL_CANDIDATES if f.name in _CHECKED_LOCAL]
+DEFAULT_FEEDS = DEFAULT_FEEDS + ADDED_IN_V11
+
 #: Settings version 5: feeds that failed in real use, mapped to their replacement (None = removed).
 #: VentureBeat answers automated readers with HTTP 429; MIT News moved its topic feeds; Space.com's
 #: feed came back empty.

@@ -74,7 +74,7 @@ PALETTES: dict[str, dict] = {
         "categories": {
             "News": ("#e5f0ff", "#0060df"), "Sports": ("#e3f6e8", "#248a3d"), "Entertainment": ("#fdebf3", "#c41e6a"),
             "Tech": ("#eef0f3", "#5e5ce6"), "Science & AI": ("#fff4e0", "#b25000"),
-            "Internet Culture": ("#f4ecff", "#8944ab")},
+            "Internet Culture": ("#f4ecff", "#8944ab"), "Local": ("#e2f5f6", "#0a6d73")},
         "tags": {"new": "#248a3d", "updated": "#0060df", "day": "#b25000", "follow": "#a05a00"},
         "labels": {
             "Hot": ("#ffe5e3", "#d70015"), "Rising": ("#fff1dd", "#b25000"), "New": ("#e1f5f2", "#0b7a6b"),
@@ -91,7 +91,7 @@ PALETTES: dict[str, dict] = {
         "categories": {
             "News": ("#14243d", "#64a8ff"), "Sports": ("#14301d", "#4cd964"), "Entertainment": ("#3a1528", "#ff7eb6"),
             "Tech": ("#26263a", "#a5a3ff"), "Science & AI": ("#3a2a10", "#ffb340"),
-            "Internet Culture": ("#2c1a3a", "#d39bff")},
+            "Internet Culture": ("#2c1a3a", "#d39bff"), "Local": ("#10302f", "#5fd4d0")},
         "tags": {"new": "#30d158", "updated": "#64a8ff", "day": "#ffb340", "follow": "#ffd60a"},
         "labels": {
             "Hot": ("#3c1614", "#ff6961"), "Rising": ("#3a2a10", "#ffb340"), "New": ("#10302b", "#5edcc8"),
@@ -335,7 +335,7 @@ class DailyWindow:
         self.root.bind("<Control-comma>", lambda e: self.open_settings())
         self.root.bind("<Control-q>", lambda e: self._on_close())
         self.root.bind("<Control-f>", lambda e: self.search_entry.focus_set())
-        for n in range(1, 8):
+        for n in range(1, 10):  # Top Stories, then up to eight categories
             self.root.bind(f"<Control-Key-{n}>", lambda e, n=n: self._section_by_number(n))
         for key, step in (("j", 1), ("k", -1)):
             self.root.bind(f"<KeyPress-{key}>", lambda e, step=step: None if self._typing() else self.jump_story(step))
@@ -367,7 +367,7 @@ class DailyWindow:
             "O              open the story's main article\n"
             "S              show or hide the story's sources\n"
             "P              listen to the podcast\n"
-            "Ctrl+1 ... 7   Top Stories, then each category\n"
+            "Ctrl+1 ... 8   Top Stories, then each category\n"
             "Ctrl+F         search (Esc clears)\n"
             "F5 or Ctrl+R   refresh now\n"
             "Ctrl+D         details, sources and changes\n"

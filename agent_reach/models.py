@@ -36,10 +36,17 @@ class CategoryEnum(str, Enum):
     NEWS = "News"
     INTERNET_CULTURE = "Internet Culture"
     SCIENCE_AI = "Science & AI"
+    #: news of the reader's own area; set by a fixed rule (agent_reach/pipeline/local.py), never by the model
+    LOCAL = "Local"
 
     @classmethod
     def values(cls) -> list[str]:
         return [c.value for c in cls]
+
+    @classmethod
+    def model_values(cls) -> list[str]:
+        """The categories the labelling model may choose (Local is decided by rule)."""
+        return [c.value for c in cls if c is not cls.LOCAL]
 
 
 class SourceName(str, Enum):

@@ -128,6 +128,38 @@ def test_public_edition_carries_the_news_and_nothing_private():
     assert P.public_edition(ed) == pub  # deterministic: a retry produces the same bytes
 
 
+def test_each_story_names_the_article_its_headline_opens():
+    """The website's headline opens the same article as the HTML export's: one of the story's own sources, a
+    publisher article ahead of search and social pages (Google News, Reddit, X) whenever the story has one."""
+    from agent_reach.daily.edition import primary_url
+    from agent_reach.ingestion.google_urls import is_google_news
+    ed = real_edition()
+    pub = P.public_edition(ed)
+    by_id = {s.story_id[:12]: s for s in ed.stories}
+    linked = 0
+    for s in pub["stories"]:
+        urls = [src["url"] for src in s["sources"] if src["url"]]
+        if not urls:
+            assert s["url"] is None
+            continue
+        linked += 1
+        assert s["url"] in urls and s["url"] == primary_url(by_id[s["id"]])
+        articles = [u for u in urls if not is_google_news(u) and not any(
+            host in u for host in ("reddit.com", "x.com/", "twitter.com", "bsky.app", "trends24.in"))]
+        if articles:
+            assert not is_google_news(s["url"])
+    assert linked == len(pub["stories"])
+    # archive search carries the same link, so a search result opens the article too
+    entries = {e["id"]: e for e in P.search_entries(pub)}
+    assert all(entries[s["id"]].get("u") == s["url"] for s in pub["stories"])
+
+
+def test_the_sitemap_lists_every_section_page():
+    sitemap = P.sitemap_xml({"editions": []}).decode()
+    for path in ("world/", "technology/", "science/", "sports/", "entertainment/", "internet-culture/"):
+        assert f"<loc>https://getagentreach.dev/{path}</loc>" in sitemap
+
+
 def test_text_that_looks_like_a_local_path_is_never_published(daily_paths, tmp_path):
     """Such a story is left out and named in the result; the rest of the day still goes up (audit F10: one
     headline about "AppData" kept the whole edition off the site)."""
@@ -325,7 +357,7 @@ def test_archive_search_files_per_month_repair_themselves(daily_paths, tmp_path)
     assert days == sorted(days, reverse=True) and set(days) == {"2026-10-07", "2026-10-06"}
     first = month["stories"][0]
     assert first["h"] == "Margaret Hamilton, who led software development for the Apollo program, has died" and first["r"] == 1
-    assert set(first) == {"d", "id", "r", "t", "c", "h", "s", "o", "l"} and len(first["s"]) <= P.SEARCH_SUMMARY_CHARS + 1
+    assert set(first) - {"u"} == {"d", "id", "r", "t", "c", "h", "s", "o", "l"} and len(first["s"]) <= P.SEARCH_SUMMARY_CHARS + 1
     assert json.loads((tmp_path / "site/search/2026-09.json").read_text(encoding="utf-8"))["stories"][0]["d"] == "2026-09-30"
     # withdrawing the only date of a month removes that month's file
     assert P.withdraw(daily_paths, "2026-09-30", site).state == "withdrawn"

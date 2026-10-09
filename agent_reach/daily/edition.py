@@ -1060,7 +1060,7 @@ def top_stories(edition: "DailyEdition") -> list[Story]:
 
 
 #: Reading order of the category sections (any category not listed follows in enum order).
-SECTION_ORDER = ["News", "Tech", "Science & AI", "Sports", "Entertainment", "Internet Culture"]
+SECTION_ORDER = ["News", "Local", "Tech", "Science & AI", "Sports", "Entertainment", "Internet Culture"]
 
 
 def section_order() -> list[str]:

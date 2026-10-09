@@ -56,7 +56,8 @@ from xml.sax.saxutils import escape as xml_escape
 from pydantic import BaseModel, Field
 
 from agent_reach.daily import __version__
-from agent_reach.daily.edition import DailyEdition, Story, category_sections, newest_published, safe_url, top_stories
+from agent_reach.daily.edition import (DailyEdition, Story, category_sections, newest_published, primary_url,
+                                      safe_url, top_stories)
 from agent_reach.daily.fsutil import FileUnavailable, atomic_write_bytes, atomic_write_json, read_json, unlink_with_retry
 from agent_reach.daily.lock import LockBusy, RefreshLock
 from agent_reach.daily.paths import DataPaths
@@ -84,7 +85,8 @@ SEARCH_SCHEMA = "agent_reach.search_month"
 SEARCH_SUMMARY_CHARS = 280
 SEARCH_OUTLETS = 5
 # Page shells that exist on the site whatever is published (sitemap.xml lists them).
-STATIC_PAGES = ("", "daily/", "latest/", "technology/", "science/", "world/", "archive/", "about/")
+STATIC_PAGES = ("", "daily/", "latest/", "world/", "local/", "technology/", "science/", "sports/", "entertainment/",
+                "internet-culture/", "archive/", "about/")
 #: Environment variable that overrides the stored access key (CI, a portable install).
 TOKEN_ENV = "AGENT_REACH_PUBLISH_TOKEN"
 HTTP_TIMEOUT_S = 30.0
@@ -361,8 +363,12 @@ def _public_story(s: Story, edition: DailyEdition, change: str, top_rank: int | 
                         "via": "Google News" if is_google_news(url) else ev.source_name, "title": ev.title,
                         "url": url, "published_utc": _utc(ev.published_at_utc), "kind": kind})
     labels = [label for label in s.labels if label in ("Hot", "Rising")]
+    # the article the headline opens, as in the HTML export: the first cited publisher article, never a
+    # search/social page when a real article exists (optional field, schema version 1 is unchanged)
+    link = primary_url(s)
     return {"id": s.story_id[:12], "rank": s.rank, "top_rank": top_rank, "category": s.category.value,
-            "headline": headline, "summary": summary, "why_it_matters": s.why_it_matters,
+            "headline": headline, "url": link if any(x["url"] == link for x in sources) else None,
+            "summary": summary, "why_it_matters": s.why_it_matters,
             "change": change, "labels": labels, "newest_published_utc": _utc(newest_published(s)),
             "coverage": {"level": strength.level, "independent_reports": strength.independent_reports,
                          "publishers": list(strength.publishers), "repeats": strength.duplicates_collapsed,
@@ -595,6 +601,8 @@ def search_entries(public: dict) -> list[dict]:
         out.append({"d": public["edition_date"], "id": s["id"], "r": s["rank"], "t": s["top_rank"],
                     "c": s["category"], "h": s["headline"], "s": _clip(" ".join(s["summary"]), SEARCH_SUMMARY_CHARS),
                     "o": names[:SEARCH_OUTLETS], "l": s["coverage"]["level"]})
+        if s.get("url"):
+            out[-1]["u"] = s["url"]
     return out
 
 

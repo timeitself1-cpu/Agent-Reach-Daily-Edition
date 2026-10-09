@@ -87,9 +87,16 @@ def install() -> None:
         from agent_reach.daily.store import EditionStore
         real_refresh = R.refresh
 
+        from agent_reach.daily.timeutil import CENTRAL
+
         def refresh(paths, **kwargs):
             state, _ = load_state(paths)
             when = datetime.now(timezone.utc)
+            local = when.astimezone(CENTRAL)
+            if local.hour >= 20:
+                # tests make up to three hourly revisions of one date: after 8 pm Central the later ones would
+                # cross midnight into a new edition date, so the simulated day starts at noon instead
+                when = local.replace(hour=12, minute=0, second=0, microsecond=0).astimezone(timezone.utc)
             if state.last_success_utc is not None:
                 when = max(when, state.last_success_utc + timedelta(hours=1))
             else:

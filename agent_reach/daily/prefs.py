@@ -20,6 +20,7 @@ from agent_reach.daily.feeds import (
     ADDED_IN_V2,
     ADDED_IN_V3,
     ADDED_IN_V4,
+    ADDED_IN_V11,
     REPLACED_IN_V5,
     REPLACED_IN_V6,
     REPLACED_IN_V7,
@@ -56,7 +57,7 @@ SOURCE_NOTES = {
     "producthunt": "Product Hunt launches (tech)",
     "arxiv": "arXiv AI/ML papers (research)",
 }
-PREFS_VERSION = 10
+PREFS_VERSION = 11
 DAILY_VELOCITY_WINDOWS = [24.0, 48.0, 168.0]
 DAILY_VELOCITY_WEIGHTS = [0.5, 0.3, 0.2]
 DAILY_VELOCITY_TOLERANCE = 0.25
@@ -86,6 +87,8 @@ class DailyPrefs(BaseModel):
     enabled_sources: list[str] = Field(default_factory=lambda: list(DAILY_DEFAULT_SOURCES))
     feeds: list[FeedSpec] = Field(default_factory=default_feeds)  # one entry per publisher feed
     geo: str = "US"
+    #: the area of the Local section (agent_reach/pipeline/local.py AREAS); "" = no Local section
+    local_area: str = "frisco-tx"
     contact_email: str = ""
 
     ollama_host: str = "http://localhost:11434"
@@ -155,7 +158,9 @@ class DailyPrefs(BaseModel):
           CBS News's (``REPLACED_IN_V8``);
         * version 8 -> 9: story grouping uses EmbeddingGemma 2 (``embeddinggemma-2:270m``) instead of
           nomic-embed-text, which stays as the fallback when the new model is not installed. A model the
-          user chose themselves is kept.
+          user chose themselves is kept;
+        * version 10 -> 11: the Local section (Frisco, Texas by default, ``local_area``) and its local news
+          feeds (``ADDED_IN_V11``).
         """
         if not isinstance(data, dict):
             return data
@@ -206,6 +211,10 @@ class DailyPrefs(BaseModel):
                 data['embed_model'] = 'nomic-embed-text'
             data['embed_fallback_models'] = [m for m in data.get('embed_fallback_models', [])
                                            if m != 'embeddinggemma-2:270m' and m != data.get('embed_model')]
+        if version < 11 and isinstance(data.get("feeds"), list):
+            have = {str((f.get("url") if isinstance(f, dict) else getattr(f, "url", "")) or "").lower()
+                    for f in data["feeds"]}
+            data["feeds"] = list(data["feeds"]) + [f.model_copy() for f in ADDED_IN_V11 if f.url.lower() not in have]
         data["prefs_version"] = PREFS_VERSION
         return data
 
@@ -316,6 +325,7 @@ def build_settings(prefs: DailyPrefs, paths: DataPaths, **overrides: Any):
     from agent_reach.config import Settings
 
     from agent_reach.config import DEFAULT_GOOGLE_NEWS_SECTIONS
+    from agent_reach.pipeline.local import google_news_sections as local_google_news
 
     channels = [f.entry() for f in prefs.enabled_youtube_channels()]
     sources = [s for s in prefs.enabled_sources if s != "youtube" or channels]  # no channels on: nothing to read
@@ -328,7 +338,8 @@ def build_settings(prefs: DailyPrefs, paths: DataPaths, **overrides: Any):
         news_rss_max_total_items=900,
         youtube_channels=channels,
         youtube_items_per_channel=3,
-        google_news_sections=list(DEFAULT_GOOGLE_NEWS_SECTIONS),
+        google_news_sections=list(DEFAULT_GOOGLE_NEWS_SECTIONS) + local_google_news(prefs.local_area),
+        local_area=prefs.local_area,
         wikipedia_in_the_news=True,
         max_items_for_llm=prefs.max_items_for_llm,
         max_items_per_source=60,

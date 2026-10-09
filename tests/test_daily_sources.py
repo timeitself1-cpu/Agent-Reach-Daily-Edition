@@ -194,8 +194,10 @@ def test_feed_health_and_publishers_in_a_real_edition(daily_env):
     gn = next(h for h in ed.source_health if h.source == "google_news")
     total = len(rss.feeds) + len(gn.feeds)  # publisher feeds + Google News sections
     from agent_reach.config import DEFAULT_GOOGLE_NEWS_SECTIONS
+    from agent_reach.pipeline.local import google_news_sections
 
-    assert len(gn.feeds) == 1 + len(DEFAULT_GOOGLE_NEWS_SECTIONS) and all(f.status == "ok" for f in gn.feeds)
+    local = google_news_sections("frisco-tx")  # the default Local area's searches
+    assert len(gn.feeds) == 1 + len(DEFAULT_GOOGLE_NEWS_SECTIONS) + len(local) and all(f.status == "ok" for f in gn.feeds)
     assert any(f"1 of {total} feeds returned nothing: Arts Four" in w for w in ed.coverage.warnings)
     pubs = {r.publisher: r for r in A.publisher_breakdown(ed)}
     assert "Daily Two" in pubs and "Google News" in pubs["Daily Two"].channels  # publisher reached via an aggregator
