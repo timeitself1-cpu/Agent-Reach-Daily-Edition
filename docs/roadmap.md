@@ -126,8 +126,8 @@ they do not replace a week of production observation for quality and churn targe
   Technology and Science & AI. The navigation lists all six in one row that scrolls sideways on phones.
 - **Shorter phone pages.** Home bands show up to five stories (three on phones) and link to the full section;
   summaries are clamped; the per-card source lists moved to the story page. At 390px, Home went from 18,674px
-  to 11,087px and the top story's headline from 534px to 339px down the page; Latest from 20,788px to
-  15,802px. On story pages the breadcrumb and edition line share one row: the headline starts at 232px (was 323px).
+  to 11,395px and the top story's headline from 534px to 339px down the page; Latest from 20,788px to
+  15,930px (measured after the outlet tags and ticker below). On story pages the breadcrumb and edition line share one row: the headline starts at 232px (was 323px).
 - **A light theme.** It follows the system by default; the footer has Auto / Light / Dark. `assets/theme.js`
   applies a saved choice before the first paint (the CSP allows no inline scripts), and the build adds it to the
   app's dated shells too.
@@ -135,3 +135,14 @@ they do not replace a week of production observation for quality and churn targe
   320, 390 and 1440px in both themes; Home's `landmark-unique` is fixed and section links are 44px tall.
 - **Load.** Same-conditions comparison with `main` (slow 4G, 4× CPU, median of 3): load timing unchanged within
   noise; Home has 803 elements instead of 1,385 and Latest's blocking time fell from 472ms to 373ms.
+- **Outlet tags.** Stories reported by several independent outlets show them as tags (widely known national and
+  international newsrooms such as AP, Reuters and the BBC first; the story page lists every outlet). A
+  single-source story keeps its plain outlet name and the "Single source" coverage label.
+- **Edition ticker.** The edition's numbers are no longer behind "Details": one line under the header shows
+  freshness, date and update, stories, reports, source types that answered (amber when some did not), what changed
+  since the previous update (new, updated and, when the app sends `changes`, dropped) and how long ago it was
+  generated, refreshed every minute. On phones it scrolls sideways inside itself; story pages keep the compact
+  breadcrumb row instead.
+- **Not done: thumbnails.** Lead-story images would load from publishers' servers, which the About page's privacy
+  promise ("loads nothing from other servers") and the CSP (`img-src 'self'`) rule out; copying them to this site
+  raises copyright questions for news photos. Waiting on the owner's decision.

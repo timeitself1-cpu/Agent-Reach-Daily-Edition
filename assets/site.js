@@ -151,9 +151,23 @@ if (typeof module !== 'undefined') module.exports = {normOutlet, dedupeOutlets};
   }
   const independentCount = s => Math.min(s.coverage?.independent_reports || 0, publisherList(s).length);
   const sourceLinks = s => s.sources.filter(x => webUrl(x.url)).length;
-  function outlets(s) {
-    const names = publisherList(s);
-    return names.length > 2 ? `${names.slice(0, 2).join(', ')} +${names.length - 2}` : names.join(', ');
+  // Independent outlets as tags, widely known national and international newsrooms first, so a story carried
+  // by AP, Reuters and the BBC shows it at a glance. Every outlet is listed on the story page.
+  const MAJOR_OUTLETS = ['AP News', 'Reuters', 'AFP', 'BBC News', 'The New York Times', 'The Washington Post',
+    'The Wall Street Journal', 'Bloomberg', 'Financial Times', 'The Guardian', 'NPR', 'PBS NewsHour', 'CNN',
+    'ABC News', 'CBS News', 'NBC News', 'Al Jazeera', 'DW', 'The Economist', 'Politico', 'Axios', 'CNBC'];
+  function orderedOutlets(s) {
+    const rank = n => { const i = MAJOR_OUTLETS.indexOf(n); return i < 0 ? MAJOR_OUTLETS.length : i; };
+    return publisherList(s).map((n, i) => [n, i]).sort((a, b) => rank(a[0]) - rank(b[0]) || a[1] - b[1]).map(x => x[0]);
+  }
+  function outletTags(s, max = 3) {
+    const names = orderedOutlets(s);
+    if (names.length < 2) return names.length ? h('span', {class: 'outlets', text: names[0]}) : null;
+    const shown = names.slice(0, max), rest = names.length - shown.length;
+    return h('span', {class: 'outlets outlet-tags', title: 'Reported independently by ' + names.join(', ')},
+      h('span', {class: 'sr', text: `Reported independently by ${plural(names.length, 'outlet')}: `}),
+      shown.map((n, i) => [i ? h('span', {class: 'sr', text: ', '}) : null, h('span', {class: 'tag', text: n})]),
+      rest ? [h('span', {class: 'sr', text: ' and '}), h('span', {class: 'tag more', text: `+${rest}`}), h('span', {class: 'sr', text: ' more'})] : null);
   }
   function badges(s) {
     const out = [];
@@ -197,7 +211,7 @@ if (typeof module !== 'undefined') module.exports = {normOutlet, dedupeOutlets};
     const when = ago(s.newest_published_utc);
     return h('div', {class: 'meta'},
       when && !opts.noTime ? h('time', {datetime: s.newest_published_utc, 'data-relative': 'true', title: 'Newest report: ' + stamp(s.newest_published_utc), text: when}) : null,
-      opts.noOutlets ? null : h('span', {class: 'outlets', text: outlets(s)}), covMeter(s),
+      opts.noOutlets ? null : outletTags(s, opts.tags || 3), covMeter(s),
       opts.ed ? storyLink(opts.ed, s) : null);
   }
   function card(ed, s, variant, tag = 'h3') {
@@ -226,6 +240,13 @@ if (typeof module !== 'undefined') module.exports = {normOutlet, dedupeOutlets};
     if (!row || !here || row.scrollWidth <= row.clientWidth) return;
     row.scrollLeft = Math.max(0, here.offsetLeft - (row.clientWidth - here.offsetWidth) / 2);
   }
+  // A ticker that scrolls sideways (phones) can be scrolled from the keyboard too.
+  function scrollableTicker() {
+    const t = document.querySelector('.ticker');
+    if (!t) return;
+    if (t.scrollWidth > t.clientWidth + 1) t.setAttribute('tabindex', '0'); else t.removeAttribute('tabindex');
+  }
+  window.addEventListener('resize', scrollableTicker);
   // Reader-chosen theme: Auto follows the system; assets/theme.js applies a saved choice before the first paint.
   const THEMES = [['auto', 'Auto'], ['light', 'Light'], ['dark', 'Dark']];
   function savedTheme() {
@@ -270,7 +291,7 @@ if (typeof module !== 'undefined') module.exports = {normOutlet, dedupeOutlets};
     const app = document.getElementById('app');
     const nodes = [masthead(current, ed), main, footer()];
     if (app) app.replaceChildren(...nodes); else body.replaceChildren(...nodes, pageStatus, extNote);
-    revealCurrentNav();
+    revealCurrentNav(); scrollableTicker();
     if (!active.isConnected) {
       const newScope = scope && document.querySelector(scope.classList.contains('masthead') ? '.masthead' : '.footer');
       const target = wasSkip ? document.querySelector('.skip') : focusedLink && newScope
@@ -333,16 +354,32 @@ if (typeof module !== 'undefined') module.exports = {normOutlet, dedupeOutlets};
         h('li', null, h('a', {href: '/search/?q=' + encodeURIComponent('"' + s.headline + '"'), text: s.headline})))));
     }
     details.hidden = true;
-    const summary = crumbs ? `${latest ? 'Latest' : 'Archived'}${ed.revision > 1 ? ` · Update ${ed.revision}` : ''}`
-      : `${shortDate(ed.edition_date)} · ${latest ? 'Latest' : 'Archived'}${ed.revision > 1 ? ` · Update ${ed.revision}` : ''} · ${plural(ed.stories.length, 'story', 'stories')}`;
     const toggle = h('button', {type: 'button', class: 'edition-toggle', 'aria-expanded': 'false', 'aria-controls': 'edition-details', 'aria-label': 'Show full edition details'},
-      h('span', {class: 'edition-toggle-text', text: summary}), h('span', {class: 'edition-toggle-label', text: 'Details'}));
+      crumbs ? h('span', {class: 'edition-toggle-text', text: `${latest ? 'Latest' : 'Archived'}${ed.revision > 1 ? ` · Update ${ed.revision}` : ''}`}) : null,
+      h('span', {class: 'edition-toggle-label', text: 'Details'}));
     toggle.addEventListener('click', () => {
       details.hidden = !details.hidden;
       toggle.setAttribute('aria-expanded', String(!details.hidden));
       toggle.setAttribute('aria-label', `${details.hidden ? 'Show' : 'Hide'} full edition details`);
     });
-    return h('div', {class: 'strip' + (crumbs ? ' with-crumbs' : '')}, h('div', {class: 'strip-row'}, crumbs || null, toggle), details);
+    return h('div', {class: 'strip' + (crumbs ? ' with-crumbs' : '')}, h('div', {class: 'strip-row'}, crumbs || ticker(ed, latest, ageH), toggle), details);
+  }
+  // The edition at a glance, always visible under the header: freshness, size, how many source types answered
+  // and what changed since the previous update. One line; it scrolls sideways on phones.
+  function ticker(ed, latest, ageH) {
+    const n = x => h('b', {text: Number(x || 0).toLocaleString('en-US')});
+    const answered = ed.sources_answered || 0, tried = ed.sources_tried || 0;
+    const count = kind => ed.stories.filter(s => s.change === kind).length;
+    const dropped = ed.changes && Array.isArray(ed.changes.dropped) ? ed.changes.dropped.length : null;
+    return h('ul', {class: 'ticker', 'aria-label': 'Edition status'},
+      h('li', {class: 'live' + (latest && ageH < 30 ? '' : ' old')}, h('b', {text: latest ? 'Latest edition' : 'Archived edition'})),
+      h('li', null, h('time', {datetime: ed.edition_date, text: shortDate(ed.edition_date)}), ed.revision > 1 ? ` · Update ${ed.revision}` : ''),
+      h('li', null, n(ed.stories.length), ed.stories.length === 1 ? ' story' : ' stories'),
+      h('li', null, n(ed.reports_read), ed.reports_read === 1 ? ' report' : ' reports'),
+      h('li', {class: tried && answered < tried ? 'warn' : null, title: `${answered} of ${tried} kinds of source answered during this run`}, h('b', {text: `${answered}/${tried}`}), ' source types up'),
+      ed.compared_with ? h('li', {class: 'diff'}, `Since update ${ed.compared_with.revision}: `, h('b', {class: 'up', text: `+${count('new')}`}), ' new · ',
+        n(count('updated')), ' updated', dropped != null ? [' · ', n(dropped), ' dropped'] : null) : null,
+      h('li', null, 'Generated ', h('time', {datetime: ed.generated_utc, 'data-relative': 'true', title: fullStamp(ed.generated_utc), text: ago(ed.generated_utc)})));
   }
   function notices(ed, idx) {
     const out = [];
@@ -358,13 +395,13 @@ if (typeof module !== 'undefined') module.exports = {normOutlet, dedupeOutlets};
       headline(ed, s, 'h1'),
       h('p', {class: 'dek', text: s.summary.join(' ')}),
       s.why_it_matters ? h('p', {class: 'why'}, h('b', {text: 'Why it matters: '}), s.why_it_matters) : null,
-      meta(s, {ed}));
+      meta(s, {ed, tags: 5}));
   }
   function rail(ed, stories) {
     return h('section', {class: 'rail', 'aria-labelledby': 'rail-title'}, h('h2', {class: 'rail-title', id: 'rail-title'}, h('span', {text: 'Top stories'})),
       stories.map((s, i) => h('article', {class: 'rail-item', id: 'story-' + s.id, 'data-cat': s.category}, h('span', {class: 'rail-num', 'aria-hidden': 'true', text: String(i + 2)}),
         kicker(s), headline(ed, s, 'h3'),
-        h('p', {class: 'dek', text: s.summary.join(' ')}), meta(s, {noOutlets: true, ed}))));
+        h('p', {class: 'dek', text: s.summary.join(' ')}), meta(s, {ed, tags: 2}))));
   }
   const BAND_STORIES = 5;
   function sectionBand(ed, cat, stories, title) {
@@ -476,7 +513,7 @@ if (typeof module !== 'undefined') module.exports = {normOutlet, dedupeOutlets};
         ? h('h1', {class: 'hl', tabindex: '-1'}, h('a', {class: 'out', href: url, rel: 'noopener noreferrer', target: '_blank', 'aria-describedby': 'ext-note', 'data-outlet': mainOutlet(s, url), text: s.headline}))
         : h('h1', {class: 'hl', tabindex: '-1', text: s.headline}),
         h('div', {class: 'meta'}, when ? h('time', {datetime: when, text: `Newest report ${fullStamp(when)}`}) : h('span', {text: 'Publication time not stated'}),
-          h('span', {class: 'outlets', text: outlets(s)}), covMeter(s)),
+          outletTags(s, 8), covMeter(s)),
         h('div', {class: 'story-actions'},
           url ? h('a', {class: 'pill solid read-source', href: url, rel: 'noopener noreferrer', target: '_blank', 'aria-describedby': 'ext-note'}, `Read at ${mainOutlet(s, url)}`) : null,
           h('button', {class: 'source-jump', type: 'button', text: `${plural(sourceLinks(s), 'source link')} ↓`}),
@@ -531,10 +568,10 @@ if (typeof module !== 'undefined') module.exports = {normOutlet, dedupeOutlets};
   function renderLatest(ed, idx) {
     const known = ed.stories.filter(s => s.newest_published_utc).sort((a, b) => Date.parse(b.newest_published_utc) - Date.parse(a.newest_published_utc));
     const rest = ed.ordered.filter(s => !s.newest_published_utc);
-    mount('latest', ed, h('div', {class: 'wrap'},
+    mount('latest', ed, h('div', {class: 'wrap'}, strip(ed, idx),
       h('header', {class: 'page-head'}, h('h1', {text: 'Latest News'}),
         h('p', {text: `Every story of the ${longDate(ed.edition_date)} edition, newest report first. Times are when the newest source says it was published, in your time zone.`})),
-      strip(ed, idx), notices(ed, idx),
+      notices(ed, idx),
       h('div', {class: 'river'}, known.concat(rest).map(s => h('article', {class: 'river-item', 'data-cat': s.category},
         h('div', {class: 'river-time'}, s.newest_published_utc ? [h('b', {text: new Date(s.newest_published_utc).toLocaleTimeString('en-US', {hour: 'numeric', minute: '2-digit'})}),
           new Date(s.newest_published_utc).toLocaleDateString('en-US', {month: 'short', day: 'numeric'})] : h('b', {text: 'Time not stated'})),
@@ -546,9 +583,9 @@ if (typeof module !== 'undefined') module.exports = {normOutlet, dedupeOutlets};
     const sec = SECTION[cat];
     const ids = ((ed.sections || []).find(x => x.category === cat) || {ids: []}).ids;
     const stories = ids.map(id => ed.byId[id]).filter(Boolean);
-    mount(cat, ed, h('div', {class: 'wrap'},
+    mount(cat, ed, h('div', {class: 'wrap'}, strip(ed, idx),
       h('header', {class: 'page-head', 'data-cat': cat}, h('h1', {text: sec.title}), h('p', {text: `${sec.blurb} From the ${longDate(ed.edition_date)} edition.`})),
-      strip(ed, idx), notices(ed, idx)),
+      notices(ed, idx)),
       stories.length ? h('section', {class: 'band', 'data-cat': cat, 'aria-label': sec.title}, h('div', {class: 'wrap'},
         h('div', {class: 'grid'}, stories.map((s, i) => card(ed, s, i === 0 && stories.length >= 3 ? 'feature' : '', 'h2')))))
         : h('div', {class: 'wrap state'}, h('p', {text: 'No stories in this section in the latest edition.'})));

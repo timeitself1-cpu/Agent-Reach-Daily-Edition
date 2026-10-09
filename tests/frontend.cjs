@@ -149,7 +149,11 @@ test('edition disclosure preserves all metadata with accessible state', async ()
   const p = await open('/');
   const toggle = p.d.querySelector('.edition-toggle'), details = p.d.querySelector('.edition-full');
   assert.equal(details.hidden, true);
-  assert.match(toggle.textContent, /Oct 7, 2026.*Latest.*Update 2.*44 stories/);
+  // The edition's numbers stay visible in the ticker; Details holds the full record.
+  const ticker = p.d.querySelector('.strip .ticker');
+  assert.equal(ticker.getAttribute('aria-label'), 'Edition status');
+  assert.match(ticker.textContent, /Latest edition.*Oct 7, 2026 · Update 2.*44 stories.*1,517 reports.*10\/10 source types up.*Generated/);
+  assert.ok(ticker.querySelector('time[data-relative][datetime="'+edition.generated_utc+'"]'));
   assert.ok(details.querySelector('time[datetime="'+edition.generated_utc+'"]'));
   toggle.click();
   assert.equal(details.hidden, false);
@@ -258,7 +262,10 @@ test('latest river and category pages retain every fixture story', async () => {
 test('roadmap lead deduplicates publishers and labels links separately', async () => {
   const ed = roadmapEdition, story = ed.stories[0];
   const p = await open('/daily/2026-10-07/#story-' + story.id, {fetch: u => u.includes('/editions/2026-10-07') ? ed : undefined});
-  assert.match(p.d.querySelector('.outlets').textContent, /^AP News, BBC News \+5$/);
+  const tags = [...p.d.querySelectorAll('.story-main .outlet-tags .tag')].map(t => t.textContent);
+  assert.deepEqual(tags.slice(0, 2), ['AP News', 'Reuters'], 'widely known newsrooms lead the tags');
+  assert.equal(tags.length, 7); assert.equal(new Set(tags).size, 7);
+  assert.match(p.d.querySelector('.story-main .outlet-tags').textContent, /^Reported independently by 7 outlets: AP News, Reuters, /);
   assert.match(p.d.querySelector('.facts').textContent, /7 independent outlets/);
   assert.doesNotMatch(p.d.querySelector('.facts').textContent, /apnews\.com|reuters\.com/);
   assert.match(p.d.querySelector('.source-jump').textContent, /8 source links/);
@@ -355,7 +362,7 @@ test('axe 4.10 reports no region or nested complementary landmarks', async () =>
 test('fresh, stale, and archived edition information survives', async () => {
   const p = await open('/');
   assert.match(p.d.querySelector('.strip').textContent, /Latest edition.*Update 2.*44 stories.*1,517 reports.*10 of 10/s);
-  assert.equal(p.d.querySelector('.strip time[datetime="2026-10-07T23:42:20Z"]').textContent.startsWith('Generated'),true);
+  assert.equal(p.d.querySelector('.edition-full time[datetime="2026-10-07T23:42:20Z"]').textContent.startsWith('Generated'),true);
   assert.equal(p.d.querySelector('.live.old'),null);
   p.close();
   const stale = await open('/', {now:'2026-10-10T16:00:00Z'});
@@ -659,7 +666,7 @@ test('failed edition load keeps archive recovery and safe text rendering', async
 test('generation and source times remain explicit on every news-reading view',async()=>{
   for(const path of ['/', '/daily/2026-10-07/', '/latest/', '/technology/', '/science/', '/world/', '/daily/2026-10-07/#story-'+edition.top[0]]) {
     const p=await open(path);
-    const generated=p.d.querySelector('.strip time[datetime="'+edition.generated_utc+'"]');
+    const generated=p.d.querySelector('.edition-full time[datetime="'+edition.generated_utc+'"]');
     assert.ok(generated,path);
     assert.match(generated.textContent,/Generated.*2026/);
     assert.match(p.d.querySelector('.strip').textContent,/Latest edition.*Update 2/);
@@ -746,4 +753,35 @@ test('withdrawn edition JSON and dated 404 shells provide archive recovery',asyn
   assert.ok(withdrawn.d.querySelector('main a[href="/archive/"]'));
   assert.equal(withdrawn.d.querySelector('#page-status').textContent,withdrawn.d.querySelector('h1').textContent);
   withdrawn.close();
+});
+
+test('the ticker shows what changed since the previous update and flags missing source types', async () => {
+  const ed = structuredClone(edition);
+  ed.compared_with = {edition_date: ed.edition_date, revision: 1};
+  ed.stories[0].change = 'new'; ed.stories[1].change = 'new'; ed.stories[2].change = 'updated';
+  ed.changes = {dropped: [{headline: 'Gone', category: 'News'}]};
+  ed.sources_answered = 8;
+  const p = await open('/latest/', {fetch: u => u.endsWith('2026-10-07.json') ? ed : undefined});
+  const ticker = p.d.querySelector('.ticker');
+  assert.match(ticker.textContent, new RegExp(`Since update 1: \\+${ed.stories.filter(s => s.change === 'new').length} new · ${ed.stories.filter(s => s.change === 'updated').length} updated · 1 dropped`));
+  assert.ok(ticker.querySelector('.warn'));
+  assert.match(ticker.querySelector('.warn').textContent, /^8\/10 source types up$/);
+  assert.equal(p.d.querySelector('main .wrap').firstElementChild.className, 'strip', 'the ticker sits directly under the header');
+  p.close();
+});
+
+test('outlet tags show one outlet once and only for stories with several independent outlets', async () => {
+  const p = await open('/');
+  for (const item of p.d.querySelectorAll('main article[data-cat]')) {
+    const story = edition.stories.find(s => 'story-' + s.id === item.id);
+    if (!story) continue;
+    const tags = item.querySelector('.outlet-tags');
+    const outlets = new Set(story.coverage.publishers.map(normOutlet));
+    if (outlets.size < 2) { assert.equal(tags, null, story.headline); continue; }
+    const names = [...tags.querySelectorAll('.tag:not(.more)')].map(t => normOutlet(t.textContent));
+    assert.equal(new Set(names).size, names.length);
+    const more = tags.querySelector('.tag.more');
+    assert.equal(names.length + (more ? Number(more.textContent.slice(1)) : 0), outlets.size, story.headline);
+  }
+  p.close();
 });

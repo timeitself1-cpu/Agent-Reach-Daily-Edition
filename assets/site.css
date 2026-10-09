@@ -74,11 +74,31 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer;paddin
 .nav a[aria-current="page"]{color:var(--ink);background:var(--card2);box-shadow:inset 0 0 0 1px var(--line2)}
 
 /* ------------------------------------------------------------------ edition strip and notices */
-.strip{display:flex;flex-direction:column;gap:8px;padding:20px 0 16px;border-bottom:1px solid var(--line);font-size:13px;color:var(--muted)}
+.strip{display:flex;flex-direction:column;gap:8px;padding:8px 0;border-bottom:1px solid var(--line);font-size:13px;color:var(--muted)}
 .edition-meta{display:flex;flex-wrap:wrap;align-items:center;gap:6px 16px}
 .edition-stats{max-width:85ch}
 .edition-full{display:flex;flex-direction:column;gap:8px;padding-bottom:8px}
 .strip-row{display:flex;flex-wrap:wrap;align-items:center;gap:0 16px;min-width:0}
+/* The edition ticker: one line of live numbers under the header. */
+.ticker{display:flex;flex-wrap:wrap;align-items:center;flex:1 1 0;min-width:0;min-height:44px;margin:0;padding:6px 0;list-style:none;row-gap:4px;
+  font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums}
+.ticker:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:4px}
+.ticker li{display:block;flex:none}
+.ticker li + li::before{content:"";display:inline-block;width:3px;height:3px;border-radius:50%;background:var(--faint);margin:0 9px;vertical-align:middle}
+.ticker li.live{display:inline-flex}
+@media (max-width:640px){ /* phones: one line that scrolls sideways inside itself */
+  .ticker{flex-wrap:nowrap;overflow-x:auto;white-space:nowrap;padding:0;scrollbar-width:none;
+    -webkit-mask-image:linear-gradient(90deg,#000 calc(100% - 24px),transparent);mask-image:linear-gradient(90deg,#000 calc(100% - 24px),transparent)}
+  .ticker::-webkit-scrollbar{display:none}
+  .ticker li:last-child{padding-right:24px}
+  .ticker .live b{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap} /* the dot shows freshness; the words stay for screen readers */
+}
+.ticker b{color:var(--ink);font-weight:600}
+.ticker .live b{color:var(--ink2)}
+.ticker .live::before{margin-right:8px}
+.ticker .warn b{color:var(--upd)}
+.ticker .up{color:var(--new)}
+.ticker + .edition-toggle{flex:none}
 .edition-toggle{display:flex;flex:1 1 auto;align-items:center;justify-content:space-between;gap:12px;min-height:44px;text-align:left;color:var(--ink2);font-size:13px}
 .with-crumbs .edition-toggle{flex:0 1 auto;margin-left:auto;justify-content:flex-end;color:var(--muted)}
 .strip.with-crumbs{padding:6px 0}
@@ -87,6 +107,10 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer;paddin
 .edition-toggle[aria-expanded="false"] .edition-toggle-label::after{content:" +"}
 .strip b{color:var(--ink2);font-weight:600}
 .strip .live{display:inline-flex;align-items:center;gap:8px}
+/* Independent outlets as tags. */
+.outlet-tags{display:inline-flex;flex-wrap:wrap;align-items:center;gap:4px}
+.outlet-tags .tag{font-size:12px;font-weight:600;line-height:1.5;padding:1px 8px;border-radius:999px;background:var(--card2);border:1px solid var(--line2);color:var(--ink2);white-space:nowrap}
+.outlet-tags .tag.more{background:none;border-style:dashed;color:var(--muted)}
 .strip .live::before{content:"";flex:none;width:8px;height:8px;border-radius:50%;background:var(--new);box-shadow:0 0 0 3px rgba(95,211,166,.15)}
 .strip .live.old::before{background:var(--upd);box-shadow:0 0 0 3px var(--upd-bg)}
 .notice{margin:16px 0 0;padding:12px 16px;border-radius:10px;background:var(--card);border:1px solid var(--line);color:var(--ink2);font-size:14px}
@@ -143,7 +167,7 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer;paddin
 .rail-item .meta{margin-top:4px}
 
 /* ------------------------------------------------------------------ cards and grids */
-.band{padding:36px 0 40px;border-bottom:1px solid var(--line);content-visibility:auto;contain-intrinsic-size:auto 900px}
+.band{padding:36px 0 40px;border-bottom:1px solid var(--line)}
 .band-head{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:12px 16px;margin:0 0 22px}
 .band-title{font-family:var(--serif);font-weight:600;font-size:clamp(26px,2.6vw,34px);letter-spacing:-.015em;margin:0;display:flex;align-items:center;gap:12px}
 .band-title::before{content:"";flex:none;width:10px;height:10px;border-radius:2px;background:var(--cat,var(--accent));transform:rotate(45deg)}
