@@ -15,6 +15,8 @@ npm run build
 
 The build renders Home, Daily, dated editions, Latest, category pages and Archive with the same frontend code used by the browser. It embeds the existing public edition and index JSON and writes escaped story text into HTML. Readers see content before JavaScript or JSON requests, and the client uses that embedded data for initial rendering. Default Cloudflare cache revalidation keeps HTML and embedded data together. Source shells without an embed still work; a dated edition and the index load concurrently. No new backend fields or stable story IDs are assumed.
 
+The static Home and Daily pages include **every** story, with full summaries, optional context and native source disclosures. Dated story fragments resolve to real HTML articles, including stories beyond the home page's five-card previews. Latest and category pages expose the same evidence. Static timestamps use explicit UTC dates; edition metadata and revision history use a native disclosure. The `data-rendered="static"` styles remain active if scripts are disabled or fail to load, and are removed only when the browser mounts its enhanced view. Mobile category and dated pages keep every story visible. Search still requires JavaScript; its fallback links to the pre-rendered archive.
+
 Preview **the built directory**, not the repository root:
 
 ```sh

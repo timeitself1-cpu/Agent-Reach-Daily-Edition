@@ -297,6 +297,7 @@ if (typeof module !== 'undefined') module.exports = {normOutlet, dedupeOutlets};
     const app = document.getElementById('app');
     const nodes = [masthead(current, ed), main, footer()];
     if (app) app.replaceChildren(...nodes); else body.replaceChildren(...nodes, pageStatus, extNote);
+    delete body.dataset.rendered;
     revealCurrentNav(); scrollableTicker();
     if (!active.isConnected) {
       const newScope = scope && document.querySelector(scope.classList.contains('masthead') ? '.masthead' : '.footer');
@@ -410,9 +411,9 @@ if (typeof module !== 'undefined') module.exports = {normOutlet, dedupeOutlets};
         h('p', {class: 'dek', text: s.summary.join(' ')}), meta(s, {ed, tags: 2}))));
   }
   const BAND_STORIES = 5;
-  function sectionBand(ed, cat, stories, title) {
+  function sectionBand(ed, cat, stories, title, complete = false) {
     const sec = SECTION[cat] || {};
-    const shown = stories.slice(0, BAND_STORIES);
+    const shown = complete ? stories : stories.slice(0, BAND_STORIES);
     const all = cat ? ((ed.sections || []).find(x => x.category === cat) || {ids: []}).ids.length : 0;
     const grid = h('div', {class: 'grid'}, shown.map((s, i) => card(ed, s, i === 0 && shown.length >= 4 ? 'feature' : '')));
     return h('section', {class: 'band', id: cat ? sectionId(cat) : 'band-top', 'data-cat': cat, 'aria-labelledby': (cat ? sectionId(cat) : 'band-top') + '-title'}, h('div', {class: 'wrap'},
@@ -453,7 +454,7 @@ if (typeof module !== 'undefined') module.exports = {normOutlet, dedupeOutlets};
     if (top.length > 4) content.push(sectionBand(ed, null, top.slice(4, 8), 'More top stories'));
     for (const sec of ed.sections || []) {
       const stories = sec.ids.map(id => ed.byId[id]).filter(s => s && !used.has(s.id));
-      content.push(sectionBand(ed, sec.category, stories));
+      content.push(sectionBand(ed, sec.category, stories, null, current === 'edition' || body.dataset.prerender === 'true'));
     }
     if (idx) content.push(archiveBand(idx, ed.edition_date));
     content.push(aboutBand());
@@ -578,7 +579,7 @@ if (typeof module !== 'undefined') module.exports = {normOutlet, dedupeOutlets};
       h('header', {class: 'page-head'}, h('h1', {text: 'Latest News'}),
         h('p', {text: `Every story of the ${longDate(ed.edition_date)} edition, newest report first. Times are when the newest source says it was published, in your time zone.`})),
       notices(ed, idx),
-      h('div', {class: 'river'}, known.concat(rest).map(s => h('article', {class: 'river-item', 'data-cat': s.category},
+      h('div', {class: 'river'}, known.concat(rest).map(s => h('article', {class: 'river-item', id: 'story-' + s.id, 'data-cat': s.category},
         h('div', {class: 'river-time'}, s.newest_published_utc ? [h('b', {text: new Date(s.newest_published_utc).toLocaleTimeString('en-US', {hour: 'numeric', minute: '2-digit'})}),
           new Date(s.newest_published_utc).toLocaleDateString('en-US', {month: 'short', day: 'numeric'})] : h('b', {text: 'Time not stated'})),
         h('div', {class: 'river-body'}, kicker(s), headline(ed, s, 'h2'),

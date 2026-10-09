@@ -219,6 +219,9 @@ test('embedded edition renders without a loading skeleton or data requests; bad 
   assert.equal(p.d.querySelector('.skeleton'), null);
   assert.equal(p.d.querySelectorAll('#page-status').length, 1);
   assert.equal(p.d.querySelector('h1').textContent, edition.stories[0].headline);
+  assert.equal(p.d.body.dataset.rendered, undefined);
+  assert.equal(p.d.body.dataset.prerender, undefined);
+  for (const band of p.d.querySelectorAll('.band[data-cat]')) assert.ok(band.querySelectorAll('.card').length <= 5);
   p.close();
   const malformed = html.replace(/(<script id="edition-data"[^>]*>)[\s\S]*?(<\/script>)/, '$1invalid$2');
   const fallback = await open('/', {html: malformed});
@@ -236,7 +239,7 @@ test('static rendering escapes news text and script terminators in embedded JSON
   const staticDom = new JSDOM(html);
   assert.equal(staticDom.window.document.querySelector('h1').textContent, ed.stories[0].headline);
   assert.equal(staticDom.window.document.querySelector('h1 img'), null);
-  assert.ok(staticDom.window.document.querySelector('noscript link[href="/assets/no-script.css"]'));
+  assert.ok(staticDom.window.document.querySelector('head > link[href="/assets/no-script.css"]'));
   staticDom.window.close();
   const p = await open('/', {html});
   assert.equal(p.w.attacked, undefined);

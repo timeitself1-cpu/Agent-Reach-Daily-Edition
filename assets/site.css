@@ -391,7 +391,7 @@ details.src small{color:var(--faint);font-size:12px}
   .rail-item{padding:14px 0}
   .band{padding:26px 0 28px}
   .band-head{margin-bottom:14px}
-  .band .grid > .card:nth-child(n+4){display:none}
+  body[data-page="home"]:not([data-rendered="static"]) .band .grid > .card:nth-child(n+4){display:none}
   .grid{gap:14px}
   .card{padding:16px 16px 6px;gap:8px}
   .card .hl{font-size:21px}
