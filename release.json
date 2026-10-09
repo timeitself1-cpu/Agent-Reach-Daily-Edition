@@ -1,5 +1,5 @@
 {
- "version": "1.0.0rc17",
- "notes": "The app now keeps itself up to date: new versions install themselves when you open it.",
+ "version": "1.0.0rc18",
+ "notes": "Local news for Frisco, Texas, website headlines that open the original article, and more accurate summaries and source counts.",
  "setup_required": ""
 }
