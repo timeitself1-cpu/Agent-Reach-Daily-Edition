@@ -19,6 +19,7 @@ tracks each real-world event over time (timelines), and later feeds structured e
 
 ## Release and repository state
 
+- **Oct 9, later:** Phase 1 items 5, 6, 9, 10: rc20 prepared on the same branch (public `sources` list, sitemap pages; **stable NOT moved**), site PR #13 open (share links, Report an issue, per-story RSS + section feeds, /sources/, /corrections/). See PLAN progress log.
 - **Oct 9, branch `claude/sleepy-clarke-abilea` (from the default branch at PR #12):** the user's website
   improvement plan (four phases; Phase 1 items 1-3 done here). The Local section is removed: **rc19 released**
   (stable -> 90f6e5a after CI green, at the user's go-ahead; the PC installs it at the next window start or hourly

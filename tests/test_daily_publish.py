@@ -203,7 +203,7 @@ def test_each_story_names_the_article_its_headline_opens():
 
 def test_the_sitemap_lists_every_section_page():
     sitemap = P.sitemap_xml({"editions": []}).decode()
-    for path in ("world/", "technology/", "science/", "sports/", "entertainment/", "internet-culture/"):
+    for path in ("world/", "technology/", "science/", "sports/", "entertainment/", "internet-culture/", "sources/", "corrections/"):
         assert f"<loc>https://getagentreach.dev/{path}</loc>" in sitemap
 
 

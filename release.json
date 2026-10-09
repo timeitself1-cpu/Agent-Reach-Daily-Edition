@@ -1,5 +1,5 @@
 {
- "version": "1.0.0rc19",
- "notes": "The Local news section has been removed; older editions that had it still show it.",
+ "version": "1.0.0rc20",
+ "notes": "The website now shows which sources each edition read, on its new Sources page.",
  "setup_required": ""
 }

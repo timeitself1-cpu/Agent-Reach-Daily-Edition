@@ -88,7 +88,7 @@ SEARCH_SUMMARY_CHARS = 280
 SEARCH_OUTLETS = 5
 # Page shells that exist on the site whatever is published (sitemap.xml lists them).
 STATIC_PAGES = ("", "daily/", "latest/", "world/", "technology/", "science/", "sports/", "entertainment/",
-                "internet-culture/", "archive/", "about/")
+                "internet-culture/", "archive/", "about/", "sources/", "corrections/")
 #: Environment variable that overrides the stored access key (CI, a portable install).
 TOKEN_ENV = "AGENT_REACH_PUBLISH_TOKEN"
 HTTP_TIMEOUT_S = 30.0

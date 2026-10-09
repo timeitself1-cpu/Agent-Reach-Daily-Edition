@@ -5,6 +5,15 @@ Each release candidate is delivered as a zip of the repository. Extract it over 
 Your editions, settings and history (`%LOCALAPPDATA%\AgentReachDaily`) are kept. Earlier releases are
 summarised in `docs/HISTORY.md` ("Release history").
 
+## 1.0.0rc20 (update): sources on the website
+
+This version installs itself (no zip, no Setup).
+
+1. **Sources page.** Each edition published to the website now lists the sources it read: each kind of source
+   and every news feed by name and website, with how many reports each gave and how many the edition cites. Feed
+   addresses and error messages are never published. The website shows them on its new Sources page.
+2. **Sitemap.** The website's new Sources and Corrections pages are listed for search engines.
+
 ## 1.0.0rc19 (update): no Local section
 
 This version installs itself (no zip, no Setup).
