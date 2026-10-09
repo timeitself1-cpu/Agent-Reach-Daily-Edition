@@ -779,17 +779,37 @@ def safe_url(url: str | None) -> str | None:
 
 #: Hosts whose links are redirects, trend pages or social posts rather than the reporting itself.
 NON_ARTICLE_HOSTS = ("news.google.com", "trends.google.com", "google.com", "bsky.app", "x.com", "twitter.com",
-                     "reddit.com", "tiktok.com", "trends24.in", "news.ycombinator.com")
+                     "reddit.com", "tiktok.com", "trends24.in", "news.ycombinator.com", "wikipedia.org")
 
 
-def primary_url(story: "Story") -> str | None:
-    """The link a headline opens: the first cited publisher article, else the first safe link."""
-    links = [safe_url(e.url) for e in story.evidence]
-    for url in links:
+def primary_url(story: "Story", headline: str | None = None) -> str | None:
+    """Select reporting about this headline; unresolved or ambiguous evidence stays in the reader."""
+    from agent_reach.daily.strength import SIGNAL_SOURCES
+
+    title = story.headline if headline is None else headline
+    key = lambda value: re.sub(r"[^\w]", "", value.casefold())
+    reports = [e for e in story.evidence if e.source not in SIGNAL_SOURCES]
+    exact = [e for e in reports if key(e.title) == key(title)]
+    # A matching but unresolved report must not be replaced by a different claim about the same person.
+    candidates = exact or reports
+    stop = set('a an the of to in on for and or with at by from as is are was be before after says said'.split())
+    words_of = lambda value: set(re.findall(r'[a-z0-9]+', value.lower())) - stop
+    negation = lambda value: set(re.findall(r'\b(?:no|not|never)\b', value.lower()))
+    numbers = lambda value: set(re.findall(r'\b\d+(?:[.,]\d+)*\b', value))
+    words = words_of(title)
+    ranked = []
+    for order, evidence in enumerate(candidates):
+        url = safe_url(evidence.url)
         host = _host(url) or ""
-        if url and not any(host == h or host.endswith("." + h) for h in NON_ARTICLE_HOSTS):
-            return url
-    return next((u for u in links if u), None)
+        if not url or any(host == h or host.endswith("." + h) for h in NON_ARTICLE_HOSTS):
+            continue
+        if negation(title) != negation(evidence.title) or not numbers(title) <= numbers(evidence.title):
+            continue
+        common = len(words & words_of(evidence.title))
+        overlap = common / max(1, len(words))
+        if exact or (common >= min(3, len(words)) and overlap >= .7):
+            ranked.append((overlap, -order, url))
+    return max(ranked)[2] if ranked else None
 
 
 def _clip(text: str | None, limit: int) -> str | None:

@@ -177,13 +177,16 @@ def test_each_story_names_the_article_its_headline_opens():
         if not urls:
             assert s["url"] is None
             continue
+        assert s["url"] == primary_url(by_id[s["id"]], s["headline"])
+        if s["url"] is None:
+            continue  # An unresolved or unrelated source belongs in the internal evidence view.
         linked += 1
-        assert s["url"] in urls and s["url"] == primary_url(by_id[s["id"]])
+        assert s["url"] in urls
         articles = [u for u in urls if not is_google_news(u) and not any(
             host in u for host in ("reddit.com", "x.com/", "twitter.com", "bsky.app", "trends24.in"))]
         if articles:
             assert not is_google_news(s["url"])
-    assert linked == len(pub["stories"])
+    assert linked > 0
     # archive search carries the same link, so a search result opens the article too
     entries = {e["id"]: e for e in P.search_entries(pub)}
     assert all(entries[s["id"]].get("u") == s["url"] for s in pub["stories"])
@@ -392,7 +395,8 @@ def test_archive_search_files_per_month_repair_themselves(daily_paths, tmp_path)
     assert days == sorted(days, reverse=True) and set(days) == {"2026-10-07", "2026-10-06"}
     first = month["stories"][0]
     assert first["h"] == "Margaret Hamilton, who led software development for the Apollo program, has died" and first["r"] == 1
-    assert set(first) - {"u"} == {"d", "id", "r", "t", "c", "h", "s", "o", "l"} and len(first["s"]) <= P.SEARCH_SUMMARY_CHARS + 1
+    assert set(first) - {"u", "coverage"} == {"d", "id", "r", "t", "c", "h", "s", "o", "l"} and len(first["s"]) <= P.SEARCH_SUMMARY_CHARS + 1
+    assert first['coverage']['level'] == first['l']
     assert json.loads((tmp_path / "site/search/2026-09.json").read_text(encoding="utf-8"))["stories"][0]["d"] == "2026-09-30"
     # withdrawing the only date of a month removes that month's file
     assert P.withdraw(daily_paths, "2026-09-30", site).state == "withdrawn"

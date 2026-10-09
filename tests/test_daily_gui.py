@@ -253,6 +253,7 @@ def test_headline_opens_the_main_article_and_j_k_move_between_stories(root, dail
     from agent_reach.daily.edition import EvidenceLink, primary_url
 
     first = make_story(headline="Story With A Redirect First")
+    first.evidence[0].title = first.headline  # The clickable report must support the displayed headline.
     first.evidence.insert(0, EvidenceLink(item_id=9, source="google_news", source_name="Google News",
                                           title="Redirect", url="https://news.google.com/rss/articles/abc"))
     stories = [first] + [make_story(headline=f"Another Story Number {i}") for i in range(2, 9)]

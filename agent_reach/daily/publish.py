@@ -62,8 +62,7 @@ from agent_reach.daily.fsutil import FileUnavailable, atomic_write_bytes, atomic
 from agent_reach.daily.lock import LockBusy, RefreshLock
 from agent_reach.daily.paths import DataPaths
 from agent_reach.daily.registry import evidence_keys
-from agent_reach.daily.strength import SIGNAL_SOURCES, origin, strength_of
-from agent_reach.pipeline.cleaner import dedupe_key
+from agent_reach.daily.strength import reporting_groups, strength_of
 from agent_reach.daily.timeutil import format_central, format_long_date, utcnow
 from agent_reach.outlets import outlet_name
 from agent_reach.ingestion.google_urls import is_google_news
@@ -338,22 +337,7 @@ def _public_story(s: Story, edition: DailyEdition, change: str, top_rank: int | 
     headline, summary = verified_story(s)
     strength = strength_of(s, edition.generation_completed_utc)
     sources, seen = [], set()
-    origins: set[str] = set()
-    title_owner: dict[str, str] = {}
-    for ev in s.evidence:
-        # the same rules as strength.assess: a second report from one publisher, or the same headline from
-        # another publisher (a wire story), is a repeat and does not count as independent reporting
-        kind = "signal" if ev.source in SIGNAL_SOURCES else "report"
-        okey = origin(ev.publisher, ev.url) if kind == "report" else None
-        if okey is not None:
-            tkey = dedupe_key(ev.title)
-            owner = title_owner.get(tkey) if tkey else None
-            if okey in origins or (owner is not None and owner != okey):
-                kind = "repeat"
-            else:
-                origins.add(okey)
-                if tkey:
-                    title_owner[tkey] = okey
+    for ev, identity in zip(s.evidence, reporting_groups(s.evidence)):
         url = safe_url(ev.url)
         key = url or ev.title
         if key in seen:
@@ -361,17 +345,20 @@ def _public_story(s: Story, edition: DailyEdition, change: str, top_rank: int | 
         seen.add(key)
         sources.append({"outlet": outlet_name(ev.publisher, ev.url) or _outlet(ev.source_name),
                         "via": "Google News" if is_google_news(url) else ev.source_name, "title": ev.title,
-                        "url": url, "published_utc": _utc(ev.published_at_utc), "kind": kind})
+                        "url": url, "published_utc": _utc(ev.published_at_utc), **identity})
     labels = [label for label in s.labels if label in ("Hot", "Rising")]
-    # the article the headline opens, as in the HTML export: the first cited publisher article, never a
-    # search/social page when a real article exists (optional field, schema version 1 is unchanged)
-    link = primary_url(s)
+    # The cited report supporting the displayed headline, or the internal evidence view when its
+    # destination cannot be resolved. Background and attention signals never supply this link.
+    link = primary_url(s, headline)
     return {"id": s.story_id[:12], "rank": s.rank, "top_rank": top_rank, "category": s.category.value,
             "headline": headline, "url": link if any(x["url"] == link for x in sources) else None,
             "summary": summary, "why_it_matters": s.why_it_matters,
             "change": change, "labels": labels, "newest_published_utc": _utc(newest_published(s)),
-            "coverage": {"level": strength.level, "independent_reports": strength.independent_reports,
+            "coverage": {"level": strength.level, "points": strength.points, "independent_reports": strength.independent_reports,
                          "publishers": list(strength.publishers), "repeats": strength.duplicates_collapsed,
+                         "source_links": sum(bool(x['url']) for x in sources),
+                         "linked_outlets": len({x['outlet_id'] for x in sources if x['kind'] != 'signal' and x['outlet_id']}),
+                         "linked_reporting_origins": len({x['reporting_origin'] for x in sources if x['reporting_origin']}),
                          "signals": strength.trend_signals, "channels": strength.channels},
             "sources": sources}
 
@@ -497,7 +484,8 @@ def edition_page(public: dict, site_url: str = SITE_URL) -> bytes:
             when = html.escape(source.get("published_utc") or "Time not stated")
             outlet = html.escape(source["outlet"])
             kind = html.escape(source["kind"])
-            sources.append(f"<li>{label}<small>{outlet} · {when} · {kind}</small></li>")
+            via = ' · Google News redirect' if is_google_news(link) else ''
+            sources.append(f"<li>{label}<small>{outlet} · {when} · {kind}{via}</small></li>")
         anchor = html.escape(story["id"], quote=True)
         category = html.escape(story["category"])
         articles.append(
@@ -635,7 +623,7 @@ def search_entries(public: dict) -> list[dict]:
                     names.append(src["outlet"])
         out.append({"d": public["edition_date"], "id": s["id"], "r": s["rank"], "t": s["top_rank"],
                     "c": s["category"], "h": s["headline"], "s": _clip(" ".join(s["summary"]), SEARCH_SUMMARY_CHARS),
-                    "o": names[:SEARCH_OUTLETS], "l": s["coverage"]["level"]})
+                    "o": names[:SEARCH_OUTLETS], "l": s["coverage"]["level"], "coverage": s["coverage"]})
         if s.get("url"):
             out[-1]["u"] = s["url"]
     return out
