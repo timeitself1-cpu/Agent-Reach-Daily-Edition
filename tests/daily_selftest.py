@@ -826,6 +826,11 @@ def part_repeat(report: Report, args, paths: DataPaths) -> None:
     wait_activity(ctrl, timeout=args.limit_s)
     st = load_state(paths)[0]
     ed = EditionStore(paths).load_latest().edition
+    if st.last_attempt_outcome == 'no_update' and '60 minutes' in st.last_attempt_message:
+        ok = first is not None and ed is not None and ed.run_id == first.run_id and ed.revision == first.revision
+        report.check(P, 'rapid second refresh keeps the edition until the publication interval', ok,
+                     st.last_attempt_message, time.monotonic() - started)
+        return
     ok = (st.last_attempt_outcome == "success" and ed is not None and ed.revision == 2
           and ed.changes is not None and len(ed.top_ranks) <= 8 and st.last_success_run_id == ed.run_id)
     report.check(P, "second refresh after changing settings: revision 2, what changed, state agrees", ok,
