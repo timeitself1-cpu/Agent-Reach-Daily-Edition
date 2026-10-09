@@ -5,22 +5,22 @@
  "editions": [
   {
    "date": "2026-10-08",
-   "revision": 7,
-   "generated_utc": "2026-10-09T01:50:34Z",
-   "stories": 56,
-   "lead": "Hurricane Isaias Strengthens, Threatens US Gulf Coast",
+   "revision": 8,
+   "generated_utc": "2026-10-09T04:15:11Z",
+   "stories": 29,
+   "lead": "The long-deployed USS Lincoln returns home to San Diego Bay",
    "headlines": [
-    "NASA Crew Returns to Earth After 8 Months in Space",
-    "USS Abraham Lincoln Returns Home After Record-Breaking Deployment",
-    "Russian Strike on Buses Kills at Least 30 in Ukraine"
+    "US plans livestream of execution by firing squad",
+    "Trump administration is suspending Microsoft from a green card program",
+    "Elon Musk's SpaceX Just Made a Huge Play to Challenge the Phone Industry"
    ],
    "sections": {
     "News": 10,
-    "Tech": 10,
-    "Science & AI": 10,
-    "Sports": 10,
-    "Entertainment": 10,
-    "Internet Culture": 6
+    "Local": 1,
+    "Tech": 7,
+    "Science & AI": 5,
+    "Sports": 5,
+    "Entertainment": 1
    }
   },
   {
