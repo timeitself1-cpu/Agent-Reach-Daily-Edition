@@ -150,8 +150,17 @@ def test_public_edition_carries_the_news_and_nothing_private():
         for ev in s.evidence:
             if ev.excerpt and len(ev.excerpt) > 200:  # (a summary may quote one sentence of a lead, never the excerpt)
                 assert ev.excerpt not in text
-    for word in ('"excerpt"', ed.run_id, '"config_fingerprint"', '"source_health"', '"feed"', '"item_id"', '"notes"'):
+    for word in ('"excerpt"', ed.run_id, '"config_fingerprint"', '"source_health"', '"feed"', '"item_id"', '"notes"',
+                 '"error"', '"latency_ms"'):
         assert word not in text
+    # the sources it read: every kind and feed by name and website, never a feed's address
+    assert [s["type"] for s in pub["sources"]] == [h.source for h in ed.source_health]
+    feeds = [f for h in ed.source_health for f in h.feeds]
+    assert feeds and sum(len(s["feeds"]) for s in pub["sources"]) == len(feeds)
+    assert not [f.url for f in feeds if f.url in text]
+    gn = next(s for s in pub["sources"] if s["type"] == "google_news")
+    assert gn["about"] and gn["feeds"][0] == {"name": "Google News - Top stories", "site": "news.google.com",
+                                              "category": "News", "status": "ok", "reports": 38, "cited": 2}
     # every link is an absolute web link; kinds separate reporting from repeats and signals
     kinds = {src["kind"] for s in pub["stories"] for src in s["sources"]}
     assert kinds == {"report", "repeat", "signal"}

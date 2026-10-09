@@ -9,8 +9,10 @@ What goes up for one edition (``site_files``):
 
 * ``editions/YYYY-MM-DD.json``  the public edition (``public_edition``): headlines, the app's own validated
   summaries, categories, coverage strength, New/Updated labels, and for each source its outlet, headline, link
-  and stated publication time. Never: publisher excerpts, the run log, feed lists, settings, model diagnostics,
-  file paths or anything else about this computer (``assert_public`` refuses text that looks like a local path).
+  and stated publication time; and the sources the edition read (``public_sources``: each kind of source, each
+  feed by name and website, with report counts; the website's Sources page, asked for on Oct 9, 2026). Never:
+  publisher excerpts, feed addresses, error texts, the run log, settings, model diagnostics, file paths or anything
+  else about this computer (``assert_public`` refuses text that looks like a local path).
 * ``daily/YYYY-MM-DD/index.html``  the permanent page of that date (``edition_page``); ``/daily/`` and the
   home page show the newest date.
 * ``editions/index.json``  the archive list, rewritten from what is already on the site plus this edition.
@@ -51,12 +53,13 @@ from dataclasses import dataclass, field
 from datetime import date, datetime, timezone
 from pathlib import Path
 from typing import Literal
+from urllib.parse import urlsplit
 from xml.sax.saxutils import escape as xml_escape
 
 from pydantic import BaseModel, Field
 
 from agent_reach.daily import __version__
-from agent_reach.daily.edition import (DailyEdition, Story, category_sections, newest_published, primary_url,
+from agent_reach.daily.edition import (DailyEdition, SourceHealth, Story, category_sections, newest_published, primary_url,
                                       safe_url, top_stories)
 from agent_reach.daily.fsutil import FileUnavailable, atomic_write_bytes, atomic_write_json, read_json, unlink_with_retry
 from agent_reach.daily.lock import LockBusy, RefreshLock
@@ -393,6 +396,41 @@ def is_removed(story: Story, hidden_ids: set[str], hidden_reports: dict[str, lis
     return False
 
 
+#: What each kind of source is, for the website's Sources page (plain English; the window has its own notes).
+PUBLIC_SOURCE_NOTES = {
+    "google_news": "Google News top stories and one Google News section per category.",
+    "news_rss": "News publishers' own RSS feeds, listed below by name.",
+    "youtube": "New videos from the YouTube channels of news organisations, listed below.",
+    "google_trends": "What people in the US are searching for on Google today.",
+    "wikipedia": "Wikipedia's most-read articles and its 'In the news' list.",
+    "mastodon": "News links people are sharing on Mastodon (mastodon.social).",
+    "bluesky": "Topics trending on Bluesky.",
+    "reddit": "Top posts of news communities on Reddit (often rate-limited).",
+    "x_trends24": "Trending topics on X, as listed by trends24.in.",
+    "tiktok": "Trending TikTok hashtags.",
+    "hackernews": "The Hacker News front page (technology).",
+    "github": "GitHub's trending repositories (technology).",
+    "producthunt": "New products on Product Hunt (technology).",
+    "arxiv": "New AI and machine-learning papers on arXiv (research).",
+}
+
+
+def public_sources(health: list[SourceHealth]) -> list[dict]:
+    """The sources an edition read, for the website's Sources page: each kind of source with how many reports it
+    gave and how many the edition cites, and each feed by name and website. Never a feed's full address (a
+    private feed's address can carry a key) or its error text."""
+    out = []
+    for h in health:
+        feeds = []
+        for f in h.feeds:
+            site = (urlsplit(f.url).hostname or "").removeprefix("www.") if f.url.startswith(("http://", "https://")) else ""
+            feeds.append({"name": f.name, "site": site, "category": f.category, "status": f.status,
+                          "reports": f.collected, "cited": f.used})
+        out.append({"type": h.source, "name": h.name, "about": PUBLIC_SOURCE_NOTES.get(h.source, ""),
+                    "status": h.status, "reports": h.item_count, "cited": h.used, "feeds": feeds})
+    return out
+
+
 def public_edition(edition: DailyEdition, hidden: list[str] | None = None,
                    hidden_reports: dict[str, list[list[str]]] | None = None, left_out: list[int] | None = None) -> dict:
     """The public copy of an edition (deterministic: the same edition always gives the same bytes).
@@ -429,6 +467,7 @@ def public_edition(edition: DailyEdition, hidden: list[str] | None = None,
         "summaries": edition.model.summaries,
         "reports_read": edition.accounting.ingested,
         "sources_answered": edition.coverage.sources_ok, "sources_tried": edition.coverage.sources_attempted,
+        "sources": public_sources(edition.source_health),
         "compared_with": ({"edition_date": changes.compared_edition_date, "revision": changes.compared_revision}
                           if changes is not None else None),
         "top": [s.story_id[:12] for s in top],
