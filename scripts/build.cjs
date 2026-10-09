@@ -5,6 +5,7 @@ const {checkEditions} = require('./check-editions.cjs');
 const {dedupeOutlets} = require('../assets/site.js');
 const root = resolve(__dirname, '..');
 const out = resolve(root, 'dist');
+const staticStamp = value => new Date(value).toLocaleString('en-US', {year: 'numeric', month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit', timeZone: 'UTC', timeZoneName: 'short'});
 function renderShell(html, path, index, edition) {
   const errors = [];
   const vc = new VirtualConsole();
@@ -19,16 +20,43 @@ function renderShell(html, path, index, edition) {
     d.body.append(embedded);
     w.scrollTo = () => {};
     w.fetch = () => { throw new Error('Static rendering must use embedded edition data'); };
+    d.body.dataset.prerender = 'true';
     w.eval(readFileSync(resolve(root, 'assets/site.js'), 'utf8'));
     if (errors.length) throw errors[0];
     if (!d.querySelector('main h1') || d.querySelector('main[aria-busy="true"]')) throw new Error('Unable to render ' + path);
-    // Story pages are client routes. Readers without JavaScript get each story's evidence in place
-    // (hidden by site.css, shown by no-script.css).
+    d.body.dataset.rendered = 'static';
+    delete d.body.dataset.prerender;
+    // Native details keeps lengthy revision history accessible without pushing the news below it.
+    const editionDetails = d.querySelector('.edition-full');
+    if (editionDetails) {
+      const disclosure = d.createElement('details'); disclosure.className = 'static-edition-details';
+      const summary = d.createElement('summary'); summary.textContent = 'Edition details and changes';
+      editionDetails.before(disclosure); editionDetails.hidden = false;
+      disclosure.append(summary, editionDetails);
+    }
+    // A durable timestamp remains accurate even long after this build. The browser restores relative times.
+    for (const time of d.querySelectorAll('time[datetime]')) {
+      if (time.dateTime.includes('T')) time.textContent = (time.textContent.startsWith('Generated ') ? 'Generated ' : '') + staticStamp(time.dateTime);
+    }
+    if (d.body.dataset.page === 'latest') d.querySelector('.page-head p').textContent = `Every story of the ${edition.edition_date} edition, newest report first. Source publication times are shown in UTC.`;
+    // Story fragments must resolve with scripts disabled or unavailable, with evidence in place.
     for (const story of edition.stories) {
       const article = d.getElementById('story-' + story.id);
       if (!article || article.querySelector('details.src')) continue;
+      const container = article.querySelector('.river-body') || article;
+      const riverTime = article.querySelector('.river-time');
+      if (riverTime && story.newest_published_utc) {
+        const time = d.createElement('time'); time.dateTime = story.newest_published_utc;
+        time.textContent = staticStamp(story.newest_published_utc); riverTime.replaceChildren(time);
+      }
+      if (story.why_it_matters && !article.querySelector('.why')) {
+        const why = d.createElement('p'); why.className = 'why static-why';
+        const label = d.createElement('b'); label.textContent = 'Why it matters: ';
+        why.append(label, story.why_it_matters); container.append(why);
+      }
       const details = d.createElement('details'); details.className = 'src static-src';
-      const summary = d.createElement('summary'); summary.textContent = `View ${story.sources.filter(s => s.url).length} source links`;
+      const count = story.sources.filter(s => s.url).length;
+      const summary = d.createElement('summary'); summary.textContent = count ? `View ${count} source ${count === 1 ? 'link' : 'links'}` : 'View source details';
       const list = d.createElement('ul');
       for (const source of story.sources) {
         const item = d.createElement('li');
@@ -36,17 +64,17 @@ function renderShell(html, path, index, edition) {
         title.textContent = source.title;
         if (source.url) { title.href = source.url; title.rel = 'noopener noreferrer'; }
         const meta = d.createElement('small');
-        meta.textContent = `${dedupeOutlets([source.outlet])[0] || source.outlet} · ${source.published_utc || 'time not stated'} · ${source.kind}${source.via === 'Google News' ? ' · via Google News' : ''}`;
+        meta.textContent = `${dedupeOutlets([source.outlet])[0] || source.outlet} · ${source.published_utc ? staticStamp(source.published_utc) : 'Time not stated'} · ${source.kind}${source.via === 'Google News' ? ' · via Google News' : ''}`;
         item.append(title, meta); list.append(item);
       }
-      details.append(summary, list); article.append(details);
+      details.append(summary, list); container.append(details);
+      // The native disclosure is the source control until the browser mounts the enhanced view.
+      article.querySelector('.story-link')?.remove();
     }
     d.querySelector('#page-status')?.remove(); // Client creates its own persistent live region.
-    const noscript = d.createElement('noscript');
     const fallbackStyles = d.createElement('link');
     fallbackStyles.rel = 'stylesheet'; fallbackStyles.href = '/assets/no-script.css';
-    noscript.append(fallbackStyles);
-    d.head.append(noscript);
+    d.head.append(fallbackStyles);
     return dom.serialize();
   } finally { dom.window.close(); }
 }

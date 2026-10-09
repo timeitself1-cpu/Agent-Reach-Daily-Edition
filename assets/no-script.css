@@ -1,6 +1,19 @@
-/* Full static edition remains browsable when JavaScript is disabled. */
-.band .card[hidden]{display:flex!important}
-.edition-full[hidden]{display:flex!important}
-.edition-toggle,.theme-control{display:none!important}
-details.src.static-src{display:block}
-.card .dek,.rail-item .dek{display:block;-webkit-line-clamp:unset;overflow:visible}
+/* Keep the HTML usable until the enhanced view successfully mounts, including a failed script load. */
+[data-rendered="static"] .band .grid > .card{display:flex}
+[data-rendered="static"] .edition-toggle,
+[data-rendered="static"] .theme-control{display:none!important}
+[data-rendered="static"] details.src.static-src{display:block}
+[data-rendered="static"] .dek{display:block;-webkit-line-clamp:unset;overflow:visible}
+[data-rendered="static"] .edition-full{padding:12px 0;line-height:1.6}
+[data-rendered="static"] .static-edition-details{width:100%;border-top:1px solid var(--line)}
+[data-rendered="static"] .static-edition-details > summary{cursor:pointer;min-height:44px;align-content:center;color:var(--ink2);font-weight:600}
+[data-rendered="static"] .river-time{overflow-wrap:anywhere;line-height:1.6}
+[data-rendered="static"] .static-why{font-size:15px;line-height:1.6;color:var(--ink2)}
+[data-rendered="static"] article:target{outline:2px solid var(--accent);outline-offset:6px;scroll-margin-top:24px}
+[data-rendered="static"] details.src{margin-top:12px}
+[data-rendered="static"] details.src li{padding:8px 0;border-bottom:1px solid var(--line)}
+[data-rendered="static"] details.src small{line-height:1.6}
+@media print{
+  [data-rendered="static"] details.src::details-content{display:block;content-visibility:visible}
+  [data-rendered="static"] details.src a::after{content:" (" attr(href) ")";font-size:8pt;overflow-wrap:anywhere}
+}
