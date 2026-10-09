@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import base64
 import hashlib
+import html
 import json
 import sys
 from pathlib import Path
@@ -17,6 +18,40 @@ from agent_reach.daily import publish as P
 from agent_reach.daily.edition import DailyEdition
 
 REAL = Path(__file__).parent / "fixtures" / "real"
+
+
+def test_published_html_has_every_summary_and_source_without_scripts():
+    public = P.public_edition(real_edition())
+    page = P.edition_page(public).decode("utf-8")
+    assert '<main id="main"' in page
+    assert '<noscript>' not in page
+    assert "Turn on JavaScript" not in page
+    assert page.count('<article ') == len(public["stories"])
+    for story in public["stories"]:
+        assert f'id="story-{story["id"]}"' in page
+        assert html.escape(story["headline"]) in page
+        for paragraph in story["summary"]:
+            assert f'<p>{html.escape(paragraph)}</p>' in page
+        for source in story["sources"]:
+            assert html.escape(source["title"]) in page
+            if source["url"]:
+                assert f'href="{html.escape(source["url"], quote=True)}"' in page
+
+
+def test_published_html_escapes_text_and_rejects_unsafe_links():
+    public = P.public_edition(real_edition())
+    story = public["stories"][0]
+    story["headline"] = '<img src=x onerror="alert(1)">'
+    story["summary"] = ['</div><script>alert(1)</script>']
+    story["why_it_matters"] = '<b>Plain text & context</b>'
+    story["url"] = 'javascript:alert(1)'
+    story["sources"][0].update(url='javascript:alert(2)', title='<svg onload=alert(1)>', published_utc=None)
+    page = P.edition_page(public).decode("utf-8")
+    assert '<img' not in page and '<svg' not in page
+    assert '<script>alert' not in page and 'href="javascript:' not in page
+    assert html.escape(story["summary"][0]) in page
+    assert html.escape(story["why_it_matters"]) in page
+    assert 'Time not stated' in page
 
 
 def real_edition(name: str = "2026-10-07-rc12d2-r2.json") -> DailyEdition:

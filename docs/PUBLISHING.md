@@ -9,7 +9,7 @@ edition, and how to preview the site locally. Code: `agent_reach/daily/publish.p
 
 - Repository `timeitself1-cpu/Agent-Reach-Website`, branch `main`. It is a static site: HTML shells, one script
   (`assets/site.js`) and one stylesheet (`assets/site.css`), self-hosted fonts, and the published editions as JSON.
-- Cloudflare serves the repository as a Workers static-assets site (`wrangler.jsonc`, `assets.directory = "."`,
+- Cloudflare serves the website build as a Workers static-assets site (`wrangler.jsonc`, `assets.directory = "./dist"`,
   `not_found_handling = "404-page"`) and deploys every push to `main` automatically. Cloudflare keeps serving the
   previous deployment until a new one is ready, so a deployment is all-or-nothing too.
 - Pages: `/` (newest edition, front page), `/daily/` (newest edition), `/daily/YYYY-MM-DD/` (one date,
@@ -90,3 +90,6 @@ python -m http.server 8080 --directory site                   # then open http:/
 | Published successfully | The site has the edition; Cloudflare shows it within a few minutes. "Live website now shows" confirms it. |
 | Publication failed: previous edition preserved | Nothing changed on the site. The message says why (offline, key expired, no write permission). |
 | Edition taken off the website | The last action was a withdrawal. |
+## Reading published editions without JavaScript
+
+Each published `daily/YYYY-MM-DD/index.html` contains the complete edition inside `#app`: ranked headlines, summary paragraphs, optional "Why it matters" context, source links, publication timestamps and stable-within-revision story anchors. Text and attributes are escaped and links are restricted to absolute HTTP(S) URLs. Native source disclosures work without scripts. The website can replace this content with its enhanced reader or pre-render its full layout at build time; no JSON contract change or extra publishing request is required.
