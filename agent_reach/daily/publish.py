@@ -469,8 +469,7 @@ def _dumps(obj) -> bytes:
 
 
 def edition_page(public: dict, site_url: str = SITE_URL) -> bytes:
-    """The permanent page of one date. The site's script renders it; the head carries the date's own title and
-    description, and the headlines are in the page for readers and search engines without JavaScript."""
+    """A complete, escaped edition before any website build or browser JavaScript runs."""
     d = public["edition_date"]
     day = format_long_date(date.fromisoformat(d))
     by_id = {s["id"]: s for s in public["stories"]}
@@ -479,7 +478,43 @@ def edition_page(public: dict, site_url: str = SITE_URL) -> bytes:
     desc = html.escape(f"{lead['headline']}, and {len(public['stories']) - 1} more stories from the {day} edition.",
                        quote=True)
     url = html.escape(f"{site_url.rstrip('/')}/daily/{d}/", quote=True)
-    items = "".join(f"<li>{html.escape(s['headline'])}</li>" for s in public["stories"])
+    articles = []
+    for story in sorted(public["stories"], key=lambda s: s["rank"]):
+        headline = html.escape(story["headline"])
+        link = safe_url(story.get("url"))
+        if link:
+            headline = f'<a href="{html.escape(link, quote=True)}">{headline}</a>'
+        paragraphs = "".join(f"<p>{html.escape(p)}</p>" for p in story["summary"])
+        why = story.get("why_it_matters")
+        if why:
+            paragraphs += f'<p class="why"><b>Why it matters: </b>{html.escape(why)}</p>'
+        sources = []
+        for source in story["sources"]:
+            label = html.escape(source["title"])
+            link = safe_url(source.get("url"))
+            if link:
+                label = f'<a href="{html.escape(link, quote=True)}" rel="noopener noreferrer">{label}</a>'
+            when = html.escape(source.get("published_utc") or "Time not stated")
+            outlet = html.escape(source["outlet"])
+            kind = html.escape(source["kind"])
+            sources.append(f"<li>{label}<small>{outlet} · {when} · {kind}</small></li>")
+        anchor = html.escape(story["id"], quote=True)
+        category = html.escape(story["category"])
+        articles.append(
+            f'<article class="card" id="story-{anchor}"><span class="kicker">{category}</span>'
+            f'<h2 class="hl">{headline}</h2><div class="story-body">{paragraphs}</div>'
+            f'<details class="src"><summary>Sources ({len(sources)})</summary><ul>{"".join(sources)}</ul></details>'
+            '</article>'
+        )
+    content = (
+        '<header class="wrap page-head"><nav aria-label="Edition navigation">'
+        '<a href="/daily/">Latest edition</a> · <a href="/archive/">Browse the archive</a></nav>'
+        f'<h1>{title}</h1><p>{len(articles)} stories · Update {int(public["revision"])} · '
+        f'Generated <time datetime="{html.escape(public["generated_utc"], quote=True)}">'
+        f'{html.escape(public["generated_utc"])}</time></p>'
+        '<p>AI-generated summaries from public reporting. Read the sources to check the reporting.</p></header>'
+        f'<main id="main" class="wrap"><div class="compact">{"".join(articles)}</div></main>'
+    )
     return (
         "<!doctype html>\n<html lang=\"en\">\n<head>\n<meta charset=\"utf-8\">"
         "<meta name=\"viewport\" content=\"width=device-width,initial-scale=1\">\n"
@@ -493,7 +528,7 @@ def edition_page(public: dict, site_url: str = SITE_URL) -> bytes:
         "<link rel=\"stylesheet\" href=\"/assets/site.css\"><script src=\"/assets/site.js\" defer></script>\n"
         "</head>\n"
         f"<body data-page=\"edition\" data-date=\"{d}\">\n<div id=\"app\">\n"
-        f"<noscript><h1>{title}</h1><ol>{items}</ol><p>Turn on JavaScript to read the stories.</p></noscript>\n"
+        f"{content}\n"
         "</div>\n</body>\n</html>\n"
     ).encode("utf-8")
 
