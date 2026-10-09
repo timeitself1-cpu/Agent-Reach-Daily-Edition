@@ -1,17 +1,22 @@
 # Agent Reach website
 
-The daily publisher commits edition JSON, the archive index, monthly search data, dated HTML shells, RSS and sitemap. The website builds these into static Cloudflare assets; it does not change the publisher or its JSON contract.
+The daily publisher commits edition JSON, the archive index, monthly search data, dated HTML shells, RSS and sitemap. The website builds these into static Cloudflare assets. It accepts the publisher's optional trust fields and corrects older exports consistently in HTML, edition JSON and search JSON without modifying the input files.
 
 Use Node 24:
 
 ```sh
 npm ci
 npm test
+npx playwright install chromium
+npm run test:browser
 npm run check:editions
 npm run build
+npm run check:built
 ```
 
 `npm test` uses the frozen October 7 publication under `tests/fixtures/`. It remains independent of daily additions, revisions and withdrawals. `check:editions` validates the current published files: dates/revisions/counts, unique IDs/ranks, section/top membership, source fields, exact monthly search membership/headlines, dated shell identity, RSS and sitemap links. The build runs this validation before creating output. A bad publication fails the build rather than silently deploying mismatched files. CI runs unit tests and the build on every PR and `main` push.
+
+Phase 1 trust tests also freeze October 8 revision 8. `test:browser` clicks archived section and skip links in Chromium with scripts enabled, disabled and blocked. See [the trust contract](docs/phase1-trust.md) for identity fields, scoring corrections, search consistency and primary-link fallback rules.
 
 The build renders Home, Daily, dated editions, Latest, category pages and Archive with the same frontend code used by the browser. It embeds the existing public edition and index JSON and writes escaped story text into HTML. Readers see content before JavaScript or JSON requests, and the client uses that embedded data for initial rendering. Default Cloudflare cache revalidation keeps HTML and embedded data together. Source shells without an embed still work; a dated edition and the index load concurrently. No new backend fields or stable story IDs are assumed.
 

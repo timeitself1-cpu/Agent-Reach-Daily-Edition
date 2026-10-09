@@ -7,7 +7,9 @@ const OUTLET_ALIASES = {
   pbs: 'PBS NewsHour', pbsnewshour: 'PBS NewsHour', wired: 'Wired',
   tomshardware: "Tom's Hardware", github: 'GitHub', guardian: 'The Guardian',
   theguardian: 'The Guardian', washingtonpost: 'The Washington Post',
-  thewashingtonpost: 'The Washington Post'
+  thewashingtonpost: 'The Washington Post',
+  nbcdfw: 'NBC DFW', nbc5dallasfortworth: 'NBC DFW',
+  aljazeera: 'Al Jazeera', aljazeeraenglish: 'Al Jazeera'
 };
 function normOutlet(name) {
   let key = String(name || '').toLowerCase().trim().replace(/^www\./, '')
@@ -26,7 +28,73 @@ function dedupeOutlets(names) {
   }
   return [...out.values()];
 }
-if (typeof module !== 'undefined') module.exports = {normOutlet, dedupeOutlets};
+function correctedCoverage(c) {
+  const publishers = dedupeOutlets(c.publishers || []);
+  const count = Math.min(c.independent_reports || 0, publishers.length);
+  const removed = (c.independent_reports || 0) - count;
+  // Old exports lack the full scoring evidence. Never retain a strong label based on a removed alias.
+  const corroboration = n => n < 2 ? 0 : Math.min(n, 4);
+  const points = Number.isFinite(c.points) ? c.points - corroboration(c.independent_reports) + corroboration(count) : null;
+  const level = count < 2 ? 'limited' : points !== null ? (points >= 5 ? 'strong' : 'moderate')
+    : removed && count < 4 && c.level === 'strong' ? 'moderate' : c.level;
+  return {...c, ...(points !== null ? {points} : {}), publishers, independent_reports: count, repeats: (c.repeats || 0) + removed, level};
+}
+const LINK_STOP = new Set('a an the of to in on for and or with at by from as is are was be before after says said'.split(' '));
+const linkWords = text => new Set((String(text).toLowerCase().match(/[a-z0-9]+/g) || []).filter(w => !LINK_STOP.has(w)));
+const titleKey = text => String(text).normalize('NFKC').toLowerCase().replace(/[^\p{L}\p{N}_]/gu, '');
+// Same syndication key as the publisher's cleaner.dedupe_key.
+const reportTitleKey = text => String(text).toLowerCase().replace(/[^a-z0-9 ]+/g, ' ').replace(/\s+/g, ' ').trim().replace(/^the /, '');
+function articleUrl(value) {
+  try {
+    const u = new URL(value);
+    const blocked = ['google.com', 'wikipedia.org', 'bsky.app', 'x.com', 'twitter.com', 'reddit.com', 'tiktok.com', 'trends24.in', 'news.ycombinator.com'];
+    return /^https?:$/.test(u.protocol) && !blocked.some(h => u.hostname === h || u.hostname.endsWith('.' + h)) ? u.href : null;
+  } catch (_) { return null; }
+}
+function primaryLink(s) {
+  const reports = (s.sources || []).filter(src => src.kind !== 'signal');
+  const exact = reports.filter(src => titleKey(src.title) === titleKey(s.headline));
+  const words = linkWords(s.headline);
+  const negation = text => [...new Set(String(text).toLowerCase().match(/\b(?:no|not|never)\b/g) || [])].sort().join(',');
+  const numbers = text => String(text).match(/\b\d+(?:[.,]\d+)*\b/g) || [];
+  const candidates = (exact.length ? exact : reports).map((src, order) => {
+    const other = linkWords(src.title), common = [...words].filter(w => other.has(w)).length;
+    const compatible = negation(s.headline) === negation(src.title) && numbers(s.headline).every(n => numbers(src.title).includes(n));
+    return {url: compatible ? articleUrl(src.url) : null, score: common / Math.max(1, words.size), common, order};
+  }).filter(x => x.url && (exact.length || (x.common >= Math.min(3, words.size) && x.score >= .7)));
+  return candidates.sort((a, b) => b.score - a.score || a.order - b.order)[0]?.url || null;
+}
+function normalizeStory(s) {
+  s.coverage = correctedCoverage(s.coverage);
+  const keys = s.sources.map(src => src.outlet_id || normOutlet(src.outlet));
+  const parents = s.sources.map((_, i) => i), seen = new Map();
+  const root = i => { while (parents[i] !== i) { parents[i] = parents[parents[i]]; i = parents[i]; } return i; };
+  s.sources.forEach((src, i) => {
+    if (src.kind === 'signal' || !keys[i]) return;
+    for (const [type, value] of [['outlet', keys[i]], ['title', reportTitleKey(src.title)], ['origin', src.reporting_origin]]) {
+      if (!value) continue;
+      const token = type + ':' + value;
+      if (seen.has(token)) {
+        const a = root(i), b = root(seen.get(token)); parents[Math.max(a, b)] = Math.min(a, b);
+      }
+      seen.set(token, i);
+    }
+  });
+  const counted = new Set();
+  s.sources = s.sources.map((src, i) => {
+    const first = s.sources[root(i)];
+    const report = src.kind === 'signal' || !keys[i] ? null : first.reporting_origin || 'outlet:' + keys[root(i)];
+    const kind = src.kind === 'signal' ? 'signal' : counted.has(report) ? 'repeat' : 'report';
+    if (report) counted.add(report);
+    return {...src, outlet: dedupeOutlets([src.outlet])[0] || src.outlet, outlet_id: keys[i], reporting_origin: report, kind};
+  });
+  s.coverage.source_links = s.sources.filter(src => src.url).length;
+  s.coverage.linked_outlets = new Set(s.sources.filter(src => src.kind !== 'signal' && src.outlet_id).map(src => src.outlet_id)).size;
+  s.coverage.linked_reporting_origins = new Set(s.sources.map(src => src.reporting_origin).filter(Boolean)).size;
+  s.url = primaryLink(s);
+  return s;
+}
+if (typeof module !== 'undefined') module.exports = {normOutlet, dedupeOutlets, correctedCoverage, primaryLink, normalizeStory};
 // Agent Reach Daily website. Every page is rendered from the editions the app publishes:
 //   /editions/index.json        the archive list (newest first, "latest" = newest date)
 //   /editions/YYYY-MM-DD.json   one public edition (written by agent_reach/daily/publish.py)
@@ -56,7 +124,7 @@ if (typeof module !== 'undefined') module.exports = {normOutlet, dedupeOutlets};
   // ------------------------------------------------------------------ helpers
   function webUrl(u) {
     if (typeof u !== 'string' || !u.trim()) return null;
-    try { const x = new URL(u, location.origin); return (x.protocol === 'https:' || x.protocol === 'http:') ? x.href : null; }
+    try { const x = new URL(u, location.href); return (x.protocol === 'https:' || x.protocol === 'http:') ? x.href : null; }
     catch (e) { return null; }
   }
   function h(tag, attrs, ...kids) {
@@ -67,7 +135,7 @@ if (typeof module !== 'undefined') module.exports = {normOutlet, dedupeOutlets};
       else if (k === 'text') n.textContent = v;
       else if (k === 'href') {
         if (/^mailto:[^\s<>"]+$/.test(v)) n.setAttribute('href', v);
-        else { const u = webUrl(v); if (u) n.setAttribute('href', v.startsWith('/') ? v : u); }
+        else { const u = webUrl(v); if (u) n.setAttribute('href', v.startsWith('/') || v.startsWith('#') ? v : u); }
       }
       else n.setAttribute(k, v === true ? '' : v);
     }
@@ -116,6 +184,7 @@ if (typeof module !== 'undefined') module.exports = {normOutlet, dedupeOutlets};
   const loadIndex = () => (indexPromise = indexPromise || getJson('/editions/index.json'));
   function prepareEdition(ed) {
     if (!ed || !Array.isArray(ed.stories) || !ed.stories.length) throw new Error('empty edition');
+    ed.stories.forEach(normalizeStory);
     ed.byId = Object.fromEntries(ed.stories.map(s => [s.id, s]));
     ed.ordered = ed.stories.slice().sort((a, b) => a.rank - b.rank);
     ed.topStories = (ed.top || []).map(id => ed.byId[id]).filter(Boolean);
@@ -179,17 +248,10 @@ if (typeof module !== 'undefined') module.exports = {normOutlet, dedupeOutlets};
     return out;
   }
   const kicker = s => h('span', {class: 'kicker', 'data-cat': s.category}, catLabel(s.category), badges(s));
-  // The article a headline opens: the app's choice when it sent one, else the first source that is a publisher's
-  // article (not a search, social or trend page), as in the app's HTML export.
-  const NOT_ARTICLES = ['news.google.com', 'trends.google.com', 'google.com', 'bsky.app', 'x.com', 'twitter.com',
-    'reddit.com', 'tiktok.com', 'trends24.in', 'news.ycombinator.com'];
+  // A supporting report, or the internal evidence view when no resolved title is a safe match.
   const hostOf = u => { try { return new URL(u).hostname.toLowerCase().replace(/^www\./, ''); } catch (_) { return ''; } };
-  const isArticle = u => !NOT_ARTICLES.some(x => hostOf(u) === x || hostOf(u).endsWith('.' + x));
   function mainLink(s) {
-    const own = webUrl(s.url);
-    if (own && /^https?:/.test(s.url)) return own;
-    const urls = (s.sources || []).map(x => webUrl(x.url)).filter(u => u && /^https?:/.test(u));
-    return urls.find(isArticle) || urls[0] || null;
+    return primaryLink(s);
   }
   function mainOutlet(s, url) {
     const src = (s.sources || []).find(x => webUrl(x.url) === url);
@@ -465,15 +527,9 @@ if (typeof module !== 'undefined') module.exports = {normOutlet, dedupeOutlets};
 
   // ------------------------------------------------------------------ story page
   function sourcesBlock(s) {
-    const seen = new Set();
-    const sources = s.sources.map(src => {
-      const key = normOutlet(src.outlet);
-      if (src.kind !== 'report') return src;
-      if (seen.has(key)) return {...src, kind: 'repeat'};
-      seen.add(key); return src;
-    });
+    const sources = s.sources;
     const groups = [
-      ['report', 'Independent reports', 'Each from a different outlet.'],
+      ['report', 'Independent reports shown', 'One entry per reporting origin in the displayed sources.'],
       ['repeat', 'Repeats and syndicated copies', 'The same outlet again, or the same headline carried by another outlet (a wire story). Counted once.'],
       ['signal', 'Social and search signals', 'Trending searches and posts show attention, not reporting. They never count as a source.'],
     ];
@@ -487,13 +543,15 @@ if (typeof module !== 'undefined') module.exports = {normOutlet, dedupeOutlets};
           return h('div', {class: 'source'}, h('span', {class: 'outlet', text: dedupeOutlets([src.outlet])[0] || src.outlet}),
             src.published_utc ? h('time', {class: 'when', datetime: src.published_utc, text: fullStamp(src.published_utc)}) : h('span', {class: 'when', text: 'Time not stated'}),
             url ? h('a', {class: 'title', href: url, rel: 'noopener noreferrer', target: '_blank', text: src.title}) : h('span', {class: 'title', text: src.title}),
-            src.via && src.via !== src.outlet ? h('span', {class: 'via', text: 'Found via ' + src.via}) : null);
+            hostOf(src.url) === 'news.google.com' ? h('span', {class: 'via', text: 'Google News redirect · opens through Google News'})
+              : src.via && src.via !== src.outlet ? h('span', {class: 'via', text: 'Found via ' + src.via}) : null);
         }));
     }));
   }
   function coveragePanel(s) {
     const c = {...s.coverage, independent_reports: independentCount(s), publishers: publisherList(s)};
     const facts = [h('li', {text: `${plural(c.independent_reports, 'independent outlet')}${c.publishers.length ? ': ' + c.publishers.join(', ') : ''}`})];
+    facts.push(h('li', {text: `Displayed evidence: ${plural(c.source_links || 0, 'source link')} · ${plural(c.linked_outlets || 0, 'newsroom')} · ${plural(c.linked_reporting_origins || 0, 'reporting origin')}`}));
     if (c.repeats) facts.push(h('li', {text: `${plural(c.repeats, 'repeat or syndicated copy', 'repeats or syndicated copies')}, counted once`}));
     if (c.signals) facts.push(h('li', {text: `${plural(c.signals, 'social or search signal')} (attention, not reporting)`}));
     facts.push(h('li', {text: `Found through ${plural(c.channels, 'channel')}`}));
@@ -685,7 +743,11 @@ if (typeof module !== 'undefined') module.exports = {normOutlet, dedupeOutlets};
     function load(m) {
       if (!pending.has(m)) pending.set(m, getJson(`/search/${m}.json`).then(doc => {
         if (!Array.isArray(doc && doc.stories)) throw new Error('unavailable search data');
-        const list = doc.stories;
+        const list = doc.stories.map(x => {
+          const c = x.coverage ? correctedCoverage(x.coverage) : null;
+          return {...x, o: dedupeOutlets(x.o || []), l: c ? c.level : x.l, coverage: c,
+            u: articleUrl(x.u) || undefined};
+        });
         data.set(m, list.filter(x => x && x.d && x.id && x.h).map(x => Object.assign(x, {
           _h: norm(x.h), _all: norm([x.h, x.s, (x.o || []).join(' '), catLabel(x.c)].join(' | '))})));
       }).catch(() => data.set(m, null)));
@@ -802,7 +864,8 @@ if (typeof module !== 'undefined') module.exports = {normOutlet, dedupeOutlets};
           : h('a', {href: storyHref(x)}, marked(x.h, terms))),
         x.s ? h('p', {class: 'dek'}, marked(x.s, terms)) : null,
         h('div', {class: 'meta'}, (x.o || []).length ? h('span', {class: 'outlets'}, marked((x.o || []).join(', '), terms)) : null,
-          h('span', {class: `cov ${x.l || 'limited'}`}, h('span', {class: 'bars', 'aria-hidden': 'true'}, h('i'), h('i'), h('i')), COVER[x.l] || COVER.limited),
+          x.coverage ? covMeter({coverage: x.coverage, sources: []})
+            : h('span', {class: `cov ${x.l || 'limited'}`}, h('span', {class: 'bars', 'aria-hidden': 'true'}, h('i'), h('i'), h('i')), COVER[x.l] || COVER.limited),
           x.u ? h('a', {class: 'story-link', href: storyHref(x)}, 'Sources', h('span', {class: 'sr', text: ` and coverage: ${x.h}`})) : null));
     }
     input.addEventListener('input', () => { clearTimeout(timer); timer = setTimeout(() => { st.shown = SEARCH_PAGE; syncQuery(); run(); }, 140); });
