@@ -5,6 +5,26 @@ Each release candidate is delivered as a zip of the repository. Extract it over 
 Your editions, settings and history (`%LOCALAPPDATA%\AgentReachDaily`) are kept. Earlier releases are
 summarised in `docs/HISTORY.md` ("Release history").
 
+## 1.0.0rc18 (update): local news, and a more trustworthy edition
+
+This version installs itself (no zip, no Setup). It brings the website and quality work of October 8 and 9.
+
+1. **Local news for Frisco, Texas.** A new **Local** section collects news from Frisco, Collin and Denton
+   counties and North Texas: the City of Frisco's news, NBC DFW, WFAA, FOX 4, CBS News Texas and two Google News
+   searches. A story is Local only when its reports name a town of the area; Cowboys and other pro teams stay
+   in Sports. To turn the section off, set `"local_area": ""` in `settings.json`.
+2. **One click to the source on the website.** Each story tells the website which article its headline opens
+   (the same one as in the exported page), and the website now has a page for every section, Local included.
+3. **Fairer source counts.** One outlet listed twice (for example "AP News" and "apnews.com") counts once, and
+   Google News links are replaced by the publisher's own link whenever it can be found.
+4. **Checked summaries.** Numbers and names in a summary must appear in the cited reports, and sentences without a
+   subject or with broken quotation marks are fixed or replaced by a checked sentence from a source.
+5. **Fewer filler stories and duplicates.** A story from one outlet needs a real news report or a strong signal
+   (trailers, podcasts, mock drafts and debate clips need a second outlet), and two reports of the same event
+   are merged more often.
+6. **Calmer updates.** The website gets a same-day update at most once an hour (sooner only for major new
+   stories), stories are not replaced by barely better ones, and each update lists what changed.
+
 ## 1.0.0rc17 (zip rc17): the app updates itself
 
 1. **No more zips.** When you open Agent Reach Daily it checks for a newer version and installs it by itself (a

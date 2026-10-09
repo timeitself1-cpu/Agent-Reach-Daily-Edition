@@ -19,7 +19,9 @@ tracks each real-world event over time (timelines), and later feeds structured e
 
 ## Release and repository state
 
-- **Current release: rc17** (`1.0.0rc17`): the app updates itself from branch `stable` (`daily/updater.py`); the
+- **Current release: rc18** (`1.0.0rc18`, Oct 9): Local section for Frisco, TX (`pipeline/local.py`), headline
+  links in the public edition, and the Phase 1/2 quality work of PR #8; delivered through `stable` (no zip, no
+  Setup). Earlier: rc17 (`1.0.0rc17`): the app updates itself from branch `stable` (`daily/updater.py`); the
   user installs this one zip by hand (`Agent-Reach-Daily-v1.0rc17.zip`), later releases arrive by themselves
   (release rule in CLAUDE.md "Delivery"). rc16 = audit round 2 Step A; rc15 runs on the PC since Oct 8.
 - **Update channel:** branch `stable` of this repository = the newest released commit (moved only after CI green).
