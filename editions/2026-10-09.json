@@ -1,0 +1,1620 @@
+{
+ "schema": "agent_reach.public_edition",
+ "schema_version": 1,
+ "app": "Agent Reach Daily 1.0.0rc18",
+ "edition_date": "2026-10-09",
+ "revision": 1,
+ "timezone": "America/Chicago",
+ "generated_utc": "2026-10-09T05:37:47Z",
+ "models": {
+  "summaries": "llama3.1:8b",
+  "grouping": "nomic-embed-text"
+ },
+ "summaries": "local_model",
+ "reports_read": 1505,
+ "sources_answered": 10,
+ "sources_tried": 10,
+ "compared_with": {
+  "edition_date": "2026-10-08",
+  "revision": 8
+ },
+ "top": [
+  "4c38e0fd20f6",
+  "8516545d9b4a",
+  "65777f500dad",
+  "21bec8946347",
+  "021910426c12",
+  "d5023d63430f",
+  "202fa341edd7",
+  "55f93bef0b72",
+  "dbaffc991fc1",
+  "07575e5a6164"
+ ],
+ "sections": [
+  {
+   "category": "News",
+   "ids": [
+    "4c38e0fd20f6",
+    "8516545d9b4a",
+    "65777f500dad",
+    "021910426c12",
+    "d5023d63430f",
+    "144758263a24",
+    "2f5f11411b9c",
+    "159bcc692346",
+    "4e0a149207a5",
+    "f794b8b8a82d"
+   ]
+  },
+  {
+   "category": "Tech",
+   "ids": [
+    "07575e5a6164",
+    "574b140956ac",
+    "5a514c61da91",
+    "d42620978f1c"
+   ]
+  },
+  {
+   "category": "Science & AI",
+   "ids": [
+    "dbaffc991fc1",
+    "cbf4e8e8a0dd",
+    "287bab4c4e7a",
+    "a7a1c6740925",
+    "aee80b84e923",
+    "b240fc6e976b",
+    "8faf310e98c6",
+    "5297ef14e4e0",
+    "84f1f58d5438"
+   ]
+  },
+  {
+   "category": "Sports",
+   "ids": [
+    "21bec8946347",
+    "202fa341edd7",
+    "abbcc3e35bed",
+    "ddbbbdb8bbad"
+   ]
+  },
+  {
+   "category": "Entertainment",
+   "ids": [
+    "55f93bef0b72"
+   ]
+  },
+  {
+   "category": "Internet Culture",
+   "ids": [
+    "5c103885c27f"
+   ]
+  }
+ ],
+ "stories": [
+  {
+   "id": "4c38e0fd20f6",
+   "rank": 1,
+   "top_rank": 1,
+   "category": "News",
+   "headline": "The long-deployed USS Lincoln returns home to San Diego Bay",
+   "url": "https://www.npr.org/2026/10/08/nx-s1-5995911/the-long-deployed-uss-lincoln-returns-home-to-san-diego-bay",
+   "summary": [
+    "The long-deployed USS Lincoln returns home to San Diego Bay.",
+    "The USS Abraham Lincoln aircraft carrier has returned home after a record-setting uninterrupted time at sea supporting the Iran war."
+   ],
+   "why_it_matters": null,
+   "change": "",
+   "labels": [],
+   "newest_published_utc": "2026-10-09T00:05:48Z",
+   "coverage": {
+    "level": "moderate",
+    "independent_reports": 2,
+    "publishers": [
+     "NPR",
+     "PBS NewsHour"
+    ],
+    "repeats": 3,
+    "signals": 0,
+    "channels": 2
+   },
+   "sources": [
+    {
+     "outlet": "NPR",
+     "via": "News feeds",
+     "title": "The long-deployed USS Lincoln returns home to San Diego Bay",
+     "url": "https://www.npr.org/2026/10/08/nx-s1-5995911/the-long-deployed-uss-lincoln-returns-home-to-san-diego-bay",
+     "published_utc": "2026-10-09T00:05:48Z",
+     "kind": "report"
+    },
+    {
+     "outlet": "PBS NewsHour",
+     "via": "News feeds",
+     "title": "Long-deployed USS Abraham Lincoln returns home to San Diego Bay",
+     "url": "https://www.pbs.org/newshour/nation/long-deployed-uss-abraham-lincoln-returns-home-to-san-diego-bay",
+     "published_utc": "2026-10-08T23:54:55Z",
+     "kind": "report"
+    },
+    {
+     "outlet": "NPR",
+     "via": "News feeds",
+     "title": "The long-deployed USS Lincoln is returning home to San Diego",
+     "url": "https://www.npr.org/2026/10/08/g-s1-147195/uss-lincoln-returning-san-diego",
+     "published_utc": "2026-10-08T16:18:20Z",
+     "kind": "repeat"
+    },
+    {
+     "outlet": "NPR",
+     "via": "Google News",
+     "title": "The long-deployed USS Lincoln returns home to San Diego Bay",
+     "url": "https://news.google.com/rss/articles/CBMipwFBVV95cUxOLVFUOC1MX3RNSUtocDVWdF9ycEd4QU1uUmljenNkMzhlTkw5TFE0NUQ4bkxGWFB4VUVETGx3dnhTRTZ0cUlrWHVpTks4X00tQjF5MWp3WktRanJMNXhLeGpMVlQwSUxxdlZpQmVEVFlobFVGV2kxZ2dLV0lXWXFZaGtrN0RodURxc2xDVXNWTHZnQlk1UXhoc1VEQVRlWUJlX1ZZWGt0Yw?oc=5",
+     "published_utc": "2026-10-09T00:05:48Z",
+     "kind": "repeat"
+    },
+    {
+     "outlet": "AP News",
+     "via": "Google News",
+     "title": "The long-deployed USS Lincoln returns home to San Diego Bay",
+     "url": "https://news.google.com/rss/articles/CBMilAFBVV95cUxOaXpmdmZOT25ZT1RrbXRKYnRQY1VxbGR5WkFIVzMtX2hSU19MSUc1cHpJWDlJU0tkLVZOa0hNMlhXNlJxMjFlLWJiTUtlMy1nNnpwdlV3U3FYcUtBaU1OZXNxeEJjVjZxUWltUXBtX0xKME9LNjlVRDFsYWZWT2xXQW91ZlFPbDdlRlZJQzNwSjRJdHJP?oc=5",
+     "published_utc": "2026-10-09T00:02:00Z",
+     "kind": "repeat"
+    }
+   ]
+  },
+  {
+   "id": "8516545d9b4a",
+   "rank": 2,
+   "top_rank": 2,
+   "category": "News",
+   "headline": "Isaias strengthens into Category 2 hurricane on collision course with the Gulf Coast",
+   "url": "https://www.npr.org/2026/10/09/nx-s1-5996396/hurricane-isaias-updates",
+   "summary": [
+    "Isaias strengthens into Category 2 hurricane on collision course with the Gulf Coast.",
+    "The first hurricane of the Atlantic season was forecast to intensify rapidly and cause dangerous conditions in the Florida Panhandle, southern Alabama and southern Mississippi when it makes landfall late Friday or early Saturday."
+   ],
+   "why_it_matters": null,
+   "change": "updated",
+   "labels": [],
+   "newest_published_utc": "2026-10-09T05:20:03Z",
+   "coverage": {
+    "level": "strong",
+    "independent_reports": 4,
+    "publishers": [
+     "ABC News",
+     "AP News",
+     "CBS News",
+     "NPR"
+    ],
+    "repeats": 0,
+    "signals": 0,
+    "channels": 3
+   },
+   "sources": [
+    {
+     "outlet": "NPR",
+     "via": "News feeds",
+     "title": "Isaias strengthens into Category 2 hurricane on collision course with the Gulf Coast",
+     "url": "https://www.npr.org/2026/10/09/nx-s1-5996396/hurricane-isaias-updates",
+     "published_utc": "2026-10-09T05:20:03Z",
+     "kind": "report"
+    },
+    {
+     "outlet": "AP News",
+     "via": "Google News",
+     "title": "Isaias strengthens into Category 2 hurricane on collision course with the US Gulf Coast",
+     "url": "https://news.google.com/rss/articles/CBMiugFBVV95cUxQNzlTM0pnaG9JM2k2Z19LSllNREhMckxuUE15MnZZdHZMYVUyendPbnBOejU3bS1RWXdJZXFPZllWb2hOMGdHS2ZPMTFqMTdGRFM4Yll1blQ2M2xMWC1YLTR4OVhsTVdyTUxkdm5CN1RUTXltMUpMdlhuLVoxcUVyTDFqejZyeTdvRHY5WGFMLURMTWRBZ1poYUl1WVI3VTMwajI0UzgwTzBKaU45eTVianM3eHhKSWtGVWc?oc=5",
+     "published_utc": "2026-10-09T03:25:00Z",
+     "kind": "report"
+    },
+    {
+     "outlet": "ABC News",
+     "via": "News feeds",
+     "title": "Hurricane Isaias latest: Storm strengthens to Category 2",
+     "url": "https://abcnews.com/US/tropical-storm-isaias-forecast-make-landfall-hurricane-friday/story?id=137059483",
+     "published_utc": "2026-10-09T03:13:11Z",
+     "kind": "report"
+    },
+    {
+     "outlet": "CBS News",
+     "via": "YouTube",
+     "title": "Florida bracing for impact from Hurricane Isaias",
+     "url": "https://www.youtube.com/watch?v=A8YBiAp5T9w",
+     "published_utc": "2026-10-09T00:21:36Z",
+     "kind": "report"
+    }
+   ]
+  },
+  {
+   "id": "65777f500dad",
+   "rank": 3,
+   "top_rank": 3,
+   "category": "News",
+   "headline": "Firing squad execution of Fort Hood shooter Nidal Malik Hasan will be livestreamed, Pentagon says",
+   "url": "https://www.theverge.com/tech/1008530/us-government-livestream-execution-firing-squad-fort-hood",
+   "summary": [
+    "Firing squad execution of Fort Hood shooter Nidal Malik Hasan will be livestreamed, Pentagon says."
+   ],
+   "why_it_matters": null,
+   "change": "updated",
+   "labels": [],
+   "newest_published_utc": "2026-10-09T04:31:43Z",
+   "coverage": {
+    "level": "strong",
+    "independent_reports": 4,
+    "publishers": [
+     "AP News",
+     "Gizmodo",
+     "KCRA",
+     "The Verge"
+    ],
+    "repeats": 0,
+    "signals": 2,
+    "channels": 2
+   },
+   "sources": [
+    {
+     "outlet": "KCRA",
+     "via": "Google News",
+     "title": "Firing squad execution of Fort Hood shooter Nidal Malik Hasan will be livestreamed, Pentagon says",
+     "url": "https://news.google.com/rss/articles/CBMipgFBVV95cUxOaTZXeDFiM24wYTVKWlo5TjFnaUtrZkxTbWtRS2h2Z2VGWm5mYngtNDNTNVFFbkVmdHNQWTZhMnhpNTdKWlQydFFPU3I2eHl1VmRjUW1uVkduQ1ZnNER1cFByaGZ1NjhmNHRlOG1sOGhBSFVhbFduZFhlT0RMdHB5N2Y2LXJTdDhxX1lpMXBwTDRNUGhSemU5YmY1MmRRTC1XdzNHZTZ3?oc=5",
+     "published_utc": "2026-10-09T03:01:00Z",
+     "kind": "report"
+    },
+    {
+     "outlet": "The Verge",
+     "via": "News feeds",
+     "title": "US plans livestream of execution by firing squad",
+     "url": "https://www.theverge.com/tech/1008530/us-government-livestream-execution-firing-squad-fort-hood",
+     "published_utc": "2026-10-08T22:32:04Z",
+     "kind": "report"
+    },
+    {
+     "outlet": "Gizmodo",
+     "via": "News feeds",
+     "title": "The Pentagon Plans to Execute the Fort Hood Shooter on Livestream",
+     "url": "https://gizmodo.com/the-pentagon-plans-to-execute-the-fort-hood-shooter-on-livestream-2000824008",
+     "published_utc": "2026-10-09T04:31:43Z",
+     "kind": "report"
+    },
+    {
+     "outlet": "bsky.app",
+     "via": "Bluesky",
+     "title": "Execution will be streamed, says Pentagon",
+     "url": "https://bsky.app/profile/did:plc:qrz3lhbyuxbeilrc6nekdqme/feed/de4b5451-0748-4086-a11a-337978f34595",
+     "published_utc": null,
+     "kind": "signal"
+    },
+    {
+     "outlet": "AP News",
+     "via": "Google News",
+     "title": "Pentagon says the firing squad execution of Fort Hood shooter Nidal Malik Hasan will be livestreamed",
+     "url": "https://news.google.com/rss/articles/CBMinAFBVV95cUxNNFlfYXBjMDRKS0YzTHZFdFBOSGE4bGxpTEt1aXcxeHlSbktpNjVPNUd4QVVOYjlCNUd5NnBBS3hldGlhYXc5ZlJFWWZCa0JqcUQ0dUZETzJTeC1idVU0eDRkNlRBLWtWNmtTSi1RWFFfb2pKVnRrQjBZTnRpZk85dWhxZi1TSXRLVm9BdHhfbVBaOWRVTVIxUTM4a1o?oc=5",
+     "published_utc": "2026-10-09T01:01:00Z",
+     "kind": "report"
+    },
+    {
+     "outlet": "The Guardian",
+     "via": "Mastodon",
+     "title": "Pentagon says execution of Fort Hood shooter will be livestreamed",
+     "url": "https://www.theguardian.com/us-news/2026/oct/08/hegseth-fort-hood-shooter-public-execution",
+     "published_utc": "2026-10-08T23:18:29Z",
+     "kind": "signal"
+    }
+   ]
+  },
+  {
+   "id": "21bec8946347",
+   "rank": 4,
+   "top_rank": 4,
+   "category": "Sports",
+   "headline": "Guardians erupt in sixth inning to stun White Sox in Game 4 of ALDS, force deciding Game 5",
+   "url": "https://www.cbssports.com/mlb/news/guardians-white-sox-alds-game-4-mlb-playoffs/",
+   "summary": [
+    "Guardians erupt in sixth inning to stun White Sox in Game 4 of ALDS, force deciding Game 5.",
+    "The Guardians have taken both games in Chicago after trailing 2-0 in the best-of-five ALDS"
+   ],
+   "why_it_matters": null,
+   "change": "updated",
+   "labels": [],
+   "newest_published_utc": "2026-10-09T05:26:39Z",
+   "coverage": {
+    "level": "strong",
+    "independent_reports": 4,
+    "publishers": [
+     "CBS Sports",
+     "ESPN",
+     "Fox News",
+     "Yahoo Sports"
+    ],
+    "repeats": 2,
+    "signals": 0,
+    "channels": 1
+   },
+   "sources": [
+    {
+     "outlet": "CBS Sports",
+     "via": "News feeds",
+     "title": "Guardians erupt in sixth inning to stun White Sox in Game 4 of ALDS, force deciding Game 5",
+     "url": "https://www.cbssports.com/mlb/news/guardians-white-sox-alds-game-4-mlb-playoffs/",
+     "published_utc": "2026-10-09T04:59:10Z",
+     "kind": "report"
+    },
+    {
+     "outlet": "Yahoo Sports",
+     "via": "News feeds",
+     "title": "ALDS Game 4: White Sox collapse forces Game 5",
+     "url": "https://sports.yahoo.com/articles/alds-game-4-white-sox-051552379.html",
+     "published_utc": "2026-10-09T05:15:52Z",
+     "kind": "report"
+    },
+    {
+     "outlet": "ESPN",
+     "via": "News feeds",
+     "title": "MLB division series takeaways: Guardians rock White Sox to force Game 5",
+     "url": "https://www.espn.com/mlb/story/_/id/50128553/mlb-2026-playoffs-division-series-alds-game-4-updates-lineups-analysis-takeaways",
+     "published_utc": "2026-10-09T05:26:39Z",
+     "kind": "report"
+    },
+    {
+     "outlet": "Fox News",
+     "via": "News feeds",
+     "title": "Guardians force decisive ALDS Game 5 as White Sox miss chance to reach first ALCS since 2005",
+     "url": "https://www.foxnews.com/outkick-sports/guardians-force-decisive-alds-game-5-white-sox-miss-chance-reach-first-alcs-since-2005",
+     "published_utc": "2026-10-09T04:22:46Z",
+     "kind": "report"
+    },
+    {
+     "outlet": "CBS Sports",
+     "via": "News feeds",
+     "title": "2026 MLB playoff bracket: Schedule, scores as Guardians force Game 5 vs. White Sox in ALDS",
+     "url": "https://www.cbssports.com/mlb/news/2026-mlb-playoff-bracket-schedule-scores-results-how-to-watch/",
+     "published_utc": "2026-10-09T03:49:09Z",
+     "kind": "repeat"
+    },
+    {
+     "outlet": "ESPN",
+     "via": "News feeds",
+     "title": "Ramirez launches another clutch HR as Guardians force winner-take-all Game 5",
+     "url": "https://www.espn.com/mlb/story/_/id/50137741/ramirez-guardians-top-white-sox-force-decisive-game-5-alds",
+     "published_utc": "2026-10-09T05:13:09Z",
+     "kind": "repeat"
+    }
+   ]
+  },
+  {
+   "id": "021910426c12",
+   "rank": 5,
+   "top_rank": 5,
+   "category": "News",
+   "headline": "Between record debt and high school protests, France's situation draws global attention",
+   "url": "https://www.lemonde.fr/en/international/article/2026/10/09/between-record-debt-and-high-school-protests-france-s-situation-draws-global-attention_6758409_4.html",
+   "summary": [
+    "Between record debt and high school protests, France's situation draws global attention.",
+    "The mobilization of French high school students has sparked major media coverage and political reactions in the United States, Italy, Belgium and the United Kingdom."
+   ],
+   "why_it_matters": null,
+   "change": "new",
+   "labels": [],
+   "newest_published_utc": "2026-10-09T03:00:10Z",
+   "coverage": {
+    "level": "strong",
+    "independent_reports": 3,
+    "publishers": [
+     "CBS News",
+     "Le Monde",
+     "The New York Times"
+    ],
+    "repeats": 1,
+    "signals": 1,
+    "channels": 2
+   },
+   "sources": [
+    {
+     "outlet": "Le Monde",
+     "via": "News feeds",
+     "title": "Between record debt and high school protests, France's situation draws global attention",
+     "url": "https://www.lemonde.fr/en/international/article/2026/10/09/between-record-debt-and-high-school-protests-france-s-situation-draws-global-attention_6758409_4.html",
+     "published_utc": "2026-10-09T03:00:10Z",
+     "kind": "report"
+    },
+    {
+     "outlet": "Le Monde",
+     "via": "News feeds",
+     "title": "High school protests draw tens of thousands across France for second time in a week",
+     "url": "https://www.lemonde.fr/en/france/article/2026/10/09/high-school-protests-draw-tens-of-thousands-across-france-for-second-time-in-a-week_6758404_7.html",
+     "published_utc": "2026-10-08T22:31:04Z",
+     "kind": "repeat"
+    },
+    {
+     "outlet": "CBS News",
+     "via": "News feeds",
+     "title": "Riot police clash with students in Paris protests",
+     "url": "https://www.cbsnews.com/video/riot-police-clash-students-paris-protests/",
+     "published_utc": "2026-10-09T00:04:10Z",
+     "kind": "report"
+    },
+    {
+     "outlet": "The New York Times",
+     "via": "Google News",
+     "title": "Paris Police Disperse Thousands Protesting School Conditions",
+     "url": "https://news.google.com/rss/articles/CBMihAFBVV95cUxOemRha3VQVG9VekNqYVp6VjdBYWJsd0g5aTlvWlFvZTMtbzRZYllWTk1NSi1OS2JESTJhY2FpMndNR08xd0RtMWpaWmtiaVVqcWNpR0l4bnRldTRJQUotOTNlU2V6dDI1OEtqWHRLa200bVdTWFltZUZoeUJuTWRCblgzTlE?oc=5",
+     "published_utc": "2026-10-08T18:42:31Z",
+     "kind": "report"
+    },
+    {
+     "outlet": "bsky.app",
+     "via": "Bluesky",
+     "title": "French student protests",
+     "url": "https://bsky.app/profile/did:plc:qrz3lhbyuxbeilrc6nekdqme/feed/2712067e3e5a",
+     "published_utc": null,
+     "kind": "signal"
+    }
+   ]
+  },
+  {
+   "id": "d5023d63430f",
+   "rank": 6,
+   "top_rank": 6,
+   "category": "News",
+   "headline": "US midterms: key takeaways from Senate debates in Michigan, Georgia and Maine",
+   "url": "https://www.theguardian.com/us-news/2026/oct/09/us-midterms-michigan-georgia-maine-senate-debate-key-takeaways",
+   "summary": [
+    "US midterms: key takeaways from Senate debates in Michigan, Georgia and Maine.",
+    "Candidates traded personal attacks, sparred over affordability, the economy and abortion win three closely watched US Senate debates on Thursday"
+   ],
+   "why_it_matters": null,
+   "change": "new",
+   "labels": [],
+   "newest_published_utc": "2026-10-09T04:48:13Z",
+   "coverage": {
+    "level": "moderate",
+    "independent_reports": 3,
+    "publishers": [
+     "The Guardian",
+     "The Hill",
+     "The New York Times"
+    ],
+    "repeats": 0,
+    "signals": 0,
+    "channels": 1
+   },
+   "sources": [
+    {
+     "outlet": "The Guardian",
+     "via": "News feeds",
+     "title": "US midterms: key takeaways from Senate debates in Michigan, Georgia and Maine",
+     "url": "https://www.theguardian.com/us-news/2026/oct/09/us-midterms-michigan-georgia-maine-senate-debate-key-takeaways",
+     "published_utc": "2026-10-09T04:48:13Z",
+     "kind": "report"
+    },
+    {
+     "outlet": "The New York Times",
+     "via": "News feeds",
+     "title": "Fiery Senate Debates in Maine, Michigan and Georgia: Five Takeaways",
+     "url": "https://www.nytimes.com/2026/10/09/us/fiery-senate-debates-in-maine-michigan-and-georgia-five-takeaways.html",
+     "published_utc": "2026-10-09T04:01:07Z",
+     "kind": "report"
+    },
+    {
+     "outlet": "The Hill",
+     "via": "News feeds",
+     "title": "Second Maine Senate debate takes testy turn: 3 takeaways",
+     "url": "https://thehill.com/homenews/campaign/6138012-second-maine-senate-debate-collins-jackson-takeaways/",
+     "published_utc": "2026-10-09T02:17:40Z",
+     "kind": "report"
+    }
+   ]
+  },
+  {
+   "id": "202fa341edd7",
+   "rank": 7,
+   "top_rank": 7,
+   "category": "Sports",
+   "headline": "LeBron still adjusting but logs strong start in 1st game with 76ers",
+   "url": "https://www.espn.com/nba/story/_/id/50137673/lebron-james-scores-10-points-18-minutes-76ers-debut",
+   "summary": [
+    "LeBron still adjusting but logs strong start in 1st game with 76ers.",
+    "LeBron James, who joined the 76ers this summer, had 10 points, five assists and four rebounds in the first half of his debut with Philadelphia."
+   ],
+   "why_it_matters": null,
+   "change": "new",
+   "labels": [],
+   "newest_published_utc": "2026-10-09T05:26:39Z",
+   "coverage": {
+    "level": "strong",
+    "independent_reports": 3,
+    "publishers": [
+     "ESPN",
+     "The Guardian",
+     "Yahoo Sports"
+    ],
+    "repeats": 0,
+    "signals": 0,
+    "channels": 2
+   },
+   "sources": [
+    {
+     "outlet": "ESPN",
+     "via": "News feeds",
+     "title": "LeBron still adjusting but logs strong start in 1st game with 76ers",
+     "url": "https://www.espn.com/nba/story/_/id/50137673/lebron-james-scores-10-points-18-minutes-76ers-debut",
+     "published_utc": "2026-10-09T05:26:39Z",
+     "kind": "report"
+    },
+    {
+     "outlet": "Yahoo Sports",
+     "via": "Google News",
+     "title": "LeBron James plays point forward as 76ers offense shines in first look at new star-studded lineup",
+     "url": "https://news.google.com/rss/articles/CBMi9gFBVV95cUxOdWswNGk2enFZNkQ2Z2JXU24ybW1OZVlMMm03S3oyTk5RX2FPMlQzSWlqZFNlY1JzT3VxdXhwRHNCQW5nenRBUXVtZ0REOUJ4czk3M2NVMVNodzBRdGVZbjlfUm5QUzNocHF6STJTS3dRNmtST1oxMlBleElNSnJrcVY1bHFrNUlvV1VHQTRqdU5xWkxBbk1Ub2FkRzhlLVBJVC1VcHJYNmxEYkh1eURJQUVDUWtLOE1hMzlWYmFaN21ORnBfdDg5QThGamhTakNOTFFJNHRSSnhOYl8tbnpOMjJYeEhhdld0UVFVYVM1S1l1RkdRSEE?oc=5",
+     "published_utc": "2026-10-09T00:59:00Z",
+     "kind": "report"
+    },
+    {
+     "outlet": "The Guardian",
+     "via": "News feeds",
+     "title": "LeBron James shines in pre-season debut for revamped Philadelphia 76ers",
+     "url": "https://www.theguardian.com/sport/2026/oct/08/lebron-james-philadelphia-76ers-debut-brooklyn-nets-preseason",
+     "published_utc": "2026-10-09T03:29:04Z",
+     "kind": "report"
+    }
+   ]
+  },
+  {
+   "id": "55f93bef0b72",
+   "rank": 8,
+   "top_rank": 8,
+   "category": "Entertainment",
+   "headline": "Princeton Celebrates Anne Carson, a Nobel Prize Winner Who Was Denied Tenure",
+   "url": "https://en.wikipedia.org/wiki/Anne_Carson",
+   "summary": [
+    "Princeton Celebrates Anne Carson, a Nobel Prize Winner Who Was Denied Tenure."
+   ],
+   "why_it_matters": null,
+   "change": "",
+   "labels": [],
+   "newest_published_utc": "2026-10-09T02:15:30Z",
+   "coverage": {
+    "level": "moderate",
+    "independent_reports": 2,
+    "publishers": [
+     "BBC News",
+     "The New York Times"
+    ],
+    "repeats": 0,
+    "signals": 1,
+    "channels": 2
+   },
+   "sources": [
+    {
+     "outlet": "en.wikipedia.org",
+     "via": "Wikipedia",
+     "title": "Anne Carson",
+     "url": "https://en.wikipedia.org/wiki/Anne_Carson",
+     "published_utc": null,
+     "kind": "signal"
+    },
+    {
+     "outlet": "The New York Times",
+     "via": "Google News",
+     "title": "Princeton Celebrates Anne Carson, a Nobel Prize Winner Who Was Denied Tenure",
+     "url": "https://news.google.com/rss/articles/CBMipwFBVV95cUxNNl9VeGZsbDhKRzJVUXFMWjJmTmUzUVRreklTVFRFLXp5WjZoeWZBbmFhZjA2NWJvTnk1NkhZbTR5MTRiVlJtbWMxYXhWdVNNWlpqdXRNMUhtYTI0RlhOQy15X2tmcFB1TkhMb1g0Z3FuQi1udGZLOFZGVzNpN1NJeU5hYmJ4SE1lcmV3T19xMWlKSVRoY0o5NWNmcXBIbkNOMnZ1SmNZMA?oc=5",
+     "published_utc": "2026-10-09T02:15:30Z",
+     "kind": "report"
+    },
+    {
+     "outlet": "BBC News",
+     "via": "News feeds",
+     "title": "'Bold and inventive' Canadian poet Anne Carson wins Nobel Literature Prize",
+     "url": "https://www.bbc.co.uk/news/articles/cq4g1j54nepyo?at_medium=RSS&at_campaign=rss",
+     "published_utc": "2026-10-08T14:33:23Z",
+     "kind": "report"
+    }
+   ]
+  },
+  {
+   "id": "144758263a24",
+   "rank": 9,
+   "top_rank": null,
+   "category": "News",
+   "headline": "ICE Agents Shoot Man in New York City",
+   "url": "https://www.youtube.com/shorts/3LiXIvHTiZY",
+   "summary": [
+    "ICE agents shot a man in New York City, surrounding his vehicle with a child inside."
+   ],
+   "why_it_matters": null,
+   "change": "updated",
+   "labels": [],
+   "newest_published_utc": "2026-10-09T04:26:50Z",
+   "coverage": {
+    "level": "strong",
+    "independent_reports": 3,
+    "publishers": [
+     "Al Jazeera",
+     "Al Jazeera English",
+     "BBC News"
+    ],
+    "repeats": 0,
+    "signals": 0,
+    "channels": 3
+   },
+   "sources": [
+    {
+     "outlet": "BBC News",
+     "via": "Google News",
+     "title": "ICE agent shoots man in New York City",
+     "url": "https://news.google.com/rss/articles/CBMiW0FVX3lxTFBmc0lBbDEyZVRtZjFKUnFkR1VxRnc1ZFNFZXFxVWYtOTRnd1E2RGVSYzloU2xKNjBBc2hNSER4VXE2Z25oZ1FxdjAtdW1lR0FLdnl4NjdmWnNoOW8?oc=5",
+     "published_utc": "2026-10-09T02:15:36Z",
+     "kind": "report"
+    },
+    {
+     "outlet": "Al Jazeera English",
+     "via": "YouTube",
+     "title": "Uproar in NY after ICE shoots man with child in the car | AJ",
+     "url": "https://www.youtube.com/shorts/3LiXIvHTiZY",
+     "published_utc": "2026-10-09T04:26:19Z",
+     "kind": "report"
+    },
+    {
+     "outlet": "Al Jazeera",
+     "via": "News feeds",
+     "title": "Uproar in NY after ICE shoots man with child in the car",
+     "url": "https://www.aljazeera.com/video/newsfeed/2026/10/9/uproar-in-ny-after-ice-shoots-man-with-child-in-the-car?traffic_source=rss",
+     "published_utc": "2026-10-09T04:26:50Z",
+     "kind": "report"
+    }
+   ]
+  },
+  {
+   "id": "dbaffc991fc1",
+   "rank": 10,
+   "top_rank": 9,
+   "category": "Science & AI",
+   "headline": "NASA is searching for hidden caves to build its first Moon base",
+   "url": "https://www.sciencedaily.com/releases/2026/10/261008005247.htm",
+   "summary": [
+    "NASA is searching for hidden caves to build its first Moon base.",
+    "NASA is preparing for humanity's first Moon base with three investigations that will hunt for underground shelters, uncover hidden ice, and track dangerous conditions on the lunar surface."
+   ],
+   "why_it_matters": null,
+   "change": "",
+   "labels": [],
+   "newest_published_utc": "2026-10-08T13:57:38Z",
+   "coverage": {
+    "level": "moderate",
+    "independent_reports": 2,
+    "publishers": [
+     "ScienceDaily",
+     "SpaceNews"
+    ],
+    "repeats": 0,
+    "signals": 0,
+    "channels": 1
+   },
+   "sources": [
+    {
+     "outlet": "ScienceDaily",
+     "via": "News feeds",
+     "title": "NASA is searching for hidden caves to build its first Moon base",
+     "url": "https://www.sciencedaily.com/releases/2026/10/261008005247.htm",
+     "published_utc": "2026-10-08T12:19:20Z",
+     "kind": "report"
+    },
+    {
+     "outlet": "SpaceNews",
+     "via": "News feeds",
+     "title": "What will it take to build a moon base?",
+     "url": "https://spacenews.com/what-will-it-take-to-build-a-moon-base/",
+     "published_utc": "2026-10-08T13:57:38Z",
+     "kind": "report"
+    }
+   ]
+  },
+  {
+   "id": "07575e5a6164",
+   "rank": 11,
+   "top_rank": 10,
+   "category": "Tech",
+   "headline": "Trump administration is suspending Microsoft from a green card program",
+   "url": "https://apnews.com/article/h1b-visa-program-vance-microsoft-e7b3a407f822702b269ee277d21343ea",
+   "summary": [
+    "Trump administration is suspending Microsoft from a green card program."
+   ],
+   "why_it_matters": null,
+   "change": "updated",
+   "labels": [],
+   "newest_published_utc": "2026-10-09T02:34:46Z",
+   "coverage": {
+    "level": "strong",
+    "independent_reports": 6,
+    "publishers": [
+     "AP News",
+     "BBC News",
+     "Business Insider",
+     "Techmeme",
+     "The New York Times",
+     "Tom's Hardware"
+    ],
+    "repeats": 2,
+    "signals": 0,
+    "channels": 3
+   },
+   "sources": [
+    {
+     "outlet": "AP News",
+     "via": "Hacker News",
+     "title": "Trump administration is suspending Microsoft from a green card program",
+     "url": "https://apnews.com/article/h1b-visa-program-vance-microsoft-e7b3a407f822702b269ee277d21343ea",
+     "published_utc": "2026-10-08T15:15:00Z",
+     "kind": "report"
+    },
+    {
+     "outlet": "The New York Times",
+     "via": "News feeds",
+     "title": "Trump Administration Suspends Microsoft From Green Card Program, Alleging Visa Fraud",
+     "url": "https://www.nytimes.com/2026/10/08/us/politics/microsoft-visas-green-cards.html",
+     "published_utc": "2026-10-09T00:27:00Z",
+     "kind": "report"
+    },
+    {
+     "outlet": "AP News",
+     "via": "Google News",
+     "title": "The Trump administration is suspending Microsoft from a green card program, alleging fraud",
+     "url": "https://news.google.com/rss/articles/CBMilwFBVV95cUxOSlNGOUJHbkJ0UXdETE9EUWMySjZkMWVzX3V6Ny1yNlc1Ym4ydmx5NXY2UEJyak1mNVROdkRqOTNGY2kxT1BrQUwyYVRzSmlDNlVIa0xnenNUM2cyWjg2NTd0Rl9seW1JOVFuRHczVk93M2RkOWdDOUV0Sl90WjFJeEZEeWNTUFFvNkNkRU81alBOWlltQ1VN?oc=5",
+     "published_utc": "2026-10-09T00:07:00Z",
+     "kind": "repeat"
+    },
+    {
+     "outlet": "Business Insider",
+     "via": "News feeds",
+     "title": "The advice immigration attorneys have for Microsoft workers worried about their green cards",
+     "url": "https://www.businessinsider.com/immigration-lawyers-microsoft-adobe-green-card-perm-program-10-2026",
+     "published_utc": "2026-10-09T02:34:46Z",
+     "kind": "report"
+    },
+    {
+     "outlet": "Business Insider",
+     "via": "Google News",
+     "title": "The advice immigration attorneys have for Microsoft workers worried about their green cards",
+     "url": "https://news.google.com/rss/articles/CBMioAFBVV95cUxPcW1yWDZpNjlPNkx3QmVmODh6azl2WWU3ZXpDSGVkb0ktVUtvOXAtQTNlWUJLbko5bFJleFEzLTdtNk12eEZSeThPTDBBY3JYZGR6TUJfa080ajlEdjh4TXo3MzlvWEFmb1VEYzZGNV9RSFJIQWtla3pKWWhnNEpLV3o4X09RSWNZYi1qbllxbjlpOTRsZW9kdkozemxyWEkw?oc=5",
+     "published_utc": "2026-10-09T02:34:00Z",
+     "kind": "repeat"
+    },
+    {
+     "outlet": "Tom's Hardware",
+     "via": "News feeds",
+     "title": "U.S. suspends green card path for H-1B workers at Microsoft and Adobe — labor certification program blocked due to alleged fraud",
+     "url": "https://www.tomshardware.com/tech-industry/policy/u-s-suspends-green-card-path-for-h-1b-workers-at-microsoft-and-adobe-labor-certification-program-blocked-due-to-alleged-fraud",
+     "published_utc": "2026-10-08T17:26:07Z",
+     "kind": "report"
+    },
+    {
+     "outlet": "BBC News",
+     "via": "News feeds",
+     "title": "White House blocks Microsoft from foreign worker hiring programme",
+     "url": "https://www.bbc.co.uk/news/articles/ck5yngl2y4gpo?at_medium=RSS&at_campaign=rss",
+     "published_utc": "2026-10-08T21:37:35Z",
+     "kind": "report"
+    },
+    {
+     "outlet": "Techmeme",
+     "via": "News feeds",
+     "title": "Microsoft denies JD Vance's claim it replaced thousands of US workers with foreign workers last year, saying most H-1B applications were for existing employees (Associated Press)",
+     "url": "https://www.techmeme.com/261008/p55#a261008p55",
+     "published_utc": "2026-10-09T02:15:56Z",
+     "kind": "report"
+    }
+   ]
+  },
+  {
+   "id": "5c103885c27f",
+   "rank": 12,
+   "top_rank": null,
+   "category": "Internet Culture",
+   "headline": "Meta Bans TikTok Ads on Its Platforms in US",
+   "url": "https://news.google.com/rss/articles/CBMiuwFBVV95cUxNcFlfTjhMRWZPWEhDVF9mcGQ1VEY2aWVLMThVLUJaVmNWUzdwV09KTWlDN0E4Rm5IRHFyME1QN01fczZFSGdDbVBsYnh3dDJTdFlfTkczM1NreS11VjJ2QWVFbnV2eU1EMDNWZHl5X2h4WV9SN3FFRUJBaHpzUng2VlhKemtnUnJEblBpajF5U0FCWmdFLWR6azJ0aDB5bEhUdVJHc0g1dVNYY0NZYVdyaU9UOE12SUFDQmpB?oc=5",
+   "summary": [
+    "Meta bans TikTok ads on its platforms in US."
+   ],
+   "why_it_matters": null,
+   "change": "new",
+   "labels": [],
+   "newest_published_utc": "2026-10-08T23:28:00Z",
+   "coverage": {
+    "level": "moderate",
+    "independent_reports": 2,
+    "publishers": [
+     "Bloomberg.com",
+     "Reuters"
+    ],
+    "repeats": 0,
+    "signals": 0,
+    "channels": 1
+   },
+   "sources": [
+    {
+     "outlet": "Reuters",
+     "via": "Google News",
+     "title": "Meta bans TikTok ads on its platforms in US",
+     "url": "https://news.google.com/rss/articles/CBMiuwFBVV95cUxNcFlfTjhMRWZPWEhDVF9mcGQ1VEY2aWVLMThVLUJaVmNWUzdwV09KTWlDN0E4Rm5IRHFyME1QN01fczZFSGdDbVBsYnh3dDJTdFlfTkczM1NreS11VjJ2QWVFbnV2eU1EMDNWZHl5X2h4WV9SN3FFRUJBaHpzUng2VlhKemtnUnJEblBpajF5U0FCWmdFLWR6azJ0aDB5bEhUdVJHc0g1dVNYY0NZYVdyaU9UOE12SUFDQmpB?oc=5",
+     "published_utc": "2026-10-08T23:28:00Z",
+     "kind": "report"
+    },
+    {
+     "outlet": "Bloomberg.com",
+     "via": "Google News",
+     "title": "Meta Bans Ads From TikTok on Its Apps in Escalating Feud",
+     "url": "https://news.google.com/rss/articles/CBMixwFBVV95cUxPeXFCVEt4TVBVRnF2ejEzTDZINVhULU1CTzVkZXJZNXY4SFpHWWZyMWhsYVVJOS1icVd4NUlPSUFIVnpjdFgyZlJNVl9Qcl9MTm5kNnMzZkNzVElpblpmX1FDVm50NHNZbm1YOVpwWHk1cXlUZVVUV2thNjZsWGVFTFhZU3JSaEg2R09ETENONGdsSnExMnlTVVNiUjQzUDdObFNKbVpsckpRcy00V211RFBodnZFMWltSGRDVlQyYXhkTU04WHZZ?oc=5",
+     "published_utc": "2026-10-08T23:00:00Z",
+     "kind": "report"
+    }
+   ]
+  },
+  {
+   "id": "2f5f11411b9c",
+   "rank": 13,
+   "top_rank": null,
+   "category": "News",
+   "headline": "Christa Pike's attorneys say she is walking with help and eating after failed execution attempt",
+   "url": "https://www.pbs.org/newshour/nation/christa-pikes-attorneys-say-she-is-walking-with-help-and-eating-after-failed-execution-attempt",
+   "summary": [
+    "Christa Pike's attorneys say she is walking with help and eating after failed execution attempt.",
+    "Christa Pike has begun walking and eating again at a hospital a week after surviving Tennessee's attempt to execute her with lethal drugs, her attorneys said Thursday."
+   ],
+   "why_it_matters": null,
+   "change": "new",
+   "labels": [],
+   "newest_published_utc": "2026-10-09T00:35:13Z",
+   "coverage": {
+    "level": "moderate",
+    "independent_reports": 2,
+    "publishers": [
+     "BBC News",
+     "PBS NewsHour"
+    ],
+    "repeats": 0,
+    "signals": 0,
+    "channels": 1
+   },
+   "sources": [
+    {
+     "outlet": "PBS NewsHour",
+     "via": "News feeds",
+     "title": "Christa Pike's attorneys say she is walking with help and eating after failed execution attempt",
+     "url": "https://www.pbs.org/newshour/nation/christa-pikes-attorneys-say-she-is-walking-with-help-and-eating-after-failed-execution-attempt",
+     "published_utc": "2026-10-09T00:35:13Z",
+     "kind": "report"
+    },
+    {
+     "outlet": "BBC News",
+     "via": "News feeds",
+     "title": "Christa Pike now walking after failed US execution, lawyer tells BBC",
+     "url": "https://www.bbc.co.uk/news/articles/c60rln74yzvxo?at_medium=RSS&at_campaign=rss",
+     "published_utc": "2026-10-08T15:02:32Z",
+     "kind": "report"
+    }
+   ]
+  },
+  {
+   "id": "159bcc692346",
+   "rank": 14,
+   "top_rank": null,
+   "category": "News",
+   "headline": "Sparks fly as Abdul El-Sayed and Mike Rogers face off in first Michigan Senate debate",
+   "url": "https://www.nbcnews.com/politics/2026-election/sparks-fly-abdul-el-sayed-mike-rogers-first-michigan-senate-debate-rcna599866",
+   "summary": [
+    "Sparks fly as Abdul El-Sayed and Mike Rogers face off in first Michigan Senate debate.",
+    "Facing questions about gas prices, the war in Iran and tariffs, the candidates frequently exchanged insults amid a high-stakes campaign."
+   ],
+   "why_it_matters": null,
+   "change": "new",
+   "labels": [],
+   "newest_published_utc": "2026-10-09T02:39:00Z",
+   "coverage": {
+    "level": "moderate",
+    "independent_reports": 2,
+    "publishers": [
+     "AP News",
+     "NBC News"
+    ],
+    "repeats": 0,
+    "signals": 0,
+    "channels": 2
+   },
+   "sources": [
+    {
+     "outlet": "NBC News",
+     "via": "News feeds",
+     "title": "Sparks fly as Abdul El-Sayed and Mike Rogers face off in first Michigan Senate debate",
+     "url": "https://www.nbcnews.com/politics/2026-election/sparks-fly-abdul-el-sayed-mike-rogers-first-michigan-senate-debate-rcna599866",
+     "published_utc": "2026-10-09T00:42:31Z",
+     "kind": "report"
+    },
+    {
+     "outlet": "AP News",
+     "via": "Google News",
+     "title": "Rogers and El-Sayed trade attacks in combative first Michigan Senate debate",
+     "url": "https://news.google.com/rss/articles/CBMingFBVV95cUxQdjAydXBMZXdCOUJLSG41X0g3LXJGd0ZzS2FlUEViREw3aFlQVlVsSVltX0N3aS1nYk1aZURoamdhZmdEZGY4VnNZMUdjNDcyTVJBd2paa1g2ckFZNHBZTllrR3ZYUHVQLTA2YXlibTRHTVFrc2YtN1RjcXk1b1pvSV93ekpEUXBtb1FKQnZGMlFCVjZyS1RKZ0l5am00QQ?oc=5",
+     "published_utc": "2026-10-09T02:39:00Z",
+     "kind": "report"
+    }
+   ]
+  },
+  {
+   "id": "4e0a149207a5",
+   "rank": 15,
+   "top_rank": null,
+   "category": "News",
+   "headline": "Flights to Saudi capital suspended after Houthis 'attack on airport'",
+   "url": "https://news.sky.com/story/airlines-suspend-flights-to-saudi-capital-after-houthis-claim-attack-on-airport-13596623",
+   "summary": [
+    "Flights to Saudi capital suspended after Houthis 'attack on airport'.",
+    "Explosions were heard in Saudi Arabia's capital, including a large blast at Riyadh's international airport, where flights were subsequently halted."
+   ],
+   "why_it_matters": null,
+   "change": "new",
+   "labels": [],
+   "newest_published_utc": "2026-10-08T18:42:35Z",
+   "coverage": {
+    "level": "moderate",
+    "independent_reports": 2,
+    "publishers": [
+     "Reuters",
+     "Sky News"
+    ],
+    "repeats": 0,
+    "signals": 0,
+    "channels": 2
+   },
+   "sources": [
+    {
+     "outlet": "Sky News",
+     "via": "News feeds",
+     "title": "Flights to Saudi capital suspended after Houthis 'attack on airport'",
+     "url": "https://news.sky.com/story/airlines-suspend-flights-to-saudi-capital-after-houthis-claim-attack-on-airport-13596623",
+     "published_utc": "2026-10-08T17:23:00Z",
+     "kind": "report"
+    },
+    {
+     "outlet": "Reuters",
+     "via": "Google News",
+     "title": "Plane damaged at Riyadh airport as Houthis escalate attacks, sources say",
+     "url": "https://news.google.com/rss/articles/CBMiyAFBVV95cUxQS3RjWlUtbVhIS3V2UlRkMFZOT3pESFlCZGVKcVp5N1lwX1JCTGRrXzI3dXdHT3diVGZUWENHREJ3MW5zQUpRamZpbkV0dTdoNDhRUzl6OW5FT2JZSjZHaHY2T2ltMm1fNTZVNHhuQzdZTmJVRHhSbE1vYnNpZTR4SGJONWhxVWxoYmxBLW1SRkpBNlROdHBxN3VjMUtpcHFaVzgzQ1ZvcmIyVllXcjBhSTY3TlhuLXpQRExkZmYtd29TOEppUkYwOA?oc=5",
+     "published_utc": "2026-10-08T18:42:35Z",
+     "kind": "report"
+    }
+   ]
+  },
+  {
+   "id": "f794b8b8a82d",
+   "rank": 16,
+   "top_rank": null,
+   "category": "News",
+   "headline": "Margaret Hamilton, computing pioneer who led software development for the Apollo program, dies at 90",
+   "url": "https://www.theguardian.com/science/2026/oct/07/margaret-hamilton-moon-computer-software",
+   "summary": [
+    "Margaret Hamilton, computing pioneer who led software development for the Apollo program, dies at 90."
+   ],
+   "why_it_matters": null,
+   "change": "new",
+   "labels": [],
+   "newest_published_utc": "2026-10-08T00:40:37Z",
+   "coverage": {
+    "level": "limited",
+    "independent_reports": 1,
+    "publishers": [
+     "Lobsters"
+    ],
+    "repeats": 0,
+    "signals": 3,
+    "channels": 1
+   },
+   "sources": [
+    {
+     "outlet": "The Guardian",
+     "via": "Mastodon",
+     "title": "Margaret Hamilton, trailblazer whose software powered Apollo 11 moon landing, dies at 90",
+     "url": "https://www.theguardian.com/science/2026/oct/07/margaret-hamilton-moon-computer-software",
+     "published_utc": "2026-10-08T00:40:37Z",
+     "kind": "signal"
+    },
+    {
+     "outlet": "The New York Times",
+     "via": "Mastodon",
+     "title": "Margaret Hamilton, Whose Software Guided the Apollo Missions, Has Died",
+     "url": "https://www.nytimes.com/2026/10/07/obituaries/margaret-hamilton-dead.html",
+     "published_utc": "2026-10-07T23:05:07Z",
+     "kind": "signal"
+    },
+    {
+     "outlet": "BBC News",
+     "via": "Mastodon",
+     "title": "Margaret Hamilton, whose software helped land Apollo 11 on the moon, dies at 90",
+     "url": "https://www.bbc.co.uk/news/articles/cx5yn46j41zpo",
+     "published_utc": null,
+     "kind": "signal"
+    },
+    {
+     "outlet": "Lobsters",
+     "via": "News feeds",
+     "title": "Margaret Hamilton, computing pioneer who led software development for the Apollo program, dies at 90",
+     "url": "https://news.mit.edu/2026/margaret-hamilton-computing-pioneer-dies-1007",
+     "published_utc": "2026-10-07T21:38:09Z",
+     "kind": "report"
+    }
+   ]
+  },
+  {
+   "id": "cbf4e8e8a0dd",
+   "rank": 17,
+   "top_rank": null,
+   "category": "Science & AI",
+   "headline": "4 people on NASA's Crew-12 mission return to Earth after 8 months in space",
+   "url": "https://www.npr.org/2026/10/08/nx-s1-5992845/nasa-spacex-crew-12-international-space-station-iss-splashdown",
+   "summary": [
+    "4 people on NASA's Crew-12 mission return to Earth after 8 months in space.",
+    "Four people - two NASA astronauts, one from the European Space Agency and a Russian cosmonaut - spent nearly eight months at the space station, conducting spacewalks, science experiments and research."
+   ],
+   "why_it_matters": null,
+   "change": "",
+   "labels": [],
+   "newest_published_utc": "2026-10-08T15:34:39Z",
+   "coverage": {
+    "level": "limited",
+    "independent_reports": 1,
+    "publishers": [
+     "NPR"
+    ],
+    "repeats": 1,
+    "signals": 0,
+    "channels": 2
+   },
+   "sources": [
+    {
+     "outlet": "NPR",
+     "via": "News feeds",
+     "title": "4 people on NASA's Crew-12 mission return to Earth after 8 months in space",
+     "url": "https://www.npr.org/2026/10/08/nx-s1-5992845/nasa-spacex-crew-12-international-space-station-iss-splashdown",
+     "published_utc": "2026-10-08T15:34:39Z",
+     "kind": "report"
+    },
+    {
+     "outlet": "NPR",
+     "via": "Google News",
+     "title": "4 people on NASA's Crew-12 mission return to Earth after 8 months in space",
+     "url": "https://news.google.com/rss/articles/CBMiqwFBVV95cUxNcl9qUkRWTGNpb3dJMDdMOXp5QWJIMGlFMmtrQUNPcGRlQmRoc0hBX0lEOWdqa1h3bExkLWZpMU9yeV8wbndqQlp0bkJ3TXZkdFFjSk42TUVSY1kzWm16Tm9ndUwwUlJyU2xnUjMxTzc1VDA4TmotOE5qWG4wSmwyZjFKN2xRUmVuXzIwdllvUGpmTlZHZnAtX1FqSnF0d1NkSFIxZUN6NnpvbVk?oc=5",
+     "published_utc": "2026-10-08T15:34:39Z",
+     "kind": "repeat"
+    }
+   ]
+  },
+  {
+   "id": "574b140956ac",
+   "rank": 18,
+   "top_rank": null,
+   "category": "Tech",
+   "headline": "Before Computer Science Became a Boys' Club, Margaret Hamilton Wrote the Code",
+   "url": "https://news.google.com/rss/articles/CBMikgFBVV95cUxQMFR2ZlpwRkYtTDJmOGFnc0ZPY1VzOTZ2bWZXV25PRkxMMTdrMXJkUHdXVmlzLURJV29DTmZIdlNUVXFVZ2hDcU1rblVUczBLdm1Xb3NLWFcwdHNjTmR0Slc2U0MxY2NKN2J6TmZIaG43d29fSk5fTDZJSUNUbWlwOUtDc2YzeVJWb1hSMHlaaE5QUQ?oc=5",
+   "summary": [
+    "Before Computer Science Became a Boys' Club, Margaret Hamilton Wrote the Code."
+   ],
+   "why_it_matters": null,
+   "change": "new",
+   "labels": [],
+   "newest_published_utc": "2026-10-09T02:09:40Z",
+   "coverage": {
+    "level": "limited",
+    "independent_reports": 1,
+    "publishers": [
+     "The New York Times"
+    ],
+    "repeats": 0,
+    "signals": 0,
+    "channels": 1
+   },
+   "sources": [
+    {
+     "outlet": "The New York Times",
+     "via": "Google News",
+     "title": "Before Computer Science Became a Boys’ Club, Margaret Hamilton Wrote the Code",
+     "url": "https://news.google.com/rss/articles/CBMikgFBVV95cUxQMFR2ZlpwRkYtTDJmOGFnc0ZPY1VzOTZ2bWZXV25PRkxMMTdrMXJkUHdXVmlzLURJV29DTmZIdlNUVXFVZ2hDcU1rblVUczBLdm1Xb3NLWFcwdHNjTmR0Slc2U0MxY2NKN2J6TmZIaG43d29fSk5fTDZJSUNUbWlwOUtDc2YzeVJWb1hSMHlaaE5QUQ?oc=5",
+     "published_utc": "2026-10-09T02:09:40Z",
+     "kind": "report"
+    }
+   ]
+  },
+  {
+   "id": "abbcc3e35bed",
+   "rank": 19,
+   "top_rank": null,
+   "category": "Sports",
+   "headline": "Bucky Irving runs riot as Buccaneers stun Cowboys for first win of season",
+   "url": "https://www.theguardian.com/sport/2026/oct/08/bucky-irving-tampa-bay-buccaneers-dallas-cowboys-nfl",
+   "summary": [
+    "Bucky Irving runs riot as Buccaneers stun Cowboys for first win of season.",
+    "Bucky Irving rushed for a career-high 165 yards and scored twice as Tampa Bay capitalized on Dallas mistakes to claim a surprise 24-16 victory"
+   ],
+   "why_it_matters": null,
+   "change": "",
+   "labels": [],
+   "newest_published_utc": "2026-10-09T03:44:15Z",
+   "coverage": {
+    "level": "limited",
+    "independent_reports": 1,
+    "publishers": [
+     "The Guardian"
+    ],
+    "repeats": 0,
+    "signals": 0,
+    "channels": 1
+   },
+   "sources": [
+    {
+     "outlet": "The Guardian",
+     "via": "News feeds",
+     "title": "Bucky Irving runs riot as Buccaneers stun Cowboys for first win of season",
+     "url": "https://www.theguardian.com/sport/2026/oct/08/bucky-irving-tampa-bay-buccaneers-dallas-cowboys-nfl",
+     "published_utc": "2026-10-09T03:44:15Z",
+     "kind": "report"
+    }
+   ]
+  },
+  {
+   "id": "287bab4c4e7a",
+   "rank": 20,
+   "top_rank": null,
+   "category": "Science & AI",
+   "headline": "Audacious space heist aims to bring home bits of mysterious martian moon",
+   "url": "https://www.science.org/content/article/audacious-space-heist-japan-aims-bring-home-bits-martian-moon",
+   "summary": [
+    "Audacious space heist aims to bring home bits of mysterious martian moon.",
+    "Samples from Japan's MMX mission could reveal how Phobos formed - and may contain pieces of Mars"
+   ],
+   "why_it_matters": null,
+   "change": "",
+   "labels": [],
+   "newest_published_utc": "2026-10-08T02:00:00Z",
+   "coverage": {
+    "level": "limited",
+    "independent_reports": 1,
+    "publishers": [
+     "Science"
+    ],
+    "repeats": 0,
+    "signals": 0,
+    "channels": 1
+   },
+   "sources": [
+    {
+     "outlet": "Science",
+     "via": "News feeds",
+     "title": "Audacious space heist aims to bring home bits of mysterious martian moon",
+     "url": "https://www.science.org/content/article/audacious-space-heist-japan-aims-bring-home-bits-martian-moon",
+     "published_utc": "2026-10-08T02:00:00Z",
+     "kind": "report"
+    }
+   ]
+  },
+  {
+   "id": "a7a1c6740925",
+   "rank": 21,
+   "top_rank": null,
+   "category": "Science & AI",
+   "headline": "Global analysis reveals how armed conflict erodes farmland and potential food production",
+   "url": "https://phys.org/news/2026-10-global-analysis-reveals-armed-conflict.html",
+   "summary": [
+    "Global analysis reveals how armed conflict erodes farmland and potential food production.",
+    "Armed conflict accelerates cropland loss, and the effects can persist for years after conflict begins and vary substantially with conflict severity and social conditions, according to a new study published in Nature Food on Sept. 24."
+   ],
+   "why_it_matters": null,
+   "change": "new",
+   "labels": [],
+   "newest_published_utc": "2026-10-09T03:00:01Z",
+   "coverage": {
+    "level": "limited",
+    "independent_reports": 1,
+    "publishers": [
+     "Phys.org"
+    ],
+    "repeats": 0,
+    "signals": 0,
+    "channels": 1
+   },
+   "sources": [
+    {
+     "outlet": "Phys.org",
+     "via": "News feeds",
+     "title": "Global analysis reveals how armed conflict erodes farmland and potential food production",
+     "url": "https://phys.org/news/2026-10-global-analysis-reveals-armed-conflict.html",
+     "published_utc": "2026-10-09T03:00:01Z",
+     "kind": "report"
+    }
+   ]
+  },
+  {
+   "id": "ddbbbdb8bbad",
+   "rank": 22,
+   "top_rank": null,
+   "category": "Sports",
+   "headline": "Aces' Wilson wins 5th MVP, says she'll nix pregame ceremony to focus on Game 3",
+   "url": "https://www.espn.com/wnba/story/_/id/50135041/sources-aces-star-aja-wilson-wins-record-5th-wnba-mvp-award",
+   "summary": [
+    "Aces' Wilson wins 5th MVP, says she'll nix pregame ceremony to focus on Game 3.",
+    "Las Vegas Aces center A'ja Wilson won a record fifth WNBA Most Valuable Player award but said she will not participate in a pregame ceremony to receive her trophy because she wants to focus on Friday's Game 3."
+   ],
+   "why_it_matters": null,
+   "change": "new",
+   "labels": [],
+   "newest_published_utc": "2026-10-09T05:26:26Z",
+   "coverage": {
+    "level": "limited",
+    "independent_reports": 1,
+    "publishers": [
+     "ESPN"
+    ],
+    "repeats": 0,
+    "signals": 0,
+    "channels": 1
+   },
+   "sources": [
+    {
+     "outlet": "ESPN",
+     "via": "News feeds",
+     "title": "Aces' Wilson wins 5th MVP, says she'll nix pregame ceremony to focus on Game 3",
+     "url": "https://www.espn.com/wnba/story/_/id/50135041/sources-aces-star-aja-wilson-wins-record-5th-wnba-mvp-award",
+     "published_utc": "2026-10-09T05:26:26Z",
+     "kind": "report"
+    }
+   ]
+  },
+  {
+   "id": "aee80b84e923",
+   "rank": 23,
+   "top_rank": null,
+   "category": "Science & AI",
+   "headline": "OpenAI caught Russians and Iranians using ChatGPT for influence campaigns",
+   "url": "https://www.npr.org/2026/10/08/nx-s1-5995576/openai-russia-iran-influence-operations-chatgpt",
+   "summary": [
+    "OpenAI caught Russians and Iranians using ChatGPT for influence campaigns.",
+    "The company says Russian operatives used its AI chatbot to update their bosses, shedding light on influence campaigns previously not attributed to Russia."
+   ],
+   "why_it_matters": null,
+   "change": "new",
+   "labels": [],
+   "newest_published_utc": "2026-10-09T00:25:15Z",
+   "coverage": {
+    "level": "limited",
+    "independent_reports": 1,
+    "publishers": [
+     "NPR"
+    ],
+    "repeats": 1,
+    "signals": 0,
+    "channels": 2
+   },
+   "sources": [
+    {
+     "outlet": "NPR",
+     "via": "News feeds",
+     "title": "OpenAI caught Russians and Iranians using ChatGPT for influence campaigns",
+     "url": "https://www.npr.org/2026/10/08/nx-s1-5995576/openai-russia-iran-influence-operations-chatgpt",
+     "published_utc": "2026-10-09T00:25:15Z",
+     "kind": "report"
+    },
+    {
+     "outlet": "NPR",
+     "via": "Google News",
+     "title": "OpenAI caught Russians and Iranians using ChatGPT for influence campaigns",
+     "url": "https://news.google.com/rss/articles/CBMilwFBVV95cUxQZE9QY05vM01MS0RQbVNwMkFkTUlyWjBQUlBZczZLSUdHa3ZSUnF4MU01eFhvVUhWYzE2YkR2QVlDdmtvV29ZbXNxUTlKamJHdDdKRnplSC1HWktrbGR1LWRNVnFfSXQ1UDBRZVNZdFYxekx1WUlOcDZrV3c3YlpPQzhVQnVWQjF4RTBtZjBSaXRpVjVxbTVZ?oc=5",
+     "published_utc": "2026-10-09T00:25:15Z",
+     "kind": "repeat"
+    }
+   ]
+  },
+  {
+   "id": "b240fc6e976b",
+   "rank": 24,
+   "top_rank": null,
+   "category": "Science & AI",
+   "headline": "James Webb Space Telescope Helps Detect the Most Distant Fast Radio Burst Ever Seen",
+   "url": "https://news.google.com/rss/articles/CBMi-wFBVV95cUxQdXZJRmprMzFTbEZPdTNoZ2RsczZNTkxteExQTVNPNWhBTGk2S05zazVSQ2MzUENudjVid2NXU1JZLWYxMmJ6TlZITFkwUExNSGg3VVhqN3JQVF9vSHJ3UWVYdnc5M0ZQVDJLdVFubGJqS1g3WFhUcS0yWTJWdGRFRVh0cFBncF9qUHhxY2V5QWR6WENIWmhyLVptelJaaERWUWdyd2g0YUI2SWJmY1VPb0xBNkNZeDltUzR4UEFkZEpyWHFlXzQ3YUNVY2EtNy01NEVMSk5xcWV1N1pmTDlNUGNrNC14M010aVVEYy03M1A4RE9RcnduUUUwQQ?oc=5",
+   "summary": [
+    "James Webb Space Telescope helps detect the most distant Fast Radio Burst ever seen - and scientists are surprised by its source."
+   ],
+   "why_it_matters": null,
+   "change": "",
+   "labels": [],
+   "newest_published_utc": "2026-10-08T18:00:00Z",
+   "coverage": {
+    "level": "limited",
+    "independent_reports": 1,
+    "publishers": [
+     "Space"
+    ],
+    "repeats": 0,
+    "signals": 0,
+    "channels": 1
+   },
+   "sources": [
+    {
+     "outlet": "Space",
+     "via": "Google News",
+     "title": "James Webb Space Telescope helps detect the most distant Fast Radio Burst ever seen — and scientists are surprised by its source",
+     "url": "https://news.google.com/rss/articles/CBMi-wFBVV95cUxQdXZJRmprMzFTbEZPdTNoZ2RsczZNTkxteExQTVNPNWhBTGk2S05zazVSQ2MzUENudjVid2NXU1JZLWYxMmJ6TlZITFkwUExNSGg3VVhqN3JQVF9vSHJ3UWVYdnc5M0ZQVDJLdVFubGJqS1g3WFhUcS0yWTJWdGRFRVh0cFBncF9qUHhxY2V5QWR6WENIWmhyLVptelJaaERWUWdyd2g0YUI2SWJmY1VPb0xBNkNZeDltUzR4UEFkZEpyWHFlXzQ3YUNVY2EtNy01NEVMSk5xcWV1N1pmTDlNUGNrNC14M010aVVEYy03M1A4RE9RcnduUUUwQQ?oc=5",
+     "published_utc": "2026-10-08T18:00:00Z",
+     "kind": "report"
+    }
+   ]
+  },
+  {
+   "id": "8faf310e98c6",
+   "rank": 25,
+   "top_rank": null,
+   "category": "Science & AI",
+   "headline": "Trump Acquires over $1 Million in SpaceX Debt",
+   "url": "https://news.google.com/rss/articles/CBMiswFBVV95cUxOLV95aE9oaml6c1FEWHZ0MXF3VTBaYllwbVJ3Y2lfRTdRTTVDMkpZRlFoOVRtNWZKT2NIUXZaOHpXeW5tb3FWdklLaWIwYU5idlNzcU5lRGJTd05NVjBvMXE3RkVyWUFjeHQzcld4dWlXT2oydEpNZV8wb3NmNUgxa21oNVNaSklfRU9Gb2pGT3VRZTVYQVAxcE5ybzlHRWE0MEE5U1IwQk1NSEhyalJwZ1U4Yw?oc=5",
+   "summary": [
+    "Trump acquired over $1 million in SpaceX debt, days before unveiling his space policy."
+   ],
+   "why_it_matters": null,
+   "change": "new",
+   "labels": [],
+   "newest_published_utc": "2026-10-09T04:17:42Z",
+   "coverage": {
+    "level": "limited",
+    "independent_reports": 1,
+    "publishers": [
+     "The Washington Post"
+    ],
+    "repeats": 0,
+    "signals": 0,
+    "channels": 1
+   },
+   "sources": [
+    {
+     "outlet": "The Washington Post",
+     "via": "Google News",
+     "title": "Trump bought over $1 million in SpaceX debt days before unveiling space policy",
+     "url": "https://news.google.com/rss/articles/CBMiswFBVV95cUxOLV95aE9oaml6c1FEWHZ0MXF3VTBaYllwbVJ3Y2lfRTdRTTVDMkpZRlFoOVRtNWZKT2NIUXZaOHpXeW5tb3FWdklLaWIwYU5idlNzcU5lRGJTd05NVjBvMXE3RkVyWUFjeHQzcld4dWlXT2oydEpNZV8wb3NmNUgxa21oNVNaSklfRU9Gb2pGT3VRZTVYQVAxcE5ybzlHRWE0MEE5U1IwQk1NSEhyalJwZ1U4Yw?oc=5",
+     "published_utc": "2026-10-09T04:17:42Z",
+     "kind": "report"
+    }
+   ]
+  },
+  {
+   "id": "5297ef14e4e0",
+   "rank": 26,
+   "top_rank": null,
+   "category": "Science & AI",
+   "headline": "NASA's Prima Space Telescope Would Aim to See What James Webb Can't",
+   "url": "https://news.google.com/rss/articles/CBMib0FVX3lxTE9aUUp1TVJpM2pGSXE4X1NmcnctUkR0MlNlQVN3bHRKTHh4RUdSRWpLQkMzRU43YVlkQV9VTkZVZmNrbDlLYkJfcF84M0p4OXlyUnZiNkI2RDFYNXF5NGgyQm5rQ01XcWYtT0c1eC1Hdw?oc=5",
+   "summary": [
+    "NASA's Prima space telescope would aim to see what James Webb can't."
+   ],
+   "why_it_matters": null,
+   "change": "new",
+   "labels": [],
+   "newest_published_utc": "2026-10-09T02:52:59Z",
+   "coverage": {
+    "level": "limited",
+    "independent_reports": 1,
+    "publishers": [
+     "Mashable"
+    ],
+    "repeats": 0,
+    "signals": 0,
+    "channels": 1
+   },
+   "sources": [
+    {
+     "outlet": "Mashable",
+     "via": "Google News",
+     "title": "NASA's Prima space telescope would aim to see what James Webb can't",
+     "url": "https://news.google.com/rss/articles/CBMib0FVX3lxTE9aUUp1TVJpM2pGSXE4X1NmcnctUkR0MlNlQVN3bHRKTHh4RUdSRWpLQkMzRU43YVlkQV9VTkZVZmNrbDlLYkJfcF84M0p4OXlyUnZiNkI2RDFYNXF5NGgyQm5rQ01XcWYtT0c1eC1Hdw?oc=5",
+     "published_utc": "2026-10-09T02:52:59Z",
+     "kind": "report"
+    }
+   ]
+  },
+  {
+   "id": "5a514c61da91",
+   "rank": 27,
+   "top_rank": null,
+   "category": "Tech",
+   "headline": "Amazon builds 1,000th satellite, says space internet service is weeks away",
+   "url": "https://thenextweb.com/news/amazon-leo-1000th-satellite-europe",
+   "summary": [
+    "Amazon builds 1,000th satellite, says space internet service is weeks away.",
+    "Amazon has built its 1,000th Leo satellite and says service is weeks away."
+   ],
+   "why_it_matters": null,
+   "change": "",
+   "labels": [],
+   "newest_published_utc": "2026-10-08T19:41:14Z",
+   "coverage": {
+    "level": "limited",
+    "independent_reports": 1,
+    "publishers": [
+     "The Next Web"
+    ],
+    "repeats": 0,
+    "signals": 0,
+    "channels": 1
+   },
+   "sources": [
+    {
+     "outlet": "The Next Web",
+     "via": "News feeds",
+     "title": "Amazon builds 1,000th satellite, says space internet service is weeks away",
+     "url": "https://thenextweb.com/news/amazon-leo-1000th-satellite-europe",
+     "published_utc": "2026-10-08T19:41:14Z",
+     "kind": "report"
+    }
+   ]
+  },
+  {
+   "id": "84f1f58d5438",
+   "rank": 28,
+   "top_rank": null,
+   "category": "Science & AI",
+   "headline": "JetBrains Releases Mellum2.1: A 12B MoE Open Model for Coding Agents",
+   "url": "https://www.marktechpost.com/2026/10/08/jetbrains-releases-mellum2-1-a-12b-moe-open-model-for-coding-agents/",
+   "summary": [
+    "JetBrains Releases Mellum2.1: A 12B MoE Open Model for Coding Agents.",
+    "JetBrains released Mellum2.1, an Apache 2.0, 12B mixture-of-experts thinking model with 2.5B active parameters."
+   ],
+   "why_it_matters": null,
+   "change": "new",
+   "labels": [],
+   "newest_published_utc": "2026-10-08T16:17:35Z",
+   "coverage": {
+    "level": "limited",
+    "independent_reports": 1,
+    "publishers": [
+     "MarkTechPost"
+    ],
+    "repeats": 0,
+    "signals": 0,
+    "channels": 1
+   },
+   "sources": [
+    {
+     "outlet": "MarkTechPost",
+     "via": "News feeds",
+     "title": "JetBrains Releases Mellum2.1: A 12B MoE Open Model for Coding Agents",
+     "url": "https://www.marktechpost.com/2026/10/08/jetbrains-releases-mellum2-1-a-12b-moe-open-model-for-coding-agents/",
+     "published_utc": "2026-10-08T16:17:35Z",
+     "kind": "report"
+    }
+   ]
+  },
+  {
+   "id": "d42620978f1c",
+   "rank": 29,
+   "top_rank": null,
+   "category": "Tech",
+   "headline": "Judge weighs if Trump can charge $100K for early access to Truth Social posts",
+   "url": "https://arstechnica.com/tech-policy/2026/10/judge-weighs-if-trump-can-charge-100k-for-early-access-to-truth-social-posts/",
+   "summary": [
+    "Judge weighs if Trump can charge $100K for early access to Truth Social posts.",
+    "Judge questioned if Trump delaying access to Truth Social posts by a second harms the press."
+   ],
+   "why_it_matters": null,
+   "change": "",
+   "labels": [],
+   "newest_published_utc": "2026-10-08T20:53:01Z",
+   "coverage": {
+    "level": "limited",
+    "independent_reports": 1,
+    "publishers": [
+     "Ars Technica"
+    ],
+    "repeats": 0,
+    "signals": 0,
+    "channels": 1
+   },
+   "sources": [
+    {
+     "outlet": "Ars Technica",
+     "via": "News feeds",
+     "title": "Judge weighs if Trump can charge $100K for early access to Truth Social posts",
+     "url": "https://arstechnica.com/tech-policy/2026/10/judge-weighs-if-trump-can-charge-100k-for-early-access-to-truth-social-posts/",
+     "published_utc": "2026-10-08T20:53:01Z",
+     "kind": "report"
+    }
+   ]
+  }
+ ],
+ "changes": {
+  "compared_with": {
+   "edition_date": "2026-10-08",
+   "revision": 8
+  },
+  "new": [
+   "021910426c12",
+   "d5023d63430f",
+   "202fa341edd7",
+   "5c103885c27f",
+   "2f5f11411b9c",
+   "159bcc692346",
+   "4e0a149207a5",
+   "f794b8b8a82d",
+   "574b140956ac",
+   "a7a1c6740925",
+   "ddbbbdb8bbad",
+   "aee80b84e923",
+   "8faf310e98c6",
+   "5297ef14e4e0",
+   "84f1f58d5438"
+  ],
+  "updated": [
+   "8516545d9b4a",
+   "65777f500dad",
+   "21bec8946347",
+   "144758263a24",
+   "07575e5a6164"
+  ],
+  "fading": [],
+  "dropped": [
+   {
+    "headline": "Elon Musk's SpaceX Just Made a Huge Play to Challenge the Phone Industry",
+    "category": "News"
+   },
+   {
+    "headline": "\"She Put Her Body on the Line\": Maricarmen, 87, Dies; Her Eviction Sparked Spain Housing Protests",
+    "category": "News"
+   },
+   {
+    "headline": "A'ja Wilson wins record fifth MVP as first three-peat in WNBA history strengthens all-time greatness case",
+    "category": "Sports"
+   },
+   {
+    "headline": "How Buccaneers' longest drive in 19 years baffled Cowboys' defense",
+    "category": "Sports"
+   },
+   {
+    "headline": "Apple Set to Debut Touch-Screen MacBook and New iPad Mini",
+    "category": "Tech"
+   },
+   {
+    "headline": "Collin County training 1,100 poll workers ahead of November election",
+    "category": "Local"
+   },
+   {
+    "headline": "Iran scales up Hormuz attacks, raising pressure on Trump as midterms near",
+    "category": "News"
+   },
+   {
+    "headline": "NFL Week 5 picks: Experts face off on 49ers at Seahawks, Falcons vs. Ravens and more",
+    "category": "Sports"
+   },
+   {
+    "headline": "Russian strike on buses kills at least 30, say officials, as deadly attacks on Ukraine surge",
+    "category": "News"
+   },
+   {
+    "headline": "ICE Emails Discuss Using Palantir-Supported Tool to Investigate Voter Fraud",
+    "category": "Tech"
+   },
+   {
+    "headline": "Ukrainian drone attack takes out Russian datacenter",
+    "category": "Tech"
+   },
+   {
+    "headline": "US Judge Sentences Raheim Hamilton to 40 Years in Prison for Facilitating $430M in Illegal Transactions",
+    "category": "Tech"
+   },
+   {
+    "headline": "Anthropic Is Launching a 'Presidential Engagement' Effort to Advise Candidates on AI Policy",
+    "category": "News"
+   },
+   {
+    "headline": "Nvidia, Oracle, CoreWeave and other AI stocks sink on OpenAI revenue report",
+    "category": "News"
+   },
+   {
+    "headline": "Fired OpenAI safety researchers dispute misconduct claims, warn of chilling effect",
+    "category": "Science & AI"
+   }
+  ]
+ }
+}
