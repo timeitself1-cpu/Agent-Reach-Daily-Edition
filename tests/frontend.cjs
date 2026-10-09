@@ -857,3 +857,65 @@ test('the archive lists each edition with its update number and story count', as
   rows.forEach((row, i) => { if (!(idx.editions[i].revision > 1)) assert.equal(row.querySelector('.ed-count small'), null); });
   p.close();
 });
+
+test('a story page shares to X, Facebook and Reddit and reports an issue by email with the story named', async () => {
+  const story = edition.stories[2];
+  const p = await open('/daily/2026-10-07/#story-' + story.id);
+  const links = [...p.d.querySelectorAll('.share-links a:not(.report-issue)')];
+  assert.deepEqual(links.map(a => a.textContent), ['X', 'Facebook', 'Reddit']);
+  const shared = new URL(`https://example.test/daily/2026-10-07/#story-${story.id}`);
+  shared.searchParams.set('headline', story.headline);
+  for (const a of links) {
+    const u = new URL(a.href);
+    assert.equal(a.target, '_blank'); assert.match(a.rel, /noopener/);
+    assert.equal(u.searchParams.get(u.hostname === 'www.facebook.com' ? 'u' : 'url'), shared.href);
+    if (u.hostname !== 'www.facebook.com') assert.equal(u.searchParams.get(u.hostname === 'x.com' ? 'text' : 'title'), story.headline);
+  }
+  const report = new URL(p.d.querySelector('.share-links .report-issue').href);
+  assert.equal(report.protocol, 'mailto:'); assert.equal(report.pathname, 'hello@getagentreach.dev');
+  assert.equal(report.searchParams.get('subject'), `Report: ${story.headline} (edition of 2026-10-07)`);
+  assert.match(report.searchParams.get('body'), new RegExp(`#story-${story.id}`));
+  p.close();
+});
+
+test('the Sources page lists each kind of source and every feed the edition read', async () => {
+  const ed = structuredClone(edition);
+  ed.sources = [
+    {type: 'news_rss', name: 'News feeds', about: 'News publishers’ own RSS feeds, listed below by name.', status: 'partial', reports: 900, cited: 40, feeds: [
+      {name: 'Zeta Times', site: 'zeta.test', category: 'Tech', status: 'ok', reports: 20, cited: 2},
+      {name: 'Alpha Daily', site: 'alpha.test', category: 'News', status: 'failed', reports: 0, cited: 0}]},
+    {type: 'wikipedia', name: 'Wikipedia', about: 'Wikipedia’s most-read articles.', status: 'ok', reports: 30, cited: 1, feeds: []}];
+  const p = await open('/sources/', {fetch: u => u.endsWith('2026-10-07.json') ? ed : undefined});
+  assert.equal(p.d.querySelector('main h1').textContent, 'Sources');
+  assert.match(p.d.querySelector('.page-head p').textContent, /2 kinds of source and 2 feeds/);
+  assert.deepEqual([...p.d.querySelectorAll('.source-kind h2')].map(x => x.textContent), ['News feeds', 'Wikipedia']);
+  assert.match(p.d.querySelector('#source-news_rss .source-stat').textContent, /^Partly answered · 900 reports · 40 cited/);
+  const feeds = [...p.d.querySelectorAll('#source-news_rss .feed-list li')];
+  assert.deepEqual(feeds.map(li => li.querySelector('b').textContent), ['Alpha Daily', 'Zeta Times']); // section order
+  assert.equal(feeds[0].className, 'failed'); assert.match(feeds[0].textContent, /did not answer/);
+  assert.match(feeds[1].textContent, /zeta\.test · Technology · 20 reports · 2 cited/);
+  assert.match(p.d.querySelector('.page-head').textContent, /not a fact check/);
+  p.close();
+  const old = await open('/sources/'); // editions published before the list existed
+  assert.match(old.d.querySelector('main .state').textContent, /appears here with the next edition/);
+  old.close();
+});
+
+test('the corrections page has the policy and an append-only log, linked from every page', async () => {
+  const p = await open('/corrections/');
+  assert.equal(p.d.querySelector('main h1').textContent, 'Corrections');
+  assert.ok(p.d.getElementById('policy') && p.d.querySelector('ol.corrections-log'));
+  assert.equal(p.d.querySelectorAll('ol.corrections-log li').length, 0);
+  assert.match(p.d.querySelector('.corrections-empty').textContent, /No corrections/);
+  assert.ok(p.d.querySelector('.masthead') && p.d.querySelector('footer a[href="/corrections/"]') && p.d.querySelector('footer a[href="/sources/"]'));
+  p.close();
+  const about = await open('/about/');
+  assert.ok(about.d.querySelector('main a[href="/corrections/"]') && about.d.querySelector('main a[href="/sources/"]'));
+  about.close();
+});
+
+test('each section page links its own RSS feed', async () => {
+  const p = await open('/technology/');
+  assert.equal(p.d.querySelector('.feed-link a').getAttribute('href'), '/feeds/technology.xml');
+  p.close();
+});

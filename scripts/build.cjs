@@ -72,6 +72,16 @@ function renderShell(html, path, index, edition) {
       const totals = d.createElement('p');
       totals.textContent = `Displayed evidence: ${story.coverage.source_links} source links · ${story.coverage.linked_outlets} newsrooms · ${story.coverage.linked_reporting_origins} reporting origins`;
       details.append(summary, totals, list); container.append(details);
+      const link = `${SITE}/daily/${edition.edition_date}/#story-${story.id}`;
+      const actions = d.createElement('p'); actions.className = 'share-links static-share';
+      const share = (text, href) => { const a = d.createElement('a'); a.href = href; a.textContent = text; a.rel = 'noopener noreferrer'; return a; };
+      const label = d.createElement('span'); label.textContent = 'Share on';
+      const u = encodeURIComponent(link), t = encodeURIComponent(story.headline);
+      actions.append(label, share('X', `https://x.com/intent/post?text=${t}&url=${u}`), share('Facebook', `https://www.facebook.com/sharer/sharer.php?u=${u}`),
+        share('Reddit', `https://www.reddit.com/submit?url=${u}&title=${t}`));
+      const report = share('Report an issue', `mailto:hello@getagentreach.dev?subject=${encodeURIComponent(`Report: ${story.headline} (edition of ${edition.edition_date})`)}&body=${encodeURIComponent(`Story: ${link}\n\nWhat is wrong:\n`)}`);
+      report.className = 'report-issue'; report.removeAttribute('rel'); actions.append(report);
+      container.append(actions);
       // The native disclosure is the source control until the browser mounts the enhanced view.
       article.querySelector('.story-link')?.remove();
     }
@@ -81,6 +91,41 @@ function renderShell(html, path, index, edition) {
     d.head.append(fallbackStyles);
     return dom.serialize();
   } finally { dom.window.close(); }
+}
+// RSS: one item per story of the newest edition (the publisher's feed.xml has one item per edition), and one
+// feed per section. Built from the same edition files as the pages, so every link resolves (check-built.cjs).
+const SITE = 'https://getagentreach.dev';
+const FEED_SECTIONS = {'News': ['world', 'World & Nation'], 'Tech': ['technology', 'Technology'], 'Science & AI': ['science', 'Science & AI'],
+  'Sports': ['sports', 'Sports'], 'Entertainment': ['entertainment', 'Entertainment'], 'Internet Culture': ['internet-culture', 'Internet Culture']};
+const xml = text => String(text).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;')
+  .replace(/[\u0000-\u0008\u000b\u000c\u000e-\u001f]/g, '');
+const rfc822 = iso => new Date(iso).toUTCString().replace('GMT', '+0000');
+function feedXml(edition, stories, {title, path, self}) {
+  const items = stories.map(s => {
+    const link = `${SITE}/daily/${edition.edition_date}/#story-${s.id}`;
+    const parts = [s.summary.join(' ')];
+    if (s.why_it_matters) parts.push('Why it matters: ' + s.why_it_matters);
+    const c = s.coverage || {}, n = c.independent_reports || 0; // the same wording as the cards (site.js covText)
+    parts.push(`${c.level === 'strong' ? 'Strong coverage' : c.level === 'moderate' ? 'Moderate coverage' : n <= 1 ? 'Single source' : 'Limited coverage'}: ${n} independent ${n === 1 ? 'outlet' : 'outlets'}.`);
+    parts.push('Summary written by a local AI model and checked against its sources; read the sources before relying on it.');
+    return `<item><title>${xml(s.headline)}</title><link>${xml(link)}</link><guid isPermaLink="true">${xml(link)}</guid>` +
+      `<pubDate>${rfc822(s.newest_published_utc || edition.generated_utc)}</pubDate>` +
+      `<category>${xml((FEED_SECTIONS[s.category] || [null, s.category])[1])}</category><description>${xml(parts.join(' '))}</description></item>`;
+  });
+  return `<?xml version="1.0" encoding="UTF-8"?>\n<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel>` +
+    `<title>${xml(title)}</title><link>${SITE}${path}</link><atom:link href="${SITE}${self}" rel="self" type="application/rss+xml"/>` +
+    `<description>${xml(`Every story of the latest Agent Reach Daily edition (${edition.edition_date}, update ${edition.revision}), summarized by a local AI model from public reporting.`)}</description>` +
+    `<language>en-us</language><lastBuildDate>${rfc822(edition.generated_utc)}</lastBuildDate>${items.join('')}</channel></rss>\n`;
+}
+function feedFiles(edition) {
+  const byId = new Map(edition.stories.map(s => [s.id, s]));
+  const ordered = [...edition.top, ...edition.sections.flatMap(sec => sec.ids)].filter((id, i, all) => all.indexOf(id) === i && byId.has(id)).map(id => byId.get(id));
+  const files = {'feed.xml': feedXml(edition, ordered, {title: 'Agent Reach Daily', path: '/', self: '/feed.xml'})};
+  for (const [category, [slug, label]] of Object.entries(FEED_SECTIONS)) {
+    files[`feeds/${slug}.xml`] = feedXml(edition, ordered.filter(s => s.category === category),
+      {title: `Agent Reach Daily: ${label}`, path: `/${slug}/`, self: `/feeds/${slug}.xml`});
+  }
+  return files;
 }
 function addPreview(html) {
   const dom = new JSDOM(html);
@@ -136,14 +181,21 @@ function build() {
     });
     writeFileSync(file, JSON.stringify(data));
   }
-  const shells = ['index.html', 'daily/index.html', 'latest/index.html', 'technology/index.html', 'science/index.html', 'world/index.html', 'sports/index.html', 'entertainment/index.html', 'internet-culture/index.html', 'archive/index.html', 'search/index.html', 'about/index.html', '404.html', ...[...editions.keys()].map(date => `daily/${date}/index.html`)];
+  mkdirSync(resolve(out, 'feeds'), {recursive: true});
+  for (const [path, text] of Object.entries(feedFiles(editions.get(index.latest)))) writeFileSync(resolve(out, path), text);
+  const shells = ['index.html', 'daily/index.html', 'latest/index.html', 'technology/index.html', 'science/index.html', 'world/index.html', 'sports/index.html', 'entertainment/index.html', 'internet-culture/index.html', 'archive/index.html', 'search/index.html', 'about/index.html', 'sources/index.html', 'corrections/index.html', '404.html', ...[...editions.keys()].map(date => `daily/${date}/index.html`)];
   for (const file of shells) {
     let html = readFileSync(resolve(root, file), 'utf8');
     const match = /data-page="([^"]+)"/.exec(html);
     const date = /data-date="([^"]+)"/.exec(html)?.[1] || index.latest;
-    if (['home', 'edition', 'latest', 'section', 'archive'].includes(match?.[1]) && editions.has(date)) {
+    if (['home', 'edition', 'latest', 'section', 'archive', 'sources'].includes(match?.[1]) && editions.has(date)) {
       const path = '/' + file.replace(/index\.html$/, '');
       html = renderShell(html, path, index, editions.get(date));
+    }
+    const section = /data-section="([^"]+)"/.exec(html)?.[1];
+    if (FEED_SECTIONS[section]) { // feed discovery for the section's own RSS feed
+      const [slug, label] = FEED_SECTIONS[section];
+      html = html.replace('</head>', `<link rel="alternate" type="application/rss+xml" title="Agent Reach Daily: ${label.replace(/&/g, '&amp;')}" href="/feeds/${slug}.xml">\n</head>`);
     }
     html = addPreview(html);
     mkdirSync(dirname(resolve(out, file)), {recursive: true});
@@ -151,5 +203,5 @@ function build() {
   }
   console.log(`Built public website in dist/ with ${editions.size} embedded editions.`);
 }
-module.exports = {renderShell, addPreview};
+module.exports = {renderShell, addPreview, feedFiles};
 if (require.main === module) build();
