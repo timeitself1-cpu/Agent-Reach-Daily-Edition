@@ -22,11 +22,12 @@ function renderShell(html, path, index, edition) {
     w.eval(readFileSync(resolve(root, 'assets/site.js'), 'utf8'));
     if (errors.length) throw errors[0];
     if (!d.querySelector('main h1') || d.querySelector('main[aria-busy="true"]')) throw new Error('Unable to render ' + path);
-    // The interactive lead/rail link to a detail view. Static readers need their evidence here.
+    // Story pages are client routes. Readers without JavaScript get each story's evidence in place
+    // (hidden by site.css, shown by no-script.css).
     for (const story of edition.stories) {
       const article = d.getElementById('story-' + story.id);
       if (!article || article.querySelector('details.src')) continue;
-      const details = d.createElement('details'); details.className = 'src';
+      const details = d.createElement('details'); details.className = 'src static-src';
       const summary = d.createElement('summary'); summary.textContent = `View ${story.sources.filter(s => s.url).length} source links`;
       const list = d.createElement('ul');
       for (const source of story.sources) {
@@ -53,6 +54,17 @@ function addPreview(html) {
   const dom = new JSDOM(html);
   try {
     const d = dom.window.document;
+    // Publisher-written dated shells predate the light theme: give every page the theme script and colours.
+    if (!d.querySelector('script[src="/assets/theme.js"]')) {
+      const theme = d.createElement('script'); theme.src = '/assets/theme.js';
+      d.head.insertBefore(theme, d.head.querySelector('link[rel="stylesheet"]'));
+    }
+    const dark = d.querySelector('meta[name="theme-color"]:not([media])');
+    if (dark) {
+      dark.setAttribute('media', '(prefers-color-scheme: dark)');
+      const light = d.createElement('meta'); light.name = 'theme-color'; light.content = '#f6f5f1';
+      light.setAttribute('media', '(prefers-color-scheme: light)'); dark.after(light);
+    }
     for (const [name, content] of [['og:image', 'https://getagentreach.dev/assets/social-card.png'], ['og:image:alt', 'Agent Reach Daily: today’s news, from public reporting. Read the summaries. Check the sources.'], ['og:image:width', '1200'], ['og:image:height', '630'], ['og:image:type', 'image/png'], ['twitter:card', 'summary_large_image'], ['twitter:image', 'https://getagentreach.dev/assets/social-card.png']]) {
       const attr = name.startsWith('og:') ? 'property' : 'name';
       let meta = d.querySelector(`meta[${attr}="${name}"]`);
@@ -75,7 +87,7 @@ function build() {
     rmSync(target, {recursive: true, force: true, maxRetries: 3});
   }
   for (const path of ['assets', 'editions', 'search', 'feed.xml', 'sitemap.xml', 'robots.txt', 'app-top-stories.webp', 'app-window.webp', '_headers']) cpSync(resolve(root, path), resolve(out, path), {recursive: true});
-  const shells = ['index.html', 'daily/index.html', 'latest/index.html', 'technology/index.html', 'science/index.html', 'world/index.html', 'archive/index.html', 'search/index.html', 'about/index.html', '404.html', ...[...editions.keys()].map(date => `daily/${date}/index.html`)];
+  const shells = ['index.html', 'daily/index.html', 'latest/index.html', 'technology/index.html', 'science/index.html', 'world/index.html', 'sports/index.html', 'entertainment/index.html', 'internet-culture/index.html', 'archive/index.html', 'search/index.html', 'about/index.html', '404.html', ...[...editions.keys()].map(date => `daily/${date}/index.html`)];
   for (const file of shells) {
     let html = readFileSync(resolve(root, file), 'utf8');
     const match = /data-page="([^"]+)"/.exec(html);

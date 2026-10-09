@@ -89,7 +89,7 @@ Owner: **P** = publisher (Windows app), **W** = website (this repository). Sizes
 | Per-page embeds (B7): section pages embed only their own stories plus the index. | W | S | — |
 | Stable event IDs, then per-story pages, per-story `og:` metadata and per-story RSS items. These were deferred in rounds 1 and 2. | P → W | L | Backend event-matching accuracy targets |
 | An optional "Strong coverage only" view or filter, once A1 makes the counts trustworthy. | W | S | A1 |
-| A reader-selected light theme (deferred since round 1). | W | M | — |
+| A reader-selected light theme (deferred since round 1). **Done October 9** (see below). | W | M | — |
 
 ## Preserve
 
@@ -113,3 +113,25 @@ The live checker passed against deployed revision 6 with all six headers and fou
 The new main-push/manual workflow will verify future deployment once these changes are merged.
 Neither PR is merged by this implementation. Recorded input tests exercise publisher fixes offline;
 they do not replace a week of production observation for quality and churn targets.
+
+## Round 3 — October 9, 2026: headlines open the source, and a polish pass
+
+- **One click to the source.** Every story headline (lead, top stories, cards, Latest, section pages, the story
+  page itself, and search results when the data names the link) opens the publisher's article in a new tab,
+  as the app's HTML export does. A second link on each story ("N sources →") opens the story page. The app
+  sends the chosen link as the optional `stories[].url` (see `backend-coordination.md`); until then the site
+  picks it from `sources` with the same rule. On revision 7, all 56 headlines open a publisher article and none
+  a Google News redirect.
+- **Pages for every section.** `/sports/`, `/entertainment/` and `/internet-culture/` join World & Nation,
+  Technology and Science & AI. The navigation lists all six in one row that scrolls sideways on phones.
+- **Shorter phone pages.** Home bands show up to five stories (three on phones) and link to the full section;
+  summaries are clamped; the per-card source lists moved to the story page. At 390px, Home went from 18,674px
+  to 11,087px and the top story's headline from 534px to 339px down the page; Latest from 20,788px to
+  15,802px. On story pages the breadcrumb and edition line share one row: the headline starts at 232px (was 323px).
+- **A light theme.** It follows the system by default; the footer has Auto / Light / Dark. `assets/theme.js`
+  applies a saved choice before the first paint (the CSP allows no inline scripts), and the build adds it to the
+  app's dated shells too.
+- **Accessibility.** axe-core 4.10 (WCAG 2.0–2.2 A/AA and best practice) reports no violations on nine routes at
+  320, 390 and 1440px in both themes; Home's `landmark-unique` is fixed and section links are 44px tall.
+- **Load.** Same-conditions comparison with `main` (slow 4G, 4× CPU, median of 3): load timing unchanged within
+  noise; Home has 803 elements instead of 1,385 and Latest's blocking time fell from 472ms to 373ms.

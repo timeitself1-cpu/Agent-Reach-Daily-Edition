@@ -98,3 +98,21 @@ frontend labels explicitly. Successful resolution retains the publisher URL. No 
 Publisher names and aliases normalize before independence counts; source-link count and independent
 publisher count are different measurements, and the reader labels each one. Schema 1 URLs, headline
 hints, feed and sitemap remain compatible.
+
+## Headline links and section pages — October 9, 2026
+
+Story headlines now open the publisher's article in one click (a new tab), as in the app's HTML export. The
+story page, with every source and the coverage panel, is one link away ("N sources →").
+
+Two optional fields, both still `schema_version: 1`:
+
+- `stories[].url`: the article the headline opens. It is the app's `primary_url()` (the first cited publisher
+  article; search, social and trend pages such as Google News, Reddit and X only when nothing else exists) and
+  is always one of the story's own `sources[].url`. `check:editions` enforces both. `null` or missing is fine.
+- `search/YYYY-MM.json` entries may carry `u`, the same link, so a search result opens the article too.
+
+Without `url` the site applies the same rule to `sources` itself, so editions published before this change
+behave the same way.
+
+The site now has `/sports/`, `/entertainment/` and `/internet-culture/` pages next to the existing three.
+`sitemap.xml` is written by the app, which lists them from the release that carries this change.

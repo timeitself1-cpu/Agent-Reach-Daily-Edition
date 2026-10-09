@@ -38,15 +38,17 @@ if (typeof module !== 'undefined') module.exports = {normOutlet, dedupeOutlets};
   if (typeof document === 'undefined') return;
   const REPO = 'https://github.com/timeitself1-cpu/Agent-Reach-Daily-Edition';
   const MAIL = 'hello@getagentreach.dev';
-  const NAV = [['Home', '/', 'home'], ['Latest News', '/latest/', 'latest'], ['Technology', '/technology/', 'Tech'],
-    ['Science & AI', '/science/', 'Science & AI'], ['World & Nation', '/world/', 'News'], ['Archive', '/archive/', 'archive'],
-    ['About', '/about/', 'about']];
   const SECTION = {
     'News': {label: 'World & Nation', path: '/world/', title: 'World & Nation', blurb: 'World and national news: politics, courts, conflict, the economy and public safety.'},
     'Tech': {label: 'Technology', path: '/technology/', title: 'Technology', blurb: 'Companies, products, security and the business of technology.'},
     'Science & AI': {label: 'Science & AI', path: '/science/', title: 'Science & AI', blurb: 'Research, space, health, climate and artificial intelligence.'},
-    'Sports': {label: 'Sports'}, 'Entertainment': {label: 'Entertainment'}, 'Internet Culture': {label: 'Internet Culture'},
+    'Sports': {label: 'Sports', path: '/sports/', title: 'Sports', blurb: 'Games, results, trades and the business of sport.'},
+    'Entertainment': {label: 'Entertainment', path: '/entertainment/', title: 'Entertainment', blurb: 'Film, television, music, games and the people who make them.'},
+    'Internet Culture': {label: 'Internet Culture', path: '/internet-culture/', title: 'Internet Culture', blurb: 'What people are talking about online: platforms, creators and viral moments.'},
   };
+  const NAV = [['Home', '/', 'home'], ['Latest', '/latest/', 'latest'],
+    ...['News', 'Tech', 'Science & AI', 'Sports', 'Entertainment', 'Internet Culture'].map(c => [SECTION[c].label, SECTION[c].path, c]),
+    ['Archive', '/archive/', 'archive'], ['About', '/about/', 'about']];
   const body = document.body;
   const page = body.dataset.page || 'home';
 
@@ -101,6 +103,8 @@ if (typeof module !== 'undefined') module.exports = {normOutlet, dedupeOutlets};
   const catLabel = c => (SECTION[c] && SECTION[c].label) || c;
   const pageStatus = h('p', {class: 'sr', id: 'page-status', role: 'status', 'aria-live': 'polite', 'aria-atomic': 'true'});
   body.append(pageStatus); // Keep load status mounted while the page content changes.
+  const extNote = document.getElementById('ext-note') || h('p', {id: 'ext-note', hidden: true, text: 'Opens the publisher’s article in a new tab.'});
+  body.append(extNote);
 
   async function getJson(url) {
     const r = await fetch(url, {cache: 'no-cache'});
@@ -159,28 +163,47 @@ if (typeof module !== 'undefined') module.exports = {normOutlet, dedupeOutlets};
     return out;
   }
   const kicker = s => h('span', {class: 'kicker', 'data-cat': s.category}, catLabel(s.category), badges(s));
+  // The article a headline opens: the app's choice when it sent one, else the first source that is a publisher's
+  // article (not a search, social or trend page), as in the app's HTML export.
+  const NOT_ARTICLES = ['news.google.com', 'trends.google.com', 'google.com', 'bsky.app', 'x.com', 'twitter.com',
+    'reddit.com', 'tiktok.com', 'trends24.in', 'news.ycombinator.com'];
+  const hostOf = u => { try { return new URL(u).hostname.toLowerCase().replace(/^www\./, ''); } catch (_) { return ''; } };
+  const isArticle = u => !NOT_ARTICLES.some(x => hostOf(u) === x || hostOf(u).endsWith('.' + x));
+  function mainLink(s) {
+    const own = webUrl(s.url);
+    if (own && /^https?:/.test(s.url)) return own;
+    const urls = (s.sources || []).map(x => webUrl(x.url)).filter(u => u && /^https?:/.test(u));
+    return urls.find(isArticle) || urls[0] || null;
+  }
+  function mainOutlet(s, url) {
+    const src = (s.sources || []).find(x => webUrl(x.url) === url);
+    return src ? (dedupeOutlets([src.outlet])[0] || src.outlet) : hostOf(url);
+  }
+  // A headline: one click opens the publisher's article in a new tab. A story without any link opens its page.
+  function headline(ed, s, tag, cls = 'hl') {
+    const url = mainLink(s);
+    const link = url
+      ? h('a', {class: 'out', href: url, rel: 'noopener noreferrer', target: '_blank', 'aria-describedby': 'ext-note', 'data-outlet': mainOutlet(s, url), text: s.headline})
+      : h('a', {href: storyUrl(ed, s), text: s.headline});
+    return h(tag, {class: cls}, link);
+  }
+  // The way to the story's own page: full summary, every source, coverage.
+  function storyLink(ed, s) {
+    const n = sourceLinks(s);
+    return h('a', {class: 'story-link', href: storyUrl(ed, s)}, n ? plural(n, 'source') : 'Details',
+      h('span', {class: 'sr', text: ` and coverage: ${s.headline}`}));
+  }
   function meta(s, opts = {}) {
     const when = ago(s.newest_published_utc);
     return h('div', {class: 'meta'},
-      when ? h('time', {datetime: s.newest_published_utc, 'data-relative': 'true', title: 'Newest report: ' + stamp(s.newest_published_utc), text: when}) : null,
-      opts.noOutlets ? null : h('span', {class: 'outlets', text: outlets(s)}), covMeter(s));
+      when && !opts.noTime ? h('time', {datetime: s.newest_published_utc, 'data-relative': 'true', title: 'Newest report: ' + stamp(s.newest_published_utc), text: when}) : null,
+      opts.noOutlets ? null : h('span', {class: 'outlets', text: outlets(s)}), covMeter(s),
+      opts.ed ? storyLink(opts.ed, s) : null);
   }
-  function sourceList(s) {
-    const n = sourceLinks(s);
-    return h('details', {class: 'src'}, h('summary', {text: `View ${plural(n, 'source link')}`}),
-      h('ul', null, s.sources.map(src => {
-        const url = webUrl(src.url);
-        const when = src.published_utc ? stamp(src.published_utc) : 'time not stated';
-        const kind = src.kind === 'signal' ? ' · social/search signal' : src.kind === 'repeat' ? ' · repeat or syndicated copy' : '';
-        return h('li', null, url ? h('a', {href: url, rel: 'noopener noreferrer', target: '_blank', text: src.title}) : h('span', {text: src.title}),
-          h('small', {text: `${dedupeOutlets([src.outlet])[0] || src.outlet} · ${when}${kind}${src.via === 'Google News' ? ' · via Google News' : ''}`}));
-      })));
-  }
-  function card(ed, s, variant, heading = 'h3') {
+  function card(ed, s, variant, tag = 'h3') {
     const cls = 'card' + (variant === 'feature' ? ' feature' : '');
     return h('article', {class: cls, id: 'story-' + s.id, 'data-cat': s.category}, kicker(s),
-      h(heading, {class: 'hl'}, h('a', {href: storyUrl(ed, s), text: s.headline})),
-      h('p', {class: 'dek', text: s.summary.join(' ')}), meta(s), sourceList(s));
+      headline(ed, s, tag), h('p', {class: 'dek', text: s.summary.join(' ')}), meta(s, {ed}));
   }
 
   // ------------------------------------------------------------------ chrome
@@ -194,8 +217,29 @@ if (typeof module !== 'undefined') module.exports = {normOutlet, dedupeOutlets};
         h('div', {class: 'mast-actions'}, h('a', {class: 'pill search', href: '/search/', 'aria-current': current === 'search' ? 'page' : null},
           h('span', {class: 'glass', 'aria-hidden': 'true'}), 'Search'),
           h('a', {class: 'pill solid', href: '/about/#app', text: 'Get the app'}))),
-      h('nav', {class: 'nav', 'aria-label': 'Sections'}, NAV.map(([label, href, key]) =>
-        h('a', {href, text: label, 'aria-current': key === current ? 'page' : null})))));
+      h('nav', {class: 'nav', 'aria-label': 'Sections'}, h('div', {class: 'nav-row'}, NAV.map(([label, href, key]) =>
+        h('a', {href, text: label, 'aria-current': key === current ? 'page' : null}))))));
+  }
+  // Keep the current section in view when the navigation row scrolls sideways (phones).
+  function revealCurrentNav() {
+    const row = document.querySelector('.nav-row'), here = row && row.querySelector('[aria-current="page"]');
+    if (!row || !here || row.scrollWidth <= row.clientWidth) return;
+    row.scrollLeft = Math.max(0, here.offsetLeft - (row.clientWidth - here.offsetWidth) / 2);
+  }
+  // Reader-chosen theme: Auto follows the system; assets/theme.js applies a saved choice before the first paint.
+  const THEMES = [['auto', 'Auto'], ['light', 'Light'], ['dark', 'Dark']];
+  function savedTheme() {
+    try { const t = localStorage.getItem('theme'); return t === 'light' || t === 'dark' ? t : 'auto'; } catch (_) { return 'auto'; }
+  }
+  function themeControl() {
+    const buttons = THEMES.map(([key, label]) => h('button', {type: 'button', class: 'seg', 'data-theme': key, 'aria-pressed': String(savedTheme() === key), text: label}));
+    for (const b of buttons) b.addEventListener('click', () => {
+      const key = b.dataset.theme;
+      if (key === 'auto') delete document.documentElement.dataset.theme; else document.documentElement.dataset.theme = key;
+      try { if (key === 'auto') localStorage.removeItem('theme'); else localStorage.setItem('theme', key); } catch (_) { /* private mode: this page only */ }
+      for (const x of buttons) x.setAttribute('aria-pressed', String(x === b));
+    });
+    return h('div', {class: 'theme-control', role: 'group', 'aria-label': 'Colour theme'}, h('span', {text: 'Theme'}), buttons);
   }
   function footer() {
     return h('footer', {class: 'footer'}, h('div', {class: 'wrap'},
@@ -213,7 +257,7 @@ if (typeof module !== 'undefined') module.exports = {normOutlet, dedupeOutlets};
           h('li', null, h('a', {href: '/about/#app', text: 'The Windows app'})), h('li', null, h('a', {href: REPO, text: 'Source code on GitHub'})),
           h('li', null, h('a', {href: '/about/#corrections', text: 'Corrections'})), h('li', null, h('a', {href: 'mailto:' + MAIL, text: MAIL}))))),
       h('div', {class: 'foot-base'}, h('span', {text: '© 2026 Michael Brown · Open source under the MIT License'}),
-        h('span', {text: 'No cookies, no tracking, no ads.'}))));
+        themeControl(), h('span', {text: 'No cookies, no tracking, no ads.'}))));
   }
   function mount(current, ed, ...content) {
     const active = document.activeElement;
@@ -225,7 +269,8 @@ if (typeof module !== 'undefined') module.exports = {normOutlet, dedupeOutlets};
     const main = h('main', {id: 'main', tabindex: '-1', 'aria-busy': 'false'}, content);
     const app = document.getElementById('app');
     const nodes = [masthead(current, ed), main, footer()];
-    if (app) app.replaceChildren(...nodes); else body.replaceChildren(...nodes, pageStatus);
+    if (app) app.replaceChildren(...nodes); else body.replaceChildren(...nodes, pageStatus, extNote);
+    revealCurrentNav();
     if (!active.isConnected) {
       const newScope = scope && document.querySelector(scope.classList.contains('masthead') ? '.masthead' : '.footer');
       const target = wasSkip ? document.querySelector('.skip') : focusedLink && newScope
@@ -251,6 +296,7 @@ if (typeof module !== 'undefined') module.exports = {normOutlet, dedupeOutlets};
     if (main) main.setAttribute('tabindex', '-1');
     body.prepend(masthead(current, null));
     if (main) main.after(footer()); else body.append(footer());
+    revealCurrentNav();
   }
   function failed(current, what, withdrawn = false) {
     const message = what || 'The news could not be loaded.';
@@ -267,7 +313,7 @@ if (typeof module !== 'undefined') module.exports = {normOutlet, dedupeOutlets};
   }
 
   // ------------------------------------------------------------------ front page / edition
-  function strip(ed, idx) {
+  function strip(ed, idx, crumbs) {
     const latest = idx && idx.latest === ed.edition_date;
     const ageH = (Date.now() - Date.parse(ed.generated_utc)) / 3.6e6;
     const details = h('div', {class: 'edition-full', id: 'edition-details'},
@@ -287,15 +333,16 @@ if (typeof module !== 'undefined') module.exports = {normOutlet, dedupeOutlets};
         h('li', null, h('a', {href: '/search/?q=' + encodeURIComponent('"' + s.headline + '"'), text: s.headline})))));
     }
     details.hidden = true;
+    const summary = crumbs ? `${latest ? 'Latest' : 'Archived'}${ed.revision > 1 ? ` · Update ${ed.revision}` : ''}`
+      : `${shortDate(ed.edition_date)} · ${latest ? 'Latest' : 'Archived'}${ed.revision > 1 ? ` · Update ${ed.revision}` : ''} · ${plural(ed.stories.length, 'story', 'stories')}`;
     const toggle = h('button', {type: 'button', class: 'edition-toggle', 'aria-expanded': 'false', 'aria-controls': 'edition-details', 'aria-label': 'Show full edition details'},
-      h('span', {text: `${shortDate(ed.edition_date)} · ${latest ? 'Latest' : 'Archived'}${ed.revision > 1 ? ` · Update ${ed.revision}` : ''} · ${plural(ed.stories.length, 'story', 'stories')}`}),
-      h('span', {class: 'edition-toggle-label', text: 'Details'}));
+      h('span', {class: 'edition-toggle-text', text: summary}), h('span', {class: 'edition-toggle-label', text: 'Details'}));
     toggle.addEventListener('click', () => {
       details.hidden = !details.hidden;
       toggle.setAttribute('aria-expanded', String(!details.hidden));
       toggle.setAttribute('aria-label', `${details.hidden ? 'Show' : 'Hide'} full edition details`);
     });
-    return h('div', {class: 'strip', 'aria-label': 'Edition details'}, toggle, details);
+    return h('div', {class: 'strip' + (crumbs ? ' with-crumbs' : '')}, h('div', {class: 'strip-row'}, crumbs || null, toggle), details);
   }
   function notices(ed, idx) {
     const out = [];
@@ -308,40 +355,26 @@ if (typeof module !== 'undefined') module.exports = {normOutlet, dedupeOutlets};
   function lead(ed, s) {
     return h('article', {class: 'lead', id: 'story-' + s.id, 'data-cat': s.category},
       h('span', {class: 'rank-label', text: 'Top story'}), kicker(s),
-      h('h1', {class: 'hl'}, h('a', {href: storyUrl(ed, s), text: s.headline})),
+      headline(ed, s, 'h1'),
       h('p', {class: 'dek', text: s.summary.join(' ')}),
       s.why_it_matters ? h('p', {class: 'why'}, h('b', {text: 'Why it matters: '}), s.why_it_matters) : null,
-      h('div', {class: 'lead-foot'}, meta(s), h('a', {class: 'readmore', href: storyUrl(ed, s), text: 'Read the story and its sources'})));
+      meta(s, {ed}));
   }
   function rail(ed, stories) {
-    return h('section', {class: 'rail', 'aria-label': 'More top stories'}, h('h2', {class: 'rail-title'}, h('span', {text: 'Top stories'})),
-      stories.map((s, i) => h('article', {class: 'rail-item', id: 'story-' + s.id, 'data-cat': s.category}, h('span', {class: 'rail-num', text: String(i + 2)}),
-        kicker(s), h('h3', {class: 'hl'}, h('a', {href: storyUrl(ed, s), text: s.headline})),
-        h('p', {class: 'dek', text: s.summary.join(' ')}), meta(s, {noOutlets: true}))));
+    return h('section', {class: 'rail', 'aria-labelledby': 'rail-title'}, h('h2', {class: 'rail-title', id: 'rail-title'}, h('span', {text: 'Top stories'})),
+      stories.map((s, i) => h('article', {class: 'rail-item', id: 'story-' + s.id, 'data-cat': s.category}, h('span', {class: 'rail-num', 'aria-hidden': 'true', text: String(i + 2)}),
+        kicker(s), headline(ed, s, 'h3'),
+        h('p', {class: 'dek', text: s.summary.join(' ')}), meta(s, {noOutlets: true, ed}))));
   }
+  const BAND_STORIES = 5;
   function sectionBand(ed, cat, stories, title) {
     const sec = SECTION[cat] || {};
-    const visible = stories;
-    const grid = h('div', {class: 'grid', id: 'section-' + (cat || title).toLowerCase().replace(/[^a-z]+/g, '-')},
-      visible.map((s, i) => {
-        const node = card(ed, s, i === 0 && visible.length >= 5 ? 'feature' : '');
-        node.hidden = i >= 5;
-        return node;
-      }));
-    let toggle = null;
-    if (!sec.path && stories.length > 5) {
-      toggle = h('button', {class: 'band-link section-toggle', type: 'button', 'aria-expanded': 'false', 'aria-controls': grid.id, text: `Show all ${stories.length}`});
-      toggle.addEventListener('click', () => {
-        const expanding = toggle.getAttribute('aria-expanded') === 'false';
-        [...grid.children].forEach((node, i) => { node.hidden = !expanding && i >= 5; });
-        toggle.setAttribute('aria-expanded', String(expanding));
-        toggle.textContent = expanding ? 'Show fewer' : `Show all ${stories.length}`;
-        if (expanding) grid.children[5].querySelector('.hl a').focus({preventScroll: true});
-      });
-    }
-    return h('section', {class: 'band', id: cat ? sectionId(cat) : 'band-top', 'data-cat': cat, 'aria-label': title || catLabel(cat)}, h('div', {class: 'wrap'},
-      h('div', {class: 'band-head'}, h('h2', {class: 'band-title', text: title || catLabel(cat)}),
-        sec.path ? h('a', {class: 'band-link', href: sec.path, text: `All ${sec.title}`}) : toggle), grid));
+    const shown = stories.slice(0, BAND_STORIES);
+    const all = cat ? ((ed.sections || []).find(x => x.category === cat) || {ids: []}).ids.length : 0;
+    const grid = h('div', {class: 'grid'}, shown.map((s, i) => card(ed, s, i === 0 && shown.length >= 4 ? 'feature' : '')));
+    return h('section', {class: 'band', id: cat ? sectionId(cat) : 'band-top', 'data-cat': cat, 'aria-labelledby': (cat ? sectionId(cat) : 'band-top') + '-title'}, h('div', {class: 'wrap'},
+      h('div', {class: 'band-head'}, h('h2', {class: 'band-title', id: (cat ? sectionId(cat) : 'band-top') + '-title', text: title || catLabel(cat)}),
+        sec.path ? h('a', {class: 'band-link', href: sec.path}, `All ${all} in ${sec.title}`) : null), grid));
   }
   function archiveBand(idx, current) {
     const others = (idx.editions || []).filter(e => e.date !== current).slice(0, 4);
@@ -432,17 +465,21 @@ if (typeof module !== 'undefined') module.exports = {normOutlet, dedupeOutlets};
     const prev = order[i - 1], next = order[i + 1];
     const same = order.filter(x => x.category === s.category && x !== s).slice(0, 4);
     const when = s.newest_published_utc;
-    const main = mount('edition', ed, h('div', {class: 'wrap'}, strip(ed, idx), notices(ed, idx),
+    const crumbs = h('nav', {class: 'crumbs', 'aria-label': 'Breadcrumb'}, h('a', {href: editionUrl(ed.edition_date)}, h('span', {class: 'crumb-pre', text: 'Edition of '}), shortDate(ed.edition_date)),
+      h('span', {'aria-hidden': 'true', text: '/'}), SECTION[s.category] && SECTION[s.category].path ? h('a', {href: SECTION[s.category].path, text: catLabel(s.category)}) : h('span', {text: catLabel(s.category)}),
+      s.top_rank ? h('span', {class: 'crumb-rank', text: `· Top story ${s.top_rank} of ${ed.topStories.length}`}) : null);
+    const url = mainLink(s);
+    const main = mount('edition', ed, h('div', {class: 'wrap'}, strip(ed, idx, crumbs), notices(ed, idx),
       storyNotice ? h('p', {class: 'notice story-recovery', text: storyNotice}) : null,
       h('article', {class: 'story', 'data-cat': s.category},
-      h('nav', {class: 'crumbs', 'aria-label': 'Breadcrumb'}, h('a', {href: editionUrl(ed.edition_date), text: `Edition of ${shortDate(ed.edition_date)}`}),
-        h('span', {'aria-hidden': 'true', text: '/'}), SECTION[s.category] && SECTION[s.category].path ? h('a', {href: SECTION[s.category].path, text: catLabel(s.category)}) : h('span', {text: catLabel(s.category)}),
-        s.top_rank ? h('span', {text: `· Top story ${s.top_rank} of ${ed.topStories.length}`}) : null),
-      h('div', {class: 'story-main'}, kicker(s), h('h1', {class: 'hl', tabindex: '-1', text: s.headline}),
+      h('div', {class: 'story-main'}, kicker(s), url
+        ? h('h1', {class: 'hl', tabindex: '-1'}, h('a', {class: 'out', href: url, rel: 'noopener noreferrer', target: '_blank', 'aria-describedby': 'ext-note', 'data-outlet': mainOutlet(s, url), text: s.headline}))
+        : h('h1', {class: 'hl', tabindex: '-1', text: s.headline}),
         h('div', {class: 'meta'}, when ? h('time', {datetime: when, text: `Newest report ${fullStamp(when)}`}) : h('span', {text: 'Publication time not stated'}),
           h('span', {class: 'outlets', text: outlets(s)}), covMeter(s)),
         h('div', {class: 'story-actions'},
-          h('button', {class: 'source-jump', type: 'button', text: `Read ${plural(sourceLinks(s), 'source link')} ↓`}),
+          url ? h('a', {class: 'pill solid read-source', href: url, rel: 'noopener noreferrer', target: '_blank', 'aria-describedby': 'ext-note'}, `Read at ${mainOutlet(s, url)}`) : null,
+          h('button', {class: 'source-jump', type: 'button', text: `${plural(sourceLinks(s), 'source link')} ↓`}),
           h('button', {class: 'pill share-story', type: 'button', text: 'Share'}),
           h('button', {class: 'pill copy-story', type: 'button', text: 'Copy link'})),
         h('p', {class: 'share-status sr', role: 'status', 'aria-live': 'polite'}),
@@ -501,8 +538,8 @@ if (typeof module !== 'undefined') module.exports = {normOutlet, dedupeOutlets};
       h('div', {class: 'river'}, known.concat(rest).map(s => h('article', {class: 'river-item', 'data-cat': s.category},
         h('div', {class: 'river-time'}, s.newest_published_utc ? [h('b', {text: new Date(s.newest_published_utc).toLocaleTimeString('en-US', {hour: 'numeric', minute: '2-digit'})}),
           new Date(s.newest_published_utc).toLocaleDateString('en-US', {month: 'short', day: 'numeric'})] : h('b', {text: 'Time not stated'})),
-        h('div', null, kicker(s), h('h2', {class: 'hl'}, h('a', {href: storyUrl(ed, s), text: s.headline})),
-          h('p', {class: 'dek', text: s.summary.join(' ')}), meta(s, {}), sourceList(s)))))));
+        h('div', {class: 'river-body'}, kicker(s), headline(ed, s, 'h2'),
+          h('p', {class: 'dek', text: s.summary.join(' ')}), meta(s, {ed, noTime: true})))))));
     document.title = 'Latest News | Agent Reach Daily';
   }
   function renderSection(ed, idx, cat) {
@@ -709,14 +746,18 @@ if (typeof module !== 'undefined') module.exports = {normOutlet, dedupeOutlets};
         target.scrollIntoView({block: 'nearest'});
       }
     }
+    const storyHref = x => `/daily/${x.d}/?headline=${encodeURIComponent(x.h)}#story-${x.id}`;
     function hit(x, terms) {
       return h('article', {class: 'hit', 'data-cat': x.c},
         h('div', {class: 'hit-meta'}, h('time', {datetime: x.d, text: shortDate(x.d)}), h('span', {class: 'kicker', 'data-cat': x.c, text: catLabel(x.c)}),
           x.t ? h('span', {class: 'badge trend', text: `Top story ${x.t}`}) : null),
-        h('h2', {class: 'hl'}, h('a', {href: `/daily/${x.d}/?headline=${encodeURIComponent(x.h)}#story-${x.id}`}, marked(x.h, terms))),
+        h('h2', {class: 'hl'}, x.u && webUrl(x.u) && /^https?:/.test(x.u)
+          ? h('a', {class: 'out', href: webUrl(x.u), rel: 'noopener noreferrer', target: '_blank', 'aria-describedby': 'ext-note'}, marked(x.h, terms))
+          : h('a', {href: storyHref(x)}, marked(x.h, terms))),
         x.s ? h('p', {class: 'dek'}, marked(x.s, terms)) : null,
         h('div', {class: 'meta'}, (x.o || []).length ? h('span', {class: 'outlets'}, marked((x.o || []).join(', '), terms)) : null,
-          h('span', {class: `cov ${x.l || 'limited'}`}, h('span', {class: 'bars', 'aria-hidden': 'true'}, h('i'), h('i'), h('i')), COVER[x.l] || COVER.limited)));
+          h('span', {class: `cov ${x.l || 'limited'}`}, h('span', {class: 'bars', 'aria-hidden': 'true'}, h('i'), h('i'), h('i')), COVER[x.l] || COVER.limited),
+          x.u ? h('a', {class: 'story-link', href: storyHref(x)}, 'Sources', h('span', {class: 'sr', text: ` and coverage: ${x.h}`})) : null));
     }
     input.addEventListener('input', () => { clearTimeout(timer); timer = setTimeout(() => { st.shown = SEARCH_PAGE; syncQuery(); run(); }, 140); });
     cat.addEventListener('change', () => { st.cat = cat.value; st.shown = SEARCH_PAGE; syncQuery(); run(); });

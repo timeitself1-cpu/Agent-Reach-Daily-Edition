@@ -45,35 +45,104 @@ async function open(path = '/', opts = {}) {
 }
 
 test('all public route shells render and keep RSS discovery', async () => {
-  for (const path of ['/', '/daily/', '/daily/2026-10-07/', '/latest/', '/technology/', '/science/', '/world/', '/archive/', '/search/', '/about/', '/404.html']) {
+  for (const path of ['/', '/daily/', '/daily/2026-10-07/', '/latest/', '/technology/', '/science/', '/world/', '/sports/', '/entertainment/', '/internet-culture/', '/archive/', '/search/', '/about/', '/404.html']) {
     const p = await open(path);
     assert.ok(p.d.querySelector('main h1'), path);
     assert.ok(p.d.querySelector('link[rel="alternate"][href="/feed.xml"]'), path);
     assert.ok(p.d.querySelector('footer a[href="/feed.xml"]'), path);
-    assert.equal(p.d.querySelectorAll('.nav a').length, 7);
+    assert.equal(p.d.querySelectorAll('.nav a').length, 10);
+    assert.equal(p.d.querySelectorAll('#ext-note').length, 1, path);
     assert.deepEqual(p.errors, [], path);
     p.close();
   }
 });
 
-test('Home reveals every story in sections without a dedicated page and continues keyboard reading', async () => {
+test('Home bands show up to five stories and link every section to a page that lists all of it', async () => {
   const p = await open('/');
-  for (const cat of ['Sports', 'Entertainment']) {
-    const band = p.d.querySelector(`.band[data-cat="${cat}"]`);
-    const cards = [...band.querySelectorAll('.card')];
-    const toggle = band.querySelector('.section-toggle');
-    assert.ok(cards.length > 5);
-    assert.equal(cards.filter(c => !c.hidden).length, 5);
-    assert.equal(toggle.getAttribute('aria-controls'), band.querySelector('.grid').id);
-    toggle.click();
-    assert.equal(cards.filter(c => !c.hidden).length, cards.length);
-    assert.equal(toggle.getAttribute('aria-expanded'), 'true');
-    assert.equal(p.d.activeElement, cards[5].querySelector('.hl a'));
-    toggle.focus(); toggle.click();
-    assert.equal(cards.filter(c => !c.hidden).length, 5);
-    assert.equal(p.d.activeElement, toggle);
+  for (const sec of edition.sections) {
+    const band = p.d.querySelector(`.band[data-cat="${sec.category}"]`);
+    if (!band) continue; // every story of the section is already among the top stories
+    assert.ok(band.querySelectorAll('.card').length <= 5, sec.category);
+    const link = band.querySelector('.band-link');
+    assert.match(link.textContent, new RegExp(`^All ${sec.ids.length} in `));
+    const q = await open(link.getAttribute('href'));
+    assert.equal(q.d.querySelectorAll('.card').length, sec.ids.length, sec.category);
+    assert.equal(q.d.querySelector('.nav [aria-current="page"]').getAttribute('href'), link.getAttribute('href'));
+    q.close();
   }
   p.close();
+});
+
+const NOT_ARTICLE = /^(?:[^/]+\.)?(?:news\.google\.com|google\.com|reddit\.com|x\.com|twitter\.com|bsky\.app|trends24\.in|news\.ycombinator\.com|tiktok\.com)$/;
+const expectedLink = s => s.url || (s.sources.find(x => x.url && !NOT_ARTICLE.test(new URL(x.url).hostname.replace(/^www\./, ''))) || s.sources.find(x => x.url) || {}).url;
+test('one click on a headline opens the publisher article in a new tab; a second link opens the story page', async () => {
+  for (const path of ['/', '/latest/', '/technology/', '/sports/']) {
+    const p = await open(path);
+    const items = [...p.d.querySelectorAll('main article[data-cat]')].filter(a => a.querySelector('.hl'));
+    assert.ok(items.length > 2, path);
+    for (const item of items) {
+      const story = edition.stories.find(s => s.headline === item.querySelector('.hl').textContent);
+      const a = item.querySelector('.hl a');
+      assert.equal(a.getAttribute('href'), expectedLink(story), path + ': ' + story.headline);
+      assert.equal(a.target, '_blank'); assert.match(a.rel, /noopener/); assert.equal(a.getAttribute('aria-describedby'), 'ext-note');
+      const more = item.querySelector('.story-link');
+      assert.equal(more.getAttribute('href'), `/daily/2026-10-07/#story-${story.id}`);
+      assert.match(more.textContent, new RegExp(`^${story.sources.filter(x => x.url).length} sources? and coverage: `));
+    }
+    assert.equal(p.d.getElementById('ext-note').textContent, 'Opens the publisher’s article in a new tab.');
+    p.close();
+  }
+  // Google News redirects and social pages are passed over while the story has a publisher's article.
+  const ed = structuredClone(edition), story = ed.stories[0];
+  story.sources.unshift({outlet: 'Google News', via: 'Google News', title: 'x', url: 'https://news.google.com/rss/articles/abc', published_utc: null, kind: 'report'},
+    {outlet: 'Reddit', via: 'Reddit', title: 'y', url: 'https://www.reddit.com/r/news/1', published_utc: null, kind: 'signal'});
+  let p = await open('/', {fetch: u => u.endsWith('2026-10-07.json') ? ed : undefined});
+  assert.equal(p.d.querySelector('.lead .hl a').getAttribute('href'), edition.stories[0].sources.find(x => x.url).url); p.close();
+  // The app's own choice wins when it sends one; a story without any link opens its page.
+  story.url = 'https://example.org/chosen'; story.sources.push({outlet: 'Example', via: 'Example', title: 'z', url: story.url, published_utc: null, kind: 'report'});
+  ed.stories[1].sources.forEach(x => { x.url = null; }); ed.stories[1].url = null;
+  p = await open('/latest/', {fetch: u => u.endsWith('2026-10-07.json') ? ed : undefined});
+  assert.equal(p.d.querySelector(`#story-${story.id}, .river-item`) && [...p.d.querySelectorAll('.river-item .hl a')].find(a => a.textContent === story.headline).getAttribute('href'), story.url);
+  const bare = [...p.d.querySelectorAll('.river-item .hl a')].find(a => a.textContent === ed.stories[1].headline);
+  assert.equal(bare.getAttribute('href'), `/daily/2026-10-07/#story-${ed.stories[1].id}`); assert.equal(bare.target, '');
+  p.close();
+  // The story page's headline opens the article too, with a named button beside the source list.
+  p = await open('/daily/2026-10-07/#story-' + story.id, {fetch: u => u.endsWith('2026-10-07.json') ? ed : undefined});
+  assert.equal(p.d.querySelector('h1').textContent, story.headline);
+  assert.equal(p.d.querySelector('h1 a').getAttribute('href'), story.url);
+  assert.equal(p.d.querySelector('.read-source').textContent, 'Read at Example');
+  p.close();
+});
+
+test('search results open the article when the search data names it', async () => {
+  const doc = structuredClone(monthly); doc.stories[0].u = 'https://example.org/article';
+  const p = await open('/search/?q=Hamilton', {fetch: u => u.startsWith('/search/') ? doc : undefined});
+  const hit = p.d.querySelector('.hit');
+  assert.equal(hit.querySelector('h2 a').getAttribute('href'), 'https://example.org/article');
+  assert.equal(hit.querySelector('h2 a').target, '_blank');
+  assert.match(hit.querySelector('.story-link').getAttribute('href'), /^\/daily\/2026-10-07\/\?headline=.*#story-/);
+  p.close();
+});
+
+test('the theme control saves a choice, Auto follows the system, and every page loads the theme first', async () => {
+  const store = new Map();
+  const p = await open('/', {setup(w) { Object.defineProperty(w, 'localStorage', {value: {getItem: k => store.get(k) ?? null, setItem: (k, v) => store.set(k, v), removeItem: k => store.delete(k)}}); }});
+  const [auto, light, dark] = ['auto', 'light', 'dark'].map(k => p.d.querySelector(`.theme-control [data-theme="${k}"]`));
+  assert.equal(auto.getAttribute('aria-pressed'), 'true');
+  light.click();
+  assert.equal(p.d.documentElement.dataset.theme, 'light'); assert.equal(store.get('theme'), 'light');
+  assert.equal(light.getAttribute('aria-pressed'), 'true'); assert.equal(auto.getAttribute('aria-pressed'), 'false');
+  dark.click(); assert.equal(p.d.documentElement.dataset.theme, 'dark');
+  auto.click(); assert.equal(p.d.documentElement.dataset.theme, undefined); assert.equal(store.has('theme'), false);
+  p.close();
+  const blocked = await open('/', {setup(w) { Object.defineProperty(w, 'localStorage', {get() { throw new Error('denied'); }}); }});
+  blocked.d.querySelector('.theme-control [data-theme="light"]').click();
+  assert.equal(blocked.d.documentElement.dataset.theme, 'light'); assert.deepEqual(blocked.errors, []); blocked.close();
+  const {addPreview} = require('../scripts/build.cjs');
+  const dated = new JSDOM(addPreview(readFileSync(resolve(fixtures, 'daily/2026-10-07/index.html'), 'utf8'))).window.document;
+  const theme = dated.querySelector('head script[src="/assets/theme.js"]');
+  assert.ok(theme && theme.compareDocumentPosition(dated.querySelector('link[rel="stylesheet"]')) & 4, 'theme script precedes the stylesheet');
+  assert.equal(dated.querySelectorAll('meta[name="theme-color"][media]').length, 2);
 });
 
 test('edition disclosure preserves all metadata with accessible state', async () => {
@@ -134,8 +203,12 @@ test('embedded edition renders without a loading skeleton or data requests; bad 
   const {renderShell} = require('../scripts/build.cjs');
   const html = renderShell(readFileSync(resolve(root, 'index.html'), 'utf8'), '/', index, edition);
   const staticPage = new JSDOM(html);
-  assert.equal(staticPage.window.document.querySelectorAll('main [id^="story-"]').length, edition.stories.length);
-  for (const story of edition.stories) assert.equal(staticPage.window.document.getElementById('story-'+story.id).querySelectorAll('details.src li').length, story.sources.length);
+  const shown = [...staticPage.window.document.querySelectorAll('main [id^="story-"]')];
+  assert.ok(shown.length >= 20);
+  for (const node of shown) {
+    const story = edition.stories.find(s => 'story-' + s.id === node.id);
+    assert.equal(node.querySelectorAll('details.src.static-src li').length, story.sources.length);
+  }
   staticPage.window.close();
   const p = await open('/', {html});
   assert.deepEqual(p.requests, []);
@@ -259,14 +332,13 @@ test('relative timestamps refresh at 60 seconds and pause when hidden', async ()
   assert.equal(typeof tick, 'function'); p.close();
 });
 
-test('source times include historical year and local timezone', async () => {
-  const ed = structuredClone(edition); ed.stories[0].sources[0].published_utc = '2025-10-08T12:00:00Z';
-  const p = await open('/', {fetch: u => u.endsWith('2026-10-07.json') ? ed : undefined});
-  // The lead source disclosure exists in static rendering; exercise a card disclosure too.
-  for (const story of ed.stories) for (const source of story.sources) source.published_utc = '2025-10-08T12:00:00Z'; p.close();
-  const q = await open('/latest/', {fetch: u => u.endsWith('2026-10-07.json') ? ed : undefined});
-  const text = q.d.querySelector('.src small').textContent;
-  assert.match(text, /2025/); assert.match(text, /(?:[A-Z]{2,5}|GMT[+-]\d+)$/); q.close();
+test('story times include historical year and local timezone', async () => {
+  const ed = structuredClone(edition);
+  for (const story of ed.stories) story.newest_published_utc = '2025-10-08T12:00:00Z';
+  const q = await open('/technology/', {fetch: u => u.endsWith('2026-10-07.json') ? ed : undefined});
+  const time = q.d.querySelector('.card .meta time');
+  assert.match(time.textContent, /2025/); assert.match(time.textContent, /(?:[A-Z]{2,5}|GMT[+-]\d+)$/);
+  assert.match(time.title, /2025/); q.close();
 });
 
 test('axe 4.10 reports no region or nested complementary landmarks', async () => {
@@ -616,8 +688,7 @@ test('null source URLs and empty optional values remain readable plain text',asy
   p.close();
   const card=await open('/technology/',{fetch:u=>u.includes('/editions/2026')?ed:undefined});
   assert.equal(card.d.querySelectorAll('.card').length,8);
-  assert.equal(card.d.querySelector('details.src a[href$="/null"]'),null);
-  assert.ok([...card.d.querySelectorAll('details.src li')].some(li=>li.textContent.includes(story.sources[0].title)&&!li.querySelector('a')));
+  assert.equal(card.d.querySelector('a[href$="/null"]'),null);
   card.close();
 });
 

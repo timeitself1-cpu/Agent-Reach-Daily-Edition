@@ -1,3 +1,7 @@
+> **Status, October 9, 2026:** items 1, 2, 3, 6 and 7 were done directly (see "Round 3" in `roadmap.md`), and headlines
+> now open the publisher's article. Still open from this prompt: item 4's per-page embeds and render skipping,
+> item 5 (strong-coverage filter) and item 8 (UI checks in CI).
+
 You are improving the frontend of Agent Reach Daily (https://getagentreach.dev), in the repository `timeitself1-cpu/Agent-Reach-Website`. It is a static news site with no runtime dependencies:
 
 - `scripts/build.cjs` pre-renders the HTML shells with jsdom and embeds the edition JSON in each page.
