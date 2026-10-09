@@ -39,14 +39,16 @@ or the logs. `AGENT_REACH_PUBLISH_TOKEN` (environment variable) overrides it, fo
 3. If automatic publishing is on, `publish_after_refresh` builds the public copy (`public_edition`): headlines,
    the validated summaries, "why it matters", categories, Top Stories and sections, New/Updated, coverage
    strength, and for each source its outlet, headline, link, stated publication time and whether it is an
-   independent report, a repeat/syndicated copy or a social/search signal. Not included: publisher excerpts,
+   independent report, a repeat/syndicated copy or a social/search signal. Each story also names the article its
+   headline opens (`url`, the same choice as the HTML export: the first cited publisher article, a search or social
+   page only when there is nothing else), so one click on a website headline goes to the source. Not included: publisher excerpts,
    run ids, settings, feed lists, model diagnostics, notes, file paths. `assert_public` refuses to publish any
    text that looks like a path on the PC.
 4. Six files go up in **one commit** through GitHub's API: `editions/YYYY-MM-DD.json`,
    `daily/YYYY-MM-DD/index.html`, `editions/index.json` (the archive list, merged with what is already on the
    site), `feed.xml` (RSS, one item per edition) and `sitemap.xml`, both rebuilt from that archive list, and
-   `search/YYYY-MM.json`, the archive search data of that month (headline, a short summary, category, outlets
-   and coverage level per story). A month whose search file is missing is rebuilt from the edition files
+   `search/YYYY-MM.json`, the archive search data of that month (headline, a short summary, category, outlets,
+   coverage level and the headline's article link per story). A month whose search file is missing is rebuilt from the edition files
    already on the site, so editions published by an older version become searchable on the next publication. The branch only moves by fast-forward: if it changed meanwhile, the files are re-read and the commit
    rebuilt (3 tries). If anything fails, no commit lands and the website keeps the previous edition.
 5. The result is recorded in `publish\status.json` and shown in the window and in the refresh message. A website
