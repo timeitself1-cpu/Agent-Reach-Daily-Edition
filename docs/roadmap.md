@@ -146,3 +146,7 @@ they do not replace a week of production observation for quality and churn targe
 - **Not done: thumbnails.** Lead-story images would load from publishers' servers, which the About page's privacy
   promise ("loads nothing from other servers") and the CSP (`img-src 'self'`) rule out; copying them to this site
   raises copyright questions for news photos. Waiting on the owner's decision.
+- **Local news for Frisco, Texas.** A `Local` section ("Frisco & North Texas", `/local/`, after World & Nation in
+  the navigation). The app files a story there when its reports name a town of the area, from the City of Frisco,
+  four Dallas–Fort Worth newsrooms and two Google News searches, all checked against the live sites in the app's
+  feed-check workflow. Editions published before that release have no Local stories, so the page says so.

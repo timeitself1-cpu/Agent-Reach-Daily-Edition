@@ -12,7 +12,7 @@
   --new:#5fd3a6;--upd:#ffc561;--new-bg:rgba(95,211,166,.12);--upd-bg:rgba(255,197,97,.12);
   --strong:#6aa5ff;--moderate:#b6c2d4;--limited:#6e7684;
   --mast:linear-gradient(180deg,#14171c 0%,#0f1114 100%);--shadow:0 1px 2px rgba(0,0,0,.25);
-  --c-news:#7fb0ff;--c-tech:#b3a6ff;--c-science:#ffc075;--c-sports:#72d99a;--c-ent:#ff96bf;--c-culture:#64d5d9;
+  --c-news:#7fb0ff;--c-tech:#b3a6ff;--c-science:#ffc075;--c-sports:#72d99a;--c-ent:#ff96bf;--c-culture:#64d5d9;--c-local:#f0a37a;
   --serif:"Newsreader","Iowan Old Style","Charter","Georgia",serif;
   --sans:"Inter",system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;
   --wrap:1240px;--gutter:clamp(16px,3.2vw,40px);--radius:14px;
@@ -24,7 +24,7 @@
   --new:#0b6e46;--upd:#7f4c00;--new-bg:rgba(11,110,70,.09);--upd-bg:rgba(127,76,0,.09);
   --strong:#1d5fd0;--moderate:#7b8696;--limited:#a9afb9;
   --mast:linear-gradient(180deg,#ffffff 0%,#f6f5f1 100%);--shadow:0 1px 2px rgba(20,23,27,.06);
-  --c-news:#1b5cc8;--c-tech:#5b3cc4;--c-science:#985000;--c-sports:#0f6f3d;--c-ent:#a8235f;--c-culture:#0a6d73;}}
+  --c-news:#1b5cc8;--c-tech:#5b3cc4;--c-science:#985000;--c-sports:#0f6f3d;--c-ent:#a8235f;--c-culture:#0a6d73;--c-local:#a1430f;}}
 :root[data-theme="light"]{color-scheme:light;
   --bg:#f6f5f1;--bg2:#efede7;--card:#ffffff;--card2:#fbfaf7;--line:#e2dfd7;--line2:#cbc7bd;
   --ink:#15171b;--ink2:#30353d;--muted:#575e6a;--faint:#5f6672;
@@ -32,7 +32,7 @@
   --new:#0b6e46;--upd:#7f4c00;--new-bg:rgba(11,110,70,.09);--upd-bg:rgba(127,76,0,.09);
   --strong:#1d5fd0;--moderate:#7b8696;--limited:#a9afb9;
   --mast:linear-gradient(180deg,#ffffff 0%,#f6f5f1 100%);--shadow:0 1px 2px rgba(20,23,27,.06);
-  --c-news:#1b5cc8;--c-tech:#5b3cc4;--c-science:#985000;--c-sports:#0f6f3d;--c-ent:#a8235f;--c-culture:#0a6d73;}
+  --c-news:#1b5cc8;--c-tech:#5b3cc4;--c-science:#985000;--c-sports:#0f6f3d;--c-ent:#a8235f;--c-culture:#0a6d73;--c-local:#a1430f;}
 *{box-sizing:border-box}
 [hidden]{display:none!important}
 html{-webkit-text-size-adjust:100%;scroll-padding-top:24px}
@@ -290,8 +290,8 @@ details.src small{color:var(--faint);font-size:12px}
 .levels{display:grid;gap:10px;margin:14px 0}
 .levels div{display:grid;grid-template-columns:170px 1fr;gap:12px;align-items:center;padding:12px 14px;border-radius:10px;background:var(--card);border:1px solid var(--line);font-size:15px;color:var(--ink2)}
 .state{padding:80px 0;text-align:center;color:var(--muted)}
-.state h1{font-family:var(--serif);color:var(--ink);font-weight:600;font-size:34px;margin:0 0 10px}
-.state a{color:var(--accent2)}
+.state h1,.state h2{font-family:var(--serif);color:var(--ink);font-weight:600;font-size:34px;margin:0 0 10px}
+.state a{color:var(--accent2);text-decoration:underline;text-underline-offset:3px}
 .skeleton{display:grid;grid-template-columns:1.6fr 1fr;gap:40px;padding:28px 0}
 .skeleton div{border-radius:var(--radius);background:linear-gradient(90deg,var(--card) 0%,var(--card2) 50%,var(--card) 100%);background-size:200% 100%;animation:shimmer 1.4s infinite linear}
 @keyframes shimmer{to{background-position:-200% 0}}
@@ -323,6 +323,7 @@ details.src small{color:var(--faint);font-size:12px}
 [data-cat="Sports"]{--cat:var(--c-sports)}
 [data-cat="Entertainment"]{--cat:var(--c-ent)}
 [data-cat="Internet Culture"]{--cat:var(--c-culture)}
+[data-cat="Local"]{--cat:var(--c-local)}
 
 /* ------------------------------------------------------------------ responsive */
 @media (max-width:1080px){

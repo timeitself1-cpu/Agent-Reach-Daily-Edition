@@ -40,6 +40,7 @@ if (typeof module !== 'undefined') module.exports = {normOutlet, dedupeOutlets};
   const MAIL = 'hello@getagentreach.dev';
   const SECTION = {
     'News': {label: 'World & Nation', path: '/world/', title: 'World & Nation', blurb: 'World and national news: politics, courts, conflict, the economy and public safety.'},
+    'Local': {label: 'Local', path: '/local/', title: 'Frisco & North Texas', blurb: 'Local news from Frisco, Collin and Denton counties and the rest of North Texas.'},
     'Tech': {label: 'Technology', path: '/technology/', title: 'Technology', blurb: 'Companies, products, security and the business of technology.'},
     'Science & AI': {label: 'Science & AI', path: '/science/', title: 'Science & AI', blurb: 'Research, space, health, climate and artificial intelligence.'},
     'Sports': {label: 'Sports', path: '/sports/', title: 'Sports', blurb: 'Games, results, trades and the business of sport.'},
@@ -47,7 +48,7 @@ if (typeof module !== 'undefined') module.exports = {normOutlet, dedupeOutlets};
     'Internet Culture': {label: 'Internet Culture', path: '/internet-culture/', title: 'Internet Culture', blurb: 'What people are talking about online: platforms, creators and viral moments.'},
   };
   const NAV = [['Home', '/', 'home'], ['Latest', '/latest/', 'latest'],
-    ...['News', 'Tech', 'Science & AI', 'Sports', 'Entertainment', 'Internet Culture'].map(c => [SECTION[c].label, SECTION[c].path, c]),
+    ...['News', 'Local', 'Tech', 'Science & AI', 'Sports', 'Entertainment', 'Internet Culture'].map(c => [SECTION[c].label, SECTION[c].path, c]),
     ['Archive', '/archive/', 'archive'], ['About', '/about/', 'about']];
   const body = document.body;
   const page = body.dataset.page || 'home';
@@ -410,7 +411,7 @@ if (typeof module !== 'undefined') module.exports = {normOutlet, dedupeOutlets};
     const all = cat ? ((ed.sections || []).find(x => x.category === cat) || {ids: []}).ids.length : 0;
     const grid = h('div', {class: 'grid'}, shown.map((s, i) => card(ed, s, i === 0 && shown.length >= 4 ? 'feature' : '')));
     return h('section', {class: 'band', id: cat ? sectionId(cat) : 'band-top', 'data-cat': cat, 'aria-labelledby': (cat ? sectionId(cat) : 'band-top') + '-title'}, h('div', {class: 'wrap'},
-      h('div', {class: 'band-head'}, h('h2', {class: 'band-title', id: (cat ? sectionId(cat) : 'band-top') + '-title', text: title || catLabel(cat)}),
+      h('div', {class: 'band-head'}, h('h2', {class: 'band-title', id: (cat ? sectionId(cat) : 'band-top') + '-title', text: title || sec.title || catLabel(cat)}),
         sec.path ? h('a', {class: 'band-link', href: sec.path}, `All ${all} in ${sec.title}`) : null), grid));
   }
   function archiveBand(idx, current) {
@@ -588,7 +589,9 @@ if (typeof module !== 'undefined') module.exports = {normOutlet, dedupeOutlets};
       notices(ed, idx)),
       stories.length ? h('section', {class: 'band', 'data-cat': cat, 'aria-label': sec.title}, h('div', {class: 'wrap'},
         h('div', {class: 'grid'}, stories.map((s, i) => card(ed, s, i === 0 && stories.length >= 3 ? 'feature' : '', 'h2')))))
-        : h('div', {class: 'wrap state'}, h('p', {text: 'No stories in this section in the latest edition.'})));
+        : h('div', {class: 'wrap state'}, h('h2', {text: `No ${sec.title} stories in this edition`}),
+          h('p', null, cat === 'Local' ? 'Local stories appear here when an edition has them. ' : 'Other sections may have more today. ',
+            h('a', {href: '/', text: 'Read the full edition'}), '.')));
     document.title = `${sec.title} | Agent Reach Daily`;
   }
   function renderArchive(idx) {

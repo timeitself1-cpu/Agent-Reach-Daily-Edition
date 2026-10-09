@@ -45,12 +45,12 @@ async function open(path = '/', opts = {}) {
 }
 
 test('all public route shells render and keep RSS discovery', async () => {
-  for (const path of ['/', '/daily/', '/daily/2026-10-07/', '/latest/', '/technology/', '/science/', '/world/', '/sports/', '/entertainment/', '/internet-culture/', '/archive/', '/search/', '/about/', '/404.html']) {
+  for (const path of ['/', '/daily/', '/daily/2026-10-07/', '/latest/', '/technology/', '/science/', '/world/', '/local/', '/sports/', '/entertainment/', '/internet-culture/', '/archive/', '/search/', '/about/', '/404.html']) {
     const p = await open(path);
     assert.ok(p.d.querySelector('main h1'), path);
     assert.ok(p.d.querySelector('link[rel="alternate"][href="/feed.xml"]'), path);
     assert.ok(p.d.querySelector('footer a[href="/feed.xml"]'), path);
-    assert.equal(p.d.querySelectorAll('.nav a').length, 10);
+    assert.equal(p.d.querySelectorAll('.nav a').length, 11);
     assert.equal(p.d.querySelectorAll('#ext-note').length, 1, path);
     assert.deepEqual(p.errors, [], path);
     p.close();
@@ -784,4 +784,29 @@ test('outlet tags show one outlet once and only for stories with several indepen
     assert.equal(names.length + (more ? Number(more.textContent.slice(1)) : 0), outlets.size, story.headline);
   }
   p.close();
+});
+
+test('Local stories get a Frisco & North Texas band on Home and their own page', async () => {
+  const ed = structuredClone(edition);
+  const moved = ed.sections.find(s => s.category === 'News').ids.filter(id => !ed.top.includes(id)).slice(0, 2);
+  for (const id of moved) ed.stories.find(s => s.id === id).category = 'Local';
+  ed.sections.forEach(sec => { sec.ids = sec.ids.filter(id => !moved.includes(id)); });
+  ed.sections.splice(1, 0, {category: 'Local', ids: moved});
+  const fetch = u => u.endsWith('2026-10-07.json') ? ed : undefined;
+  const home = await open('/', {fetch});
+  const band = home.d.querySelector('.band[data-cat="Local"]');
+  assert.equal(band.querySelector('.band-title').textContent, 'Frisco & North Texas');
+  assert.equal(band.querySelectorAll('.card').length, 2);
+  assert.equal(band.querySelector('.band-link').getAttribute('href'), '/local/');
+  assert.match(band.querySelector('.card .kicker').textContent, /^Local/);
+  assert.ok(home.d.querySelector('.section-shortcuts a[href$="#band-local"]'));
+  home.close();
+  const page = await open('/local/', {fetch});
+  assert.equal(page.d.querySelector('h1').textContent, 'Frisco & North Texas');
+  assert.equal(page.d.querySelectorAll('.card').length, 2);
+  assert.equal(page.d.querySelector('.nav [aria-current="page"]').textContent, 'Local');
+  page.close();
+  const search = await open('/search/');
+  assert.equal(search.d.querySelector('option[value="Local"]').textContent, 'Local');
+  search.close();
 });

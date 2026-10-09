@@ -87,7 +87,7 @@ function build() {
     rmSync(target, {recursive: true, force: true, maxRetries: 3});
   }
   for (const path of ['assets', 'editions', 'search', 'feed.xml', 'sitemap.xml', 'robots.txt', 'app-top-stories.webp', 'app-window.webp', '_headers']) cpSync(resolve(root, path), resolve(out, path), {recursive: true});
-  const shells = ['index.html', 'daily/index.html', 'latest/index.html', 'technology/index.html', 'science/index.html', 'world/index.html', 'sports/index.html', 'entertainment/index.html', 'internet-culture/index.html', 'archive/index.html', 'search/index.html', 'about/index.html', '404.html', ...[...editions.keys()].map(date => `daily/${date}/index.html`)];
+  const shells = ['index.html', 'daily/index.html', 'latest/index.html', 'technology/index.html', 'science/index.html', 'world/index.html', 'local/index.html', 'sports/index.html', 'entertainment/index.html', 'internet-culture/index.html', 'archive/index.html', 'search/index.html', 'about/index.html', '404.html', ...[...editions.keys()].map(date => `daily/${date}/index.html`)];
   for (const file of shells) {
     let html = readFileSync(resolve(root, file), 'utf8');
     const match = /data-page="([^"]+)"/.exec(html);

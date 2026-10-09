@@ -116,3 +116,10 @@ behave the same way.
 
 The site now has `/sports/`, `/entertainment/` and `/internet-culture/` pages next to the existing three.
 `sitemap.xml` is written by the app, which lists them from the release that carries this change.
+
+## Local section — October 9, 2026
+
+The app adds a seventh category, `Local` (Frisco, Texas, Collin and Denton counties and North Texas by
+default; the app's `local_area` setting). It appears in `sections` after `News` and on `/local/`, titled
+"Frisco & North Texas". Stories file under it only by a fixed rule in the app (`pipeline/local.py`), never by
+the model. No schema change: `category` simply takes one more value. The sitemap lists `/local/`.
