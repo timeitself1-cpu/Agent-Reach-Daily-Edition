@@ -46,7 +46,7 @@ async function open(path = '/', opts = {}) {
 }
 
 test('all public route shells render and keep RSS discovery', async () => {
-  for (const path of ['/', '/daily/', '/daily/2026-10-07/', '/latest/', '/technology/', '/science/', '/world/', '/local/', '/sports/', '/entertainment/', '/internet-culture/', '/archive/', '/search/', '/about/', '/404.html']) {
+  for (const path of ['/', '/daily/', '/daily/2026-10-07/', '/latest/', '/technology/', '/science/', '/world/', '/sports/', '/entertainment/', '/internet-culture/', '/archive/', '/search/', '/about/', '/404.html']) {
     const p = await open(path);
     assert.ok(p.d.querySelector('main h1'), path);
     assert.ok(p.d.querySelector('link[rel="alternate"][href="/feed.xml"]'), path);
@@ -821,7 +821,7 @@ test('outlet tags show one outlet once and only for stories with several indepen
   p.close();
 });
 
-test('the retired Local section stays in old editions but leaves navigation, search filters and new pages', async () => {
+test('the retired Local section stays in old editions but has no navigation, page or search filter', async () => {
   const ed = structuredClone(edition); // an edition published before October 9, 2026 with a Local section
   const moved = ed.sections.find(s => s.category === 'News').ids.filter(id => !ed.top.includes(id)).slice(0, 2);
   for (const id of moved) ed.stories.find(s => s.id === id).category = 'Local';
@@ -839,12 +839,6 @@ test('the retired Local section stays in old editions but leaves navigation, sea
     ['Today', 'Latest', 'World & Nation', 'Technology', 'Science & AI', 'Sports', 'Entertainment', 'Internet Culture', 'Archive', 'About', 'How it works']);
   assert.equal(home.d.querySelector('.nav a[href="/about/#method"]').textContent, 'How it works');
   home.close();
-  const page = await open('/local/', {fetch});
-  assert.equal(page.d.querySelector('h1').textContent, 'Frisco & North Texas');
-  assert.match(page.d.querySelector('.page-head p').textContent, /retired on October 9, 2026/);
-  assert.equal(page.d.querySelectorAll('.card').length, 0);
-  assert.equal(page.d.querySelector('.nav [aria-current="page"]'), null);
-  page.close();
   const search = await open('/search/?cat=Local');
   assert.equal(search.d.querySelector('option[value="Local"]'), null);
   assert.equal(search.d.querySelector('select[aria-label="Section"]').value, '');

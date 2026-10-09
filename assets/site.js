@@ -108,8 +108,8 @@ if (typeof module !== 'undefined') module.exports = {normOutlet, dedupeOutlets, 
   const MAIL = 'hello@getagentreach.dev';
   const SECTION = {
     'News': {label: 'World & Nation', path: '/world/', title: 'World & Nation', blurb: 'World and national news: politics, courts, conflict, the economy and public safety.'},
-    // Retired on October 9, 2026 (app rc19): no navigation, page link or search filter; editions published
-    // before then still show their Local stories under this label.
+    // Retired on October 9, 2026 (app rc19; its /local/ page was deleted): no navigation, page or search filter;
+    // editions published before then still show their Local stories under this label.
     'Local': {label: 'Local', title: 'Frisco & North Texas', blurb: 'Local news from Frisco, Collin and Denton counties and the rest of North Texas.', retired: 'October 9, 2026'},
     'Tech': {label: 'Technology', path: '/technology/', title: 'Technology', blurb: 'Companies, products, security and the business of technology.'},
     'Science & AI': {label: 'Science & AI', path: '/science/', title: 'Science & AI', blurb: 'Research, space, health, climate and artificial intelligence.'},
@@ -649,13 +649,6 @@ if (typeof module !== 'undefined') module.exports = {normOutlet, dedupeOutlets, 
   }
   function renderSection(ed, idx, cat) {
     const sec = SECTION[cat];
-    if (sec.retired) { // an old link to a retired section: say so, and point to the editions that had it
-      mount(cat, ed, h('div', {class: 'wrap'}, h('header', {class: 'page-head', 'data-cat': cat}, h('h1', {text: sec.title}),
-        h('p', null, `This section was retired on ${sec.retired}. Editions published before then still show their ${sec.label} stories in `,
-          h('a', {href: '/archive/', text: 'the archive'}), '. ', h('a', {href: '/', text: 'Read today’s edition'}), '.'))));
-      document.title = `${sec.title} | Agent Reach Daily`;
-      return;
-    }
     const ids = ((ed.sections || []).find(x => x.category === cat) || {ids: []}).ids;
     const stories = ids.map(id => ed.byId[id]).filter(Boolean);
     mount(cat, ed, h('div', {class: 'wrap'}, strip(ed, idx),

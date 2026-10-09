@@ -136,7 +136,7 @@ function build() {
     });
     writeFileSync(file, JSON.stringify(data));
   }
-  const shells = ['index.html', 'daily/index.html', 'latest/index.html', 'technology/index.html', 'science/index.html', 'world/index.html', 'local/index.html', 'sports/index.html', 'entertainment/index.html', 'internet-culture/index.html', 'archive/index.html', 'search/index.html', 'about/index.html', '404.html', ...[...editions.keys()].map(date => `daily/${date}/index.html`)];
+  const shells = ['index.html', 'daily/index.html', 'latest/index.html', 'technology/index.html', 'science/index.html', 'world/index.html', 'sports/index.html', 'entertainment/index.html', 'internet-culture/index.html', 'archive/index.html', 'search/index.html', 'about/index.html', '404.html', ...[...editions.keys()].map(date => `daily/${date}/index.html`)];
   for (const file of shells) {
     let html = readFileSync(resolve(root, file), 'utf8');
     const match = /data-page="([^"]+)"/.exec(html);
