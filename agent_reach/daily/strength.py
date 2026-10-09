@@ -61,31 +61,64 @@ def _title_key(title: str) -> str:
     return dedupe_key(title)
 
 
+def reporting_groups(evidence: list) -> list[dict]:
+    """Canonical newsroom and reporting-origin IDs for each retained source, scoped to this story.
+
+    Syndicated titles share the first reporting origin; subsequent contributions from that newsroom
+    keep that origin too. These are evidence identities, not stable event IDs.
+    """
+    keys = [origin(e.publisher, e.url) for e in evidence]
+    parents = list(range(len(evidence)))
+
+    def root(i):
+        while parents[i] != i:
+            parents[i] = parents[parents[i]]
+            i = parents[i]
+        return i
+
+    # Connect all known copies before assigning IDs: a syndicated match discovered later
+    # must also collapse earlier contributions from that newsroom.
+    seen = {}
+    for i, e in enumerate(evidence):
+        if e.source in SIGNAL_SOURCES or not keys[i]:
+            continue
+        for token in [('outlet', keys[i]), ('title', _title_key(e.title))]:
+            if not token[1]:
+                continue
+            if token in seen:
+                a, b = root(i), root(seen[token])
+                parents[max(a, b)] = min(a, b)
+            seen[token] = i
+    result, counted = [], set()
+    for i, e in enumerate(evidence):
+        report = None if e.source in SIGNAL_SOURCES or not keys[i] else 'outlet:' + keys[root(i)]
+        kind = 'signal' if e.source in SIGNAL_SOURCES else 'repeat' if report in counted else 'report'
+        if report:
+            counted.add(report)
+        result.append({'outlet_id': keys[i], 'reporting_origin': report, 'kind': kind})
+    return result
+
+
 def assess(evidence: list, reference: datetime) -> EvidenceStrength:
     """Evidence strength of one story's evidence links at ``reference`` (the edition's generation time)."""
     reference = reference.astimezone(timezone.utc)
     origins: dict[str, str] = {}  # origin key -> display name
-    title_owner: dict[str, str] = {}  # headline key -> origin that reported it first
     duplicates = 0
     signals = 0
     newest: datetime | None = None
-    for e in evidence:
+    for e, identity in zip(evidence, reporting_groups(evidence)):
         if e.source in SIGNAL_SOURCES:
             signals += 1
             continue
         if e.published_at_utc is not None and e.published_at_utc <= reference:
             newest = e.published_at_utc if newest is None else max(newest, e.published_at_utc)
-        key = origin(e.publisher, e.url)
+        key = identity['reporting_origin']
         if key is None:
             continue
-        tkey = _title_key(e.title)
-        owner = title_owner.get(tkey) if tkey else None
-        if key in origins or (owner is not None and owner != key):
+        if identity['kind'] == 'repeat':
             duplicates += 1  # same publisher again, or a syndicated copy of a headline already counted
             continue
         origins[key] = outlet_name(e.publisher, e.url) or key
-        if tkey:
-            title_owner[tkey] = key
     independent = len(origins)
     channels = len({e.source for e in evidence if e.source not in SIGNAL_SOURCES})  # channels that carried reports
     age = round((reference - newest).total_seconds() / 3600, 1) if newest is not None else None
@@ -137,7 +170,13 @@ def strength_of(story, generated_at: datetime) -> EvidenceStrength:
     points += {0: 0, 1: 0, 2: 2, 3: 3}.get(independent, 4)
     level = 'limited' if independent < 2 else ('strong' if points >= 5 else 'moderate')
     reasons = [f"{independent} independent report{'s' if independent != 1 else ''} ({', '.join(publishers)})"]
-    reasons.extend(stored.reasons[1:])
+    duplicates = stored.duplicates_collapsed + stored.independent_reports - independent
+    if duplicates:
+        reasons.append(f"{duplicates} repeat or syndicated cop{'ies' if duplicates != 1 else 'y'} counted once")
+    reasons.extend(r for r in stored.reasons[1:] if 'repeat or syndicated' not in r
+                   and 'not corroborated' not in r)
+    if independent < 2:
+        reasons.append('not corroborated by a second independent publisher')
     return stored.model_copy(update={'publishers': publishers, 'independent_reports': independent, 'points': points,
                                      'level': level, 'reasons': reasons,
-                                     'duplicates_collapsed': stored.duplicates_collapsed + stored.independent_reports - independent})
+                                     'duplicates_collapsed': duplicates})

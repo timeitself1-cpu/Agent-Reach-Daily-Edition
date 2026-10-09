@@ -15,6 +15,9 @@ ALIASES = {
     "tomshardware": "Tom's Hardware", "github": "GitHub", "guardian": "The Guardian",
     "theguardian": "The Guardian", "washingtonpost": "The Washington Post",
     "thewashingtonpost": "The Washington Post",
+    # Reviewed newsroom aliases, not parent-company ownership groups.
+    "nbcdfw": "NBC DFW", "nbc5dallasfortworth": "NBC DFW",
+    "aljazeera": "Al Jazeera", "aljazeeraenglish": "Al Jazeera",
 }
 AGGREGATORS = {"google.com", "youtube.com", "youtu.be", "news.google.com", "news.ycombinator.com"}
 

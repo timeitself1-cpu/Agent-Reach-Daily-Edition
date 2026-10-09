@@ -12,6 +12,7 @@ from html import escape
 from agent_reach.daily.edition import DailyEdition, Story, category_sections, primary_url, safe_url, top_stories
 from agent_reach.daily.strength import strength_of
 from agent_reach.daily.timeutil import edition_heading, format_central, updated_line
+from agent_reach.ingestion.google_urls import is_google_news
 
 CSS = """
 :root { --bg:#f5f5f7; --card:#fff; --ink:#1d1d1f; --ink2:#3a3a3c; --muted:#6e6e73; --line:#e5e5ea; --accent:#0066cc;
@@ -117,7 +118,8 @@ def _story(s: Story, edition: DailyEdition, number: int | None = None) -> str:
                 when += f"; retrieved {_e(format_central(ev.retrieved_at_utc))}"
         pub = f" ({_e(ev.publisher)})" if ev.publisher else ""
         excerpt = f'<span class="excerpt">{_e(ev.excerpt)}</span>' if ev.excerpt else ""
-        items.append(f"<li>{_e(ev.source_name)}: {_link(ev.url, ev.title)}{pub}{when}{excerpt}</li>")
+        redirect = ' &middot; Google News redirect' if is_google_news(ev.url) else ''
+        items.append(f"<li>{_e(ev.source_name)}: {_link(ev.url, ev.title)}{pub}{when}{redirect}{excerpt}</li>")
     return (
         f'<article id="story-{s.rank}"><div class="kicker">{" ".join(kicker)}</div>'
         f"<h3>{number or s.rank}. {_headline(s)}</h3>"

@@ -1,0 +1,13 @@
+# Phase 1: trust and destinations
+
+Reviewed aliases in `agent_reach/outlets.py` canonicalize NBC DFW / NBC 5 Dallas-Fort Worth and Al Jazeera / Al Jazeera English. These represent the same newsroom in the affected reporting; NBC News, CNBC and other distinct teams are not collapsed by ownership.
+
+`reporting_groups()` connects same-newsroom contributions and normalized identical titles (a conservative syndication heuristic) before assigning reporting-origin IDs. A later matching copy also connects earlier contributions. `assess()` uses those groups for independent counts, repeats and strength together. Public source entries now carry `outlet_id`, `reporting_origin` and `kind`. Reporting-origin IDs are scoped to a story's evidence, not globally stable event identifiers.
+
+Cached strength covers the entire collected evidence, before the reader's eight-source cap. `strength_of()` preserves that scope, canonicalizes stored publishers, subtracts removed aliases' corroboration points and recalculates the level and explanations. It does not replace full evidence counts with the smaller displayed list.
+
+Public `coverage` adds optional `points`, `source_links`, `linked_outlets` and `linked_reporting_origins`. The latter three count retained displayed evidence: links include signals, while newsroom/origin counts exclude them. Syndicated links can therefore mean two links, two newsrooms, one origin. Monthly search includes the same coverage object and primary URL as its story. These are additive fields in public schema version 1.
+
+`primary_url()` selects a report supporting the actual displayed headline. Publication passes its verified headline explicitly; desktop/export readers use their displayed story headline. Exact title matches take precedence. A matching but unresolved Google News report does not permit an unrelated report about the same person to replace it. Resolved paraphrases require substantial title overlap; otherwise the website uses the dated internal evidence view. This heuristic is deliberately conservative and is not a semantic proof. Signal/background platforms, including Wikipedia, never supply the headline URL. The existing bounded Google News resolver runs at ingestion; unresolved links remain usable in evidence and are visibly labelled in public HTML, desktop source details and standalone exports.
+
+Regression tests cover both reviewed alias pairs, distinct reporting teams, syndication, cached scoring corrections, separate evidence totals, search parity and the Anne Carson/Princeton wrong-destination case. The companion website change handles legacy public data and tests actual fragment navigation in three script modes.

@@ -1158,6 +1158,8 @@ class DailyWindow:
             self._render_evidence(s)
 
     def _render_evidence(self, s: Story) -> None:
+        from agent_reach.ingestion.google_urls import is_google_news
+
         t = self.text
         for ev in s.evidence:
             t.insert("end", "• ", ("evidence",))
@@ -1167,6 +1169,8 @@ class DailyWindow:
             else:
                 t.insert("end", ev.title, ("evidence",))
             extra = [ev.publisher or ev.source_name]
+            if is_google_news(ev.url):
+                extra.append('Google News redirect')
             if ev.published_at_utc:
                 extra.append("published " + format_central(ev.published_at_utc))
             else:
