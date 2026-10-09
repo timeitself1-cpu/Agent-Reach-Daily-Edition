@@ -39,3 +39,38 @@ test('ordinary HTML contains every summary, evidence link and fragment on comple
     } finally { dom.window.close(); }
   }
 });
+
+test('the RSS feeds have one item per story, newest edition only, with escaped text and story links', () => {
+  const {feedFiles} = require('../scripts/build.cjs');
+  const ed = structuredClone(edition);
+  ed.stories[0].headline = 'Q&A: <Rates> "rise"';
+  const files = feedFiles(ed);
+  assert.deepEqual(Object.keys(files).sort(), ['feed.xml', 'feeds/entertainment.xml', 'feeds/internet-culture.xml', 'feeds/science.xml', 'feeds/sports.xml', 'feeds/technology.xml', 'feeds/world.xml']);
+  const read = text => new JSDOM(text, {contentType: 'text/xml'}).window.document;
+  const all = read(files['feed.xml']);
+  assert.equal(all.querySelectorAll('item').length, ed.stories.length);
+  assert.equal(all.querySelector('item title').textContent, 'Q&A: <Rates> "rise"');
+  for (const item of all.querySelectorAll('item')) {
+    assert.match(item.querySelector('link').textContent, /^https:\/\/getagentreach\.dev\/daily\/2026-10-07\/#story-[0-9a-f]+$/);
+    assert.equal(item.querySelector('guid').textContent, item.querySelector('link').textContent);
+    assert.ok(!Number.isNaN(Date.parse(item.querySelector('pubDate').textContent)));
+    assert.match(item.querySelector('description').textContent, /independent outlets?\. Summary written by a local AI model/);
+  }
+  const tech = read(files['feeds/technology.xml']);
+  assert.equal(tech.querySelectorAll('item').length, ed.stories.filter(s => s.category === 'Tech').length);
+  assert.equal(tech.querySelector('channel > title').textContent, 'Agent Reach Daily: Technology');
+});
+
+test('static story articles carry share links and a prefilled Report an issue email', () => {
+  const html = renderShell(readFileSync(resolve(root, 'index.html'), 'utf8'), '/', index, structuredClone(edition));
+  const dom = new JSDOM(html);
+  try {
+    const d = dom.window.document;
+    for (const story of edition.stories) {
+      const article = d.getElementById('story-' + story.id);
+      const report = new URL(article.querySelector('.static-share .report-issue').href);
+      assert.equal(report.searchParams.get('subject'), `Report: ${story.headline} (edition of 2026-10-07)`);
+      assert.deepEqual([...article.querySelectorAll('.static-share a:not(.report-issue)')].map(a => a.textContent), ['X', 'Facebook', 'Reddit']);
+    }
+  } finally { dom.window.close(); }
+});

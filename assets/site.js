@@ -342,12 +342,12 @@ if (typeof module !== 'undefined') module.exports = {normOutlet, dedupeOutlets, 
         h('div', null, h('h3', {text: 'Read'}), h('ul', null,
           h('li', null, h('a', {href: '/daily/', text: 'Latest edition'})), h('li', null, h('a', {href: '/latest/', text: 'Latest News'})),
           h('li', null, h('a', {href: '/archive/', text: 'Archive'})), h('li', null, h('a', {href: '/search/', text: 'Search the archive'})),
-          h('li', null, h('a', {href: '/about/#method', text: 'How it works'})),
+          h('li', null, h('a', {href: '/about/#method', text: 'How it works'})), h('li', null, h('a', {href: '/sources/', text: 'Sources'})),
           h('li', null, h('a', {href: '/about/#coverage', text: 'Reading coverage strength'})),
           h('li', null, h('a', {href: '/feed.xml', text: 'RSS feed'})))),
         h('div', null, h('h3', {text: 'Project'}), h('ul', null,
           h('li', null, h('a', {href: '/about/#app', text: 'The Windows app'})), h('li', null, h('a', {href: REPO, text: 'Source code on GitHub'})),
-          h('li', null, h('a', {href: '/about/#corrections', text: 'Corrections'})), h('li', null, h('a', {href: 'mailto:' + MAIL, text: MAIL}))))),
+          h('li', null, h('a', {href: '/corrections/', text: 'Corrections'})), h('li', null, h('a', {href: 'mailto:' + MAIL, text: MAIL}))))),
       h('div', {class: 'foot-base'}, h('span', {text: '© 2026 Michael Brown · Open source under the MIT License'}),
         themeControl(), h('span', {text: 'No cookies, no tracking, no ads.'}))));
   }
@@ -498,7 +498,7 @@ if (typeof module !== 'undefined') module.exports = {normOutlet, dedupeOutlets, 
     return h('section', {class: 'wrap about-band', 'aria-label': 'About Agent Reach Daily'},
       h('div', null, h('h2', {text: 'The day’s news, from public reporting, summarized by a local AI.'}),
         h('p', {text: 'Agent Reach Daily reads around 1,500 reports a day from 112 publisher feeds, 22 YouTube news channels and eight other kinds of source, keeps each event as one story, and checks every summary sentence against the story’s own sources. It runs on one Windows PC and publishes here automatically. Coverage strength shows how many independent outlets reported a story; it is not a fact check.'}),
-        h('div', {class: 'links'}, h('a', {class: 'pill', href: '/about/#method', text: 'How it works'}), h('a', {class: 'pill', href: '/about/#app', text: 'Make your own edition'}))),
+        h('div', {class: 'links'}, h('a', {class: 'pill', href: '/about/#method', text: 'How it works'}), h('a', {class: 'pill', href: '/sources/', text: 'Sources'}), h('a', {class: 'pill', href: '/about/#app', text: 'Make your own edition'}))),
       h('ol', {class: 'howlist'},
         h('li', null, h('b', {text: 'Collect'}), 'News feeds, Google News, Hacker News, Wikipedia, YouTube, Bluesky, Mastodon and trend lists.'),
         h('li', null, h('b', {text: 'Group'}), 'Reports of one event become one story. When unsure, they stay apart.'),
@@ -526,6 +526,20 @@ if (typeof module !== 'undefined') module.exports = {normOutlet, dedupeOutlets, 
     mount(current, ed, content);
     document.title = current === 'home' ? 'Agent Reach Daily: today’s news, from public reporting'
       : `Agent Reach Daily: ${longDate(ed.edition_date)}`;
+  }
+
+  // ------------------------------------------------------------------ sharing and reporting
+  // Plain links to each network's own share page: nothing from them loads here, and nothing is sent until the
+  // reader confirms there.
+  function shareLinks(url, title) {
+    const u = encodeURIComponent(url), t = encodeURIComponent(title);
+    return [['X', `https://x.com/intent/post?text=${t}&url=${u}`], ['Facebook', `https://www.facebook.com/sharer/sharer.php?u=${u}`],
+      ['Reddit', `https://www.reddit.com/submit?url=${u}&title=${t}`]];
+  }
+  // "Report an issue": an email with the story and its edition already named, so a correction can find it.
+  function reportHref(ed, s, url) {
+    const subject = `Report: ${s.headline} (edition of ${ed.edition_date})`;
+    return `mailto:${MAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(`Story: ${url}\n\nWhat is wrong:\n`)}`;
   }
 
   // ------------------------------------------------------------------ story page
@@ -574,6 +588,8 @@ if (typeof module !== 'undefined') module.exports = {normOutlet, dedupeOutlets, 
       h('span', {'aria-hidden': 'true', text: '/'}), SECTION[s.category] && SECTION[s.category].path ? h('a', {href: SECTION[s.category].path, text: catLabel(s.category)}) : h('span', {text: catLabel(s.category)}),
       s.top_rank ? h('span', {class: 'crumb-rank', text: `· Top story ${s.top_rank} of ${ed.topStories.length}`}) : null);
     const url = mainLink(s);
+    const shareUrl = new URL(storyUrl(ed, s), location.origin);
+    shareUrl.searchParams.set('headline', s.headline);
     const main = mount('edition', ed, h('div', {class: 'wrap'}, strip(ed, idx, crumbs), notices(ed, idx),
       storyNotice ? h('p', {class: 'notice story-recovery', text: storyNotice}) : null,
       h('article', {class: 'story', 'data-cat': s.category},
@@ -587,6 +603,9 @@ if (typeof module !== 'undefined') module.exports = {normOutlet, dedupeOutlets, 
           h('button', {class: 'source-jump', type: 'button', text: `${plural(sourceLinks(s), 'source link')} ↓`}),
           h('button', {class: 'pill share-story', type: 'button', text: 'Share'}),
           h('button', {class: 'pill copy-story', type: 'button', text: 'Copy link'})),
+        h('div', {class: 'share-links'}, h('span', {text: 'Share on'}), shareLinks(shareUrl.href, s.headline).map(([name, href]) =>
+          h('a', {href, rel: 'noopener noreferrer', target: '_blank', 'aria-label': `Share on ${name} (opens in a new tab)`, text: name})),
+          h('a', {class: 'report-issue', href: reportHref(ed, s, shareUrl.href), text: 'Report an issue'})),
         h('p', {class: 'share-status sr', role: 'status', 'aria-live': 'polite'}),
         h('label', {class: 'share-fallback', hidden: true}, 'Copy this story link', h('input', {type: 'url', readonly: true})),
         h('div', {class: 'story-body'}, s.summary.map(t => h('p', {text: t}))),
@@ -606,8 +625,6 @@ if (typeof module !== 'undefined') module.exports = {normOutlet, dedupeOutlets, 
       sources.focus({preventScroll: true});
       sources.scrollIntoView({block: 'start'});
     });
-    const shareUrl = new URL(storyUrl(ed, s), location.origin);
-    shareUrl.searchParams.set('headline', s.headline);
     const status = main.querySelector('.share-status');
     const copy = async () => {
       try {
@@ -652,7 +669,8 @@ if (typeof module !== 'undefined') module.exports = {normOutlet, dedupeOutlets, 
     const ids = ((ed.sections || []).find(x => x.category === cat) || {ids: []}).ids;
     const stories = ids.map(id => ed.byId[id]).filter(Boolean);
     mount(cat, ed, h('div', {class: 'wrap'}, strip(ed, idx),
-      h('header', {class: 'page-head', 'data-cat': cat}, h('h1', {text: sec.title}), h('p', {text: `${sec.blurb} From the ${longDate(ed.edition_date)} edition.`})),
+      h('header', {class: 'page-head', 'data-cat': cat}, h('h1', {text: sec.title}), h('p', {text: `${sec.blurb} From the ${longDate(ed.edition_date)} edition.`}),
+        h('p', {class: 'feed-link'}, h('a', {href: `/feeds${sec.path.slice(0, -1)}.xml`, text: `RSS feed for ${sec.title}`}))),
       notices(ed, idx)),
       stories.length ? h('section', {class: 'band', 'data-cat': cat, 'aria-label': sec.title}, h('div', {class: 'wrap'},
         h('div', {class: 'grid'}, stories.map((s, i) => card(ed, s, i === 0 && stories.length >= 3 ? 'feature' : '', 'h2')))))
@@ -660,6 +678,28 @@ if (typeof module !== 'undefined') module.exports = {normOutlet, dedupeOutlets, 
           h('p', null, 'Other sections may have more today. ',
             h('a', {href: '/', text: 'Read the full edition'}), '.')));
     document.title = `${sec.title} | Agent Reach Daily`;
+  }
+  // Sources: what the shown edition read, from the publisher's list (editions before app 1.0rc20 have none).
+  const SOURCE_STATUS = {ok: 'Answered', partial: 'Partly answered', empty: 'Answered with nothing new', failed: 'Did not answer'};
+  function renderSources(ed, idx) {
+    const kinds = Array.isArray(ed.sources) ? ed.sources : [];
+    const feeds = kinds.reduce((n, k) => n + (k.feeds || []).length, 0);
+    const order = Object.keys(SECTION);
+    const rank = f => { const i = order.indexOf(f.category); return i < 0 ? order.length : i; };
+    mount('sources', ed, h('div', {class: 'wrap'}, strip(ed, idx),
+      h('header', {class: 'page-head'}, h('h1', {text: 'Sources'}),
+        h('p', {text: `Every edition is made from public reporting. This is what the ${longDate(ed.edition_date)} edition read` +
+          (kinds.length ? `: ${plural(kinds.length, 'kind')} of source and ${plural(feeds, 'feed')}, with how many reports each gave and how many the edition cites.` : '.')}),
+        h('p', null, 'Coverage strength counts the independent newsrooms among these reports. It is not a fact check. ', h('a', {href: '/about/#coverage', text: 'How coverage is measured'}), '.')),
+      kinds.length ? h('div', {class: 'sources-page'}, kinds.map(k => h('section', {class: 'source-kind', id: 'source-' + k.type},
+        h('h2', {text: k.name}), k.about ? h('p', {text: k.about}) : null,
+        h('p', {class: 'source-stat', text: `${SOURCE_STATUS[k.status] || k.status} · ${plural(k.reports || 0, 'report')} · ${Number(k.cited || 0).toLocaleString('en-US')} cited in stories`}),
+        (k.feeds || []).length ? h('ul', {class: 'feed-list'}, [...k.feeds].sort((a, b) => rank(a) - rank(b) || a.name.localeCompare(b.name)).map(f =>
+          h('li', {class: f.status === 'failed' ? 'failed' : null}, h('b', {text: f.name}),
+            h('span', {text: [f.site, f.category && catLabel(f.category), plural(f.reports || 0, 'report'), `${f.cited || 0} cited`,
+              f.status === 'failed' ? 'did not answer' : f.status === 'empty' ? 'nothing new' : null].filter(Boolean).join(' · ')})))) : null)))
+        : h('p', {class: 'state', text: 'The detailed list of sources appears here with the next edition.'})));
+    document.title = 'Sources | Agent Reach Daily';
   }
   function renderArchive(idx) {
     const months = new Map();
@@ -897,7 +937,7 @@ if (typeof module !== 'undefined') module.exports = {normOutlet, dedupeOutlets, 
 
   // ------------------------------------------------------------------ routing
   async function start() {
-    if (page === 'about') { chrome('about'); return; }
+    if (page === 'about' || page === 'corrections') { chrome(page); return; }
     if (page === 'notfound') {
       if (/^\/daily\/\d{4}-\d{2}-\d{2}\/$/.test(location.pathname)) {
         failed('edition', "This edition isn't available. It may have been withdrawn.", true);
@@ -952,6 +992,7 @@ if (typeof module !== 'undefined') module.exports = {normOutlet, dedupeOutlets, 
       if (s) return renderStory(ed, idx, s, storyNotice);
       if (storyNotice) return renderFront(ed, idx, page === 'home' ? 'home' : 'edition', storyNotice);
       if (page === 'latest') return renderLatest(ed, idx);
+      if (page === 'sources') return renderSources(ed, idx);
       if (page === 'section') return renderSection(ed, idx, body.dataset.section);
       return renderFront(ed, idx, page === 'home' ? 'home' : 'edition');
     };

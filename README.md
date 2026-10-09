@@ -22,6 +22,10 @@ The build renders Home, Daily, dated editions, Latest, category pages and Archiv
 
 The static Home and Daily pages include **every** story, with full summaries, optional context and native source disclosures. Dated story fragments resolve to real HTML articles, including stories beyond the home page's five-card previews. Latest and category pages expose the same evidence. Static timestamps use explicit UTC dates; edition metadata and revision history use a native disclosure. The `data-rendered="static"` styles remain active if scripts are disabled or fail to load, and are removed only when the browser mounts its enhanced view. Mobile category and dated pages keep every story visible. Search still requires JavaScript; its fallback links to the pre-rendered archive.
 
+RSS: the publisher's `feed.xml` has one item per edition. The build replaces it in `dist/` with one item per story of the newest edition and writes one feed per section (`/feeds/world.xml`, `/feeds/technology.xml`, ...), from the same edition files as the pages; `check:built` verifies that every item links to an existing story. Stories get new IDs when a revision regroups them, so a reader may see a story again after an update.
+
+Corrections: `/corrections/` holds the policy and an append-only log. Add each correction as the first `<li>` of `ol.corrections-log` (newest first, format in the HTML comment) and never remove one; the "No corrections" line hides itself once the list has an entry. `/sources/` lists what the shown edition read, from the edition's optional `sources` field (app 1.0rc20 and later); older editions show a short note instead.
+
 Preview **the built directory**, not the repository root:
 
 ```sh

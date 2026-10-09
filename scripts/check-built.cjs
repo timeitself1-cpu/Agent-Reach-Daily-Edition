@@ -42,5 +42,17 @@ try {
       stories++;
     }
   }
+  // Every RSS item links to a story fragment that exists on its dated page.
+  let items = 0;
+  for (const file of ['feed.xml', ...readdirSync(resolve(root, 'feeds')).map(f => 'feeds/' + f)]) {
+    const feed = new JSDOM(readFileSync(resolve(root, file), 'utf8'), {contentType: 'text/xml'}).window.document;
+    for (const link of feed.querySelectorAll('item > link')) {
+      const url = new URL(link.textContent);
+      assert.ok(documents.get(url.pathname)?.window.document.getElementById(url.hash.slice(1)), `Feed link: ${file} -> ${url}`);
+      items++;
+    }
+  }
+  assert.ok(items > 0, 'The RSS feeds have no items');
+  console.log(`Verified ${items} RSS story links.`);
   console.log(`Verified ${anchors} local fragment links and HTML/JSON/search parity for ${stories} stories.`);
 } finally { for (const dom of documents.values()) dom.window.close(); }
