@@ -5,54 +5,116 @@
  "stories": [
   {
    "d": "2026-10-09",
-   "id": "4c38e0fd20f6",
+   "id": "c864026a5691",
    "r": 1,
    "t": 1,
    "c": "News",
-   "h": "The long-deployed USS Lincoln returns home to San Diego Bay",
-   "s": "The long-deployed USS Lincoln returns home to San Diego Bay. The USS Abraham Lincoln aircraft carrier has returned home after a record-setting uninterrupted time at sea supporting the Iran war.",
+   "h": "ICJ judge Navi Pillay wins Nobel peace prize for promoting international law",
+   "s": "ICJ judge Navi Pillay wins Nobel peace prize for promoting international law. Committee recognises work of South African who chaired UN commission that concluded Israel was guilty of genocide in Gaza",
    "o": [
-    "NPR",
-    "PBS NewsHour",
-    "AP News"
+    "The Guardian",
+    "The Washington Post",
+    "Sky News",
+    "Times of India",
+    "NPR"
    ],
-   "l": "moderate",
-   "u": "https://www.npr.org/2026/10/08/nx-s1-5995911/the-long-deployed-uss-lincoln-returns-home-to-san-diego-bay"
+   "l": "strong",
+   "coverage": {
+    "level": "strong",
+    "points": 6,
+    "independent_reports": 10,
+    "publishers": [
+     "ABC News",
+     "CBC News",
+     "CBS News",
+     "Le Monde",
+     "NPR",
+     "Sky News",
+     "The Guardian",
+     "The Washington Post",
+     "Times of India",
+     "nobelprize.org"
+    ],
+    "repeats": 0,
+    "source_links": 8,
+    "linked_outlets": 7,
+    "linked_reporting_origins": 7,
+    "signals": 1,
+    "channels": 2
+   },
+   "u": "https://www.theguardian.com/world/2026/oct/09/navanethem-navi-pillay-wins-nobel-peace-prize"
   },
   {
    "d": "2026-10-09",
-   "id": "8516545d9b4a",
+   "id": "264478534ba7",
    "r": 2,
    "t": 2,
+   "c": "News",
+   "h": "Firing Squad Execution to Be Livestreamed, Pentagon Says",
+   "s": "Fort Hood attacker's execution by firing squad will be livestreamed, Pentagon says.",
+   "o": [
+    "BBC News",
+    "PBS NewsHour",
+    "NPR",
+    "The New York Times",
+    "en.wikipedia.org"
+   ],
+   "l": "strong",
+   "coverage": {
+    "level": "strong",
+    "points": 6,
+    "independent_reports": 4,
+    "publishers": [
+     "BBC News",
+     "NPR",
+     "PBS NewsHour",
+     "The New York Times"
+    ],
+    "repeats": 0,
+    "source_links": 8,
+    "linked_outlets": 4,
+    "linked_reporting_origins": 4,
+    "signals": 5,
+    "channels": 2
+   },
+   "u": "https://www.bbc.co.uk/news/articles/cmy0r96xygx6o?at_medium=RSS&at_campaign=rss"
+  },
+  {
+   "d": "2026-10-09",
+   "id": "306312ce90b6",
+   "r": 3,
+   "t": 3,
    "c": "News",
    "h": "Isaias strengthens into Category 2 hurricane on collision course with the Gulf Coast",
    "s": "Isaias strengthens into Category 2 hurricane on collision course with the Gulf Coast. The first hurricane of the Atlantic season was forecast to intensify rapidly and cause dangerous conditions in the Florida Panhandle, southern Alabama and southern Mississippi when it makes…",
    "o": [
     "NPR",
-    "AP News",
     "ABC News",
+    "The Guardian",
+    "BBC News",
     "CBS News"
    ],
    "l": "strong",
+   "coverage": {
+    "level": "strong",
+    "points": 6,
+    "independent_reports": 6,
+    "publishers": [
+     "ABC News",
+     "BBC News",
+     "CBS News",
+     "NPR",
+     "PBS NewsHour",
+     "The Guardian"
+    ],
+    "repeats": 1,
+    "source_links": 7,
+    "linked_outlets": 6,
+    "linked_reporting_origins": 6,
+    "signals": 0,
+    "channels": 2
+   },
    "u": "https://www.npr.org/2026/10/09/nx-s1-5996396/hurricane-isaias-updates"
-  },
-  {
-   "d": "2026-10-09",
-   "id": "65777f500dad",
-   "r": 3,
-   "t": 3,
-   "c": "News",
-   "h": "Firing squad execution of Fort Hood shooter Nidal Malik Hasan will be livestreamed, Pentagon says",
-   "s": "Firing squad execution of Fort Hood shooter Nidal Malik Hasan will be livestreamed, Pentagon says.",
-   "o": [
-    "KCRA",
-    "The Verge",
-    "Gizmodo",
-    "AP News",
-    "bsky.app"
-   ],
-   "l": "strong",
-   "u": "https://www.theverge.com/tech/1008530/us-government-livestream-execution-firing-squad-fort-hood"
   },
   {
    "d": "2026-10-09",
@@ -69,6 +131,23 @@
     "Fox News"
    ],
    "l": "strong",
+   "coverage": {
+    "level": "strong",
+    "points": 5,
+    "independent_reports": 4,
+    "publishers": [
+     "CBS Sports",
+     "ESPN",
+     "Fox News",
+     "Yahoo Sports"
+    ],
+    "repeats": 2,
+    "source_links": 6,
+    "linked_outlets": 4,
+    "linked_reporting_origins": 4,
+    "signals": 0,
+    "channels": 1
+   },
    "u": "https://www.cbssports.com/mlb/news/guardians-white-sox-alds-game-4-mlb-playoffs/"
   },
   {
@@ -86,6 +165,22 @@
     "bsky.app"
    ],
    "l": "strong",
+   "coverage": {
+    "level": "strong",
+    "points": 5,
+    "independent_reports": 3,
+    "publishers": [
+     "CBS News",
+     "Le Monde",
+     "The New York Times"
+    ],
+    "repeats": 1,
+    "source_links": 5,
+    "linked_outlets": 3,
+    "linked_reporting_origins": 3,
+    "signals": 1,
+    "channels": 2
+   },
    "u": "https://www.lemonde.fr/en/international/article/2026/10/09/between-record-debt-and-high-school-protests-france-s-situation-draws-global-attention_6758409_4.html"
   },
   {
@@ -102,13 +197,88 @@
     "The Hill"
    ],
    "l": "moderate",
+   "coverage": {
+    "level": "moderate",
+    "points": 4,
+    "independent_reports": 3,
+    "publishers": [
+     "The Guardian",
+     "The Hill",
+     "The New York Times"
+    ],
+    "repeats": 0,
+    "source_links": 3,
+    "linked_outlets": 3,
+    "linked_reporting_origins": 3,
+    "signals": 0,
+    "channels": 1
+   },
    "u": "https://www.theguardian.com/us-news/2026/oct/09/us-midterms-michigan-georgia-maine-senate-debate-key-takeaways"
   },
   {
    "d": "2026-10-09",
-   "id": "202fa341edd7",
+   "id": "f3793106a177",
    "r": 7,
    "t": 7,
+   "c": "News",
+   "h": "Houthi Strikes on Riyadh Airport Killed Three Saudis",
+   "s": "Houthi strikes on Riyadh airport killed three Saudis as war escalates. Explosions were heard in Saudi Arabia's capital, including a large blast at Riyadh's international airport.",
+   "o": [
+    "Reuters",
+    "Sky News"
+   ],
+   "l": "moderate",
+   "coverage": {
+    "level": "moderate",
+    "points": 4,
+    "independent_reports": 2,
+    "publishers": [
+     "Reuters",
+     "Sky News"
+    ],
+    "repeats": 0,
+    "source_links": 2,
+    "linked_outlets": 2,
+    "linked_reporting_origins": 2,
+    "signals": 0,
+    "channels": 2
+   }
+  },
+  {
+   "d": "2026-10-09",
+   "id": "8c719236148d",
+   "r": 8,
+   "t": null,
+   "c": "News",
+   "h": "Trump Says U.S. Won't Attack Iran Before Midterms",
+   "s": "Trump says U.S. won't attack Iran before midterms. And, ICE agent shoots man in NYC.",
+   "o": [
+    "NPR",
+    "BBC News"
+   ],
+   "l": "moderate",
+   "coverage": {
+    "level": "moderate",
+    "points": 4,
+    "independent_reports": 2,
+    "publishers": [
+     "BBC News",
+     "NPR"
+    ],
+    "repeats": 0,
+    "source_links": 2,
+    "linked_outlets": 2,
+    "linked_reporting_origins": 2,
+    "signals": 0,
+    "channels": 2
+   },
+   "u": "https://www.npr.org/2026/10/09/g-s1-147455/up-first-newsletter-hurricane-isaias-ukraine-russia-trump-iran-ice-shooting"
+  },
+  {
+   "d": "2026-10-09",
+   "id": "202fa341edd7",
+   "r": 9,
+   "t": 8,
    "c": "Sports",
    "h": "LeBron still adjusting but logs strong start in 1st game with 76ers",
    "s": "LeBron still adjusting but logs strong start in 1st game with 76ers. LeBron James, who joined the 76ers this summer, had 10 points, five assists and four rebounds in the first half of his debut with Philadelphia.",
@@ -118,13 +288,29 @@
     "The Guardian"
    ],
    "l": "strong",
+   "coverage": {
+    "level": "strong",
+    "points": 5,
+    "independent_reports": 3,
+    "publishers": [
+     "ESPN",
+     "The Guardian",
+     "Yahoo Sports"
+    ],
+    "repeats": 0,
+    "source_links": 3,
+    "linked_outlets": 3,
+    "linked_reporting_origins": 3,
+    "signals": 0,
+    "channels": 2
+   },
    "u": "https://www.espn.com/nba/story/_/id/50137673/lebron-james-scores-10-points-18-minutes-76ers-debut"
   },
   {
    "d": "2026-10-09",
    "id": "55f93bef0b72",
-   "r": 8,
-   "t": 8,
+   "r": 10,
+   "t": 9,
    "c": "Entertainment",
    "h": "Princeton Celebrates Anne Carson, a Nobel Prize Winner Who Was Denied Tenure",
    "s": "Princeton Celebrates Anne Carson, a Nobel Prize Winner Who Was Denied Tenure.",
@@ -134,42 +320,25 @@
     "en.wikipedia.org"
    ],
    "l": "moderate",
-   "u": "https://en.wikipedia.org/wiki/Anne_Carson"
+   "coverage": {
+    "level": "moderate",
+    "points": 4,
+    "independent_reports": 2,
+    "publishers": [
+     "BBC News",
+     "The New York Times"
+    ],
+    "repeats": 0,
+    "source_links": 3,
+    "linked_outlets": 2,
+    "linked_reporting_origins": 2,
+    "signals": 1,
+    "channels": 2
+   }
   },
   {
    "d": "2026-10-09",
-   "id": "144758263a24",
-   "r": 9,
-   "t": null,
-   "c": "News",
-   "h": "ICE Agents Shoot Man in New York City",
-   "s": "ICE agents shot a man in New York City, surrounding his vehicle with a child inside.",
-   "o": [
-    "BBC News",
-    "Al Jazeera English",
-    "Al Jazeera"
-   ],
-   "l": "strong",
-   "u": "https://www.youtube.com/shorts/3LiXIvHTiZY"
-  },
-  {
-   "d": "2026-10-09",
-   "id": "dbaffc991fc1",
-   "r": 10,
-   "t": 9,
-   "c": "Science & AI",
-   "h": "NASA is searching for hidden caves to build its first Moon base",
-   "s": "NASA is searching for hidden caves to build its first Moon base. NASA is preparing for humanity's first Moon base with three investigations that will hunt for underground shelters, uncover hidden ice, and track dangerous conditions on the lunar surface.",
-   "o": [
-    "ScienceDaily",
-    "SpaceNews"
-   ],
-   "l": "moderate",
-   "u": "https://www.sciencedaily.com/releases/2026/10/261008005247.htm"
-  },
-  {
-   "d": "2026-10-09",
-   "id": "07575e5a6164",
+   "id": "7259af4f5c7a",
    "r": 11,
    "t": 10,
    "c": "Tech",
@@ -177,78 +346,128 @@
    "s": "Trump administration is suspending Microsoft from a green card program.",
    "o": [
     "AP News",
-    "The New York Times",
-    "Business Insider",
-    "Tom's Hardware",
-    "BBC News"
+    "Fast Company"
    ],
-   "l": "strong",
+   "l": "moderate",
+   "coverage": {
+    "level": "moderate",
+    "points": 4,
+    "independent_reports": 2,
+    "publishers": [
+     "AP News",
+     "Fast Company"
+    ],
+    "repeats": 1,
+    "source_links": 3,
+    "linked_outlets": 2,
+    "linked_reporting_origins": 2,
+    "signals": 0,
+    "channels": 3
+   },
    "u": "https://apnews.com/article/h1b-visa-program-vance-microsoft-e7b3a407f822702b269ee277d21343ea"
   },
   {
    "d": "2026-10-09",
-   "id": "5c103885c27f",
+   "id": "2de24081df32",
    "r": 12,
+   "t": null,
+   "c": "Science & AI",
+   "h": "4 astronauts return to Earth after 8 months in space",
+   "s": "4 astronauts return to Earth after 8 months in space.",
+   "o": [
+    "KSL News",
+    "ScienceDaily",
+    "NPR",
+    "NASA"
+   ],
+   "l": "strong",
+   "coverage": {
+    "level": "strong",
+    "points": 6,
+    "independent_reports": 4,
+    "publishers": [
+     "KSL News",
+     "NASA",
+     "NPR",
+     "ScienceDaily"
+    ],
+    "repeats": 0,
+    "source_links": 4,
+    "linked_outlets": 4,
+    "linked_reporting_origins": 4,
+    "signals": 0,
+    "channels": 3
+   }
+  },
+  {
+   "d": "2026-10-09",
+   "id": "e9a860240d28",
+   "r": 13,
+   "t": null,
+   "c": "Tech",
+   "h": "What to Expect at Apple's 'Welcome Home' Event Next Week",
+   "s": "What to expect at Apple's 'Welcome home' event next week - Engadget.",
+   "o": [
+    "Engadget",
+    "Mashable",
+    "CNET"
+   ],
+   "l": "strong",
+   "coverage": {
+    "level": "strong",
+    "points": 5,
+    "independent_reports": 3,
+    "publishers": [
+     "CNET",
+     "Engadget",
+     "Mashable"
+    ],
+    "repeats": 0,
+    "source_links": 3,
+    "linked_outlets": 3,
+    "linked_reporting_origins": 3,
+    "signals": 0,
+    "channels": 2
+   },
+   "u": "https://www.engadget.com/2281840/what-to-expect-at-apples-welcome-home-event-next-week/"
+  },
+  {
+   "d": "2026-10-09",
+   "id": "e156389cb84b",
+   "r": 14,
    "t": null,
    "c": "Internet Culture",
    "h": "Meta Bans TikTok Ads on Its Platforms in US",
-   "s": "Meta bans TikTok ads on its platforms in US.",
+   "s": "Meta has banned ads from TikTok's Chinese parent company ByteDance across the US and several other countries, escalating the rivalry between the major social media operators. The ban restricts ads and sponsored content from ByteDance across Meta's platforms.",
    "o": [
+    "The Verge",
     "Reuters",
+    "CNBC",
     "Bloomberg.com"
    ],
-   "l": "moderate",
-   "u": "https://news.google.com/rss/articles/CBMiuwFBVV95cUxNcFlfTjhMRWZPWEhDVF9mcGQ1VEY2aWVLMThVLUJaVmNWUzdwV09KTWlDN0E4Rm5IRHFyME1QN01fczZFSGdDbVBsYnh3dDJTdFlfTkczM1NreS11VjJ2QWVFbnV2eU1EMDNWZHl5X2h4WV9SN3FFRUJBaHpzUng2VlhKemtnUnJEblBpajF5U0FCWmdFLWR6azJ0aDB5bEhUdVJHc0g1dVNYY0NZYVdyaU9UOE12SUFDQmpB?oc=5"
-  },
-  {
-   "d": "2026-10-09",
-   "id": "2f5f11411b9c",
-   "r": 13,
-   "t": null,
-   "c": "News",
-   "h": "Christa Pike's attorneys say she is walking with help and eating after failed execution attempt",
-   "s": "Christa Pike's attorneys say she is walking with help and eating after failed execution attempt. Christa Pike has begun walking and eating again at a hospital a week after surviving Tennessee's attempt to execute her with lethal drugs, her attorneys said Thursday.",
-   "o": [
-    "PBS NewsHour",
-    "BBC News"
-   ],
-   "l": "moderate",
-   "u": "https://www.pbs.org/newshour/nation/christa-pikes-attorneys-say-she-is-walking-with-help-and-eating-after-failed-execution-attempt"
-  },
-  {
-   "d": "2026-10-09",
-   "id": "159bcc692346",
-   "r": 14,
-   "t": null,
-   "c": "News",
-   "h": "Sparks fly as Abdul El-Sayed and Mike Rogers face off in first Michigan Senate debate",
-   "s": "Sparks fly as Abdul El-Sayed and Mike Rogers face off in first Michigan Senate debate. Facing questions about gas prices, the war in Iran and tariffs, the candidates frequently exchanged insults amid a high-stakes campaign.",
-   "o": [
-    "NBC News",
-    "AP News"
-   ],
-   "l": "moderate",
-   "u": "https://www.nbcnews.com/politics/2026-election/sparks-fly-abdul-el-sayed-mike-rogers-first-michigan-senate-debate-rcna599866"
-  },
-  {
-   "d": "2026-10-09",
-   "id": "4e0a149207a5",
-   "r": 15,
-   "t": null,
-   "c": "News",
-   "h": "Flights to Saudi capital suspended after Houthis 'attack on airport'",
-   "s": "Flights to Saudi capital suspended after Houthis 'attack on airport'. Explosions were heard in Saudi Arabia's capital, including a large blast at Riyadh's international airport, where flights were subsequently halted.",
-   "o": [
-    "Sky News",
-    "Reuters"
-   ],
-   "l": "moderate",
-   "u": "https://news.sky.com/story/airlines-suspend-flights-to-saudi-capital-after-houthis-claim-attack-on-airport-13596623"
+   "l": "strong",
+   "coverage": {
+    "level": "strong",
+    "points": 6,
+    "independent_reports": 4,
+    "publishers": [
+     "Bloomberg.com",
+     "CNBC",
+     "Reuters",
+     "The Verge"
+    ],
+    "repeats": 1,
+    "source_links": 5,
+    "linked_outlets": 4,
+    "linked_reporting_origins": 4,
+    "signals": 0,
+    "channels": 2
+   }
   },
   {
    "d": "2026-10-09",
    "id": "f794b8b8a82d",
-   "r": 16,
+   "r": 15,
    "t": null,
    "c": "News",
    "h": "Margaret Hamilton, computing pioneer who led software development for the Apollo program, dies at 90",
@@ -260,26 +479,26 @@
     "BBC News"
    ],
    "l": "limited",
-   "u": "https://www.theguardian.com/science/2026/oct/07/margaret-hamilton-moon-computer-software"
-  },
-  {
-   "d": "2026-10-09",
-   "id": "cbf4e8e8a0dd",
-   "r": 17,
-   "t": null,
-   "c": "Science & AI",
-   "h": "4 people on NASA's Crew-12 mission return to Earth after 8 months in space",
-   "s": "4 people on NASA's Crew-12 mission return to Earth after 8 months in space. Four people - two NASA astronauts, one from the European Space Agency and a Russian cosmonaut - spent nearly eight months at the space station, conducting spacewalks, science experiments and research.",
-   "o": [
-    "NPR"
-   ],
-   "l": "limited",
-   "u": "https://www.npr.org/2026/10/08/nx-s1-5992845/nasa-spacex-crew-12-international-space-station-iss-splashdown"
+   "coverage": {
+    "level": "limited",
+    "points": 0,
+    "independent_reports": 1,
+    "publishers": [
+     "Lobsters"
+    ],
+    "repeats": 0,
+    "source_links": 4,
+    "linked_outlets": 1,
+    "linked_reporting_origins": 1,
+    "signals": 3,
+    "channels": 1
+   },
+   "u": "https://news.mit.edu/2026/margaret-hamilton-computing-pioneer-dies-1007"
   },
   {
    "d": "2026-10-09",
    "id": "574b140956ac",
-   "r": 18,
+   "r": 16,
    "t": null,
    "c": "Tech",
    "h": "Before Computer Science Became a Boys' Club, Margaret Hamilton Wrote the Code",
@@ -288,40 +507,25 @@
     "The New York Times"
    ],
    "l": "limited",
-   "u": "https://news.google.com/rss/articles/CBMikgFBVV95cUxQMFR2ZlpwRkYtTDJmOGFnc0ZPY1VzOTZ2bWZXV25PRkxMMTdrMXJkUHdXVmlzLURJV29DTmZIdlNUVXFVZ2hDcU1rblVUczBLdm1Xb3NLWFcwdHNjTmR0Slc2U0MxY2NKN2J6TmZIaG43d29fSk5fTDZJSUNUbWlwOUtDc2YzeVJWb1hSMHlaaE5QUQ?oc=5"
-  },
-  {
-   "d": "2026-10-09",
-   "id": "abbcc3e35bed",
-   "r": 19,
-   "t": null,
-   "c": "Sports",
-   "h": "Bucky Irving runs riot as Buccaneers stun Cowboys for first win of season",
-   "s": "Bucky Irving runs riot as Buccaneers stun Cowboys for first win of season. Bucky Irving rushed for a career-high 165 yards and scored twice as Tampa Bay capitalized on Dallas mistakes to claim a surprise 24-16 victory",
-   "o": [
-    "The Guardian"
-   ],
-   "l": "limited",
-   "u": "https://www.theguardian.com/sport/2026/oct/08/bucky-irving-tampa-bay-buccaneers-dallas-cowboys-nfl"
-  },
-  {
-   "d": "2026-10-09",
-   "id": "287bab4c4e7a",
-   "r": 20,
-   "t": null,
-   "c": "Science & AI",
-   "h": "Audacious space heist aims to bring home bits of mysterious martian moon",
-   "s": "Audacious space heist aims to bring home bits of mysterious martian moon. Samples from Japan's MMX mission could reveal how Phobos formed - and may contain pieces of Mars",
-   "o": [
-    "Science"
-   ],
-   "l": "limited",
-   "u": "https://www.science.org/content/article/audacious-space-heist-japan-aims-bring-home-bits-martian-moon"
+   "coverage": {
+    "level": "limited",
+    "points": 1,
+    "independent_reports": 1,
+    "publishers": [
+     "The New York Times"
+    ],
+    "repeats": 0,
+    "source_links": 1,
+    "linked_outlets": 1,
+    "linked_reporting_origins": 1,
+    "signals": 0,
+    "channels": 1
+   }
   },
   {
    "d": "2026-10-09",
    "id": "a7a1c6740925",
-   "r": 21,
+   "r": 17,
    "t": null,
    "c": "Science & AI",
    "h": "Global analysis reveals how armed conflict erodes farmland and potential food production",
@@ -330,12 +534,26 @@
     "Phys.org"
    ],
    "l": "limited",
+   "coverage": {
+    "level": "limited",
+    "points": 1,
+    "independent_reports": 1,
+    "publishers": [
+     "Phys.org"
+    ],
+    "repeats": 0,
+    "source_links": 1,
+    "linked_outlets": 1,
+    "linked_reporting_origins": 1,
+    "signals": 0,
+    "channels": 1
+   },
    "u": "https://phys.org/news/2026-10-global-analysis-reveals-armed-conflict.html"
   },
   {
    "d": "2026-10-09",
    "id": "ddbbbdb8bbad",
-   "r": 22,
+   "r": 18,
    "t": null,
    "c": "Sports",
    "h": "Aces' Wilson wins 5th MVP, says she'll nix pregame ceremony to focus on Game 3",
@@ -344,105 +562,272 @@
     "ESPN"
    ],
    "l": "limited",
+   "coverage": {
+    "level": "limited",
+    "points": 0,
+    "independent_reports": 1,
+    "publishers": [
+     "ESPN"
+    ],
+    "repeats": 0,
+    "source_links": 1,
+    "linked_outlets": 1,
+    "linked_reporting_origins": 1,
+    "signals": 0,
+    "channels": 1
+   },
    "u": "https://www.espn.com/wnba/story/_/id/50135041/sources-aces-star-aja-wilson-wins-record-5th-wnba-mvp-award"
   },
   {
    "d": "2026-10-09",
-   "id": "aee80b84e923",
-   "r": 23,
+   "id": "6f8b3023ee81",
+   "r": 19,
    "t": null,
-   "c": "Science & AI",
-   "h": "OpenAI caught Russians and Iranians using ChatGPT for influence campaigns",
-   "s": "OpenAI caught Russians and Iranians using ChatGPT for influence campaigns. The company says Russian operatives used its AI chatbot to update their bosses, shedding light on influence campaigns previously not attributed to Russia.",
+   "c": "News",
+   "h": "Trump Envoy Kept Financial Ties to Firm Behind $15 Billion Hormuz-bypass Oil Pipeline Plan",
+   "s": "Trump envoy kept financial ties to firm behind $15 billion Hormuz-bypass oil pipeline plan.",
    "o": [
-    "NPR"
+    "Reuters"
    ],
    "l": "limited",
-   "u": "https://www.npr.org/2026/10/08/nx-s1-5995576/openai-russia-iran-influence-operations-chatgpt"
+   "coverage": {
+    "level": "limited",
+    "points": 1,
+    "independent_reports": 1,
+    "publishers": [
+     "Reuters"
+    ],
+    "repeats": 0,
+    "source_links": 1,
+    "linked_outlets": 1,
+    "linked_reporting_origins": 1,
+    "signals": 0,
+    "channels": 1
+   }
   },
   {
    "d": "2026-10-09",
-   "id": "b240fc6e976b",
+   "id": "69684b30bf9c",
+   "r": 20,
+   "t": null,
+   "c": "News",
+   "h": "Trauma Endures in Paris Suburb After Police Grenade Shatters Teenager's Jaw",
+   "s": "Trauma endures in Paris suburb after police grenade shatters teenager's jaw: 'They maim a student, leave, and then what?",
+   "o": [
+    "Le Monde"
+   ],
+   "l": "limited",
+   "coverage": {
+    "level": "limited",
+    "points": 1,
+    "independent_reports": 1,
+    "publishers": [
+     "Le Monde"
+    ],
+    "repeats": 0,
+    "source_links": 1,
+    "linked_outlets": 1,
+    "linked_reporting_origins": 1,
+    "signals": 0,
+    "channels": 1
+   },
+   "u": "https://www.lemonde.fr/en/france/article/2026/10/09/trauma-endures-in-paris-suburb-after-police-grenade-shatters-teenager-s-jaw-they-maim-a-student-leave-and-then-what-how-are-we-supposed-to-pick-up-the-pieces_6758415_7.html"
+  },
+  {
+   "d": "2026-10-09",
+   "id": "01af887fd9fb",
+   "r": 21,
+   "t": null,
+   "c": "Sports",
+   "h": "Fury-Joshua Tickets Priced up to GBP 13,000 Sell Out in One Hour",
+   "s": "Fury vs Joshua: Tickets priced up to GBP 13,000 for all-British showdown sell out in one hour.",
+   "o": [
+    "BBC News"
+   ],
+   "l": "limited",
+   "coverage": {
+    "level": "limited",
+    "points": 1,
+    "independent_reports": 1,
+    "publishers": [
+     "BBC News"
+    ],
+    "repeats": 0,
+    "source_links": 1,
+    "linked_outlets": 1,
+    "linked_reporting_origins": 1,
+    "signals": 0,
+    "channels": 1
+   },
+   "u": "https://www.bbc.co.uk/sport/boxing/articles/cwp9gxzyplk4o?at_medium=RSS&at_campaign=rss"
+  },
+  {
+   "d": "2026-10-09",
+   "id": "8442e35832eb",
+   "r": 22,
+   "t": null,
+   "c": "Science & AI",
+   "h": "As AI Closed In on ‘Unique Games’ Proof, Researchers Raced to Beat the Machines",
+   "s": "As AI Closed In on ‘Unique Games’ Proof, Researchers Raced to Beat the Machines. In the shadow of a rumored AI proof of one of the biggest problems in their field, three computer scientists rushed to publish their own milestone result.",
+   "o": [
+    "Quanta Magazine"
+   ],
+   "l": "limited",
+   "coverage": {
+    "level": "limited",
+    "points": 0,
+    "independent_reports": 1,
+    "publishers": [
+     "Quanta Magazine"
+    ],
+    "repeats": 0,
+    "source_links": 1,
+    "linked_outlets": 1,
+    "linked_reporting_origins": 1,
+    "signals": 0,
+    "channels": 1
+   },
+   "u": "https://www.quantamagazine.org/as-ai-closed-in-on-unique-games-proof-researchers-raced-to-beat-the-machines-20261007/"
+  },
+  {
+   "d": "2026-10-09",
+   "id": "89d5ac56ab1c",
+   "r": 23,
+   "t": null,
+   "c": "Tech",
+   "h": "ShinyHunters Extorted Boeing Spin-off Prior to Arrests",
+   "s": "The data theft and extortion group ShinyHunters extorted a Boeing spin-off prior to the arrests of its suspected leader. The group is reportedly cooperating with the FBI to identify other members.",
+   "o": [
+    "Krebs on Security"
+   ],
+   "l": "limited",
+   "coverage": {
+    "level": "limited",
+    "points": 0,
+    "independent_reports": 1,
+    "publishers": [
+     "Krebs on Security"
+    ],
+    "repeats": 0,
+    "source_links": 1,
+    "linked_outlets": 1,
+    "linked_reporting_origins": 1,
+    "signals": 0,
+    "channels": 1
+   },
+   "u": "https://krebsonsecurity.com/2026/10/shinyhunters-extorted-boeing-spin-off-prior-to-arrests/"
+  },
+  {
+   "d": "2026-10-09",
+   "id": "892c9ac3da51",
    "r": 24,
    "t": null,
    "c": "Science & AI",
-   "h": "James Webb Space Telescope Helps Detect the Most Distant Fast Radio Burst Ever Seen",
-   "s": "James Webb Space Telescope helps detect the most distant Fast Radio Burst ever seen - and scientists are surprised by its source.",
+   "h": "OpenAI projected to bring in $20bn less in revenue than expected",
+   "s": "OpenAI projected to bring in $20bn less in revenue than expected. Questions raised over AI growth as ChatGPT maker forecasts this year's revenue at $50bn, way below the $70bn signalled before",
    "o": [
-    "Space"
+    "The Guardian"
    ],
    "l": "limited",
-   "u": "https://news.google.com/rss/articles/CBMi-wFBVV95cUxQdXZJRmprMzFTbEZPdTNoZ2RsczZNTkxteExQTVNPNWhBTGk2S05zazVSQ2MzUENudjVid2NXU1JZLWYxMmJ6TlZITFkwUExNSGg3VVhqN3JQVF9vSHJ3UWVYdnc5M0ZQVDJLdVFubGJqS1g3WFhUcS0yWTJWdGRFRVh0cFBncF9qUHhxY2V5QWR6WENIWmhyLVptelJaaERWUWdyd2g0YUI2SWJmY1VPb0xBNkNZeDltUzR4UEFkZEpyWHFlXzQ3YUNVY2EtNy01NEVMSk5xcWV1N1pmTDlNUGNrNC14M010aVVEYy03M1A4RE9RcnduUUUwQQ?oc=5"
+   "coverage": {
+    "level": "limited",
+    "points": 1,
+    "independent_reports": 1,
+    "publishers": [
+     "The Guardian"
+    ],
+    "repeats": 0,
+    "source_links": 1,
+    "linked_outlets": 1,
+    "linked_reporting_origins": 1,
+    "signals": 0,
+    "channels": 1
+   },
+   "u": "https://www.theguardian.com/technology/2026/oct/09/openai-forecast-revenue-gap"
   },
   {
    "d": "2026-10-09",
-   "id": "8faf310e98c6",
+   "id": "b848d7e716e9",
    "r": 25,
    "t": null,
    "c": "Science & AI",
-   "h": "Trump Acquires over $1 Million in SpaceX Debt",
-   "s": "Trump acquired over $1 million in SpaceX debt, days before unveiling his space policy.",
+   "h": "Anthropic's Claude Science creates the first complete ultraviolet map of the sky",
+   "s": "Anthropic's Claude Science creates the first complete ultraviolet map of the sky. Astrophysicist Brice Menard of Johns Hopkins University used Anthropic's Claude Science to map the entire sky in ultraviolet light for the first time.",
    "o": [
-    "The Washington Post"
+    "The Decoder"
    ],
    "l": "limited",
-   "u": "https://news.google.com/rss/articles/CBMiswFBVV95cUxOLV95aE9oaml6c1FEWHZ0MXF3VTBaYllwbVJ3Y2lfRTdRTTVDMkpZRlFoOVRtNWZKT2NIUXZaOHpXeW5tb3FWdklLaWIwYU5idlNzcU5lRGJTd05NVjBvMXE3RkVyWUFjeHQzcld4dWlXT2oydEpNZV8wb3NmNUgxa21oNVNaSklfRU9Gb2pGT3VRZTVYQVAxcE5ybzlHRWE0MEE5U1IwQk1NSEhyalJwZ1U4Yw?oc=5"
+   "coverage": {
+    "level": "limited",
+    "points": 1,
+    "independent_reports": 1,
+    "publishers": [
+     "The Decoder"
+    ],
+    "repeats": 0,
+    "source_links": 1,
+    "linked_outlets": 1,
+    "linked_reporting_origins": 1,
+    "signals": 0,
+    "channels": 1
+   },
+   "u": "https://the-decoder.com/anthropics-claude-science-creates-the-first-complete-ultraviolet-map-of-the-sky/"
   },
   {
    "d": "2026-10-09",
-   "id": "5297ef14e4e0",
+   "id": "0452c40b5e91",
    "r": 26,
    "t": null,
-   "c": "Science & AI",
-   "h": "NASA's Prima Space Telescope Would Aim to See What James Webb Can't",
-   "s": "NASA's Prima space telescope would aim to see what James Webb can't.",
+   "c": "Tech",
+   "h": "The people holding up the internet",
+   "s": "The people holding up the internet. Four billion phones ask one text file what time it is.",
    "o": [
-    "Mashable"
+    "Lobsters"
    ],
    "l": "limited",
-   "u": "https://news.google.com/rss/articles/CBMib0FVX3lxTE9aUUp1TVJpM2pGSXE4X1NmcnctUkR0MlNlQVN3bHRKTHh4RUdSRWpLQkMzRU43YVlkQV9VTkZVZmNrbDlLYkJfcF84M0p4OXlyUnZiNkI2RDFYNXF5NGgyQm5rQ01XcWYtT0c1eC1Hdw?oc=5"
+   "coverage": {
+    "level": "limited",
+    "points": 0,
+    "independent_reports": 1,
+    "publishers": [
+     "Lobsters"
+    ],
+    "repeats": 0,
+    "source_links": 1,
+    "linked_outlets": 1,
+    "linked_reporting_origins": 1,
+    "signals": 0,
+    "channels": 1
+   },
+   "u": "https://sheets.works/data-viz/holding-up-the-internet"
   },
   {
    "d": "2026-10-09",
-   "id": "5a514c61da91",
+   "id": "ac156f24577e",
    "r": 27,
    "t": null,
-   "c": "Tech",
-   "h": "Amazon builds 1,000th satellite, says space internet service is weeks away",
-   "s": "Amazon builds 1,000th satellite, says space internet service is weeks away. Amazon has built its 1,000th Leo satellite and says service is weeks away.",
-   "o": [
-    "The Next Web"
-   ],
-   "l": "limited",
-   "u": "https://thenextweb.com/news/amazon-leo-1000th-satellite-europe"
-  },
-  {
-   "d": "2026-10-09",
-   "id": "84f1f58d5438",
-   "r": 28,
-   "t": null,
    "c": "Science & AI",
-   "h": "JetBrains Releases Mellum2.1: A 12B MoE Open Model for Coding Agents",
-   "s": "JetBrains Releases Mellum2.1: A 12B MoE Open Model for Coding Agents. JetBrains released Mellum2.1, an Apache 2.0, 12B mixture-of-experts thinking model with 2.5B active parameters.",
+   "h": "What will it take to build a moon base?",
+   "s": "What will it take to build a moon base. In this episode, a panel of industry experts discuss what's needed to build a moon base.",
    "o": [
-    "MarkTechPost"
+    "SpaceNews"
    ],
    "l": "limited",
-   "u": "https://www.marktechpost.com/2026/10/08/jetbrains-releases-mellum2-1-a-12b-moe-open-model-for-coding-agents/"
-  },
-  {
-   "d": "2026-10-09",
-   "id": "d42620978f1c",
-   "r": 29,
-   "t": null,
-   "c": "Tech",
-   "h": "Judge weighs if Trump can charge $100K for early access to Truth Social posts",
-   "s": "Judge weighs if Trump can charge $100K for early access to Truth Social posts. Judge questioned if Trump delaying access to Truth Social posts by a second harms the press.",
-   "o": [
-    "Ars Technica"
-   ],
-   "l": "limited",
-   "u": "https://arstechnica.com/tech-policy/2026/10/judge-weighs-if-trump-can-charge-100k-for-early-access-to-truth-social-posts/"
+   "coverage": {
+    "level": "limited",
+    "points": 1,
+    "independent_reports": 1,
+    "publishers": [
+     "SpaceNews"
+    ],
+    "repeats": 0,
+    "source_links": 1,
+    "linked_outlets": 1,
+    "linked_reporting_origins": 1,
+    "signals": 0,
+    "channels": 1
+   },
+   "u": "https://spacenews.com/what-will-it-take-to-build-a-moon-base/"
   },
   {
    "d": "2026-10-08",

@@ -5,19 +5,19 @@
  "editions": [
   {
    "date": "2026-10-09",
-   "revision": 1,
-   "generated_utc": "2026-10-09T05:37:47Z",
-   "stories": 29,
-   "lead": "The long-deployed USS Lincoln returns home to San Diego Bay",
+   "revision": 2,
+   "generated_utc": "2026-10-09T13:27:43Z",
+   "stories": 27,
+   "lead": "ICJ judge Navi Pillay wins Nobel peace prize for promoting international law",
    "headlines": [
+    "Firing Squad Execution to Be Livestreamed, Pentagon Says",
     "Isaias strengthens into Category 2 hurricane on collision course with the Gulf Coast",
-    "Firing squad execution of Fort Hood shooter Nidal Malik Hasan will be livestreamed, Pentagon says",
     "Guardians erupt in sixth inning to stun White Sox in Game 4 of ALDS, force deciding Game 5"
    ],
    "sections": {
     "News": 10,
-    "Tech": 4,
-    "Science & AI": 9,
+    "Tech": 5,
+    "Science & AI": 6,
     "Sports": 4,
     "Entertainment": 1,
     "Internet Culture": 1
