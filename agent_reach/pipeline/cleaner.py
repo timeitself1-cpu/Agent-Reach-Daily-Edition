@@ -358,7 +358,7 @@ MONTH_DAY_GUARD = (r"(?!(?:" + "|".join(r"(?<=\b%s\.)" % m for m in
 SENTENCE_RX = re.compile(r"(?<=[.!?])" + MONTH_DAY_GUARD + r"(?<!\bU\.S\.)(?<!\bU\.K\.)(?<!\bU\.N\.)(?<!\bE\.U\.)(?<!\bNo\.)(?<!\bSt\.)"
                          r"(?<!\bMr\.)(?<!\bMs\.)(?<!\bDr\.)(?<!\bMrs\.)(?<!\bGov\.)(?<!\bSen\.)(?<!\bRep\.)"
                          r"(?<!\bGen\.)(?<!\bJr\.)(?<!\bSr\.)(?<!\bvs\.)(?<!\bLt\.)(?<!\bCol\.)(?<!\bProf\.)"
-                         r"(?<!\bBros\.)(?<!\bInc\.)(?<!\bCorp\.)(?<!\bCo\.)(?<!\bLtd\.)"
+                         r"(?<!\bBros\.)(?<!\bInc\.)(?<!\bCorp\.)(?<!\bCo\.)(?<!\bLtd\.)(?<!\bP\.T\.)"
                          r"(?<![\s(\"][A-Z]\.)\s+")  # an initial: 'James D. Watson' (October 7)
 
 SMALL_WORDS = frozenset(
@@ -428,7 +428,7 @@ def sanitize_summary(text: str, entities: list[str] | None = None) -> str:
     t = re.sub(r"\(\s*\)", "", t)
     t = WS_RX.sub(" ", t)
     t = SPACE_BEFORE_PUNCT_RX.sub(r"\1", t)
-    t = REPEAT_PUNCT_RX.sub(r"\1", t).strip(" ,;:-|\"'")
+    t = REPEAT_PUNCT_RX.sub(r"\1", t).strip(" ,;:-|")
     if not t:
         return ""
     for low, proper in PROPER_WORDS.items():

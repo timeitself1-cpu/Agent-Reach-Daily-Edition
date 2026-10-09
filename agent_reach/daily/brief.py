@@ -247,11 +247,14 @@ def apply_brief(story: Story, details: str, why: str) -> tuple[int, int]:
                 and not is_fragment(sentence) and not ends_dangling(sentence) and support(sentence, stems) >= share)
 
     added = 0
+    from agent_reach.pipeline.summary_checks import validate_summary
+    cited = [(e.title, e.excerpt) for e in story.evidence]
     details = sanitize_summary(details or "")
     for sentence in [s.strip() for s in SENTENCE_SPLIT_RX.split(details) if s.strip()][:2]:
         if len(story.sentences) >= 4:
             break
-        if (20 <= len(sentence) <= 320 and sound(sentence) and _novel(sentence, [story.headline, *story.sentences])
+        if (20 <= len(sentence) <= 320 and sound(sentence) and not validate_summary(sentence, '', cited)
+                and _novel(sentence, [story.headline, *story.sentences])
                 and place_sentence(story.sentences, sentence, keep_first=True)):
             added += 1
     why_added = 0

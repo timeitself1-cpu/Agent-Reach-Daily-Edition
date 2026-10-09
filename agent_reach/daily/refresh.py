@@ -378,8 +378,10 @@ async def _attempt(paths: DataPaths, prefs: DailyPrefs, store: EditionStore, *, 
     kept = keep_previous_categories(supported, store.load_latest().edition)
     if kept:
         log.info("%d carried-over stories kept their previous category", kept)
+    from agent_reach.daily.revisions import retain_listed
+    supported = retain_listed(supported, store.load_latest().edition, prefs, started)
     selection = select_stories(supported, prefs, now=started)
-    selection.dropped_unsupported = len(built) - len(supported)
+    selection.dropped_unsupported = max(0, len(built) - len(supported))
     stories = selection.stories
 
     brief_stats: dict[str, int] = {}
@@ -405,6 +407,9 @@ async def _attempt(paths: DataPaths, prefs: DailyPrefs, store: EditionStore, *, 
         except (asyncio.TimeoutError, ImportError) as exc:
             log.warning("brief pass skipped: %s", type(exc).__name__)
 
+    from agent_reach.pipeline.summary_checks import verified_story
+    for story in stories:
+        story.headline, story.sentences = verified_story(story)
     completed = now_fn()
     edition = assemble_edition(report, selection, prefs, started=started, completed=completed,
                                trigger=trigger, config_fingerprint=config_fingerprint(report.effective_config),

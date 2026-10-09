@@ -173,11 +173,11 @@ def test_model_missing_and_model_going_away(world):
 
 
 def test_model_going_away_late_is_said_in_the_edition(world):
-    out = _run(world, "--refresh-now", env={"AR_WORLD_MODEL_DIES_AFTER": "5"})
+    out = _run(world, "--refresh-now", env={"AR_WORLD_BRIEF_CALLS": "1"})
     assert out.returncode == 0, out.stdout
     ed = EditionStore(world).load_latest().edition
     assert ed.model.summaries == "local_model" and ed.model.brief_calls_failed
-    out = _run(world, "--refresh-now", env={"AR_WORLD_MODEL_DIES_AFTER": "4"})
+    out = _run(world, "--refresh-now", env={"AR_WORLD_BRIEF_CALLS": "0", "AR_WORLD_ADVANCE_HOUR": "1"})
     ed = EditionStore(world).load_latest().edition
     if out.returncode == 0:  # every brief call failed: one plain note, no claim of notes that are not there
         assert any("stopped answering before writing them" in n for n in ed.notes)
@@ -221,7 +221,7 @@ def test_damaged_files_degrade_gracefully(world):
     assert snap.shown.run_id == good.run_id  # older damaged files do not hide today's edition
     texts = " ".join(b.text for b in snap.banners)
     assert "max_stories" in texts and "Refresh history was unreadable" in texts
-    out = _run(world, "--refresh-now")
+    out = _run(world, "--refresh-now", env={"AR_WORLD_ADVANCE_HOUR": "1"})
     assert out.returncode == 0, out.stdout + out.stderr
     assert sorted(p.name.split(".")[0] for p in world.quarantine_dir.iterdir()) == ["2026-09-30", "2026-10-01"]
     latest = store.load_latest()
@@ -253,7 +253,7 @@ def test_repeated_daily_use_stays_coherent(world, tmp_path):
         if k == 2:
             prefs, _ = load_prefs(world)
             save_prefs(world, prefs.model_copy(update={"max_stories": 5, "follow_topics": ["Norvale"]}))
-        ctrl = _controller(world)  # a new window each time
+        ctrl = _controller(world, AR_WORLD_ADVANCE_HOUR=1)  # a new window, an hour later each time
         assert ctrl.start_refresh(manual=True)
         _wait(ctrl)
         snap = _assert_idle(world)

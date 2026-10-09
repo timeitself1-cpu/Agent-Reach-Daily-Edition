@@ -6,8 +6,7 @@
     1. Finds Python 3.10+ with tkinter (the py launcher or python on PATH).
     2. Creates or reuses the project environment .venv in this folder and installs requirements.txt.
     3. Checks the Daily app imports and its command line.
-    4. Checks Ollama and the local models (llama3.1:8b; embeddinggemma-2:270m groups the stories,
-       nomic-embed-text is its fallback).
+    4. Checks Ollama and the local models (llama3.1:8b; nomic-embed-text groups the stories).
        Missing models are only downloaded with -PullModels (several GB; you are told first).
     5. Creates the data folder %LOCALAPPDATA%\AgentReachDaily with default settings.
     6. Creates "Agent Reach" shortcuts on the Desktop and in the Start menu (skip with -NoShortcut).
@@ -206,7 +205,7 @@ else {
     $warnings.Add("Install Ollama from https://ollama.com/download")
 }
 
-$models = @("llama3.1:8b", "embeddinggemma-2:270m", "nomic-embed-text")
+$models = @("llama3.1:8b", "nomic-embed-text")
 $names = @()
 $reachable = $false
 try {

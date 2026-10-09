@@ -107,7 +107,8 @@ def test_public_edition_carries_the_news_and_nothing_private():
     pub = P.public_edition(ed)
     text = json.dumps(pub)
     assert pub["edition_date"] == "2026-10-07" and pub["revision"] == 2 and len(pub["stories"]) == 44
-    assert pub["stories"][0]["headline"] == "Computing Pioneer Margaret Hamilton Dies at 90"
+    # Cached text that fails the new context gate uses the cited source title.
+    assert pub["stories"][0]["headline"] == "Margaret Hamilton, who led software development for the Apollo program, has died"
     assert len(pub["top"]) == 8 and {s["category"] for s in pub["sections"]} >= {"News", "Tech", "Science & AI"}
     # publisher excerpts, run ids, feed lists and diagnostics never go up
     for s in ed.stories:
@@ -137,7 +138,7 @@ def test_text_that_looks_like_a_local_path_is_never_published(daily_paths, tmp_p
     assert left_out == [ed.stories[3].rank] and len(pub["stories"]) == 43 and "AppData" not in json.dumps(pub)
     r = P.publish_edition(daily_paths, ed, P.FolderTarget(tmp_path / "site"))
     assert r.state == "published" and f"Left out: story {ed.stories[3].rank}," in r.message
-    assert "AppData" not in (tmp_path / "site/search/2026-10.json").read_text()
+    assert "AppData" not in (tmp_path / "site/search/2026-10.json").read_text(encoding="utf-8")
     # outside the stories there is nothing to leave out: the edition is refused
     ed.model.llm_model = r"C:\Users\someone\models\llama"
     with pytest.raises(P.PublishError, match="file path"):
@@ -169,17 +170,17 @@ def test_folder_publish_is_idempotent_and_withdraw_moves_latest_back(daily_paths
     assert r.state == "published" and set(r.changed) == {"editions/2026-10-07.json", "editions/index.json",
                                                          "daily/2026-10-07/index.html", "feed.xml", "sitemap.xml",
                                                          "search/2026-10.json"}
-    index = json.loads((tmp_path / "site/editions/index.json").read_text())
+    index = json.loads((tmp_path / "site/editions/index.json").read_text(encoding="utf-8"))
     assert index["latest"] == "2026-10-07" and [e["date"] for e in index["editions"]] == ["2026-10-07", "2026-10-06"]
     # the RSS feed and the sitemap follow the archive list: valid XML, one feed item per date, newest first
     feed = ElementTree.fromstring((tmp_path / "site/feed.xml").read_bytes())
     links = [i.findtext("link") for i in feed.iter("item")]
     assert links == ["https://getagentreach.dev/daily/2026-10-07/", "https://getagentreach.dev/daily/2026-10-06/"]
     assert feed.find("channel/item/title").text.startswith("October 7, 2026: ")
-    sitemap = (tmp_path / "site/sitemap.xml").read_text()
+    sitemap = (tmp_path / "site/sitemap.xml").read_text(encoding="utf-8")
     ElementTree.fromstring(sitemap)
     assert "/daily/2026-10-06/</loc><lastmod>" in sitemap and "<loc>https://getagentreach.dev/about/</loc>" in sitemap
-    page = (tmp_path / "site/daily/2026-10-07/index.html").read_text()
+    page = (tmp_path / "site/daily/2026-10-07/index.html").read_text(encoding="utf-8")
     assert 'data-date="2026-10-07"' in page and "Margaret Hamilton" in page
     assert P.publish_edition(daily_paths, real_edition(), site).state == "unchanged"  # a retry adds nothing
     assert P.load_status(daily_paths).edition_date == "2026-10-07"
@@ -187,15 +188,15 @@ def test_folder_publish_is_idempotent_and_withdraw_moves_latest_back(daily_paths
     # an older revision of the same date never replaces a newer one on the site
     r = P.publish_edition(daily_paths, real_edition("2026-10-07-rc12d2-r1.json"), site)
     assert r.state == "failed" and "newer revision" in r.message
-    assert json.loads((tmp_path / "site/editions/2026-10-07.json").read_text())["revision"] == 2
+    assert json.loads((tmp_path / "site/editions/2026-10-07.json").read_text(encoding="utf-8"))["revision"] == 2
 
     r = P.withdraw(daily_paths, "2026-10-07", site)
     assert r.state == "withdrawn"
     assert not (tmp_path / "site/editions/2026-10-07.json").exists()
-    assert json.loads((tmp_path / "site/editions/index.json").read_text())["latest"] == "2026-10-06"
-    assert "/daily/2026-10-07/" not in (tmp_path / "site/feed.xml").read_text()
-    assert "/daily/2026-10-07/" not in (tmp_path / "site/sitemap.xml").read_text()
-    assert {x["d"] for x in json.loads((tmp_path / "site/search/2026-10.json").read_text())["stories"]} == {"2026-10-06"}
+    assert json.loads((tmp_path / "site/editions/index.json").read_text(encoding="utf-8"))["latest"] == "2026-10-06"
+    assert "/daily/2026-10-07/" not in (tmp_path / "site/feed.xml").read_text(encoding="utf-8")
+    assert "/daily/2026-10-07/" not in (tmp_path / "site/sitemap.xml").read_text(encoding="utf-8")
+    assert {x["d"] for x in json.loads((tmp_path / "site/search/2026-10.json").read_text(encoding="utf-8"))["stories"]} == {"2026-10-06"}
     # automatic publishing does not bring the withdrawn edition back; a newer revision of that day would
     assert P.publish_edition(daily_paths, real_edition(), site, automatic=True).state == "skipped"
     newer = real_edition().model_copy(update={"revision": 3})
@@ -279,9 +280,9 @@ def test_a_removed_story_stays_off_the_site_in_later_revisions_of_the_day(daily_
     assert P.publish_edition(daily_paths, second, site, automatic=True).state == "published"
     for path in ("editions/2026-10-07.json", "daily/2026-10-07/index.html", "search/2026-10.json"):
         assert "Stun Grenades" not in (tmp_path / "site" / path).read_text(encoding="utf-8")
-    assert json.loads((tmp_path / "site/editions/2026-10-07.json").read_text())["revision"] == 2
+    assert json.loads((tmp_path / "site/editions/2026-10-07.json").read_text(encoding="utf-8"))["revision"] == 2
     # settings written by rc13/rc14 (ids only) still load and still hide by id
-    old = json.loads(P.settings_file(daily_paths).read_text())
+    old = json.loads(P.settings_file(daily_paths).read_text(encoding="utf-8"))
     del old["hidden_reports"]
     P.settings_file(daily_paths).write_text(json.dumps(old))
     assert P.load_settings(daily_paths).hidden_stories["2026-10-07"] == [stun.story_id[:12]]
@@ -319,13 +320,13 @@ def test_archive_search_files_per_month_repair_themselves(daily_paths, tmp_path)
         assert P.publish_edition(daily_paths, ed, site).state == "published"
     (tmp_path / "site/search/2026-10.json").unlink()  # as on a site published before search existed
     assert P.publish_edition(daily_paths, real_edition(), site).state == "published"
-    month = json.loads((tmp_path / "site/search/2026-10.json").read_text())
+    month = json.loads((tmp_path / "site/search/2026-10.json").read_text(encoding="utf-8"))
     days = [x["d"] for x in month["stories"]]
     assert days == sorted(days, reverse=True) and set(days) == {"2026-10-07", "2026-10-06"}
     first = month["stories"][0]
-    assert first["h"] == "Computing Pioneer Margaret Hamilton Dies at 90" and first["r"] == 1
+    assert first["h"] == "Margaret Hamilton, who led software development for the Apollo program, has died" and first["r"] == 1
     assert set(first) == {"d", "id", "r", "t", "c", "h", "s", "o", "l"} and len(first["s"]) <= P.SEARCH_SUMMARY_CHARS + 1
-    assert json.loads((tmp_path / "site/search/2026-09.json").read_text())["stories"][0]["d"] == "2026-09-30"
+    assert json.loads((tmp_path / "site/search/2026-09.json").read_text(encoding="utf-8"))["stories"][0]["d"] == "2026-09-30"
     # withdrawing the only date of a month removes that month's file
     assert P.withdraw(daily_paths, "2026-09-30", site).state == "withdrawn"
     assert not (tmp_path / "site/search/2026-09.json").exists()

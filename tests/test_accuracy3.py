@@ -374,7 +374,7 @@ def test_new_reporting_or_a_headline_from_new_reports_is_an_update():
     after = _with_report(make_story(headline="US Bombers Removed from UK Base Due to Iranian Threat", url=url),
                          "New York Times", "Potential Iranian Drone Attack Led to Exit of U.S. Aircraft From British Air Base")
     ch = compare_editions(_edition_on(5, [before]), _edition_on(6, [after]))
-    assert [c.detail for c in ch.updated] == ["new reporting from New York Times"]
+    assert [c.detail for c in ch.updated] == ["new reporting from The New York Times"]
 
     old = make_story(headline="Trump Approval Ratings Plummet to New Low", url="https://guardian.test/polls")
     new = _with_report(make_story(headline="Trump Claims He's 'Doing Great' Amid Record Low Approval Rating",
@@ -928,7 +928,7 @@ def test_version_6_settings_replace_yahoo_finance():
     prefs = DailyPrefs.model_validate({"prefs_version": 6, "feeds": [
         {"name": "Yahoo Finance", "url": yahoo, "category": "News", "enabled": False},
         {"name": "My Paper", "url": "https://paper.test/rss", "category": "News"}]})
-    assert prefs.prefs_version == PREFS_VERSION == 9
+    assert prefs.prefs_version == PREFS_VERSION == 10
     by_name = {f.name: f for f in prefs.feeds}
     assert "Yahoo Finance" not in by_name and not by_name["Bloomberg - Markets"].enabled and by_name["My Paper"].enabled
     assert yahoo not in {f.url for f in default_feeds()}

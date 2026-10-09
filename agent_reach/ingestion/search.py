@@ -99,6 +99,11 @@ class GoogleNewsIngester(BaseIngester):
     source = SourceName.GOOGLE_NEWS
     BASE = "https://news.google.com/rss"
 
+    def __init__(self, client, settings, semaphore) -> None:
+        super().__init__(client, settings, semaphore)
+        from agent_reach.ingestion.google_urls import GoogleNewsResolver
+        self.url_resolver = GoogleNewsResolver(settings)
+
     def item_cap(self) -> int:
         sections = len(self.settings.google_news_sections)
         base = self.settings.max_items_per_source
@@ -173,6 +178,13 @@ class GoogleNewsIngester(BaseIngester):
             )
             if item:
                 out.append(item)
+        async def resolve_item(item):
+            resolved = await self.url_resolver.resolve(item.url, self.client, self.semaphore)
+            if resolved:
+                item.url = resolved
+            else:
+                item.metadata['via'] = 'Google News'
+        await asyncio.gather(*(resolve_item(item) for item in out))
         return out
 
 

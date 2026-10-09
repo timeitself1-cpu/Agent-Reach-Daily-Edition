@@ -183,16 +183,19 @@ def _walk(widget):
 
 
 def test_window_shows_evidence_strength_and_changes(root, daily_env):
+    from datetime import timedelta
     from agent_reach.daily.refresh import refresh
     from tests.daily_fakes import OllamaUp
 
-    refresh(daily_env.paths, trigger="manual", force=True, ollama_probe=lambda p: OllamaUp())
+    first = refresh(daily_env.paths, trigger="manual", force=True, ollama_probe=lambda p: OllamaUp()).edition
     w, _ = _window(root, daily_env.paths)
     body = _text(w)
     assert "Strong evidence" in body or "Moderate evidence" in body
     assert "What changed" not in body and "WHAT CHANGED" not in body
     daily_env.net.down.add("sports")
-    refresh(daily_env.paths, trigger="manual", force=True, ollama_probe=lambda p: OllamaUp())
+    second = refresh(daily_env.paths, trigger="manual", force=True, ollama_probe=lambda p: OllamaUp(),
+                     now_fn=lambda: first.generation_completed_utc + timedelta(hours=1)).edition
+    assert second.changes is not None and not second.changes.gone
     w.refresh_view(force=True)
     root.update()
     assert "What changed" not in _text(w) and "No longer listed" not in _text(w)  # kept out of the reading view
@@ -201,8 +204,8 @@ def test_window_shows_evidence_strength_and_changes(root, daily_env):
     DetailsWindow(w)
     root.update()
     texts = [c.get("1.0", "end") for c in _walk(root) if c.winfo_class() == "Text" and c is not w.text]
-    changes = next(t for t in texts if "No longer listed" in t)
-    assert "Riverton Hawks Win Championship Final in Overtime" in changes
+    assert any('No material changes' in t for t in texts)
+    assert any(s.headline in _text(w) for s in first.stories if s.category.value == 'Sports')
 
 
 def test_sidebar_sections_top_stories_and_categories(root, daily_env):
@@ -218,11 +221,11 @@ def test_sidebar_sections_top_stories_and_categories(root, daily_env):
     w.show_section("Tech")
     root.update()
     body = _text(w)
-    assert body.startswith("Tech\n") and "Nimbus Phone 5 Adds Satellite Messaging" in body
+    assert body.startswith("Tech\n") and "Frostline" in body
     assert "Ferry" not in body  # a category view lists only that category
-    w.search_var.set("satellite")
+    w.search_var.set("frostline")
     root.update()
-    assert _text(w).startswith("Search\n") and "Nimbus Phone 5" in _text(w)
+    assert _text(w).startswith("Search\n") and "Frostline" in _text(w)
     w._clear_filters()
     root.update()
     assert _text(w).startswith("Top Stories\n")

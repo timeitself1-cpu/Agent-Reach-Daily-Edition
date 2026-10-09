@@ -1,0 +1,107 @@
+[
+  {
+    "title": "Trump says US will not attack Iran before midterm elections in November",
+    "source": "google_news",
+    "category_hint": "News",
+    "raw_score": 0.9,
+    "url": "https://news.google.com/rss/articles/CBMivAFBVV95cUxNMmV2ZUhoRklKSzBPaFkzWHVFdkwxVDlVVU8tdDV2NXc4NEkxTjZSTVhoaklIeTlJX3BCUTFkRUREY1VDVGpTY1lhZEQ4OHgyRG81S0RLa0JJVEZHTWpiUFJVRy0xZmVSWEpVbDZsVFBSRzZ4bmw2RnhtMXlBelJ1Vi1GUnVuZ3htemdTdExuTktpQ2dKdzhFRmRMd0MwMlYtd3JPb1J0NVlKcVNtWUlNNHRoNVFWaFBWUHNTdg?oc=5",
+    "timestamp": "2026-10-08T17:22:39Z",
+    "comment_count": null,
+    "description": null,
+    "metadata": {
+      "publisher": "Reuters",
+      "published_at": "2026-10-08T17:22:39+00:00"
+    },
+    "item_id": 41,
+    "normalized_title": "Trump says US will not attack Iran before midterm elections in November",
+    "heuristic_score": 0.8618,
+    "duplicate_count": 1,
+    "inferred_category": "News",
+    "context": null,
+    "context_source": null
+  },
+  {
+    "title": "Trump Says U.S. Will Not Strike Iran Again Before Midterms as Military Draws Up New Plans",
+    "source": "news_rss",
+    "category_hint": "News",
+    "raw_score": 10.0,
+    "url": "https://www.nytimes.com/2026/10/08/us/politics/trump-iran-war-options.html",
+    "timestamp": "2026-10-08T21:05:33Z",
+    "comment_count": null,
+    "description": "The U.S. military has drafted options for three days of strikes, but in recent months the president has repeatedly vetoed plans to restart the war.",
+    "metadata": {
+      "publisher": "New York Times - Home Page",
+      "published_at": "2026-10-08T21:05:33+00:00"
+    },
+    "item_id": 304,
+    "normalized_title": "Trump Says U.S. Will Not Strike Iran Again Before Midterms as Military Draws Up New Plans",
+    "heuristic_score": 0.8797,
+    "duplicate_count": 1,
+    "inferred_category": "News",
+    "context": "The U.S. military has drafted options for three days of strikes, but in recent months the president has repeatedly vetoed plans to restart the war.",
+    "context_source": "feed"
+  },
+  {
+    "title": "Trump promises not to resume Iran strikes before midterm elections",
+    "source": "news_rss",
+    "category_hint": "News",
+    "raw_score": 9.0,
+    "url": "https://www.cbsnews.com/live-updates/iran-war-nuclear-donald-trump-vance-rubio-strait-of-hormuz/",
+    "timestamp": "2026-10-08T20:06:00Z",
+    "comment_count": null,
+    "description": "Crude oil prices had shot up on Thursday after reports President Trump was considering more strikes. They immediately dropped again after his new announcement.",
+    "metadata": {
+      "publisher": "CBS News - World",
+      "published_at": "2026-10-08T20:06:00+00:00"
+    },
+    "item_id": 411,
+    "normalized_title": "Trump promises not to resume Iran strikes before midterm elections",
+    "heuristic_score": 0.8287,
+    "duplicate_count": 1,
+    "inferred_category": "News",
+    "context": "Iran War Updates: Trump promises not to resume strikes before midterm elections | Crude oil prices had shot up on Thursday after reports President Trump was considering more strikes. They immediately dropped again after his new announcement. | President Trump promised Thursday the U.S. would not attack Iran before the midterm elections, tempering rising crude oil prices. He also touted \"productive conversations\" with Iran, though he did not provide specifics. | The Houthis claimed Thursday to have hit Saudi Arabia's main airport with a ballistic missile, the third time this week the...",
+    "context_source": "page"
+  },
+  {
+    "title": "Gold Rises After Trump Says US Won’t Attack Iran Before Midterms",
+    "source": "news_rss",
+    "category_hint": "News",
+    "raw_score": 8.0,
+    "url": "https://www.bloomberg.com/news/articles/2026-10-07/gold-near-nine-week-low-on-prospects-for-rate-hike-by-year-end",
+    "timestamp": "2026-10-07T23:37:27Z",
+    "comment_count": null,
+    "description": "Gold rose from a two-month low, with traders assessing the outlook for energy prices after President Donald Trump said the US won’t attack Iran before the midterm elections.",
+    "metadata": {
+      "publisher": "Bloomberg - Markets",
+      "published_at": "2026-10-07T23:37:27+00:00"
+    },
+    "item_id": 553,
+    "normalized_title": "Gold Rises After Trump Says US Won't Attack Iran Before Midterms",
+    "heuristic_score": 0.7793,
+    "duplicate_count": 1,
+    "inferred_category": "News",
+    "context": "Gold Near Nine-Week Low on Prospects for Rate Hike by Year-End | Gold rose from a two-month low, with traders assessing the outlook for energy prices after President Donald Trump said the US won't attack Iran before the midterm elections. | Bullion climbed as much as 0.9% to trade near $4,146 an ounce, as a surge in oil eased after Trump said on Thursday the US was also having \"productive discussions\" with Iran, without offering details. The comments follow recent reporting in The Atlantic that the White House was considering striking Iran ahaed of the November midterms.",
+    "context_source": "page"
+  },
+  {
+    "title": "Saudi airports hit, Trump signals Iran restraint before midterms",
+    "source": "youtube",
+    "category_hint": "News",
+    "raw_score": 1262.83,
+    "url": "https://www.youtube.com/watch?v=xGlVyUUcTew",
+    "timestamp": "2026-10-08T20:25:57Z",
+    "comment_count": null,
+    "description": "President Donald Trump says he wont strike Iran again before the midterm elections. Microsoft, Adobe and other tech companies are suspended from a worker visa program.",
+    "metadata": {
+      "publisher": "Reuters",
+      "published_at": "2026-10-08T20:25:57+00:00"
+    },
+    "item_id": 1302,
+    "normalized_title": "Saudi airports hit, Trump signals Iran restraint before midterms",
+    "heuristic_score": 0.5257,
+    "duplicate_count": 1,
+    "inferred_category": "News",
+    "context": "President Donald Trump says he wont strike Iran again before the midterm elections. Microsoft, Adobe and other tech companies are suspended from a worker visa program.",
+    "context_source": "feed"
+  }
+]

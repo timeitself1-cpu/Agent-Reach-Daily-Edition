@@ -133,6 +133,12 @@ class IdentityGate:
             return self._cache[key]
         cos = self.cosine(*key)
         conflict = self.index.conflict(*key)
+        from agent_reach.pipeline.same_event import same_event_titles, conflicting_claims
+        left, right = self.index.items[a], self.index.items[b]
+        shared_actor = (hasattr(left, 'metadata') and hasattr(right, 'metadata')
+                        and self.index.shares_name(*key, titles=True))
+        if shared_actor and conflicting_claims(left, right, shared_actor=True):
+            conflict = conflict or 'opposite claims about the same actor and action'
         if conflict:
             d = PairDecision(*key, REJECT, [conflict], cos)
             if "roundup" in conflict:
@@ -140,9 +146,12 @@ class IdentityGate:
         else:
             ok, shared, why = self.index.link_evidence(*key)
             specific = self.index.specific_overlap(*key)
+            same_claim = bool(shared_actor and same_event_titles(left, right, shared_actor=True))
+            if same_claim:
+                ok, why = True, 'same actor, action, day and high title overlap'
             if why == NAME_AND_PHRASE and cos is not None:
                 ok = cos >= self.strong_cosine  # with vectors the embedding must agree strongly too
-            if ok and cos is not None and cos < self.min_cosine:
+            if ok and not same_claim and cos is not None and cos < self.min_cosine:
                 d = PairDecision(*key, NEUTRAL, [f"embedding disagrees (cosine {cos:.2f} < {self.min_cosine:.2f})"],
                                  cos, shared)
             elif ok:

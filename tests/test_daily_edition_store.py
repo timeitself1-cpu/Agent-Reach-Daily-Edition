@@ -93,7 +93,7 @@ def test_repeats_of_the_same_story_are_left_out():
 
 def test_weak_single_trend_signals_are_left_out():
     weak = make_story(headline="Someone Trending", platforms=["x_trends24"], items=1, relevance=5, now=NOW)
-    strong_trend = make_story(headline="Huge Trending Event", platforms=["x_trends24"], items=1, relevance=8, now=NOW)
+    strong_trend = make_story(headline="Huge Trending Event", platforms=["x_trends24"], items=3, relevance=9, now=NOW)
     article = make_story(headline="Single Article Story", platforms=["news_rss"], items=1, relevance=5, now=NOW)
     sel = E.select_stories([weak, strong_trend, article], DailyPrefs(), now=NOW)
     assert [s.headline for s in sel.stories] == ["Huge Trending Event", "Single Article Story"]
@@ -102,7 +102,7 @@ def test_weak_single_trend_signals_are_left_out():
 
 def test_sections_keep_top_n_per_category_and_a_balanced_top_stories():
     prefs = DailyPrefs(max_stories=3, max_per_category=2, max_tech_only_share=0.34)
-    tech = [make_story(headline=h, category="Tech", tech_only=True, relevance=9, now=NOW, platforms=["hackernews"])
+    tech = [make_story(headline=h, category="Tech", tech_only=True, relevance=9, items=3, now=NOW, platforms=["hackernews"])
             for h in ("Frostline Fridges Bricked by Update", "Halden Hospitals Hit by Ransomware",
                       "Rust Compiler Ships Faster Builds", "Quantum Chip Benchmark Published")]
     news = [make_story(headline=h, category="News", relevance=r, now=NOW)

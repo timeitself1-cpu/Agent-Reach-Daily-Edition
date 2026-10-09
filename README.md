@@ -7,8 +7,7 @@ desktop window: what happened, why it matters, whether it is new or continuing, 
 fact came from.
 
 - **Local AI, no subscriptions.** Summaries are written by [Ollama](https://ollama.com) on your
-  own PC (`llama3.1:8b` writes; `embeddinggemma-2:270m` groups reports into stories, with
-  `nomic-embed-text` as its fallback). No paid or cloud AI API is used or needed.
+  own PC (`llama3.1:8b` writes; `nomic-embed-text` groups reports into stories). No paid or cloud AI API is used or needed.
 - **Evidence first.** The model only words what the collected sources say. Every "why it
   matters" note is checked against the evidence: invented names, numbers or vague filler are
   dropped rather than shown.
@@ -35,16 +34,10 @@ The setup script creates the project environment (`.venv`), installs the require
 Ollama and downloads the models when `-PullModels` is given, creates your data folder,
 puts an **Agent Reach** shortcut on the Desktop and in the Start menu, and (with `-RegisterTask`)
 registers the background refresh task. It never deletes anything. Add `-DryRun` to see every step
-first. Leave out `-PullModels` if you already ran `ollama pull llama3.1:8b`,
-`ollama pull embeddinggemma-2:270m` and `ollama pull nomic-embed-text`. Without EmbeddingGemma the app
-still works: it groups stories with `nomic-embed-text` and says so under "How stories were grouped".
-EmbeddingGemma 2 is new (October 2026): if its download fails, setup shows the reason Ollama gave. As of
-October 7, Ollama runs EmbeddingGemma 2 only on Mac computers ("this model requires MLX support"), so on
-Windows the download fails and the app uses nomic-embed-text; nothing to do. If another reason is shown,
-update Ollama (https://ollama.com/download, or "Restart to update" in the Ollama tray menu) and run setup
-with `-PullModels` again. Embedding models never appear in the Ollama app's chat model list. (Ollama 0.40.0 on
-Windows can also download a model and then fail to open it, "The path cannot be traversed because it contains an
-untrusted mount point": an Ollama bug, ollama/ollama issue 18847. The app is not affected; it uses nomic-embed-text.)
+first. Leave out `-PullModels` if you already ran `ollama pull llama3.1:8b` and
+`ollama pull nomic-embed-text`. Both models work with the Windows setup. Older default settings
+migrate to `nomic-embed-text`; a custom grouping model remains your choice. Embedding models
+do not appear in the Ollama app's chat model list.
 
 Then **double-click "Agent Reach"** on the Desktop. The first time, choose
 **Collect today's news now**; on a PC without a graphics card the first edition takes roughly
@@ -111,7 +104,16 @@ repository with it. Read the chosen stories first; only stories grouped correctl
   screen with a plain-language note, and automatic retries back off (30 min, 1 h, 2 h, ... up to
   6 h). Ollama is started automatically when it is installed but not running.
 - **Editions are dated** by the US Central (CST/CDT) day on which the refresh started. A second
-  successful refresh on the same day replaces that day's edition as a new revision.
+  successful refresh on the same day replaces that day's edition as a new revision. Publication
+  waits at least 60 minutes after the previous revision, except for a new Strong story in Top Stories' first
+  three positions. A manual refresh still collects immediately, but cannot bypass this publication gate.
+- **Calmer selection.** Eligible listed stories stay unless a replacement in their section scores at least
+  20% higher. Stale, unsupported or newly excluded filler stories may leave. Sections can be shorter than
+  ten; trailers, podcasts, mock drafts, debate clips and explainers need two independent publishers.
+- **Summary checks.** Names and quantities must share a cited sentence context. A failed summary gets
+  one regeneration, then a source title and extractive first sentence. These conservative text checks
+  can reject valid paraphrases; they do not prove every statement true. Unresolved Google News links
+  remain labelled via Google News. Export diagnostics are under the collapsed **Run details** section.
 
 ## Your data
 
@@ -244,8 +246,7 @@ previous edition preserved") and what the live site shows. Details: [docs/PUBLIS
 | Symptom | What to do |
 |---|---|
 | "Ollama is not running" | Start **Ollama** from the Start menu (the app also tries to start it). Check with `--check`. |
-| "model(s) ... are missing" | `ollama pull llama3.1:8b`, `ollama pull embeddinggemma-2:270m` and `ollama pull nomic-embed-text`, or re-run setup with `-PullModels`. |
-| "The story-grouping model embeddinggemma-2:270m is not installed" | Refreshes still work (stories are grouped with nomic-embed-text). On Windows, Ollama cannot run it yet ("requires MLX support"): nothing to do. On a Mac: `ollama pull embeddinggemma-2:270m`; if that fails, update Ollama first. |
+| "model(s) ... are missing" | `ollama pull llama3.1:8b` and `ollama pull nomic-embed-text`, or re-run setup with `-PullModels`. |
 | "No news source responded" | You are offline or a firewall blocks the feeds. The previous edition is kept; it retries automatically. |
 | A source shows PARTIAL or FAILED (Details) | Normal from time to time (Reddit and X often rate-limit automated readers). The edition is built from the rest and says what was missing. Expand "News feeds", "YouTube" or "Google News" in Details to see which feed, channel or section failed and why. |
 | A publisher feed keeps failing | Feed addresses move. Settings > Publisher feeds > select it > **Test**; then Edit the address or turn the feed off. |

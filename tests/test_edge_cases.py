@@ -194,7 +194,8 @@ def test_missing_grouping_model_is_named_but_never_blocks(monkeypatch):
                "/api/version": {"version": "0.40.0"}}
     monkeypatch.setattr(prereqs.httpx, "Client", lambda **kw: real_client(
         transport=httpx.MockTransport(lambda req: httpx.Response(200, json=answers[req.url.path])), **kw))
-    prefs = DailyPrefs()
+    prefs = DailyPrefs(embed_model="embeddinggemma-2:270m",
+                       embed_fallback_models=["nomic-embed-text"], prefs_version=10)
     status = prereqs.check_prefs(prefs)
     assert status.ready and status.missing == []
     assert status.grouping_missing == prefs.embed_model and status.grouping_fallback == "nomic-embed-text"

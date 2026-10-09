@@ -18,6 +18,8 @@ service-account*.json
 *.db-journal
 state/
 reports/
+google-news-urls.json
+google-news-urls.tmp
 
 # --- python caches / envs ---
 __pycache__/

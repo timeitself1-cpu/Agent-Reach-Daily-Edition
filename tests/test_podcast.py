@@ -134,7 +134,10 @@ def test_refresh_records_the_podcast_and_survives_its_failure(daily_env, monkeyp
         raise RuntimeError("engine crashed")
 
     monkeypatch.setattr(P, "default_synthesizer", boom)
-    out = R.refresh(daily_env.paths, trigger="manual", force=True, ollama_probe=lambda p: OllamaUp())
+    from datetime import timedelta
+    when = out.edition.generation_completed_utc + timedelta(hours=1)
+    out = R.refresh(daily_env.paths, trigger="manual", force=True, ollama_probe=lambda p: OllamaUp(),
+                    now_fn=lambda: when)
     assert out.code == R.EXIT_PUBLISHED  # the edition never depends on the podcast
 
 

@@ -56,7 +56,7 @@ SOURCE_NOTES = {
     "producthunt": "Product Hunt launches (tech)",
     "arxiv": "arXiv AI/ML papers (research)",
 }
-PREFS_VERSION = 9
+PREFS_VERSION = 10
 DAILY_VELOCITY_WINDOWS = [24.0, 48.0, 168.0]
 DAILY_VELOCITY_WEIGHTS = [0.5, 0.3, 0.2]
 DAILY_VELOCITY_TOLERANCE = 0.25
@@ -90,8 +90,8 @@ class DailyPrefs(BaseModel):
 
     ollama_host: str = "http://localhost:11434"
     ollama_model: str = "llama3.1:8b"
-    embed_model: str = "embeddinggemma-2:270m"
-    embed_fallback_models: list[str] = Field(default_factory=lambda: ["nomic-embed-text"])
+    embed_model: str = "nomic-embed-text"
+    embed_fallback_models: list[str] = Field(default_factory=list)
     require_llm: bool = True  # no edition from heuristic labels unless the user explicitly allows it
     why_it_matters: bool = True
     start_ollama_if_down: bool = True
@@ -201,6 +201,11 @@ class DailyPrefs(BaseModel):
         if version < 9 and data.get("embed_model", "nomic-embed-text") in ("nomic-embed-text", "nomic-embed-text:latest"):
             data["embed_model"] = "embeddinggemma-2:270m"
             data.setdefault("embed_fallback_models", ["nomic-embed-text"])
+        if version < 10:
+            if data.get('embed_model') == 'embeddinggemma-2:270m':
+                data['embed_model'] = 'nomic-embed-text'
+            data['embed_fallback_models'] = [m for m in data.get('embed_fallback_models', [])
+                                           if m != 'embeddinggemma-2:270m' and m != data.get('embed_model')]
         data["prefs_version"] = PREFS_VERSION
         return data
 
