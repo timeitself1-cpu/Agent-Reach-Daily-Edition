@@ -19,6 +19,13 @@ tracks each real-world event over time (timelines), and later feeds structured e
 
 ## Release and repository state
 
+- **Oct 9, branch `claude/sleepy-clarke-abilea` (from the default branch at PR #12):** the user's website
+  improvement plan (four phases; Phase 1 items 1-3 done here). The Local section is removed (rc19 prepared:
+  version bumped, `release.json` written, **stable NOT moved**: waits for the user's go-ahead and green CI). The
+  website side is on the site repo's branch `claude/sleepy-clarke-abilea` (nav Today / How it works, Local only in
+  old editions, `/local/` says retired, archive update numbers), **not merged**. Open questions for the user:
+  delete `/local/` or keep it; merge the site branch; move stable. Most items of the user's Phase 1 list (archive,
+  About, RSS, sitemap, share/copy links, corrections section, theme toggle, search) already exist on the site.
 - **Current release: rc18** (`1.0.0rc18`, Oct 9): Local section for Frisco, TX (`pipeline/local.py`), headline
   links in the public edition, and the Phase 1/2 quality work of PR #8; delivered through `stable` (no zip, no
   Setup). Earlier: rc17 (`1.0.0rc17`): the app updates itself from branch `stable` (`daily/updater.py`); the
