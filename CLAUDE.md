@@ -147,6 +147,7 @@ agent_reach/
                        selection (Top Stories/sections), coverage notes, publication decision
     gates.py           pre-publish quality gates (empty/thin/headline_echo/tautology/prompt_leak/contradiction): stories
                        that fail are quarantined (counted, logged to quarantine/DATE.json), never dropped silently
+    headlines.py       neutral headline style at publish time (bait opener, sentence case, trailing !/...)
     places.py          gazetteer for the contradiction gate     brief.py           grounded "why it matters"/details pass    changes.py  what changed vs previous edition
     store.py           atomic dated editions + latest pointer, repair/quarantine   state.py  attempt vs success, backoff
     prefs.py           settings.json (migrations v1..v8, load strict/non-strict)   feeds.py  default feeds, feed test

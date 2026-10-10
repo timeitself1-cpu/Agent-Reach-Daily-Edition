@@ -59,6 +59,7 @@ from xml.sax.saxutils import escape as xml_escape
 from pydantic import BaseModel, Field
 
 from agent_reach.daily import __version__
+from agent_reach.daily.headlines import normalize_headline
 from agent_reach.daily.edition import (DailyEdition, SourceHealth, Story, category_sections, newest_published, primary_url,
                                       safe_url, top_stories)
 from agent_reach.daily.fsutil import FileUnavailable, atomic_write_bytes, atomic_write_json, read_json, unlink_with_retry
@@ -335,10 +336,20 @@ def _outlet(name: str) -> str:
     return _SECTION_RX.sub("", name.strip()) or name.strip()
 
 
+def _prose(s: Story, summary: list[str]) -> str:
+    """The story's own running text, which shows a headline's words to be names or ordinary words
+    (``headlines.normalize_headline``): its summary, report excerpts, and report titles not in Title Case."""
+    from agent_reach.daily.headlines import is_title_case
+
+    return " ".join([*summary, *(e.excerpt or "" for e in s.evidence),
+                     *(e.title for e in s.evidence if not is_title_case(e.title))])
+
+
 def _public_story(s: Story, edition: DailyEdition, change: str, top_rank: int | None) -> dict:
     from agent_reach.pipeline.summary_checks import useful_summary, verified_story
     headline, summary = verified_story(s)
     summary = useful_summary(headline, summary)  # a summary that only repeats the headline is left out
+    headline = normalize_headline(headline, names=s.entities, vouching_text=_prose(s, summary))
     strength = strength_of(s, edition.generation_completed_utc)
     sources, seen = [], set()
     for ev, identity in zip(s.evidence, reporting_groups(s.evidence)):

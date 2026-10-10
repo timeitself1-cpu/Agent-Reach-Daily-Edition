@@ -180,3 +180,69 @@ def test_a_broken_gate_keeps_the_previous_edition(daily_env, monkeypatch):
     out = R.refresh(daily_env.paths, trigger="manual", force=True, ollama_probe=lambda p: OllamaUp())
     assert out.code != R.EXIT_PUBLISHED and "quality checks could not run" in out.message
     assert EditionStore(daily_env.paths).load_latest().edition is None
+
+
+# ------------------------------------------------------------------------------ headline normalization
+from agent_reach.daily.headlines import HeadlineConfig, normalize_headline  # noqa: E402
+
+HCFG = HeadlineConfig.from_settings()
+PROSE = ("Ferry workers in Norvale walked out on Tuesday in a dispute over pay, halting service on the island routes. "
+         "The union said the strike would continue until the operator improved its offer, and the island council "
+         "urged talks. Residents said the island service is vital for supplies and school transport every day.")
+
+
+def test_the_vibe_coded_headline_loses_its_bait_opener_and_title_case():
+    prose = "The browser versions of Halo and the game Vice City and Hit And Run load in a tab, the developer said."
+    out = normalize_headline(VIBE, vouching_text=prose, cfg=HCFG)
+    assert not out.lower().startswith("we might be cooked")
+    assert out.startswith("These ") and "ports of Halo" in out and "seem to work perfectly" in out
+    assert "GTA: Vice City" in out  # acronym and name kept
+
+
+def test_title_case_becomes_sentence_case_but_names_survive():
+    h = "Norvale Ferry Strike Halts Island Service as Workers Walk Out!"
+    assert normalize_headline(h, vouching_text=PROSE, cfg=HCFG) == "Norvale ferry strike halts island service as workers walk out"
+    # nothing to show 'Island' is not a name: it keeps its capital rather than risk 'norvale'
+    assert "Norvale" in normalize_headline(h, cfg=HCFG)
+
+
+def test_allowlist_acronyms_and_key_names_are_kept():
+    out = normalize_headline("FBI Says Nobel Winner Joins NASA And OpenAI In US Probe", vouching_text=PROSE, cfg=HCFG)
+    assert out == "FBI says Nobel winner joins NASA and OpenAI in US probe"
+    assert normalize_headline("Mayor Okafor Resigns After Audit Finds Missing Funds", names=["Okafor"],
+                              vouching_text=PROSE, cfg=HCFG) == "Mayor Okafor resigns after audit finds missing funds"
+
+
+def test_quoted_claims_are_never_altered():
+    out = normalize_headline('Lawyer Says "The Agents Did Not Identify Themselves" In Court Filing!', vouching_text=PROSE, cfg=HCFG)
+    assert '"The Agents Did Not Identify Themselves"' in out and not out.endswith("!")
+
+
+def test_trailing_bait_punctuation():
+    assert normalize_headline("Is this the end of AI??", cfg=HCFG) == "Is this the end of AI"
+    assert normalize_headline("Company says it will keep going...", cfg=HCFG) == "Company says it will keep going"
+    assert normalize_headline("Will the Fed cut rates this year?", cfg=HCFG) == "Will the Fed cut rates this year?"
+
+
+def test_sentence_case_headlines_and_short_remainders_are_left_alone():
+    h = "Fed holds rates steady, signals one cut this year"
+    assert normalize_headline(h, cfg=HCFG) == h
+    assert normalize_headline("Wow! Big win", cfg=HCFG) == "Wow! Big win"  # fewer than four words would remain
+
+
+def test_normalization_is_idempotent_and_never_empty():
+    for h in (VIBE, MICRO1, ICE, GIGABYTE, "!!!"):
+        once = normalize_headline(h, vouching_text=PROSE, cfg=HCFG)
+        assert once and normalize_headline(once, vouching_text=PROSE, cfg=HCFG) == once
+
+
+def test_the_published_edition_and_its_feed_carry_the_normalized_headline(monkeypatch):
+    from agent_reach.daily.publish import public_edition
+    from agent_reach.pipeline import summary_checks
+
+    bait = "We Might Be Cooked, As Ferry Workers In Norvale Walk Out Over Pay Again!"
+    monkeypatch.setattr(summary_checks, "verified_story", lambda story: (bait, list(story.sentences)))
+    ed = _edition("2026-10-07-rc12d2-r2.json")
+    public = public_edition(ed)
+    heads = [s["headline"] for s in public["stories"]]
+    assert heads and all(h.startswith("Ferry workers in Norvale walk out over pay again") for h in heads), heads[:2]
