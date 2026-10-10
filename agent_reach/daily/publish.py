@@ -369,15 +369,15 @@ def _prose(s: Story, summary: list[str]) -> str:
 
 def _public_story(s: Story, edition: DailyEdition, change: str, top_rank: int | None) -> dict:
     from agent_reach.pipeline.summary_checks import useful_summary, verified_story
-    from agent_reach.pipeline.evidence import stable_event_id
     headline, summary = verified_story(s)
     summary = useful_summary(headline, summary)  # a summary that only repeats the headline is left out
     headline = normalize_headline(headline, names=s.entities, vouching_text=_prose(s, summary))
     strength = strength_of(s, edition.generation_completed_utc)
-    # Stable event ID for timelines: same event across editions
+    # Stable event ID: ONE canonical mechanism. Import AND call inside try —
+    # an ID failure must never block publishing.
     try:
-        items = getattr(s, 'items', None) or []
-        event_id = stable_event_id(items) if items else None
+        from agent_reach.pipeline.evidence import canonical_event_id
+        event_id = canonical_event_id(s)
     except Exception:
         event_id = None
     sources, seen = [], set()
@@ -1041,7 +1041,7 @@ def _read_json(target: Target, path: str) -> dict | None:
 
 
 def site_files(edition: DailyEdition, settings: PublishSettings, current_index: dict | None,
-               left_out: list[int] | None = None) -> tuple[dict, dict]:
+               left_out: list[int] | None = None, paths: DataPaths | None = None) -> tuple[dict, dict]:
     """(public edition, {path: bytes}) for one edition."""
     d = edition.edition_date.isoformat()
     public = public_edition(edition, settings.hidden_stories.get(d), settings.hidden_reports.get(d), left_out)
@@ -1050,67 +1050,66 @@ def site_files(edition: DailyEdition, settings: PublishSettings, current_index: 
              **index_files(merge_index(current_index, index_entry(public)), settings.site_url)}
     # Update the event registry and publish event JSON files for timelines.
     try:
-        event_files = update_event_registry(public, d, edition.revision)
+        event_files = update_event_registry(public, d, edition.revision, paths)
         files.update(event_files)
     except Exception as exc:  # registry failures must not block publishing
         log.warning("event registry update failed: %s", exc)
     return public, files
 
 
-def update_event_registry(public: dict, edition_date: str, revision: int) -> dict[str, bytes]:
+def update_event_registry(public: dict, edition_date: str, revision: int,
+                          paths: DataPaths | None = None) -> dict[str, bytes]:
     """Update the event registry from a published edition; return {path: bytes} for event JSON files.
 
     For each story: compute stable event ID, create or append timeline entry.
     Returns event JSON files for publishing to /events/.
     """
     from agent_reach.daily.event_registry import EventRegistry
-    from agent_reach.daily.paths import data_dir  # or wherever the base dir comes from
 
-    # The registry lives alongside the edition cache
-    # TODO: get the actual data dir from paths; for now use a standard location
-    import os
-    base = os.environ.get("AGENT_REACH_DATA", os.path.expanduser("~/.agent-reach"))
+    # Registry lives in the data dir (alongside the edition cache)
+    base = paths.root if paths else Path(os.environ.get("AGENT_REACH_DATA", os.path.expanduser("~/.agent-reach")))
     registry = EventRegistry(base)
 
     files = {}
     stories = public.get("stories", [])
-    # Get change info if available (from edition.changes)
-    changes = {c.get("story_id"): c for c in public.get("changes", {}).get("updated", [])}
-    new_ids = set(public.get("changes", {}).get("new", []))
+    # Change info: public["changes"] has "new" (list of story IDs) and "updated" (list of {story_id, detail})
+    changes_raw = public.get("changes", {})
+    # Handle both formats: list of dicts with story_id, or list of strings
+    updated_map = {}
+    for c in changes_raw.get("updated", []):
+        if isinstance(c, dict):
+            updated_map[c.get("story_id", "")] = c
+        elif isinstance(c, str):
+            updated_map[c] = {"detail": ""}
+    new_ids = set()
+    for n in changes_raw.get("new", []):
+        new_ids.add(n if isinstance(n, str) else n.get("story_id", ""))
 
     for story in stories:
         story_id = story.get("id") or story.get("story_id", "")
         if story_id in new_ids:
             change = "new"
-        elif story_id in changes:
+        elif story_id in updated_map:
             change = "updated"
         else:
             change = "unchanged"
 
-        # Build a story-like object for the registry
-        class StoryProxy:
-            pass
-        proxy = StoryProxy()
-        proxy.headline = story.get("headline", "")
-        proxy.summary = story.get("summary", "")
-        proxy.category = story.get("category", "")
-        proxy.sources = story.get("sources", [])
-        # Items for stable ID: use sources as proxy if full items unavailable
-        proxy.items = []
-
+        # Build a story-like object for the registry.
+        # Pass the dict directly: canonical_event_id() handles dicts (prefers event_id,
+        # then entity_id, then headline hash).
         what_changed = ""
-        if change == "updated" and story_id in changes:
-            what_changed = changes[story_id].get("detail", "")
+        if change == "updated" and story_id in updated_map:
+            what_changed = updated_map[story_id].get("detail", "")
 
-        record = registry.update_from_story(proxy, edition_date, revision, change, what_changed)
+        record = registry.update_from_story(story, edition_date, revision, change, what_changed)
 
-        # Event JSON file for /events/<event_id>.json
-        event_path = f"events/{record.event_id}.json"
+        # Event JSON file: use _repo_path() so it deploys to website/
+        event_path = _repo_path(f"events/{record.event_id}.json")
         files[event_path] = json.dumps(record.to_dict(), indent=2, ensure_ascii=False).encode("utf-8")
 
     # Event index for /events/index.json
     index_data = registry.index()
-    files["events/index.json"] = json.dumps(index_data, indent=2, ensure_ascii=False).encode("utf-8")
+    files[_repo_path("events/index.json")] = json.dumps(index_data, indent=2, ensure_ascii=False).encode("utf-8")
 
     # Archive stale events (no updates in 14 days)
     try:
@@ -1169,7 +1168,7 @@ def publish_edition(paths: DataPaths, edition: DailyEdition, target: Target | No
                 raise Hopeless(f"The website already has a newer revision ({on_site['revision']}) of the {label} "
                                    "edition; nothing was changed.")
             left_out: list[int] = []
-            public, files = site_files(edition, settings, current, left_out)
+            public, files = site_files(edition, settings, current, left_out, paths)
             published["public"], published["left_out"] = public, left_out
             files.update(search_files(t, merge_index(current, index_entry(public)), d, search_entries(public)))
             return files

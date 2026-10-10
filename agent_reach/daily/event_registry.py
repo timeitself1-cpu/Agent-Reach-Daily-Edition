@@ -137,11 +137,24 @@ class EventRegistry:
         record = self.get(event_id)
         now = datetime.now(timezone.utc).date().isoformat()
 
+        # Extract outlet names explicitly. Sources may be dicts (public JSON) or objects.
         sources = []
-        if hasattr(story, 'sources'):
-            sources = [getattr(s, 'outlet', str(s)) for s in (story.sources or [])]
+        raw_sources = []
+        if isinstance(story, dict):
+            raw_sources = story.get("sources", []) or []
+        elif hasattr(story, 'sources'):
+            raw_sources = story.sources or []
         elif hasattr(story, 'publishers'):
-            sources = list(story.publishers or [])
+            raw_sources = story.publishers or []
+        for s in raw_sources:
+            if isinstance(s, dict):
+                outlet = s.get("outlet") or s.get("publisher") or ""
+            elif isinstance(s, str):
+                outlet = s
+            else:
+                outlet = getattr(s, 'outlet', '') or ""
+            if outlet:
+                sources.append(outlet)
 
         entry = TimelineEntry(
             date=edition_date,
