@@ -819,18 +819,7 @@ if (typeof module !== 'undefined') module.exports = {normOutlet, dedupeOutlets, 
           deptHead(label, secInfo.path, total),
           h('div', {class: 'dept-grid'}, cards))));
     }
-    if (emptyDepts.length) {
-      front.append(h('div', {class: 'wrap'},
-        h('nav', {class: 'more-sections', 'aria-label': 'More sections'},
-          h('span', {class: 'more-sections-label', text: 'Also in the Top 10:'}),
-          ...emptyDepts.map(([sec, , total]) => {
-            const secInfo = SECTION[sec.category] || {};
-            const label = secInfo.title || catLabel(sec.category);
-            return secInfo.path
-              ? h('a', {class: 'more-sections-link', href: secInfo.path, 'data-cat': sec.category, text: `${label} (${total})`})
-              : h('span', {class: 'more-sections-link', 'data-cat': sec.category, text: `${label} (${total})`});
-          }))));
-    }
+    // The single "Also in the Top 10" strip is rendered above, directly after the jump nav.
     if (idx) {
       const ab = archiveBand(idx, ed.edition_date);
       if (ab) front.append(ab);
