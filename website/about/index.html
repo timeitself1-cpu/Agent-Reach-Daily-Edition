@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>About | Agent Reach Daily</title>
+<meta name="description" content="How Agent Reach Daily makes each edition, how to read coverage strength, corrections, privacy, and the free Windows app.">
+<link rel="canonical" href="https://getagentreach.dev/about/">
+<meta property="og:title" content="About | Agent Reach Daily"><meta property="og:description" content="How Agent Reach Daily makes each edition, how to read coverage strength, corrections, privacy, and the free Windows app."><meta property="og:type" content="website"><meta property="og:url" content="https://getagentreach.dev/about/">
+<meta name="theme-color" content="#121417" media="(prefers-color-scheme: dark)"><meta name="theme-color" content="#f6f5f1" media="(prefers-color-scheme: light)">
+<script src="/assets/theme.js"></script>
+<link rel="icon" href="/assets/icon.svg" type="image/svg+xml">
+<link rel="alternate" type="application/rss+xml" title="Agent Reach Daily" href="/feed.xml">
+<link rel="preload" href="/assets/fonts/newsreader-latin-opsz-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/assets/site.css"><script src="/assets/site.js" defer></script>
+</head>
+<body data-page="about">
+<main id="main" class="wrap prose">
+<header class="page-head" style="border:0;padding-top:4px">
+<h1>About Agent Reach Daily</h1>
+<p>A daily news edition made by software from public reporting, and published here automatically. This page explains how it is made, what the coverage indicator means, and what it cannot do.</p>
+</header>
+
+<h2 id="method">How an edition is made</h2>
+<p>Each edition is made on one Windows PC by the open-source <a href="#app">Agent Reach Daily</a> app. Nothing about the readers of this site is involved.</p>
+<ol>
+<li><strong>Collect.</strong> About 1,500 reports a day from 10 kinds of source: 112 publisher feeds (about 100 news organisations), 22 YouTube news channels, Google News sections, Hacker News, Wikipedia, Reddit, Bluesky, Mastodon, and the Google Trends and X trend lists. Each edition says how many of the 10 answered; the <a href="/sources/">sources page</a> lists every one.</li>
+<li><strong>Filter.</strong> Duplicates, adverts, live blogs, stale articles and one-off trends with no reporting behind them are dropped.</li>
+<li><strong>Group.</strong> Reports that may describe the same event are proposed by a local embedding model; a strict rule-based check decides whether they really belong together. When it is unsure, it keeps them apart: a story split in two is less harmful than two events mixed into one.</li>
+<li><strong>Write.</strong> A local language model (llama3.1:8b, running in Ollama on the same PC) writes the headline and summary. Every summary sentence must be supported by the story’s own sources; sentences that are not are removed. No cloud AI service is used.</li>
+<li><strong>Check and publish.</strong> An edition is published only when enough sources answered, enough stories were found and the AI model worked. If a run fails, the previous edition stays online.</li>
+</ol>
+<p>Stories are ranked by how relevant and how widely reported they are. <em>New</em> and <em>Updated</em> mark stories that were not in, or have new reporting since, the previous edition.</p>
+
+<h2 id="coverage">Reading coverage strength</h2>
+<p>Every story shows a small three-bar indicator. It counts <strong>independent outlets</strong> that reported the story:</p>
+<div class="levels">
+<div><span class="cov strong"><span class="bars" aria-hidden="true"><i></i><i></i><i></i></span>Strong coverage</span><span>At least four independent reports with recent reporting or multiple source channels, or three with both.</span></div>
+<div><span class="cov moderate"><span class="bars" aria-hidden="true"><i></i><i></i><i></i></span>Moderate coverage</span><span>At least two independent reports, below the strong threshold.</span></div>
+<div><span class="cov limited"><span class="bars" aria-hidden="true"><i></i><i></i><i></i></span>Single source</span><span>One outlet so far. Not confirmed by a second independent outlet.</span></div>
+</div>
+<p>A second article from the same outlet, or the same headline carried by several outlets (a wire story), counts once and is listed as a <em>repeat or syndicated copy</em>. Trending searches and social posts are shown as <em>signals</em>: they show attention, not reporting, and never count.</p>
+<p>Newsroom aliases are counted together: NBC DFW and NBC 5 Dallas-Fort Worth are one newsroom, as are Al Jazeera and Al Jazeera English in these reports. Shared ownership alone does not combine distinct reporting teams. A story’s evidence lists separate totals for links, newsrooms and reporting origins. These displayed sources may be a selection of the full evidence used for the coverage rating.</p>
+<p><strong>Coverage is not a fact check.</strong> Several outlets can repeat the same claim, and a single-source story can be entirely correct. Open a story to see every source with its date and link.</p>
+
+<h2 id="ai">What the AI does, and what it cannot do</h2>
+<p>The summaries are written automatically and published without an editor. The checks remove sentences that the sources do not support, but they cannot catch every mistake: a summary can misread a source, miss a later development, or group a report with the wrong story. Treat each summary as a pointer to the reporting, not a replacement for it.</p>
+<p>Headlines of sources, and the articles they link to, belong to their publishers. This site shows only the app’s own short summaries and links to the original reporting. Agent Reach is not affiliated with any of the outlets it links to.</p>
+
+<h2 id="corrections">Corrections</h2>
+<p>The <a href="/corrections/">corrections page</a> has the policy and the log of every correction. If a story is wrong, mixes two events, or should not be here, use <strong>Report an issue</strong> on its page, or write to <a href="mailto:hello@getagentreach.dev">hello@getagentreach.dev</a> or <a href="https://github.com/timeitself1-cpu/Agent-Reach-Daily-Edition/issues">open an issue on GitHub</a>. A story can be removed from an edition, or a whole edition withdrawn, and the change is visible on the site within minutes.</p>
+
+<h2 id="privacy">Privacy</h2>
+<p>This site sets no cookies, has no analytics, ads or trackers, and loads nothing from other servers: its fonts (Newsreader and Inter, under the <a href="/assets/fonts/OFL.txt">SIL Open Font License</a>) are served from here. Source links may open publisher sites, video platforms or background references. Unresolved Google News links are labelled as redirects and open through Google News. When no resolved report matches a headline, the headline opens our summary and evidence instead.</p>
+
+<h2 id="app">The Windows app</h2>
+<p>Agent Reach Daily is also a free Windows app that makes the same kind of edition for you, on your own PC, from the sources you choose: no account, no subscription, no cloud AI. It includes a daily podcast read by your Windows voice, follow and mute topics, and 30 days of editions to search.</p>
+<figure><a href="/app-window.webp"><img src="/app-top-stories.webp" width="680" height="684" alt="Agent Reach Daily on Windows 11 showing the Top Stories for October 7, 2026: an In brief list, then numbered stories, each with its category, outlets, summary, sources and evidence strength." loading="lazy"></a><figcaption>The app on Windows 11, October 7, 2026. <a href="/app-window.webp">See the full window</a>.</figcaption></figure>
+<h3>You need</h3>
+<ul><li>Windows 10 or 11 and Python 3.10 or newer (3.12 recommended)</li><li>The free <a href="https://ollama.com/download">Ollama</a> app and about 6 GB of disk space for the AI models</li><li>A graphics card helps: about 7 minutes per edition with one, 10 to 40 minutes without</li></ul>
+<h3>Install</h3>
+<ol><li>Download the source code from <a href="https://github.com/timeitself1-cpu/Agent-Reach-Daily-Edition">GitHub</a> and unzip it.</li>
+<li>In PowerShell, from that folder, run:<br><code>powershell -ExecutionPolicy Bypass -File .\Setup-AgentReachDaily.ps1 -PullModels -RegisterTask</code></li>
+<li>Open Agent Reach from the Desktop and choose <em>Collect today’s news now</em>. After that, a new edition is made every day.</li></ol>
+<p>The app is a release candidate: it works end to end and is tested on a real Windows PC with every release. Known gaps: two editions an hour apart do not always recognise the same story, and the “why it matters” notes are often left out because they fail the source check.</p>
+
+<h2 id="contact">Who makes it</h2>
+<p>Agent Reach is built by Michael Brown around one question: <em>what actually happened today?</em> Read less, understand more, and always be able to see where a fact came from. Contact: <a href="mailto:hello@getagentreach.dev">hello@getagentreach.dev</a>. Open source under the <a href="https://github.com/timeitself1-cpu/Agent-Reach-Daily-Edition/blob/HEAD/LICENSE">MIT License</a>.</p>
+<p>Built with Claude Code as a development tool. The app itself runs on local Ollama models. This does not imply endorsement by Anthropic.</p>
+</main>
+
+</body>
+</html>

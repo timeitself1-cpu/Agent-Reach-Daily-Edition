@@ -1,0 +1,3146 @@
+{
+ "schema": "agent_reach.public_edition",
+ "schema_version": 1,
+ "app": "Agent Reach Daily 1.0.0rc20",
+ "edition_date": "2026-10-09",
+ "revision": 2,
+ "timezone": "America/Chicago",
+ "generated_utc": "2026-10-09T13:27:43Z",
+ "models": {
+  "summaries": "llama3.1:8b",
+  "grouping": "nomic-embed-text"
+ },
+ "summaries": "local_model",
+ "reports_read": 1520,
+ "sources_answered": 10,
+ "sources_tried": 10,
+ "sources": [
+  {
+   "type": "google_news",
+   "name": "Google News",
+   "about": "Google News top stories and one Google News section per category.",
+   "status": "ok",
+   "reports": 318,
+   "cited": 13,
+   "feeds": [
+    {
+     "name": "Google News - Top stories",
+     "site": "news.google.com",
+     "category": "News",
+     "status": "ok",
+     "reports": 38,
+     "cited": 1
+    },
+    {
+     "name": "Google News - World",
+     "site": "news.google.com",
+     "category": "News",
+     "status": "ok",
+     "reports": 20,
+     "cited": 2
+    },
+    {
+     "name": "Google News - U.S.",
+     "site": "news.google.com",
+     "category": "News",
+     "status": "ok",
+     "reports": 20,
+     "cited": 0
+    },
+    {
+     "name": "Google News - Business",
+     "site": "news.google.com",
+     "category": "News",
+     "status": "ok",
+     "reports": 20,
+     "cited": 0
+    },
+    {
+     "name": "Google News - Health",
+     "site": "news.google.com",
+     "category": "News",
+     "status": "ok",
+     "reports": 20,
+     "cited": 0
+    },
+    {
+     "name": "Google News - Technology",
+     "site": "news.google.com",
+     "category": "Tech",
+     "status": "ok",
+     "reports": 20,
+     "cited": 1
+    },
+    {
+     "name": "Google News - Science",
+     "site": "news.google.com",
+     "category": "Science & AI",
+     "status": "ok",
+     "reports": 20,
+     "cited": 1
+    },
+    {
+     "name": "Google News - AI",
+     "site": "news.google.com",
+     "category": "Science & AI",
+     "status": "ok",
+     "reports": 20,
+     "cited": 0
+    },
+    {
+     "name": "Google News - Sports",
+     "site": "news.google.com",
+     "category": "Sports",
+     "status": "ok",
+     "reports": 20,
+     "cited": 1
+    },
+    {
+     "name": "Google News - Entertainment",
+     "site": "news.google.com",
+     "category": "Entertainment",
+     "status": "ok",
+     "reports": 20,
+     "cited": 1
+    },
+    {
+     "name": "Google News - Viral & TikTok",
+     "site": "news.google.com",
+     "category": "Internet Culture",
+     "status": "ok",
+     "reports": 20,
+     "cited": 4
+    },
+    {
+     "name": "AP News (via Google News)",
+     "site": "news.google.com",
+     "category": "News",
+     "status": "ok",
+     "reports": 20,
+     "cited": 1
+    },
+    {
+     "name": "Reuters (via Google News)",
+     "site": "news.google.com",
+     "category": "News",
+     "status": "ok",
+     "reports": 20,
+     "cited": 1
+    },
+    {
+     "name": "Google News - Space",
+     "site": "news.google.com",
+     "category": "Science & AI",
+     "status": "ok",
+     "reports": 20,
+     "cited": 0
+    },
+    {
+     "name": "Google News - Games",
+     "site": "news.google.com",
+     "category": "Entertainment",
+     "status": "ok",
+     "reports": 20,
+     "cited": 0
+    }
+   ]
+  },
+  {
+   "type": "news_rss",
+   "name": "News feeds",
+   "about": "News publishers' own RSS feeds, listed below by name.",
+   "status": "ok",
+   "reports": 900,
+   "cited": 49,
+   "feeds": [
+    {
+     "name": "BBC News - World",
+     "site": "feeds.bbci.co.uk",
+     "category": "News",
+     "status": "ok",
+     "reports": 9,
+     "cited": 1
+    },
+    {
+     "name": "NPR - News",
+     "site": "feeds.npr.org",
+     "category": "News",
+     "status": "ok",
+     "reports": 9,
+     "cited": 1
+    },
+    {
+     "name": "NPR - World",
+     "site": "feeds.npr.org",
+     "category": "News",
+     "status": "ok",
+     "reports": 9,
+     "cited": 1
+    },
+    {
+     "name": "The Guardian - US",
+     "site": "theguardian.com",
+     "category": "News",
+     "status": "ok",
+     "reports": 9,
+     "cited": 1
+    },
+    {
+     "name": "The Guardian - World",
+     "site": "theguardian.com",
+     "category": "News",
+     "status": "ok",
+     "reports": 9,
+     "cited": 2
+    },
+    {
+     "name": "PBS News - Headlines",
+     "site": "pbs.org",
+     "category": "News",
+     "status": "ok",
+     "reports": 9,
+     "cited": 2
+    },
+    {
+     "name": "CBS News - Latest",
+     "site": "cbsnews.com",
+     "category": "News",
+     "status": "ok",
+     "reports": 9,
+     "cited": 0
+    },
+    {
+     "name": "Al Jazeera - All",
+     "site": "aljazeera.com",
+     "category": "News",
+     "status": "ok",
+     "reports": 8,
+     "cited": 0
+    },
+    {
+     "name": "Le Monde - English",
+     "site": "lemonde.fr",
+     "category": "News",
+     "status": "ok",
+     "reports": 8,
+     "cited": 4
+    },
+    {
+     "name": "France 24 - English",
+     "site": "france24.com",
+     "category": "News",
+     "status": "ok",
+     "reports": 8,
+     "cited": 0
+    },
+    {
+     "name": "DW - English",
+     "site": "rss.dw.com",
+     "category": "News",
+     "status": "ok",
+     "reports": 8,
+     "cited": 0
+    },
+    {
+     "name": "BBC News - Business",
+     "site": "feeds.bbci.co.uk",
+     "category": "News",
+     "status": "ok",
+     "reports": 8,
+     "cited": 0
+    },
+    {
+     "name": "NPR - Business",
+     "site": "feeds.npr.org",
+     "category": "News",
+     "status": "ok",
+     "reports": 8,
+     "cited": 0
+    },
+    {
+     "name": "CNBC - Top News",
+     "site": "cnbc.com",
+     "category": "News",
+     "status": "ok",
+     "reports": 8,
+     "cited": 0
+    },
+    {
+     "name": "BBC News - Science",
+     "site": "feeds.bbci.co.uk",
+     "category": "Science & AI",
+     "status": "ok",
+     "reports": 8,
+     "cited": 1
+    },
+    {
+     "name": "NASA - News",
+     "site": "nasa.gov",
+     "category": "Science & AI",
+     "status": "ok",
+     "reports": 8,
+     "cited": 0
+    },
+    {
+     "name": "ScienceDaily - Top Science",
+     "site": "sciencedaily.com",
+     "category": "Science & AI",
+     "status": "ok",
+     "reports": 8,
+     "cited": 1
+    },
+    {
+     "name": "NPR - Health",
+     "site": "feeds.npr.org",
+     "category": "News",
+     "status": "ok",
+     "reports": 8,
+     "cited": 0
+    },
+    {
+     "name": "BBC News - Technology",
+     "site": "feeds.bbci.co.uk",
+     "category": "Tech",
+     "status": "ok",
+     "reports": 8,
+     "cited": 0
+    },
+    {
+     "name": "Ars Technica",
+     "site": "feeds.arstechnica.com",
+     "category": "Tech",
+     "status": "ok",
+     "reports": 8,
+     "cited": 0
+    },
+    {
+     "name": "The Verge",
+     "site": "theverge.com",
+     "category": "Tech",
+     "status": "ok",
+     "reports": 8,
+     "cited": 1
+    },
+    {
+     "name": "ESPN - Top Headlines",
+     "site": "espn.com",
+     "category": "Sports",
+     "status": "ok",
+     "reports": 8,
+     "cited": 1
+    },
+    {
+     "name": "BBC Sport",
+     "site": "feeds.bbci.co.uk",
+     "category": "Sports",
+     "status": "ok",
+     "reports": 8,
+     "cited": 1
+    },
+    {
+     "name": "BBC News - Entertainment & Arts",
+     "site": "feeds.bbci.co.uk",
+     "category": "Entertainment",
+     "status": "ok",
+     "reports": 8,
+     "cited": 1
+    },
+    {
+     "name": "The Guardian - Culture",
+     "site": "theguardian.com",
+     "category": "Entertainment",
+     "status": "ok",
+     "reports": 8,
+     "cited": 0
+    },
+    {
+     "name": "NPR - Arts & Life",
+     "site": "feeds.npr.org",
+     "category": "Entertainment",
+     "status": "ok",
+     "reports": 8,
+     "cited": 0
+    },
+    {
+     "name": "TechCrunch",
+     "site": "techcrunch.com",
+     "category": "Tech",
+     "status": "ok",
+     "reports": 8,
+     "cited": 0
+    },
+    {
+     "name": "Wired",
+     "site": "wired.com",
+     "category": "Tech",
+     "status": "ok",
+     "reports": 8,
+     "cited": 0
+    },
+    {
+     "name": "Engadget",
+     "site": "engadget.com",
+     "category": "Tech",
+     "status": "ok",
+     "reports": 8,
+     "cited": 1
+    },
+    {
+     "name": "The Register",
+     "site": "theregister.com",
+     "category": "Tech",
+     "status": "ok",
+     "reports": 8,
+     "cited": 0
+    },
+    {
+     "name": "The Guardian - Technology",
+     "site": "theguardian.com",
+     "category": "Tech",
+     "status": "ok",
+     "reports": 8,
+     "cited": 1
+    },
+    {
+     "name": "NPR - Technology",
+     "site": "feeds.npr.org",
+     "category": "Tech",
+     "status": "ok",
+     "reports": 8,
+     "cited": 0
+    },
+    {
+     "name": "Lobsters",
+     "site": "lobste.rs",
+     "category": "Tech",
+     "status": "ok",
+     "reports": 8,
+     "cited": 2
+    },
+    {
+     "name": "MIT Technology Review",
+     "site": "technologyreview.com",
+     "category": "Science & AI",
+     "status": "ok",
+     "reports": 8,
+     "cited": 0
+    },
+    {
+     "name": "The Guardian - Science",
+     "site": "theguardian.com",
+     "category": "Science & AI",
+     "status": "ok",
+     "reports": 8,
+     "cited": 0
+    },
+    {
+     "name": "NPR - Science",
+     "site": "feeds.npr.org",
+     "category": "Science & AI",
+     "status": "ok",
+     "reports": 8,
+     "cited": 2
+    },
+    {
+     "name": "New York Times - Home Page",
+     "site": "rss.nytimes.com",
+     "category": "News",
+     "status": "ok",
+     "reports": 8,
+     "cited": 2
+    },
+    {
+     "name": "Washington Post - World",
+     "site": "feeds.washingtonpost.com",
+     "category": "News",
+     "status": "ok",
+     "reports": 8,
+     "cited": 1
+    },
+    {
+     "name": "NBC News - Top Stories",
+     "site": "feeds.nbcnews.com",
+     "category": "News",
+     "status": "ok",
+     "reports": 8,
+     "cited": 0
+    },
+    {
+     "name": "ABC News - Top Stories",
+     "site": "abcnews.go.com",
+     "category": "News",
+     "status": "ok",
+     "reports": 8,
+     "cited": 1
+    },
+    {
+     "name": "Fox News - Latest",
+     "site": "moxie.foxnews.com",
+     "category": "News",
+     "status": "ok",
+     "reports": 8,
+     "cited": 1
+    },
+    {
+     "name": "Sky News - World",
+     "site": "feeds.skynews.com",
+     "category": "News",
+     "status": "ok",
+     "reports": 8,
+     "cited": 2
+    },
+    {
+     "name": "CBS News - World",
+     "site": "cbsnews.com",
+     "category": "News",
+     "status": "ok",
+     "reports": 8,
+     "cited": 2
+    },
+    {
+     "name": "Politico - Politics",
+     "site": "rss.politico.com",
+     "category": "News",
+     "status": "ok",
+     "reports": 8,
+     "cited": 0
+    },
+    {
+     "name": "The Hill",
+     "site": "thehill.com",
+     "category": "News",
+     "status": "ok",
+     "reports": 8,
+     "cited": 1
+    },
+    {
+     "name": "MarketWatch - Top Stories",
+     "site": "feeds.content.dowjones.io",
+     "category": "News",
+     "status": "ok",
+     "reports": 8,
+     "cited": 0
+    },
+    {
+     "name": "ZDNET",
+     "site": "zdnet.com",
+     "category": "Tech",
+     "status": "ok",
+     "reports": 8,
+     "cited": 0
+    },
+    {
+     "name": "Gizmodo",
+     "site": "gizmodo.com",
+     "category": "Tech",
+     "status": "ok",
+     "reports": 8,
+     "cited": 0
+    },
+    {
+     "name": "9to5Mac",
+     "site": "9to5mac.com",
+     "category": "Tech",
+     "status": "ok",
+     "reports": 8,
+     "cited": 0
+    },
+    {
+     "name": "Tom's Hardware",
+     "site": "tomshardware.com",
+     "category": "Tech",
+     "status": "ok",
+     "reports": 8,
+     "cited": 0
+    },
+    {
+     "name": "Android Authority",
+     "site": "androidauthority.com",
+     "category": "Tech",
+     "status": "ok",
+     "reports": 8,
+     "cited": 0
+    },
+    {
+     "name": "Ars Technica - AI",
+     "site": "arstechnica.com",
+     "category": "Science & AI",
+     "status": "ok",
+     "reports": 8,
+     "cited": 0
+    },
+    {
+     "name": "The Decoder",
+     "site": "the-decoder.com",
+     "category": "Science & AI",
+     "status": "ok",
+     "reports": 8,
+     "cited": 1
+    },
+    {
+     "name": "Google - AI",
+     "site": "blog.google",
+     "category": "Science & AI",
+     "status": "ok",
+     "reports": 8,
+     "cited": 0
+    },
+    {
+     "name": "OpenAI - News",
+     "site": "openai.com",
+     "category": "Science & AI",
+     "status": "ok",
+     "reports": 8,
+     "cited": 0
+    },
+    {
+     "name": "Hugging Face - Blog",
+     "site": "huggingface.co",
+     "category": "Science & AI",
+     "status": "ok",
+     "reports": 8,
+     "cited": 0
+    },
+    {
+     "name": "New Scientist",
+     "site": "newscientist.com",
+     "category": "Science & AI",
+     "status": "ok",
+     "reports": 8,
+     "cited": 0
+    },
+    {
+     "name": "SpaceNews",
+     "site": "spacenews.com",
+     "category": "Science & AI",
+     "status": "ok",
+     "reports": 8,
+     "cited": 1
+    },
+    {
+     "name": "Quanta Magazine",
+     "site": "quantamagazine.org",
+     "category": "Science & AI",
+     "status": "ok",
+     "reports": 5,
+     "cited": 1
+    },
+    {
+     "name": "Nature",
+     "site": "nature.com",
+     "category": "Science & AI",
+     "status": "ok",
+     "reports": 8,
+     "cited": 0
+    },
+    {
+     "name": "CBS Sports - Headlines",
+     "site": "cbssports.com",
+     "category": "Sports",
+     "status": "ok",
+     "reports": 8,
+     "cited": 2
+    },
+    {
+     "name": "Yahoo Sports",
+     "site": "sports.yahoo.com",
+     "category": "Sports",
+     "status": "ok",
+     "reports": 8,
+     "cited": 1
+    },
+    {
+     "name": "Sky Sports - News",
+     "site": "skysports.com",
+     "category": "Sports",
+     "status": "ok",
+     "reports": 8,
+     "cited": 0
+    },
+    {
+     "name": "The Guardian - Sport",
+     "site": "theguardian.com",
+     "category": "Sports",
+     "status": "ok",
+     "reports": 8,
+     "cited": 1
+    },
+    {
+     "name": "Variety",
+     "site": "variety.com",
+     "category": "Entertainment",
+     "status": "ok",
+     "reports": 8,
+     "cited": 0
+    },
+    {
+     "name": "The Hollywood Reporter",
+     "site": "hollywoodreporter.com",
+     "category": "Entertainment",
+     "status": "ok",
+     "reports": 8,
+     "cited": 0
+    },
+    {
+     "name": "Deadline",
+     "site": "deadline.com",
+     "category": "Entertainment",
+     "status": "ok",
+     "reports": 8,
+     "cited": 0
+    },
+    {
+     "name": "Billboard",
+     "site": "billboard.com",
+     "category": "Entertainment",
+     "status": "ok",
+     "reports": 8,
+     "cited": 0
+    },
+    {
+     "name": "Rolling Stone",
+     "site": "rollingstone.com",
+     "category": "Entertainment",
+     "status": "ok",
+     "reports": 8,
+     "cited": 0
+    },
+    {
+     "name": "IGN",
+     "site": "feeds.feedburner.com",
+     "category": "Entertainment",
+     "status": "ok",
+     "reports": 8,
+     "cited": 0
+    },
+    {
+     "name": "Polygon",
+     "site": "polygon.com",
+     "category": "Entertainment",
+     "status": "ok",
+     "reports": 8,
+     "cited": 0
+    },
+    {
+     "name": "The Daily Dot",
+     "site": "dailydot.com",
+     "category": "Internet Culture",
+     "status": "ok",
+     "reports": 8,
+     "cited": 0
+    },
+    {
+     "name": "Mashable",
+     "site": "mashable.com",
+     "category": "Internet Culture",
+     "status": "ok",
+     "reports": 8,
+     "cited": 1
+    },
+    {
+     "name": "Axios",
+     "site": "api.axios.com",
+     "category": "News",
+     "status": "ok",
+     "reports": 8,
+     "cited": 0
+    },
+    {
+     "name": "Vox",
+     "site": "vox.com",
+     "category": "News",
+     "status": "ok",
+     "reports": 8,
+     "cited": 0
+    },
+    {
+     "name": "The Atlantic",
+     "site": "theatlantic.com",
+     "category": "News",
+     "status": "ok",
+     "reports": 8,
+     "cited": 0
+    },
+    {
+     "name": "ProPublica",
+     "site": "propublica.org",
+     "category": "News",
+     "status": "ok",
+     "reports": 8,
+     "cited": 0
+    },
+    {
+     "name": "CBC News - Top Stories",
+     "site": "cbc.ca",
+     "category": "News",
+     "status": "ok",
+     "reports": 8,
+     "cited": 0
+    },
+    {
+     "name": "ABC News Australia - Top Stories",
+     "site": "abc.net.au",
+     "category": "News",
+     "status": "ok",
+     "reports": 8,
+     "cited": 0
+    },
+    {
+     "name": "South China Morning Post - World",
+     "site": "scmp.com",
+     "category": "News",
+     "status": "ok",
+     "reports": 8,
+     "cited": 0
+    },
+    {
+     "name": "The Japan Times",
+     "site": "japantimes.co.jp",
+     "category": "News",
+     "status": "ok",
+     "reports": 8,
+     "cited": 0
+    },
+    {
+     "name": "Times of India - Top Stories",
+     "site": "timesofindia.indiatimes.com",
+     "category": "News",
+     "status": "ok",
+     "reports": 8,
+     "cited": 1
+    },
+    {
+     "name": "Euronews",
+     "site": "euronews.com",
+     "category": "News",
+     "status": "ok",
+     "reports": 8,
+     "cited": 0
+    },
+    {
+     "name": "Business Insider",
+     "site": "feeds.businessinsider.com",
+     "category": "News",
+     "status": "ok",
+     "reports": 8,
+     "cited": 0
+    },
+    {
+     "name": "Fortune",
+     "site": "fortune.com",
+     "category": "News",
+     "status": "ok",
+     "reports": 8,
+     "cited": 0
+    },
+    {
+     "name": "Bloomberg - Markets",
+     "site": "feeds.bloomberg.com",
+     "category": "News",
+     "status": "ok",
+     "reports": 8,
+     "cited": 0
+    },
+    {
+     "name": "Techmeme",
+     "site": "techmeme.com",
+     "category": "Tech",
+     "status": "ok",
+     "reports": 8,
+     "cited": 0
+    },
+    {
+     "name": "The Next Web",
+     "site": "thenextweb.com",
+     "category": "Tech",
+     "status": "ok",
+     "reports": 8,
+     "cited": 0
+    },
+    {
+     "name": "MacRumors",
+     "site": "feeds.macrumors.com",
+     "category": "Tech",
+     "status": "ok",
+     "reports": 8,
+     "cited": 0
+    },
+    {
+     "name": "BleepingComputer",
+     "site": "bleepingcomputer.com",
+     "category": "Tech",
+     "status": "ok",
+     "reports": 8,
+     "cited": 0
+    },
+    {
+     "name": "Krebs on Security",
+     "site": "krebsonsecurity.com",
+     "category": "Tech",
+     "status": "ok",
+     "reports": 8,
+     "cited": 1
+    },
+    {
+     "name": "Fast Company",
+     "site": "fastcompany.com",
+     "category": "Tech",
+     "status": "ok",
+     "reports": 8,
+     "cited": 1
+    },
+    {
+     "name": "Google DeepMind - Blog",
+     "site": "deepmind.google",
+     "category": "Science & AI",
+     "status": "ok",
+     "reports": 8,
+     "cited": 0
+    },
+    {
+     "name": "Simon Willison",
+     "site": "simonwillison.net",
+     "category": "Science & AI",
+     "status": "ok",
+     "reports": 8,
+     "cited": 0
+    },
+    {
+     "name": "MarkTechPost",
+     "site": "marktechpost.com",
+     "category": "Science & AI",
+     "status": "ok",
+     "reports": 8,
+     "cited": 0
+    },
+    {
+     "name": "Science - News",
+     "site": "science.org",
+     "category": "Science & AI",
+     "status": "ok",
+     "reports": 8,
+     "cited": 0
+    },
+    {
+     "name": "Phys.org",
+     "site": "phys.org",
+     "category": "Science & AI",
+     "status": "ok",
+     "reports": 8,
+     "cited": 1
+    },
+    {
+     "name": "ScienceAlert",
+     "site": "sciencealert.com",
+     "category": "Science & AI",
+     "status": "ok",
+     "reports": 8,
+     "cited": 0
+    },
+    {
+     "name": "ESPN - NFL",
+     "site": "espn.com",
+     "category": "Sports",
+     "status": "ok",
+     "reports": 8,
+     "cited": 0
+    },
+    {
+     "name": "ESPN - NBA",
+     "site": "espn.com",
+     "category": "Sports",
+     "status": "ok",
+     "reports": 8,
+     "cited": 1
+    },
+    {
+     "name": "ESPN - MLB",
+     "site": "espn.com",
+     "category": "Sports",
+     "status": "ok",
+     "reports": 8,
+     "cited": 2
+    },
+    {
+     "name": "ESPN - Soccer",
+     "site": "espn.com",
+     "category": "Sports",
+     "status": "ok",
+     "reports": 8,
+     "cited": 0
+    },
+    {
+     "name": "BBC Sport - Football",
+     "site": "feeds.bbci.co.uk",
+     "category": "Sports",
+     "status": "ok",
+     "reports": 8,
+     "cited": 0
+    },
+    {
+     "name": "Sporting News",
+     "site": "sportingnews.com",
+     "category": "Sports",
+     "status": "ok",
+     "reports": 8,
+     "cited": 0
+    },
+    {
+     "name": "Pitchfork - News",
+     "site": "pitchfork.com",
+     "category": "Entertainment",
+     "status": "ok",
+     "reports": 8,
+     "cited": 0
+    },
+    {
+     "name": "Collider",
+     "site": "collider.com",
+     "category": "Entertainment",
+     "status": "ok",
+     "reports": 8,
+     "cited": 0
+    },
+    {
+     "name": "Screen Rant",
+     "site": "screenrant.com",
+     "category": "Entertainment",
+     "status": "ok",
+     "reports": 8,
+     "cited": 0
+    },
+    {
+     "name": "Kotaku",
+     "site": "kotaku.com",
+     "category": "Entertainment",
+     "status": "ok",
+     "reports": 8,
+     "cited": 0
+    },
+    {
+     "name": "Eurogamer",
+     "site": "eurogamer.net",
+     "category": "Entertainment",
+     "status": "ok",
+     "reports": 8,
+     "cited": 0
+    },
+    {
+     "name": "Tubefilter",
+     "site": "tubefilter.com",
+     "category": "Internet Culture",
+     "status": "ok",
+     "reports": 8,
+     "cited": 0
+    },
+    {
+     "name": "Social Media Today",
+     "site": "socialmediatoday.com",
+     "category": "Internet Culture",
+     "status": "ok",
+     "reports": 8,
+     "cited": 0
+    },
+    {
+     "name": "Boing Boing",
+     "site": "boingboing.net",
+     "category": "Internet Culture",
+     "status": "ok",
+     "reports": 8,
+     "cited": 0
+    }
+   ]
+  },
+  {
+   "type": "google_trends",
+   "name": "Google Trends",
+   "about": "What people in the US are searching for on Google today.",
+   "status": "ok",
+   "reports": 10,
+   "cited": 0,
+   "feeds": []
+  },
+  {
+   "type": "wikipedia",
+   "name": "Wikipedia",
+   "about": "Wikipedia's most-read articles and its 'In the news' list.",
+   "status": "ok",
+   "reports": 60,
+   "cited": 2,
+   "feeds": []
+  },
+  {
+   "type": "reddit",
+   "name": "Reddit",
+   "about": "Top posts of news communities on Reddit (often rate-limited).",
+   "status": "partial",
+   "reports": 16,
+   "cited": 1,
+   "feeds": []
+  },
+  {
+   "type": "x_trends24",
+   "name": "X (trends24)",
+   "about": "Trending topics on X, as listed by trends24.in.",
+   "status": "ok",
+   "reports": 50,
+   "cited": 1,
+   "feeds": []
+  },
+  {
+   "type": "hackernews",
+   "name": "Hacker News",
+   "about": "The Hacker News front page (technology).",
+   "status": "ok",
+   "reports": 60,
+   "cited": 1,
+   "feeds": []
+  },
+  {
+   "type": "youtube",
+   "name": "YouTube",
+   "about": "New videos from the YouTube channels of news organisations, listed below.",
+   "status": "ok",
+   "reports": 61,
+   "cited": 5,
+   "feeds": [
+    {
+     "name": "BBC News",
+     "site": "youtube.com",
+     "category": "News",
+     "status": "ok",
+     "reports": 3,
+     "cited": 1
+    },
+    {
+     "name": "Reuters",
+     "site": "youtube.com",
+     "category": "News",
+     "status": "ok",
+     "reports": 3,
+     "cited": 0
+    },
+    {
+     "name": "Associated Press",
+     "site": "youtube.com",
+     "category": "News",
+     "status": "ok",
+     "reports": 3,
+     "cited": 0
+    },
+    {
+     "name": "NBC News",
+     "site": "youtube.com",
+     "category": "News",
+     "status": "ok",
+     "reports": 3,
+     "cited": 0
+    },
+    {
+     "name": "ABC News",
+     "site": "youtube.com",
+     "category": "News",
+     "status": "ok",
+     "reports": 3,
+     "cited": 0
+    },
+    {
+     "name": "CBS News",
+     "site": "youtube.com",
+     "category": "News",
+     "status": "ok",
+     "reports": 3,
+     "cited": 1
+    },
+    {
+     "name": "PBS NewsHour",
+     "site": "youtube.com",
+     "category": "News",
+     "status": "ok",
+     "reports": 3,
+     "cited": 1
+    },
+    {
+     "name": "Al Jazeera English",
+     "site": "youtube.com",
+     "category": "News",
+     "status": "ok",
+     "reports": 3,
+     "cited": 0
+    },
+    {
+     "name": "Sky News",
+     "site": "youtube.com",
+     "category": "News",
+     "status": "ok",
+     "reports": 3,
+     "cited": 0
+    },
+    {
+     "name": "CNBC Television",
+     "site": "youtube.com",
+     "category": "News",
+     "status": "ok",
+     "reports": 3,
+     "cited": 0
+    },
+    {
+     "name": "Bloomberg Technology",
+     "site": "youtube.com",
+     "category": "Tech",
+     "status": "ok",
+     "reports": 3,
+     "cited": 0
+    },
+    {
+     "name": "CNET",
+     "site": "youtube.com",
+     "category": "Tech",
+     "status": "ok",
+     "reports": 3,
+     "cited": 1
+    },
+    {
+     "name": "The Verge",
+     "site": "youtube.com",
+     "category": "Tech",
+     "status": "ok",
+     "reports": 3,
+     "cited": 0
+    },
+    {
+     "name": "Linus Tech Tips",
+     "site": "youtube.com",
+     "category": "Tech",
+     "status": "ok",
+     "reports": 2,
+     "cited": 0
+    },
+    {
+     "name": "Marques Brownlee",
+     "site": "youtube.com",
+     "category": "Tech",
+     "status": "ok",
+     "reports": 1,
+     "cited": 0
+    },
+    {
+     "name": "Fireship",
+     "site": "youtube.com",
+     "category": "Tech",
+     "status": "ok",
+     "reports": 1,
+     "cited": 0
+    },
+    {
+     "name": "NASA",
+     "site": "youtube.com",
+     "category": "Science & AI",
+     "status": "ok",
+     "reports": 3,
+     "cited": 1
+    },
+    {
+     "name": "ESPN",
+     "site": "youtube.com",
+     "category": "Sports",
+     "status": "ok",
+     "reports": 3,
+     "cited": 0
+    },
+    {
+     "name": "NFL",
+     "site": "youtube.com",
+     "category": "Sports",
+     "status": "ok",
+     "reports": 3,
+     "cited": 0
+    },
+    {
+     "name": "NBA",
+     "site": "youtube.com",
+     "category": "Sports",
+     "status": "ok",
+     "reports": 3,
+     "cited": 0
+    },
+    {
+     "name": "IGN",
+     "site": "youtube.com",
+     "category": "Entertainment",
+     "status": "ok",
+     "reports": 3,
+     "cited": 0
+    },
+    {
+     "name": "Entertainment Tonight",
+     "site": "youtube.com",
+     "category": "Entertainment",
+     "status": "ok",
+     "reports": 3,
+     "cited": 0
+    }
+   ]
+  },
+  {
+   "type": "mastodon",
+   "name": "Mastodon",
+   "about": "News links people are sharing on Mastodon (mastodon.social).",
+   "status": "ok",
+   "reports": 20,
+   "cited": 4,
+   "feeds": [
+    {
+     "name": "mastodon.social",
+     "site": "mastodon.social",
+     "category": null,
+     "status": "ok",
+     "reports": 20,
+     "cited": 4
+    }
+   ]
+  },
+  {
+   "type": "bluesky",
+   "name": "Bluesky",
+   "about": "Topics trending on Bluesky.",
+   "status": "ok",
+   "reports": 25,
+   "cited": 2,
+   "feeds": []
+  }
+ ],
+ "compared_with": {
+  "edition_date": "2026-10-09",
+  "revision": 1
+ },
+ "top": [
+  "c864026a5691",
+  "264478534ba7",
+  "306312ce90b6",
+  "21bec8946347",
+  "021910426c12",
+  "d5023d63430f",
+  "f3793106a177",
+  "202fa341edd7",
+  "55f93bef0b72",
+  "7259af4f5c7a"
+ ],
+ "sections": [
+  {
+   "category": "News",
+   "ids": [
+    "c864026a5691",
+    "264478534ba7",
+    "306312ce90b6",
+    "021910426c12",
+    "d5023d63430f",
+    "f3793106a177",
+    "8c719236148d",
+    "f794b8b8a82d",
+    "6f8b3023ee81",
+    "69684b30bf9c"
+   ]
+  },
+  {
+   "category": "Tech",
+   "ids": [
+    "7259af4f5c7a",
+    "e9a860240d28",
+    "574b140956ac",
+    "89d5ac56ab1c",
+    "0452c40b5e91"
+   ]
+  },
+  {
+   "category": "Science & AI",
+   "ids": [
+    "2de24081df32",
+    "a7a1c6740925",
+    "8442e35832eb",
+    "892c9ac3da51",
+    "b848d7e716e9",
+    "ac156f24577e"
+   ]
+  },
+  {
+   "category": "Sports",
+   "ids": [
+    "21bec8946347",
+    "202fa341edd7",
+    "ddbbbdb8bbad",
+    "01af887fd9fb"
+   ]
+  },
+  {
+   "category": "Entertainment",
+   "ids": [
+    "55f93bef0b72"
+   ]
+  },
+  {
+   "category": "Internet Culture",
+   "ids": [
+    "e156389cb84b"
+   ]
+  }
+ ],
+ "stories": [
+  {
+   "id": "c864026a5691",
+   "rank": 1,
+   "top_rank": 1,
+   "category": "News",
+   "headline": "ICJ judge Navi Pillay wins Nobel peace prize for promoting international law",
+   "url": "https://www.theguardian.com/world/2026/oct/09/navanethem-navi-pillay-wins-nobel-peace-prize",
+   "summary": [
+    "ICJ judge Navi Pillay wins Nobel peace prize for promoting international law.",
+    "Committee recognises work of South African who chaired UN commission that concluded Israel was guilty of genocide in Gaza"
+   ],
+   "why_it_matters": null,
+   "change": "new",
+   "labels": [],
+   "newest_published_utc": "2026-10-09T12:49:38Z",
+   "coverage": {
+    "level": "strong",
+    "points": 6,
+    "independent_reports": 10,
+    "publishers": [
+     "ABC News",
+     "CBC News",
+     "CBS News",
+     "Le Monde",
+     "NPR",
+     "Sky News",
+     "The Guardian",
+     "The Washington Post",
+     "Times of India",
+     "nobelprize.org"
+    ],
+    "repeats": 0,
+    "source_links": 8,
+    "linked_outlets": 7,
+    "linked_reporting_origins": 7,
+    "signals": 1,
+    "channels": 2
+   },
+   "sources": [
+    {
+     "outlet": "The Guardian",
+     "via": "News feeds",
+     "title": "ICJ judge Navi Pillay wins Nobel peace prize for promoting international law",
+     "url": "https://www.theguardian.com/world/2026/oct/09/navanethem-navi-pillay-wins-nobel-peace-prize",
+     "published_utc": "2026-10-09T11:24:10Z",
+     "outlet_id": "theguardian",
+     "reporting_origin": "outlet:theguardian",
+     "kind": "report"
+    },
+    {
+     "outlet": "The Washington Post",
+     "via": "News feeds",
+     "title": "Navi Pillay, leading human rights jurist, awarded Nobel Peace Prize",
+     "url": "https://www.washingtonpost.com/world/2026/10/09/navi-pillay-wins-nobel-peace-prize/",
+     "published_utc": "2026-10-09T10:07:26Z",
+     "outlet_id": "thewashingtonpost",
+     "reporting_origin": "outlet:thewashingtonpost",
+     "kind": "report"
+    },
+    {
+     "outlet": "Sky News",
+     "via": "News feeds",
+     "title": "And the Nobel Peace Prize goes to...",
+     "url": "https://news.sky.com/story/former-un-human-rights-chief-navi-pillay-wins-the-nobel-peace-prize-13596724",
+     "published_utc": "2026-10-09T09:01:00Z",
+     "outlet_id": "sky",
+     "reporting_origin": "outlet:sky",
+     "kind": "report"
+    },
+    {
+     "outlet": "Times of India",
+     "via": "News feeds",
+     "title": "'I may share it with Trump': Navi Pillay jokes after winning Nobel Peace Prize",
+     "url": "https://timesofindia.indiatimes.com/world/us/i-may-share-it-with-trump-navi-pillay-jokes-after-winning-the-nobel-peace-prize/articleshow/134831913.cms",
+     "published_utc": "2026-10-09T11:32:22Z",
+     "outlet_id": "indiatimes",
+     "reporting_origin": "outlet:indiatimes",
+     "kind": "report"
+    },
+    {
+     "outlet": "X",
+     "via": "X (trends24)",
+     "title": "Navi Pillay",
+     "url": "https://x.com/search?q=Navi%20Pillay",
+     "published_utc": null,
+     "outlet_id": "x",
+     "reporting_origin": null,
+     "kind": "signal"
+    },
+    {
+     "outlet": "NPR",
+     "via": "News feeds",
+     "title": "South African human rights lawyer Navi Pillay wins the Nobel Peace Prize",
+     "url": "https://www.npr.org/2026/10/08/nx-s1-5994952/nobel-peace-prize",
+     "published_utc": "2026-10-09T08:23:16Z",
+     "outlet_id": "npr",
+     "reporting_origin": "outlet:npr",
+     "kind": "report"
+    },
+    {
+     "outlet": "Le Monde",
+     "via": "News feeds",
+     "title": "2026 Nobel Peace Prize awarded to South Africa's Navanethem 'Navi' Pillay for her efforts to promote international law",
+     "url": "https://www.lemonde.fr/en/international/article/2026/10/09/2026-nobel-peace-prize-awarded-to-south-africa-s-navanethem-navi-pillay_6758414_4.html",
+     "published_utc": "2026-10-09T09:15:12Z",
+     "outlet_id": "lemonde",
+     "reporting_origin": "outlet:lemonde",
+     "kind": "report"
+    },
+    {
+     "outlet": "CBS News",
+     "via": "News feeds",
+     "title": "Nobel Peace Prize awarded to former ICC judge Navanethem \"Navi\" Pillay",
+     "url": "https://www.cbsnews.com/news/nobel-peace-prize-2026-navanethem-navi-pillay-south-africa/",
+     "published_utc": "2026-10-09T12:49:38Z",
+     "outlet_id": "cbsnews",
+     "reporting_origin": "outlet:cbsnews",
+     "kind": "report"
+    }
+   ]
+  },
+  {
+   "id": "264478534ba7",
+   "rank": 2,
+   "top_rank": 2,
+   "category": "News",
+   "headline": "Firing Squad Execution to Be Livestreamed, Pentagon Says",
+   "url": "https://www.bbc.co.uk/news/articles/cmy0r96xygx6o?at_medium=RSS&at_campaign=rss",
+   "summary": [
+    "Fort Hood attacker's execution by firing squad will be livestreamed, Pentagon says."
+   ],
+   "why_it_matters": null,
+   "change": "updated",
+   "labels": [],
+   "newest_published_utc": "2026-10-09T12:24:58Z",
+   "coverage": {
+    "level": "strong",
+    "points": 6,
+    "independent_reports": 4,
+    "publishers": [
+     "BBC News",
+     "NPR",
+     "PBS NewsHour",
+     "The New York Times"
+    ],
+    "repeats": 0,
+    "source_links": 8,
+    "linked_outlets": 4,
+    "linked_reporting_origins": 4,
+    "signals": 5,
+    "channels": 2
+   },
+   "sources": [
+    {
+     "outlet": "BBC News",
+     "via": "News feeds",
+     "title": "Firing squad execution to be livestreamed, Pentagon says",
+     "url": "https://www.bbc.co.uk/news/articles/cmy0r96xygx6o?at_medium=RSS&at_campaign=rss",
+     "published_utc": "2026-10-09T12:24:58Z",
+     "outlet_id": "bbcnews",
+     "reporting_origin": "outlet:bbcnews",
+     "kind": "report"
+    },
+    {
+     "outlet": "PBS NewsHour",
+     "via": "News feeds",
+     "title": "Christa Pike's attorneys say she is walking with help and eating after failed execution attempt",
+     "url": "https://www.pbs.org/newshour/nation/christa-pikes-attorneys-say-she-is-walking-with-help-and-eating-after-failed-execution-attempt",
+     "published_utc": "2026-10-09T00:35:13Z",
+     "outlet_id": "pbsnewshour",
+     "reporting_origin": "outlet:pbsnewshour",
+     "kind": "report"
+    },
+    {
+     "outlet": "en.wikipedia.org",
+     "via": "Wikipedia",
+     "title": "Christa Pike",
+     "url": "https://en.wikipedia.org/wiki/Christa_Pike",
+     "published_utc": null,
+     "outlet_id": "wikipedia",
+     "reporting_origin": null,
+     "kind": "signal"
+    },
+    {
+     "outlet": "NPR",
+     "via": "Google News",
+     "title": "Christa Pike is walking with help and eating after failed execution attempt",
+     "url": "https://news.google.com/rss/articles/CBMic0FVX3lxTE11akZrSDhTd2tydUlrQUNQV0ZJRk1xVnBjek9ybUdEZldKbXhpTVMwdm5QeUZITVVfaGYxSmlMd0YyNURMMlMyQngwMXY0ODRJZ3FxSkJYbXpXSFB4UEpnQXBVeXJFS1IxUEt0NzVCYzZUX3c?oc=5",
+     "published_utc": "2026-10-09T05:52:50Z",
+     "outlet_id": "npr",
+     "reporting_origin": "outlet:npr",
+     "kind": "report"
+    },
+    {
+     "outlet": "bsky.app",
+     "via": "Bluesky",
+     "title": "Execution will be streamed, says Pentagon",
+     "url": "https://bsky.app/profile/did:plc:qrz3lhbyuxbeilrc6nekdqme/feed/de4b5451-0748-4086-a11a-337978f34595",
+     "published_utc": null,
+     "outlet_id": "bsky",
+     "reporting_origin": null,
+     "kind": "signal"
+    },
+    {
+     "outlet": "The New York Times",
+     "via": "News feeds",
+     "title": "The 2026 Nobel Peace Prize Winner, and the Pentagon’s Plan to Livestream an Execution",
+     "url": "https://www.nytimes.com/2026/10/09/podcasts/the-headlines/nobel-peace-prize-livestream-execution.html",
+     "published_utc": "2026-10-09T11:00:10Z",
+     "outlet_id": "thenewyorktimes",
+     "reporting_origin": "outlet:thenewyorktimes",
+     "kind": "report"
+    },
+    {
+     "outlet": "The Guardian",
+     "via": "Mastodon",
+     "title": "Pentagon says execution of Fort Hood shooter will be livestreamed",
+     "url": "https://www.theguardian.com/us-news/2026/oct/08/hegseth-fort-hood-shooter-public-execution",
+     "published_utc": "2026-10-08T23:18:29Z",
+     "outlet_id": "theguardian",
+     "reporting_origin": null,
+     "kind": "signal"
+    },
+    {
+     "outlet": "reddit.com",
+     "via": "Reddit",
+     "title": "Pentagon says execution of Fort Hood shooter will be livestreamed",
+     "url": "https://www.reddit.com/r/news/comments/1x1359j/pentagon_says_execution_of_fort_hood_shooter_will/",
+     "published_utc": "2026-10-08T21:19:28Z",
+     "outlet_id": "reddit",
+     "reporting_origin": null,
+     "kind": "signal"
+    }
+   ]
+  },
+  {
+   "id": "306312ce90b6",
+   "rank": 3,
+   "top_rank": 3,
+   "category": "News",
+   "headline": "Isaias strengthens into Category 2 hurricane on collision course with the Gulf Coast",
+   "url": "https://www.npr.org/2026/10/09/nx-s1-5996396/hurricane-isaias-updates",
+   "summary": [
+    "Isaias strengthens into Category 2 hurricane on collision course with the Gulf Coast.",
+    "The first hurricane of the Atlantic season was forecast to intensify rapidly and cause dangerous conditions in the Florida Panhandle, southern Alabama and southern Mississippi when it makes landfall late Friday or early Saturday."
+   ],
+   "why_it_matters": null,
+   "change": "updated",
+   "labels": [],
+   "newest_published_utc": "2026-10-09T12:54:28Z",
+   "coverage": {
+    "level": "strong",
+    "points": 6,
+    "independent_reports": 6,
+    "publishers": [
+     "ABC News",
+     "BBC News",
+     "CBS News",
+     "NPR",
+     "PBS NewsHour",
+     "The Guardian"
+    ],
+    "repeats": 1,
+    "source_links": 7,
+    "linked_outlets": 6,
+    "linked_reporting_origins": 6,
+    "signals": 0,
+    "channels": 2
+   },
+   "sources": [
+    {
+     "outlet": "NPR",
+     "via": "News feeds",
+     "title": "Isaias strengthens into Category 2 hurricane on collision course with the Gulf Coast",
+     "url": "https://www.npr.org/2026/10/09/nx-s1-5996396/hurricane-isaias-updates",
+     "published_utc": "2026-10-09T05:20:03Z",
+     "outlet_id": "npr",
+     "reporting_origin": "outlet:npr",
+     "kind": "report"
+    },
+    {
+     "outlet": "ABC News",
+     "via": "News feeds",
+     "title": "Hurricane Isaias takes aim at Florida Panhandle, now Category 3 storm",
+     "url": "https://abcnews.com/US/hurricane-isaias-takes-aim-florida-panhandle/story?id=137122880",
+     "published_utc": "2026-10-09T12:39:10Z",
+     "outlet_id": "abcnews",
+     "reporting_origin": "outlet:abcnews",
+     "kind": "report"
+    },
+    {
+     "outlet": "The Guardian",
+     "via": "News feeds",
+     "title": "Isaias strengthens to become first Atlantic hurricane of 2026 season",
+     "url": "https://www.theguardian.com/environment/2026/oct/09/isaias-strengthens-first-atlantic-hurricane-2026",
+     "published_utc": "2026-10-09T09:59:06Z",
+     "outlet_id": "theguardian",
+     "reporting_origin": "outlet:theguardian",
+     "kind": "report"
+    },
+    {
+     "outlet": "BBC News",
+     "via": "News feeds",
+     "title": "Hurricane Isaias strengthens to a major category three storm",
+     "url": "https://www.bbc.co.uk/weather/articles/cw146l6pnvx0o?at_medium=RSS&at_campaign=rss",
+     "published_utc": "2026-10-09T12:54:28Z",
+     "outlet_id": "bbcnews",
+     "reporting_origin": "outlet:bbcnews",
+     "kind": "report"
+    },
+    {
+     "outlet": "CBS News",
+     "via": "YouTube",
+     "title": "Florida bracing for impact from Hurricane Isaias",
+     "url": "https://www.youtube.com/watch?v=A8YBiAp5T9w",
+     "published_utc": "2026-10-09T00:21:36Z",
+     "outlet_id": "cbsnews",
+     "reporting_origin": "outlet:cbsnews",
+     "kind": "report"
+    },
+    {
+     "outlet": "PBS NewsHour",
+     "via": "YouTube",
+     "title": "Gulf Coast prepares for landfall as Hurricane Isaias gains power",
+     "url": "https://www.youtube.com/watch?v=YMwVOj1E888",
+     "published_utc": "2026-10-08T22:21:03Z",
+     "outlet_id": "pbsnewshour",
+     "reporting_origin": "outlet:pbsnewshour",
+     "kind": "report"
+    },
+    {
+     "outlet": "PBS NewsHour",
+     "via": "News feeds",
+     "title": "Gulf Coast prepares for landfall as Hurricane Isaias gains power",
+     "url": "https://www.pbs.org/newshour/show/gulf-coast-prepares-for-landfall-as-hurricane-isaias-gains-power",
+     "published_utc": "2026-10-08T22:55:06Z",
+     "outlet_id": "pbsnewshour",
+     "reporting_origin": "outlet:pbsnewshour",
+     "kind": "repeat"
+    }
+   ]
+  },
+  {
+   "id": "21bec8946347",
+   "rank": 4,
+   "top_rank": 4,
+   "category": "Sports",
+   "headline": "Guardians erupt in sixth inning to stun White Sox in Game 4 of ALDS, force deciding Game 5",
+   "url": "https://www.cbssports.com/mlb/news/guardians-white-sox-alds-game-4-mlb-playoffs/",
+   "summary": [
+    "Guardians erupt in sixth inning to stun White Sox in Game 4 of ALDS, force deciding Game 5.",
+    "The Guardians have taken both games in Chicago after trailing 2-0 in the best-of-five ALDS"
+   ],
+   "why_it_matters": null,
+   "change": "",
+   "labels": [],
+   "newest_published_utc": "2026-10-09T05:26:39Z",
+   "coverage": {
+    "level": "strong",
+    "points": 5,
+    "independent_reports": 4,
+    "publishers": [
+     "CBS Sports",
+     "ESPN",
+     "Fox News",
+     "Yahoo Sports"
+    ],
+    "repeats": 2,
+    "source_links": 6,
+    "linked_outlets": 4,
+    "linked_reporting_origins": 4,
+    "signals": 0,
+    "channels": 1
+   },
+   "sources": [
+    {
+     "outlet": "CBS Sports",
+     "via": "News feeds",
+     "title": "Guardians erupt in sixth inning to stun White Sox in Game 4 of ALDS, force deciding Game 5",
+     "url": "https://www.cbssports.com/mlb/news/guardians-white-sox-alds-game-4-mlb-playoffs/",
+     "published_utc": "2026-10-09T04:59:10Z",
+     "outlet_id": "cbssports",
+     "reporting_origin": "outlet:cbssports",
+     "kind": "report"
+    },
+    {
+     "outlet": "Yahoo Sports",
+     "via": "News feeds",
+     "title": "ALDS Game 4: White Sox collapse forces Game 5",
+     "url": "https://sports.yahoo.com/articles/alds-game-4-white-sox-051552379.html",
+     "published_utc": "2026-10-09T05:15:52Z",
+     "outlet_id": "yahoo",
+     "reporting_origin": "outlet:yahoo",
+     "kind": "report"
+    },
+    {
+     "outlet": "ESPN",
+     "via": "News feeds",
+     "title": "MLB division series takeaways: Guardians rock White Sox to force Game 5",
+     "url": "https://www.espn.com/mlb/story/_/id/50128553/mlb-2026-playoffs-division-series-alds-game-4-updates-lineups-analysis-takeaways",
+     "published_utc": "2026-10-09T05:26:39Z",
+     "outlet_id": "espn",
+     "reporting_origin": "outlet:espn",
+     "kind": "report"
+    },
+    {
+     "outlet": "Fox News",
+     "via": "News feeds",
+     "title": "Guardians force decisive ALDS Game 5 as White Sox miss chance to reach first ALCS since 2005",
+     "url": "https://www.foxnews.com/outkick-sports/guardians-force-decisive-alds-game-5-white-sox-miss-chance-reach-first-alcs-since-2005",
+     "published_utc": "2026-10-09T04:22:46Z",
+     "outlet_id": "foxnews",
+     "reporting_origin": "outlet:foxnews",
+     "kind": "report"
+    },
+    {
+     "outlet": "CBS Sports",
+     "via": "News feeds",
+     "title": "2026 MLB playoff bracket: Schedule, scores as Guardians force Game 5 vs. White Sox in ALDS",
+     "url": "https://www.cbssports.com/mlb/news/2026-mlb-playoff-bracket-schedule-scores-results-how-to-watch/",
+     "published_utc": "2026-10-09T03:49:09Z",
+     "outlet_id": "cbssports",
+     "reporting_origin": "outlet:cbssports",
+     "kind": "repeat"
+    },
+    {
+     "outlet": "ESPN",
+     "via": "News feeds",
+     "title": "Ramirez launches another clutch HR as Guardians force winner-take-all Game 5",
+     "url": "https://www.espn.com/mlb/story/_/id/50137741/ramirez-guardians-top-white-sox-force-decisive-game-5-alds",
+     "published_utc": "2026-10-09T05:13:09Z",
+     "outlet_id": "espn",
+     "reporting_origin": "outlet:espn",
+     "kind": "repeat"
+    }
+   ]
+  },
+  {
+   "id": "021910426c12",
+   "rank": 5,
+   "top_rank": 5,
+   "category": "News",
+   "headline": "Between record debt and high school protests, France's situation draws global attention",
+   "url": "https://www.lemonde.fr/en/international/article/2026/10/09/between-record-debt-and-high-school-protests-france-s-situation-draws-global-attention_6758409_4.html",
+   "summary": [
+    "Between record debt and high school protests, France's situation draws global attention.",
+    "The mobilization of French high school students has sparked major media coverage and political reactions in the United States, Italy, Belgium and the United Kingdom."
+   ],
+   "why_it_matters": null,
+   "change": "",
+   "labels": [],
+   "newest_published_utc": "2026-10-09T03:00:10Z",
+   "coverage": {
+    "level": "strong",
+    "points": 5,
+    "independent_reports": 3,
+    "publishers": [
+     "CBS News",
+     "Le Monde",
+     "The New York Times"
+    ],
+    "repeats": 1,
+    "source_links": 5,
+    "linked_outlets": 3,
+    "linked_reporting_origins": 3,
+    "signals": 1,
+    "channels": 2
+   },
+   "sources": [
+    {
+     "outlet": "Le Monde",
+     "via": "News feeds",
+     "title": "Between record debt and high school protests, France's situation draws global attention",
+     "url": "https://www.lemonde.fr/en/international/article/2026/10/09/between-record-debt-and-high-school-protests-france-s-situation-draws-global-attention_6758409_4.html",
+     "published_utc": "2026-10-09T03:00:10Z",
+     "outlet_id": "lemonde",
+     "reporting_origin": "outlet:lemonde",
+     "kind": "report"
+    },
+    {
+     "outlet": "Le Monde",
+     "via": "News feeds",
+     "title": "High school protests draw tens of thousands across France for second time in a week",
+     "url": "https://www.lemonde.fr/en/france/article/2026/10/09/high-school-protests-draw-tens-of-thousands-across-france-for-second-time-in-a-week_6758404_7.html",
+     "published_utc": "2026-10-08T22:31:04Z",
+     "outlet_id": "lemonde",
+     "reporting_origin": "outlet:lemonde",
+     "kind": "repeat"
+    },
+    {
+     "outlet": "CBS News",
+     "via": "News feeds",
+     "title": "Riot police clash with students in Paris protests",
+     "url": "https://www.cbsnews.com/video/riot-police-clash-students-paris-protests/",
+     "published_utc": "2026-10-09T00:04:10Z",
+     "outlet_id": "cbsnews",
+     "reporting_origin": "outlet:cbsnews",
+     "kind": "report"
+    },
+    {
+     "outlet": "The New York Times",
+     "via": "Google News",
+     "title": "Paris Police Disperse Thousands Protesting School Conditions",
+     "url": "https://news.google.com/rss/articles/CBMihAFBVV95cUxOemRha3VQVG9VekNqYVp6VjdBYWJsd0g5aTlvWlFvZTMtbzRZYllWTk1NSi1OS2JESTJhY2FpMndNR08xd0RtMWpaWmtiaVVqcWNpR0l4bnRldTRJQUotOTNlU2V6dDI1OEtqWHRLa200bVdTWFltZUZoeUJuTWRCblgzTlE?oc=5",
+     "published_utc": "2026-10-08T18:42:31Z",
+     "outlet_id": "thenewyorktimes",
+     "reporting_origin": "outlet:thenewyorktimes",
+     "kind": "report"
+    },
+    {
+     "outlet": "bsky.app",
+     "via": "Bluesky",
+     "title": "French student protests",
+     "url": "https://bsky.app/profile/did:plc:qrz3lhbyuxbeilrc6nekdqme/feed/2712067e3e5a",
+     "published_utc": null,
+     "outlet_id": "bsky",
+     "reporting_origin": null,
+     "kind": "signal"
+    }
+   ]
+  },
+  {
+   "id": "d5023d63430f",
+   "rank": 6,
+   "top_rank": 6,
+   "category": "News",
+   "headline": "US midterms: key takeaways from Senate debates in Michigan, Georgia and Maine",
+   "url": "https://www.theguardian.com/us-news/2026/oct/09/us-midterms-michigan-georgia-maine-senate-debate-key-takeaways",
+   "summary": [
+    "US midterms: key takeaways from Senate debates in Michigan, Georgia and Maine.",
+    "Candidates traded personal attacks, sparred over affordability, the economy and abortion win three closely watched US Senate debates on Thursday"
+   ],
+   "why_it_matters": null,
+   "change": "",
+   "labels": [],
+   "newest_published_utc": "2026-10-09T04:48:13Z",
+   "coverage": {
+    "level": "moderate",
+    "points": 4,
+    "independent_reports": 3,
+    "publishers": [
+     "The Guardian",
+     "The Hill",
+     "The New York Times"
+    ],
+    "repeats": 0,
+    "source_links": 3,
+    "linked_outlets": 3,
+    "linked_reporting_origins": 3,
+    "signals": 0,
+    "channels": 1
+   },
+   "sources": [
+    {
+     "outlet": "The Guardian",
+     "via": "News feeds",
+     "title": "US midterms: key takeaways from Senate debates in Michigan, Georgia and Maine",
+     "url": "https://www.theguardian.com/us-news/2026/oct/09/us-midterms-michigan-georgia-maine-senate-debate-key-takeaways",
+     "published_utc": "2026-10-09T04:48:13Z",
+     "outlet_id": "theguardian",
+     "reporting_origin": "outlet:theguardian",
+     "kind": "report"
+    },
+    {
+     "outlet": "The New York Times",
+     "via": "News feeds",
+     "title": "Fiery Senate Debates in Maine, Michigan and Georgia: Five Takeaways",
+     "url": "https://www.nytimes.com/2026/10/09/us/fiery-senate-debates-in-maine-michigan-and-georgia-five-takeaways.html",
+     "published_utc": "2026-10-09T04:01:07Z",
+     "outlet_id": "thenewyorktimes",
+     "reporting_origin": "outlet:thenewyorktimes",
+     "kind": "report"
+    },
+    {
+     "outlet": "The Hill",
+     "via": "News feeds",
+     "title": "Second Maine Senate debate takes testy turn: 3 takeaways",
+     "url": "https://thehill.com/homenews/campaign/6138012-second-maine-senate-debate-collins-jackson-takeaways/",
+     "published_utc": "2026-10-09T02:17:40Z",
+     "outlet_id": "thehill",
+     "reporting_origin": "outlet:thehill",
+     "kind": "report"
+    }
+   ]
+  },
+  {
+   "id": "f3793106a177",
+   "rank": 7,
+   "top_rank": 7,
+   "category": "News",
+   "headline": "Houthi Strikes on Riyadh Airport Killed Three Saudis",
+   "url": null,
+   "summary": [
+    "Houthi strikes on Riyadh airport killed three Saudis as war escalates.",
+    "Explosions were heard in Saudi Arabia's capital, including a large blast at Riyadh's international airport."
+   ],
+   "why_it_matters": null,
+   "change": "updated",
+   "labels": [],
+   "newest_published_utc": "2026-10-09T11:57:24Z",
+   "coverage": {
+    "level": "moderate",
+    "points": 4,
+    "independent_reports": 2,
+    "publishers": [
+     "Reuters",
+     "Sky News"
+    ],
+    "repeats": 0,
+    "source_links": 2,
+    "linked_outlets": 2,
+    "linked_reporting_origins": 2,
+    "signals": 0,
+    "channels": 2
+   },
+   "sources": [
+    {
+     "outlet": "Reuters",
+     "via": "Google News",
+     "title": "Houthi strikes on Riyadh airport killed three Saudis as war escalates",
+     "url": "https://news.google.com/rss/articles/CBMiuAFBVV95cUxQMEFCQWZhWGJXa25ZeDBOZlE3b3RWQldSSUM5MmRDd1JqdFNvbl83R19nc014ek1YTW1iQlBqbW1paUlManF3UzlNT21BTl81cG5NNGQ5MWhWOWZOMnpQamN6TmxrUFVLVXRCaTl2T0JYclhVc3dvLUpNeG5wY3JSci02OHVtWmRpemp2UExRUGRoTnpyN3lKUGlRQ3FHdS1pZDNvNVM0bWE2djAzNzNvNTg4RVdXVEhw?oc=5",
+     "published_utc": "2026-10-09T11:57:24Z",
+     "outlet_id": "reuters",
+     "reporting_origin": "outlet:reuters",
+     "kind": "report"
+    },
+    {
+     "outlet": "Sky News",
+     "via": "News feeds",
+     "title": "Flights to Saudi capital suspended after Houthis 'attack on airport'",
+     "url": "https://news.sky.com/story/airlines-suspend-flights-to-saudi-capital-after-houthis-claim-attack-on-airport-13596623",
+     "published_utc": "2026-10-08T17:23:00Z",
+     "outlet_id": "sky",
+     "reporting_origin": "outlet:sky",
+     "kind": "report"
+    }
+   ]
+  },
+  {
+   "id": "8c719236148d",
+   "rank": 8,
+   "top_rank": null,
+   "category": "News",
+   "headline": "Trump Says U.S. Won't Attack Iran Before Midterms",
+   "url": "https://www.npr.org/2026/10/09/g-s1-147455/up-first-newsletter-hurricane-isaias-ukraine-russia-trump-iran-ice-shooting",
+   "summary": [
+    "Trump says U.S. won't attack Iran before midterms.",
+    "And, ICE agent shoots man in NYC."
+   ],
+   "why_it_matters": null,
+   "change": "new",
+   "labels": [],
+   "newest_published_utc": "2026-10-09T11:37:04Z",
+   "coverage": {
+    "level": "moderate",
+    "points": 4,
+    "independent_reports": 2,
+    "publishers": [
+     "BBC News",
+     "NPR"
+    ],
+    "repeats": 0,
+    "source_links": 2,
+    "linked_outlets": 2,
+    "linked_reporting_origins": 2,
+    "signals": 0,
+    "channels": 2
+   },
+   "sources": [
+    {
+     "outlet": "NPR",
+     "via": "News feeds",
+     "title": "Trump says U.S. won't attack Iran before midterms. And, ICE agent shoots man in NYC",
+     "url": "https://www.npr.org/2026/10/09/g-s1-147455/up-first-newsletter-hurricane-isaias-ukraine-russia-trump-iran-ice-shooting",
+     "published_utc": "2026-10-09T11:37:04Z",
+     "outlet_id": "npr",
+     "reporting_origin": "outlet:npr",
+     "kind": "report"
+    },
+    {
+     "outlet": "BBC News",
+     "via": "YouTube",
+     "title": "President Trump says the US won't attack Iran before crucial midterm elections",
+     "url": "https://www.youtube.com/watch?v=YN4KKlhJwwA",
+     "published_utc": "2026-10-08T20:45:25Z",
+     "outlet_id": "bbcnews",
+     "reporting_origin": "outlet:bbcnews",
+     "kind": "report"
+    }
+   ]
+  },
+  {
+   "id": "202fa341edd7",
+   "rank": 9,
+   "top_rank": 8,
+   "category": "Sports",
+   "headline": "LeBron still adjusting but logs strong start in 1st game with 76ers",
+   "url": "https://www.espn.com/nba/story/_/id/50137673/lebron-james-scores-10-points-18-minutes-76ers-debut",
+   "summary": [
+    "LeBron still adjusting but logs strong start in 1st game with 76ers.",
+    "LeBron James, who joined the 76ers this summer, had 10 points, five assists and four rebounds in the first half of his debut with Philadelphia."
+   ],
+   "why_it_matters": null,
+   "change": "",
+   "labels": [],
+   "newest_published_utc": "2026-10-09T05:26:39Z",
+   "coverage": {
+    "level": "strong",
+    "points": 5,
+    "independent_reports": 3,
+    "publishers": [
+     "ESPN",
+     "The Guardian",
+     "Yahoo Sports"
+    ],
+    "repeats": 0,
+    "source_links": 3,
+    "linked_outlets": 3,
+    "linked_reporting_origins": 3,
+    "signals": 0,
+    "channels": 2
+   },
+   "sources": [
+    {
+     "outlet": "ESPN",
+     "via": "News feeds",
+     "title": "LeBron still adjusting but logs strong start in 1st game with 76ers",
+     "url": "https://www.espn.com/nba/story/_/id/50137673/lebron-james-scores-10-points-18-minutes-76ers-debut",
+     "published_utc": "2026-10-09T05:26:39Z",
+     "outlet_id": "espn",
+     "reporting_origin": "outlet:espn",
+     "kind": "report"
+    },
+    {
+     "outlet": "Yahoo Sports",
+     "via": "Google News",
+     "title": "LeBron James plays point forward as 76ers offense shines in first look at new star-studded lineup",
+     "url": "https://news.google.com/rss/articles/CBMi9gFBVV95cUxOdWswNGk2enFZNkQ2Z2JXU24ybW1OZVlMMm03S3oyTk5RX2FPMlQzSWlqZFNlY1JzT3VxdXhwRHNCQW5nenRBUXVtZ0REOUJ4czk3M2NVMVNodzBRdGVZbjlfUm5QUzNocHF6STJTS3dRNmtST1oxMlBleElNSnJrcVY1bHFrNUlvV1VHQTRqdU5xWkxBbk1Ub2FkRzhlLVBJVC1VcHJYNmxEYkh1eURJQUVDUWtLOE1hMzlWYmFaN21ORnBfdDg5QThGamhTakNOTFFJNHRSSnhOYl8tbnpOMjJYeEhhdld0UVFVYVM1S1l1RkdRSEE?oc=5",
+     "published_utc": "2026-10-09T00:59:00Z",
+     "outlet_id": "yahoosports",
+     "reporting_origin": "outlet:yahoosports",
+     "kind": "report"
+    },
+    {
+     "outlet": "The Guardian",
+     "via": "News feeds",
+     "title": "LeBron James shines in pre-season debut for revamped Philadelphia 76ers",
+     "url": "https://www.theguardian.com/sport/2026/oct/08/lebron-james-philadelphia-76ers-debut-brooklyn-nets-preseason",
+     "published_utc": "2026-10-09T03:29:04Z",
+     "outlet_id": "theguardian",
+     "reporting_origin": "outlet:theguardian",
+     "kind": "report"
+    }
+   ]
+  },
+  {
+   "id": "55f93bef0b72",
+   "rank": 10,
+   "top_rank": 9,
+   "category": "Entertainment",
+   "headline": "Princeton Celebrates Anne Carson, a Nobel Prize Winner Who Was Denied Tenure",
+   "url": null,
+   "summary": [
+    "Princeton Celebrates Anne Carson, a Nobel Prize Winner Who Was Denied Tenure."
+   ],
+   "why_it_matters": null,
+   "change": "",
+   "labels": [],
+   "newest_published_utc": "2026-10-09T02:15:30Z",
+   "coverage": {
+    "level": "moderate",
+    "points": 4,
+    "independent_reports": 2,
+    "publishers": [
+     "BBC News",
+     "The New York Times"
+    ],
+    "repeats": 0,
+    "source_links": 3,
+    "linked_outlets": 2,
+    "linked_reporting_origins": 2,
+    "signals": 1,
+    "channels": 2
+   },
+   "sources": [
+    {
+     "outlet": "en.wikipedia.org",
+     "via": "Wikipedia",
+     "title": "Anne Carson",
+     "url": "https://en.wikipedia.org/wiki/Anne_Carson",
+     "published_utc": null,
+     "outlet_id": "wikipedia",
+     "reporting_origin": null,
+     "kind": "signal"
+    },
+    {
+     "outlet": "The New York Times",
+     "via": "Google News",
+     "title": "Princeton Celebrates Anne Carson, a Nobel Prize Winner Who Was Denied Tenure",
+     "url": "https://news.google.com/rss/articles/CBMipwFBVV95cUxNNl9VeGZsbDhKRzJVUXFMWjJmTmUzUVRreklTVFRFLXp5WjZoeWZBbmFhZjA2NWJvTnk1NkhZbTR5MTRiVlJtbWMxYXhWdVNNWlpqdXRNMUhtYTI0RlhOQy15X2tmcFB1TkhMb1g0Z3FuQi1udGZLOFZGVzNpN1NJeU5hYmJ4SE1lcmV3T19xMWlKSVRoY0o5NWNmcXBIbkNOMnZ1SmNZMA?oc=5",
+     "published_utc": "2026-10-09T02:15:30Z",
+     "outlet_id": "thenewyorktimes",
+     "reporting_origin": "outlet:thenewyorktimes",
+     "kind": "report"
+    },
+    {
+     "outlet": "BBC News",
+     "via": "News feeds",
+     "title": "'Bold and inventive' Canadian poet Anne Carson wins Nobel Literature Prize",
+     "url": "https://www.bbc.co.uk/news/articles/cq4g1j54nepyo?at_medium=RSS&at_campaign=rss",
+     "published_utc": "2026-10-08T14:33:23Z",
+     "outlet_id": "bbcnews",
+     "reporting_origin": "outlet:bbcnews",
+     "kind": "report"
+    }
+   ]
+  },
+  {
+   "id": "7259af4f5c7a",
+   "rank": 11,
+   "top_rank": 10,
+   "category": "Tech",
+   "headline": "Trump administration is suspending Microsoft from a green card program",
+   "url": "https://apnews.com/article/h1b-visa-program-vance-microsoft-e7b3a407f822702b269ee277d21343ea",
+   "summary": [
+    "Trump administration is suspending Microsoft from a green card program."
+   ],
+   "why_it_matters": null,
+   "change": "updated",
+   "labels": [],
+   "newest_published_utc": "2026-10-09T12:20:00Z",
+   "coverage": {
+    "level": "moderate",
+    "points": 4,
+    "independent_reports": 2,
+    "publishers": [
+     "AP News",
+     "Fast Company"
+    ],
+    "repeats": 1,
+    "source_links": 3,
+    "linked_outlets": 2,
+    "linked_reporting_origins": 2,
+    "signals": 0,
+    "channels": 3
+   },
+   "sources": [
+    {
+     "outlet": "AP News",
+     "via": "Hacker News",
+     "title": "Trump administration is suspending Microsoft from a green card program",
+     "url": "https://apnews.com/article/h1b-visa-program-vance-microsoft-e7b3a407f822702b269ee277d21343ea",
+     "published_utc": "2026-10-08T15:15:00Z",
+     "outlet_id": "apnews",
+     "reporting_origin": "outlet:apnews",
+     "kind": "report"
+    },
+    {
+     "outlet": "AP News",
+     "via": "Google News",
+     "title": "The Trump administration is suspending Microsoft from a green card program, alleging fraud",
+     "url": "https://news.google.com/rss/articles/CBMilwFBVV95cUxOSlNGOUJHbkJ0UXdETE9EUWMySjZkMWVzX3V6Ny1yNlc1Ym4ydmx5NXY2UEJyak1mNVROdkRqOTNGY2kxT1BrQUwyYVRzSmlDNlVIa0xnenNUM2cyWjg2NTd0Rl9seW1JOVFuRHczVk93M2RkOWdDOUV0Sl90WjFJeEZEeWNTUFFvNkNkRU81alBOWlltQ1VN?oc=5",
+     "published_utc": "2026-10-09T00:07:00Z",
+     "outlet_id": "apnews",
+     "reporting_origin": "outlet:apnews",
+     "kind": "repeat"
+    },
+    {
+     "outlet": "Fast Company",
+     "via": "News feeds",
+     "title": "Microsoft and Adobe are suspended from H-B1 visa program, with Vance accusing the tech giants of fraud",
+     "url": "https://www.fastcompany.com/91620880/microsoft-and-adobe-are-suspended-from-h-b1-visa-program-with-vance-accusing-the-tech-giants-of-fraud",
+     "published_utc": "2026-10-09T12:20:00Z",
+     "outlet_id": "fastcompany",
+     "reporting_origin": "outlet:fastcompany",
+     "kind": "report"
+    }
+   ]
+  },
+  {
+   "id": "2de24081df32",
+   "rank": 12,
+   "top_rank": null,
+   "category": "Science & AI",
+   "headline": "4 astronauts return to Earth after 8 months in space",
+   "url": null,
+   "summary": [
+    "4 astronauts return to Earth after 8 months in space."
+   ],
+   "why_it_matters": null,
+   "change": "updated",
+   "labels": [],
+   "newest_published_utc": "2026-10-09T03:56:28Z",
+   "coverage": {
+    "level": "strong",
+    "points": 6,
+    "independent_reports": 4,
+    "publishers": [
+     "KSL News",
+     "NASA",
+     "NPR",
+     "ScienceDaily"
+    ],
+    "repeats": 0,
+    "source_links": 4,
+    "linked_outlets": 4,
+    "linked_reporting_origins": 4,
+    "signals": 0,
+    "channels": 3
+   },
+   "sources": [
+    {
+     "outlet": "KSL News",
+     "via": "Google News",
+     "title": "4 astronauts return to Earth after 8 months in space",
+     "url": "https://news.google.com/rss/articles/CBMikwFBVV95cUxQVTd5RXYyODd4V25tdWlVTnZWV1pXUWFMU0JKQU1tLThOMUFLSFgtMHFUNmpuc0RVbWNsNDlJVnl4WmNoTVVHMkd3d1hTTUV5UmJrWnJsX2VyRE9pMjBuelkzVmcyMDZoaDFZSTFIdzlucHI0RkdRclNaRGNMLVNSVzZTd28wWjZZSnpoaS1rdndoRFk?oc=5",
+     "published_utc": "2026-10-09T01:25:05Z",
+     "outlet_id": "kslnews",
+     "reporting_origin": "outlet:kslnews",
+     "kind": "report"
+    },
+    {
+     "outlet": "ScienceDaily",
+     "via": "News feeds",
+     "title": "NASA astronauts splash down after 100 million miles in space",
+     "url": "https://www.sciencedaily.com/releases/2026/10/261008232629.htm",
+     "published_utc": "2026-10-09T03:56:28Z",
+     "outlet_id": "sciencedaily",
+     "reporting_origin": "outlet:sciencedaily",
+     "kind": "report"
+    },
+    {
+     "outlet": "NPR",
+     "via": "News feeds",
+     "title": "4 people on NASA's Crew-12 mission return to Earth after 8 months in space",
+     "url": "https://www.npr.org/2026/10/08/nx-s1-5992845/nasa-spacex-crew-12-international-space-station-iss-splashdown",
+     "published_utc": "2026-10-08T15:34:39Z",
+     "outlet_id": "npr",
+     "reporting_origin": "outlet:npr",
+     "kind": "report"
+    },
+    {
+     "outlet": "NASA",
+     "via": "YouTube",
+     "title": "NASA's SpaceX Crew-12 Re-Entry & Splashdown",
+     "url": "https://www.youtube.com/watch?v=x6p9Ri0DlNE",
+     "published_utc": "2026-10-08T16:52:21Z",
+     "outlet_id": "nasa",
+     "reporting_origin": "outlet:nasa",
+     "kind": "report"
+    }
+   ]
+  },
+  {
+   "id": "e9a860240d28",
+   "rank": 13,
+   "top_rank": null,
+   "category": "Tech",
+   "headline": "What to Expect at Apple's 'Welcome Home' Event Next Week",
+   "url": "https://www.engadget.com/2281840/what-to-expect-at-apples-welcome-home-event-next-week/",
+   "summary": [
+    "What to expect at Apple's 'Welcome home' event next week - Engadget."
+   ],
+   "why_it_matters": null,
+   "change": "new",
+   "labels": [],
+   "newest_published_utc": "2026-10-09T12:00:04Z",
+   "coverage": {
+    "level": "strong",
+    "points": 5,
+    "independent_reports": 3,
+    "publishers": [
+     "CNET",
+     "Engadget",
+     "Mashable"
+    ],
+    "repeats": 0,
+    "source_links": 3,
+    "linked_outlets": 3,
+    "linked_reporting_origins": 3,
+    "signals": 0,
+    "channels": 2
+   },
+   "sources": [
+    {
+     "outlet": "Engadget",
+     "via": "News feeds",
+     "title": "What to expect at Apple's 'Welcome home' event next week",
+     "url": "https://www.engadget.com/2281840/what-to-expect-at-apples-welcome-home-event-next-week/",
+     "published_utc": "2026-10-09T12:00:00Z",
+     "outlet_id": "engadget",
+     "reporting_origin": "outlet:engadget",
+     "kind": "report"
+    },
+    {
+     "outlet": "Mashable",
+     "via": "News feeds",
+     "title": "Apples got a kitchen gadget? What we expect Apple to show us at an event on Tuesday",
+     "url": "https://mashable.com/tech/apples-kitchen-gadget-smart-home-event-leaks",
+     "published_utc": "2026-10-09T12:00:00Z",
+     "outlet_id": "mashable",
+     "reporting_origin": "outlet:mashable",
+     "kind": "report"
+    },
+    {
+     "outlet": "CNET",
+     "via": "YouTube",
+     "title": "Apple's Welcome Home Event: Everything Leaked! Apple TV 4K, HomePods and a New Hub | One More Thing",
+     "url": "https://www.youtube.com/watch?v=Nm4lbhLaESs",
+     "published_utc": "2026-10-09T12:00:04Z",
+     "outlet_id": "cnet",
+     "reporting_origin": "outlet:cnet",
+     "kind": "report"
+    }
+   ]
+  },
+  {
+   "id": "e156389cb84b",
+   "rank": 14,
+   "top_rank": null,
+   "category": "Internet Culture",
+   "headline": "Meta Bans TikTok Ads on Its Platforms in US",
+   "url": null,
+   "summary": [
+    "Meta has banned ads from TikTok's Chinese parent company ByteDance across the US and several other countries, escalating the rivalry between the major social media operators.",
+    "The ban restricts ads and sponsored content from ByteDance across Meta's platforms."
+   ],
+   "why_it_matters": null,
+   "change": "updated",
+   "labels": [],
+   "newest_published_utc": "2026-10-09T13:12:45Z",
+   "coverage": {
+    "level": "strong",
+    "points": 6,
+    "independent_reports": 4,
+    "publishers": [
+     "Bloomberg.com",
+     "CNBC",
+     "Reuters",
+     "The Verge"
+    ],
+    "repeats": 1,
+    "source_links": 5,
+    "linked_outlets": 4,
+    "linked_reporting_origins": 4,
+    "signals": 0,
+    "channels": 2
+   },
+   "sources": [
+    {
+     "outlet": "The Verge",
+     "via": "News feeds",
+     "title": "Meta is banning TikTok ads across its platforms",
+     "url": "https://www.theverge.com/tech/1008658/meta-tiktok-bytedance-ads-ban",
+     "published_utc": "2026-10-09T13:12:45Z",
+     "outlet_id": "theverge",
+     "reporting_origin": "outlet:theverge",
+     "kind": "report"
+    },
+    {
+     "outlet": "The Verge",
+     "via": "Google News",
+     "title": "Meta is banning TikTok ads across its platforms",
+     "url": "https://news.google.com/rss/articles/CBMidkFVX3lxTE5QY0lZcmZiWDBTbS1iOHVyRmtuVm1leEZNdFdHNm8tN3hRSmFRRFJjRVZsb3pQWFFFOElOTGhEc2UwVzVDSUpCWE1PbmQ3SGtJWVZzaVFlOWdhSHFIVDNMWUN2V1JidkdRc3o5ZUUzdnVmU0M1VUE?oc=5",
+     "published_utc": "2026-10-09T13:12:45Z",
+     "outlet_id": "theverge",
+     "reporting_origin": "outlet:theverge",
+     "kind": "repeat"
+    },
+    {
+     "outlet": "Reuters",
+     "via": "Google News",
+     "title": "Meta bans TikTok ads on its platforms in US",
+     "url": "https://news.google.com/rss/articles/CBMiuwFBVV95cUxNcFlfTjhMRWZPWEhDVF9mcGQ1VEY2aWVLMThVLUJaVmNWUzdwV09KTWlDN0E4Rm5IRHFyME1QN01fczZFSGdDbVBsYnh3dDJTdFlfTkczM1NreS11VjJ2QWVFbnV2eU1EMDNWZHl5X2h4WV9SN3FFRUJBaHpzUng2VlhKemtnUnJEblBpajF5U0FCWmdFLWR6azJ0aDB5bEhUdVJHc0g1dVNYY0NZYVdyaU9UOE12SUFDQmpB?oc=5",
+     "published_utc": "2026-10-08T23:28:00Z",
+     "outlet_id": "reuters",
+     "reporting_origin": "outlet:reuters",
+     "kind": "report"
+    },
+    {
+     "outlet": "CNBC",
+     "via": "Google News",
+     "title": "Meta bans TikTok ads on its platforms in the U.S.",
+     "url": "https://news.google.com/rss/articles/CBMilgFBVV95cUxPZi1DX2F6MUVqcHFtSk5YTmJEc1psaEVVUzJSMTB4V0Z4Mk55RjhKRjZ0cTJxTmRCYVlUZloybW9hYUhCWUhSQVlQTjJFUnR4MEY1bW1vNndwaDBaU1dublk3UmdCQUoyMGZhWmhobVJFRHA2MVd6M2ZzbmgwWHdnNnJfbWU4YUpSN2RleHFjbDliNGJyRUE?oc=5",
+     "published_utc": "2026-10-09T11:14:59Z",
+     "outlet_id": "cnbc",
+     "reporting_origin": "outlet:cnbc",
+     "kind": "report"
+    },
+    {
+     "outlet": "Bloomberg.com",
+     "via": "Google News",
+     "title": "Meta Bans Ads From TikTok on Its Apps in Escalating Feud",
+     "url": "https://news.google.com/rss/articles/CBMixwFBVV95cUxPeXFCVEt4TVBVRnF2ejEzTDZINVhULU1CTzVkZXJZNXY4SFpHWWZyMWhsYVVJOS1icVd4NUlPSUFIVnpjdFgyZlJNVl9Qcl9MTm5kNnMzZkNzVElpblpmX1FDVm50NHNZbm1YOVpwWHk1cXlUZVVUV2thNjZsWGVFTFhZU3JSaEg2R09ETENONGdsSnExMnlTVVNiUjQzUDdObFNKbVpsckpRcy00V211RFBodnZFMWltSGRDVlQyYXhkTU04WHZZ?oc=5",
+     "published_utc": "2026-10-09T00:12:00Z",
+     "outlet_id": "bloomberg",
+     "reporting_origin": "outlet:bloomberg",
+     "kind": "report"
+    }
+   ]
+  },
+  {
+   "id": "f794b8b8a82d",
+   "rank": 15,
+   "top_rank": null,
+   "category": "News",
+   "headline": "Margaret Hamilton, computing pioneer who led software development for the Apollo program, dies at 90",
+   "url": "https://news.mit.edu/2026/margaret-hamilton-computing-pioneer-dies-1007",
+   "summary": [
+    "Margaret Hamilton, computing pioneer who led software development for the Apollo program, dies at 90."
+   ],
+   "why_it_matters": null,
+   "change": "",
+   "labels": [],
+   "newest_published_utc": "2026-10-08T00:40:37Z",
+   "coverage": {
+    "level": "limited",
+    "points": 0,
+    "independent_reports": 1,
+    "publishers": [
+     "Lobsters"
+    ],
+    "repeats": 0,
+    "source_links": 4,
+    "linked_outlets": 1,
+    "linked_reporting_origins": 1,
+    "signals": 3,
+    "channels": 1
+   },
+   "sources": [
+    {
+     "outlet": "The Guardian",
+     "via": "Mastodon",
+     "title": "Margaret Hamilton, trailblazer whose software powered Apollo 11 moon landing, dies at 90",
+     "url": "https://www.theguardian.com/science/2026/oct/07/margaret-hamilton-moon-computer-software",
+     "published_utc": "2026-10-08T00:40:37Z",
+     "outlet_id": "theguardian",
+     "reporting_origin": null,
+     "kind": "signal"
+    },
+    {
+     "outlet": "The New York Times",
+     "via": "Mastodon",
+     "title": "Margaret Hamilton, Whose Software Guided the Apollo Missions, Has Died",
+     "url": "https://www.nytimes.com/2026/10/07/obituaries/margaret-hamilton-dead.html",
+     "published_utc": "2026-10-07T23:05:07Z",
+     "outlet_id": "thenewyorktimes",
+     "reporting_origin": null,
+     "kind": "signal"
+    },
+    {
+     "outlet": "BBC News",
+     "via": "Mastodon",
+     "title": "Margaret Hamilton, whose software helped land Apollo 11 on the moon, dies at 90",
+     "url": "https://www.bbc.co.uk/news/articles/cx5yn46j41zpo",
+     "published_utc": null,
+     "outlet_id": "bbcnews",
+     "reporting_origin": null,
+     "kind": "signal"
+    },
+    {
+     "outlet": "Lobsters",
+     "via": "News feeds",
+     "title": "Margaret Hamilton, computing pioneer who led software development for the Apollo program, dies at 90",
+     "url": "https://news.mit.edu/2026/margaret-hamilton-computing-pioneer-dies-1007",
+     "published_utc": "2026-10-07T21:38:09Z",
+     "outlet_id": "mit",
+     "reporting_origin": "outlet:mit",
+     "kind": "report"
+    }
+   ]
+  },
+  {
+   "id": "574b140956ac",
+   "rank": 16,
+   "top_rank": null,
+   "category": "Tech",
+   "headline": "Before Computer Science Became a Boys' Club, Margaret Hamilton Wrote the Code",
+   "url": null,
+   "summary": [
+    "Before Computer Science Became a Boys' Club, Margaret Hamilton Wrote the Code."
+   ],
+   "why_it_matters": null,
+   "change": "",
+   "labels": [],
+   "newest_published_utc": "2026-10-09T02:09:40Z",
+   "coverage": {
+    "level": "limited",
+    "points": 1,
+    "independent_reports": 1,
+    "publishers": [
+     "The New York Times"
+    ],
+    "repeats": 0,
+    "source_links": 1,
+    "linked_outlets": 1,
+    "linked_reporting_origins": 1,
+    "signals": 0,
+    "channels": 1
+   },
+   "sources": [
+    {
+     "outlet": "The New York Times",
+     "via": "Google News",
+     "title": "Before Computer Science Became a Boys’ Club, Margaret Hamilton Wrote the Code",
+     "url": "https://news.google.com/rss/articles/CBMikgFBVV95cUxQMFR2ZlpwRkYtTDJmOGFnc0ZPY1VzOTZ2bWZXV25PRkxMMTdrMXJkUHdXVmlzLURJV29DTmZIdlNUVXFVZ2hDcU1rblVUczBLdm1Xb3NLWFcwdHNjTmR0Slc2U0MxY2NKN2J6TmZIaG43d29fSk5fTDZJSUNUbWlwOUtDc2YzeVJWb1hSMHlaaE5QUQ?oc=5",
+     "published_utc": "2026-10-09T02:09:40Z",
+     "outlet_id": "thenewyorktimes",
+     "reporting_origin": "outlet:thenewyorktimes",
+     "kind": "report"
+    }
+   ]
+  },
+  {
+   "id": "a7a1c6740925",
+   "rank": 17,
+   "top_rank": null,
+   "category": "Science & AI",
+   "headline": "Global analysis reveals how armed conflict erodes farmland and potential food production",
+   "url": "https://phys.org/news/2026-10-global-analysis-reveals-armed-conflict.html",
+   "summary": [
+    "Global analysis reveals how armed conflict erodes farmland and potential food production.",
+    "Armed conflict accelerates cropland loss, and the effects can persist for years after conflict begins and vary substantially with conflict severity and social conditions, according to a new study published in Nature Food on Sept. 24."
+   ],
+   "why_it_matters": null,
+   "change": "",
+   "labels": [],
+   "newest_published_utc": "2026-10-09T03:00:01Z",
+   "coverage": {
+    "level": "limited",
+    "points": 1,
+    "independent_reports": 1,
+    "publishers": [
+     "Phys.org"
+    ],
+    "repeats": 0,
+    "source_links": 1,
+    "linked_outlets": 1,
+    "linked_reporting_origins": 1,
+    "signals": 0,
+    "channels": 1
+   },
+   "sources": [
+    {
+     "outlet": "Phys.org",
+     "via": "News feeds",
+     "title": "Global analysis reveals how armed conflict erodes farmland and potential food production",
+     "url": "https://phys.org/news/2026-10-global-analysis-reveals-armed-conflict.html",
+     "published_utc": "2026-10-09T03:00:01Z",
+     "outlet_id": "phys",
+     "reporting_origin": "outlet:phys",
+     "kind": "report"
+    }
+   ]
+  },
+  {
+   "id": "ddbbbdb8bbad",
+   "rank": 18,
+   "top_rank": null,
+   "category": "Sports",
+   "headline": "Aces' Wilson wins 5th MVP, says she'll nix pregame ceremony to focus on Game 3",
+   "url": "https://www.espn.com/wnba/story/_/id/50135041/sources-aces-star-aja-wilson-wins-record-5th-wnba-mvp-award",
+   "summary": [
+    "Aces' Wilson wins 5th MVP, says she'll nix pregame ceremony to focus on Game 3.",
+    "Las Vegas Aces center A'ja Wilson won a record fifth WNBA Most Valuable Player award but said she will not participate in a pregame ceremony to receive her trophy because she wants to focus on Friday's Game 3."
+   ],
+   "why_it_matters": null,
+   "change": "",
+   "labels": [],
+   "newest_published_utc": "2026-10-09T05:26:26Z",
+   "coverage": {
+    "level": "limited",
+    "points": 0,
+    "independent_reports": 1,
+    "publishers": [
+     "ESPN"
+    ],
+    "repeats": 0,
+    "source_links": 1,
+    "linked_outlets": 1,
+    "linked_reporting_origins": 1,
+    "signals": 0,
+    "channels": 1
+   },
+   "sources": [
+    {
+     "outlet": "ESPN",
+     "via": "News feeds",
+     "title": "Aces' Wilson wins 5th MVP, says she'll nix pregame ceremony to focus on Game 3",
+     "url": "https://www.espn.com/wnba/story/_/id/50135041/sources-aces-star-aja-wilson-wins-record-5th-wnba-mvp-award",
+     "published_utc": "2026-10-09T05:26:26Z",
+     "outlet_id": "espn",
+     "reporting_origin": "outlet:espn",
+     "kind": "report"
+    }
+   ]
+  },
+  {
+   "id": "6f8b3023ee81",
+   "rank": 19,
+   "top_rank": null,
+   "category": "News",
+   "headline": "Trump Envoy Kept Financial Ties to Firm Behind $15 Billion Hormuz-bypass Oil Pipeline Plan",
+   "url": null,
+   "summary": [
+    "Trump envoy kept financial ties to firm behind $15 billion Hormuz-bypass oil pipeline plan."
+   ],
+   "why_it_matters": null,
+   "change": "new",
+   "labels": [],
+   "newest_published_utc": "2026-10-09T11:40:04Z",
+   "coverage": {
+    "level": "limited",
+    "points": 1,
+    "independent_reports": 1,
+    "publishers": [
+     "Reuters"
+    ],
+    "repeats": 0,
+    "source_links": 1,
+    "linked_outlets": 1,
+    "linked_reporting_origins": 1,
+    "signals": 0,
+    "channels": 1
+   },
+   "sources": [
+    {
+     "outlet": "Reuters",
+     "via": "Google News",
+     "title": "Trump envoy kept financial ties to firm behind $15 billion Hormuz-bypass oil pipeline plan",
+     "url": "https://news.google.com/rss/articles/CBMiuAFBVV95cUxNdFAxYTlxLTNCZ3c2bHMya2hWU2VvRUNTQ1I3YllKaGtoRERCSGFwaGFsRDlpQUVsdENqMnloSVpIQlFLZzk0N0VLNEdRSDExR2ZDaU5YOFQ1ekl4Y0tHb2VyUEVGOHVvam9KeTFHU1ZabmxQVjJMRC1jVmZFOVdtdWFuM3p6VHhjU2VqOFl3MXdBUG12OXU4RlMzV0ZNZ3RaSGpidld3cDBzR2VIcjNQOUNRbHdObV9K?oc=5",
+     "published_utc": "2026-10-09T11:40:04Z",
+     "outlet_id": "reuters",
+     "reporting_origin": "outlet:reuters",
+     "kind": "report"
+    }
+   ]
+  },
+  {
+   "id": "69684b30bf9c",
+   "rank": 20,
+   "top_rank": null,
+   "category": "News",
+   "headline": "Trauma Endures in Paris Suburb After Police Grenade Shatters Teenager's Jaw",
+   "url": "https://www.lemonde.fr/en/france/article/2026/10/09/trauma-endures-in-paris-suburb-after-police-grenade-shatters-teenager-s-jaw-they-maim-a-student-leave-and-then-what-how-are-we-supposed-to-pick-up-the-pieces_6758415_7.html",
+   "summary": [
+    "Trauma endures in Paris suburb after police grenade shatters teenager's jaw: 'They maim a student, leave, and then what?"
+   ],
+   "why_it_matters": null,
+   "change": "new",
+   "labels": [],
+   "newest_published_utc": "2026-10-09T09:19:52Z",
+   "coverage": {
+    "level": "limited",
+    "points": 1,
+    "independent_reports": 1,
+    "publishers": [
+     "Le Monde"
+    ],
+    "repeats": 0,
+    "source_links": 1,
+    "linked_outlets": 1,
+    "linked_reporting_origins": 1,
+    "signals": 0,
+    "channels": 1
+   },
+   "sources": [
+    {
+     "outlet": "Le Monde",
+     "via": "News feeds",
+     "title": "Trauma endures in Paris suburb after police grenade shatters teenager's jaw: 'They maim a student, leave, and then what? How are we supposed to pick up the pieces?'",
+     "url": "https://www.lemonde.fr/en/france/article/2026/10/09/trauma-endures-in-paris-suburb-after-police-grenade-shatters-teenager-s-jaw-they-maim-a-student-leave-and-then-what-how-are-we-supposed-to-pick-up-the-pieces_6758415_7.html",
+     "published_utc": "2026-10-09T09:19:52Z",
+     "outlet_id": "lemonde",
+     "reporting_origin": "outlet:lemonde",
+     "kind": "report"
+    }
+   ]
+  },
+  {
+   "id": "01af887fd9fb",
+   "rank": 21,
+   "top_rank": null,
+   "category": "Sports",
+   "headline": "Fury-Joshua Tickets Priced up to GBP 13,000 Sell Out in One Hour",
+   "url": "https://www.bbc.co.uk/sport/boxing/articles/cwp9gxzyplk4o?at_medium=RSS&at_campaign=rss",
+   "summary": [
+    "Fury vs Joshua: Tickets priced up to GBP 13,000 for all-British showdown sell out in one hour."
+   ],
+   "why_it_matters": null,
+   "change": "new",
+   "labels": [],
+   "newest_published_utc": "2026-10-09T12:51:41Z",
+   "coverage": {
+    "level": "limited",
+    "points": 1,
+    "independent_reports": 1,
+    "publishers": [
+     "BBC News"
+    ],
+    "repeats": 0,
+    "source_links": 1,
+    "linked_outlets": 1,
+    "linked_reporting_origins": 1,
+    "signals": 0,
+    "channels": 1
+   },
+   "sources": [
+    {
+     "outlet": "BBC News",
+     "via": "News feeds",
+     "title": "Fury-Joshua tickets priced up to £13,000 sell out in one hour",
+     "url": "https://www.bbc.co.uk/sport/boxing/articles/cwp9gxzyplk4o?at_medium=RSS&at_campaign=rss",
+     "published_utc": "2026-10-09T12:51:41Z",
+     "outlet_id": "bbcnews",
+     "reporting_origin": "outlet:bbcnews",
+     "kind": "report"
+    }
+   ]
+  },
+  {
+   "id": "8442e35832eb",
+   "rank": 22,
+   "top_rank": null,
+   "category": "Science & AI",
+   "headline": "As AI Closed In on ‘Unique Games’ Proof, Researchers Raced to Beat the Machines",
+   "url": "https://www.quantamagazine.org/as-ai-closed-in-on-unique-games-proof-researchers-raced-to-beat-the-machines-20261007/",
+   "summary": [
+    "As AI Closed In on ‘Unique Games’ Proof, Researchers Raced to Beat the Machines.",
+    "In the shadow of a rumored AI proof of one of the biggest problems in their field, three computer scientists rushed to publish their own milestone result."
+   ],
+   "why_it_matters": null,
+   "change": "new",
+   "labels": [],
+   "newest_published_utc": "2026-10-07T15:08:46Z",
+   "coverage": {
+    "level": "limited",
+    "points": 0,
+    "independent_reports": 1,
+    "publishers": [
+     "Quanta Magazine"
+    ],
+    "repeats": 0,
+    "source_links": 1,
+    "linked_outlets": 1,
+    "linked_reporting_origins": 1,
+    "signals": 0,
+    "channels": 1
+   },
+   "sources": [
+    {
+     "outlet": "Quanta Magazine",
+     "via": "News feeds",
+     "title": "As AI Closed In on ‘Unique Games’ Proof, Researchers Raced to Beat the Machines",
+     "url": "https://www.quantamagazine.org/as-ai-closed-in-on-unique-games-proof-researchers-raced-to-beat-the-machines-20261007/",
+     "published_utc": "2026-10-07T15:08:46Z",
+     "outlet_id": "quantamagazine",
+     "reporting_origin": "outlet:quantamagazine",
+     "kind": "report"
+    }
+   ]
+  },
+  {
+   "id": "89d5ac56ab1c",
+   "rank": 23,
+   "top_rank": null,
+   "category": "Tech",
+   "headline": "ShinyHunters Extorted Boeing Spin-off Prior to Arrests",
+   "url": "https://krebsonsecurity.com/2026/10/shinyhunters-extorted-boeing-spin-off-prior-to-arrests/",
+   "summary": [
+    "The data theft and extortion group ShinyHunters extorted a Boeing spin-off prior to the arrests of its suspected leader.",
+    "The group is reportedly cooperating with the FBI to identify other members."
+   ],
+   "why_it_matters": null,
+   "change": "new",
+   "labels": [],
+   "newest_published_utc": "2026-10-07T13:48:45Z",
+   "coverage": {
+    "level": "limited",
+    "points": 0,
+    "independent_reports": 1,
+    "publishers": [
+     "Krebs on Security"
+    ],
+    "repeats": 0,
+    "source_links": 1,
+    "linked_outlets": 1,
+    "linked_reporting_origins": 1,
+    "signals": 0,
+    "channels": 1
+   },
+   "sources": [
+    {
+     "outlet": "Krebs on Security",
+     "via": "News feeds",
+     "title": "ShinyHunters Extorted Boeing Spin-off Prior to Arrests",
+     "url": "https://krebsonsecurity.com/2026/10/shinyhunters-extorted-boeing-spin-off-prior-to-arrests/",
+     "published_utc": "2026-10-07T13:48:45Z",
+     "outlet_id": "krebsonsecurity",
+     "reporting_origin": "outlet:krebsonsecurity",
+     "kind": "report"
+    }
+   ]
+  },
+  {
+   "id": "892c9ac3da51",
+   "rank": 24,
+   "top_rank": null,
+   "category": "Science & AI",
+   "headline": "OpenAI projected to bring in $20bn less in revenue than expected",
+   "url": "https://www.theguardian.com/technology/2026/oct/09/openai-forecast-revenue-gap",
+   "summary": [
+    "OpenAI projected to bring in $20bn less in revenue than expected.",
+    "Questions raised over AI growth as ChatGPT maker forecasts this year's revenue at $50bn, way below the $70bn signalled before"
+   ],
+   "why_it_matters": null,
+   "change": "new",
+   "labels": [],
+   "newest_published_utc": "2026-10-09T08:06:09Z",
+   "coverage": {
+    "level": "limited",
+    "points": 1,
+    "independent_reports": 1,
+    "publishers": [
+     "The Guardian"
+    ],
+    "repeats": 0,
+    "source_links": 1,
+    "linked_outlets": 1,
+    "linked_reporting_origins": 1,
+    "signals": 0,
+    "channels": 1
+   },
+   "sources": [
+    {
+     "outlet": "The Guardian",
+     "via": "News feeds",
+     "title": "OpenAI projected to bring in $20bn less in revenue than expected",
+     "url": "https://www.theguardian.com/technology/2026/oct/09/openai-forecast-revenue-gap",
+     "published_utc": "2026-10-09T08:06:09Z",
+     "outlet_id": "theguardian",
+     "reporting_origin": "outlet:theguardian",
+     "kind": "report"
+    }
+   ]
+  },
+  {
+   "id": "b848d7e716e9",
+   "rank": 25,
+   "top_rank": null,
+   "category": "Science & AI",
+   "headline": "Anthropic's Claude Science creates the first complete ultraviolet map of the sky",
+   "url": "https://the-decoder.com/anthropics-claude-science-creates-the-first-complete-ultraviolet-map-of-the-sky/",
+   "summary": [
+    "Anthropic's Claude Science creates the first complete ultraviolet map of the sky.",
+    "Astrophysicist Brice Menard of Johns Hopkins University used Anthropic's Claude Science to map the entire sky in ultraviolet light for the first time."
+   ],
+   "why_it_matters": null,
+   "change": "new",
+   "labels": [],
+   "newest_published_utc": "2026-10-09T09:22:25Z",
+   "coverage": {
+    "level": "limited",
+    "points": 1,
+    "independent_reports": 1,
+    "publishers": [
+     "The Decoder"
+    ],
+    "repeats": 0,
+    "source_links": 1,
+    "linked_outlets": 1,
+    "linked_reporting_origins": 1,
+    "signals": 0,
+    "channels": 1
+   },
+   "sources": [
+    {
+     "outlet": "The Decoder",
+     "via": "News feeds",
+     "title": "Anthropic's Claude Science creates the first complete ultraviolet map of the sky",
+     "url": "https://the-decoder.com/anthropics-claude-science-creates-the-first-complete-ultraviolet-map-of-the-sky/",
+     "published_utc": "2026-10-09T09:22:25Z",
+     "outlet_id": "thedecoder",
+     "reporting_origin": "outlet:thedecoder",
+     "kind": "report"
+    }
+   ]
+  },
+  {
+   "id": "0452c40b5e91",
+   "rank": 26,
+   "top_rank": null,
+   "category": "Tech",
+   "headline": "The people holding up the internet",
+   "url": "https://sheets.works/data-viz/holding-up-the-internet",
+   "summary": [
+    "The people holding up the internet.",
+    "Four billion phones ask one text file what time it is."
+   ],
+   "why_it_matters": null,
+   "change": "new",
+   "labels": [],
+   "newest_published_utc": "2026-10-08T08:18:39Z",
+   "coverage": {
+    "level": "limited",
+    "points": 0,
+    "independent_reports": 1,
+    "publishers": [
+     "Lobsters"
+    ],
+    "repeats": 0,
+    "source_links": 1,
+    "linked_outlets": 1,
+    "linked_reporting_origins": 1,
+    "signals": 0,
+    "channels": 1
+   },
+   "sources": [
+    {
+     "outlet": "Lobsters",
+     "via": "News feeds",
+     "title": "The people holding up the internet",
+     "url": "https://sheets.works/data-viz/holding-up-the-internet",
+     "published_utc": "2026-10-08T08:18:39Z",
+     "outlet_id": "sheets",
+     "reporting_origin": "outlet:sheets",
+     "kind": "report"
+    }
+   ]
+  },
+  {
+   "id": "ac156f24577e",
+   "rank": 27,
+   "top_rank": null,
+   "category": "Science & AI",
+   "headline": "What will it take to build a moon base?",
+   "url": "https://spacenews.com/what-will-it-take-to-build-a-moon-base/",
+   "summary": [
+    "What will it take to build a moon base.",
+    "In this episode, a panel of industry experts discuss what's needed to build a moon base."
+   ],
+   "why_it_matters": null,
+   "change": "",
+   "labels": [],
+   "newest_published_utc": "2026-10-08T13:57:38Z",
+   "coverage": {
+    "level": "limited",
+    "points": 1,
+    "independent_reports": 1,
+    "publishers": [
+     "SpaceNews"
+    ],
+    "repeats": 0,
+    "source_links": 1,
+    "linked_outlets": 1,
+    "linked_reporting_origins": 1,
+    "signals": 0,
+    "channels": 1
+   },
+   "sources": [
+    {
+     "outlet": "SpaceNews",
+     "via": "News feeds",
+     "title": "What will it take to build a moon base?",
+     "url": "https://spacenews.com/what-will-it-take-to-build-a-moon-base/",
+     "published_utc": "2026-10-08T13:57:38Z",
+     "outlet_id": "spacenews",
+     "reporting_origin": "outlet:spacenews",
+     "kind": "report"
+    }
+   ]
+  }
+ ],
+ "changes": {
+  "compared_with": {
+   "edition_date": "2026-10-09",
+   "revision": 1
+  },
+  "new": [
+   "c864026a5691",
+   "8c719236148d",
+   "e9a860240d28",
+   "6f8b3023ee81",
+   "69684b30bf9c",
+   "01af887fd9fb",
+   "8442e35832eb",
+   "89d5ac56ab1c",
+   "892c9ac3da51",
+   "b848d7e716e9",
+   "0452c40b5e91"
+  ],
+  "updated": [
+   "264478534ba7",
+   "306312ce90b6",
+   "f3793106a177",
+   "7259af4f5c7a",
+   "2de24081df32",
+   "e156389cb84b"
+  ],
+  "fading": [
+   "7259af4f5c7a"
+  ],
+  "dropped": [
+   {
+    "headline": "The long-deployed USS Lincoln returns home to San Diego Bay",
+    "category": "News"
+   },
+   {
+    "headline": "ICE Agents Shoot Man in New York City",
+    "category": "News"
+   },
+   {
+    "headline": "Christa Pike's attorneys say she is walking with help and eating after failed execution attempt",
+    "category": "News"
+   },
+   {
+    "headline": "Sparks fly as Abdul El-Sayed and Mike Rogers face off in first Michigan Senate debate",
+    "category": "News"
+   },
+   {
+    "headline": "Bucky Irving runs riot as Buccaneers stun Cowboys for first win of season",
+    "category": "Sports"
+   },
+   {
+    "headline": "Audacious space heist aims to bring home bits of mysterious martian moon",
+    "category": "Science & AI"
+   },
+   {
+    "headline": "OpenAI caught Russians and Iranians using ChatGPT for influence campaigns",
+    "category": "Science & AI"
+   },
+   {
+    "headline": "James Webb Space Telescope Helps Detect the Most Distant Fast Radio Burst Ever Seen",
+    "category": "Science & AI"
+   },
+   {
+    "headline": "Trump Acquires over $1 Million in SpaceX Debt",
+    "category": "Science & AI"
+   },
+   {
+    "headline": "NASA's Prima Space Telescope Would Aim to See What James Webb Can't",
+    "category": "Science & AI"
+   },
+   {
+    "headline": "Amazon builds 1,000th satellite, says space internet service is weeks away",
+    "category": "Tech"
+   },
+   {
+    "headline": "JetBrains Releases Mellum2.1: A 12B MoE Open Model for Coding Agents",
+    "category": "Science & AI"
+   },
+   {
+    "headline": "Judge weighs if Trump can charge $100K for early access to Truth Social posts",
+    "category": "Tech"
+   }
+  ]
+ }
+}
