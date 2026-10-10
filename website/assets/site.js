@@ -585,6 +585,7 @@ if (typeof module !== 'undefined') module.exports = {normOutlet, dedupeOutlets, 
       details.hidden = !details.hidden;
       toggle.setAttribute('aria-expanded', String(!details.hidden));
       toggle.setAttribute('aria-label', `${details.hidden ? 'Show' : 'Hide'} full edition details`);
+      toggle.closest('.strip').classList.toggle('details-open', !details.hidden);
     });
     return h('div', {class: 'strip' + (crumbs ? ' with-crumbs' : '')}, h('div', {class: 'strip-row'}, crumbs || ticker(ed, latest, ageH), toggle), details);
   }
@@ -672,13 +673,18 @@ if (typeof module !== 'undefined') module.exports = {normOutlet, dedupeOutlets, 
   // The Top 10 leaderboard: stories ranked 1–10 in a single chart, Billboard-style.
   function top10Board(ed, stories) {
     const newIds = new Set((ed.changes && ed.changes.new) || []);
-    const rows = stories.slice(0, 10).map((s, i) => {
-      const rank = i + 1;
-      // Movement indicator: NEW for stories entering the chart, UPDATED for movers.
+    // Top 10 kicker: category label + movement indicator (▲ New / ● Updated).
+    // Uses the movement style instead of the standard badges to avoid duplication.
+    const t10kicker = s => {
+      const cat = h('span', {class: 'kicker', 'data-cat': s.category}, catLabel(s.category));
       const move = s.change === 'new' || newIds.has(s.id)
         ? h('span', {class: 'move new', text: '▲ New'})
         : s.change === 'updated'
         ? h('span', {class: 'move updated', text: '● Updated'}) : null;
+      return h('p', {class: 't10-kicker'}, cat, move);
+    };
+    const rows = stories.slice(0, 10).map((s, i) => {
+      const rank = i + 1;
       // #1 is the cover story: a one-line pointer to the hero, not a repeat.
       if (rank === 1) {
         return h('a', {class: 't10-row is-cover t10-pointer', href: '#cover', id: 'story-' + s.id, 'data-cat': s.category,
@@ -693,7 +699,7 @@ if (typeof module !== 'undefined') module.exports = {normOutlet, dedupeOutlets, 
         h('span', {class: 't10-rank', 'aria-hidden': 'true', text: String(rank)}),
         h('span', {class: 'sr', text: `Rank ${rank} of 10: `}),
         h('div', {class: 't10-body'},
-          h('p', {class: 't10-kicker'}, kicker(s), move),
+          t10kicker(s),
           headline(ed, s, 'h3', 'hl t10-hl'),
           dek(s),
           meta(s, {ed})));
