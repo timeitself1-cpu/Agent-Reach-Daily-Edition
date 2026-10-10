@@ -177,7 +177,7 @@ home page shows the newest edition, `/daily/2026-10-08/` keeps each date, and `/
 off until you switch it on, and it needs one GitHub access key, once:
 
 1. On github.com: **Settings > Developer settings > Personal access tokens > Fine-grained tokens > Generate new
-   token**. Repository access: **Only select repositories > timeitself1-cpu/Agent-Reach-Website**. Permissions:
+   token**. Repository access: **Only select repositories > timeitself1-cpu/Agent-Reach**. Permissions:
    **Contents: Read and write** (nothing else). Pick an expiry you are comfortable with (a year, for example).
 2. In the app: **...** > **Website publishing...**, paste the key, **Save key** (it tests the connection).
 3. Tick **Automatic publishing**. From then on every successful refresh publishes its edition; nothing to copy
@@ -309,6 +309,12 @@ checks do), never sees the web, and its output is checked before it is shown. De
 .\.venv\Scripts\python.exe -m pyflakes agent_reach tests
 .\.venv\Scripts\python.exe -m tests.replay_benchmark
 ```
+
+Repo layout (monorepo since October 2026): the Python app lives at the root (`agent_reach/`, `tests/`);
+the website source lives in `website/` (Node 24: `cd website && npm ci && npm test`). CI is split by path:
+`tests.yml` runs on app changes, `website.yml` on `website/` changes, `contract.yml` guards the shared
+taxonomy (`agent_reach/daily/sections.json` ↔ `website/assets/site.js`). The publisher writes website files
+under `website/` in this same repo; served URLs are unchanged.
 
 On your own PC, `powershell -ExecutionPolicy Bypass -File .\Test-AgentReachDaily.ps1` runs the self-test
 with the real Ollama and real news in a scratch folder (your data folder is only read) and leaves a zip of

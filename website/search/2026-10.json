@@ -1,0 +1,2557 @@
+{
+ "schema": "agent_reach.search_month",
+ "schema_version": 1,
+ "month": "2026-10",
+ "stories": [
+  {
+   "d": "2026-10-10",
+   "id": "da37fc15f76c",
+   "r": 1,
+   "t": 1,
+   "c": "News",
+   "h": "Hurricane Isaias Makes Landfall in Florida",
+   "s": "Hurricane Isaias made landfall near Destin, Florida, around 8:30 p.m. Local time as a Category 2 storm with 105-mph winds. The storm is expected to bring life-threatening storm surge, damaging winds, flooding and the possibility of tornados.",
+   "o": [
+    "PBS NewsHour",
+    "NPR",
+    "The New York Times",
+    "ABC News",
+    "BBC News"
+   ],
+   "l": "strong",
+   "coverage": {
+    "level": "strong",
+    "points": 6,
+    "independent_reports": 7,
+    "publishers": [
+     "ABC News",
+     "BBC News",
+     "NBC News",
+     "NPR",
+     "PBS NewsHour",
+     "The Guardian",
+     "The New York Times"
+    ],
+    "repeats": 3,
+    "source_links": 8,
+    "linked_outlets": 7,
+    "linked_reporting_origins": 6,
+    "signals": 0,
+    "channels": 2
+   },
+   "u": "https://www.youtube.com/watch?v=jqO-S1IoHfQ"
+  },
+  {
+   "d": "2026-10-10",
+   "id": "cc2983207ade",
+   "r": 2,
+   "t": 2,
+   "c": "News",
+   "h": "Saudi Arabia Faces New Level of Peril in Houthi Attacks, Amid Wider Iran War",
+   "s": "Yemen's Houthis are striking Saudi oil infrastructure, as compounding Middle East conflicts threaten to expand. Saudi Arabia says missile strikes by Iran's Houthi allies killed three people at Riyadh's airport as fighting escalates in the Middle East conflict's new epicenter.",
+   "o": [
+    "The Washington Post",
+    "AP News",
+    "CBS News"
+   ],
+   "l": "strong",
+   "coverage": {
+    "level": "strong",
+    "points": 5,
+    "independent_reports": 3,
+    "publishers": [
+     "AP News",
+     "CBS News",
+     "The Washington Post"
+    ],
+    "repeats": 0,
+    "source_links": 3,
+    "linked_outlets": 3,
+    "linked_reporting_origins": 3,
+    "signals": 0,
+    "channels": 2
+   },
+   "u": "https://www.washingtonpost.com/world/2026/10/10/saudi-arabia-faces-new-level-peril-houthi-attacks-amid-wider-iran-war/"
+  },
+  {
+   "d": "2026-10-10",
+   "id": "d7aadde34616",
+   "r": 3,
+   "t": 3,
+   "c": "News",
+   "h": "Trump Announces Deal for Russian Diesel",
+   "s": "US President Donald Trump announced a deal to import Russian diesel into the US, sparking outrage from Ukraine and its allies. The deal aims to ease fuel prices, but critics argue it contradicts Russia sanctions law and plays into Russia's hands.",
+   "o": [
+    "BBC News",
+    "CNBC",
+    "Sky News",
+    "Le Monde",
+    "Al Jazeera"
+   ],
+   "l": "strong",
+   "coverage": {
+    "level": "strong",
+    "points": 6,
+    "independent_reports": 6,
+    "publishers": [
+     "Al Jazeera",
+     "BBC News",
+     "CNBC",
+     "CNBC Television",
+     "Le Monde",
+     "Sky News"
+    ],
+    "repeats": 1,
+    "source_links": 8,
+    "linked_outlets": 6,
+    "linked_reporting_origins": 6,
+    "signals": 1,
+    "channels": 2
+   },
+   "u": "https://www.bbc.co.uk/news/articles/cm1dwgr666wno?at_medium=RSS&at_campaign=rss"
+  },
+  {
+   "d": "2026-10-10",
+   "id": "d54db1309e02",
+   "r": 4,
+   "t": 4,
+   "c": "News",
+   "h": "US Imposes Sanctions on International Criminal Court",
+   "s": "The Trump administration imposed aggressive sanctions on the International Criminal Court, cutting it off from the global financial system. The sanctions were announced hours after a former ICC judge won the Nobel Peace Prize. The sanctions include threats of punishment for…",
+   "o": [
+    "Reuters",
+    "The Washington Post",
+    "state.gov"
+   ],
+   "l": "strong",
+   "coverage": {
+    "level": "strong",
+    "points": 5,
+    "independent_reports": 3,
+    "publishers": [
+     "Reuters",
+     "The Washington Post",
+     "state.gov"
+    ],
+    "repeats": 2,
+    "source_links": 5,
+    "linked_outlets": 3,
+    "linked_reporting_origins": 3,
+    "signals": 0,
+    "channels": 4
+   }
+  },
+  {
+   "d": "2026-10-10",
+   "id": "d25c5f2e5117",
+   "r": 5,
+   "t": 5,
+   "c": "Science & AI",
+   "h": "Rogue Anthropic AI agent gave police fake tip in unsolved murder case",
+   "s": "Philadelphia police said the tip was \"flagged as spam\", but criticised the tech company for taking more than two months to detect and report the breach. An investigation is underway after an AI model from the company Anthropic submitted a false tip for an unsolved Philadelphia…",
+   "o": [
+    "BBC News",
+    "6abc Philadelphia",
+    "nbcphiladelphia.com",
+    "TechCrunch",
+    "The Decoder"
+   ],
+   "l": "strong",
+   "coverage": {
+    "level": "strong",
+    "points": 6,
+    "independent_reports": 5,
+    "publishers": [
+     "6abc Philadelphia",
+     "BBC News",
+     "TechCrunch",
+     "The Decoder",
+     "nbcphiladelphia.com"
+    ],
+    "repeats": 1,
+    "source_links": 7,
+    "linked_outlets": 5,
+    "linked_reporting_origins": 5,
+    "signals": 1,
+    "channels": 3
+   },
+   "u": "https://www.bbc.co.uk/news/articles/cqkg50j1yd5lo?at_medium=RSS&at_campaign=rss"
+  },
+  {
+   "d": "2026-10-10",
+   "id": "9c0c027764eb",
+   "r": 6,
+   "t": 6,
+   "c": "Science & AI",
+   "h": "NASA Seeks US Industry Plans for Commercial Space Stations",
+   "s": "NASA is advancing American leadership in space by taking the next step toward a future where commercial space stations lead the way in low Earth orbit.",
+   "o": [
+    "NASA",
+    "Ars Technica"
+   ],
+   "l": "moderate",
+   "coverage": {
+    "level": "moderate",
+    "points": 4,
+    "independent_reports": 2,
+    "publishers": [
+     "Ars Technica",
+     "NASA"
+    ],
+    "repeats": 2,
+    "source_links": 4,
+    "linked_outlets": 2,
+    "linked_reporting_origins": 2,
+    "signals": 0,
+    "channels": 2
+   },
+   "u": "https://www.nasa.gov/news-release/nasa-seeks-us-industry-plans-for-commercial-space-stations/"
+  },
+  {
+   "d": "2026-10-10",
+   "id": "141c3c0b7ec6",
+   "r": 7,
+   "t": 7,
+   "c": "News",
+   "h": "Three Men Found Guilty in the 2024 Killing of Australian and US Surfers in Mexico",
+   "s": "Three men were found guilty of murdering two Australian brothers and their American friend during a surfing trip in Mexico.",
+   "o": [
+    "CNN",
+    "Sky News"
+   ],
+   "l": "moderate",
+   "coverage": {
+    "level": "moderate",
+    "points": 4,
+    "independent_reports": 2,
+    "publishers": [
+     "CNN",
+     "Sky News"
+    ],
+    "repeats": 0,
+    "source_links": 2,
+    "linked_outlets": 2,
+    "linked_reporting_origins": 2,
+    "signals": 0,
+    "channels": 2
+   }
+  },
+  {
+   "d": "2026-10-10",
+   "id": "fea31af3b0d7",
+   "r": 8,
+   "t": 8,
+   "c": "Tech",
+   "h": "Yandex Takes a Second Data Center Hit in 48 Hours",
+   "s": "A UAV attack disabled several modules at the largest Yandex data center in Kaluga, reducing service and impacting a facility with 3,800 server racks.",
+   "o": [
+    "united24media.com",
+    "Bloomberg.com"
+   ],
+   "l": "moderate",
+   "coverage": {
+    "level": "moderate",
+    "points": 4,
+    "independent_reports": 2,
+    "publishers": [
+     "Bloomberg.com",
+     "united24media.com"
+    ],
+    "repeats": 0,
+    "source_links": 2,
+    "linked_outlets": 2,
+    "linked_reporting_origins": 2,
+    "signals": 0,
+    "channels": 2
+   },
+   "u": "https://united24media.com/war-in-ukraine/yandex-takes-a-second-data-center-hit-in-48-hours-now-its-biggest-russian-site-is-damaged-23277"
+  },
+  {
+   "d": "2026-10-10",
+   "id": "aff43f196f3f",
+   "r": 9,
+   "t": 9,
+   "c": "Sports",
+   "h": "Verstappen wins wet Singapore Sprint after Russell crashes",
+   "s": "Red Bull's Max Verstappen wins an incident-packed sprint race at the Singapore Grand Prix after George Russell crashes out of the lead.",
+   "o": [
+    "Sky Sports",
+    "BBC News",
+    "X"
+   ],
+   "l": "moderate",
+   "coverage": {
+    "level": "moderate",
+    "points": 3,
+    "independent_reports": 2,
+    "publishers": [
+     "BBC News",
+     "Sky Sports"
+    ],
+    "repeats": 0,
+    "source_links": 3,
+    "linked_outlets": 2,
+    "linked_reporting_origins": 2,
+    "signals": 1,
+    "channels": 1
+   },
+   "u": "https://www.skysports.com/f1/news/12040/13597101/singapore-gp-sprint-max-verstappen-beats-lewis-hamilton-after-george-russell-crashes-out-from-lead"
+  },
+  {
+   "d": "2026-10-10",
+   "id": "8b1b98c4fb5f",
+   "r": 10,
+   "t": 10,
+   "c": "Tech",
+   "h": "Microsoft AI Releases Microsoft-Decision-1: A Qwen3.5-9B Decision-Scoring Model",
+   "s": "Microsoft has released Microsoft-Decision-1, a decision model for routing, classification, verification and agent control. Decision models are quickly emerging as an important new category in AI.",
+   "o": [
+    "MarkTechPost",
+    "commandline.microsoft.com"
+   ],
+   "l": "moderate",
+   "coverage": {
+    "level": "moderate",
+    "points": 4,
+    "independent_reports": 2,
+    "publishers": [
+     "MarkTechPost",
+     "commandline.microsoft.com"
+    ],
+    "repeats": 0,
+    "source_links": 2,
+    "linked_outlets": 2,
+    "linked_reporting_origins": 2,
+    "signals": 0,
+    "channels": 2
+   },
+   "u": "https://www.marktechpost.com/2026/10/09/microsoft-ai-releases-microsoft-decision-1-a-qwen3-5-9b-decision-scoring-model/"
+  },
+  {
+   "d": "2026-10-10",
+   "id": "6b8667309135",
+   "r": 11,
+   "t": null,
+   "c": "Entertainment",
+   "h": "Danny Trejo Insists He’s \"Pro-Immigrant\" & \"Proud Mexican\" Amid Backlash To Daily Wire’s ICE Film: \"Make No Mistake\"",
+   "s": "Danny Trejo has broken his silence amid backlash around his role in Daily Wire's latest controversial production.",
+   "o": [
+    "Deadline",
+    "Variety"
+   ],
+   "l": "moderate",
+   "coverage": {
+    "level": "moderate",
+    "points": 4,
+    "independent_reports": 2,
+    "publishers": [
+     "Deadline",
+     "Variety"
+    ],
+    "repeats": 0,
+    "source_links": 2,
+    "linked_outlets": 2,
+    "linked_reporting_origins": 2,
+    "signals": 0,
+    "channels": 2
+   },
+   "u": "https://deadline.com/2026/10/danny-trejo-pro-immigrant-backlash-daily-wire-ice-film-1237153821/"
+  },
+  {
+   "d": "2026-10-10",
+   "id": "960e3f602273",
+   "r": 12,
+   "t": null,
+   "c": "Tech",
+   "h": "Apple Stores to Add Buyer's Name to iPhone Duo Startup Screen",
+   "s": "Apple has something special planned for customers who purchase an iPhone Duo in an Apple Store.",
+   "o": [
+    "MacRumors",
+    "9to5Mac"
+   ],
+   "l": "moderate",
+   "coverage": {
+    "level": "moderate",
+    "points": 3,
+    "independent_reports": 2,
+    "publishers": [
+     "9to5Mac",
+     "MacRumors"
+    ],
+    "repeats": 0,
+    "source_links": 2,
+    "linked_outlets": 2,
+    "linked_reporting_origins": 2,
+    "signals": 0,
+    "channels": 1
+   },
+   "u": "https://www.macrumors.com/2026/10/09/iphone-duo-name-personalization/"
+  },
+  {
+   "d": "2026-10-10",
+   "id": "1145cd5ee91a",
+   "r": 13,
+   "t": null,
+   "c": "Sports",
+   "h": "Valkyries Make History, Oust Aces to Reach Finals in 2nd Year as Franchise",
+   "s": "The Valkyries, a second-year franchise, became the quickest expansion team to reach the WNBA Finals by sweeping the defending champion Aces 87-77 in overtime.",
+   "o": [
+    "ESPN"
+   ],
+   "l": "limited",
+   "coverage": {
+    "level": "limited",
+    "points": 1,
+    "independent_reports": 1,
+    "publishers": [
+     "ESPN"
+    ],
+    "repeats": 0,
+    "source_links": 1,
+    "linked_outlets": 1,
+    "linked_reporting_origins": 1,
+    "signals": 0,
+    "channels": 1
+   },
+   "u": "https://www.espn.com/wnba/story/_/id/50144607/valkyries-dethrone-aces-ot-make-wnba-finals-second-year-franchise"
+  },
+  {
+   "d": "2026-10-10",
+   "id": "aca6e5866730",
+   "r": 14,
+   "t": null,
+   "c": "News",
+   "h": "Russian Attack on Ukraine's Zaporizhzhia Kills Seven, Governor Says",
+   "s": "",
+   "o": [
+    "Reuters"
+   ],
+   "l": "limited",
+   "coverage": {
+    "level": "limited",
+    "points": 1,
+    "independent_reports": 1,
+    "publishers": [
+     "Reuters"
+    ],
+    "repeats": 0,
+    "source_links": 1,
+    "linked_outlets": 1,
+    "linked_reporting_origins": 1,
+    "signals": 0,
+    "channels": 1
+   }
+  },
+  {
+   "d": "2026-10-10",
+   "id": "d9cc80e7c371",
+   "r": 15,
+   "t": null,
+   "c": "Science & AI",
+   "h": "Plastic Chemical Affects Human Ovaries",
+   "s": "Mounting evidence shows that a common plastic chemical, phthalates, can affect human ovaries. The most common phthalate, DEHP, is widely used in materials, raising concerns about its impact on reproductive health.",
+   "o": [
+    "ScienceAlert"
+   ],
+   "l": "limited",
+   "coverage": {
+    "level": "limited",
+    "points": 1,
+    "independent_reports": 1,
+    "publishers": [
+     "ScienceAlert"
+    ],
+    "repeats": 0,
+    "source_links": 1,
+    "linked_outlets": 1,
+    "linked_reporting_origins": 1,
+    "signals": 0,
+    "channels": 1
+   },
+   "u": "https://www.sciencealert.com/mounting-evidence-shows-a-common-plastic-chemical-can-affect-human-ovaries"
+  },
+  {
+   "d": "2026-10-10",
+   "id": "710b3ad8dc31",
+   "r": 16,
+   "t": null,
+   "c": "Science & AI",
+   "h": "OpenAI Revenue Keeps Surging as Company Seeks $30 Billion in Fresh Capital",
+   "s": "OpenAI's annualized revenue rate sits at about $50 billion, well below the initially reported $70 billion figure that was based on a different accounting method.",
+   "o": [
+    "The Decoder"
+   ],
+   "l": "limited",
+   "coverage": {
+    "level": "limited",
+    "points": 1,
+    "independent_reports": 1,
+    "publishers": [
+     "The Decoder"
+    ],
+    "repeats": 0,
+    "source_links": 1,
+    "linked_outlets": 1,
+    "linked_reporting_origins": 1,
+    "signals": 0,
+    "channels": 1
+   },
+   "u": "https://the-decoder.com/openai-revenue-keeps-surging-as-company-seeks-30-billion-in-fresh-capital/"
+  },
+  {
+   "d": "2026-10-10",
+   "id": "59c57b3e5885",
+   "r": 17,
+   "t": null,
+   "c": "Science & AI",
+   "h": "micro1 Commits $1bn to Buy Company Data for Training AI Agents",
+   "s": "Exceptions that require judgment micro1 will spend $1bn in 12 months buying company data to train AI agents, financed by Citi and Hercules.",
+   "o": [
+    "The Next Web"
+   ],
+   "l": "limited",
+   "coverage": {
+    "level": "limited",
+    "points": 1,
+    "independent_reports": 1,
+    "publishers": [
+     "The Next Web"
+    ],
+    "repeats": 0,
+    "source_links": 1,
+    "linked_outlets": 1,
+    "linked_reporting_origins": 1,
+    "signals": 0,
+    "channels": 1
+   },
+   "u": "https://thenextweb.com/news/micro1-1bn-enterprise-data-ai-training-citi-hercules"
+  },
+  {
+   "d": "2026-10-10",
+   "id": "737c83af477e",
+   "r": 18,
+   "t": null,
+   "c": "Science & AI",
+   "h": "This Year's Nobel Science Prizes Are Real-life Sci-fi",
+   "s": "",
+   "o": [
+    "The Economist"
+   ],
+   "l": "limited",
+   "coverage": {
+    "level": "limited",
+    "points": 0,
+    "independent_reports": 1,
+    "publishers": [
+     "The Economist"
+    ],
+    "repeats": 0,
+    "source_links": 1,
+    "linked_outlets": 1,
+    "linked_reporting_origins": 1,
+    "signals": 0,
+    "channels": 1
+   }
+  },
+  {
+   "d": "2026-10-10",
+   "id": "dec59a43ca0b",
+   "r": 19,
+   "t": null,
+   "c": "Science & AI",
+   "h": "Gavin Newsom's Executive Order Increases AI Oversight, Proposes 'Kill Switch'",
+   "s": "",
+   "o": [
+    "Daily Bruin"
+   ],
+   "l": "limited",
+   "coverage": {
+    "level": "limited",
+    "points": 1,
+    "independent_reports": 1,
+    "publishers": [
+     "Daily Bruin"
+    ],
+    "repeats": 0,
+    "source_links": 1,
+    "linked_outlets": 1,
+    "linked_reporting_origins": 1,
+    "signals": 0,
+    "channels": 1
+   }
+  },
+  {
+   "d": "2026-10-10",
+   "id": "87cb3fcba333",
+   "r": 20,
+   "t": null,
+   "c": "Science & AI",
+   "h": "Astronomers Detect Mysterious Burst of Energy from a Galaxy Far, Far Away",
+   "s": "A long time ago in a galaxy far, far away, a mysterious flash of energy was released into the universe.",
+   "o": [
+    "The Guardian"
+   ],
+   "l": "limited",
+   "coverage": {
+    "level": "limited",
+    "points": 0,
+    "independent_reports": 1,
+    "publishers": [
+     "The Guardian"
+    ],
+    "repeats": 0,
+    "source_links": 1,
+    "linked_outlets": 1,
+    "linked_reporting_origins": 1,
+    "signals": 0,
+    "channels": 1
+   },
+   "u": "https://www.theguardian.com/science/2026/oct/09/astronomy-fast-radio-bursts-frb-radio-waves"
+  },
+  {
+   "d": "2026-10-10",
+   "id": "157e81bf08e8",
+   "r": 21,
+   "t": null,
+   "c": "News",
+   "h": "Panama Hit by Powerful 7.7 Earthquake, Cathedral Collapses",
+   "s": "A powerful 7.7 earthquake struck Panama, causing widespread damage and prompting evacuations. The earthquake also triggered a 6.6 aftershock and many smaller tremors, damaging buildings and prompting evacuations.",
+   "o": [
+    "Euronews"
+   ],
+   "l": "limited",
+   "coverage": {
+    "level": "limited",
+    "points": 1,
+    "independent_reports": 1,
+    "publishers": [
+     "Euronews"
+    ],
+    "repeats": 0,
+    "source_links": 1,
+    "linked_outlets": 1,
+    "linked_reporting_origins": 1,
+    "signals": 0,
+    "channels": 1
+   }
+  },
+  {
+   "d": "2026-10-10",
+   "id": "9d5e22484f8d",
+   "r": 22,
+   "t": null,
+   "c": "Tech",
+   "h": "Elon Musk Criticizes Mukesh Ambani over Starlink Launch Delay",
+   "s": "Elon Musk has accused Mukesh Ambani of blocking competition, which is causing delays in the launch of Starlink in India.",
+   "o": [
+    "TechCrunch"
+   ],
+   "l": "limited",
+   "coverage": {
+    "level": "limited",
+    "points": 1,
+    "independent_reports": 1,
+    "publishers": [
+     "TechCrunch"
+    ],
+    "repeats": 0,
+    "source_links": 1,
+    "linked_outlets": 1,
+    "linked_reporting_origins": 1,
+    "signals": 0,
+    "channels": 1
+   },
+   "u": "https://techcrunch.com/2026/10/09/elon-musk-intensifies-attack-on-ambani-over-starlink-india-launch-delay/"
+  },
+  {
+   "d": "2026-10-10",
+   "id": "3c42e5318d70",
+   "r": 23,
+   "t": null,
+   "c": "Science & AI",
+   "h": "Margaret Hamilton, Whose Software Sent Humans to the Moon, Dies at 90",
+   "s": "Hamilton was in her early thirties when she led the team of software engineers that powered NASA's Apollo missions.",
+   "o": [
+    "NPR"
+   ],
+   "l": "limited",
+   "coverage": {
+    "level": "limited",
+    "points": 0,
+    "independent_reports": 1,
+    "publishers": [
+     "NPR"
+    ],
+    "repeats": 0,
+    "source_links": 1,
+    "linked_outlets": 1,
+    "linked_reporting_origins": 1,
+    "signals": 0,
+    "channels": 1
+   },
+   "u": "https://www.npr.org/2026/10/08/nx-s1-5994972/margaret-hamilton-obituary-software-engineer-apollo"
+  },
+  {
+   "d": "2026-10-09",
+   "id": "c864026a5691",
+   "r": 1,
+   "t": 1,
+   "c": "News",
+   "h": "ICJ judge Navi Pillay wins Nobel peace prize for promoting international law",
+   "s": "ICJ judge Navi Pillay wins Nobel peace prize for promoting international law. Committee recognises work of South African who chaired UN commission that concluded Israel was guilty of genocide in Gaza",
+   "o": [
+    "The Guardian",
+    "The Washington Post",
+    "Sky News",
+    "Times of India",
+    "NPR"
+   ],
+   "l": "strong",
+   "coverage": {
+    "level": "strong",
+    "points": 6,
+    "independent_reports": 10,
+    "publishers": [
+     "ABC News",
+     "CBC News",
+     "CBS News",
+     "Le Monde",
+     "NPR",
+     "Sky News",
+     "The Guardian",
+     "The Washington Post",
+     "Times of India",
+     "nobelprize.org"
+    ],
+    "repeats": 0,
+    "source_links": 8,
+    "linked_outlets": 7,
+    "linked_reporting_origins": 7,
+    "signals": 1,
+    "channels": 2
+   },
+   "u": "https://www.theguardian.com/world/2026/oct/09/navanethem-navi-pillay-wins-nobel-peace-prize"
+  },
+  {
+   "d": "2026-10-09",
+   "id": "264478534ba7",
+   "r": 2,
+   "t": 2,
+   "c": "News",
+   "h": "Firing Squad Execution to Be Livestreamed, Pentagon Says",
+   "s": "Fort Hood attacker's execution by firing squad will be livestreamed, Pentagon says.",
+   "o": [
+    "BBC News",
+    "PBS NewsHour",
+    "NPR",
+    "The New York Times",
+    "en.wikipedia.org"
+   ],
+   "l": "strong",
+   "coverage": {
+    "level": "strong",
+    "points": 6,
+    "independent_reports": 4,
+    "publishers": [
+     "BBC News",
+     "NPR",
+     "PBS NewsHour",
+     "The New York Times"
+    ],
+    "repeats": 0,
+    "source_links": 8,
+    "linked_outlets": 4,
+    "linked_reporting_origins": 4,
+    "signals": 5,
+    "channels": 2
+   },
+   "u": "https://www.bbc.co.uk/news/articles/cmy0r96xygx6o?at_medium=RSS&at_campaign=rss"
+  },
+  {
+   "d": "2026-10-09",
+   "id": "306312ce90b6",
+   "r": 3,
+   "t": 3,
+   "c": "News",
+   "h": "Isaias strengthens into Category 2 hurricane on collision course with the Gulf Coast",
+   "s": "Isaias strengthens into Category 2 hurricane on collision course with the Gulf Coast. The first hurricane of the Atlantic season was forecast to intensify rapidly and cause dangerous conditions in the Florida Panhandle, southern Alabama and southern Mississippi when it makes…",
+   "o": [
+    "NPR",
+    "ABC News",
+    "The Guardian",
+    "BBC News",
+    "CBS News"
+   ],
+   "l": "strong",
+   "coverage": {
+    "level": "strong",
+    "points": 6,
+    "independent_reports": 6,
+    "publishers": [
+     "ABC News",
+     "BBC News",
+     "CBS News",
+     "NPR",
+     "PBS NewsHour",
+     "The Guardian"
+    ],
+    "repeats": 1,
+    "source_links": 7,
+    "linked_outlets": 6,
+    "linked_reporting_origins": 6,
+    "signals": 0,
+    "channels": 2
+   },
+   "u": "https://www.npr.org/2026/10/09/nx-s1-5996396/hurricane-isaias-updates"
+  },
+  {
+   "d": "2026-10-09",
+   "id": "21bec8946347",
+   "r": 4,
+   "t": 4,
+   "c": "Sports",
+   "h": "Guardians erupt in sixth inning to stun White Sox in Game 4 of ALDS, force deciding Game 5",
+   "s": "Guardians erupt in sixth inning to stun White Sox in Game 4 of ALDS, force deciding Game 5. The Guardians have taken both games in Chicago after trailing 2-0 in the best-of-five ALDS",
+   "o": [
+    "CBS Sports",
+    "Yahoo Sports",
+    "ESPN",
+    "Fox News"
+   ],
+   "l": "strong",
+   "coverage": {
+    "level": "strong",
+    "points": 5,
+    "independent_reports": 4,
+    "publishers": [
+     "CBS Sports",
+     "ESPN",
+     "Fox News",
+     "Yahoo Sports"
+    ],
+    "repeats": 2,
+    "source_links": 6,
+    "linked_outlets": 4,
+    "linked_reporting_origins": 4,
+    "signals": 0,
+    "channels": 1
+   },
+   "u": "https://www.cbssports.com/mlb/news/guardians-white-sox-alds-game-4-mlb-playoffs/"
+  },
+  {
+   "d": "2026-10-09",
+   "id": "021910426c12",
+   "r": 5,
+   "t": 5,
+   "c": "News",
+   "h": "Between record debt and high school protests, France's situation draws global attention",
+   "s": "Between record debt and high school protests, France's situation draws global attention. The mobilization of French high school students has sparked major media coverage and political reactions in the United States, Italy, Belgium and the United Kingdom.",
+   "o": [
+    "Le Monde",
+    "CBS News",
+    "The New York Times",
+    "bsky.app"
+   ],
+   "l": "strong",
+   "coverage": {
+    "level": "strong",
+    "points": 5,
+    "independent_reports": 3,
+    "publishers": [
+     "CBS News",
+     "Le Monde",
+     "The New York Times"
+    ],
+    "repeats": 1,
+    "source_links": 5,
+    "linked_outlets": 3,
+    "linked_reporting_origins": 3,
+    "signals": 1,
+    "channels": 2
+   },
+   "u": "https://www.lemonde.fr/en/international/article/2026/10/09/between-record-debt-and-high-school-protests-france-s-situation-draws-global-attention_6758409_4.html"
+  },
+  {
+   "d": "2026-10-09",
+   "id": "d5023d63430f",
+   "r": 6,
+   "t": 6,
+   "c": "News",
+   "h": "US midterms: key takeaways from Senate debates in Michigan, Georgia and Maine",
+   "s": "US midterms: key takeaways from Senate debates in Michigan, Georgia and Maine. Candidates traded personal attacks, sparred over affordability, the economy and abortion win three closely watched US Senate debates on Thursday",
+   "o": [
+    "The Guardian",
+    "The New York Times",
+    "The Hill"
+   ],
+   "l": "moderate",
+   "coverage": {
+    "level": "moderate",
+    "points": 4,
+    "independent_reports": 3,
+    "publishers": [
+     "The Guardian",
+     "The Hill",
+     "The New York Times"
+    ],
+    "repeats": 0,
+    "source_links": 3,
+    "linked_outlets": 3,
+    "linked_reporting_origins": 3,
+    "signals": 0,
+    "channels": 1
+   },
+   "u": "https://www.theguardian.com/us-news/2026/oct/09/us-midterms-michigan-georgia-maine-senate-debate-key-takeaways"
+  },
+  {
+   "d": "2026-10-09",
+   "id": "f3793106a177",
+   "r": 7,
+   "t": 7,
+   "c": "News",
+   "h": "Houthi Strikes on Riyadh Airport Killed Three Saudis",
+   "s": "Houthi strikes on Riyadh airport killed three Saudis as war escalates. Explosions were heard in Saudi Arabia's capital, including a large blast at Riyadh's international airport.",
+   "o": [
+    "Reuters",
+    "Sky News"
+   ],
+   "l": "moderate",
+   "coverage": {
+    "level": "moderate",
+    "points": 4,
+    "independent_reports": 2,
+    "publishers": [
+     "Reuters",
+     "Sky News"
+    ],
+    "repeats": 0,
+    "source_links": 2,
+    "linked_outlets": 2,
+    "linked_reporting_origins": 2,
+    "signals": 0,
+    "channels": 2
+   }
+  },
+  {
+   "d": "2026-10-09",
+   "id": "8c719236148d",
+   "r": 8,
+   "t": null,
+   "c": "News",
+   "h": "Trump Says U.S. Won't Attack Iran Before Midterms",
+   "s": "Trump says U.S. won't attack Iran before midterms. And, ICE agent shoots man in NYC.",
+   "o": [
+    "NPR",
+    "BBC News"
+   ],
+   "l": "moderate",
+   "coverage": {
+    "level": "moderate",
+    "points": 4,
+    "independent_reports": 2,
+    "publishers": [
+     "BBC News",
+     "NPR"
+    ],
+    "repeats": 0,
+    "source_links": 2,
+    "linked_outlets": 2,
+    "linked_reporting_origins": 2,
+    "signals": 0,
+    "channels": 2
+   },
+   "u": "https://www.npr.org/2026/10/09/g-s1-147455/up-first-newsletter-hurricane-isaias-ukraine-russia-trump-iran-ice-shooting"
+  },
+  {
+   "d": "2026-10-09",
+   "id": "202fa341edd7",
+   "r": 9,
+   "t": 8,
+   "c": "Sports",
+   "h": "LeBron still adjusting but logs strong start in 1st game with 76ers",
+   "s": "LeBron still adjusting but logs strong start in 1st game with 76ers. LeBron James, who joined the 76ers this summer, had 10 points, five assists and four rebounds in the first half of his debut with Philadelphia.",
+   "o": [
+    "ESPN",
+    "Yahoo Sports",
+    "The Guardian"
+   ],
+   "l": "strong",
+   "coverage": {
+    "level": "strong",
+    "points": 5,
+    "independent_reports": 3,
+    "publishers": [
+     "ESPN",
+     "The Guardian",
+     "Yahoo Sports"
+    ],
+    "repeats": 0,
+    "source_links": 3,
+    "linked_outlets": 3,
+    "linked_reporting_origins": 3,
+    "signals": 0,
+    "channels": 2
+   },
+   "u": "https://www.espn.com/nba/story/_/id/50137673/lebron-james-scores-10-points-18-minutes-76ers-debut"
+  },
+  {
+   "d": "2026-10-09",
+   "id": "55f93bef0b72",
+   "r": 10,
+   "t": 9,
+   "c": "Entertainment",
+   "h": "Princeton Celebrates Anne Carson, a Nobel Prize Winner Who Was Denied Tenure",
+   "s": "Princeton Celebrates Anne Carson, a Nobel Prize Winner Who Was Denied Tenure.",
+   "o": [
+    "The New York Times",
+    "BBC News",
+    "en.wikipedia.org"
+   ],
+   "l": "moderate",
+   "coverage": {
+    "level": "moderate",
+    "points": 4,
+    "independent_reports": 2,
+    "publishers": [
+     "BBC News",
+     "The New York Times"
+    ],
+    "repeats": 0,
+    "source_links": 3,
+    "linked_outlets": 2,
+    "linked_reporting_origins": 2,
+    "signals": 1,
+    "channels": 2
+   }
+  },
+  {
+   "d": "2026-10-09",
+   "id": "7259af4f5c7a",
+   "r": 11,
+   "t": 10,
+   "c": "Tech",
+   "h": "Trump administration is suspending Microsoft from a green card program",
+   "s": "Trump administration is suspending Microsoft from a green card program.",
+   "o": [
+    "AP News",
+    "Fast Company"
+   ],
+   "l": "moderate",
+   "coverage": {
+    "level": "moderate",
+    "points": 4,
+    "independent_reports": 2,
+    "publishers": [
+     "AP News",
+     "Fast Company"
+    ],
+    "repeats": 1,
+    "source_links": 3,
+    "linked_outlets": 2,
+    "linked_reporting_origins": 2,
+    "signals": 0,
+    "channels": 3
+   },
+   "u": "https://apnews.com/article/h1b-visa-program-vance-microsoft-e7b3a407f822702b269ee277d21343ea"
+  },
+  {
+   "d": "2026-10-09",
+   "id": "2de24081df32",
+   "r": 12,
+   "t": null,
+   "c": "Science & AI",
+   "h": "4 astronauts return to Earth after 8 months in space",
+   "s": "4 astronauts return to Earth after 8 months in space.",
+   "o": [
+    "KSL News",
+    "ScienceDaily",
+    "NPR",
+    "NASA"
+   ],
+   "l": "strong",
+   "coverage": {
+    "level": "strong",
+    "points": 6,
+    "independent_reports": 4,
+    "publishers": [
+     "KSL News",
+     "NASA",
+     "NPR",
+     "ScienceDaily"
+    ],
+    "repeats": 0,
+    "source_links": 4,
+    "linked_outlets": 4,
+    "linked_reporting_origins": 4,
+    "signals": 0,
+    "channels": 3
+   }
+  },
+  {
+   "d": "2026-10-09",
+   "id": "e9a860240d28",
+   "r": 13,
+   "t": null,
+   "c": "Tech",
+   "h": "What to Expect at Apple's 'Welcome Home' Event Next Week",
+   "s": "What to expect at Apple's 'Welcome home' event next week - Engadget.",
+   "o": [
+    "Engadget",
+    "Mashable",
+    "CNET"
+   ],
+   "l": "strong",
+   "coverage": {
+    "level": "strong",
+    "points": 5,
+    "independent_reports": 3,
+    "publishers": [
+     "CNET",
+     "Engadget",
+     "Mashable"
+    ],
+    "repeats": 0,
+    "source_links": 3,
+    "linked_outlets": 3,
+    "linked_reporting_origins": 3,
+    "signals": 0,
+    "channels": 2
+   },
+   "u": "https://www.engadget.com/2281840/what-to-expect-at-apples-welcome-home-event-next-week/"
+  },
+  {
+   "d": "2026-10-09",
+   "id": "e156389cb84b",
+   "r": 14,
+   "t": null,
+   "c": "Internet Culture",
+   "h": "Meta Bans TikTok Ads on Its Platforms in US",
+   "s": "Meta has banned ads from TikTok's Chinese parent company ByteDance across the US and several other countries, escalating the rivalry between the major social media operators. The ban restricts ads and sponsored content from ByteDance across Meta's platforms.",
+   "o": [
+    "The Verge",
+    "Reuters",
+    "CNBC",
+    "Bloomberg.com"
+   ],
+   "l": "strong",
+   "coverage": {
+    "level": "strong",
+    "points": 6,
+    "independent_reports": 4,
+    "publishers": [
+     "Bloomberg.com",
+     "CNBC",
+     "Reuters",
+     "The Verge"
+    ],
+    "repeats": 1,
+    "source_links": 5,
+    "linked_outlets": 4,
+    "linked_reporting_origins": 4,
+    "signals": 0,
+    "channels": 2
+   }
+  },
+  {
+   "d": "2026-10-09",
+   "id": "f794b8b8a82d",
+   "r": 15,
+   "t": null,
+   "c": "News",
+   "h": "Margaret Hamilton, computing pioneer who led software development for the Apollo program, dies at 90",
+   "s": "Margaret Hamilton, computing pioneer who led software development for the Apollo program, dies at 90.",
+   "o": [
+    "Lobsters",
+    "The Guardian",
+    "The New York Times",
+    "BBC News"
+   ],
+   "l": "limited",
+   "coverage": {
+    "level": "limited",
+    "points": 0,
+    "independent_reports": 1,
+    "publishers": [
+     "Lobsters"
+    ],
+    "repeats": 0,
+    "source_links": 4,
+    "linked_outlets": 1,
+    "linked_reporting_origins": 1,
+    "signals": 3,
+    "channels": 1
+   },
+   "u": "https://news.mit.edu/2026/margaret-hamilton-computing-pioneer-dies-1007"
+  },
+  {
+   "d": "2026-10-09",
+   "id": "574b140956ac",
+   "r": 16,
+   "t": null,
+   "c": "Tech",
+   "h": "Before Computer Science Became a Boys' Club, Margaret Hamilton Wrote the Code",
+   "s": "Before Computer Science Became a Boys' Club, Margaret Hamilton Wrote the Code.",
+   "o": [
+    "The New York Times"
+   ],
+   "l": "limited",
+   "coverage": {
+    "level": "limited",
+    "points": 1,
+    "independent_reports": 1,
+    "publishers": [
+     "The New York Times"
+    ],
+    "repeats": 0,
+    "source_links": 1,
+    "linked_outlets": 1,
+    "linked_reporting_origins": 1,
+    "signals": 0,
+    "channels": 1
+   }
+  },
+  {
+   "d": "2026-10-09",
+   "id": "a7a1c6740925",
+   "r": 17,
+   "t": null,
+   "c": "Science & AI",
+   "h": "Global analysis reveals how armed conflict erodes farmland and potential food production",
+   "s": "Global analysis reveals how armed conflict erodes farmland and potential food production. Armed conflict accelerates cropland loss, and the effects can persist for years after conflict begins and vary substantially with conflict severity and social conditions, according to a new…",
+   "o": [
+    "Phys.org"
+   ],
+   "l": "limited",
+   "coverage": {
+    "level": "limited",
+    "points": 1,
+    "independent_reports": 1,
+    "publishers": [
+     "Phys.org"
+    ],
+    "repeats": 0,
+    "source_links": 1,
+    "linked_outlets": 1,
+    "linked_reporting_origins": 1,
+    "signals": 0,
+    "channels": 1
+   },
+   "u": "https://phys.org/news/2026-10-global-analysis-reveals-armed-conflict.html"
+  },
+  {
+   "d": "2026-10-09",
+   "id": "ddbbbdb8bbad",
+   "r": 18,
+   "t": null,
+   "c": "Sports",
+   "h": "Aces' Wilson wins 5th MVP, says she'll nix pregame ceremony to focus on Game 3",
+   "s": "Aces' Wilson wins 5th MVP, says she'll nix pregame ceremony to focus on Game 3. Las Vegas Aces center A'ja Wilson won a record fifth WNBA Most Valuable Player award but said she will not participate in a pregame ceremony to receive her trophy because she wants to focus on…",
+   "o": [
+    "ESPN"
+   ],
+   "l": "limited",
+   "coverage": {
+    "level": "limited",
+    "points": 0,
+    "independent_reports": 1,
+    "publishers": [
+     "ESPN"
+    ],
+    "repeats": 0,
+    "source_links": 1,
+    "linked_outlets": 1,
+    "linked_reporting_origins": 1,
+    "signals": 0,
+    "channels": 1
+   },
+   "u": "https://www.espn.com/wnba/story/_/id/50135041/sources-aces-star-aja-wilson-wins-record-5th-wnba-mvp-award"
+  },
+  {
+   "d": "2026-10-09",
+   "id": "6f8b3023ee81",
+   "r": 19,
+   "t": null,
+   "c": "News",
+   "h": "Trump Envoy Kept Financial Ties to Firm Behind $15 Billion Hormuz-bypass Oil Pipeline Plan",
+   "s": "Trump envoy kept financial ties to firm behind $15 billion Hormuz-bypass oil pipeline plan.",
+   "o": [
+    "Reuters"
+   ],
+   "l": "limited",
+   "coverage": {
+    "level": "limited",
+    "points": 1,
+    "independent_reports": 1,
+    "publishers": [
+     "Reuters"
+    ],
+    "repeats": 0,
+    "source_links": 1,
+    "linked_outlets": 1,
+    "linked_reporting_origins": 1,
+    "signals": 0,
+    "channels": 1
+   }
+  },
+  {
+   "d": "2026-10-09",
+   "id": "69684b30bf9c",
+   "r": 20,
+   "t": null,
+   "c": "News",
+   "h": "Trauma Endures in Paris Suburb After Police Grenade Shatters Teenager's Jaw",
+   "s": "Trauma endures in Paris suburb after police grenade shatters teenager's jaw: 'They maim a student, leave, and then what?",
+   "o": [
+    "Le Monde"
+   ],
+   "l": "limited",
+   "coverage": {
+    "level": "limited",
+    "points": 1,
+    "independent_reports": 1,
+    "publishers": [
+     "Le Monde"
+    ],
+    "repeats": 0,
+    "source_links": 1,
+    "linked_outlets": 1,
+    "linked_reporting_origins": 1,
+    "signals": 0,
+    "channels": 1
+   },
+   "u": "https://www.lemonde.fr/en/france/article/2026/10/09/trauma-endures-in-paris-suburb-after-police-grenade-shatters-teenager-s-jaw-they-maim-a-student-leave-and-then-what-how-are-we-supposed-to-pick-up-the-pieces_6758415_7.html"
+  },
+  {
+   "d": "2026-10-09",
+   "id": "01af887fd9fb",
+   "r": 21,
+   "t": null,
+   "c": "Sports",
+   "h": "Fury-Joshua Tickets Priced up to GBP 13,000 Sell Out in One Hour",
+   "s": "Fury vs Joshua: Tickets priced up to GBP 13,000 for all-British showdown sell out in one hour.",
+   "o": [
+    "BBC News"
+   ],
+   "l": "limited",
+   "coverage": {
+    "level": "limited",
+    "points": 1,
+    "independent_reports": 1,
+    "publishers": [
+     "BBC News"
+    ],
+    "repeats": 0,
+    "source_links": 1,
+    "linked_outlets": 1,
+    "linked_reporting_origins": 1,
+    "signals": 0,
+    "channels": 1
+   },
+   "u": "https://www.bbc.co.uk/sport/boxing/articles/cwp9gxzyplk4o?at_medium=RSS&at_campaign=rss"
+  },
+  {
+   "d": "2026-10-09",
+   "id": "8442e35832eb",
+   "r": 22,
+   "t": null,
+   "c": "Science & AI",
+   "h": "As AI Closed In on ‘Unique Games’ Proof, Researchers Raced to Beat the Machines",
+   "s": "As AI Closed In on ‘Unique Games’ Proof, Researchers Raced to Beat the Machines. In the shadow of a rumored AI proof of one of the biggest problems in their field, three computer scientists rushed to publish their own milestone result.",
+   "o": [
+    "Quanta Magazine"
+   ],
+   "l": "limited",
+   "coverage": {
+    "level": "limited",
+    "points": 0,
+    "independent_reports": 1,
+    "publishers": [
+     "Quanta Magazine"
+    ],
+    "repeats": 0,
+    "source_links": 1,
+    "linked_outlets": 1,
+    "linked_reporting_origins": 1,
+    "signals": 0,
+    "channels": 1
+   },
+   "u": "https://www.quantamagazine.org/as-ai-closed-in-on-unique-games-proof-researchers-raced-to-beat-the-machines-20261007/"
+  },
+  {
+   "d": "2026-10-09",
+   "id": "89d5ac56ab1c",
+   "r": 23,
+   "t": null,
+   "c": "Tech",
+   "h": "ShinyHunters Extorted Boeing Spin-off Prior to Arrests",
+   "s": "The data theft and extortion group ShinyHunters extorted a Boeing spin-off prior to the arrests of its suspected leader. The group is reportedly cooperating with the FBI to identify other members.",
+   "o": [
+    "Krebs on Security"
+   ],
+   "l": "limited",
+   "coverage": {
+    "level": "limited",
+    "points": 0,
+    "independent_reports": 1,
+    "publishers": [
+     "Krebs on Security"
+    ],
+    "repeats": 0,
+    "source_links": 1,
+    "linked_outlets": 1,
+    "linked_reporting_origins": 1,
+    "signals": 0,
+    "channels": 1
+   },
+   "u": "https://krebsonsecurity.com/2026/10/shinyhunters-extorted-boeing-spin-off-prior-to-arrests/"
+  },
+  {
+   "d": "2026-10-09",
+   "id": "892c9ac3da51",
+   "r": 24,
+   "t": null,
+   "c": "Science & AI",
+   "h": "OpenAI projected to bring in $20bn less in revenue than expected",
+   "s": "OpenAI projected to bring in $20bn less in revenue than expected. Questions raised over AI growth as ChatGPT maker forecasts this year's revenue at $50bn, way below the $70bn signalled before",
+   "o": [
+    "The Guardian"
+   ],
+   "l": "limited",
+   "coverage": {
+    "level": "limited",
+    "points": 1,
+    "independent_reports": 1,
+    "publishers": [
+     "The Guardian"
+    ],
+    "repeats": 0,
+    "source_links": 1,
+    "linked_outlets": 1,
+    "linked_reporting_origins": 1,
+    "signals": 0,
+    "channels": 1
+   },
+   "u": "https://www.theguardian.com/technology/2026/oct/09/openai-forecast-revenue-gap"
+  },
+  {
+   "d": "2026-10-09",
+   "id": "b848d7e716e9",
+   "r": 25,
+   "t": null,
+   "c": "Science & AI",
+   "h": "Anthropic's Claude Science creates the first complete ultraviolet map of the sky",
+   "s": "Anthropic's Claude Science creates the first complete ultraviolet map of the sky. Astrophysicist Brice Menard of Johns Hopkins University used Anthropic's Claude Science to map the entire sky in ultraviolet light for the first time.",
+   "o": [
+    "The Decoder"
+   ],
+   "l": "limited",
+   "coverage": {
+    "level": "limited",
+    "points": 1,
+    "independent_reports": 1,
+    "publishers": [
+     "The Decoder"
+    ],
+    "repeats": 0,
+    "source_links": 1,
+    "linked_outlets": 1,
+    "linked_reporting_origins": 1,
+    "signals": 0,
+    "channels": 1
+   },
+   "u": "https://the-decoder.com/anthropics-claude-science-creates-the-first-complete-ultraviolet-map-of-the-sky/"
+  },
+  {
+   "d": "2026-10-09",
+   "id": "0452c40b5e91",
+   "r": 26,
+   "t": null,
+   "c": "Tech",
+   "h": "The people holding up the internet",
+   "s": "The people holding up the internet. Four billion phones ask one text file what time it is.",
+   "o": [
+    "Lobsters"
+   ],
+   "l": "limited",
+   "coverage": {
+    "level": "limited",
+    "points": 0,
+    "independent_reports": 1,
+    "publishers": [
+     "Lobsters"
+    ],
+    "repeats": 0,
+    "source_links": 1,
+    "linked_outlets": 1,
+    "linked_reporting_origins": 1,
+    "signals": 0,
+    "channels": 1
+   },
+   "u": "https://sheets.works/data-viz/holding-up-the-internet"
+  },
+  {
+   "d": "2026-10-09",
+   "id": "ac156f24577e",
+   "r": 27,
+   "t": null,
+   "c": "Science & AI",
+   "h": "What will it take to build a moon base?",
+   "s": "What will it take to build a moon base. In this episode, a panel of industry experts discuss what's needed to build a moon base.",
+   "o": [
+    "SpaceNews"
+   ],
+   "l": "limited",
+   "coverage": {
+    "level": "limited",
+    "points": 1,
+    "independent_reports": 1,
+    "publishers": [
+     "SpaceNews"
+    ],
+    "repeats": 0,
+    "source_links": 1,
+    "linked_outlets": 1,
+    "linked_reporting_origins": 1,
+    "signals": 0,
+    "channels": 1
+   },
+   "u": "https://spacenews.com/what-will-it-take-to-build-a-moon-base/"
+  },
+  {
+   "d": "2026-10-08",
+   "id": "eca18904a544",
+   "r": 1,
+   "t": 1,
+   "c": "News",
+   "h": "The long-deployed USS Lincoln returns home to San Diego Bay",
+   "s": "The long-deployed USS Lincoln returns home to San Diego Bay. The USS Abraham Lincoln aircraft carrier has returned home after a record-setting uninterrupted time at sea supporting the Iran war.",
+   "o": [
+    "NPR",
+    "PBS NewsHour",
+    "Al Jazeera English",
+    "Al Jazeera",
+    "AP News"
+   ],
+   "l": "strong",
+   "u": "https://www.npr.org/2026/10/08/nx-s1-5995911/the-long-deployed-uss-lincoln-returns-home-to-san-diego-bay"
+  },
+  {
+   "d": "2026-10-08",
+   "id": "c5e7f4546be6",
+   "r": 2,
+   "t": 2,
+   "c": "News",
+   "h": "US plans livestream of execution by firing squad",
+   "s": "US plans livestream of execution by firing squad. Pete Hegseth: \"We'll make sure that people are able to watch it.\"",
+   "o": [
+    "The Verge",
+    "ABC News",
+    "Sky News",
+    "bsky.app"
+   ],
+   "l": "strong",
+   "u": "https://www.theverge.com/tech/1008530/us-government-livestream-execution-firing-squad-fort-hood"
+  },
+  {
+   "d": "2026-10-08",
+   "id": "3cafde12495a",
+   "r": 3,
+   "t": 3,
+   "c": "Tech",
+   "h": "Trump administration is suspending Microsoft from a green card program",
+   "s": "Trump administration is suspending Microsoft from a green card program.",
+   "o": [
+    "AP News",
+    "Business Insider",
+    "Techmeme",
+    "Tom's Hardware",
+    "BBC News"
+   ],
+   "l": "strong",
+   "u": "https://apnews.com/article/h1b-visa-program-vance-microsoft-e7b3a407f822702b269ee277d21343ea"
+  },
+  {
+   "d": "2026-10-08",
+   "id": "9ec36261e260",
+   "r": 4,
+   "t": 4,
+   "c": "News",
+   "h": "Elon Musk's SpaceX Just Made a Huge Play to Challenge the Phone Industry",
+   "s": "Elon Musk's SpaceX just made a huge play to challenge the phone industry and stocks like AT&T, T-Mobile and Verizon are getting crushed. SpaceX agreed to purchase a nationwide spectrum portfolio.",
+   "o": [
+    "Yahoo Finance",
+    "CNBC"
+   ],
+   "l": "moderate",
+   "u": "https://www.cnbc.com/2026/10/08/spacex-spectrum-license-att-verizon-tmobile.html"
+  },
+  {
+   "d": "2026-10-08",
+   "id": "dbbc0d6bda00",
+   "r": 5,
+   "t": 5,
+   "c": "News",
+   "h": "Isaias strengthens into Category 2 hurricane on collision course with the US Gulf Coast",
+   "s": "Isaias strengthens into Category 2 hurricane on collision course with the US Gulf Coast.",
+   "o": [
+    "AP News",
+    "ABC News",
+    "BBC News"
+   ],
+   "l": "strong",
+   "u": "https://abcnews.com/US/tropical-storm-isaias-forecast-make-landfall-hurricane-friday/story?id=137059483"
+  },
+  {
+   "d": "2026-10-08",
+   "id": "8c09a5856ef7",
+   "r": 6,
+   "t": 6,
+   "c": "Science & AI",
+   "h": "4 people on NASA's Crew-12 mission return to Earth after 8 months in space",
+   "s": "4 people on NASA's Crew-12 mission return to Earth after 8 months in space. Four people - two NASA astronauts, one from the European Space Agency and a Russian cosmonaut - spent nearly eight months at the space station, conducting spacewalks, science experiments and research.",
+   "o": [
+    "NPR",
+    "Space",
+    "NASA"
+   ],
+   "l": "strong",
+   "u": "https://www.npr.org/2026/10/08/nx-s1-5992845/nasa-spacex-crew-12-international-space-station-iss-splashdown"
+  },
+  {
+   "d": "2026-10-08",
+   "id": "d67294c7e10c",
+   "r": 7,
+   "t": 7,
+   "c": "News",
+   "h": "\"She Put Her Body on the Line\": Maricarmen, 87, Dies; Her Eviction Sparked Spain Housing Protests",
+   "s": "\"She Put Her Body on the Line\": Maricarmen, 87, Dies; Her Eviction Sparked Spain Housing Protests.",
+   "o": [
+    "Democracy Now!",
+    "The Japan Times"
+   ],
+   "l": "moderate",
+   "u": "https://www.japantimes.co.jp/news/2026/10/09/world/society/madrid-protesters-mourn-evicted-retiree/"
+  },
+  {
+   "d": "2026-10-08",
+   "id": "6baf3c8c4f28",
+   "r": 8,
+   "t": 8,
+   "c": "Sports",
+   "h": "A'ja Wilson wins record fifth MVP as first three-peat in WNBA history strengthens all-time greatness case",
+   "s": "A'ja Wilson wins record fifth MVP as first three-peat in WNBA history strengthens all-time greatness case. The Las Vegas Aces star's fifth WNBA MVP puts her alongside Bill Russell, Kareem Abdul-Jabbar and Michael Jordan in rarefied historic air.",
+   "o": [
+    "Fox News",
+    "The Guardian"
+   ],
+   "l": "moderate",
+   "u": "https://www.foxnews.com/outkick-sports/aja-wilson-wins-record-fifth-wnba-mvp-first-three-peat-wnba-history-strengthens-all-time-greatness-case"
+  },
+  {
+   "d": "2026-10-08",
+   "id": "a89733095f5a",
+   "r": 9,
+   "t": null,
+   "c": "News",
+   "h": "Man Shot by ICE Agent in New York City's Marble Hill, Authorities Says",
+   "s": "A man was hospitalized after being shot by an ICE agent in New York City's Marble Hill neighborhood, according to the DHS and city officials.",
+   "o": [
+    "CBS News",
+    "WABC-TV New York",
+    "Al Jazeera",
+    "The Guardian",
+    "Reuters"
+   ],
+   "l": "strong",
+   "u": "https://www.cbsnews.com/news/ice-agent-shoots-person-in-nycs-marble-hill-law-enforcement-sources-say/"
+  },
+  {
+   "d": "2026-10-08",
+   "id": "dbaffc991fc1",
+   "r": 10,
+   "t": 9,
+   "c": "Science & AI",
+   "h": "NASA Prepares for Moon Base with Three Investigations",
+   "s": "NASA is preparing for humanity's first Moon base with three investigations that will hunt for underground shelters, uncover hidden ice, and track dangerous conditions on the lunar surface. The findings could reveal how astronauts can survive and thrive on the Moon.",
+   "o": [
+    "ScienceDaily",
+    "SpaceNews"
+   ],
+   "l": "moderate",
+   "u": "https://www.sciencedaily.com/releases/2026/10/261008005247.htm"
+  },
+  {
+   "d": "2026-10-08",
+   "id": "1ad90d1e791f",
+   "r": 11,
+   "t": 10,
+   "c": "Sports",
+   "h": "2026 MLB playoff bracket: Schedule, scores as Guardians force Game 5 vs. White Sox in ALDS",
+   "s": "2026 MLB playoff bracket: Schedule, scores as Guardians force Game 5 vs. White Sox in ALDS. Find the full MLB playoff bracket, schedule and more as the postseason continues",
+   "o": [
+    "CBS Sports",
+    "ESPN",
+    "NBC 5 Chicago"
+   ],
+   "l": "strong",
+   "u": "https://www.cbssports.com/mlb/news/2026-mlb-playoff-bracket-schedule-scores-results-how-to-watch/"
+  },
+  {
+   "d": "2026-10-08",
+   "id": "bd825eedf04d",
+   "r": 12,
+   "t": null,
+   "c": "Entertainment",
+   "h": "Princeton Celebrates Anne Carson, a Nobel Prize Winner Who Was Denied Tenure",
+   "s": "Princeton Celebrates Anne Carson, a Nobel Prize Winner Who Was Denied Tenure.",
+   "o": [
+    "The New York Times",
+    "BBC News",
+    "CBC News",
+    "en.wikipedia.org"
+   ],
+   "l": "strong",
+   "u": "https://en.wikipedia.org/wiki/Anne_Carson"
+  },
+  {
+   "d": "2026-10-08",
+   "id": "d13163320ebe",
+   "r": 13,
+   "t": null,
+   "c": "Sports",
+   "h": "How Buccaneers' longest drive in 19 years baffled Cowboys' defense",
+   "s": "How Buccaneers' longest drive in 19 years baffled Cowboys' defense. The Cowboys hoped Week 5 vs. the Buccaneers would be a pick-me-up game.",
+   "o": [
+    "Sporting News",
+    "NFL",
+    "X"
+   ],
+   "l": "moderate",
+   "u": "https://www.sportingnews.com/us/nfl/news/how-buccaneers-longest-drive-baffled-cowboys-defense/ff80fdc97d4b96c6834dc777"
+  },
+  {
+   "d": "2026-10-08",
+   "id": "6e5a0d873b65",
+   "r": 14,
+   "t": null,
+   "c": "Tech",
+   "h": "Apple Set to Debut Touch-Screen MacBook and New iPad Mini",
+   "s": "Apple is set to debut a touch-screen MacBook and a new iPad Mini in late October.",
+   "o": [
+    "Bloomberg.com",
+    "Engadget"
+   ],
+   "l": "moderate",
+   "u": "https://www.engadget.com/2281839/apple-reportedly-plans-touchscreen-macbook-and-ipad-mini-launch-for-this-month/"
+  },
+  {
+   "d": "2026-10-08",
+   "id": "5c9b9733eb0b",
+   "r": 15,
+   "t": null,
+   "c": "Local",
+   "h": "Collin County training 1,100 poll workers ahead of November election",
+   "s": "Collin County training 1,100 poll workers ahead of November election. Collin County ramps up training ahead of early voting",
+   "o": [
+    "NBC DFW",
+    "NBC 5 Dallas-Fort Worth"
+   ],
+   "l": "moderate",
+   "u": "https://www.nbcdfw.com/news/local/collin-county-training-1100-poll-workers-ahead-of-november-election/4088757/"
+  },
+  {
+   "d": "2026-10-08",
+   "id": "54e1d83af61d",
+   "r": 16,
+   "t": null,
+   "c": "News",
+   "h": "Iran scales up Hormuz attacks, raising pressure on Trump as midterms near",
+   "s": "Iran scales up Hormuz attacks, raising pressure on Trump as midterms near. Oil shipments have slowed in the face of Iranian attacks after President Donald Trump celebrated restored flows.",
+   "o": [
+    "The Washington Post"
+   ],
+   "l": "limited",
+   "u": "https://www.washingtonpost.com/world/2026/10/08/iran-scales-up-hormuz-attacks-raising-pressure-trump-midterms-near/"
+  },
+  {
+   "d": "2026-10-08",
+   "id": "c3af18e4b186",
+   "r": 17,
+   "t": null,
+   "c": "Sports",
+   "h": "NFL Week 5 picks: Experts face off on 49ers at Seahawks, Falcons vs. Ravens and more",
+   "s": "NFL Week 5 picks: Experts face off on 49ers at Seahawks, Falcons vs. Ravens and more. CBS Sports writers Jordan Dajani and Jared Dubin predict this weekend's top games",
+   "o": [
+    "CBS Sports"
+   ],
+   "l": "limited",
+   "u": "https://www.cbssports.com/nfl/news/nfl-week-5-picks-buccaneers-at-cowboys-49ers-at-seahawks/"
+  },
+  {
+   "d": "2026-10-08",
+   "id": "cd103f2eab05",
+   "r": 18,
+   "t": null,
+   "c": "News",
+   "h": "Russian strike on buses kills at least 30, say officials, as deadly attacks on Ukraine surge",
+   "s": "Russian strike on buses kills at least 30, say officials, as deadly attacks on Ukraine surge. Ukraine accused Russia of targeting two crowded vehicles in the front line city of Kramatorsk to kill as many civilians as possible.",
+   "o": [
+    "BBC News"
+   ],
+   "l": "limited",
+   "u": "https://www.bbc.co.uk/news/articles/c875pwq134l3o?at_medium=RSS&at_campaign=rss"
+  },
+  {
+   "d": "2026-10-08",
+   "id": "2c5b437c9172",
+   "r": 19,
+   "t": null,
+   "c": "Tech",
+   "h": "ICE Emails Discuss Using Palantir-Supported Tool to Investigate Voter Fraud",
+   "s": "ICE Emails Discuss Using Palantir-Supported Tool to Investigate Voter Fraud. Documents obtained by Democracy Forward show that ICE looked into feeding voter roll data into the ELITE tool, normally used to identify targets for deportation.",
+   "o": [
+    "Wired"
+   ],
+   "l": "limited",
+   "u": "https://www.wired.com/story/ice-emails-discuss-using-palantir-supported-tool-to-investigate-voter-fraud/"
+  },
+  {
+   "d": "2026-10-08",
+   "id": "b240fc6e976b",
+   "r": 20,
+   "t": null,
+   "c": "Science & AI",
+   "h": "James Webb Space Telescope Detects Most Distant Fast Radio Burst",
+   "s": "The James Webb Space Telescope has detected the most distant Fast Radio Burst ever seen.",
+   "o": [
+    "Space"
+   ],
+   "l": "limited",
+   "u": "https://news.google.com/rss/articles/CBMi-wFBVV95cUxQdXZJRmprMzFTbEZPdTNoZ2RsczZNTkxteExQTVNPNWhBTGk2S05zazVSQ2MzUENudjVid2NXU1JZLWYxMmJ6TlZITFkwUExNSGg3VVhqN3JQVF9vSHJ3UWVYdnc5M0ZQVDJLdVFubGJqS1g3WFhUcS0yWTJWdGRFRVh0cFBncF9qUHhxY2V5QWR6WENIWmhyLVptelJaaERWUWdyd2g0YUI2SWJmY1VPb0xBNkNZeDltUzR4UEFkZEpyWHFlXzQ3YUNVY2EtNy01NEVMSk5xcWV1N1pmTDlNUGNrNC14M010aVVEYy03M1A4RE9RcnduUUUwQQ?oc=5"
+  },
+  {
+   "d": "2026-10-08",
+   "id": "abbcc3e35bed",
+   "r": 21,
+   "t": null,
+   "c": "Sports",
+   "h": "Bucky Irving runs riot as Buccaneers stun Cowboys for first win of season",
+   "s": "Bucky Irving runs riot as Buccaneers stun Cowboys for first win of season. Bucky Irving rushed for a career-high 165 yards and scored twice as Tampa Bay capitalized on Dallas mistakes to claim a surprise 24-16 victory",
+   "o": [
+    "The Guardian"
+   ],
+   "l": "limited",
+   "u": "https://www.theguardian.com/sport/2026/oct/08/bucky-irving-tampa-bay-buccaneers-dallas-cowboys-nfl"
+  },
+  {
+   "d": "2026-10-08",
+   "id": "d42620978f1c",
+   "r": 22,
+   "t": null,
+   "c": "Tech",
+   "h": "Judge weighs if Trump can charge $100K for early access to Truth Social posts",
+   "s": "Judge weighs if Trump can charge $100K for early access to Truth Social posts. Judge questioned if Trump delaying access to Truth Social posts by a second harms the press.",
+   "o": [
+    "Ars Technica"
+   ],
+   "l": "limited",
+   "u": "https://arstechnica.com/tech-policy/2026/10/judge-weighs-if-trump-can-charge-100k-for-early-access-to-truth-social-posts/"
+  },
+  {
+   "d": "2026-10-08",
+   "id": "ee60b2d934b6",
+   "r": 23,
+   "t": null,
+   "c": "Tech",
+   "h": "Ukrainian drone attack takes out Russian datacenter",
+   "s": "Ukrainian drone attack takes out Russian datacenter. Putin this cloud region back into operation might not be possible, says Yandex",
+   "o": [
+    "The Register"
+   ],
+   "l": "limited",
+   "u": "https://www.theregister.com/off-prem/2026/10/09/ukrainian-drone-attack-takes-out-russian-datacenter/5302137"
+  },
+  {
+   "d": "2026-10-08",
+   "id": "ca290f10b811",
+   "r": 24,
+   "t": null,
+   "c": "Tech",
+   "h": "US Judge Sentences Raheim Hamilton to 40 Years in Prison for Facilitating $430M in Illegal Transactions",
+   "s": "A US judge sentenced Raheim Hamilton, co-creator of the dark web marketplace Empire Market, to 40 years in prison for facilitating $430M in illegal transactions.",
+   "o": [
+    "Techmeme"
+   ],
+   "l": "limited",
+   "u": "https://www.techmeme.com/261008/p54#a261008p54"
+  },
+  {
+   "d": "2026-10-08",
+   "id": "3a5ca3e95bc1",
+   "r": 25,
+   "t": null,
+   "c": "News",
+   "h": "Anthropic Is Launching a 'Presidential Engagement' Effort to Advise Candidates on AI Policy",
+   "s": "Anthropic is launching a 'presidential engagement' effort to advise candidates on AI policy ahead of the 2028 election. They want every serious candidate to understand the technology and the case for governing it.",
+   "o": [
+    "Fortune"
+   ],
+   "l": "limited",
+   "u": "https://fortune.com/2026/10/08/anthropic-presidential-engagement-program-hiring-political-lead-2028-elections/"
+  },
+  {
+   "d": "2026-10-08",
+   "id": "7c27177e5e62",
+   "r": 26,
+   "t": null,
+   "c": "News",
+   "h": "Nvidia, Oracle, CoreWeave and other AI stocks sink on OpenAI revenue report",
+   "s": "Nvidia, Oracle, CoreWeave and other AI stocks sink on OpenAI revenue report. OpenAI has told investors that it hit roughly $50 billion in annualized revenue at the end of September, CNBC confirmed.",
+   "o": [
+    "CNBC"
+   ],
+   "l": "limited",
+   "u": "https://www.cnbc.com/2026/10/08/open-ai-revenue-nvidia-oracle-coreweave.html"
+  },
+  {
+   "d": "2026-10-08",
+   "id": "61c94ae2d668",
+   "r": 27,
+   "t": null,
+   "c": "Science & AI",
+   "h": "Fired OpenAI safety researchers dispute misconduct claims, warn of chilling effect",
+   "s": "Fired OpenAI safety researchers dispute misconduct claims, warn of chilling effect. Three fired OpenAI safety researchers dispute allegations of mishandling sensitive information, warning in an open letter that their dismissals are creating a chilling effect on the company's AI…",
+   "o": [
+    "TechCrunch"
+   ],
+   "l": "limited",
+   "u": "https://techcrunch.com/2026/10/08/fired-openai-safety-researchers-dispute-misconduct-claims-warn-of-chilling-effect/"
+  },
+  {
+   "d": "2026-10-08",
+   "id": "5a514c61da91",
+   "r": 28,
+   "t": null,
+   "c": "Tech",
+   "h": "Amazon builds 1,000th satellite, says space internet service is weeks away",
+   "s": "Amazon builds 1,000th satellite, says space internet service is weeks away. Amazon has built its 1,000th Leo satellite and says service is weeks away.",
+   "o": [
+    "The Next Web"
+   ],
+   "l": "limited",
+   "u": "https://thenextweb.com/news/amazon-leo-1000th-satellite-europe"
+  },
+  {
+   "d": "2026-10-08",
+   "id": "287bab4c4e7a",
+   "r": 29,
+   "t": null,
+   "c": "Science & AI",
+   "h": "Japan's MMX Mission Aims to Retrieve Samples from Phobos",
+   "s": "Japan's MMX mission aims to retrieve samples from Phobos, a mysterious martian moon. The samples may contain pieces of Mars and could reveal how Phobos formed.",
+   "o": [
+    "Science"
+   ],
+   "l": "limited",
+   "u": "https://www.science.org/content/article/audacious-space-heist-japan-aims-bring-home-bits-martian-moon"
+  },
+  {
+   "d": "2026-10-07",
+   "id": "8c78f0defb4f",
+   "r": 1,
+   "t": 1,
+   "c": "Tech",
+   "h": "Computing Pioneer Margaret Hamilton Dies at 90",
+   "s": "Margaret Hamilton, a pioneering computer scientist, has died at 90. She led the software development team for the Apollo program and helped establish software engineering as a discipline.",
+   "o": [
+    "news.mit.edu",
+    "Techmeme",
+    "MIT News"
+   ],
+   "l": "strong"
+  },
+  {
+   "d": "2026-10-07",
+   "id": "11483c2749a7",
+   "r": 2,
+   "t": 2,
+   "c": "News",
+   "h": "Trump Says He Deserves Nobel Peace Prize",
+   "s": "US President Donald Trump has expressed doubt about his chances of winning the Nobel Peace Prize, despite believing he deserves it.",
+   "o": [
+    "South China Morning Post",
+    "Reuters"
+   ],
+   "l": "moderate"
+  },
+  {
+   "d": "2026-10-07",
+   "id": "7400f256efea",
+   "r": 3,
+   "t": 3,
+   "c": "News",
+   "h": "Fed Officials See More Work to Do to Quell Inflation",
+   "s": "Federal Reserve officials expect to raise interest rates again before the end of the year to combat inflation that has run above target for over five years.",
+   "o": [
+    "The New York Times",
+    "CNBC"
+   ],
+   "l": "moderate"
+  },
+  {
+   "d": "2026-10-07",
+   "id": "8efaa245cd73",
+   "r": 4,
+   "t": 4,
+   "c": "News",
+   "h": "Christa Pike's Botched Execution Raises Concerns",
+   "s": "Christa Pike's lawyers say she was angry and confused after a botched execution in Tennessee. A judge has ordered state officials to preserve all evidence from the botched execution.",
+   "o": [
+    "Reuters",
+    "DW",
+    "AP News",
+    "CBS News",
+    "ProPublica"
+   ],
+   "l": "strong"
+  },
+  {
+   "d": "2026-10-07",
+   "id": "00dae9445344",
+   "r": 5,
+   "t": 5,
+   "c": "News",
+   "h": "FBI Arrests Man for Plotting Mass Shooting at Mall of America",
+   "s": "The FBI has arrested an 18-year-old for allegedly planning a mass casualty attack at the Minnesota mall.",
+   "o": [
+    "Reuters",
+    "ABC News"
+   ],
+   "l": "moderate"
+  },
+  {
+   "d": "2026-10-07",
+   "id": "3fa23af214eb",
+   "r": 6,
+   "t": 6,
+   "c": "Science & AI",
+   "h": "OpenAI Rolls Out GPT-6 with Interactive UI",
+   "s": "OpenAI introduced GPT-6 with Intelligent UI, a feature that turns answers into interactive interfaces with charts, buttons, and forms. This feature will make it easier for users to understand complicated answers and reduce wait times by 44 percent.",
+   "o": [
+    "The Decoder",
+    "MacRumors"
+   ],
+   "l": "moderate"
+  },
+  {
+   "d": "2026-10-07",
+   "id": "6965d34a0360",
+   "r": 7,
+   "t": 7,
+   "c": "Science & AI",
+   "h": "Tropical Storm Isaias Forecast to Become First Atlantic Hurricane of 2026",
+   "s": "Tropical Storm Isaias is forecast to become the first Atlantic hurricane of 2026, bringing life-threatening rain and storm surge to the Gulf Coast. El Nino has led to an eerily quiet season so far.",
+   "o": [
+    "BBC News",
+    "Wired"
+   ],
+   "l": "moderate"
+  },
+  {
+   "d": "2026-10-07",
+   "id": "e0c81c5c0445",
+   "r": 8,
+   "t": 8,
+   "c": "News",
+   "h": "Trump Wants to Make His West Palm Beach Golf Club a Permanent Presidential Retreat",
+   "s": "Trump wants to turn his private golf club into a presidential retreat. The retreat would be located in West Palm Beach, Florida.",
+   "o": [
+    "NBC News",
+    "Boing Boing"
+   ],
+   "l": "moderate"
+  },
+  {
+   "d": "2026-10-07",
+   "id": "79bc6ddb415f",
+   "r": 9,
+   "t": null,
+   "c": "Science & AI",
+   "h": "IceCube, High-energy Neutrinos, and Francis Halzen Win 2026's Physics Nobel",
+   "s": "Francis Halzen won the 2026 Physics Nobel for his work on the IceCube detector that observes high-energy neutrinos.",
+   "o": [
+    "Big Think",
+    "The Guardian"
+   ],
+   "l": "moderate"
+  },
+  {
+   "d": "2026-10-07",
+   "id": "7c2ea69d7e33",
+   "r": 10,
+   "t": null,
+   "c": "News",
+   "h": "DNC Sues Trump Administration over Taxpayer-Funded Ads",
+   "s": "The Democratic National Committee has sued the Trump administration over taxpayer-funded television ads promoting the president's message. The ads have drawn considerable backlash and the DNC alleges they violate several laws.",
+   "o": [
+    "France 24",
+    "Axios",
+    "The Guardian"
+   ],
+   "l": "moderate"
+  },
+  {
+   "d": "2026-10-07",
+   "id": "788ff95a66eb",
+   "r": 11,
+   "t": null,
+   "c": "Science & AI",
+   "h": "Claude Haiku 5.5 Released with Price Cuts",
+   "s": "Anthropic released Claude Haiku 5.5, a small model that crushes its predecessor in benchmarks. Token prices drop by up to 90 percent, though a new tokenizer eats into some of those savings.",
+   "o": [
+    "anthropic.com",
+    "The Decoder",
+    "Simon Willison"
+   ],
+   "l": "moderate"
+  },
+  {
+   "d": "2026-10-07",
+   "id": "967352080062",
+   "r": 12,
+   "t": null,
+   "c": "News",
+   "h": "WHO Investigates Death of Plague Research Lab Employee in Russia",
+   "s": "The World Health Organization is seeking more information on the death of a plague research lab employee in Russia. Russia says the woman died of pneumonia of unknown origin.",
+   "o": [
+    "NPR",
+    "Reuters",
+    "CNBC",
+    "Sky News"
+   ],
+   "l": "strong"
+  },
+  {
+   "d": "2026-10-07",
+   "id": "da0243ec9743",
+   "r": 13,
+   "t": null,
+   "c": "Science & AI",
+   "h": "SpaceX's Crew-12 Astronauts Returning to Earth Oct. 8 After Nearly 8 Months in Space",
+   "s": "The four members of NASA's SpaceX Crew-12 mission are returning to Earth after nearly 8 months in space. They will be returning on October 8.",
+   "o": [
+    "Space",
+    "NASA"
+   ],
+   "l": "moderate"
+  },
+  {
+   "d": "2026-10-07",
+   "id": "99eb2eec8152",
+   "r": 14,
+   "t": null,
+   "c": "Science & AI",
+   "h": "Nobel Prize in Chemistry Awarded for Work on Mirror-Image Molecules",
+   "s": "Henri B Kagan and Kenso Soai have been awarded the Nobel Prize in Chemistry for their discovery of non-linear effects and autocatalysis in asymmetric organic synthesis.",
+   "o": [
+    "nobelprize.org",
+    "The Guardian",
+    "Nature",
+    "Associated Press"
+   ],
+   "l": "strong"
+  },
+  {
+   "d": "2026-10-07",
+   "id": "9edfd0f9d9b7",
+   "r": 15,
+   "t": null,
+   "c": "News",
+   "h": "Trump's Retreat: From the Gulf to Britain, American Forces Pull Back",
+   "s": "A war that was intended to demonstrate the reach of American power has now done the opposite.",
+   "o": [
+    "New York Times",
+    "The New York Times"
+   ],
+   "l": "moderate"
+  },
+  {
+   "d": "2026-10-07",
+   "id": "0c71fcfaeded",
+   "r": 16,
+   "t": null,
+   "c": "Science & AI",
+   "h": "NASA's SpaceX 35th Commercial Resupply Mission Overview",
+   "s": "NASA and SpaceX are targeting October 13 to launch scientific investigations, supplies, and equipment to the International Space Station. The mission will include over 6,300 pounds of cargo.",
+   "o": [
+    "NASA",
+    "NASA (.gov)"
+   ],
+   "l": "moderate"
+  },
+  {
+   "d": "2026-10-07",
+   "id": "a89582cc0cd3",
+   "r": 17,
+   "t": null,
+   "c": "Science & AI",
+   "h": "OpenAI Agents Hacked Wikipedia Tools",
+   "s": "OpenAI agents attempted to hack a note-taking tool hosted by Wikipedia, made unauthorized edits, and sent millions of resource-intensive requests.",
+   "o": [
+    "Ars Technica"
+   ],
+   "l": "limited"
+  },
+  {
+   "d": "2026-10-07",
+   "id": "74bcbfc983c0",
+   "r": 18,
+   "t": null,
+   "c": "Tech",
+   "h": "Visa, Mastercard, and Banks Face Anticompetitive Fees Lawsuit",
+   "s": "A class action lawsuit alleges that Visa, Mastercard, and major banks have conspired to artificially inflate merchants' credit card transaction fees. A San Diego pizzeria is leading the lawsuit.",
+   "o": [
+    "classaction.org"
+   ],
+   "l": "limited"
+  },
+  {
+   "d": "2026-10-07",
+   "id": "3c4179df6322",
+   "r": 19,
+   "t": null,
+   "c": "Sports",
+   "h": "Manchester City Case Wouldn't Have Been Possible Without Hacker Rui Pinto",
+   "s": "The Manchester City case, which has rocked English football to its core, wouldn't have been possible without Football Leaks and its founder, Rui Pinto. However, he is a complicated figure, with light and dark to his actions.",
+   "o": [
+    "ESPN"
+   ],
+   "l": "limited"
+  },
+  {
+   "d": "2026-10-07",
+   "id": "c57cbe9e4e71",
+   "r": 20,
+   "t": null,
+   "c": "Tech",
+   "h": "Man Convicted of Stealing over $50 Million in Crypto",
+   "s": "A 36-year-old cybersecurity consultant from Maryland has been convicted of computer fraud and money laundering in a case involving more than $50 million in cryptocurrency. He now faces up to 20 years in prison on a money-laundering charge.",
+   "o": [
+    "Gizmodo"
+   ],
+   "l": "limited"
+  },
+  {
+   "d": "2026-10-07",
+   "id": "b572b2b4f519",
+   "r": 21,
+   "t": null,
+   "c": "Sports",
+   "h": "Jon Rahm Will Not Return to LIV Golf",
+   "s": "Jon Rahm's lawyer stated that the client will not return to LIV Golf.",
+   "o": [
+    "Golf Channel"
+   ],
+   "l": "limited"
+  },
+  {
+   "d": "2026-10-07",
+   "id": "e2a07a946117",
+   "r": 22,
+   "t": null,
+   "c": "Tech",
+   "h": "Hackers Obtain Counterfeit TLS Certificates for Google and Other Large Services",
+   "s": "Hackers have obtained counterfeit TLS certificates for Google and other large organizations, allowing them to mint unauthorized certificates. This was made possible by a compromise of three domain registries.",
+   "o": [
+    "arstechnica.com"
+   ],
+   "l": "limited"
+  },
+  {
+   "d": "2026-10-07",
+   "id": "a3184106751f",
+   "r": 23,
+   "t": null,
+   "c": "Internet Culture",
+   "h": "Viral Video of Arizona Cheerleader Slammed to Ground by Police Draws Outcry",
+   "s": "A viral video showed an Arizona cheerleader being slammed to the ground by police and punched, sparking national outrage and calls for accountability.",
+   "o": [
+    "NBC News"
+   ],
+   "l": "limited"
+  },
+  {
+   "d": "2026-10-07",
+   "id": "1915e776423e",
+   "r": 24,
+   "t": null,
+   "c": "Entertainment",
+   "h": "Late-night Hosts React to Trump's Inflammatory Comments About Iran Bombing US Cities",
+   "s": "Late-night hosts reacted to Donald Trump's inflammatory comments about Iran bombing US cities as he continues to defend his war in the region.",
+   "o": [
+    "The Guardian"
+   ],
+   "l": "limited"
+  },
+  {
+   "d": "2026-10-07",
+   "id": "ca3f18965d98",
+   "r": 25,
+   "t": null,
+   "c": "Tech",
+   "h": "\"Software Is Over\": Bold AI Developer Takes Aim at Adobe with Open Source Clones",
+   "s": "Artcraft got its start last year as a \"controllable AI for artists\" that allows for precise post-generation.",
+   "o": [
+    "Ars Technica"
+   ],
+   "l": "limited"
+  },
+  {
+   "d": "2026-10-07",
+   "id": "a4dff756873b",
+   "r": 26,
+   "t": null,
+   "c": "Tech",
+   "h": "Microsoft Says New $2,599 Laptop with Nvidia Chip Outperforms MacBooks",
+   "s": "Microsoft claims its new Surface Laptop Ultra with an Nvidia chip outperforms MacBooks, but has published no test methodology.",
+   "o": [
+    "The Next Web"
+   ],
+   "l": "limited"
+  },
+  {
+   "d": "2026-10-07",
+   "id": "56f5964e0d75",
+   "r": 27,
+   "t": null,
+   "c": "Sports",
+   "h": "Jaguars to Play 26 of Next 30 Regular-Season Games Away from Jacksonville",
+   "s": "The Jaguars will play 26 of their next 30 regular-season games away from their home stadium in Jacksonville. This will be the first time an NFL team has played in 12 or more stadiums in a single season.",
+   "o": [
+    "ESPN"
+   ],
+   "l": "limited"
+  },
+  {
+   "d": "2026-10-07",
+   "id": "330cf37ffd9a",
+   "r": 28,
+   "t": null,
+   "c": "Entertainment",
+   "h": "Netflix's 8-Part Psychological Thriller Series Is Stranger Things Meets Ready or Not",
+   "s": "Netflix's new thriller series has been compared to Stranger Things and Ready or Not, making for a suspenseful binge. The show has been released earlier in 2026.",
+   "o": [
+    "Screen Rant"
+   ],
+   "l": "limited"
+  },
+  {
+   "d": "2026-10-07",
+   "id": "1ab67caa6d59",
+   "r": 29,
+   "t": null,
+   "c": "Entertainment",
+   "h": "It's Going to Be A Long Time Before We Get A New Halo Game",
+   "s": "A new report claims that a skeleton crew at Halo Studios is working on one last big content update for Halo: Campaign Evolved before the team will likely be completely cut and the studio closed.",
+   "o": [
+    "Kotaku"
+   ],
+   "l": "limited"
+  },
+  {
+   "d": "2026-10-07",
+   "id": "2b852bcd8f2b",
+   "r": 30,
+   "t": null,
+   "c": "Tech",
+   "h": "TP-Link Faces Legal Troubles in the US",
+   "s": "TP-Link is facing more legal troubles in the US as Florida and three other states filed lawsuits alleging that it lied to consumers about its connections to China and the risks of its routers.",
+   "o": [
+    "Ars Technica"
+   ],
+   "l": "limited"
+  },
+  {
+   "d": "2026-10-07",
+   "id": "95d90cc72182",
+   "r": 31,
+   "t": null,
+   "c": "Entertainment",
+   "h": "HBO's Lanterns Sets New DCU Rotten Tomatoes Audience Score Record After Finale",
+   "s": "HBO's Lanterns has set a new record for the DC Universe on Rotten Tomatoes, with a high audience score after its finale.",
+   "o": [
+    "Screen Rant"
+   ],
+   "l": "limited"
+  },
+  {
+   "d": "2026-10-07",
+   "id": "5ae90ae55c15",
+   "r": 32,
+   "t": null,
+   "c": "Internet Culture",
+   "h": "Domestic Abuse Survivors Speak Out Against Far-Right UK Street Patrols",
+   "s": "Domestic abuse survivors are speaking out against the far-right UK street patrols, which they claim are abusive and controlling. Seven women shared their stories of abuse and control by their ex-partners.",
+   "o": [
+    "The Guardian"
+   ],
+   "l": "limited"
+  },
+  {
+   "d": "2026-10-07",
+   "id": "81cca3ab6006",
+   "r": 33,
+   "t": null,
+   "c": "Tech",
+   "h": "Windows Search Becomes Fastest Way to Control PC",
+   "s": "Windows Search is becoming the fastest way to control a PC.",
+   "o": [
+    "Windows Central"
+   ],
+   "l": "limited"
+  },
+  {
+   "d": "2026-10-07",
+   "id": "11800e5c518e",
+   "r": 34,
+   "t": null,
+   "c": "Entertainment",
+   "h": "Warner and Paramount Merge to Form Skydance",
+   "s": "The merger of Warner and Paramount has formed Skydance, which will shake up the film industry. The big five have officially become the big four.",
+   "o": [
+    "The Guardian"
+   ],
+   "l": "limited"
+  },
+  {
+   "d": "2026-10-07",
+   "id": "d15543cf3a76",
+   "r": 35,
+   "t": null,
+   "c": "Entertainment",
+   "h": "International Oscar Submissions: China, Syria, Denmark, Italy, France and More Join the List",
+   "s": "China, Syria, Denmark, Italy, France, and more countries have submitted their entries for the 2027 Academy Awards. Final submissions are due by October 1.",
+   "o": [
+    "Variety"
+   ],
+   "l": "limited"
+  },
+  {
+   "d": "2026-10-07",
+   "id": "bfa823a112dd",
+   "r": 36,
+   "t": null,
+   "c": "Entertainment",
+   "h": "Star Wars: Zero Company Studio Brings Back Furloughed Developers",
+   "s": "The studio behind Star Wars: Zero Company is bringing back furloughed developers and working on new updates.",
+   "o": [
+    "Eurogamer"
+   ],
+   "l": "limited"
+  },
+  {
+   "d": "2026-10-07",
+   "id": "27dbce1f91fe",
+   "r": 37,
+   "t": null,
+   "c": "Internet Culture",
+   "h": "AI Favors Brands with Active Social Media Presence",
+   "s": "A new study has found that maintaining an active presence on social media platforms can help brands increase their visibility in Google's artificial intelligence search results. Social platform links appeared in a majority of Google's AI search results.",
+   "o": [
+    "Social Media Today"
+   ],
+   "l": "limited"
+  },
+  {
+   "d": "2026-10-07",
+   "id": "cc71add49950",
+   "r": 38,
+   "t": null,
+   "c": "Sports",
+   "h": "Mike Breen Apologizes for LeBron James Story",
+   "s": "Mike Breen apologized for causing a stir with an anecdote he shared while calling a preseason Knicks-Sixers game. The Philadelphia 76ers are going to be under a microscope all season.",
+   "o": [
+    "CBS Sports"
+   ],
+   "l": "limited"
+  },
+  {
+   "d": "2026-10-07",
+   "id": "acc967473abd",
+   "r": 39,
+   "t": null,
+   "c": "Entertainment",
+   "h": "'Ted Lasso': Brendan Hunt Breaks Down Season 4 Finale",
+   "s": "Brendan Hunt, co-creator and star of 'Ted Lasso', breaks down the Season 4 finale, including a 'passing the torch' moment and coaching team shakeup.",
+   "o": [
+    "Deadline"
+   ],
+   "l": "limited"
+  },
+  {
+   "d": "2026-10-07",
+   "id": "7b6f0ca53525",
+   "r": 40,
+   "t": null,
+   "c": "Sports",
+   "h": "Stephen A. Smith Apologizes for Lane Johnson Comments",
+   "s": "Stephen A. Smith has apologized for his comments on Lane Johnson's retirement, which sparked controversy over mental health.",
+   "o": [
+    "Bleacher Report"
+   ],
+   "l": "limited"
+  },
+  {
+   "d": "2026-10-07",
+   "id": "e26603963891",
+   "r": 41,
+   "t": null,
+   "c": "Sports",
+   "h": "How Trading Cam Jurgens Impacts the Eagles' Salary Cap",
+   "s": "The Philadelphia Eagles gained draft capital by trading Cam Jurgens to Baltimore, but the deal provides limited immediate salary-cap relief and leaves the team with a substantial dead cap charge.",
+   "o": [
+    "Yahoo Sports"
+   ],
+   "l": "limited"
+  },
+  {
+   "d": "2026-10-07",
+   "id": "53290b1dfc44",
+   "r": 42,
+   "t": null,
+   "c": "Sports",
+   "h": "Padres Closer Miller Returns from Paternity Leave",
+   "s": "Padres closer Mason Miller, who went on paternity leave, will be available to pitch in Game 4 against the Brewers after witnessing the birth of his first child.",
+   "o": [
+    "ESPN"
+   ],
+   "l": "limited"
+  },
+  {
+   "d": "2026-10-07",
+   "id": "f3fbdbecf70a",
+   "r": 43,
+   "t": null,
+   "c": "Internet Culture",
+   "h": "VPNs Become a Battleground in Social Media Control",
+   "s": "A group of tech companies and digital rights activists came together to launch a global campaign to preserve the right to use VPNs. Many people use VPNs to evade legislation targeting social media.",
+   "o": [
+    "Tubefilter"
+   ],
+   "l": "limited"
+  },
+  {
+   "d": "2026-10-07",
+   "id": "d974dae05d9b",
+   "r": 44,
+   "t": null,
+   "c": "Sports",
+   "h": "Declan Rice Close to Agreeing New Arsenal Deal",
+   "s": "Declan Rice, an England midfielder, is close to agreeing a new long-term contract with Arsenal, becoming a crucial player for the Gunners since his transfer.",
+   "o": [
+    "BBC Sport"
+   ],
+   "l": "limited"
+  }
+ ]
+}

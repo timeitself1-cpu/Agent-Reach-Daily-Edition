@@ -1,0 +1,23 @@
+name: Live deployment check
+# Moved from website/.github/workflows/live-check.yml during the monorepo merge.
+# Hits the production site, so it runs only on pushes to main (post-rename),
+# never on feature branches, plus manual dispatch.
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'website/**'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  live-check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: '24'
+      - run: node scripts/live-check.cjs
+        working-directory: website

@@ -1,0 +1,27 @@
+{
+ "schema": "agent_reach.public_index",
+ "schema_version": 1,
+ "latest": "2026-10-07",
+ "editions": [
+  {
+   "date": "2026-10-07",
+   "revision": 2,
+   "generated_utc": "2026-10-07T23:42:20Z",
+   "stories": 44,
+   "lead": "Computing Pioneer Margaret Hamilton Dies at 90",
+   "headlines": [
+    "Trump Says He Deserves Nobel Peace Prize",
+    "Fed Officials See More Work to Do to Quell Inflation",
+    "Christa Pike's Botched Execution Raises Concerns"
+   ],
+   "sections": {
+    "News": 8,
+    "Tech": 8,
+    "Science & AI": 8,
+    "Sports": 8,
+    "Entertainment": 8,
+    "Internet Culture": 4
+   }
+  }
+ ]
+}

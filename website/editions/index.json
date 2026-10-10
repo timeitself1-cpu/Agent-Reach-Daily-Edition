@@ -1,0 +1,86 @@
+{
+ "schema": "agent_reach.public_index",
+ "schema_version": 1,
+ "latest": "2026-10-10",
+ "editions": [
+  {
+   "date": "2026-10-10",
+   "revision": 3,
+   "generated_utc": "2026-10-10T11:52:00Z",
+   "stories": 23,
+   "lead": "Hurricane Isaias Makes Landfall in Florida",
+   "headlines": [
+    "Saudi Arabia Faces New Level of Peril in Houthi Attacks, Amid Wider Iran War",
+    "Trump Announces Deal for Russian Diesel",
+    "US Imposes Sanctions on International Criminal Court"
+   ],
+   "sections": {
+    "News": 7,
+    "Tech": 4,
+    "Science & AI": 9,
+    "Sports": 2,
+    "Entertainment": 1
+   }
+  },
+  {
+   "date": "2026-10-09",
+   "revision": 2,
+   "generated_utc": "2026-10-09T13:27:43Z",
+   "stories": 27,
+   "lead": "ICJ judge Navi Pillay wins Nobel peace prize for promoting international law",
+   "headlines": [
+    "Firing Squad Execution to Be Livestreamed, Pentagon Says",
+    "Isaias strengthens into Category 2 hurricane on collision course with the Gulf Coast",
+    "Guardians erupt in sixth inning to stun White Sox in Game 4 of ALDS, force deciding Game 5"
+   ],
+   "sections": {
+    "News": 10,
+    "Tech": 5,
+    "Science & AI": 6,
+    "Sports": 4,
+    "Entertainment": 1,
+    "Internet Culture": 1
+   }
+  },
+  {
+   "date": "2026-10-08",
+   "revision": 8,
+   "generated_utc": "2026-10-09T04:15:11Z",
+   "stories": 29,
+   "lead": "The long-deployed USS Lincoln returns home to San Diego Bay",
+   "headlines": [
+    "US plans livestream of execution by firing squad",
+    "Trump administration is suspending Microsoft from a green card program",
+    "Elon Musk's SpaceX Just Made a Huge Play to Challenge the Phone Industry"
+   ],
+   "sections": {
+    "News": 10,
+    "Local": 1,
+    "Tech": 7,
+    "Science & AI": 5,
+    "Sports": 5,
+    "Entertainment": 1
+   }
+  },
+  {
+   "date": "2026-10-07",
+   "revision": 2,
+   "generated_utc": "2026-10-07T23:42:20Z",
+   "stories": 44,
+   "lead": "Computing Pioneer Margaret Hamilton Dies at 90",
+   "headlines": [
+    "Trump Says He Deserves Nobel Peace Prize",
+    "Fed Officials See More Work to Do to Quell Inflation",
+    "Christa Pike's Botched Execution Raises Concerns"
+   ],
+   "sections": {
+    "News": 8,
+    "Tech": 8,
+    "Science & AI": 8,
+    "Sports": 8,
+    "Entertainment": 8,
+    "Internet Culture": 4
+   }
+  }
+ ]
+}
