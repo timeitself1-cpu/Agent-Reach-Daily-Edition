@@ -417,13 +417,65 @@ if (typeof module !== 'undefined') module.exports = {normOutlet, dedupeOutlets, 
     return h('a', {class: 'story-link', href: storyUrl(ed, s)}, sourceLinks(s) ? 'Sources' : 'Details',
       h('span', {class: 'sr', text: ` and coverage: ${s.headline}`}));
   }
+  // Timeline toggle: fetches the event's history and renders it inline.
+  function timelineToggle(s) {
+    if (!s.event_id) return null;
+    const btn = h('button', {type: 'button', class: 'timeline-toggle', 'aria-expanded': 'false',
+      text: 'Timeline'});
+    const container = h('div', {class: 'timeline-container', hidden: true});
+    btn.addEventListener('click', async () => {
+      const expanded = btn.getAttribute('aria-expanded') === 'true';
+      if (expanded) {
+        container.hidden = true;
+        btn.setAttribute('aria-expanded', 'false');
+        btn.textContent = 'Timeline';
+        return;
+      }
+      // Fetch on first open
+      if (!container.dataset.loaded) {
+        container.innerHTML = '<p class="timeline-loading">Loading timeline…</p>';
+        try {
+          const res = await fetch(`/events/${s.event_id}.json`);
+          if (!res.ok) throw new Error('not found');
+          const event = await res.json();
+          container.innerHTML = '';
+          container.append(renderTimeline(event));
+          container.dataset.loaded = 'true';
+        } catch (e) {
+          container.innerHTML = '<p class="timeline-error">Timeline not available yet.</p>';
+        }
+      }
+      container.hidden = false;
+      btn.setAttribute('aria-expanded', 'true');
+      btn.textContent = 'Hide timeline';
+    });
+    return h('span', {class: 'timeline-wrap'}, btn, container);
+  }
+  function renderTimeline(event) {
+    const entries = (event.timeline || []).slice().reverse(); // newest first
+    return h('div', {class: 'timeline'},
+      h('h4', {class: 'timeline-title', text: `Event timeline (${entries.length} ${entries.length === 1 ? 'entry' : 'entries'})`}),
+      h('ol', {class: 'timeline-list'},
+        entries.map(e => h('li', {class: 'timeline-entry'},
+          h('div', {class: 'timeline-date'}, h('time', {datetime: e.date, text: e.date})),
+          h('div', {class: 'timeline-body'},
+            h('span', {class: `timeline-change ${e.change}`, text: e.change}),
+            h('p', {class: 'timeline-headline', text: e.headline}),
+            e.what_changed ? h('p', {class: 'timeline-what', text: e.what_changed}) : null,
+            h('p', {class: 'timeline-meta', text: `${e.source_count} sources`})
+          )
+        ))
+      )
+    );
+  }
   // Story footer, one line: time, who reported it (with the strength bars) and the link to the evidence.
   function meta(s, opts = {}) {
     const when = ago(s.newest_published_utc);
     return h('div', {class: 'meta'},
       when && !opts.noTime ? h('time', {datetime: s.newest_published_utc, 'data-relative': 'true', 'data-fs': 'full', title: 'Newest report: ' + stamp(s.newest_published_utc), text: when}) : null,
       opts.noOutlets ? covMeter(s) : coverageLine(s, opts.names || 2),
-      opts.ed ? storyLink(opts.ed, s) : null);
+      opts.ed ? storyLink(opts.ed, s) : null,
+      timelineToggle(s));
   }
   function card(ed, s, variant, tag = 'h3') {
     const cls = 'card' + (variant === 'feature' ? ' feature' : '');

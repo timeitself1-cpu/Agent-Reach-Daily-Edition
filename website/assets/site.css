@@ -675,3 +675,25 @@ a.more-sections-link{text-decoration:none}
 @media(max-width:600px){.dept-grid{grid-template-columns:1fr}}
 
 /* Edition band, archive band, about band. */
+
+/* Event timeline */
+.timeline-wrap{display:inline}
+.timeline-toggle{background:none;border:1px solid var(--line);border-radius:999px;
+  padding:4px 12px;font-size:13px;color:var(--ink2);cursor:pointer;font-weight:500}
+.timeline-toggle:hover{border-color:var(--accent);color:var(--accent)}
+.timeline-container{margin-top:12px;border-top:1px solid var(--line);padding-top:12px}
+.timeline-loading,.timeline-error{color:var(--muted);font-size:14px;font-style:italic;margin:0}
+.timeline-title{font-size:14px;font-weight:700;margin:0 0 12px;color:var(--ink2)}
+.timeline-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:12px}
+.timeline-entry{display:grid;grid-template-columns:90px 1fr;gap:12px;padding:12px;
+  background:var(--card2);border-radius:8px;border:1px solid var(--line)}
+.timeline-date time{font-size:13px;color:var(--muted);font-weight:600;white-space:nowrap}
+.timeline-body{display:flex;flex-direction:column;gap:4px}
+.timeline-change{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;
+  padding:2px 8px;border-radius:999px;align-self:flex-start}
+.timeline-change.new{background:var(--new-bg);color:var(--new)}
+.timeline-change.updated{background:var(--upd-bg);color:var(--upd)}
+.timeline-change.unchanged{background:var(--card);color:var(--muted)}
+.timeline-headline{font-size:14px;font-weight:600;margin:0;line-height:1.4}
+.timeline-what{font-size:13px;color:var(--ink2);margin:0;font-style:italic}
+.timeline-meta{font-size:12px;color:var(--muted);margin:0}
