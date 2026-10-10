@@ -670,16 +670,6 @@ if (typeof module !== 'undefined') module.exports = {normOutlet, dedupeOutlets, 
       out.push(h('p', {class: 'notice', text: `This is the most recent edition (${shortDate(ed.edition_date)}). A new one appears here after the next daily run.`}));
     return out;
   }
-  const BAND_STORIES = 5;
-  function sectionBand(ed, cat, stories, title, complete = false) {
-    const sec = SECTION[cat] || {};
-    const shown = complete ? stories : stories.slice(0, BAND_STORIES);
-    const all = cat ? ((ed.sections || []).find(x => x.category === cat) || {ids: []}).ids.length : 0;
-    const grid = h('div', {class: 'grid'}, shown.map((s, i) => card(ed, s, i === 0 && shown.length >= 4 ? 'feature' : '')));
-    return h('section', {class: 'band', id: cat ? sectionId(cat) : 'band-top', 'data-cat': cat, 'aria-labelledby': (cat ? sectionId(cat) : 'band-top') + '-title'}, h('div', {class: 'wrap'},
-      h('div', {class: 'band-head'}, h('h2', {class: 'band-title', id: (cat ? sectionId(cat) : 'band-top') + '-title', text: title || sec.title || catLabel(cat)}),
-        sec.path ? h('a', {class: 'band-link', href: sec.path}, `All ${all} in ${sec.title}`) : null), grid));
-  }
   function archiveBand(idx, current) {
     const others = (idx.editions || []).filter(e => e.date !== current).slice(0, 4);
     if (!others.length) return null;

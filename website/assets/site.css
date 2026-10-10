@@ -55,14 +55,8 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer;paddin
 
 /* ------------------------------------------------------------------ masthead */
 .masthead{border-bottom:1px solid var(--line);background:var(--mast)}
-.mast-top{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:16px;padding-top:22px;padding-bottom:14px}
-.mast-date{font-size:13px;color:var(--muted);letter-spacing:.01em}
-.mast-date strong{color:var(--ink2);font-weight:600}
 .brand{display:inline-flex;align-items:baseline;gap:10px;justify-self:center;white-space:nowrap}
 .brand-name{font-family:var(--serif);font-weight:700;font-size:clamp(28px,3.4vw,40px);letter-spacing:-.02em;line-height:1;font-variation-settings:"opsz" 72}
-.brand-mark{width:12px;height:12px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 4px var(--accent-bg);align-self:center}
-.brand-daily{font-size:11px;font-weight:700;letter-spacing:.22em;color:var(--accent2);text-transform:uppercase;align-self:center;padding-top:3px}
-.mast-actions{justify-self:end;display:flex;gap:10px;align-items:center}
 .pill{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:44px;white-space:nowrap;border:1px solid var(--line2);border-radius:999px;padding:7px 14px;font-size:13px;font-weight:600;color:var(--ink2);transition:border-color .15s,color .15s,background .15s}
 .pill:hover{border-color:var(--accent);color:var(--ink)}
 .pill.solid{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
@@ -336,8 +330,6 @@ details.src small{color:var(--faint);font-size:12px}
   .aside{position:static}
 }
 @media (max-width:880px){
-  .mast-top{grid-template-columns:minmax(0,1fr) auto}
-  .mast-date{grid-column:1/-1}
   .brand{justify-self:start}
   .grid,.grid.three{grid-template-columns:repeat(2,minmax(0,1fr))}
   .about-band{grid-template-columns:minmax(0,1fr)}
@@ -348,20 +340,13 @@ details.src small{color:var(--faint);font-size:12px}
   .skeleton{grid-template-columns:1fr}
 }
 @media (max-width:640px){
-  .mast-top{padding-top:16px;padding-bottom:10px}
   .brand{justify-self:start;order:-1}
-  .mast-date{display:none}
-  .mast-actions .pill.solid{display:none}
   .search-form{padding-left:14px}
   .search-form select{max-width:38%}
   .nav{padding-bottom:6px}
   .nav a{font-size:13.5px;padding:7px 11px}
-  .mast-top{gap:8px}
   .brand{gap:7px}
   .brand-name{font-size:clamp(24px,6vw,32px)}
-  .brand-daily{font-size:9px;letter-spacing:.12em}
-  .brand-mark{width:8px;height:8px}
-  .mast-actions .pill{padding:7px 10px}
   .edition-meta{gap:6px 12px}
   .strip{padding:4px 0;gap:4px}
   .edition-toggle{gap:8px;font-size:11px;letter-spacing:-.01em}
@@ -430,10 +415,6 @@ details.src small{color:var(--faint);font-size:12px}
   .grid{display:block}
   .card{break-inside:avoid;margin-bottom:10pt;padding:8pt}
   .card .dek{display:block;overflow:visible;-webkit-line-clamp:unset}
-}
-@media (max-width:360px){
-  .brand{display:grid;grid-template-columns:8px auto;column-gap:6px;row-gap:0}
-  .brand-daily{grid-column:2;padding-top:2px}
 }
 
 /* ------------------------------------------------------------------ search */
