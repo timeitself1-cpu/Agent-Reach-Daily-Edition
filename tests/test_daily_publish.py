@@ -142,8 +142,10 @@ def test_public_edition_carries_the_news_and_nothing_private():
     pub = P.public_edition(ed)
     text = json.dumps(pub)
     assert pub["edition_date"] == "2026-10-07" and pub["revision"] == 2 and len(pub["stories"]) == 44
-    # Cached text that fails the new context gate uses the cited source title.
-    assert pub["stories"][0]["headline"] == "Margaret Hamilton, who led software development for the Apollo program, has died"
+    # the model's headline passes the checks against its cited reports (a Title Case headline's every capital is no
+    # longer a name its summary must repeat); its summary only restated it, so the headline stands alone
+    assert pub["stories"][0]["headline"] == "Computing Pioneer Margaret Hamilton Dies at 90"
+    assert pub["stories"][0]["summary"] == []
     assert len(pub["top"]) == 8 and {s["category"] for s in pub["sections"]} >= {"News", "Tech", "Science & AI"}
     # publisher excerpts, run ids, feed lists and diagnostics never go up
     for s in ed.stories:
@@ -403,7 +405,7 @@ def test_archive_search_files_per_month_repair_themselves(daily_paths, tmp_path)
     days = [x["d"] for x in month["stories"]]
     assert days == sorted(days, reverse=True) and set(days) == {"2026-10-07", "2026-10-06"}
     first = month["stories"][0]
-    assert first["h"] == "Margaret Hamilton, who led software development for the Apollo program, has died" and first["r"] == 1
+    assert first["h"] == "Computing Pioneer Margaret Hamilton Dies at 90" and first["r"] == 1
     assert set(first) - {"u", "coverage"} == {"d", "id", "r", "t", "c", "h", "s", "o", "l"} and len(first["s"]) <= P.SEARCH_SUMMARY_CHARS + 1
     assert first['coverage']['level'] == first['l']
     assert json.loads((tmp_path / "site/search/2026-09.json").read_text(encoding="utf-8"))["stories"][0]["d"] == "2026-09-30"

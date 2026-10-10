@@ -10,7 +10,7 @@ from bs4 import BeautifulSoup
 
 from agent_reach.config import Settings
 from agent_reach.daily.changes import compare_editions
-from agent_reach.daily.edition import Story, qualifies, select_stories, evaluate_publication
+from agent_reach.daily.edition import Story, adds_to_headline, qualifies, select_stories, evaluate_publication
 from agent_reach.daily.prefs import DailyPrefs
 from agent_reach.daily.publish import public_edition
 from agent_reach.daily.render_html import render_edition_html
@@ -20,7 +20,8 @@ from agent_reach.ingestion.google_urls import GoogleNewsResolver
 from agent_reach.models import CleanedTrendItem, SourceName
 from agent_reach.outlets import outlet_name, registrable_domain
 from agent_reach.pipeline.clusterer import LinkIndex, SemanticClusterer, DraftCluster
-from agent_reach.pipeline.summary_checks import validate_summary, repair_text, verified_story
+from agent_reach.pipeline.summary_checks import (clean_title, repair_text, useful_summary, validate_summary,
+                                                verified_story)
 from tests.daily_fakes import make_edition, make_story, RealAsyncClient
 
 RECORD = json.loads((Path(__file__).parent / 'fixtures/real/2026-10-08-roadmap.json').read_text(encoding='utf-8'))
@@ -114,8 +115,10 @@ def test_recorded_factual_context_subject_and_headline_errors_are_rejected(rank)
     errors = validate_summary(' '.join(story.sentences), story.headline, [(e.title, e.excerpt) for e in story.evidence])
     assert errors, (rank, story.headline)
     headline, summary = verified_story(story)
-    assert headline in [e.title for e in story.evidence]
-    assert summary and summary[0].startswith(headline.rstrip('.!?'))
+    assert headline in [clean_title(e.title) for e in story.evidence]
+    # the reports' own sentences replace the model's text, never the headline said again (October 10)
+    assert summary and not summary[0].startswith(headline.rstrip('.!?')) or summary == [headline.rstrip('.!?') + '.']
+    assert all(adds_to_headline(s, headline) for s in useful_summary(headline, summary))
 
 
 def test_quotes_and_abbreviation_case_are_repaired_without_losing_subject():

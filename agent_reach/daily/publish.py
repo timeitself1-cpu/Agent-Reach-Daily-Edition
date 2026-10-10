@@ -336,8 +336,9 @@ def _outlet(name: str) -> str:
 
 
 def _public_story(s: Story, edition: DailyEdition, change: str, top_rank: int | None) -> dict:
-    from agent_reach.pipeline.summary_checks import verified_story
+    from agent_reach.pipeline.summary_checks import useful_summary, verified_story
     headline, summary = verified_story(s)
+    summary = useful_summary(headline, summary)  # a summary that only repeats the headline is left out
     strength = strength_of(s, edition.generation_completed_utc)
     sources, seen = [], set()
     for ev, identity in zip(s.evidence, reporting_groups(s.evidence)):
