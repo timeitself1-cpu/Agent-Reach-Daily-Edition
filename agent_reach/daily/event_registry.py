@@ -125,17 +125,19 @@ class EventRegistry:
                           change: str = "new", what_changed: str = "") -> EventRecord:
         """Add or update an event from a story in an edition.
 
-        Computes the stable event ID, loads or creates the record, appends
-        a timeline entry, and saves.
+        Uses the ONE canonical event ID mechanism (evidence.canonical_event_id),
+        guaranteeing the registry ID matches the public story's event_id.
         """
-        from agent_reach.pipeline.evidence import stable_event_id
-
-        # Get the story's items for stable ID computation
-        items = getattr(story, 'items', None) or getattr(story, 'reports', None) or []
-        event_id = stable_event_id(items) if items else self._fallback_id(story)
+        # Import inside try: registry failures must never propagate.
+        try:
+            from agent_reach.pipeline.evidence import canonical_event_id
+            event_id = canonical_event_id(story)
+        except Exception:
+            # Last-resort fallback: hash the headline directly
+            headline = getattr(story, 'headline', '') or (story.get('headline', '') if isinstance(story, dict) else '')
+            event_id = "evt_" + hashlib.sha256(f"{headline.casefold()}|fallback".encode()).hexdigest()[:12]
 
         record = self.get(event_id)
-        now = datetime.now(timezone.utc).date().isoformat()
 
         # Extract outlet names explicitly. Sources may be dicts (public JSON) or objects.
         sources = []
@@ -192,12 +194,6 @@ class EventRegistry:
 
         self.save(record)
         return record
-
-    def _fallback_id(self, story: Any) -> str:
-        """When no items are available, hash the headline + date."""
-        headline = getattr(story, 'headline', '') or ""
-        key = f"{headline.casefold()}|fallback"
-        return "evt_" + hashlib.sha256(key.encode()).hexdigest()[:12]
 
     def archive_stale(self, days: int = ARCHIVE_AFTER_DAYS) -> int:
         """Mark events with no updates in `days` as archived. Returns count archived."""
