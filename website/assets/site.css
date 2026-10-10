@@ -607,7 +607,7 @@ details.src small{color:var(--faint);font-size:12px}
 .t10-row{display:grid;grid-template-columns:64px 1fr;gap:16px;
   padding:22px 0;border-top:1px solid var(--line);align-items:start}
 .t10-row:first-child{border-top:0;padding-top:8px}
-.t10-rank{font-family:var(--serif);font-weight:800;font-size:44px;line-height:1;color:var(--line2);
+.t10-rank{font-family:var(--serif);font-weight:800;font-size:44px;line-height:1;color:var(--muted);
   font-variation-settings:"opsz" 72;font-variant-numeric:tabular-nums}
 .t10-row.is-cover .t10-rank{color:var(--accent)}
 .t10-kicker{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:0 0 6px;
@@ -628,6 +628,7 @@ details.src small{color:var(--faint);font-size:12px}
 .dept-head .dept-title{margin:0}
 .dept-link{font-size:14px;font-weight:600;color:var(--accent);white-space:nowrap}
 .dept-link:hover{text-decoration:underline}
+.dept-note{color:var(--muted);font-size:14px;font-style:italic;margin:0;padding:16px 0 32px}
 .dept-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;padding:16px 0 32px}
 .dept-grid .card{margin:0;height:100%}
 @media(max-width:900px){.dept-grid{grid-template-columns:1fr 1fr}}
