@@ -266,7 +266,7 @@ AgentReachDaily.cmd/.pyw
 - Momentum is uncertain for a day after any feed-list change (the scorer compares the whole configuration).
 - Each exact embedding model (tag + Ollama digest) is its own space: never reuse or compare vectors across
   models; bump `EVENT_REPR_VERSION` when the embedded text changes.
-- Google News links are redirect pages with no article text; Reddit is mostly blocked (429/403); YouTube
+- Google News links are redirect pages with no article text; `ingestion/google_urls.py` resolves them to the publisher's address (offline token decode, Google's page-data call, redirects; bounded; the raw link is kept as `source_url_raw`, unresolved ones are counted as `unresolved_source_urls` and keep the label). The page-data call is an undocumented endpoint, verified here only against mock responses; Reddit is mostly blocked (429/403); YouTube
   channel feeds have whole-site outages (treated as one outage since rc11).
 - `AgentReachDaily.pyw` double-click did not open the window on the user's PC (shortcuts and .cmd do).
 
