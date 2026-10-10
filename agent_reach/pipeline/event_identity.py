@@ -363,7 +363,7 @@ def dedupe_stories(groups: list[list[int]], gate: IdentityGate) -> list[list[int
     and no pair across them is REJECTed, merge them. Conservative: requires strong
     evidence, prefers keeping separate stories over a false merge.
     """
-    from agent_reach.pipeline.same_event import title_words, _actor, _different_central_actors
+    from agent_reach.pipeline.same_event import title_words, _different_central_actors
 
     if len(groups) < 2:
         return groups
