@@ -670,17 +670,30 @@ if (typeof module !== 'undefined') module.exports = {normOutlet, dedupeOutlets, 
       meta(s, {ed, names: 3}));
   }
   // The Top 10 leaderboard: stories ranked 1–10 in a single chart, Billboard-style.
-  // #1 is the cover story (marked, compact row — the full cover treatment is above).
   function top10Board(ed, stories) {
+    const newIds = new Set((ed.changes && ed.changes.new) || []);
     const rows = stories.slice(0, 10).map((s, i) => {
       const rank = i + 1;
-      const coverMark = rank === 1
-        ? h('span', {class: 'cover-mark', text: 'Cover story'}) : null;
-      return h('article', {class: 't10-row' + (rank === 1 ? ' is-cover' : ''), id: 'story-' + s.id, 'data-cat': s.category},
+      // Movement indicator: NEW for stories entering the chart, UPDATED for movers.
+      const move = s.change === 'new' || newIds.has(s.id)
+        ? h('span', {class: 'move new', text: '▲ New'})
+        : s.change === 'updated'
+        ? h('span', {class: 'move updated', text: '● Updated'}) : null;
+      // #1 is the cover story: a one-line pointer to the hero, not a repeat.
+      if (rank === 1) {
+        return h('a', {class: 't10-row is-cover t10-pointer', href: '#cover', id: 'story-' + s.id, 'data-cat': s.category,
+            'aria-label': `Rank 1 of 10 is the cover story featured above: ${s.headline}`},
+          h('span', {class: 't10-rank', 'aria-hidden': 'true', text: '1'}),
+          h('div', {class: 't10-body'},
+            h('p', {class: 't10-pointer-line'},
+              h('span', {class: 'cover-mark', text: 'Cover story ↑'}),
+              h('span', {class: 't10-pointer-hint', text: 'Featured above'}))));
+      }
+      return h('article', {class: 't10-row', id: 'story-' + s.id, 'data-cat': s.category},
         h('span', {class: 't10-rank', 'aria-hidden': 'true', text: String(rank)}),
         h('span', {class: 'sr', text: `Rank ${rank} of 10: `}),
         h('div', {class: 't10-body'},
-          h('p', {class: 't10-kicker'}, kicker(s), coverMark),
+          h('p', {class: 't10-kicker'}, kicker(s), move),
           headline(ed, s, 'h3', 'hl t10-hl'),
           dek(s),
           meta(s, {ed})));
@@ -718,7 +731,7 @@ if (typeof module !== 'undefined') module.exports = {normOutlet, dedupeOutlets, 
       h('div', {class: 'wrap'}, strip(ed, idx), notices(ed, idx),
         storyNotice ? h('p', {class: 'notice story-recovery', text: storyNotice}) : null),
       h('div', {class: 'wrap'},
-        h('section', {class: 'cover'}, coverStory(ed, top[0])),
+        h('section', {class: 'cover', id: 'cover'}, coverStory(ed, top[0])),
         pullQuote(ed, top.slice(1, 6)),
         top10Board(ed, top)));
     // Departments with exclusive stories get full sections; the rest collapse into
@@ -728,10 +741,16 @@ if (typeof module !== 'undefined') module.exports = {normOutlet, dedupeOutlets, 
     for (const [sec, stories, total] of fullDepts) {
       const secInfo = SECTION[sec.category] || {};
       const label = secInfo.title || catLabel(sec.category);
+      const cards = stories.map(s => card(ed, s, ''));
+      // Fill the last grid row: a "View all" tile avoids dead empty slots.
+      if (secInfo.path && cards.length % 3 !== 0)
+        cards.push(h('a', {class: 'card view-all-tile', href: secInfo.path, 'aria-label': `View all ${total} ${label} stories`},
+          h('span', {class: 'view-all-num', text: String(total)}),
+          h('span', {class: 'view-all-label', text: `All ${label} →`})));
       front.append(h('div', {class: 'wrap'},
         h('section', {class: 'dept', 'data-cat': sec.category},
           deptHead(label, secInfo.path, total),
-          h('div', {class: 'dept-grid'}, stories.map(s => card(ed, s, ''))))));
+          h('div', {class: 'dept-grid'}, cards))));
     }
     if (emptyDepts.length) {
       front.append(h('div', {class: 'wrap'},
@@ -741,8 +760,8 @@ if (typeof module !== 'undefined') module.exports = {normOutlet, dedupeOutlets, 
             const secInfo = SECTION[sec.category] || {};
             const label = secInfo.title || catLabel(sec.category);
             return secInfo.path
-              ? h('a', {class: 'more-sections-link', href: secInfo.path, text: `${label} (${total})`})
-              : h('span', {class: 'more-sections-link', text: `${label} (${total})`});
+              ? h('a', {class: 'more-sections-link', href: secInfo.path, 'data-cat': sec.category, text: `${label} (${total})`})
+              : h('span', {class: 'more-sections-link', 'data-cat': sec.category, text: `${label} (${total})`});
           }))));
     }
     if (idx) {
