@@ -371,8 +371,12 @@ if (typeof module !== 'undefined') module.exports = {normOutlet, dedupeOutlets, 
   function coverageLine(s, max = 2) {
     const c = s.coverage || {level: 'limited', independent_reports: 0};
     const n = independentCount(s), text = reportedBy(orderedOutlets(s), n, max);
+    // Favicon of the first source's domain, for visual rhythm.
+    const firstUrl = (s.sources || []).find(x => x.url && webUrl(x.url));
+    const domain = firstUrl ? (() => { try { return new URL(firstUrl.url).hostname; } catch { return null; } })() : null;
+    const favicon = domain ? h('img', {class: 'outlet-favicon', src: `https://www.google.com/s2/favicons?domain=${domain}&sz=32`, alt: '', loading: 'lazy', width: 16, height: 16}) : null;
     return h('span', {class: `cov cov-line ${c.level}`, title: `${coverage({...c, independent_reports: n})}. Coverage is not a fact check.`},
-      bars(), n > 1 ? h('span', {class: 'sr', text: coverage(c) + '. '}) : null, h('span', {class: 'reported', text}));
+      bars(), n > 1 ? h('span', {class: 'sr', text: coverage(c) + '. '}) : null, favicon, h('span', {class: 'reported', text}));
   }
   // The summary sentences that add to the headline, or nothing: a headline can stand alone.
   function dek(s) {
@@ -397,11 +401,14 @@ if (typeof module !== 'undefined') module.exports = {normOutlet, dedupeOutlets, 
     return src ? (dedupeOutlets([src.outlet])[0] || src.outlet) : hostOf(url);
   }
   // A headline: one click opens the publisher's article in a new tab. A story without any link opens its page.
+  // Strip wire-style prefixes ("updates:", "live:", etc.) from headlines for a cleaner read.
+  const cleanHeadline = text => text.replace(/^(updates|live|breaking|developing|just in)\s*:\s*/i, '');
   function headline(ed, s, tag, cls = 'hl') {
     const url = mainLink(s);
+    const text = cleanHeadline(s.headline);
     const link = url
-      ? h('a', {class: 'out', href: url, rel: 'noopener noreferrer', target: '_blank', 'aria-describedby': 'ext-note', 'data-outlet': mainOutlet(s, url), text: s.headline})
-      : h('a', {href: storyUrl(ed, s), text: s.headline});
+      ? h('a', {class: 'out', href: url, rel: 'noopener noreferrer', target: '_blank', 'aria-describedby': 'ext-note', 'data-outlet': mainOutlet(s, url), text})
+      : h('a', {href: storyUrl(ed, s), text});
     return h(tag, {class: cls}, link);
   }
   // The way to the story's own page: full summary, every source, coverage. No count here: the coverage line
@@ -637,14 +644,14 @@ if (typeof module !== 'undefined') module.exports = {normOutlet, dedupeOutlets, 
   function archiveBand(idx, current) {
     const others = (idx.editions || []).filter(e => e.date !== current).slice(0, 4);
     if (!others.length) return null;
-    return h('section', {class: 'band', 'aria-label': 'Previous editions'}, h('div', {class: 'wrap'},
+    return h('section', {class: 'band', id: 'previous-editions', 'aria-label': 'Previous editions'}, h('div', {class: 'wrap'},
       h('div', {class: 'band-head'}, h('h2', {class: 'band-title', text: 'Previous editions'}), h('a', {class: 'band-link', href: '/archive/', text: 'Archive'})),
       h('div', {class: 'grid'}, others.map(e => h('article', {class: 'card'}, h('span', {class: 'kicker', text: shortDate(e.date)}),
         h('h3', {class: 'hl'}, h('a', {href: editionUrl(e.date), text: e.lead})), h('p', {class: 'dek', text: (e.headlines || []).join(' · ')}),
         h('div', {class: 'meta', text: plural(e.stories, 'story', 'stories')}))))));
   }
   function aboutBand() {
-    return h('section', {class: 'wrap about-band', 'aria-label': 'About Agent Reach Daily'},
+    return h('section', {class: 'wrap about-band', id: 'about', 'aria-label': 'About Agent Reach Daily'},
       h('div', null, h('h2', {text: 'The day’s news, from public reporting, summarized by a local AI.'}),
         h('p', {text: 'Agent Reach Daily reads around 1,500 reports a day from 112 publisher feeds, 22 YouTube news channels and eight other kinds of source, keeps each event as one story, and checks every summary sentence against the story’s own sources. It runs on one Windows PC and publishes here automatically. Coverage strength shows how many independent outlets reported a story; it is not a fact check.'}),
         h('div', {class: 'links'}, h('a', {class: 'pill', href: '/about/#method', text: 'How it works'}), h('a', {class: 'pill', href: '/sources/', text: 'Sources'}), h('a', {class: 'pill', href: '/about/#app', text: 'Make your own edition'}))),
@@ -738,6 +745,31 @@ if (typeof module !== 'undefined') module.exports = {normOutlet, dedupeOutlets, 
     // a one-line "More sections" strip so they don't waste scroll.
     const fullDepts = depts.filter(([, stories]) => stories.length > 0);
     const emptyDepts = depts.filter(([, stories]) => !stories.length);
+    // Section jump nav + "Also in the Top 10" strip, directly after the Top 10.
+    const jumpLinks = [
+      ...fullDepts.map(([sec]) => {
+        const secInfo = SECTION[sec.category] || {};
+        return {id: sectionId(sec.category), label: secInfo.title || catLabel(sec.category)};
+      }),
+      {id: 'previous-editions', label: 'Previous editions'},
+      {id: 'about', label: 'About'},
+    ];
+    front.append(h('div', {class: 'wrap'},
+      h('nav', {class: 'jump-nav', 'aria-label': 'On this page'},
+        h('span', {class: 'jump-nav-label', text: 'On this page:'}),
+        ...jumpLinks.map(l => h('a', {class: 'jump-nav-link', href: '#' + l.id, text: l.label})))));
+    if (emptyDepts.length) {
+      front.append(h('div', {class: 'wrap'},
+        h('nav', {class: 'more-sections', 'aria-label': 'More sections'},
+          h('span', {class: 'more-sections-label', text: 'Also in the Top 10:'}),
+          ...emptyDepts.map(([sec, , total]) => {
+            const secInfo = SECTION[sec.category] || {};
+            const label = secInfo.title || catLabel(sec.category);
+            return secInfo.path
+              ? h('a', {class: 'more-sections-link', href: secInfo.path, 'data-cat': sec.category, text: `${label} (${total})`})
+              : h('span', {class: 'more-sections-link', 'data-cat': sec.category, text: `${label} (${total})`});
+          }))));
+    }
     for (const [sec, stories, total] of fullDepts) {
       const secInfo = SECTION[sec.category] || {};
       const label = secInfo.title || catLabel(sec.category);
@@ -748,7 +780,7 @@ if (typeof module !== 'undefined') module.exports = {normOutlet, dedupeOutlets, 
           h('span', {class: 'view-all-num', text: String(total)}),
           h('span', {class: 'view-all-label', text: `All ${label} →`})));
       front.append(h('div', {class: 'wrap'},
-        h('section', {class: 'dept', 'data-cat': sec.category},
+        h('section', {class: 'dept', id: sectionId(sec.category), 'data-cat': sec.category},
           deptHead(label, secInfo.path, total),
           h('div', {class: 'dept-grid'}, cards))));
     }
