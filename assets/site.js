@@ -94,7 +94,78 @@ function normalizeStory(s) {
   s.url = primaryLink(s);
   return s;
 }
-if (typeof module !== 'undefined') module.exports = {normOutlet, dedupeOutlets, correctedCoverage, primaryLink, normalizeStory};
+// One plural rule for every count on the site: "1 newsroom" / "2 newsrooms", "1 story" / "3 stories".
+function plural(n, one, many) {
+  const count = Number(n) || 0;
+  return `${count.toLocaleString('en-US')} ${count === 1 ? one : (many || one + 's')}`;
+}
+// A summary sentence that only restates the headline adds nothing under it (October 9, 2026: "Isaias strengthens
+// into Category 2 hurricane..." printed twice, as headline and as the summary's first sentence). The same rule as the
+// app: content words (3+ letters, not a stopword, or any word with a digit) stemmed to five letters; a sentence
+// restates the headline when it has no content words, or brings fewer than 4 stems the headline lacks and those are
+// under half of its own.
+const RESTATE_STOP = new Set(('the and for with from that this into after before over says said say will has have had was were are ' +
+  'its his her their they but not can could would about more than who what when how why new').split(' '));
+function restateStems(text) {
+  const words = String(text || '').toLowerCase().replace(/['’]s\b/g, '').match(/[a-z0-9]+/g) || [];
+  return new Set(words.filter(w => /\d/.test(w) || (w.length >= 3 && !RESTATE_STOP.has(w))).map(w => /^[a-z]+$/.test(w) ? w.slice(0, 5) : w));
+}
+function addsToHeadline(sentence, headline) {
+  const own = restateStems(sentence);
+  if (!own.size) return false;
+  const said = restateStems(headline);
+  const novel = [...own].filter(w => !said.has(w)).length;
+  return !(novel < 4 && novel < 0.5 * own.size);
+}
+// A sentence that needs the one before it ('She led the Apollo software team.', 'And, ...') and a sentence the
+// feed cut off ('... a record fifth time'): the app's PRONOUN_START_RX and complete-sentence rules.
+const LEANS_BACK = /^(?:(?:he|she|they|it|his|her|their|its|but|and|yet|however|also)\b|(?:the|that) (?:move|decision|step|deal|change)\b|(?:this|these) (?!year|week|month|morning|evening|weekend|season|summer|winter|spring|fall|autumn|time\b)\w+)/i;
+const COMPLETE = /[.!?]["'’”)]*$/;
+// The summary sentences worth showing under the headline, each judged against the headline and the sentences shown
+// before it (the app's useful_summary); none at all when nothing adds to the headline.
+function shownSummary(s) {
+  const out = [];
+  for (const t of Array.isArray(s.summary) ? s.summary : []) {
+    if (typeof t !== 'string' || !COMPLETE.test(t.trim()) || /(?:\.\.\.|…)["'’”)]*$/.test(t.trim())) continue;
+    if (!addsToHeadline(t, [s.headline, ...out].join(' '))) continue;
+    if (!out.length && LEANS_BACK.test(t.trim())) continue;
+    out.push(t);
+  }
+  return out;
+}
+// Coverage wording shared by the pages, the static build and the RSS feeds. A "newsroom" is one independent report:
+// the count is coverage.independent_reports and is never repeated twice in one phrase.
+function coverageLabel(c) {
+  if (c.level === 'strong') return 'Strong coverage';
+  if (c.level === 'moderate') return 'Moderate coverage';
+  return (c.independent_reports || 0) <= 1 ? 'Single source' : 'Limited coverage';
+}
+const andList = names => names.length < 2 ? names.join('') : `${names.slice(0, -1).join(', ')} and ${names[names.length - 1]}`;
+// "Reported by BBC News, NPR and 2 more"; names are the independent outlets, the count is the independent reports.
+function reportedBy(names, n, max = 2) {
+  if (!n) return 'No independent newsroom report yet';
+  if (names.length !== n) return `${plural(n, 'newsroom')} reported this`;
+  if (n === 1) return `Single source: ${names[0]}`;
+  if (n <= max + 1) return `Reported by ${andList(names)}`;
+  return `Reported by ${names.slice(0, max).join(', ')} and ${n - max} more`;
+}
+// The source list can hold fewer independent reports than the coverage count (the app counts every newsroom it read,
+// the public edition lists a subset of links): say so instead of leaving two different numbers unexplained.
+function listedReports(s) {
+  return (s.sources || []).filter(x => x.kind === 'report').length;
+}
+function sourceListNote(s) {
+  const n = (s.coverage && s.coverage.independent_reports) || 0, listed = listedReports(s);
+  return listed < n ? `Showing ${listed} of ${n} newsrooms` : null;
+}
+function evidenceBreakdown(s) {
+  const count = kind => (s.sources || []).filter(x => x.kind === kind).length;
+  return [plural(count('report'), 'independent report'), count('repeat') ? plural(count('repeat'), 'repeat') : null,
+    count('signal') ? plural(count('signal'), 'social or search signal') : null].filter(Boolean).join(' · ');
+}
+const SOURCE_KIND = {report: 'independent report', repeat: 'repeat or syndicated copy', signal: 'social or search signal'};
+if (typeof module !== 'undefined') module.exports = {normOutlet, dedupeOutlets, correctedCoverage, primaryLink, normalizeStory,
+  plural, addsToHeadline, shownSummary, coverageLabel, reportedBy, sourceListNote, evidenceBreakdown, SOURCE_KIND};
 // Agent Reach Daily website. Every page is rendered from the editions the app publishes:
 //   /editions/index.json        the archive list (newest first, "latest" = newest date)
 //   /editions/YYYY-MM-DD.json   one public edition (written by agent_reach/daily/publish.py)
@@ -145,7 +216,6 @@ if (typeof module !== 'undefined') module.exports = {normOutlet, dedupeOutlets, 
     for (const kid of kids.flat(Infinity)) if (kid != null && kid !== false) n.append(kid instanceof Node ? kid : document.createTextNode(String(kid)));
     return n;
   }
-  const plural = (n, one, many) => `${n.toLocaleString('en-US')} ${n === 1 ? one : (many || one + 's')}`;
   const dayOf = d => new Date(d + 'T12:00:00Z');
   const longDate = d => dayOf(d).toLocaleDateString('en-US', {weekday: 'long', month: 'long', day: 'numeric', year: 'numeric', timeZone: 'UTC'});
   const shortDate = d => dayOf(d).toLocaleDateString('en-US', {month: 'short', day: 'numeric', year: 'numeric', timeZone: 'UTC'});
@@ -208,24 +278,21 @@ if (typeof module !== 'undefined') module.exports = {normOutlet, dedupeOutlets, 
   }
 
   // ------------------------------------------------------------------ story atoms
-  function coverage(c) {
-    if (c.level === 'strong') return 'Strong coverage';
-    if (c.level === 'moderate') return 'Moderate coverage';
-    return c.independent_reports <= 1 ? 'Single source' : 'Limited coverage';
-  }
+  const coverage = coverageLabel;
+  const bars = () => h('span', {class: 'bars', 'aria-hidden': 'true'}, h('i'), h('i'), h('i'));
   function covMeter(s, big) {
     const c = s.coverage || {level: 'limited', independent_reports: 0};
     const n = independentCount(s);
-    return h('span', {class: `cov ${c.level}`, title: `${plural(n, 'independent outlet')} reported this. Coverage is not a fact check.`},
-      h('span', {class: 'bars', 'aria-hidden': 'true'}, h('i'), h('i'), h('i')), big ? null : coverage(c));
+    return h('span', {class: `cov ${c.level}`, title: `${plural(n, 'independent newsroom')} reported this. Coverage is not a fact check.`},
+      bars(), big ? null : coverage(c));
   }
   function publisherList(s) {
     return dedupeOutlets(s.coverage?.publishers?.length ? s.coverage.publishers : s.sources.filter(x => x.kind === 'report').map(x => x.outlet));
   }
   const independentCount = s => Math.min(s.coverage?.independent_reports || 0, publisherList(s).length);
   const sourceLinks = s => s.sources.filter(x => webUrl(x.url)).length;
-  // Independent outlets as tags, widely known national and international newsrooms first, so a story carried
-  // by AP, Reuters and the BBC shows it at a glance. Every outlet is listed on the story page.
+  // Independent outlets, widely known national and international newsrooms first, so a story carried by AP,
+  // Reuters and the BBC shows it at a glance. Every outlet is listed in the story page's coverage panel.
   const MAJOR_OUTLETS = ['AP News', 'Reuters', 'AFP', 'BBC News', 'The New York Times', 'The Washington Post',
     'The Wall Street Journal', 'Bloomberg', 'Financial Times', 'The Guardian', 'NPR', 'PBS NewsHour', 'CNN',
     'ABC News', 'CBS News', 'NBC News', 'Al Jazeera', 'DW', 'The Economist', 'Politico', 'Axios', 'CNBC'];
@@ -233,15 +300,17 @@ if (typeof module !== 'undefined') module.exports = {normOutlet, dedupeOutlets, 
     const rank = n => { const i = MAJOR_OUTLETS.indexOf(n); return i < 0 ? MAJOR_OUTLETS.length : i; };
     return publisherList(s).map((n, i) => [n, i]).sort((a, b) => rank(a[0]) - rank(b[0]) || a[1] - b[1]).map(x => x[0]);
   }
-  function outletTags(s, max = 3) {
-    const names = orderedOutlets(s);
-    if (names.length < 2) return names.length ? h('span', {class: 'outlets', text: names[0]}) : null;
-    const shown = names.slice(0, max), rest = names.length - shown.length;
-    return h('span', {class: 'outlets outlet-tags', title: 'Reported independently by ' + names.join(', ')},
-      h('span', {class: 'sr', text: `Reported independently by ${plural(names.length, 'outlet')}: `}),
-      h('span', {class: 'tally', 'aria-hidden': 'true', text: plural(names.length, 'outlet')}),
-      shown.map((n, i) => [i ? h('span', {class: 'sr', text: ', '}) : null, h('span', {class: 'tag', text: n})]),
-      rest ? [h('span', {class: 'sr', text: ' and '}), h('span', {class: 'tag more', text: `+${rest}`}), h('span', {class: 'sr', text: ' more'})] : null);
+  // The story's one coverage line: strength as bars, then who reported it ("Reported by BBC News, NPR and 2 more").
+  function coverageLine(s, max = 2) {
+    const c = s.coverage || {level: 'limited', independent_reports: 0};
+    const n = independentCount(s), text = reportedBy(orderedOutlets(s), n, max);
+    return h('span', {class: `cov cov-line ${c.level}`, title: `${coverage({...c, independent_reports: n})}. Coverage is not a fact check.`},
+      bars(), n > 1 ? h('span', {class: 'sr', text: coverage(c) + '. '}) : null, h('span', {class: 'reported', text}));
+  }
+  // The summary sentences that add to the headline, or nothing: a headline can stand alone.
+  function dek(s) {
+    const text = shownSummary(s).join(' ');
+    return text ? h('p', {class: 'dek', text}) : null;
   }
   function badges(s) {
     const out = [];
@@ -268,27 +337,24 @@ if (typeof module !== 'undefined') module.exports = {normOutlet, dedupeOutlets, 
       : h('a', {href: storyUrl(ed, s), text: s.headline});
     return h(tag, {class: cls}, link);
   }
-  // The way to the story's own page: full summary, every source, coverage.
+  // The way to the story's own page: full summary, every source, coverage. No count here: the coverage line
+  // already gives the one number a card shows.
   function storyLink(ed, s) {
-    const n = sourceLinks(s);
-    return h('a', {class: 'story-link', href: storyUrl(ed, s)}, n ? plural(n, 'source') : 'Details',
+    return h('a', {class: 'story-link', href: storyUrl(ed, s)}, sourceLinks(s) ? 'Sources' : 'Details',
       h('span', {class: 'sr', text: ` and coverage: ${s.headline}`}));
   }
-  // Story footer: the outlet pills on their own row when several outlets reported it, then time, coverage
-  // and the link to the story page.
+  // Story footer, one line: time, who reported it (with the strength bars) and the link to the evidence.
   function meta(s, opts = {}) {
     const when = ago(s.newest_published_utc);
-    const tags = opts.noOutlets ? null : outletTags(s, opts.tags || 3);
-    const several = tags && tags.classList.contains('outlet-tags');
-    return [several ? h('div', {class: 'outlet-row'}, tags) : null, h('div', {class: 'meta'},
+    return h('div', {class: 'meta'},
       when && !opts.noTime ? h('time', {datetime: s.newest_published_utc, 'data-relative': 'true', title: 'Newest report: ' + stamp(s.newest_published_utc), text: when}) : null,
-      several ? null : tags, covMeter(s),
-      opts.ed ? storyLink(opts.ed, s) : null)];
+      opts.noOutlets ? covMeter(s) : coverageLine(s, opts.names || 2),
+      opts.ed ? storyLink(opts.ed, s) : null);
   }
   function card(ed, s, variant, tag = 'h3') {
     const cls = 'card' + (variant === 'feature' ? ' feature' : '');
     return h('article', {class: cls, id: 'story-' + s.id, 'data-cat': s.category}, kicker(s),
-      headline(ed, s, tag), h('p', {class: 'dek', text: s.summary.join(' ')}), meta(s, {ed}));
+      headline(ed, s, tag), dek(s), meta(s, {ed, names: variant === 'feature' ? 3 : 2}));
   }
 
   // ------------------------------------------------------------------ chrome
@@ -406,6 +472,13 @@ if (typeof module !== 'undefined') module.exports = {normOutlet, dedupeOutlets, 
   }
 
   // ------------------------------------------------------------------ front page / edition
+  // What changed since the previous update of the day, in words a reader expects: "11 new · 6 updated · 13 no longer
+  // in this edition" (never "dropped", which reads as if a story had been wrong).
+  function changeSummary(ed) {
+    const count = kind => ed.stories.filter(s => s.change === kind).length;
+    const gone = ed.changes && Array.isArray(ed.changes.dropped) ? ed.changes.dropped.length : 0;
+    return [`${count('new')} new`, `${count('updated')} updated`, gone ? `${gone} no longer in this edition` : null].filter(Boolean).join(' · ');
+  }
   function strip(ed, idx, crumbs) {
     const latest = idx && idx.latest === ed.edition_date;
     const ageH = (Date.now() - Date.parse(ed.generated_utc)) / 3.6e6;
@@ -416,15 +489,15 @@ if (typeof module !== 'undefined') module.exports = {normOutlet, dedupeOutlets, 
         ed.revision > 1 ? h('span', {text: `Update ${ed.revision}`}) : null,
         h('time', {datetime: ed.generated_utc, title: ed.generated_utc, text: `Generated ${fullStamp(ed.generated_utc)}`})),
       h('span', {class: 'edition-stats'}, `${plural(ed.stories.length, 'story', 'stories')} from ${plural(ed.reports_read || 0, 'report')} · ${ed.sources_answered || 0} of ${ed.sources_tried || 0} source types responded · AI-generated summaries`));
-    if (ed.compared_with) {
-      const count = kind => ed.stories.filter(s => s.change === kind).length;
-      details.append(h('p', {class: 'edition-changes', text: `Compared with update ${ed.compared_with.revision}: ${count('new')} new · ${count('updated')} updated`}));
-    }
-    if (ed.changes) {
-      const dropped = ed.changes.dropped || [];
-      details.append(h('p', {text: `${dropped.length} no longer listed`}), h('ul', {class: 'dropped-stories'}, dropped.map(s =>
-        h('li', null, h('a', {href: '/search/?q=' + encodeURIComponent('"' + s.headline + '"'), text: s.headline})))));
-    }
+    if (ed.compared_with) details.append(h('p', {class: 'edition-changes', text: `Compared with update ${ed.compared_with.revision}: ${changeSummary(ed)}`}));
+    const dropped = ed.changes && Array.isArray(ed.changes.dropped) ? ed.changes.dropped : [];
+    // Stories that left the edition are not corrections: say why they go, and keep corrections on their own page.
+    if (dropped.length) details.append(h('div', {class: 'dropped'},
+      h('p', {class: 'dropped-title', text: 'No longer in this edition'}),
+      h('p', {class: 'dropped-note'}, 'Stories leave the edition when newer or better-covered news takes their place. That does not mean they were wrong; ',
+        h('a', {href: '/corrections/', text: 'corrections'}), ' are listed separately.'),
+      h('ul', {class: 'dropped-stories'}, dropped.map(s =>
+        h('li', null, h('a', {href: '/search/?q=' + encodeURIComponent('"' + s.headline + '"'), text: s.headline}))))));
     details.hidden = true;
     const toggle = h('button', {type: 'button', class: 'edition-toggle', 'aria-expanded': 'false', 'aria-controls': 'edition-details', 'aria-label': 'Show full edition details'},
       crumbs ? h('span', {class: 'edition-toggle-text', text: `${latest ? 'Latest' : 'Archived'}${ed.revision > 1 ? ` · Update ${ed.revision}` : ''}`}) : null,
@@ -441,16 +514,13 @@ if (typeof module !== 'undefined') module.exports = {normOutlet, dedupeOutlets, 
   function ticker(ed, latest, ageH) {
     const n = x => h('b', {text: Number(x || 0).toLocaleString('en-US')});
     const answered = ed.sources_answered || 0, tried = ed.sources_tried || 0;
-    const count = kind => ed.stories.filter(s => s.change === kind).length;
-    const dropped = ed.changes && Array.isArray(ed.changes.dropped) ? ed.changes.dropped.length : null;
     return h('ul', {class: 'ticker', 'aria-label': 'Edition status'},
       h('li', {class: 'live' + (latest && ageH < 30 ? '' : ' old')}, h('b', {text: latest ? 'Latest edition' : 'Archived edition'})),
       h('li', null, h('time', {datetime: ed.edition_date, text: shortDate(ed.edition_date)}), ed.revision > 1 ? ` · Update ${ed.revision}` : ''),
       h('li', null, n(ed.stories.length), ed.stories.length === 1 ? ' story' : ' stories'),
       h('li', null, n(ed.reports_read), ed.reports_read === 1 ? ' report' : ' reports'),
       h('li', {class: tried && answered < tried ? 'warn' : null, title: `${answered} of ${tried} kinds of source answered during this run`}, h('b', {text: `${answered}/${tried}`}), ' source types up'),
-      ed.compared_with ? h('li', {class: 'diff'}, `Since update ${ed.compared_with.revision}: `, h('b', {class: 'up', text: `+${count('new')}`}), ' new · ',
-        n(count('updated')), ' updated', dropped != null ? [' · ', n(dropped), ' dropped'] : null) : null,
+      ed.compared_with ? h('li', {class: 'diff'}, `Since update ${ed.compared_with.revision}: ${changeSummary(ed)}`) : null,
       h('li', null, 'Generated ', h('time', {datetime: ed.generated_utc, 'data-relative': 'true', title: fullStamp(ed.generated_utc), text: ago(ed.generated_utc)})));
   }
   function notices(ed, idx) {
@@ -465,15 +535,15 @@ if (typeof module !== 'undefined') module.exports = {normOutlet, dedupeOutlets, 
     return h('article', {class: 'lead', id: 'story-' + s.id, 'data-cat': s.category},
       h('span', {class: 'rank-label', text: 'Top story'}), kicker(s),
       headline(ed, s, 'h1'),
-      h('p', {class: 'dek', text: s.summary.join(' ')}),
+      dek(s),
       s.why_it_matters ? h('p', {class: 'why'}, h('b', {text: 'Why it matters: '}), s.why_it_matters) : null,
-      meta(s, {ed, tags: 4}));
+      meta(s, {ed, names: 3}));
   }
   function rail(ed, stories) {
     return h('section', {class: 'rail', 'aria-labelledby': 'rail-title'}, h('h2', {class: 'rail-title', id: 'rail-title'}, h('span', {text: 'Top stories'})),
       stories.map((s, i) => h('article', {class: 'rail-item', id: 'story-' + s.id, 'data-cat': s.category}, h('span', {class: 'rail-num', 'aria-hidden': 'true', text: String(i + 2)}),
         kicker(s), headline(ed, s, 'h3'),
-        h('p', {class: 'dek', text: s.summary.join(' ')}), meta(s, {ed, tags: 2}))));
+        dek(s), meta(s, {ed}))));
   }
   const BAND_STORIES = 5;
   function sectionBand(ed, cat, stories, title, complete = false) {
@@ -544,9 +614,10 @@ if (typeof module !== 'undefined') module.exports = {normOutlet, dedupeOutlets, 
 
   // ------------------------------------------------------------------ story page
   function sourcesBlock(s) {
-    const sources = s.sources;
+    const sources = s.sources, note = sourceListNote(s);
     const groups = [
-      ['report', 'Independent reports shown', 'One entry per reporting origin in the displayed sources.'],
+      ['report', 'Independent reports', 'One entry per newsroom that reported it.' +
+        (note ? ` ${note}: the others were counted in coverage but are not listed in this edition.` : '')],
       ['repeat', 'Repeats and syndicated copies', 'The same outlet again, or the same headline carried by another outlet (a wire story). Counted once.'],
       ['signal', 'Social and search signals', 'Trending searches and posts show attention, not reporting. They never count as a source.'],
     ];
@@ -557,8 +628,9 @@ if (typeof module !== 'undefined') module.exports = {normOutlet, dedupeOutlets, 
       return h('div', null, h('h3', {text: `${title} (${list.length})`}), h('p', {class: 'hint', text: hint}),
         list.map(src => {
           const url = webUrl(src.url);
+          // No placeholder when a source states no publication time: the time is simply left out.
           return h('div', {class: 'source'}, h('span', {class: 'outlet', text: dedupeOutlets([src.outlet])[0] || src.outlet}),
-            src.published_utc ? h('time', {class: 'when', datetime: src.published_utc, text: fullStamp(src.published_utc)}) : h('span', {class: 'when', text: 'Time not stated'}),
+            src.published_utc ? h('time', {class: 'when', datetime: src.published_utc, text: fullStamp(src.published_utc)}) : null,
             url ? h('a', {class: 'title', href: url, rel: 'noopener noreferrer', target: '_blank', text: src.title}) : h('span', {class: 'title', text: src.title}),
             hostOf(src.url) === 'news.google.com' ? h('span', {class: 'via', text: 'Google News redirect · opens through Google News'})
               : src.via && src.via !== src.outlet ? h('span', {class: 'via', text: 'Found via ' + src.via}) : null);
@@ -567,16 +639,17 @@ if (typeof module !== 'undefined') module.exports = {normOutlet, dedupeOutlets, 
   }
   function coveragePanel(s) {
     const c = {...s.coverage, independent_reports: independentCount(s), publishers: publisherList(s)};
-    const facts = [h('li', {text: `${plural(c.independent_reports, 'independent outlet')}${c.publishers.length ? ': ' + c.publishers.join(', ') : ''}`})];
-    facts.push(h('li', {text: `Displayed evidence: ${plural(c.source_links || 0, 'source link')} · ${plural(c.linked_outlets || 0, 'newsroom')} · ${plural(c.linked_reporting_origins || 0, 'reporting origin')}`}));
+    const n = c.independent_reports, note = sourceListNote(s), links = sourceLinks(s);
+    const facts = [h('li', {text: n ? `${plural(n, 'independent newsroom')}: ${orderedOutlets(s).join(', ')}` : 'No independent newsroom report yet'})];
+    facts.push(h('li', {text: `Sources below: ${plural(links, 'link')}${note ? ', ' + note.toLowerCase() : ''}`}));
     if (c.repeats) facts.push(h('li', {text: `${plural(c.repeats, 'repeat or syndicated copy', 'repeats or syndicated copies')}, counted once`}));
     if (c.signals) facts.push(h('li', {text: `${plural(c.signals, 'social or search signal')} (attention, not reporting)`}));
-    facts.push(h('li', {text: `Found through ${plural(c.channels, 'channel')}`}));
-    if (c.independent_reports < 2) facts.push(h('li', {text: 'Not yet confirmed by a second independent outlet'}));
+    if (c.channels) facts.push(h('li', {text: `Found through ${plural(c.channels, 'kind of source', 'kinds of source')}`}));
+    if (n < 2) facts.push(h('li', {text: 'Not yet confirmed by a second independent newsroom'}));
     return h('section', {class: 'panel', 'aria-label': 'Coverage'}, h('h2', {text: 'Coverage'}),
-      h('div', {class: `cov-big cov ${c.level}`}, h('span', {class: 'bars', 'aria-hidden': 'true'}, h('i'), h('i'), h('i')), coverage(c)),
+      h('div', {class: `cov-big cov ${c.level}`}, bars(), coverage(c)),
       h('ul', {class: 'facts'}, facts),
-      h('p', {class: 'fine'}, 'Coverage counts independent outlets that reported this story. It is not a fact check: several outlets can repeat the same claim. ', h('a', {href: '/about/#coverage', text: 'How coverage is measured'})));
+      h('p', {class: 'fine'}, 'Coverage counts the independent newsrooms that reported this story. It is not a fact check: several newsrooms can repeat the same claim. ', h('a', {href: '/about/#coverage', text: 'How coverage is measured'})));
   }
   function renderStory(ed, idx, s, storyNotice) {
     const order = ed.ordered;
@@ -596,8 +669,7 @@ if (typeof module !== 'undefined') module.exports = {normOutlet, dedupeOutlets, 
       h('div', {class: 'story-main'}, kicker(s), url
         ? h('h1', {class: 'hl', tabindex: '-1'}, h('a', {class: 'out', href: url, rel: 'noopener noreferrer', target: '_blank', 'aria-describedby': 'ext-note', 'data-outlet': mainOutlet(s, url), text: s.headline}))
         : h('h1', {class: 'hl', tabindex: '-1', text: s.headline}),
-        h('div', {class: 'meta'}, when ? h('time', {datetime: when, text: `Newest report ${fullStamp(when)}`}) : h('span', {text: 'Publication time not stated'}),
-          outletTags(s, 8), covMeter(s)),
+        h('div', {class: 'meta'}, when ? h('time', {datetime: when, text: `Newest report ${fullStamp(when)}`}) : null, coverageLine(s, 3)),
         h('div', {class: 'story-actions'},
           url ? h('a', {class: 'pill solid read-source', href: url, rel: 'noopener noreferrer', target: '_blank', 'aria-describedby': 'ext-note'}, `Read at ${mainOutlet(s, url)}`) : null,
           h('button', {class: 'source-jump', type: 'button', text: `${plural(sourceLinks(s), 'source link')} ↓`}),
@@ -608,10 +680,11 @@ if (typeof module !== 'undefined') module.exports = {normOutlet, dedupeOutlets, 
           h('a', {class: 'report-issue', href: reportHref(ed, s, shareUrl.href), text: 'Report an issue'})),
         h('p', {class: 'share-status sr', role: 'status', 'aria-live': 'polite'}),
         h('label', {class: 'share-fallback', hidden: true}, 'Copy this story link', h('input', {type: 'url', readonly: true})),
-        h('div', {class: 'story-body'}, s.summary.map(t => h('p', {text: t}))),
+        shownSummary(s).length ? h('div', {class: 'story-body'}, shownSummary(s).map(t => h('p', {text: t}))) : null,
         s.why_it_matters ? h('div', {class: 'why-box'}, h('h2', {text: 'Why it matters'}), h('p', {text: s.why_it_matters})) : null,
         h('p', {class: 'ai-note'}, h('b', {text: 'How this was written. '}),
-          `This summary was written automatically by a local AI model (${(ed.models && ed.models.summaries) || 'a local model'}) from the reports below, and each sentence was checked against them before publication. Nobody edited it. It can still be wrong or out of date: read the sources for the full story.`),
+          `This summary was written automatically by a local AI model (${(ed.models && ed.models.summaries) || 'a local model'}) from the reports below, and each sentence was checked against them before publication. Nobody edited it. It can still be wrong or out of date: read the sources for the full story.` +
+          (shownSummary(s).length || !(s.summary || []).length ? '' : ' Its summary only repeated the headline, so it is not shown.')),
         sourcesBlock(s)),
       h('section', {class: 'aside', 'aria-labelledby': 'story-context-title'}, h('h2', {id: 'story-context-title', class: 'sr', text: 'Story context'}), coveragePanel(s),
         same.length ? h('section', {class: 'panel', 'aria-label': 'More in this section'}, h('h2', {text: `More in ${catLabel(s.category)}`}),
@@ -659,9 +732,9 @@ if (typeof module !== 'undefined') module.exports = {normOutlet, dedupeOutlets, 
       notices(ed, idx),
       h('div', {class: 'river'}, known.concat(rest).map(s => h('article', {class: 'river-item', id: 'story-' + s.id, 'data-cat': s.category},
         h('div', {class: 'river-time'}, s.newest_published_utc ? [h('b', {text: new Date(s.newest_published_utc).toLocaleTimeString('en-US', {hour: 'numeric', minute: '2-digit'})}),
-          new Date(s.newest_published_utc).toLocaleDateString('en-US', {month: 'short', day: 'numeric'})] : h('b', {text: 'Time not stated'})),
+          new Date(s.newest_published_utc).toLocaleDateString('en-US', {month: 'short', day: 'numeric'})] : null),
         h('div', {class: 'river-body'}, kicker(s), headline(ed, s, 'h2'),
-          h('p', {class: 'dek', text: s.summary.join(' ')}), meta(s, {ed, noTime: true})))))));
+          dek(s), meta(s, {ed, noTime: true})))))));
     document.title = 'Latest News | Agent Reach Daily';
   }
   function renderSection(ed, idx, cat) {
@@ -898,6 +971,8 @@ if (typeof module !== 'undefined') module.exports = {normOutlet, dedupeOutlets, 
       }
     }
     const storyHref = x => `/daily/${x.d}/?headline=${encodeURIComponent(x.h)}#story-${x.id}`;
+    // The search data keeps the summary as one string: show only its sentences that add to the headline.
+    const searchSummary = x => typeof x.s === 'string' ? shownSummary({headline: x.h, summary: x.s.split(/(?<=[.!?])\s+/)}).join(' ') : '';
     function hit(x, terms) {
       return h('article', {class: 'hit', 'data-cat': x.c},
         h('div', {class: 'hit-meta'}, h('time', {datetime: x.d, text: shortDate(x.d)}), h('span', {class: 'kicker', 'data-cat': x.c, text: catLabel(x.c)}),
@@ -905,7 +980,7 @@ if (typeof module !== 'undefined') module.exports = {normOutlet, dedupeOutlets, 
         h('h2', {class: 'hl'}, x.u && webUrl(x.u) && /^https?:/.test(x.u)
           ? h('a', {class: 'out', href: webUrl(x.u), rel: 'noopener noreferrer', target: '_blank', 'aria-describedby': 'ext-note'}, marked(x.h, terms))
           : h('a', {href: storyHref(x)}, marked(x.h, terms))),
-        x.s ? h('p', {class: 'dek'}, marked(x.s, terms)) : null,
+        searchSummary(x) ? h('p', {class: 'dek'}, marked(searchSummary(x), terms)) : null,
         h('div', {class: 'meta'}, (x.o || []).length ? h('span', {class: 'outlets'}, marked((x.o || []).join(', '), terms)) : null,
           x.coverage ? covMeter({coverage: x.coverage, sources: []})
             : h('span', {class: `cov ${x.l || 'limited'}`}, h('span', {class: 'bars', 'aria-hidden': 'true'}, h('i'), h('i'), h('i')), COVER[x.l] || COVER.limited),
