@@ -1,5 +1,5 @@
 {
- "version": "1.0.0rc20",
- "notes": "The website now shows which sources each edition read, on its new Sources page.",
+ "version": "1.0.0rc21",
+ "notes": "Summaries no longer repeat their headline, and a story's sources must all be about the same event.",
  "setup_required": ""
 }
