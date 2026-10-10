@@ -654,37 +654,6 @@ if (typeof module !== 'undefined') module.exports = {normOutlet, dedupeOutlets, 
         h('li', null, h('b', {text: 'Publish'}), 'A failed run never replaces the last good edition.')));
   }
   const sectionId = cat => 'band-' + cat.toLowerCase().replace(/[^a-z]+/g, '-');
-  // One-click topic filter: a sticky bar with All + every section in this edition.
-  // One click shows only that topic's stories (the section expands to all of them);
-  // one more click on All restores the full front page. No page load, no scroll hunt.
-  function topicBar(depts, front) {
-    const bar = h('div', {class: 'topics', role: 'toolbar', 'aria-label': 'Filter by topic'});
-    const setTopic = cat => {
-      front.dataset.topic = cat || 'all';
-      for (const b of bar.querySelectorAll('.topic')) {
-        const on = (b.dataset.topic || '') === (cat || '');
-        b.classList.toggle('on', on);
-        b.setAttribute('aria-pressed', String(on));
-      }
-      const showAll = !cat;
-      for (const el of front.querySelectorAll('[data-front-part]')) {
-        const part = el.dataset.frontPart;
-        el.hidden = showAll ? false : !(part === 'section' && el.dataset.cat === cat);
-      }
-      if (!showAll) bar.scrollIntoView({block: 'start', behavior: 'smooth'});
-    };
-    const btn = (label, cat, count) => {
-      const b = h('button', {type: 'button', class: 'topic' + (!cat ? ' on' : ''),
-        'aria-pressed': String(!cat), 'data-topic': cat || ''},
-        h('span', {text: label}),
-        count != null ? h('span', {class: 'n', text: String(count)}) : null);
-      b.addEventListener('click', () => setTopic(cat));
-      return b;
-    };
-    bar.append(btn('All topics', '', null));
-    for (const [sec, stories] of depts) bar.append(btn(catLabel(sec.category), sec.category, stories.length));
-    return bar;
-  }
   // The cover story: the top story treated like a magazine cover — kicker, giant
   // serif headline, lede, why-it-matters, and the one-line coverage footer.
   function coverStory(ed, s) {
@@ -704,7 +673,7 @@ if (typeof module !== 'undefined') module.exports = {normOutlet, dedupeOutlets, 
     const s = stories.find(x => x && x.why_it_matters && x.why_it_matters.length > 40);
     if (!s) return null;
     const text = s.why_it_matters.length > 180 ? s.why_it_matters.slice(0, 177).trimEnd() + '…' : s.why_it_matters;
-    return h('aside', {class: 'pullquote', 'data-front-part': 'pullquote', 'data-cat': ''},
+    return h('aside', {class: 'pullquote'},
       h('blockquote', {text}), h('cite', null, h('a', {href: storyUrl(ed, s), text: s.headline})));
   }
   function deptHead(title, path, count) {
@@ -715,22 +684,20 @@ if (typeof module !== 'undefined') module.exports = {normOutlet, dedupeOutlets, 
   function renderFront(ed, idx, current, storyNotice) {
     const top = ed.topStories;
     const used = new Set(top.slice(0, 8).map(s => s.id));
-    // Every section with stories becomes a department; the CSS clamps each to 5
-    // in the full view and the topic filter reveals the rest.
+    // Every section with stories becomes a department showing all its stories.
     const depts = [];
     for (const sec of ed.sections || []) {
       const stories = sec.ids.map(id => ed.byId[id]).filter(s => s && !used.has(s.id));
       if (stories.length) depts.push([sec, stories]);
     }
-    const front = h('div', {class: 'ed-front', 'data-topic': 'all'});
+    const front = h('div', {class: 'ed-front'});
     front.append(
       h('div', {class: 'wrap'}, strip(ed, idx), notices(ed, idx),
         storyNotice ? h('p', {class: 'notice story-recovery', text: storyNotice}) : null),
-      topicBar(depts, front),
       h('div', {class: 'wrap'},
-        h('section', {class: 'cover', 'data-front-part': 'hero', 'data-cat': ''}, coverStory(ed, top[0])),
+        h('section', {class: 'cover'}, coverStory(ed, top[0])),
         pullQuote(ed, top.slice(1, 6)),
-        h('section', {class: 'toplist', 'data-front-part': 'toplist', 'data-cat': '', 'aria-label': 'Top stories'},
+        h('section', {class: 'toplist', 'aria-label': 'Top stories'},
           h('h2', {class: 'dept-title', text: 'Top stories'}),
           h('div', {class: 'topnum'}, top.slice(1, 5).map((s, i) =>
             h('article', {class: 'topnum-item', id: 'story-' + s.id, 'data-cat': s.category},
@@ -738,23 +705,21 @@ if (typeof module !== 'undefined') module.exports = {normOutlet, dedupeOutlets, 
               h('div', {class: 'tnum-body'}, kicker(s), headline(ed, s, 'h3'), dek(s), meta(s, {ed}))))))));
     if (top.length > 5)
       front.append(h('div', {class: 'wrap'},
-        h('section', {class: 'dept', 'data-front-part': 'dept', 'data-cat': ''},
+        h('section', {class: 'dept'},
           deptHead('More top stories'),
           h('div', {class: 'dept-grid'}, top.slice(5, 8).map(s => card(ed, s, ''))))));
     for (const [sec, stories] of depts) {
       const secInfo = SECTION[sec.category] || {};
       front.append(h('div', {class: 'wrap'},
-        h('section', {class: 'dept', 'data-front-part': 'section', 'data-cat': sec.category},
+        h('section', {class: 'dept', 'data-cat': sec.category},
           deptHead(secInfo.title || catLabel(sec.category), secInfo.path, stories.length),
           h('div', {class: 'dept-grid'}, stories.map(s => card(ed, s, ''))))));
     }
     if (idx) {
       const ab = archiveBand(idx, ed.edition_date);
-      if (ab) { ab.dataset.frontPart = 'archive'; ab.dataset.cat = ''; front.append(ab); }
+      if (ab) front.append(ab);
     }
-    const about = aboutBand();
-    about.dataset.frontPart = 'about'; about.dataset.cat = '';
-    front.append(about);
+    front.append(aboutBand());
     mount(current, ed, front);
     document.title = current === 'home' ? 'Agent Reach Daily: today’s news, from public reporting'
       : `Agent Reach Daily: ${longDate(ed.edition_date)}`;
