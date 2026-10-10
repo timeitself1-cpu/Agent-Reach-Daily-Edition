@@ -2,7 +2,7 @@ const {readFileSync, writeFileSync, mkdirSync, rmSync, cpSync, readdirSync, lsta
 const {resolve, dirname, sep} = require('node:path');
 const {JSDOM, VirtualConsole} = require('jsdom');
 const {checkEditions} = require('./check-editions.cjs');
-const {dedupeOutlets, normalizeStory} = require('../assets/site.js');
+const {dedupeOutlets, normalizeStory, plural, shownSummary, coverageLabel, sourceListNote, evidenceBreakdown, SOURCE_KIND} = require('../assets/site.js');
 const root = resolve(__dirname, '..');
 const out = resolve(root, 'dist');
 const staticStamp = value => new Date(value).toLocaleString('en-US', {year: 'numeric', month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit', timeZone: 'UTC', timeZoneName: 'short'});
@@ -58,7 +58,7 @@ function renderShell(html, path, index, edition) {
       }
       const details = d.createElement('details'); details.className = 'src static-src';
       const count = story.sources.filter(s => s.url).length;
-      const summary = d.createElement('summary'); summary.textContent = count ? `View ${count} source ${count === 1 ? 'link' : 'links'}` : 'View source details';
+      const summary = d.createElement('summary'); summary.textContent = count ? `View ${plural(count, 'source link')}` : 'View source details';
       const list = d.createElement('ul');
       for (const source of story.sources) {
         const item = d.createElement('li');
@@ -66,11 +66,14 @@ function renderShell(html, path, index, edition) {
         title.textContent = source.title;
         if (source.url) { title.href = source.url; title.rel = 'noopener noreferrer'; }
         const meta = d.createElement('small');
-        meta.textContent = `${dedupeOutlets([source.outlet])[0] || source.outlet} · ${source.published_utc ? staticStamp(source.published_utc) : 'Time not stated'} · ${source.kind}${source.url && new URL(source.url).hostname === 'news.google.com' ? ' · Google News redirect' : ''}`;
+        // A source without a stated publication time shows no time at all (never a placeholder).
+        meta.textContent = [dedupeOutlets([source.outlet])[0] || source.outlet, source.published_utc ? staticStamp(source.published_utc) : null,
+          SOURCE_KIND[source.kind] || source.kind, source.url && new URL(source.url).hostname === 'news.google.com' ? 'Google News redirect' : null].filter(Boolean).join(' · ');
         item.append(title, meta); list.append(item);
       }
       const totals = d.createElement('p');
-      totals.textContent = `Displayed evidence: ${story.coverage.source_links} source links · ${story.coverage.linked_outlets} newsrooms · ${story.coverage.linked_reporting_origins} reporting origins`;
+      const note = sourceListNote(story);
+      totals.textContent = evidenceBreakdown(story) + (note ? `. ${note}: the others were counted in coverage but are not listed in this edition.` : '');
       details.append(summary, totals, list); container.append(details);
       const link = `${SITE}/daily/${edition.edition_date}/#story-${story.id}`;
       const actions = d.createElement('p'); actions.className = 'share-links static-share';
@@ -103,10 +106,11 @@ const rfc822 = iso => new Date(iso).toUTCString().replace('GMT', '+0000');
 function feedXml(edition, stories, {title, path, self}) {
   const items = stories.map(s => {
     const link = `${SITE}/daily/${edition.edition_date}/#story-${s.id}`;
-    const parts = [s.summary.join(' ')];
+    // A summary that only restates the headline is left out; a sentence without end punctuation gets a full stop.
+    const parts = shownSummary(s).map(t => /[.!?…"'”’)]$/.test(t.trim()) ? t.trim() : t.trim() + '.');
     if (s.why_it_matters) parts.push('Why it matters: ' + s.why_it_matters);
-    const c = s.coverage || {}, n = c.independent_reports || 0; // the same wording as the cards (site.js covText)
-    parts.push(`${c.level === 'strong' ? 'Strong coverage' : c.level === 'moderate' ? 'Moderate coverage' : n <= 1 ? 'Single source' : 'Limited coverage'}: ${n} independent ${n === 1 ? 'outlet' : 'outlets'}.`);
+    const c = s.coverage || {}, n = c.independent_reports || 0; // the same wording as the pages (site.js coverageLabel)
+    parts.push(`${coverageLabel(c)}: ${n ? `${plural(n, 'independent newsroom')} reported this` : 'no independent newsroom report yet'}.`);
     parts.push('Summary written by a local AI model and checked against its sources; read the sources before relying on it.');
     return `<item><title>${xml(s.headline)}</title><link>${xml(link)}</link><guid isPermaLink="true">${xml(link)}</guid>` +
       `<pubDate>${rfc822(s.newest_published_utc || edition.generated_utc)}</pubDate>` +

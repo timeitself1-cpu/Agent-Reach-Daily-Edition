@@ -111,3 +111,60 @@ test('static sources visibly label every unresolved Google redirect and retain i
   dom.window.close();
 });
 
+
+// Editorial polish of October 10, 2026: plurals, coverage wording and summaries that restate the headline.
+const {plural, addsToHeadline, shownSummary, reportedBy, coverageLabel, sourceListNote} = require('../assets/site.js');
+test('one plural helper: 1 newsroom, 2 newsrooms, 1 story, 3 stories', () => {
+  assert.equal(plural(1, 'newsroom'), '1 newsroom');
+  assert.equal(plural(2, 'newsroom'), '2 newsrooms');
+  assert.equal(plural(0, 'source link'), '0 source links');
+  assert.equal(plural(1, 'source link'), '1 source link');
+  assert.equal(plural(1, 'story', 'stories'), '1 story');
+  assert.equal(plural(3, 'story', 'stories'), '3 stories');
+  assert.equal(plural(1517, 'report'), '1,517 reports');
+  assert.equal(plural(undefined, 'signal'), '0 signals');
+});
+
+test('the coverage line names newsrooms and says the count once', () => {
+  assert.equal(reportedBy(['BBC News', 'NPR', 'CNN', 'Reuters'], 4), 'Reported by BBC News, NPR and 2 more');
+  assert.equal(reportedBy(['BBC News', 'NPR', 'CNN'], 3), 'Reported by BBC News, NPR and CNN');
+  assert.equal(reportedBy(['BBC News', 'NPR'], 2), 'Reported by BBC News and NPR');
+  assert.equal(reportedBy(['NBC DFW'], 1), 'Single source: NBC DFW');
+  assert.equal(reportedBy([], 0), 'No independent newsroom report yet');
+  assert.equal(reportedBy(['A', 'B', 'C', 'D', 'E'], 5, 3), 'Reported by A, B, C and 2 more');
+  assert.equal(reportedBy(['A', 'B'], 4), '4 newsrooms reported this'); // never names that disagree with the count
+  for (const n of [1, 2, 4, 9]) {
+    const text = reportedBy(Array.from({length: n}, (_, i) => 'Outlet ' + i), n);
+    assert.doesNotMatch(text, /(\d+) (?:outlets?|newsrooms?).*\1 (?:outlets?|newsrooms?)/);
+    assert.doesNotMatch(text, /\b1 (?:newsrooms|outlets|sources)\b/);
+  }
+  assert.equal(coverageLabel({level: 'limited', independent_reports: 1}), 'Single source');
+  assert.equal(coverageLabel({level: 'limited', independent_reports: 2}), 'Limited coverage');
+  assert.equal(coverageLabel({level: 'strong', independent_reports: 9}), 'Strong coverage');
+});
+
+test('a source list that holds fewer newsrooms than the coverage count says so', () => {
+  const s = normalizeStory(story([source('NBC DFW', 'Election workers trained', 'https://nbcdfw.com/a'), source('Dallas News', 'Collin County trains poll workers', 'https://dallasnews.com/b')]));
+  assert.equal(sourceListNote(s), null);
+  s.coverage.independent_reports = 4;
+  assert.equal(sourceListNote(s), 'Showing 2 of 4 newsrooms');
+});
+
+test('addsToHeadline: a sentence that restates the headline adds nothing', () => {
+  const hurricane = 'Isaias strengthens into Category 2 hurricane on collision course with the Gulf Coast';
+  assert.equal(addsToHeadline(hurricane + '.', hurricane), false, 'identical sentence');
+  assert.equal(addsToHeadline("Fort Hood attacker's execution by firing squad will be livestreamed, Pentagon says.",
+    'Firing Squad Execution to Be Livestreamed, Pentagon Says'), false, 'reordered with two small additions');
+  assert.equal(addsToHeadline('The first hurricane of the Atlantic season was forecast to intensify rapidly before landfall on Thursday.', hurricane), true);
+  assert.equal(addsToHeadline('It is.', hurricane), false, 'no content words');
+  assert.equal(addsToHeadline('Officials said 12,000 residents of 4 counties left on Tuesday.', hurricane), true, 'numbers count as content');
+  const s = {headline: hurricane, summary: [hurricane + '.', 'Forecasters expect landfall near Mobile on Thursday with surge warnings for three states.']};
+  assert.deepEqual(shownSummary(s), [s.summary[1]]);
+  assert.deepEqual(shownSummary({headline: hurricane, summary: [hurricane]}), []);
+  assert.deepEqual(shownSummary({headline: hurricane}), []);
+  // the app's useful_summary: a cut-off sentence, and a 'She ...' / 'And, ...' left without its antecedent, are not shown
+  const hamilton = 'Margaret Hamilton, computing pioneer who led software development for the Apollo program, dies at 90';
+  assert.deepEqual(shownSummary({headline: hamilton, summary: [hamilton + '.', 'She later founded two software companies and coined the term software engineering.']}), []);
+  assert.deepEqual(shownSummary({headline: 'Trump Says U.S. Won\'t Attack Iran Before Midterms', summary: ['And, ICE agent shoots man in NYC during a raid in the Bronx.']}), []);
+  assert.deepEqual(shownSummary({headline: hurricane, summary: ['Forecasters said the storm could bring a surge of six feet to the coast of Alabama']}), []);
+});

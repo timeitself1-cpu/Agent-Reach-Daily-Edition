@@ -4,6 +4,7 @@ const {readFileSync} = require('node:fs');
 const {resolve} = require('node:path');
 const {JSDOM} = require('jsdom');
 const {renderShell} = require('../scripts/build.cjs');
+const {shownSummary} = require('../assets/site.js');
 const root = resolve(__dirname, '..');
 const edition = JSON.parse(readFileSync(resolve(__dirname, 'fixtures/editions/2026-10-07.json')));
 const index = JSON.parse(readFileSync(resolve(__dirname, 'fixtures/editions/index.json')));
@@ -25,7 +26,9 @@ test('ordinary HTML contains every summary, evidence link and fragment on comple
         const article = d.getElementById('story-' + story.id);
         assert.ok(article, route + ': ' + story.id);
         assert.equal(article.querySelector('.hl').textContent, story.headline);
-        assert.equal(article.querySelector('.dek').textContent, story.summary.join(' '));
+        const summary = shownSummary(story).join(' '); // sentences that only restate the headline are left out
+        if (summary) assert.equal(article.querySelector('.dek').textContent, summary);
+        else assert.equal(article.querySelector('.dek'), null, 'a headline can stand alone');
         assert.equal(article.querySelectorAll('details li').length, story.sources.length);
         assert.deepEqual([...article.querySelectorAll('details a')].map(a => a.href), story.sources.filter(s => s.url).map(s => s.url));
         if (story.why_it_matters) assert.ok(article.textContent.includes(story.why_it_matters));
@@ -54,7 +57,8 @@ test('the RSS feeds have one item per story, newest edition only, with escaped t
     assert.match(item.querySelector('link').textContent, /^https:\/\/getagentreach\.dev\/daily\/2026-10-07\/#story-[0-9a-f]+$/);
     assert.equal(item.querySelector('guid').textContent, item.querySelector('link').textContent);
     assert.ok(!Number.isNaN(Date.parse(item.querySelector('pubDate').textContent)));
-    assert.match(item.querySelector('description').textContent, /independent outlets?\. Summary written by a local AI model/);
+    assert.match(item.querySelector('description').textContent, /(?:: \d+ independent newsrooms? reported this|: no independent newsroom report yet)\. Summary written by a local AI model/);
+    assert.doesNotMatch(item.querySelector('description').textContent, /outlets?|not stated/);
   }
   const tech = read(files['feeds/technology.xml']);
   assert.equal(tech.querySelectorAll('item').length, ed.stories.filter(s => s.category === 'Tech').length);

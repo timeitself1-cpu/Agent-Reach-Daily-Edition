@@ -93,3 +93,25 @@ test('published-file validator checks the optional headline link against the sto
   assert.throws(() => mutate('editions/2026-10-07.json', data => { data.stories[0].url = 'javascript:alert(1)'; }), /absolute headline link/);
   assert.throws(() => mutate('search/2026-10.json', data => { data.stories[0].u = 'https://elsewhere.example/'; }), /search headline link/);
 });
+
+test('editorial checks: duplicate URLs and unsupported counts warn; empty headlines and malformed dates fail', () => {
+  const ed = structuredClone(require('./fixtures/editions/2026-10-07.json'));
+  const story = ed.stories.find(s => s.sources.filter(x => x.url).length >= 2 && s.coverage.independent_reports >= 1);
+  const links = story.sources.filter(x => x.url);
+  links[1].url = links[0].url;
+  story.coverage.independent_reports = 40;
+  story.newest_published_utc = 'Oct 9 2026 12:49';
+  const warnings = editionWarnings(ed).filter(w => w.includes(story.id));
+  assert.ok(warnings.some(w => w === `2026-10-07 story ${story.id}: duplicate source URL ${links[0].url}`));
+  assert.ok(warnings.some(w => /: 40 independent reports but only \d+ distinct newsrooms? named$/.test(w)));
+  assert.ok(warnings.some(w => w.includes('timestamp not in ISO 8601 form: Oct 9 2026 12:49')));
+  // Warnings never fail validation of data already published.
+  mutate('editions/2026-10-07.json', data => { const s = data.stories.find(x => x.id === story.id); s.coverage.independent_reports = 40; });
+  assert.throws(() => mutate('editions/2026-10-07.json', data => { data.stories[0].headline = '  '; }), /empty headline/);
+  assert.throws(() => mutate('editions/2026-10-07.json', data => { data.stories[0].newest_published_utc = 'yesterday'; }), /malformed newest report time/);
+  assert.throws(() => mutate('editions/2026-10-07.json', data => { data.stories[0].sources[0].published_utc = 'soon'; }), /malformed source time/);
+  const {realDate} = require('../scripts/check-editions.cjs');
+  assert.equal(realDate('2026-10-07'), true);
+  assert.equal(realDate('2026-02-31'), false);
+  assert.equal(realDate('2026-2-3'), false);
+});

@@ -90,7 +90,7 @@ test('one click on a headline opens the publisher article in a new tab; a second
       } else assert.equal(a.getAttribute('href'), `/daily/2026-10-07/#story-${story.id}`);
       const more = item.querySelector('.story-link');
       assert.equal(more.getAttribute('href'), `/daily/2026-10-07/#story-${story.id}`);
-      assert.match(more.textContent, new RegExp(`^${story.sources.filter(x => x.url).length} sources? and coverage: `));
+      assert.equal(more.textContent, `${story.sources.some(x => x.url) ? 'Sources' : 'Details'} and coverage: ${story.headline}`);
     }
     assert.equal(p.d.getElementById('ext-note').textContent, 'Opens the publisher’s article in a new tab.');
     p.close();
@@ -140,8 +140,8 @@ test('cards, search and source panels agree on corrected NBC coverage and redire
   const fetch = url => url === '/editions/index.json' ? idx : url.startsWith('/editions/') ? ed : url.startsWith('/search/') ? doc : undefined;
   let p = await open('/', {fetch}); // a Local story of October 8: the retired section's band on that edition
   const card = p.d.querySelector(`.band[data-cat="Local"] #story-${story.id}`);
-  assert.match(card.querySelector('.cov').textContent, /Single source/);
-  assert.match(card.querySelector('.cov').title, /1 independent outlet/);
+  assert.equal(card.querySelector('.cov').textContent, 'Single source: NBC DFW');
+  assert.match(card.querySelector('.cov').title, /^Single source\. Coverage is not a fact check\./);
   p.close();
   p = await open('/search/?q=Collin', {fetch});
   assert.match(p.d.querySelector('.hit .cov').textContent, /Single source/);
@@ -150,8 +150,8 @@ test('cards, search and source panels agree on corrected NBC coverage and redire
   p.close();
   p = await open(`/daily/2026-10-08/#story-${story.id}`, {fetch, shell: '/daily/index.html',
     setup(w, d) { d.body.dataset.date = ed.edition_date; }});
-  assert.match(p.d.querySelector('[aria-label="Coverage"]').textContent, /1 independent outlet: NBC DFW/);
-  assert.match(p.d.querySelector('.sources').textContent, /Independent reports shown \(1\)/);
+  assert.match(p.d.querySelector('[aria-label="Coverage"]').textContent, /1 independent newsroom: NBC DFW/);
+  assert.match(p.d.querySelector('.sources').textContent, /Independent reports \(1\)/);
   for (const a of p.d.querySelectorAll('.source a')) if (new URL(a.href).hostname === 'news.google.com') {
     assert.match(a.parentElement.textContent, /Google News redirect/);
   }
@@ -299,15 +299,12 @@ test('latest river and category pages retain every fixture story', async () => {
 test('roadmap lead deduplicates publishers and labels links separately', async () => {
   const ed = roadmapEdition, story = ed.stories[0];
   const p = await open('/daily/2026-10-07/#story-' + story.id, {fetch: u => u.includes('/editions/2026-10-07') ? ed : undefined});
-  const tags = [...p.d.querySelectorAll('.story-main .outlet-tags .tag')].map(t => t.textContent);
-  assert.deepEqual(tags.slice(0, 2), ['AP News', 'Reuters'], 'widely known newsrooms lead the tags');
-  assert.equal(tags.length, 7); assert.equal(new Set(tags).size, 7);
-  const tagged = p.d.querySelector('.story-main .outlet-tags');
-  assert.equal(tagged.querySelector('.tally').textContent, '7 outlets');
-  assert.equal(tagged.querySelector('.tally').getAttribute('aria-hidden'), 'true'); // the sentence below says it once
-  const spoken = [...tagged.childNodes].filter(n => !(n.getAttribute && n.getAttribute('aria-hidden'))).map(n => n.textContent).join('');
-  assert.match(spoken, /^Reported independently by 7 outlets: AP News, Reuters, /);
-  assert.match(p.d.querySelector('.facts').textContent, /7 independent outlets/);
+  // Widely known newsrooms lead the one coverage line; the count is said once.
+  assert.match(p.d.querySelector('.story-main .cov-line .reported').textContent, /^Reported by AP News, Reuters, [^,]+ and 4 more$/);
+  assert.match(p.d.querySelector('.story-main .cov-line').textContent, /^Strong coverage\. Reported by AP News/);
+  const listed = p.d.querySelector('.facts li').textContent;
+  assert.match(listed, /^7 independent newsrooms: AP News, Reuters, /);
+  assert.equal(new Set(listed.split(': ')[1].split(', ')).size, 7);
   assert.doesNotMatch(p.d.querySelector('.facts').textContent, /apnews\.com|reuters\.com/);
   assert.match(p.d.querySelector('.source-jump').textContent, /8 source links/);
   const group = [...p.d.querySelectorAll('.sources h3')].find(h => h.textContent.startsWith('Independent'));
@@ -341,7 +338,11 @@ test('update details count changes and optionally link dropped headlines as plai
   assert.equal(a.textContent, '<b>Removed headline</b>');
   assert.equal(a.querySelector('b'), null);
   assert.equal(new URL(a.href).searchParams.get('q'), '"<b>Removed headline</b>"');
-  assert.match(q.d.querySelector('.edition-full').textContent, /1 no longer listed/); q.close();
+  assert.match(q.d.querySelector('.edition-changes').textContent, /· 1 no longer in this edition$/);
+  assert.equal(q.d.querySelector('.dropped-title').textContent, 'No longer in this edition');
+  assert.match(q.d.querySelector('.dropped-note').textContent, /newer or better-covered news takes their place/);
+  assert.equal(q.d.querySelector('.dropped-note a').getAttribute('href'), '/corrections/');
+  assert.doesNotMatch(q.d.querySelector('.edition-full').textContent, /dropped|no longer listed/i); q.close();
 });
 
 test('Home and Daily shortcuts resolve every section, including static HTML', async () => {
@@ -423,7 +424,7 @@ test('story sources and source groups match fixture, jump preserves URL', async 
     assert.equal(p.d.querySelectorAll('.sources .source').length,story.sources.length);
     assert.deepEqual([...p.d.querySelectorAll('.sources a.title')].map(a=>a.href).sort(), story.sources.map(s=>s.url).sort());
     const grouped = normalizeStory(structuredClone(story)).sources;
-    for (const [kind, title] of [['report','Independent reports shown'],['repeat','Repeats and syndicated copies'],['signal','Social and search signals']]) {
+    for (const [kind, title] of [['report','Independent reports'],['repeat','Repeats and syndicated copies'],['signal','Social and search signals']]) {
       const count=grouped.filter(s=>s.kind===kind).length;
       const heading=[...p.d.querySelectorAll('.sources h3')].find(h=>h.textContent===`${title} (${count})`);
       if(count) {
@@ -724,7 +725,8 @@ test('null source URLs and empty optional values remain readable plain text',asy
   assert.equal(source.querySelector('.title').textContent,story.sources[0].title);
   assert.equal(source.querySelector('b'),null);
   assert.equal(source.querySelector('time'),null);
-  assert.match(source.textContent,/Time not stated/);
+  assert.doesNotMatch(source.textContent,/not stated/i);
+  assert.equal(source.querySelector('.when'),null);
   assert.equal(p.d.querySelector('.why-box'),null);
   assert.equal(p.d.querySelectorAll('.story-body p').length,1);
   p.close();
@@ -798,26 +800,33 @@ test('the ticker shows what changed since the previous update and flags missing 
   ed.sources_answered = 8;
   const p = await open('/latest/', {fetch: u => u.endsWith('2026-10-07.json') ? ed : undefined});
   const ticker = p.d.querySelector('.ticker');
-  assert.match(ticker.textContent, new RegExp(`Since update 1: \\+${ed.stories.filter(s => s.change === 'new').length} new · ${ed.stories.filter(s => s.change === 'updated').length} updated · 1 dropped`));
+  assert.match(ticker.textContent, new RegExp(`Since update 1: ${ed.stories.filter(s => s.change === 'new').length} new · ${ed.stories.filter(s => s.change === 'updated').length} updated · 1 no longer in this edition`));
+  assert.doesNotMatch(ticker.textContent, /dropped|\+\d/);
   assert.ok(ticker.querySelector('.warn'));
   assert.match(ticker.querySelector('.warn').textContent, /^8\/10 source types up$/);
   assert.equal(p.d.querySelector('main .wrap').firstElementChild.className, 'strip', 'the ticker sits directly under the header');
   p.close();
 });
 
-test('outlet tags show one outlet once and only for stories with several independent outlets', async () => {
+test('every story shows one coverage line whose names and count match its independent newsrooms', async () => {
   const p = await open('/');
   for (const item of p.d.querySelectorAll('main article[data-cat]')) {
     const story = edition.stories.find(s => 'story-' + s.id === item.id);
     if (!story) continue;
-    const tags = item.querySelector('.outlet-tags');
-    const outlets = new Set(story.coverage.publishers.map(normOutlet));
-    if (outlets.size < 2) { assert.equal(tags, null, story.headline); continue; }
-    const names = [...tags.querySelectorAll('.tag:not(.more)')].map(t => normOutlet(t.textContent));
-    assert.equal(new Set(names).size, names.length);
-    const more = tags.querySelector('.tag.more');
-    assert.equal(names.length + (more ? Number(more.textContent.slice(1)) : 0), outlets.size, story.headline);
+    const s = normalizeStory(structuredClone(story)), n = s.coverage.independent_reports;
+    const lines = item.querySelectorAll('.cov-line');
+    assert.equal(lines.length, 1, story.headline);
+    const text = lines[0].querySelector('.reported').textContent;
+    assert.doesNotMatch(text, /(\d+) (?:outlets?|newsrooms?)\b.*\b\1 (?:outlets?|newsrooms?)/, 'the count is never said twice');
+    if (!n) { assert.equal(text, 'No independent newsroom report yet'); continue; }
+    if (n === 1) { assert.match(text, /^Single source: /); continue; }
+    const m = /^Reported by (.+?)(?: and (\d+) more)?$/.exec(text);
+    assert.ok(m, text);
+    const names = m[2] ? m[1].split(', ') : m[1].split(/, | and /);
+    assert.equal(new Set(names.map(normOutlet)).size, names.length);
+    assert.equal(names.length + Number(m[2] || 0), n, story.headline);
   }
+  assert.equal(p.d.querySelector('.outlet-tags, .tally'), null);
   p.close();
 });
 
@@ -917,5 +926,59 @@ test('the corrections page has the policy and an append-only log, linked from ev
 test('each section page links its own RSS feed', async () => {
   const p = await open('/technology/');
   assert.equal(p.d.querySelector('.feed-link a').getAttribute('href'), '/feeds/technology.xml');
+  p.close();
+});
+
+test('a story whose only summary sentence restates its headline shows the headline alone everywhere', async () => {
+  const ed = structuredClone(edition), story = ed.stories[0];
+  story.summary = [story.headline + '.'];
+  story.why_it_matters = '';
+  const fetch = u => u.endsWith('2026-10-07.json') ? ed : undefined;
+  for (const path of ['/', '/latest/', '/daily/2026-10-07/']) {
+    const p = await open(path, {fetch});
+    const item = p.d.getElementById('story-' + story.id);
+    assert.equal(item.querySelector('.hl').textContent, story.headline, path);
+    assert.equal(item.querySelector('.dek'), null, path);
+    p.close();
+  }
+  const p = await open('/daily/2026-10-07/#story-' + story.id, {fetch});
+  assert.equal(p.d.querySelector('.story-body'), null);
+  assert.match(p.d.querySelector('.ai-note').textContent, /only repeated the headline/);
+  p.close();
+  // A sentence that adds something stays, and only the restating one goes.
+  story.summary = [story.headline + '.', 'The first hurricane of the Atlantic season was forecast to intensify rapidly before landfall.'];
+  const q = await open('/daily/2026-10-07/#story-' + story.id, {fetch});
+  assert.deepEqual([...q.d.querySelectorAll('.story-body p')].map(n => n.textContent), [story.summary[1]]);
+  q.close();
+});
+
+test('news pages never print placeholder times or doubled counts', async () => {
+  const ed = structuredClone(edition);
+  ed.stories[0].newest_published_utc = null;
+  for (const src of ed.stories[0].sources) src.published_utc = null;
+  const fetch = u => u.endsWith('2026-10-07.json') ? ed : undefined;
+  for (const path of ['/', '/latest/', '/technology/', '/daily/2026-10-07/#story-' + ed.stories[0].id]) {
+    const p = await open(path, {fetch});
+    const text = p.d.querySelector('main').textContent;
+    assert.doesNotMatch(text, /not stated/i, path);
+    assert.doesNotMatch(text, /(\d+) outlets?: \1 outlets?|\b1 (?:newsrooms|outlets|sources|source links|signals)\b/, path);
+    assert.doesNotMatch(text, /Reported independently by|Displayed evidence/, path);
+    p.close();
+  }
+});
+
+test('the story page labels a source list that shows fewer newsrooms than the coverage count', async () => {
+  const ed = structuredClone(edition);
+  const story = ed.stories.find(s => s.coverage.independent_reports >= 3);
+  const listed = normalizeStory(structuredClone(story)).sources.filter(x => x.kind === 'report').length;
+  story.coverage.publishers = [...story.coverage.publishers, 'Extra Newsroom One', 'Extra Newsroom Two'];
+  story.coverage.independent_reports = listed + 2;
+  const p = await open('/daily/2026-10-07/#story-' + story.id, {fetch: u => u.endsWith('2026-10-07.json') ? ed : undefined});
+  const n = listed + 2;
+  assert.match(p.d.querySelector('.facts li').textContent, new RegExp(`^${n} independent newsrooms: `));
+  assert.match(p.d.querySelector('.facts').textContent, new RegExp(`showing ${listed} of ${n} newsrooms`));
+  const group = [...p.d.querySelectorAll('.sources h3')].find(h => h.textContent.startsWith('Independent reports'));
+  assert.equal(group.textContent, `Independent reports (${listed})`);
+  assert.match(group.nextElementSibling.textContent, new RegExp(`Showing ${listed} of ${n} newsrooms`));
   p.close();
 });
