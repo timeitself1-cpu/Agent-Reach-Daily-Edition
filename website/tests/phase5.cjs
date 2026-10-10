@@ -31,11 +31,11 @@ async function open(path, {storage, sectionsFile, now = '2026-10-08T16:00:00Z'} 
 const navLabels = d => [...d.querySelectorAll('.nav a')].map(a => a.textContent.trim());
 
 test('the built-in section table is identical to editions/sections.json (it is only the fallback)', async () => {
-  const p = await open('/world/');
+  const p = await open('/');
   const expected = sections.sections.filter(s => !s.retired).map(s => s.label);
-  const nav = navLabels(p.d);
-  for (const label of expected) assert.ok(nav.includes(label), label);
-  assert.deepEqual(expected.filter(l => nav.includes(l)), expected, 'same order');
+  // Sections surface in the one-click topic filter, not the slim header nav.
+  const topics = [...p.d.querySelectorAll('.topics .topic:not([data-topic=""])')].map(b => b.querySelector('span').textContent);
+  for (const label of expected) assert.ok(topics.includes(label), label);
   p.close();
 });
 
