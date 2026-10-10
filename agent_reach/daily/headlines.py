@@ -98,6 +98,63 @@ def strip_trailing_bait(headline: str) -> str:
     return out.rstrip()
 
 
+#: Words that never end a complete headline (truncation signal).
+_TRUNCATION_ENDINGS = frozenset("""in on at to for of and or the a an with by from as into over under
+after before about against between through during without within up down out off per via vs than then that this
+these those is are was were be been being am has have had do does did will would can could may might must shall
+should not no it its he she they we you his her their our your who whom whose which what when where why how if while
+until since because also just only still even s t""".split())
+
+
+def is_truncated(headline: str) -> bool:
+    """A headline that ends mid-thought (e.g., 'NASA is advancing American leadership in Space...')."""
+    text = headline.strip()
+    # Ends with ellipsis or is cut off
+    if re.search(r"[.…]{2,}\s*$", headline):
+        return True
+    words = re.findall(r"[A-Za-z][\w'’-]*", text)
+    if not words:
+        return False
+    # Ends with a word that never ends a complete headline
+    if words[-1].lower() in _TRUNCATION_ENDINGS:
+        return True
+    return False
+
+
+def fix_mid_sentence_caps(headline: str, *, names: frozenset[str] | set[str] = frozenset(),
+                          vouching_text: str = "") -> str:
+    """Lowercase ordinary words wrongly capitalized mid-sentence.
+
+    Catches cases like 'OpenAI model deliberately Destroys environment' where the headline
+    is not title case overall (so sentence_case doesn't trigger) but contains a stray
+    capital. Only touches words that are clearly ordinary: in COMMON_WORDS/FUNCTION_WORDS,
+    or seen lowercase in the story's prose. Names and acronyms are never touched.
+    """
+    if is_title_case(headline):
+        return headline  # sentence_case handles these
+    key_names = {t.lower() for n in names for t in re.findall(r"[A-Za-z][\w'’-]*", n)}
+    lower_seen = _known_lower(vouching_text)
+    seen_names = _names_seen(vouching_text)
+
+    def fix_token(m: re.Match) -> str:
+        word = m.group(0)
+        # Skip first word, quoted text handled by caller, acronyms, mixed case
+        low = word.lower()
+        if low in key_names or low in seen_names:
+            return word  # it's a name
+        if _DOTTED_RX.match(word) or (word.isupper() and len(word) >= 2) or word[1:] != word[1:].lower():
+            return word  # U.S., GTA, iPhone
+        if low in FUNCTION_WORDS or low in COMMON_WORDS or low in lower_seen:
+            return low
+        return word
+
+    # Only fix words after the first (first word keeps its capital)
+    parts = headline.split(' ', 1)
+    if len(parts) < 2:
+        return headline
+    return parts[0] + ' ' + re.sub(r"\b[A-Z][a-z'’-]+\b", fix_token, parts[1])
+
+
 def _known_lower(vouching_text: str) -> set[str]:
     """Words the story's own reports write in lower case somewhere (so they are ordinary words)."""
     return set(re.findall(r"(?<![A-Za-z'’-])[a-z][a-z'’-]*(?![A-Za-z])", vouching_text))
@@ -161,6 +218,9 @@ def normalize_headline(headline: str, *, names=(), vouching_text: str = "", cfg:
     text = strip_trailing_bait(text)
     if is_title_case(text):
         text = sentence_case(text, names=set(names), vouching_text=vouching_text, cfg=cfg)
+    else:
+        # Not title case, but may still have stray mid-sentence capitals
+        text = fix_mid_sentence_caps(text, names=set(names), vouching_text=vouching_text)
     return text if text.strip() else original
 
 

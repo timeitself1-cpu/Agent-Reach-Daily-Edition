@@ -927,9 +927,12 @@ class LinkIndex:
         name it, and a fragment that names two different stories joins neither. ``attach=False``: a lone
         report joins only through an accepted pair (for merging two drafts, see ``_deterministic_merge``)."""
         fragments = {i for i in ids if len(self.toks[i]) <= 3}
-        from agent_reach.pipeline.event_identity import cohesive_groups
+        from agent_reach.pipeline.event_identity import cohesive_groups, dedupe_stories
 
-        return cohesive_groups(list(ids), self.gate, fragments=fragments, attach=attach)
+        groups = cohesive_groups(list(ids), self.gate, fragments=fragments, attach=attach)
+        # Merge duplicate stories: same event split into two groups (e.g., two OpenAI
+        # revenue stories in one edition).
+        return dedupe_stories(groups, self.gate)
 
 
 #: Numbers and amount words a model headline may use only when the story's own reports do.

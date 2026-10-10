@@ -133,12 +133,17 @@ class IdentityGate:
             return self._cache[key]
         cos = self.cosine(*key)
         conflict = self.index.conflict(*key)
-        from agent_reach.pipeline.same_event import same_event_titles, conflicting_claims
+        from agent_reach.pipeline.same_event import same_event_titles, conflicting_claims, _different_central_actors
         left, right = self.index.items[a], self.index.items[b]
         shared_actor = (hasattr(left, 'metadata') and hasattr(right, 'metadata')
                         and self.index.shares_name(*key, titles=True))
         if shared_actor and conflicting_claims(left, right, shared_actor=True):
             conflict = conflict or 'opposite claims about the same actor and action'
+        # Different named individuals = different events, even on the same topic.
+        # (Pentagon execution livestream vs Christa Pike execution: both about capital
+        # punishment, but different people, different events.)
+        if not conflict and _different_central_actors(left, right):
+            conflict = 'different central actors'
         if conflict:
             d = PairDecision(*key, REJECT, [conflict], cos)
             if "roundup" in conflict:
@@ -347,3 +352,67 @@ def lexical_candidates(ids: list[int], toks: dict[int, set[str]], max_df: int) -
         for a, b in combinations(sorted(members), 2):
             pairs.add((a, b))
     return sorted(pairs)
+
+
+def dedupe_stories(groups: list[list[int]], gate: IdentityGate) -> list[list[int]]:
+    """Merge duplicate stories: two groups about the same event that the gate split.
+
+    After cohesive grouping, two stories may still describe the same event (e.g., two
+    OpenAI revenue-expectation stories in one edition). This checks pairs of stories:
+    if the representative titles share high word overlap, name the same central actor,
+    and no pair across them is REJECTed, merge them. Conservative: requires strong
+    evidence, prefers keeping separate stories over a false merge.
+    """
+    from agent_reach.pipeline.same_event import title_words, _actor, _different_central_actors
+
+    if len(groups) < 2:
+        return groups
+
+    # Representative title for each group: the longest title (usually most informative)
+    def rep_title(g: list[int]) -> str:
+        titles = [getattr(gate.index.items[i], 'normalized_title', '') for i in g]
+        return max(titles, key=len) if titles else ''
+
+    def rep_item(g: list[int]):
+        titles = [(getattr(gate.index.items[i], 'normalized_title', ''), i) for i in g]
+        return gate.index.items[max(titles, key=lambda x: len(x[0]))[1]] if titles else None
+
+    merged = [list(g) for g in groups]
+    changed = True
+    while changed:
+        changed = False
+        for i in range(len(merged)):
+            for j in range(i + 1, len(merged)):
+                gi, gj = merged[i], merged[j]
+                ti, tj = rep_title(gi), rep_title(gj)
+                if not ti or not tj:
+                    continue
+                # High title overlap: Jaccard >= 0.6 on significant words
+                wi, wj = title_words(ti), title_words(tj)
+                if not wi or not wj:
+                    continue
+                jaccard = len(wi & wj) / len(wi | wj)
+                if jaccard < 0.6:
+                    continue
+                # Same central actor (not different people)
+                ii, jj = rep_item(gi), rep_item(gj)
+                if ii is None or jj is None:
+                    continue
+                if _different_central_actors(ii, jj):
+                    continue
+                # No REJECTed pair across the groups
+                cross = [gate.decide(a, b) for a in gi for b in gj]
+                if any(d.verdict == REJECT for d in cross):
+                    continue
+                # Merge: keep the larger group, absorb the smaller
+                if len(gi) >= len(gj):
+                    merged[i] = gi + gj
+                    merged.pop(j)
+                else:
+                    merged[j] = gj + gi
+                    merged.pop(i)
+                changed = True
+                break
+            if changed:
+                break
+    return merged
