@@ -572,19 +572,6 @@ details.src small{color:var(--faint);font-size:12px}
 .nav.slim .nav-row>a[aria-current="page"]{color:var(--accent);background:var(--accent-bg);font-weight:600}
 .search-link{margin-left:8px}
 
-/* One-click topic filter: sticky bar, All + sections with counts. */
-.topics{position:sticky;top:0;z-index:20;display:flex;gap:8px;overflow-x:auto;
-  padding:12px var(--gutter);background:color-mix(in srgb,var(--bg) 92%,transparent);
-  -webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);
-  border-bottom:1px solid var(--line);scrollbar-width:none}
-.topics::-webkit-scrollbar{display:none}
-.topic{display:inline-flex;align-items:center;gap:8px;white-space:nowrap;
-  padding:8px 16px;border:1px solid var(--line);border-radius:999px;
-  font-size:14px;font-weight:500;color:var(--ink2);background:var(--card);flex:none}
-.topic:hover{border-color:var(--accent);color:var(--accent)}
-.topic.on{background:var(--ink);color:var(--bg);border-color:var(--ink);font-weight:600}
-.topic .n{font-size:12px;opacity:.7;font-variant-numeric:tabular-nums}
-
 /* Cover story: magazine cover treatment for the top story. */
 .cover{padding:56px 0 48px;border-bottom:2px solid var(--ink);max-width:860px}
 .cover-kicker{display:flex;align-items:center;gap:10px;font-size:12px;font-weight:600;
@@ -636,8 +623,5 @@ details.src small{color:var(--faint);font-size:12px}
 .dept-grid .card{margin:0;height:100%}
 @media(max-width:900px){.dept-grid{grid-template-columns:1fr 1fr}}
 @media(max-width:600px){.dept-grid{grid-template-columns:1fr}}
-/* In the full view each department shows 5; the filter reveals the rest. */
-.ed-front[data-topic="all"] .dept-grid>*:nth-child(n+6){display:none}
 
-/* Filtered state: only the chosen department shows, fully expanded. */
-.ed-front:not([data-topic="all"]) .topics{box-shadow:var(--shadow)}
+/* Edition band, archive band, about band. */
