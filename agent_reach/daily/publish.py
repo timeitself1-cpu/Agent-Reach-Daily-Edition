@@ -369,10 +369,17 @@ def _prose(s: Story, summary: list[str]) -> str:
 
 def _public_story(s: Story, edition: DailyEdition, change: str, top_rank: int | None) -> dict:
     from agent_reach.pipeline.summary_checks import useful_summary, verified_story
+    from agent_reach.pipeline.evidence import stable_event_id
     headline, summary = verified_story(s)
     summary = useful_summary(headline, summary)  # a summary that only repeats the headline is left out
     headline = normalize_headline(headline, names=s.entities, vouching_text=_prose(s, summary))
     strength = strength_of(s, edition.generation_completed_utc)
+    # Stable event ID for timelines: same event across editions
+    try:
+        items = getattr(s, 'items', None) or []
+        event_id = stable_event_id(items) if items else None
+    except Exception:
+        event_id = None
     sources, seen = [], set()
     for ev, identity in zip(s.evidence, reporting_groups(s.evidence)):
         url = safe_url(ev.url)
@@ -388,7 +395,7 @@ def _public_story(s: Story, edition: DailyEdition, change: str, top_rank: int | 
     # The cited report supporting the displayed headline, or the internal evidence view when its
     # destination cannot be resolved. Background and attention signals never supply this link.
     link = primary_url(s, headline)
-    return {"id": s.story_id[:12], "rank": s.rank, "top_rank": top_rank, "category": s.category.value,
+    return {"id": s.story_id[:12], "event_id": event_id, "rank": s.rank, "top_rank": top_rank, "category": s.category.value,
             "headline": headline, "url": link if any(x["url"] == link for x in sources) else None,
             "summary": summary, "why_it_matters": s.why_it_matters,
             "change": change, "labels": labels, "newest_published_utc": _utc(newest_published(s)),
