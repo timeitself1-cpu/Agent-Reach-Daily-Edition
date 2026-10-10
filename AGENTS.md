@@ -122,14 +122,19 @@ Conserve model and computation budgets by avoiding redundant chatter and heavy c
 
 Agents may independently inspect code, run offline benchmarks/tests, create scoped branches, commit changes, and open PRs within their tool permissions.
 
-### Actions Requiring Explicit Human Authorization
-Agents must **never** execute the following without direct human approval:
-1. Merging pull requests into `main` or moving the `stable` production release pointer.
-2. Pushing production deployments or triggering release workflows.
-3. Modifying credentials, tokens, DPAPI access keys, or secrets.
-4. Spending financial resources or modifying paid account configurations.
-5. Disabling or altering security controls, guardrails, or safety gates.
-6. Deleting datasets, user local data, or shared repository history.
+### Routine Operations vs. Restricted Actions
+To ensure operational continuity without sacrificing release safety:
+- **Allowed without explicit approval**:
+  - Existing scheduled publisher runs (daily editions via `daily/publish.py`).
+  - Automatic Cloudflare Pages/Workers deployments triggered from `main` pushes (already configured).
+  - Routine scheduled maintenance workflows (e.g., Meta Muse heartbeat checks).
+- **Requires explicit Human Owner approval**:
+  - Merging pull requests into `main` or moving the `stable` production release pointer.
+  - Adding new deployment targets or executing manual production pushes.
+  - Modifying credentials, tokens, DPAPI access keys, or repository secrets.
+  - Spending financial resources or altering paid service configurations.
+  - Disabling or weakening security controls, guardrails, or safety gates.
+  - Deleting production datasets, user local data, or rewriting shared repository history.
 
 ---
 
