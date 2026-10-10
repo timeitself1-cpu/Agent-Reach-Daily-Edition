@@ -145,7 +145,9 @@ agent_reach/
     refresh.py         the worker: due check -> lock -> repair -> attempt -> publish; Watchdog; FileUnavailable
     edition.py         DailyEdition schema, story building, sentence gates (support, numbers, unstated remarks),
                        selection (Top Stories/sections), coverage notes, publication decision
-    brief.py           grounded "why it matters"/details pass    changes.py  what changed vs previous edition
+    gates.py           pre-publish quality gates (empty/thin/headline_echo/tautology/prompt_leak/contradiction): stories
+                       that fail are quarantined (counted, logged to quarantine/DATE.json), never dropped silently
+    places.py          gazetteer for the contradiction gate     brief.py           grounded "why it matters"/details pass    changes.py  what changed vs previous edition
     store.py           atomic dated editions + latest pointer, repair/quarantine   state.py  attempt vs success, backoff
     prefs.py           settings.json (migrations v1..v8, load strict/non-strict)   feeds.py  default feeds, feed test
     lock.py            OS byte-range refresh lock   fsutil.py atomic writes, read retry   paths.py data layout

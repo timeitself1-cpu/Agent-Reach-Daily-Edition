@@ -238,6 +238,14 @@ class Revision(BaseModel):
     generation_completed_utc: datetime
 
 
+class QualityReport(BaseModel):
+    """What the pre-publish gates (``daily/gates.py``) did to this edition's stories: stories held back are
+    counted here and listed in the day's quarantine log, never silently missing."""
+    stories_accepted: int = Field(ge=0)
+    stories_quarantined: int = Field(ge=0)
+    reason_counts: dict[str, int] = Field(default_factory=dict)  # a story with two reasons counts under both
+
+
 class DailyEdition(BaseModel):
     model_config = ConfigDict(extra="ignore")
 
@@ -263,6 +271,7 @@ class DailyEdition(BaseModel):
     stories: list[Story]
     top_ranks: list[int] = Field(default_factory=list)  # Top Stories (ranks into stories); empty in older editions
     changes: EditionChanges | None = None  # vs. the previously persisted edition; None for the first edition
+    quality: QualityReport | None = None  # None in editions written before the pre-publish gates (rc22)
 
     @model_validator(mode="after")
     def _consistency(self) -> "DailyEdition":
@@ -1295,6 +1304,7 @@ def assemble_edition(
     revision: int = 1,
     previous_revisions: list[Revision] | None = None,
     brief_stats: dict[str, int] | None = None,
+    quality: QualityReport | None = None,
 ) -> DailyEdition:
     if not report.valid or report.accounting is None:
         raise ValueError("only a valid report can become an edition")
@@ -1314,6 +1324,9 @@ def assemble_edition(
                       summaries=summaries, label_calls=labels, label_calls_failed=labels_failed,
                       brief_calls=brief.get("calls", 0), brief_calls_failed=brief.get("failed_calls", 0))
     notes = edition_notes(selection, prefs, extractive=summaries == "extractive", model=model)
+    if quality is not None and quality.stories_quarantined:
+        notes.append(f"{plural(quality.stories_quarantined, 'story was', 'stories were')} held back by the "
+                     "quality checks (an empty, repeated, mistaken or contradicting summary) and is not shown.")
     return DailyEdition(
         edition_date=central_date(started),
         revision=revision,
@@ -1334,6 +1347,7 @@ def assemble_edition(
         notes=notes,
         stories=stories,
         top_ranks=[st.rank for st in selection.top],
+        quality=quality,
     )
 
 

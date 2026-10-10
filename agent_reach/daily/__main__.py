@@ -39,6 +39,8 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     mode.add_argument("--refresh-now", action="store_true", help="refresh now (manual)")
     mode.add_argument("--status", action="store_true", help="print status JSON (no network)")
     mode.add_argument("--check", action="store_true", help="check Ollama and the configured models")
+    mode.add_argument("--quarantine", action="store_true",
+                      help="list the stories the quality checks held back (today, or --date)")
     mode.add_argument("--export-html", type=Path, metavar="PATH", help="export an edition as standalone HTML")
     mode.add_argument("--export-sample", type=Path, metavar="PATH",
                       help="export a public sample of an edition as JSON (no publisher excerpts)")
@@ -182,6 +184,19 @@ def main(argv: list[str] | None = None) -> int:
                           "grouping_fallback": status.grouping_fallback, "message": status.describe(),
                           "settings_warning": warn, "python": sys.version.split()[0]}, indent=2))
         return 0 if status.ready else 1
+
+    if args.quarantine:
+        from agent_reach.daily.fsutil import read_json
+        from agent_reach.daily.gates import format_quarantine
+        from agent_reach.daily.timeutil import central_date, utcnow
+
+        day = args.date or central_date(utcnow())
+        try:
+            doc = read_json(paths.root / "quarantine" / f"{day.isoformat()}.json")
+        except (OSError, ValueError):
+            doc = None
+        print(format_quarantine(doc))
+        return 0
 
     if args.export_html:
         from agent_reach.daily.render_html import render_edition_html

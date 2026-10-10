@@ -62,6 +62,19 @@ DEFAULT_GOOGLE_NEWS_SECTIONS: tuple[str, ...] = (
 )
 
 
+#: See ``Settings.leak_patterns``. 'Exceptions that require judgment' is the micro1 case of October 10, 2026.
+DEFAULT_LEAK_PATTERNS = (
+    r"exceptions? that require judg(?:e)?ment",
+    r"as an ai(?: language model)?\b",
+    r"here(?:'s| is| are) (?:a |the |your )?(?:short |brief |concise |one-sentence )?summary",
+    r"i (?:cannot|can't|can not|am unable to|'m unable to)\b",
+    r"(?:sure|certainly|okay|ok)[,!.]? (?:here|i)\b",
+    # a lead-in that ends in a colon and tells the reader (or the model) what to do: 'Note: ...', 'Summarize the following:'
+    r"(?:note|please|ensure|make sure|remember|summari[sz]e|write|provide|use|do not|don't|avoid|include|"
+    r"keep|respond|output|return|follow|consider|focus)\b[^.!?]*:\s*$",
+)
+
+
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(
         env_prefix="AGENT_REACH_",
@@ -115,6 +128,17 @@ class Settings(BaseSettings):
     enrich_concurrency: int = Field(default=8, ge=1, le=32)
     enrich_max_bytes: int = Field(default=1_500_000, ge=50_000)
     enrich_max_chars: int = Field(default=600, ge=100, le=4000)  # context kept per item (title+meta+paragraphs)
+
+    # ------------------------------------------------- pre-publish quality gates (daily/gates.py)
+    # Regular expressions, matched case-insensitively at the START of a summary's first sentence: text that is
+    # the model's instruction or remark about its task, not a summary (October 10: the micro1 story opened with
+    # 'Exceptions that require judgment ...'). Override with AGENT_REACH_LEAK_PATTERNS='["...", "..."]'.
+    # Developer switch for the offline test world, whose synthetic one-line summaries would all be 'thin'
+    # (tests/conftest.py turns it off; the app never does).
+    gates_enabled: bool = True
+    leak_patterns: list[str] = Field(default_factory=lambda: list(DEFAULT_LEAK_PATTERNS))
+    gate_min_summary_words: int = Field(default=15, ge=1, le=200)
+    gate_max_headline_overlap: float = Field(default=0.60, ge=0.0, le=1.0)  # share of the summary's content words
 
     # -------------------------------------------------------------- storage
     db_path: Path = Path("agent_reach.db")

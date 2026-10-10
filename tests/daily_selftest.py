@@ -911,6 +911,8 @@ def main(argv: list[str] | None = None) -> int:
     args = p.parse_args(argv)
     # the self-test starts the app many times: none of those starts may install an update in the middle of it
     os.environ["AGENT_REACH_NO_UPDATE"] = "1"
+    if args.world:  # the fake world's one-line synthetic summaries would all be held back by the quality gates
+        os.environ.setdefault("AGENT_REACH_GATES_ENABLED", "0")
 
     stamp = datetime.now().strftime("%Y%m%d-%H%M")
     out = (args.out or desktop()) / f"AgentReach-selftest-{stamp}"
