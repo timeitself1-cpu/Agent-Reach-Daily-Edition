@@ -20,7 +20,7 @@ def _public():
 def test_sections_json_is_the_taxonomy_of_the_app():
     ids = [s["id"] for s in load_sections()["sections"]]
     assert sorted(ids) == sorted(CategoryEnum.values())  # every category has a label, nothing extra
-    assert SECTION_ORDER == [i for i in ids if i != "Local"]
+    assert SECTION_ORDER == [s["id"] for s in load_sections()["sections"] if not s.get("retired")]
     assert section_label("News") == "World & Nation" and section_label("Tech") == "Technology"
     assert json.loads(P.sections_bytes()) == json.loads(SECTIONS_FILE.read_text(encoding="utf-8"))
 

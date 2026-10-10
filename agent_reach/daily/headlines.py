@@ -47,7 +47,8 @@ bring pulls pull puts put keeps keep lets let runs goes go comes come leaves lea
 service services island islands strike ferry workers worker union cut cuts jobs weeks months years days hours
 minutes million billion thousand dollars percent per cent power energy oil gas climate health care school schools
 hospital hospitals cities state states country countries world national local global federal public private
-tech technology science space moon mars planet ocean sea river lake mountain park""".split())
+tech technology science space moon mars planet ocean sea river lake mountain park
+won't awarded step steps deadly allies analysis takeaways sweep powerful earthquakes watch livestream execution shooter""".split())
 # 'run' and 'city' are left out on purpose: 'Hit and Run' and 'Vice City' (Oct 10) are titles whose last word is one.
 _SUFFIXES = ("ing", "ed", "ly", "ness", "tion", "ment")
 

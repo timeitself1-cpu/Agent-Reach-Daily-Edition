@@ -33,3 +33,46 @@ def section_label(category: str) -> str:
 def sections_bytes() -> bytes:
     """The file as published to the website (``editions/sections.json``)."""
     return (json.dumps(load_sections(), ensure_ascii=False, indent=1) + "\n").encode("utf-8")
+
+
+def section_target(category: str) -> str:
+    """Map a retired category to its current merge target; never change stored source categories."""
+    rows = load_sections()["sections"]
+    row = next((s for s in rows if s["id"] == category), {})
+    target = row.get("merged_into")
+    return next((s["id"] for s in rows if target and
+                 (s["id"] == target or s.get("path", "").strip("/") == target)), category)
+
+
+def section_groups(public: dict, minimum: int | None = None) -> list[dict]:
+    """Current render groups, including old editions with separate retired sections.
+
+    Count unique valid stories once; keep source categories, edition JSON and feed membership intact.
+    """
+    if minimum is None:
+        from agent_reach.config import Settings
+        minimum = public.get("min_section_stories", Settings().min_section_stories)
+    stories = {s["id"]: s for s in public["stories"]}
+    buckets, seen = {}, set()
+    for sec in public.get("sections") or []:
+        category = section_target(sec["category"])
+        ids = buckets.setdefault(category, [])
+        for story_id in sec["ids"]:
+            if story_id in stories and story_id not in seen:
+                ids.append(story_id)
+                seen.add(story_id)
+    for story_id, story in stories.items():
+        if story_id not in seen:
+            buckets.setdefault(section_target(story["category"]), []).append(story_id)
+    groups, also = [], []
+    for category in dict.fromkeys([*section_ids(), *buckets]):
+        ids = buckets.get(category, [])
+        if not ids:
+            continue
+        if len(ids) < minimum:
+            also.extend(ids)
+        else:
+            groups.append({"category": category, "ids": ids})
+    if also:
+        groups.append({"category": "Also today", "ids": also})
+    return groups

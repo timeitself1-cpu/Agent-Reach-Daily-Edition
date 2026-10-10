@@ -477,7 +477,9 @@ def public_edition(edition: DailyEdition, hidden: list[str] | None = None,
     top = [s for s in top_stories(edition) if s.story_id[:12] not in hidden_ids]
     top_rank = {s.story_id: i for i, s in enumerate(top, 1)}
     kept = {s.story_id for s in stories}
+    from agent_reach.config import Settings
     public = {
+        "min_section_stories": Settings().min_section_stories,
         "schema": PUBLIC_SCHEMA, "schema_version": PUBLIC_SCHEMA_VERSION,
         "app": f"Agent Reach Daily {__version__}",
         "edition_date": edition.edition_date.isoformat(), "revision": edition.revision,
