@@ -1,0 +1,127 @@
+{
+ "name": "smoke (development set)",
+ "status": "auditor-labeled by the Sonnet editorial auditor on 2026-10-10; NOT independently reviewed. Checks were developed while looking at these stories, so results here are a smoke test, not an accuracy estimate.",
+ "basis": "Stored headline, summary, source titles and metadata only; the cited articles were not opened.",
+ "items": [
+  {
+   "edition": "2026-10-09",
+   "story": "264478534ba7",
+   "label": "defect",
+   "defect_type": "distinct_events_merged",
+   "expected_checks": [
+    "source_title_review"
+   ],
+   "note": "Fort Hood execution story also cites Christa Pike failed-execution reports and a newsletter"
+  },
+  {
+   "edition": "2026-10-09",
+   "story": "8c719236148d",
+   "label": "defect",
+   "defect_type": "two_topics_in_one_story",
+   "expected_checks": [
+    "two_topics_review"
+   ],
+   "note": "Podcast title joins Iran statement and an ICE shooting"
+  },
+  {
+   "edition": "2026-10-09",
+   "story": "f794b8b8a82d",
+   "label": "defect",
+   "defect_type": "summary_restates_headline",
+   "expected_checks": [
+    "summary_adds_little"
+   ],
+   "note": "Hamilton obituary: summary equals headline"
+  },
+  {
+   "edition": "2026-10-09",
+   "story": "574b140956ac",
+   "label": "defect",
+   "defect_type": "summary_restates_headline",
+   "expected_checks": [
+    "summary_adds_little"
+   ],
+   "note": "summary equals headline"
+  },
+  {
+   "edition": "2026-10-09",
+   "story": "2de24081df32",
+   "label": "defect",
+   "defect_type": "summary_restates_headline",
+   "expected_checks": [
+    "summary_adds_little"
+   ],
+   "note": "astronauts: summary equals headline"
+  },
+  {
+   "edition": "2026-10-10",
+   "story": "878808cbecf8",
+   "label": "defect",
+   "defect_type": "same_event_published_twice",
+   "expected_checks": [
+    "similar_story_review"
+   ],
+   "note": "Zaporizhzhia attack also published as 716df8387c45"
+  },
+  {
+   "edition": "2026-10-10",
+   "story": "0dcdfde4af11",
+   "label": "defect",
+   "defect_type": "unrelated_source_cited",
+   "expected_checks": [
+    "source_title_review"
+   ],
+   "note": "college-football preview cited as a report on the hurricane"
+  },
+  {
+   "edition": "2026-10-10",
+   "story": "d225e934363e",
+   "label": "defect",
+   "defect_type": "unrelated_source_cited",
+   "expected_checks": [
+    "source_title_review"
+   ],
+   "note": "Iran live-blog item cited among the lead story's reports"
+  },
+  {
+   "edition": "2026-10-10",
+   "story": "cf0d09ce65f1",
+   "label": "defect",
+   "defect_type": "summary_mixes_two_events",
+   "expected_checks": [],
+   "note": "second summary bullet is a different trade (no implemented check)"
+  },
+  {
+   "edition": "2026-10-10",
+   "story": "8b1b98c4fb5f",
+   "label": "defect",
+   "defect_type": "derivative_source_counted_independent",
+   "expected_checks": [],
+   "note": "vendor post plus trade rewrite counted as two reports (no implemented check)"
+  },
+  {
+   "edition": "2026-10-10",
+   "story": "ff030d8b5b30",
+   "label": "clean",
+   "note": "India crackdown: two outlets, same event, differently worded titles"
+  },
+  {
+   "edition": "2026-10-09",
+   "story": "c864026a5691",
+   "label": "clean",
+   "note": "Nobel Peace: 10 reports, 7 origins, one is a 'And the Nobel Peace Prize goes to...' teaser"
+  },
+  {
+   "edition": "2026-10-09",
+   "story": "e156389cb84b",
+   "label": "clean",
+   "note": "Meta/TikTok ads: four outlets, same event"
+  },
+  {
+   "edition": "2026-10-10",
+   "story": "8240bf3654a0",
+   "label": "clean",
+   "note": "SpaceX SDA launch: two outlets, summary adds the delay and network"
+  }
+ ]
+}

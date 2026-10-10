@@ -1,0 +1,263 @@
+{
+ "name": "validation (separate sample)",
+ "status": "auditor-labeled by the Sonnet editorial auditor on 2026-10-10; NOT independently reviewed. Labels were written from the stored story text BEFORE the checks were run on this sample, and the checks were not changed afterwards. Caveat: the same auditor had earlier run exploratory scans over these editions, so this is not a blind holdout. Needs independent review.",
+ "basis": "Stored headline, summary, source titles and metadata only; the cited articles were not opened. Editions 2026-10-07 and 2026-10-08 only; none of these stories appear in the smoke file.",
+ "items": [
+  {
+   "edition": "2026-10-08",
+   "story": "1ad90d1e791f",
+   "label": "defect",
+   "defect_type": "unrelated_source_cited",
+   "expected_checks": [
+    "source_title_review"
+   ],
+   "note": "MLB bracket story cites a 6th-grade fan human-interest piece"
+  },
+  {
+   "edition": "2026-10-08",
+   "story": "dbbc0d6bda00",
+   "label": "defect",
+   "defect_type": "summary_restates_headline",
+   "expected_checks": [
+    "summary_adds_little"
+   ],
+   "note": "Isaias: summary equals headline"
+  },
+  {
+   "edition": "2026-10-08",
+   "story": "d67294c7e10c",
+   "label": "defect",
+   "defect_type": "summary_restates_headline",
+   "expected_checks": [
+    "summary_adds_little"
+   ],
+   "note": "Maricarmen: summary equals headline"
+  },
+  {
+   "edition": "2026-10-08",
+   "story": "6e5a0d873b65",
+   "label": "defect",
+   "defect_type": "summary_restates_headline",
+   "expected_checks": [
+    "summary_adds_little"
+   ],
+   "note": "Apple event: summary restates headline"
+  },
+  {
+   "edition": "2026-10-08",
+   "story": "b240fc6e976b",
+   "label": "defect",
+   "defect_type": "summary_restates_headline",
+   "expected_checks": [
+    "summary_adds_little"
+   ],
+   "note": "JWST: summary restates headline in other words"
+  },
+  {
+   "edition": "2026-10-08",
+   "story": "ee60b2d934b6",
+   "label": "defect",
+   "defect_type": "garbled_summary",
+   "expected_checks": [],
+   "note": "second sentence is garbled ('Putin this cloud region back into operation') (no implemented check)"
+  },
+  {
+   "edition": "2026-10-08",
+   "story": "c5e7f4546be6",
+   "label": "defect",
+   "defect_type": "tautological_why",
+   "expected_checks": [],
+   "note": "why_it_matters restates the headline (no implemented check)"
+  },
+  {
+   "edition": "2026-10-07",
+   "story": "81cca3ab6006",
+   "label": "defect",
+   "defect_type": "summary_restates_headline",
+   "expected_checks": [
+    "summary_adds_little"
+   ],
+   "note": "Windows Search: summary equals headline"
+  },
+  {
+   "edition": "2026-10-07",
+   "story": "95d90cc72182",
+   "label": "defect",
+   "defect_type": "summary_restates_headline",
+   "expected_checks": [
+    "summary_adds_little"
+   ],
+   "note": "Lanterns: summary restates headline"
+  },
+  {
+   "edition": "2026-10-07",
+   "story": "bfa823a112dd",
+   "label": "defect",
+   "defect_type": "summary_restates_headline",
+   "expected_checks": [
+    "summary_adds_little"
+   ],
+   "note": "Star Wars Zero Company: summary restates headline"
+  },
+  {
+   "edition": "2026-10-07",
+   "story": "9edfd0f9d9b7",
+   "label": "defect",
+   "defect_type": "same_outlet_counted_twice",
+   "expected_checks": [],
+   "note": "two NYT items listed as two reports (no implemented check)"
+  },
+  {
+   "edition": "2026-10-07",
+   "story": "0c71fcfaeded",
+   "label": "defect",
+   "defect_type": "same_page_listed_twice",
+   "expected_checks": [],
+   "note": "two NASA pages each listed under two outlet labels (no implemented check)"
+  },
+  {
+   "edition": "2026-10-07",
+   "story": "a89582cc0cd3",
+   "label": "defect",
+   "defect_type": "signal_only_no_report",
+   "expected_checks": [],
+   "note": "only a signal-kind source, no report (no implemented check)"
+  },
+  {
+   "edition": "2026-10-07",
+   "story": "5ae90ae55c15",
+   "label": "defect",
+   "defect_type": "signal_only_no_report",
+   "expected_checks": [],
+   "note": "only a signal-kind source, no report (no implemented check)"
+  },
+  {
+   "edition": "2026-10-07",
+   "story": "ca3f18965d98",
+   "label": "defect",
+   "defect_type": "summary_does_not_explain_headline",
+   "expected_checks": [],
+   "note": "summary describes the startup's history, not what happened (no implemented check)"
+  },
+  {
+   "edition": "2026-10-08",
+   "story": "eca18904a544",
+   "label": "clean",
+   "note": "USS Lincoln: several outlets, summary adds the deployment record"
+  },
+  {
+   "edition": "2026-10-08",
+   "story": "9ec36261e260",
+   "label": "clean",
+   "note": "SpaceX spectrum deal: two outlets, summary adds the purchase"
+  },
+  {
+   "edition": "2026-10-08",
+   "story": "8c09a5856ef7",
+   "label": "clean",
+   "note": "Crew-12 return: NPR, Space, NASA; summary adds crew composition"
+  },
+  {
+   "edition": "2026-10-08",
+   "story": "6baf3c8c4f28",
+   "label": "clean",
+   "note": "Wilson MVP: summary adds the historical comparison"
+  },
+  {
+   "edition": "2026-10-08",
+   "story": "a89733095f5a",
+   "label": "clean",
+   "note": "ICE shooting: six outlets, titles worded differently"
+  },
+  {
+   "edition": "2026-10-08",
+   "story": "dbaffc991fc1",
+   "label": "clean",
+   "note": "Moon base: explainer source plus news item on the same topic"
+  },
+  {
+   "edition": "2026-10-08",
+   "story": "54e1d83af61d",
+   "label": "clean",
+   "note": "Hormuz attacks: one report, summary adds oil-flow detail"
+  },
+  {
+   "edition": "2026-10-08",
+   "story": "cd103f2eab05",
+   "label": "clean",
+   "note": "Kramatorsk strike: one BBC report, summary adds detail"
+  },
+  {
+   "edition": "2026-10-08",
+   "story": "abbcc3e35bed",
+   "label": "clean",
+   "note": "Buccaneers win: summary adds yardage and score"
+  },
+  {
+   "edition": "2026-10-08",
+   "story": "7c27177e5e62",
+   "label": "clean",
+   "note": "AI stocks and OpenAI revenue: summary adds the $50B figure"
+  },
+  {
+   "edition": "2026-10-08",
+   "story": "61c94ae2d668",
+   "label": "clean",
+   "note": "Fired OpenAI researchers: summary adds the open-letter detail"
+  },
+  {
+   "edition": "2026-10-07",
+   "story": "8c78f0defb4f",
+   "label": "clean",
+   "note": "Hamilton obituary: three outlets, summary adds her role"
+  },
+  {
+   "edition": "2026-10-07",
+   "story": "7400f256efea",
+   "label": "clean",
+   "note": "Fed minutes: two outlets, summary adds the rate expectation"
+  },
+  {
+   "edition": "2026-10-07",
+   "story": "788ff95a66eb",
+   "label": "clean",
+   "note": "Claude Haiku 5.5: vendor, blogger and trade press, summary adds pricing"
+  },
+  {
+   "edition": "2026-10-07",
+   "story": "99eb2eec8152",
+   "label": "clean",
+   "note": "Chemistry Nobel: four sources including a multi-prize roundup"
+  },
+  {
+   "edition": "2026-10-07",
+   "story": "79bc6ddb415f",
+   "label": "clean",
+   "note": "Physics Nobel: two outlets, summary adds the work"
+  },
+  {
+   "edition": "2026-10-07",
+   "story": "7c2ea69d7e33",
+   "label": "clean",
+   "note": "DNC lawsuit: three outlets, summary adds allegations"
+  },
+  {
+   "edition": "2026-10-07",
+   "story": "00dae9445344",
+   "label": "clean",
+   "note": "Mall of America plot: two outlets, summary adds age and allegation"
+  },
+  {
+   "edition": "2026-10-07",
+   "story": "a4dff756873b",
+   "label": "clean",
+   "note": "Surface laptop claim: summary adds the missing-methodology caveat"
+  },
+  {
+   "edition": "2026-10-07",
+   "story": "3fa23af214eb",
+   "label": "clean",
+   "note": "GPT-6 UI: two outlets, summary adds feature detail"
+  }
+ ]
+}
