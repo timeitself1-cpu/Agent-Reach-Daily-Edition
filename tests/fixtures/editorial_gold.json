@@ -1,0 +1,16 @@
+{
+ "about": "Hand-reviewed answer key from the 2026-10-10 editorial audit of website/editions. Judgments rest on stored headlines, summaries and source titles only; underlying articles were not opened. 'defects' must be flagged by one of expected_checks; 'not_defects' are reviewed false positives that must not be counted as defects.",
+ "defects": [
+  {"edition": "2026-10-09", "story": "264478534ba7", "expected_checks": ["source_title_mismatch"], "note": "Fort Hood execution story merged with Christa Pike failed-execution reports and a newsletter"},
+  {"edition": "2026-10-09", "story": "8c719236148d", "expected_checks": ["multi_topic_title"], "note": "Iran statement and ICE shooting joined in one podcast-style title"},
+  {"edition": "2026-10-10", "story": "878808cbecf8", "expected_checks": ["duplicate_candidate"], "note": "Zaporizhzhia glide-bomb attack duplicated by 716df8387c45"},
+  {"edition": "2026-10-10", "story": "0dcdfde4af11", "expected_checks": ["source_title_mismatch"], "note": "Isaias story counts a football preview as a report"},
+  {"edition": "2026-10-10", "story": "d225e934363e", "expected_checks": ["source_title_mismatch", "top_missing_why"], "note": "Lead story includes an Iran live-blog source and lacks why_it_matters"},
+  {"edition": "2026-10-09", "story": "3cafde12495a", "expected_checks": ["id_break"], "note": "Microsoft green-card story changes id between 10-08 and 10-09"},
+  {"edition": "2026-10-09", "story": "bd825eedf04d", "expected_checks": ["id_break"], "note": "Anne Carson/Princeton story changes id between 10-08 and 10-09"},
+  {"edition": "2026-10-10", "story": null, "expected_checks": ["top_size"], "note": "Top list has 9 stories on 10-10"}
+ ],
+ "not_defects": [
+  {"edition": "2026-10-10", "story": "ff030d8b5b30", "checks": ["source_title_mismatch"], "note": "India crackdown: NPR and Times of India both cover the same event; title overlap is low but not a defect"}
+ ]
+}
