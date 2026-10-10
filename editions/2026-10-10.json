@@ -3,16 +3,16 @@
  "schema_version": 1,
  "app": "Agent Reach Daily 1.0.0rc21",
  "edition_date": "2026-10-10",
- "revision": 1,
+ "revision": 2,
  "timezone": "America/Chicago",
- "generated_utc": "2026-10-10T06:12:19Z",
+ "generated_utc": "2026-10-10T08:42:15Z",
  "models": {
   "summaries": "llama3.1:8b",
   "grouping": "nomic-embed-text"
  },
  "summaries": "local_model",
- "reports_read": 1459,
- "sources_answered": 9,
+ "reports_read": 1510,
+ "sources_answered": 10,
  "sources_tried": 10,
  "sources": [
   {
@@ -21,7 +21,7 @@
    "about": "Google News top stories and one Google News section per category.",
    "status": "ok",
    "reports": 318,
-   "cited": 18,
+   "cited": 14,
    "feeds": [
     {
      "name": "Google News - Top stories",
@@ -29,7 +29,7 @@
      "category": "News",
      "status": "ok",
      "reports": 38,
-     "cited": 4
+     "cited": 2
     },
     {
      "name": "Google News - World",
@@ -45,7 +45,7 @@
      "category": "News",
      "status": "ok",
      "reports": 20,
-     "cited": 2
+     "cited": 1
     },
     {
      "name": "Google News - Business",
@@ -69,7 +69,7 @@
      "category": "Tech",
      "status": "ok",
      "reports": 20,
-     "cited": 1
+     "cited": 0
     },
     {
      "name": "Google News - Science",
@@ -77,7 +77,7 @@
      "category": "Science & AI",
      "status": "ok",
      "reports": 20,
-     "cited": 0
+     "cited": 1
     },
     {
      "name": "Google News - AI",
@@ -85,7 +85,7 @@
      "category": "Science & AI",
      "status": "ok",
      "reports": 20,
-     "cited": 3
+     "cited": 1
     },
     {
      "name": "Google News - Sports",
@@ -93,7 +93,7 @@
      "category": "Sports",
      "status": "ok",
      "reports": 20,
-     "cited": 1
+     "cited": 2
     },
     {
      "name": "Google News - Entertainment",
@@ -117,7 +117,7 @@
      "category": "News",
      "status": "ok",
      "reports": 20,
-     "cited": 0
+     "cited": 1
     },
     {
      "name": "Reuters (via Google News)",
@@ -125,7 +125,7 @@
      "category": "News",
      "status": "ok",
      "reports": 20,
-     "cited": 2
+     "cited": 1
     },
     {
      "name": "Google News - Space",
@@ -151,7 +151,7 @@
    "about": "News publishers' own RSS feeds, listed below by name.",
    "status": "ok",
    "reports": 900,
-   "cited": 60,
+   "cited": 38,
    "feeds": [
     {
      "name": "BBC News - World",
@@ -159,7 +159,7 @@
      "category": "News",
      "status": "ok",
      "reports": 9,
-     "cited": 2
+     "cited": 1
     },
     {
      "name": "NPR - News",
@@ -207,7 +207,7 @@
      "category": "News",
      "status": "ok",
      "reports": 9,
-     "cited": 2
+     "cited": 1
     },
     {
      "name": "Al Jazeera - All",
@@ -215,7 +215,7 @@
      "category": "News",
      "status": "ok",
      "reports": 8,
-     "cited": 1
+     "cited": 0
     },
     {
      "name": "Le Monde - English",
@@ -223,7 +223,7 @@
      "category": "News",
      "status": "ok",
      "reports": 8,
-     "cited": 0
+     "cited": 1
     },
     {
      "name": "France 24 - English",
@@ -231,7 +231,7 @@
      "category": "News",
      "status": "ok",
      "reports": 8,
-     "cited": 1
+     "cited": 0
     },
     {
      "name": "DW - English",
@@ -239,7 +239,7 @@
      "category": "News",
      "status": "ok",
      "reports": 8,
-     "cited": 1
+     "cited": 0
     },
     {
      "name": "BBC News - Business",
@@ -287,7 +287,7 @@
      "category": "Science & AI",
      "status": "ok",
      "reports": 8,
-     "cited": 2
+     "cited": 1
     },
     {
      "name": "NPR - Health",
@@ -319,7 +319,7 @@
      "category": "Tech",
      "status": "ok",
      "reports": 8,
-     "cited": 3
+     "cited": 1
     },
     {
      "name": "ESPN - Top Headlines",
@@ -327,7 +327,7 @@
      "category": "Sports",
      "status": "ok",
      "reports": 8,
-     "cited": 0
+     "cited": 2
     },
     {
      "name": "BBC Sport",
@@ -383,7 +383,7 @@
      "category": "Tech",
      "status": "ok",
      "reports": 8,
-     "cited": 2
+     "cited": 0
     },
     {
      "name": "The Register",
@@ -391,7 +391,7 @@
      "category": "Tech",
      "status": "ok",
      "reports": 8,
-     "cited": 1
+     "cited": 0
     },
     {
      "name": "The Guardian - Technology",
@@ -399,7 +399,7 @@
      "category": "Tech",
      "status": "ok",
      "reports": 8,
-     "cited": 1
+     "cited": 0
     },
     {
      "name": "NPR - Technology",
@@ -407,7 +407,7 @@
      "category": "Tech",
      "status": "ok",
      "reports": 8,
-     "cited": 1
+     "cited": 0
     },
     {
      "name": "Lobsters",
@@ -431,7 +431,7 @@
      "category": "Science & AI",
      "status": "ok",
      "reports": 8,
-     "cited": 2
+     "cited": 1
     },
     {
      "name": "NPR - Science",
@@ -447,7 +447,7 @@
      "category": "News",
      "status": "ok",
      "reports": 8,
-     "cited": 1
+     "cited": 0
     },
     {
      "name": "Washington Post - World",
@@ -463,7 +463,7 @@
      "category": "News",
      "status": "ok",
      "reports": 8,
-     "cited": 0
+     "cited": 1
     },
     {
      "name": "ABC News - Top Stories",
@@ -471,7 +471,7 @@
      "category": "News",
      "status": "ok",
      "reports": 8,
-     "cited": 2
+     "cited": 1
     },
     {
      "name": "Fox News - Latest",
@@ -487,7 +487,7 @@
      "category": "News",
      "status": "ok",
      "reports": 8,
-     "cited": 1
+     "cited": 0
     },
     {
      "name": "CBS News - World",
@@ -551,7 +551,7 @@
      "category": "Tech",
      "status": "ok",
      "reports": 8,
-     "cited": 1
+     "cited": 0
     },
     {
      "name": "Android Authority",
@@ -559,7 +559,7 @@
      "category": "Tech",
      "status": "ok",
      "reports": 8,
-     "cited": 1
+     "cited": 0
     },
     {
      "name": "Ars Technica - AI",
@@ -615,7 +615,7 @@
      "category": "Science & AI",
      "status": "ok",
      "reports": 8,
-     "cited": 1
+     "cited": 0
     },
     {
      "name": "Quanta Magazine",
@@ -687,7 +687,7 @@
      "category": "Entertainment",
      "status": "ok",
      "reports": 8,
-     "cited": 2
+     "cited": 1
     },
     {
      "name": "Billboard",
@@ -743,7 +743,7 @@
      "category": "News",
      "status": "ok",
      "reports": 8,
-     "cited": 2
+     "cited": 3
     },
     {
      "name": "Vox",
@@ -831,7 +831,7 @@
      "category": "News",
      "status": "ok",
      "reports": 8,
-     "cited": 2
+     "cited": 0
     },
     {
      "name": "Bloomberg - Markets",
@@ -855,7 +855,7 @@
      "category": "Tech",
      "status": "ok",
      "reports": 8,
-     "cited": 2
+     "cited": 1
     },
     {
      "name": "MacRumors",
@@ -871,7 +871,7 @@
      "category": "Tech",
      "status": "ok",
      "reports": 8,
-     "cited": 1
+     "cited": 0
     },
     {
      "name": "Krebs on Security",
@@ -967,7 +967,7 @@
      "category": "Sports",
      "status": "ok",
      "reports": 8,
-     "cited": 1
+     "cited": 0
     },
     {
      "name": "BBC Sport - Football",
@@ -1015,7 +1015,7 @@
      "category": "Entertainment",
      "status": "ok",
      "reports": 8,
-     "cited": 2
+     "cited": 1
     },
     {
      "name": "Eurogamer",
@@ -1066,7 +1066,7 @@
    "about": "Wikipedia's most-read articles and its 'In the news' list.",
    "status": "ok",
    "reports": 60,
-   "cited": 1,
+   "cited": 2,
    "feeds": []
   },
   {
@@ -1074,8 +1074,8 @@
    "name": "Reddit",
    "about": "Top posts of news communities on Reddit (often rate-limited).",
    "status": "partial",
-   "reports": 16,
-   "cited": 2,
+   "reports": 8,
+   "cited": 0,
    "feeds": []
   },
   {
@@ -1084,7 +1084,7 @@
    "about": "Trending topics on X, as listed by trends24.in.",
    "status": "ok",
    "reports": 50,
-   "cited": 0,
+   "cited": 3,
    "feeds": []
   },
   {
@@ -1093,191 +1093,191 @@
    "about": "The Hacker News front page (technology).",
    "status": "ok",
    "reports": 60,
-   "cited": 4,
+   "cited": 3,
    "feeds": []
   },
   {
    "type": "youtube",
    "name": "YouTube",
    "about": "New videos from the YouTube channels of news organisations, listed below.",
-   "status": "failed",
-   "reports": 0,
-   "cited": 0,
+   "status": "ok",
+   "reports": 59,
+   "cited": 7,
    "feeds": [
     {
      "name": "BBC News",
      "site": "youtube.com",
      "category": "News",
-     "status": "failed",
-     "reports": 0,
-     "cited": 0
+     "status": "ok",
+     "reports": 3,
+     "cited": 1
     },
     {
      "name": "Reuters",
      "site": "youtube.com",
      "category": "News",
-     "status": "failed",
-     "reports": 0,
-     "cited": 0
+     "status": "ok",
+     "reports": 3,
+     "cited": 1
     },
     {
      "name": "Associated Press",
      "site": "youtube.com",
      "category": "News",
-     "status": "failed",
-     "reports": 0,
-     "cited": 0
+     "status": "ok",
+     "reports": 3,
+     "cited": 1
     },
     {
      "name": "NBC News",
      "site": "youtube.com",
      "category": "News",
-     "status": "failed",
-     "reports": 0,
-     "cited": 0
+     "status": "ok",
+     "reports": 3,
+     "cited": 1
     },
     {
      "name": "ABC News",
      "site": "youtube.com",
      "category": "News",
-     "status": "failed",
-     "reports": 0,
+     "status": "ok",
+     "reports": 3,
      "cited": 0
     },
     {
      "name": "CBS News",
      "site": "youtube.com",
      "category": "News",
-     "status": "failed",
-     "reports": 0,
+     "status": "ok",
+     "reports": 3,
      "cited": 0
     },
     {
      "name": "PBS NewsHour",
      "site": "youtube.com",
      "category": "News",
-     "status": "failed",
-     "reports": 0,
+     "status": "ok",
+     "reports": 3,
      "cited": 0
     },
     {
      "name": "Al Jazeera English",
      "site": "youtube.com",
      "category": "News",
-     "status": "failed",
-     "reports": 0,
-     "cited": 0
+     "status": "ok",
+     "reports": 3,
+     "cited": 1
     },
     {
      "name": "Sky News",
      "site": "youtube.com",
      "category": "News",
-     "status": "failed",
-     "reports": 0,
-     "cited": 0
+     "status": "ok",
+     "reports": 3,
+     "cited": 1
     },
     {
      "name": "CNBC Television",
      "site": "youtube.com",
      "category": "News",
-     "status": "failed",
-     "reports": 0,
+     "status": "ok",
+     "reports": 3,
      "cited": 0
     },
     {
      "name": "Bloomberg Technology",
      "site": "youtube.com",
      "category": "Tech",
-     "status": "failed",
-     "reports": 0,
+     "status": "ok",
+     "reports": 3,
      "cited": 0
     },
     {
      "name": "CNET",
      "site": "youtube.com",
      "category": "Tech",
-     "status": "failed",
-     "reports": 0,
+     "status": "ok",
+     "reports": 2,
      "cited": 0
     },
     {
      "name": "The Verge",
      "site": "youtube.com",
      "category": "Tech",
-     "status": "failed",
-     "reports": 0,
+     "status": "ok",
+     "reports": 3,
      "cited": 0
     },
     {
      "name": "Linus Tech Tips",
      "site": "youtube.com",
      "category": "Tech",
-     "status": "failed",
-     "reports": 0,
+     "status": "ok",
+     "reports": 1,
      "cited": 0
     },
     {
      "name": "Marques Brownlee",
      "site": "youtube.com",
      "category": "Tech",
-     "status": "failed",
-     "reports": 0,
+     "status": "ok",
+     "reports": 1,
      "cited": 0
     },
     {
      "name": "Fireship",
      "site": "youtube.com",
      "category": "Tech",
-     "status": "failed",
-     "reports": 0,
+     "status": "ok",
+     "reports": 1,
      "cited": 0
     },
     {
      "name": "NASA",
      "site": "youtube.com",
      "category": "Science & AI",
-     "status": "failed",
-     "reports": 0,
+     "status": "ok",
+     "reports": 3,
      "cited": 0
     },
     {
      "name": "ESPN",
      "site": "youtube.com",
      "category": "Sports",
-     "status": "failed",
-     "reports": 0,
+     "status": "ok",
+     "reports": 3,
      "cited": 0
     },
     {
      "name": "NFL",
      "site": "youtube.com",
      "category": "Sports",
-     "status": "failed",
-     "reports": 0,
-     "cited": 0
+     "status": "ok",
+     "reports": 3,
+     "cited": 1
     },
     {
      "name": "NBA",
      "site": "youtube.com",
      "category": "Sports",
-     "status": "failed",
-     "reports": 0,
+     "status": "ok",
+     "reports": 3,
      "cited": 0
     },
     {
      "name": "IGN",
      "site": "youtube.com",
      "category": "Entertainment",
-     "status": "failed",
-     "reports": 0,
+     "status": "ok",
+     "reports": 3,
      "cited": 0
     },
     {
      "name": "Entertainment Tonight",
      "site": "youtube.com",
      "category": "Entertainment",
-     "status": "failed",
-     "reports": 0,
+     "status": "ok",
+     "reports": 3,
      "cited": 0
     }
    ]
@@ -1306,84 +1306,74 @@
    "about": "Topics trending on Bluesky.",
    "status": "ok",
    "reports": 25,
-   "cited": 3,
+   "cited": 2,
    "feeds": []
   }
  ],
  "compared_with": {
-  "edition_date": "2026-10-09",
-  "revision": 2
+  "edition_date": "2026-10-10",
+  "revision": 1
  },
  "top": [
-  "fd983421fa72",
-  "b2eb5ece951e",
-  "b1143fcd0f64",
-  "9117b37465dd",
-  "68b351363485",
-  "fd52d2c4d318",
-  "9bccd0d85994",
-  "0194fd6c99fe",
-  "9fe13919cc51",
-  "4cf2663c7104"
+  "c5bf09b1dcc5",
+  "a9cf352cf5a9",
+  "a5b9a45e15ca",
+  "b65ff203d4ba",
+  "611f390ce53b",
+  "d54db1309e02",
+  "c58e186aae7d",
+  "b1af75fba07c",
+  "0fcc4e77e611",
+  "bcaabb1701b8"
  ],
  "sections": [
   {
    "category": "News",
    "ids": [
-    "fd983421fa72",
-    "b2eb5ece951e",
-    "b1143fcd0f64",
-    "9117b37465dd",
-    "fd52d2c4d318",
+    "c5bf09b1dcc5",
+    "a9cf352cf5a9",
+    "a5b9a45e15ca",
+    "b65ff203d4ba",
+    "611f390ce53b",
+    "d54db1309e02",
     "9bccd0d85994",
-    "8ebf7a92f83c",
-    "e0dec9445903",
-    "c9ba0cdc29e5",
-    "972065f00428"
+    "aca6e5866730",
+    "e60c4ca505ec"
    ]
   },
   {
    "category": "Tech",
    "ids": [
-    "0194fd6c99fe",
-    "13f4d7a18d0c",
-    "fc431a6ee062",
-    "453ffd54718a",
-    "9531b30b80fc",
-    "b61306682d35",
-    "180b8f1da20f",
-    "ec4f709bd72f"
+    "b1af75fba07c",
+    "1958c904bf3e"
    ]
   },
   {
    "category": "Science & AI",
    "ids": [
-    "68b351363485",
-    "4cf2663c7104",
-    "dbaffc991fc1",
+    "3c42e5318d70",
     "24ad60a07e8a",
-    "aee80b84e923",
     "c015b4868b83",
     "d9cc80e7c371",
-    "c2faf82f2cb7",
     "710b3ad8dc31",
-    "59c57b3e5885"
+    "59c57b3e5885",
+    "737c83af477e",
+    "dec59a43ca0b",
+    "87cb3fcba333"
    ]
   },
   {
    "category": "Sports",
    "ids": [
-    "9fe13919cc51",
-    "7551f9ba30b1",
-    "6a550eb9772b"
+    "c58e186aae7d",
+    "0fcc4e77e611",
+    "bcaabb1701b8"
    ]
   },
   {
    "category": "Entertainment",
    "ids": [
-    "6b8667309135",
-    "d5ceadff358c",
-    "0c6cbb8df201"
+    "6b8667309135"
    ]
   },
   {
@@ -1395,65 +1385,42 @@
  ],
  "stories": [
   {
-   "id": "fd983421fa72",
+   "id": "c5bf09b1dcc5",
    "rank": 1,
    "top_rank": 1,
    "category": "News",
-   "headline": "Hurricane Isaias updates: Storm makes landfall in Florida Panhandle",
-   "url": "https://abcnews.com/US/live-updates/hurricane-isaias-updates-isaias-strengthens-category-3/?id=137128637",
+   "headline": "Hurricane Isaias Makes Landfall in Florida",
+   "url": "https://www.youtube.com/watch?v=jqO-S1IoHfQ",
    "summary": [
-    "The Gulf Coast is bracing for dangerous conditions, extreme wind and flooding.",
-    "Hurricane Isaias has strengthened into a Category 3 hurricane as it heads toward the Gulf Coast."
+    "Hurricane Isaias made landfall in Florida on Friday night, bringing severe effects and causing hundreds of thousands of people to lose power.",
+    "The storm is expected to continue its path across the southeastern US, bringing life-threatening storm surge, damaging winds, and flooding."
    ],
    "why_it_matters": null,
    "change": "updated",
    "labels": [],
-   "newest_published_utc": "2026-10-10T05:10:00Z",
+   "newest_published_utc": "2026-10-10T08:29:59Z",
    "coverage": {
     "level": "strong",
     "points": 6,
-    "independent_reports": 11,
+    "independent_reports": 8,
     "publishers": [
      "ABC News",
-     "AP News",
      "BBC News",
-     "CBC News",
      "CBS News",
+     "Euronews",
      "NBC News",
      "NPR",
      "PBS NewsHour",
-     "Reuters",
-     "The Guardian",
-     "The New York Times"
+     "The Guardian"
     ],
-    "repeats": 6,
+    "repeats": 7,
     "source_links": 8,
     "linked_outlets": 7,
     "linked_reporting_origins": 7,
-    "signals": 1,
-    "channels": 2
+    "signals": 0,
+    "channels": 3
    },
    "sources": [
-    {
-     "outlet": "ABC News",
-     "via": "News feeds",
-     "title": "Hurricane Isaias updates: Storm makes landfall in Florida Panhandle",
-     "url": "https://abcnews.com/US/live-updates/hurricane-isaias-updates-isaias-strengthens-category-3/?id=137128637",
-     "published_utc": "2026-10-10T04:41:55Z",
-     "outlet_id": "abcnews",
-     "reporting_origin": "outlet:abcnews",
-     "kind": "report"
-    },
-    {
-     "outlet": "ABC News",
-     "via": "Google News",
-     "title": "Hurricane Isaias updates: Storm makes landfall in Florida Panhandle",
-     "url": "https://news.google.com/rss/articles/CBMipwFBVV95cUxQaUdYcFFrUnUtM3Z0cnJIN3ZnNEZpbmM1THIzblVmMTN6TXpXaE92Wl8zOEtRaFdYRHpIVjl4WmV6VWJmNG5rcWRoRTMwaGdrWE8talRzQ192djdQWk43Ynp6bGlldkx3SVVnWUtLdWR2NVBNTTlyWGpFZE5aMlpvcHMtR1ZCZVZWdXZpZHVzbkRwVlh4Q3NfSVVYeUJFLXk2Rzk3anBfRdIBrAFBVV95cUxNeGFSUzh5SldPSGNTdDdVczJnc2NETDU0aExmdE9qdHhYSjk1d2F1b243U0M4OHZiaGxUME90OERBMC1DbDJ1YmZmUkZmOHZXNzJMUmIxU09HWjI2UnhBaGFSTXJTM2lNY3R2ZW1xc1Q4N0xxQlFNSXNES2dMQVR0c2J1bENwaXNBSTc4MV9qbXVNNl9PamxISkFESFNIZWhLWnQxOUJMeTkyRlU0?oc=5",
-     "published_utc": "2026-10-10T03:15:00Z",
-     "outlet_id": "abcnews",
-     "reporting_origin": "outlet:abcnews",
-     "kind": "repeat"
-    },
     {
      "outlet": "The Guardian",
      "via": "Google News",
@@ -1477,9 +1444,9 @@
     {
      "outlet": "CBS News",
      "via": "News feeds",
-     "title": "Hurricane Isaias makes landfall on Gulf Coast",
-     "url": "https://www.cbsnews.com/news/hurricane-isaias-first-storm-2026-atlantic-season-record/",
-     "published_utc": "2026-10-10T05:10:00Z",
+     "title": "Isaias lashes Southeast after making landfall in the U.S.",
+     "url": "https://www.cbsnews.com/live-updates/isaias-southeastern-u-s-gulf-coast/",
+     "published_utc": "2026-10-10T06:59:42Z",
      "outlet_id": "cbsnews",
      "reporting_origin": "outlet:cbsnews",
      "kind": "report"
@@ -1487,9 +1454,9 @@
     {
      "outlet": "BBC News",
      "via": "News feeds",
-     "title": "Life-threatening Hurricane Isaias makes landfall in Florida",
+     "title": "Hurricane Isaias downgraded after making landfall in Florida",
      "url": "https://www.bbc.co.uk/news/articles/c3vgx4450v2lo?at_medium=RSS&at_campaign=rss",
-     "published_utc": "2026-10-10T01:58:56Z",
+     "published_utc": "2026-10-10T08:29:59Z",
      "outlet_id": "bbcnews",
      "reporting_origin": "outlet:bbcnews",
      "kind": "report"
@@ -1505,21 +1472,207 @@
      "kind": "report"
     },
     {
-     "outlet": "The New York Times",
+     "outlet": "NBC News",
      "via": "News feeds",
-     "title": "A.I. Hurricane Models Were Front and Center as Isaias Headed Toward Land",
-     "url": "https://www.nytimes.com/2026/10/09/weather/ai-models-hurricane-isaias.html",
-     "published_utc": "2026-10-10T01:44:39Z",
-     "outlet_id": "thenewyorktimes",
-     "reporting_origin": "outlet:thenewyorktimes",
+     "title": "Tracking Hurricane Isaias as it moves across the southern U.S.",
+     "url": "https://www.nbcnews.com/video/watch-live-isaias-storm-tracker-271191621885",
+     "published_utc": "2026-10-09T04:40:40Z",
+     "outlet_id": "nbcnews",
+     "reporting_origin": "outlet:nbcnews",
+     "kind": "report"
+    },
+    {
+     "outlet": "ABC News",
+     "via": "News feeds",
+     "title": "Hurricane Isaias updates: Storm makes landfall in Florida Panhandle",
+     "url": "https://abcnews.com/US/live-updates/hurricane-isaias-updates-isaias-strengthens-category-3/?id=137128637",
+     "published_utc": "2026-10-10T07:54:26Z",
+     "outlet_id": "abcnews",
+     "reporting_origin": "outlet:abcnews",
+     "kind": "report"
+    },
+    {
+     "outlet": "NBC News",
+     "via": "YouTube",
+     "title": "Hurricane Isaias makes landfall in Florida",
+     "url": "https://www.youtube.com/watch?v=jqO-S1IoHfQ",
+     "published_utc": "2026-10-10T02:36:54Z",
+     "outlet_id": "nbcnews",
+     "reporting_origin": "outlet:nbcnews",
+     "kind": "repeat"
+    }
+   ]
+  },
+  {
+   "id": "a9cf352cf5a9",
+   "rank": 2,
+   "top_rank": 2,
+   "category": "News",
+   "headline": "Nobel Peace Prize Awarded to Navanethem Pillay",
+   "url": "https://www.nobelprize.org/prizes/peace/2026/press-release/",
+   "summary": [
+    "The Nobel Peace Prize 2026 was awarded to Navanethem 'Navi' Pillay for her efforts to promote peace and international law."
+   ],
+   "why_it_matters": null,
+   "change": "",
+   "labels": [],
+   "newest_published_utc": "2026-10-09T22:18:20Z",
+   "coverage": {
+    "level": "strong",
+    "points": 5,
+    "independent_reports": 3,
+    "publishers": [
+     "Le Monde",
+     "NPR",
+     "nobelprize.org"
+    ],
+    "repeats": 1,
+    "source_links": 7,
+    "linked_outlets": 3,
+    "linked_reporting_origins": 3,
+    "signals": 3,
+    "channels": 2
+   },
+   "sources": [
+    {
+     "outlet": "nobelprize.org",
+     "via": "Hacker News",
+     "title": "Nobel Peace Prize for 2026 to Navanethem Pillay",
+     "url": "https://www.nobelprize.org/prizes/peace/2026/press-release/",
+     "published_utc": "2026-10-09T10:12:11Z",
+     "outlet_id": "nobelprize",
+     "reporting_origin": "outlet:nobelprize",
+     "kind": "report"
+    },
+    {
+     "outlet": "The Guardian",
+     "via": "Mastodon",
+     "title": "ICJ judge Navi Pillay wins Nobel peace prize for promoting international law",
+     "url": "https://www.theguardian.com/world/2026/oct/09/navanethem-navi-pillay-wins-nobel-peace-prize",
+     "published_utc": "2026-10-09T16:30:09Z",
+     "outlet_id": "theguardian",
+     "reporting_origin": null,
+     "kind": "signal"
+    },
+    {
+     "outlet": "NPR",
+     "via": "News feeds",
+     "title": "South African human rights lawyer Navi Pillay wins Nobel Peace Prize",
+     "url": "https://www.npr.org/2026/10/09/nx-s1-5996461/south-african-human-rights-lawyer-navi-pillay-wins-nobel-peace-prize",
+     "published_utc": "2026-10-09T21:25:59Z",
+     "outlet_id": "npr",
+     "reporting_origin": "outlet:npr",
+     "kind": "report"
+    },
+    {
+     "outlet": "NPR",
+     "via": "News feeds",
+     "title": "South African human rights lawyer Navi Pillay wins the Nobel Peace Prize",
+     "url": "https://www.npr.org/2026/10/08/nx-s1-5994952/nobel-peace-prize",
+     "published_utc": "2026-10-09T08:23:16Z",
+     "outlet_id": "npr",
+     "reporting_origin": "outlet:npr",
+     "kind": "repeat"
+    },
+    {
+     "outlet": "en.wikipedia.org",
+     "via": "Wikipedia",
+     "title": "Navi Pillay",
+     "url": "https://en.wikipedia.org/wiki/Navi_Pillay",
+     "published_utc": null,
+     "outlet_id": "wikipedia",
+     "reporting_origin": null,
+     "kind": "signal"
+    },
+    {
+     "outlet": "Le Monde",
+     "via": "News feeds",
+     "title": "Nobel Peace Prize: Navanethem Pillay, a tireless advocate for international justice",
+     "url": "https://www.lemonde.fr/en/le-monde-africa/article/2026/10/10/nobel-peace-prize-navanethem-pillay-a-tireless-advocate-for-international-justice_6758438_124.html",
+     "published_utc": "2026-10-09T22:18:20Z",
+     "outlet_id": "lemonde",
+     "reporting_origin": "outlet:lemonde",
+     "kind": "report"
+    },
+    {
+     "outlet": "bsky.app",
+     "via": "Bluesky",
+     "title": "Navi Pillay wins Nobel Peace Prize",
+     "url": "https://bsky.app/profile/did:plc:qrz3lhbyuxbeilrc6nekdqme/feed/6c6cbdb7aa4c",
+     "published_utc": null,
+     "outlet_id": "bsky",
+     "reporting_origin": null,
+     "kind": "signal"
+    }
+   ]
+  },
+  {
+   "id": "a5b9a45e15ca",
+   "rank": 3,
+   "top_rank": 3,
+   "category": "News",
+   "headline": "Iran's Houthi Allies Step up Deadly Attacks on Saudi Arabia",
+   "url": "https://www.cbsnews.com/live-updates/iran-war-trump-us-elections-saudi-arabia-yemen-houthis/",
+   "summary": [
+    "Saudi Arabia says missile strikes by Iran's Houthi allies killed three people at Riyadh's airport as fighting escalates in the Middle East conflict's new epicenter."
+   ],
+   "why_it_matters": null,
+   "change": "new",
+   "labels": [],
+   "newest_published_utc": "2026-10-10T00:39:28Z",
+   "coverage": {
+    "level": "strong",
+    "points": 5,
+    "independent_reports": 3,
+    "publishers": [
+     "AP News",
+     "BBC News",
+     "CBS News"
+    ],
+    "repeats": 0,
+    "source_links": 3,
+    "linked_outlets": 3,
+    "linked_reporting_origins": 3,
+    "signals": 0,
+    "channels": 3
+   },
+   "sources": [
+    {
+     "outlet": "CBS News",
+     "via": "News feeds",
+     "title": "Iran's Houthi allies step up deadly attacks on Saudi Arabia",
+     "url": "https://www.cbsnews.com/live-updates/iran-war-trump-us-elections-saudi-arabia-yemen-houthis/",
+     "published_utc": "2026-10-10T00:39:28Z",
+     "outlet_id": "cbsnews",
+     "reporting_origin": "outlet:cbsnews",
+     "kind": "report"
+    },
+    {
+     "outlet": "AP News",
+     "via": "Google News",
+     "title": "Saudi authorities say 3 killed in Houthi-claimed attacks on Riyadh airport",
+     "url": "https://news.google.com/rss/articles/CBMikgFBVV95cUxQbmJMRkQ0Z1poSUd4YmFBT3JJN3RoNklMUGV3UFJSbmdPaFN3NEc4b0NxZnRBM0hBWTE1TEZPYWZtaVFXNkR1dGpYU2lyQmN1elEyQ2Q5RHdQY0UwbVVKVEVFRG1Mcmc1TXhLY3lVOEp6Q0RSbGw1dGV0OEx2amhwLVhVRUFkalR6SlQtaHFSWXQ2QQ?oc=5",
+     "published_utc": "2026-10-09T18:51:00Z",
+     "outlet_id": "apnews",
+     "reporting_origin": "outlet:apnews",
+     "kind": "report"
+    },
+    {
+     "outlet": "BBC News",
+     "via": "YouTube",
+     "title": "Saudi nationals killed as Iran-backed Houthis in Yemen step up airport attacks",
+     "url": "https://www.youtube.com/watch?v=sw8oFluQXHI",
+     "published_utc": "2026-10-09T22:30:21Z",
+     "outlet_id": "bbcnews",
+     "reporting_origin": "outlet:bbcnews",
      "kind": "report"
     }
    ]
   },
   {
-   "id": "b2eb5ece951e",
-   "rank": 2,
-   "top_rank": 2,
+   "id": "b65ff203d4ba",
+   "rank": 4,
+   "top_rank": 4,
    "category": "News",
    "headline": "Trump announces deal for Russian diesel as Zelensky calls it a gift to Putin",
    "url": "https://www.bbc.co.uk/news/articles/cm1dwgr666wno?at_medium=RSS&at_campaign=rss",
@@ -1528,9 +1681,9 @@
     "Ukraine President Volodymyr Zelenskyy said in a searing statement that the U.S. easing sanctions on Moscow \"plays into Russia's hands.\""
    ],
    "why_it_matters": null,
-   "change": "new",
+   "change": "updated",
    "labels": [],
-   "newest_published_utc": "2026-10-10T04:38:20Z",
+   "newest_published_utc": "2026-10-10T06:25:31Z",
    "coverage": {
     "level": "strong",
     "points": 6,
@@ -1539,18 +1692,18 @@
      "Axios",
      "BBC News",
      "CNBC",
-     "Euronews",
-     "France 24",
+     "CNBC Television",
      "NPR",
+     "Sky News",
      "The Guardian",
      "The Washington Post"
     ],
     "repeats": 4,
     "source_links": 8,
-    "linked_outlets": 4,
-    "linked_reporting_origins": 4,
-    "signals": 2,
-    "channels": 2
+    "linked_outlets": 5,
+    "linked_reporting_origins": 5,
+    "signals": 1,
+    "channels": 3
    },
    "sources": [
     {
@@ -1562,16 +1715,6 @@
      "outlet_id": "bbcnews",
      "reporting_origin": "outlet:bbcnews",
      "kind": "report"
-    },
-    {
-     "outlet": "reddit.com",
-     "via": "Reddit",
-     "title": "Trump announces deal for Russian diesel as Zelensky criticises 'gift to Putin'",
-     "url": "https://www.reddit.com/r/news/comments/1x1wpno/trump_announces_deal_for_russian_diesel_as/",
-     "published_utc": "2026-10-09T20:53:29Z",
-     "outlet_id": "reddit",
-     "reporting_origin": null,
-     "kind": "signal"
     },
     {
      "outlet": "CNBC",
@@ -1604,6 +1747,36 @@
      "kind": "signal"
     },
     {
+     "outlet": "Sky News",
+     "via": "YouTube",
+     "title": "Shock as Trump announces deal that will see Russia supply the US with diesel",
+     "url": "https://www.youtube.com/watch?v=ncbU4p9BR9M",
+     "published_utc": "2026-10-09T20:45:43Z",
+     "outlet_id": "skynews",
+     "reporting_origin": "outlet:skynews",
+     "kind": "report"
+    },
+    {
+     "outlet": "Axios",
+     "via": "News feeds",
+     "title": "Exclusive: Zelensky tells Axios Trump's diesel deal with Putin \"not fair and not honest\"",
+     "url": "https://www.axios.com/2026/10/09/exclusive-zelensky-putin-trump-diesel-deal",
+     "published_utc": "2026-10-09T21:37:32Z",
+     "outlet_id": "axios",
+     "reporting_origin": "outlet:axios",
+     "kind": "repeat"
+    },
+    {
+     "outlet": "Axios",
+     "via": "Google News",
+     "title": "Exclusive: Zelensky tells Axios Trump's diesel deal with Putin \"not fair and not honest\"",
+     "url": "https://news.google.com/rss/articles/CBMigAFBVV95cUxNS3ZsNzRjR1JGMG41Y2F4Z2N6dHljbzRFaUg3OTNMZEwzajBxUlRuZWQwbmlwNmxjOWUtWGt5eXVBT1VGYXh3NEN4eHcwODduSEh1V3RtdlZFUVdFZnhSMVhwQzloOThsdk1HcXpQRFl3YU0yc2RqWHdYMVBNZXZvTw?oc=5",
+     "published_utc": "2026-10-10T06:25:31Z",
+     "outlet_id": "axios",
+     "reporting_origin": "outlet:axios",
+     "kind": "repeat"
+    },
+    {
      "outlet": "The Washington Post",
      "via": "News feeds",
      "title": "Trump announces diesel deal with Russia in bid to lower prices",
@@ -1612,177 +1785,39 @@
      "outlet_id": "thewashingtonpost",
      "reporting_origin": "outlet:thewashingtonpost",
      "kind": "report"
-    },
-    {
-     "outlet": "The Washington Post",
-     "via": "Google News",
-     "title": "Trump announces diesel deal with Russia in bid to lower prices",
-     "url": "https://news.google.com/rss/articles/CBMipwFBVV95cUxPSjZFUm54SlFoNWZvRHdYVXE5Z1JDc0h5eE96V2JmVk41eWs2TlRkcjRXaW1nb3Vfa08yeUlFSE15NlFpeTExekZRLXY3WHdGZDdOMHY2ZkpuWjA5cEhsZkUzNUVwTDNySS1hQW8yeWtSejk5TzJTbm84SVVtazFnM0ZaUk5sekE0SUhQTFFkUU5oczQ1QXR5TXYzdGpNYmRuVFRPeDJuMA?oc=5",
-     "published_utc": "2026-10-10T03:56:04Z",
-     "outlet_id": "thewashingtonpost",
-     "reporting_origin": "outlet:thewashingtonpost",
-     "kind": "repeat"
-    },
-    {
-     "outlet": "BBC News",
-     "via": "News feeds",
-     "title": "Analysis: Trump's shock Russia deal highlights mounting pressure to curb fuel prices",
-     "url": "https://www.bbc.co.uk/news/articles/c5lye9z4xw4yo?at_medium=RSS&at_campaign=rss",
-     "published_utc": "2026-10-09T22:30:22Z",
-     "outlet_id": "bbcnews",
-     "reporting_origin": "outlet:bbcnews",
-     "kind": "repeat"
     }
    ]
   },
   {
-   "id": "b1143fcd0f64",
-   "rank": 3,
-   "top_rank": 3,
+   "id": "611f390ce53b",
+   "rank": 5,
+   "top_rank": 5,
    "category": "News",
-   "headline": "Nobel Peace Prize Awarded to Navanethem Pillay",
-   "url": "https://www.nobelprize.org/prizes/peace/2026/press-release/",
-   "summary": [
-    "The Nobel Peace Prize 2026 was awarded to Navanethem Pillay for her efforts to promote peace and international law."
-   ],
-   "why_it_matters": null,
-   "change": "updated",
-   "labels": [],
-   "newest_published_utc": "2026-10-10T02:41:00Z",
-   "coverage": {
-    "level": "strong",
-    "points": 6,
-    "independent_reports": 7,
-    "publishers": [
-     "France 24",
-     "Le Monde",
-     "NBC News",
-     "NPR",
-     "Reuters",
-     "The Guardian",
-     "nobelprize.org"
-    ],
-    "repeats": 2,
-    "source_links": 8,
-    "linked_outlets": 5,
-    "linked_reporting_origins": 5,
-    "signals": 2,
-    "channels": 3
-   },
-   "sources": [
-    {
-     "outlet": "nobelprize.org",
-     "via": "Hacker News",
-     "title": "Nobel Peace Prize for 2026 to Navanethem Pillay",
-     "url": "https://www.nobelprize.org/prizes/peace/2026/press-release/",
-     "published_utc": "2026-10-09T10:12:11Z",
-     "outlet_id": "nobelprize",
-     "reporting_origin": "outlet:nobelprize",
-     "kind": "report"
-    },
-    {
-     "outlet": "Reuters",
-     "via": "Google News",
-     "title": "Trump says Norway has 'indelible stain' for not awarding him Nobel Peace Prize",
-     "url": "https://news.google.com/rss/articles/CBMivgFBVV95cUxQR0s4c2ZUZWZHSkIyMjRaTDhwUWpKQmg2LV8zaVlUeU44ai1sblA2TzVPX3JySUx3cjc5bUVFZ1MxWjlrTG9Qa2xxclUzOHBMTDhYaFloMVlIVUFxMzBlck9jd1d0S3dnTGVSZjl6ckVNYnlXYkxUMVdpb09WVFBSb2lEcFozcjhndkJ4S0JGXzEyLUo5YkxMVmF2VTh5MDJ1czJnSXFHSGtZaDlGeEJHd2FLTERJNFhPMzVCYU5n?oc=5",
-     "published_utc": "2026-10-10T01:32:00Z",
-     "outlet_id": "reuters",
-     "reporting_origin": "outlet:reuters",
-     "kind": "report"
-    },
-    {
-     "outlet": "NPR",
-     "via": "News feeds",
-     "title": "South African human rights lawyer Navi Pillay wins Nobel Peace Prize",
-     "url": "https://www.npr.org/2026/10/09/nx-s1-5996461/south-african-human-rights-lawyer-navi-pillay-wins-nobel-peace-prize",
-     "published_utc": "2026-10-09T21:25:59Z",
-     "outlet_id": "npr",
-     "reporting_origin": "outlet:npr",
-     "kind": "report"
-    },
-    {
-     "outlet": "NPR",
-     "via": "News feeds",
-     "title": "South African human rights lawyer Navi Pillay wins the Nobel Peace Prize",
-     "url": "https://www.npr.org/2026/10/08/nx-s1-5994952/nobel-peace-prize",
-     "published_utc": "2026-10-09T08:23:16Z",
-     "outlet_id": "npr",
-     "reporting_origin": "outlet:npr",
-     "kind": "repeat"
-    },
-    {
-     "outlet": "France 24",
-     "via": "News feeds",
-     "title": "South African judge awarded Nobel Peace Prize",
-     "url": "https://www.france24.com/en/south-african-judge-awarded-nobel-peace-prize",
-     "published_utc": "2026-10-09T21:53:23Z",
-     "outlet_id": "france24",
-     "reporting_origin": "outlet:france24",
-     "kind": "report"
-    },
-    {
-     "outlet": "The Guardian",
-     "via": "Mastodon",
-     "title": "ICJ judge Navi Pillay wins Nobel peace prize for promoting international law",
-     "url": "https://www.theguardian.com/world/2026/oct/09/navanethem-navi-pillay-wins-nobel-peace-prize",
-     "published_utc": "2026-10-09T11:24:10Z",
-     "outlet_id": "theguardian",
-     "reporting_origin": null,
-     "kind": "signal"
-    },
-    {
-     "outlet": "NBC News",
-     "via": "Google News",
-     "title": "Trump says Nobel committee not awarding him the peace prize leaves ‘indelible stain’ on Norway",
-     "url": "https://news.google.com/rss/articles/CBMixgFBVV95cUxQajc2YUZVcXhSY1ZuOWNYM2pkT1oyTGgybGJSWm9DT3A3bHVOYlh0ZkQ1Zk1tMkpQbUdBYXpxb01HMWNBLVF3TzgySFVBRFllTW8tWEpQdEswMUZLX3FpWWNfZEZESEhNNFlvTFVsVnY4VFZ6M3lqTkJ2NF9yMjlWdG1UbFM0cHIwVTJCcXJZclZlZF90RHVtNVMyOE52MW1VbjhxWmNPRzBKN3Nfc3Z2UW82R1VwRnhHaDdEOWRuTWxCdHZDOVE?oc=5",
-     "published_utc": "2026-10-10T02:41:00Z",
-     "outlet_id": "nbcnews",
-     "reporting_origin": "outlet:nbcnews",
-     "kind": "report"
-    },
-    {
-     "outlet": "bsky.app",
-     "via": "Bluesky",
-     "title": "Navi Pillay wins Nobel Peace Prize",
-     "url": "https://bsky.app/profile/did:plc:qrz3lhbyuxbeilrc6nekdqme/feed/6c6cbdb7aa4c",
-     "published_utc": null,
-     "outlet_id": "bsky",
-     "reporting_origin": null,
-     "kind": "signal"
-    }
-   ]
-  },
-  {
-   "id": "9117b37465dd",
-   "rank": 4,
-   "top_rank": 4,
-   "category": "News",
-   "headline": "JD Vance says he won't watch livestream execution of Fort Hood shooter",
+   "headline": "JD Vance Says He Won't Watch Livestream Execution of Fort Hood Shooter",
    "url": "https://www.axios.com/2026/10/09/jd-vance-fort-hood-shooter-livestream-execution",
    "summary": [
     "Vice President JD Vance said Friday he won't watch a potential livestream of the convicted Fort Hood shooter's execution, which President Trump told reporters he had approved.",
     "Carr said he'll \"defer to Secretary Hegseth\" if the latter aims to air the execution of Nidal Malik Hasan on broadcast TV."
    ],
    "why_it_matters": null,
-   "change": "new",
+   "change": "updated",
    "labels": [],
-   "newest_published_utc": "2026-10-10T04:51:34Z",
+   "newest_published_utc": "2026-10-10T04:00:23Z",
    "coverage": {
     "level": "strong",
-    "points": 6,
-    "independent_reports": 4,
+    "points": 5,
+    "independent_reports": 3,
     "publishers": [
+     "AP News",
      "Axios",
-     "CBS News",
-     "Fortune",
      "Gizmodo"
     ],
     "repeats": 1,
-    "source_links": 5,
-    "linked_outlets": 4,
-    "linked_reporting_origins": 4,
+    "source_links": 4,
+    "linked_outlets": 3,
+    "linked_reporting_origins": 3,
     "signals": 0,
-    "channels": 2
+    "channels": 3
    },
    "sources": [
     {
@@ -1800,7 +1835,7 @@
      "via": "Google News",
      "title": "JD Vance says he won't watch livestream execution of Fort Hood shooter",
      "url": "https://news.google.com/rss/articles/CBMihwFBVV95cUxQU29GaWlaWjVIek81VDNFancwa2ZzeFBmRzl3UGtIWmRVUXVxS1dUdUdVanJaR2Z2WDZRWk1YbWNOTWV2NHdVMEVzNlFSMGhHZ01sc1hyMDQ1eU9uaG9zTjZGaGpkbWIzbmoyUC1SWlBIbDNEcUM0YmlvYlFUb25mT2N5cmhQd1U?oc=5",
-     "published_utc": "2026-10-10T03:44:40Z",
+     "published_utc": "2026-10-10T04:00:23Z",
      "outlet_id": "axios",
      "reporting_origin": "outlet:axios",
      "kind": "repeat"
@@ -1816,110 +1851,48 @@
      "kind": "report"
     },
     {
-     "outlet": "CBS News",
-     "via": "News feeds",
-     "title": "Pentagon's plan to livestream execution sparks backlash",
-     "url": "https://www.cbsnews.com/news/fort-hood-shooter-execution-livestream-reaction-pentagon/",
-     "published_utc": "2026-10-10T04:51:34Z",
-     "outlet_id": "cbsnews",
-     "reporting_origin": "outlet:cbsnews",
-     "kind": "report"
-    },
-    {
-     "outlet": "Fortune",
-     "via": "News feeds",
-     "title": "‘I don’t know that that’s actually going to happen’: Vance doubts plan to livestream of execution of Fort Hood shooter after Pentagon’s announcement",
-     "url": "https://fortune.com/2026/10/09/jd-vance-livestream-fort-hood-shooter-pentagon/",
-     "published_utc": "2026-10-09T21:21:15Z",
-     "outlet_id": "fortune",
-     "reporting_origin": "outlet:fortune",
+     "outlet": "AP News",
+     "via": "YouTube",
+     "title": "AP reporter describes covering 15 executions ahead of Fort Hood shooter's execution",
+     "url": "https://www.youtube.com/watch?v=I1UCTscy2Io",
+     "published_utc": "2026-10-10T03:59:04Z",
+     "outlet_id": "apnews",
+     "reporting_origin": "outlet:apnews",
      "kind": "report"
     }
    ]
   },
   {
-   "id": "68b351363485",
-   "rank": 5,
-   "top_rank": 5,
-   "category": "Science & AI",
-   "headline": "Margaret Hamilton, Trailblazer Whose Software Powered Apollo 11 Moon Landing, Dies at 90",
-   "url": "https://www.theguardian.com/science/2026/oct/07/margaret-hamilton-moon-computer-software",
-   "summary": [
-    "Hamilton led the team of software engineers that developed the software for the Apollo missions, paving the way for future space exploration."
-   ],
-   "why_it_matters": null,
-   "change": "updated",
-   "labels": [],
-   "newest_published_utc": "2026-10-08T21:38:36Z",
-   "coverage": {
-    "level": "moderate",
-    "points": 2,
-    "independent_reports": 2,
-    "publishers": [
-     "NPR",
-     "The Guardian"
-    ],
-    "repeats": 0,
-    "source_links": 2,
-    "linked_outlets": 2,
-    "linked_reporting_origins": 2,
-    "signals": 0,
-    "channels": 1
-   },
-   "sources": [
-    {
-     "outlet": "NPR",
-     "via": "News feeds",
-     "title": "Margaret Hamilton, whose software sent humans to the moon, dies at 90",
-     "url": "https://www.npr.org/2026/10/08/nx-s1-5994972/margaret-hamilton-obituary-software-engineer-apollo",
-     "published_utc": "2026-10-08T21:38:36Z",
-     "outlet_id": "npr",
-     "reporting_origin": "outlet:npr",
-     "kind": "report"
-    },
-    {
-     "outlet": "The Guardian",
-     "via": "News feeds",
-     "title": "Margaret Hamilton, trailblazer whose software powered Apollo 11 moon landing, dies aged 90",
-     "url": "https://www.theguardian.com/science/2026/oct/07/margaret-hamilton-moon-computer-software",
-     "published_utc": "2026-10-08T00:40:37Z",
-     "outlet_id": "theguardian",
-     "reporting_origin": "outlet:theguardian",
-     "kind": "report"
-    }
-   ]
-  },
-  {
-   "id": "fd52d2c4d318",
+   "id": "d54db1309e02",
    "rank": 6,
    "top_rank": 6,
    "category": "News",
    "headline": "US Imposes Sanctions on International Criminal Court",
    "url": null,
    "summary": [
-    "The US has imposed sanctions on the International Criminal Court, cutting it off from the global financial system and including threats of punishment for countries that do business with the court.",
-    "The sanctions are aimed at dismantling the court, with American businesses given six months to end ties."
+    "The Trump administration imposed aggressive sanctions on the International Criminal Court, cutting it off from the global financial system.",
+    "The sanctions were announced hours after a former ICC judge won the Nobel Peace Prize.",
+    "The sanctions include threats of punishment for countries that do business with the court."
    ],
    "why_it_matters": null,
-   "change": "new",
+   "change": "",
    "labels": [],
    "newest_published_utc": "2026-10-10T04:00:22Z",
    "coverage": {
     "level": "strong",
-    "points": 6,
-    "independent_reports": 4,
+    "points": 5,
+    "independent_reports": 3,
     "publishers": [
-     "Fortune",
      "Reuters",
      "The Washington Post",
      "state.gov"
     ],
-    "repeats": 1,
+    "repeats": 2,
     "source_links": 5,
-    "linked_outlets": 4,
-    "linked_reporting_origins": 4,
+    "linked_outlets": 3,
+    "linked_reporting_origins": 3,
     "signals": 0,
-    "channels": 3
+    "channels": 4
    },
    "sources": [
     {
@@ -1963,21 +1936,21 @@
      "kind": "report"
     },
     {
-     "outlet": "Fortune",
-     "via": "News feeds",
-     "title": "‘Piece by piece’: Trump administration vows to dismantle the International Criminal Court with sweeping new sanctions",
-     "url": "https://fortune.com/2026/10/09/trump-international-criminal-court-icc-sanctions/",
-     "published_utc": "2026-10-09T21:30:13Z",
-     "outlet_id": "fortune",
-     "reporting_origin": "outlet:fortune",
-     "kind": "report"
+     "outlet": "Reuters",
+     "via": "YouTube",
+     "title": "Navi Pillay wins Nobel as US hits ICC with sweeping sanctions",
+     "url": "https://www.youtube.com/watch?v=Z-Wr2y7ZQqU",
+     "published_utc": "2026-10-09T20:23:04Z",
+     "outlet_id": "reuters",
+     "reporting_origin": "outlet:reuters",
+     "kind": "repeat"
     }
    ]
   },
   {
    "id": "9bccd0d85994",
    "rank": 7,
-   "top_rank": 7,
+   "top_rank": null,
    "category": "News",
    "headline": "Panama Hit by Powerful Earthquakes",
    "url": "https://www.cbsnews.com/news/panama-earthquake-tsunami-threat/",
@@ -1986,7 +1959,7 @@
     "The quake was followed by a 6.6 magnitude quake later in the day, prompting evacuations."
    ],
    "why_it_matters": null,
-   "change": "new",
+   "change": "",
    "labels": [],
    "newest_published_utc": "2026-10-10T02:53:00Z",
    "coverage": {
@@ -2028,293 +2001,163 @@
    ]
   },
   {
-   "id": "8ebf7a92f83c",
+   "id": "c58e186aae7d",
    "rank": 8,
-   "top_rank": null,
-   "category": "News",
-   "headline": "3 Men Found Guilty in Murders of American, Australian Surfers in Mexico",
-   "url": "https://www.cbsnews.com/news/men-guilty-mexico-australian-american-surfer-murders/",
+   "top_rank": 7,
+   "category": "Sports",
+   "headline": "Takeaways and Analysis from Valkyries' Sweep",
+   "url": "https://www.espn.com/wnba/story/_/id/50141216/2026-wnba-playoffs-semifinals-scores-results-takeaways-analysis",
    "summary": [
-    "A local judge has found three men guilty of murdering two Australian brothers and their American friend in Baja California, Mexico, in April 2024.",
-    "The 2024 murders of brothers Jake and Callum Robinson, along with their friend Carter Rhoad, shocked Mexico and drew international outrage."
+    "The second-year Valkyries became the quickest expansion team to reach the WNBA Finals, sweeping the defending champion Aces 87-77 in overtime Friday night in Game 3."
    ],
    "why_it_matters": null,
-   "change": "new",
+   "change": "updated",
    "labels": [],
-   "newest_published_utc": "2026-10-10T02:21:00Z",
+   "newest_published_utc": "2026-10-10T08:03:20Z",
    "coverage": {
     "level": "moderate",
     "points": 4,
     "independent_reports": 3,
     "publishers": [
-     "CBS News",
-     "DW",
-     "Sky News"
+     "CBS Sports",
+     "ESPN",
+     "The Guardian"
     ],
-    "repeats": 0,
-    "source_links": 3,
+    "repeats": 1,
+    "source_links": 5,
     "linked_outlets": 3,
     "linked_reporting_origins": 3,
-    "signals": 0,
+    "signals": 1,
     "channels": 1
    },
    "sources": [
     {
-     "outlet": "CBS News",
+     "outlet": "ESPN",
      "via": "News feeds",
-     "title": "3 men found guilty in murders of American, Australian surfers in Mexico",
-     "url": "https://www.cbsnews.com/news/men-guilty-mexico-australian-american-surfer-murders/",
-     "published_utc": "2026-10-10T00:15:00Z",
-     "outlet_id": "cbsnews",
-     "reporting_origin": "outlet:cbsnews",
+     "title": "Takeaways and analysis from Valkyries' sweep",
+     "url": "https://www.espn.com/wnba/story/_/id/50141216/2026-wnba-playoffs-semifinals-scores-results-takeaways-analysis",
+     "published_utc": "2026-10-10T06:28:28Z",
+     "outlet_id": "espn",
+     "reporting_origin": "outlet:espn",
      "kind": "report"
     },
     {
-     "outlet": "Sky News",
+     "outlet": "X",
+     "via": "X (trends24)",
+     "title": "Valkyries",
+     "url": "https://x.com/search?q=Valkyries",
+     "published_utc": null,
+     "outlet_id": "x",
+     "reporting_origin": null,
+     "kind": "signal"
+    },
+    {
+     "outlet": "ESPN",
      "via": "News feeds",
-     "title": "Three men found guilty of killing Australian brothers and their American friend",
-     "url": "https://news.sky.com/story/three-found-guilty-of-killing-australian-brothers-and-american-friend-on-mexico-surf-trip-13597092",
-     "published_utc": "2026-10-09T22:20:00Z",
-     "outlet_id": "sky",
-     "reporting_origin": "outlet:sky",
+     "title": "Valkyries make 'history,' oust Aces to reach Finals in 2nd year as franchise",
+     "url": "https://www.espn.com/wnba/story/_/id/50144607/valkyries-dethrone-aces-ot-make-wnba-finals-second-year-franchise",
+     "published_utc": "2026-10-10T08:03:20Z",
+     "outlet_id": "espn",
+     "reporting_origin": "outlet:espn",
+     "kind": "repeat"
+    },
+    {
+     "outlet": "CBS Sports",
+     "via": "News feeds",
+     "title": "Golden State Valkyries reach WNBA Finals: How second-year franchise made unprecedented run",
+     "url": "https://www.cbssports.com/wnba/news/golden-state-valkyries-reach-wnba-finals-second-year-unprecedented-run/",
+     "published_utc": "2026-10-10T05:46:19Z",
+     "outlet_id": "cbssports",
+     "reporting_origin": "outlet:cbssports",
      "kind": "report"
     },
     {
-     "outlet": "DW",
+     "outlet": "The Guardian",
      "via": "News feeds",
-     "title": "Mexico: Court finds three men guilty of murder of Australian, US surfers",
-     "url": "https://www.dw.com/en/mexico-court-finds-three-men-guilty-of-murder-of-australian-us-surfers/a-79624125?maca=en-rss-en-all-1573-rdf",
-     "published_utc": "2026-10-10T02:21:00Z",
-     "outlet_id": "dw",
-     "reporting_origin": "outlet:dw",
+     "title": "Golden State Valkyries vanquish Las Vegas Aces to reach WNBA finals in second season",
+     "url": "https://www.theguardian.com/sport/2026/oct/10/golden-state-valkyries-las-vegas-aces-wnba-finals-sweep-gabby-williams",
+     "published_utc": "2026-10-10T05:00:17Z",
+     "outlet_id": "theguardian",
+     "reporting_origin": "outlet:theguardian",
      "kind": "report"
     }
    ]
   },
   {
-   "id": "e0dec9445903",
+   "id": "b1af75fba07c",
    "rank": 9,
-   "top_rank": null,
-   "category": "News",
-   "headline": "India's Central Bank Takes Steps to Support Rupee",
+   "top_rank": 8,
+   "category": "Tech",
+   "headline": "Elon Musk Accuses Mukesh Ambani of Blocking Starlink India Launch",
    "url": null,
    "summary": [
-    "India's central bank rolled out measures to support the plunging rupee, including opening a special window for state-run oil companies to meet their dollar requirements."
+    "Elon Musk has accused Indian billionaire Mukesh Ambani of blocking competition by using political interference to delay the launch of Starlink in India.",
+    "Ambani's Reliance Jio has over 500M subscribers in India."
    ],
    "why_it_matters": null,
    "change": "new",
    "labels": [],
-   "newest_published_utc": "2026-10-10T03:34:00Z",
+   "newest_published_utc": "2026-10-10T03:10:06Z",
    "coverage": {
     "level": "moderate",
     "points": 4,
     "independent_reports": 2,
     "publishers": [
-     "Bloomberg",
-     "Reuters"
-    ],
-    "repeats": 0,
-    "source_links": 2,
-    "linked_outlets": 2,
-    "linked_reporting_origins": 2,
-    "signals": 0,
-    "channels": 2
-   },
-   "sources": [
-    {
-     "outlet": "Bloomberg",
-     "via": "News feeds",
-     "title": "India Central Bank Announces Measures to Support Plunging Rupee",
-     "url": "https://www.bloomberg.com/news/articles/2026-10-10/rbi-announces-special-oil-window-regulatory-steps-for-rupee",
-     "published_utc": "2026-10-10T03:14:34Z",
-     "outlet_id": "bloomberg",
-     "reporting_origin": "outlet:bloomberg",
-     "kind": "report"
-    },
-    {
-     "outlet": "Reuters",
-     "via": "Google News",
-     "title": "India central bank takes steps to support rupee, opens dollar window for oil companies",
-     "url": "https://news.google.com/rss/articles/CBMixAFBVV95cUxQdllQdm5CdmlVZXN1TkRYcEd3akdFcFFiMU9xSXJNUnBzbk9HNWFqbTVsYVpXMG03bldVc29lZjVfMk9seFo4LXpadURFdWhmUEVYdWViNjBPNkFiVi1HTkx1clBCc1ZsSGNOdjlweHR3V0JRa0JiRFpEZWNCMHpnTF9GX2RUeWUyTE1oT1VRNjBTSUVZVDBaa0ZkVi0yTFBpRnQ0TlcwM1d2MTc4bVd6U2ZqcDRxUWJESWY4aWpfTmdNeVpB?oc=5",
-     "published_utc": "2026-10-10T03:34:00Z",
-     "outlet_id": "reuters",
-     "reporting_origin": "outlet:reuters",
-     "kind": "report"
-    }
-   ]
-  },
-  {
-   "id": "0194fd6c99fe",
-   "rank": 10,
-   "top_rank": 8,
-   "category": "Tech",
-   "headline": "FBI Arrests Founder of Ransomware Negotiation Firm",
-   "url": "https://krebsonsecurity.com/2026/10/fbi-arrests-founder-of-ransomware-negotiation-firm/",
-   "summary": [
-    "The FBI has arrested another suspected member of the ShinyHunters extortion group believed to be involved in the recent breach of FBI systems, Director Kash Patel announced Friday."
-   ],
-   "why_it_matters": null,
-   "change": "new",
-   "labels": [],
-   "newest_published_utc": "2026-10-10T00:17:42Z",
-   "coverage": {
-    "level": "moderate",
-    "points": 3,
-    "independent_reports": 2,
-    "publishers": [
-     "BleepingComputer",
-     "Krebs on Security"
-    ],
-    "repeats": 0,
-    "source_links": 2,
-    "linked_outlets": 2,
-    "linked_reporting_origins": 2,
-    "signals": 0,
-    "channels": 1
-   },
-   "sources": [
-    {
-     "outlet": "Krebs on Security",
-     "via": "News feeds",
-     "title": "FBI Arrests Founder of Ransomware Negotiation Firm",
-     "url": "https://krebsonsecurity.com/2026/10/fbi-arrests-founder-of-ransomware-negotiation-firm/",
-     "published_utc": "2026-10-10T00:17:42Z",
-     "outlet_id": "krebsonsecurity",
-     "reporting_origin": "outlet:krebsonsecurity",
-     "kind": "report"
-    },
-    {
-     "outlet": "BleepingComputer",
-     "via": "News feeds",
-     "title": "FBI arrests another suspected ShinyHunters hacker after agency breach",
-     "url": "https://www.bleepingcomputer.com/news/security/fbi-arrests-another-suspected-shinyhunters-hacker-after-agency-breach/",
-     "published_utc": "2026-10-09T17:02:29Z",
-     "outlet_id": "bleepingcomputer",
-     "reporting_origin": "outlet:bleepingcomputer",
-     "kind": "report"
-    }
-   ]
-  },
-  {
-   "id": "c9ba0cdc29e5",
-   "rank": 11,
-   "top_rank": null,
-   "category": "News",
-   "headline": "Anthropic AI Model Went Rogue, Submitted Fake Unsolved Murder Tip",
-   "url": null,
-   "summary": [
-    "Authorities called Anthropic's two-month delay in detecting and reporting the incident 'unacceptable'.",
-    "An Anthropic AI model provided false information about an unsolved homicide to a Philadelphia Police Department (PPD) tipline, according to a report from 6abc."
-   ],
-   "why_it_matters": null,
-   "change": "new",
-   "labels": [],
-   "newest_published_utc": "2026-10-10T04:54:59Z",
-   "coverage": {
-    "level": "strong",
-    "points": 6,
-    "independent_reports": 6,
-    "publishers": [
      "Al Jazeera",
-     "Engadget",
-     "TechCrunch",
-     "The Verge",
-     "WSJ",
-     "nbcphiladelphia.com"
+     "TechCrunch"
     ],
-    "repeats": 0,
-    "source_links": 7,
-    "linked_outlets": 6,
-    "linked_reporting_origins": 6,
-    "signals": 1,
+    "repeats": 1,
+    "source_links": 3,
+    "linked_outlets": 2,
+    "linked_reporting_origins": 2,
+    "signals": 0,
     "channels": 3
    },
    "sources": [
     {
-     "outlet": "WSJ",
-     "via": "Google News",
-     "title": "Anthropic AI Model Went Rogue, Submitted Fake Unsolved Murder Tip",
-     "url": "https://news.google.com/rss/articles/CBMioAFBVV95cUxOdC1Yb1VaRzVmWnNoRmpLRFF4cWtUZXNyMjYtVzItMEJIYWhGWUpsUXRtWEJmaDVpZ1lGSXE3WGFYWU94cUFwcTRZZnQzVFBsaktQVjQ3WmJMMFVyQnlTS3NtUEMzVkY1WmNoU1dmdW1LWVB5YXJ1amROdEVIWVRhSFNLdldjVkMwcVRjaHJoOGVwVFBDbmxCdHlqTGIwc2px?oc=5",
-     "published_utc": "2026-10-10T03:34:00Z",
-     "outlet_id": "wsj",
-     "reporting_origin": "outlet:wsj",
-     "kind": "report"
-    },
-    {
-     "outlet": "Al Jazeera",
-     "via": "News feeds",
-     "title": "Anthropic AI model submits false homicide tip to Philadelphia police",
-     "url": "https://www.aljazeera.com/news/2026/10/10/anthropic-ai-model-submits-false-homicide-tip-to-philadelphia-police?traffic_source=rss",
-     "published_utc": "2026-10-10T04:54:59Z",
-     "outlet_id": "aljazeera",
-     "reporting_origin": "outlet:aljazeera",
-     "kind": "report"
-    },
-    {
-     "outlet": "Engadget",
-     "via": "News feeds",
-     "title": "An Anthropic model submitted a false homicide tip to Philadelphia police",
-     "url": "https://www.engadget.com/2282713/an-anthropic-model-submitted-a-false-homicide-tip-to-philadelphia-police/",
-     "published_utc": "2026-10-09T20:00:30Z",
-     "outlet_id": "engadget",
-     "reporting_origin": "outlet:engadget",
-     "kind": "report"
-    },
-    {
      "outlet": "TechCrunch",
      "via": "News feeds",
-     "title": "An Anthropic AI model sent a false homicide tip to Philadelphia police",
-     "url": "https://techcrunch.com/2026/10/09/an-anthropic-ai-model-sent-a-false-homicide-tip-to-philadelphia-police/",
-     "published_utc": "2026-10-09T19:36:56Z",
+     "title": "Elon Musk intensifies attack on Ambani over Starlink India launch delay",
+     "url": "https://techcrunch.com/2026/10/09/elon-musk-intensifies-attack-on-ambani-over-starlink-india-launch-delay/",
+     "published_utc": "2026-10-10T03:10:06Z",
      "outlet_id": "techcrunch",
      "reporting_origin": "outlet:techcrunch",
      "kind": "report"
     },
     {
-     "outlet": "The Verge",
-     "via": "News feeds",
-     "title": "Anthropic’s AI gave Philadelphia police a fake tip about an unsolved homicide",
-     "url": "https://www.theverge.com/ai-artificial-intelligence/1009090/anthropic-fake-homicide-information-philadelphia-pd-tip",
-     "published_utc": "2026-10-09T21:15:38Z",
-     "outlet_id": "theverge",
-     "reporting_origin": "outlet:theverge",
-     "kind": "report"
+     "outlet": "TechCrunch",
+     "via": "Google News",
+     "title": "Elon Musk intensifies attack on Ambani over Starlink India launch delay",
+     "url": "https://news.google.com/rss/articles/CBMiqgFBVV95cUxQWTJHbnRLM05qWjZUNkpKSVJudERCeXJQUjJ6N25kU0d1dmtockxpeVpQTENxUU5sWmFrV1R2RDEtOEdXdGlUQVhPZ011QTVDeDVJa1F3UGlmekV1UE1xU0pLRFNUZjdxNHFUWXpZNWhwT0J5VVYxQmRzRnI5TVBPbm55UlVwVjk3NldqTVNyMmFCYjQzVUdtbUJFeTNMaVF0RW80YVJvNEhEZw?oc=5",
+     "published_utc": "2026-10-10T03:10:06Z",
+     "outlet_id": "techcrunch",
+     "reporting_origin": "outlet:techcrunch",
+     "kind": "repeat"
     },
     {
-     "outlet": "nbcphiladelphia.com",
-     "via": "Hacker News",
-     "title": "Anthropic AI model submits false tip on unsolved Philly murder",
-     "url": "https://www.nbcphiladelphia.com/news/local/anthropic-ai-model-submits-false-tip-on-unsolved-philly-murder-police-say/4477051/",
-     "published_utc": "2026-10-09T22:00:35Z",
-     "outlet_id": "nbcphiladelphia",
-     "reporting_origin": "outlet:nbcphiladelphia",
+     "outlet": "Al Jazeera",
+     "via": "YouTube",
+     "title": "Elon Musk lashes out at Indian ‘Prime Minister’ Mukesh Ambani in Starlink row",
+     "url": "https://www.youtube.com/shorts/j2oZhhvVWyE",
+     "published_utc": "2026-10-10T02:32:01Z",
+     "outlet_id": "aljazeera",
+     "reporting_origin": "outlet:aljazeera",
      "kind": "report"
-    },
-    {
-     "outlet": "bsky.app",
-     "via": "Bluesky",
-     "title": "Anthropic IPO filing",
-     "url": "https://bsky.app/profile/did:plc:qrz3lhbyuxbeilrc6nekdqme/feed/985d5ae40d34",
-     "published_utc": null,
-     "outlet_id": "bsky",
-     "reporting_origin": null,
-     "kind": "signal"
     }
    ]
   },
   {
-   "id": "9fe13919cc51",
-   "rank": 12,
+   "id": "0fcc4e77e611",
+   "rank": 10,
    "top_rank": 9,
    "category": "Sports",
-   "headline": "Mike Ditka Dies at 86",
-   "url": "https://www.espn.com/nfl/story/_/id/50140701/legendary-coach-hall-fame-te-mike-ditka-dies-age-86",
+   "headline": "Mike Ditka, the Quintessential Chicago Bear and a Pro Football Hall of Famer, Dies at 86",
+   "url": null,
    "summary": [
-    "Mike Ditka, the fiery former NFL player and coach, has died at the age of 86.",
-    "He led the Chicago Bears to their lone Super Bowl title and became a larger-than-life sporting icon."
+    "Mike Ditka, a Hall of Fame tight end who became an NFL legend for his time as coach of the Bears, has died at the age of 86."
    ],
    "why_it_matters": null,
-   "change": "new",
+   "change": "updated",
    "labels": [],
    "newest_published_utc": "2026-10-10T00:37:08Z",
    "coverage": {
@@ -2324,14 +2167,14 @@
     "publishers": [
      "AP News",
      "ESPN",
-     "The Guardian"
+     "NFL"
     ],
     "repeats": 0,
     "source_links": 4,
     "linked_outlets": 3,
     "linked_reporting_origins": 3,
     "signals": 1,
-    "channels": 2
+    "channels": 3
    },
    "sources": [
     {
@@ -2355,16 +2198,6 @@
      "kind": "signal"
     },
     {
-     "outlet": "The Guardian",
-     "via": "News feeds",
-     "title": "Mike Ditka: a life in pictures",
-     "url": "https://www.theguardian.com/sport/gallery/2026/oct/09/mike-ditka-a-life-in-pictures",
-     "published_utc": "2026-10-09T16:41:53Z",
-     "outlet_id": "theguardian",
-     "reporting_origin": "outlet:theguardian",
-     "kind": "report"
-    },
-    {
      "outlet": "ESPN",
      "via": "News feeds",
      "title": "Legendary coach, Hall of Fame TE Ditka dies at age 86",
@@ -2373,190 +2206,94 @@
      "outlet_id": "espn",
      "reporting_origin": "outlet:espn",
      "kind": "report"
+    },
+    {
+     "outlet": "NFL",
+     "via": "YouTube",
+     "title": "The NFL Report: Disaster for Dallas on TNF + Legendary Bears Coach Mike Ditka Passes Away",
+     "url": "https://www.youtube.com/watch?v=pFei46x_X3w",
+     "published_utc": "2026-10-10T00:00:54Z",
+     "outlet_id": "nfl",
+     "reporting_origin": "outlet:nfl",
+     "kind": "report"
     }
    ]
   },
   {
-   "id": "972065f00428",
-   "rank": 13,
-   "top_rank": null,
-   "category": "News",
-   "headline": "NYC man shot by ICE still has bullet in body, lawyers say",
-   "url": null,
+   "id": "bcaabb1701b8",
+   "rank": 11,
+   "top_rank": 10,
+   "category": "Sports",
+   "headline": "‘I’m supposed to be here’: Angel Reese’s road from ridicule to the WNBA finals",
+   "url": "https://www.theguardian.com/sport/2026/oct/10/angel-reese-wnba-finals-atlanta-dream-critics-apology",
    "summary": [
-    "The incident occurred early Friday in Fresno."
+    "After years of mockery and doubts about her game, Reese has helped carry Atlanta to the WNBA's biggest stage."
    ],
    "why_it_matters": null,
    "change": "new",
    "labels": [],
-   "newest_published_utc": "2026-10-10T00:07:37Z",
+   "newest_published_utc": "2026-10-10T07:00:51Z",
    "coverage": {
     "level": "moderate",
     "points": 4,
     "independent_reports": 2,
     "publishers": [
-     "ABC News",
-     "Courthouse News"
+     "The Guardian",
+     "Yahoo Sports"
     ],
     "repeats": 0,
-    "source_links": 3,
+    "source_links": 4,
     "linked_outlets": 2,
     "linked_reporting_origins": 2,
-    "signals": 1,
+    "signals": 2,
     "channels": 2
    },
    "sources": [
     {
-     "outlet": "Courthouse News",
-     "via": "Google News",
-     "title": "NYC man shot by ICE still has bullet in body, lawyers say",
-     "url": "https://news.google.com/rss/articles/CBMikgFBVV95cUxOems3ano2ZEg4M01yVEtwWDNmLXY3ZFFRY0EzQUkzdzRCN3ZQSWs5bkVRaFpIWUJWS3Q2Rk5WVmI3WTgzZmZMMjIwd29YS1RFUk9USW5rcTFOWmYydUE4cVIxc1V6ZkdqUm9JdVVENU9rbTcwYTV5ZmNPZkY4c3VfbGlVQVdIUm9JM3FPdTFQRFJhZw?oc=5",
-     "published_utc": "2026-10-09T21:27:04Z",
-     "outlet_id": "courthousenews",
-     "reporting_origin": "outlet:courthousenews",
-     "kind": "report"
-    },
-    {
-     "outlet": "ABC News",
+     "outlet": "The Guardian",
      "via": "News feeds",
-     "title": "Off-duty ICE agent shot after allegedly attacking woman and her father: Police",
-     "url": "https://abcnews.com/US/off-duty-ice-agent-shot-after-allegedly-attacking/story?id=137146259",
-     "published_utc": "2026-10-10T00:07:37Z",
-     "outlet_id": "abcnews",
-     "reporting_origin": "outlet:abcnews",
+     "title": "‘I’m supposed to be here’: Angel Reese’s road from ridicule to the WNBA finals",
+     "url": "https://www.theguardian.com/sport/2026/oct/10/angel-reese-wnba-finals-atlanta-dream-critics-apology",
+     "published_utc": "2026-10-10T07:00:51Z",
+     "outlet_id": "theguardian",
+     "reporting_origin": "outlet:theguardian",
      "kind": "report"
     },
     {
-     "outlet": "reddit.com",
-     "via": "Reddit",
-     "title": "ICE agent shot by 72-year-old after early morning assault in Fresno, police say",
-     "url": "https://www.reddit.com/r/news/comments/1x1y4pp/ice_agent_shot_by_72yearold_after_early_morning/",
-     "published_utc": "2026-10-09T21:53:32Z",
-     "outlet_id": "reddit",
+     "outlet": "X",
+     "via": "X (trends24)",
+     "title": "Angel Reese",
+     "url": "https://x.com/search?q=Angel%20Reese",
+     "published_utc": null,
+     "outlet_id": "x",
      "reporting_origin": null,
      "kind": "signal"
-    }
-   ]
-  },
-  {
-   "id": "4cf2663c7104",
-   "rank": 14,
-   "top_rank": 10,
-   "category": "Science & AI",
-   "headline": "The Real Threat Involving Artificial Intelligence Isn't What You Think",
-   "url": null,
-   "summary": [
-    "Artificial intelligence and social integration paradox."
-   ],
-   "why_it_matters": null,
-   "change": "new",
-   "labels": [],
-   "newest_published_utc": "2026-10-09T21:24:42Z",
-   "coverage": {
-    "level": "moderate",
-    "points": 4,
-    "independent_reports": 3,
-    "publishers": [
-     "ABC News",
-     "Daily Sabah",
-     "Washington Times"
-    ],
-    "repeats": 0,
-    "source_links": 3,
-    "linked_outlets": 3,
-    "linked_reporting_origins": 3,
-    "signals": 0,
-    "channels": 1
-   },
-   "sources": [
-    {
-     "outlet": "Daily Sabah",
-     "via": "Google News",
-     "title": "Artificial intelligence and social integration paradox",
-     "url": "https://news.google.com/rss/articles/CBMimwFBVV95cUxQcV9qQmJ4MEpOWUQ5eVVvdklNR2V0d20zWE85a2IydWkxT1ZyelZnamhZaHRrWXV3NVhucVF5Y1RjM3hpbThUNl9KMmd3MHVFS0xQXzMtYldqMXNFWkZYLU9lMzQxMG5XQlVVQUlHXzJiUzlnT1NKdmdld0VENWQ3VDFYd2Raa3hCcHVTcldLcVMtMjRqdTBpM1B5Zw?oc=5",
-     "published_utc": "2026-10-09T21:05:00Z",
-     "outlet_id": "dailysabah",
-     "reporting_origin": "outlet:dailysabah",
-     "kind": "report"
     },
     {
-     "outlet": "ABC News",
-     "via": "Google News",
-     "title": "Artificial Intelligence",
-     "url": "https://news.google.com/rss/articles/CBMiXkFVX3lxTFBHQWNlSHQzMUlJUTg1elY2MnlhM0JMRDkyUlMtYUdwNDFYYmF2cktZZzg2X3pDMVluRVhBS01LY0VnRVI0bnk2eElyWkczd0dLdktiOFMybWl5STktVHc?oc=5",
-     "published_utc": "2026-10-09T10:59:28Z",
-     "outlet_id": "abcnews",
-     "reporting_origin": "outlet:abcnews",
-     "kind": "report"
+     "outlet": "X",
+     "via": "X (trends24)",
+     "title": "Finals",
+     "url": "https://x.com/search?q=Finals",
+     "published_utc": null,
+     "outlet_id": "x",
+     "reporting_origin": null,
+     "kind": "signal"
     },
     {
-     "outlet": "Washington Times",
+     "outlet": "Yahoo Sports",
      "via": "Google News",
-     "title": "The real threat involving artificial intelligence isn’t what you think",
-     "url": "https://news.google.com/rss/articles/CBMiqAFBVV95cUxNb3RwRFBUS3FyTDdpb3dMSlFRQ1p6bHBPbjl1Z0dZbTR3WnRiNzFrNnJ4M0ROVzRFWW5Vc2dfa3ZPU0Q0YmNEclN3c1BtejFvUjk0UDl3UEdhRnRTY2RjbGFRcGprY0I4Vmw0WklNMUF6bnJxNHAybmRyTkJ1eHczMDczdlFFenl1ZjVUclFEZ0t5SVdqMGtpWkNuZ1M5MXlUbjlPbHN4aUg?oc=5",
-     "published_utc": "2026-10-09T21:24:42Z",
-     "outlet_id": "washingtontimes",
-     "reporting_origin": "outlet:washingtontimes",
-     "kind": "report"
-    }
-   ]
-  },
-  {
-   "id": "dbaffc991fc1",
-   "rank": 15,
-   "top_rank": null,
-   "category": "Science & AI",
-   "headline": "What Will It Take to Build a Moon Base?",
-   "url": "https://spacenews.com/what-will-it-take-to-build-a-moon-base/",
-   "summary": [
-    "Industry experts discussed the challenges and requirements for building a moon base, including the need for underground shelters, hidden ice, and tracking dangerous conditions on the lunar surface.",
-    "The findings could reveal how astronauts can survive and thrive on the moon."
-   ],
-   "why_it_matters": null,
-   "change": "updated",
-   "labels": [],
-   "newest_published_utc": "2026-10-08T13:57:38Z",
-   "coverage": {
-    "level": "moderate",
-    "points": 2,
-    "independent_reports": 2,
-    "publishers": [
-     "ScienceDaily",
-     "SpaceNews"
-    ],
-    "repeats": 0,
-    "source_links": 2,
-    "linked_outlets": 2,
-    "linked_reporting_origins": 2,
-    "signals": 0,
-    "channels": 1
-   },
-   "sources": [
-    {
-     "outlet": "ScienceDaily",
-     "via": "News feeds",
-     "title": "NASA is searching for hidden caves to build its first Moon base",
-     "url": "https://www.sciencedaily.com/releases/2026/10/261008005247.htm",
-     "published_utc": "2026-10-08T12:19:20Z",
-     "outlet_id": "sciencedaily",
-     "reporting_origin": "outlet:sciencedaily",
-     "kind": "report"
-    },
-    {
-     "outlet": "SpaceNews",
-     "via": "News feeds",
-     "title": "What will it take to build a moon base?",
-     "url": "https://spacenews.com/what-will-it-take-to-build-a-moon-base/",
-     "published_utc": "2026-10-08T13:57:38Z",
-     "outlet_id": "spacenews",
-     "reporting_origin": "outlet:spacenews",
+     "title": "Dream sweep Liberty on Angel Reese's 22 points, head to first WNBA Finals since 2013",
+     "url": "https://news.google.com/rss/articles/CBMizAFBVV95cUxOVlg2YmNULS1EZmtXYVlxN1BGemJkcVV6c2tDaEJfMVZOVGhadFFMMEM2b2NyZVFNWWw1MEZ1ZXcyX3IyQ0FtbEZocmVrS2tON1dfT1ZUckMxX01yM01EU3ZFUHNucDZjdlpBU0dvLTlTaHpxdk5Ca19uZlJvdU5raG5Mc2tfR01nM0h5bHNNMHFCYlp0cXB3Z2NrcTJlam90YjZoa0JHR0VLc3lZZ2YycnQ0QVYxblVYTW1LTmFsbzhIRXNSRnVBd3pJZzg?oc=5",
+     "published_utc": "2026-10-10T04:03:00Z",
+     "outlet_id": "yahoosports",
+     "reporting_origin": "outlet:yahoosports",
      "kind": "report"
     }
    ]
   },
   {
    "id": "6b8667309135",
-   "rank": 16,
+   "rank": 12,
    "top_rank": null,
    "category": "Entertainment",
    "headline": "Danny Trejo Insists He’s \"Pro-Immigrant\" & \"Proud Mexican\" Amid Backlash To Daily Wire’s ICE Film: \"Make No Mistake\"",
@@ -2565,7 +2302,7 @@
     "Danny Trejo has broken his silence amid backlash around his role in Daily Wire's latest controversial production."
    ],
    "why_it_matters": null,
-   "change": "new",
+   "change": "",
    "labels": [],
    "newest_published_utc": "2026-10-10T01:02:52Z",
    "coverage": {
@@ -2608,7 +2345,7 @@
   },
   {
    "id": "4053fef9ec35",
-   "rank": 17,
+   "rank": 13,
    "top_rank": null,
    "category": "Internet Culture",
    "headline": "Blogger Found Guilty of Taunting State Senator with Shrek Dick Picks",
@@ -2618,7 +2355,7 @@
     "The senator described the Shrek text as pornographic and harassing."
    ],
    "why_it_matters": null,
-   "change": "new",
+   "change": "",
    "labels": [],
    "newest_published_utc": "2026-10-09T19:56:24Z",
    "coverage": {
@@ -2671,78 +2408,23 @@
    ]
   },
   {
-   "id": "7551f9ba30b1",
-   "rank": 18,
+   "id": "aca6e5866730",
+   "rank": 14,
    "top_rank": null,
-   "category": "Sports",
-   "headline": "Golden State Valkyries Reach WNBA Finals: How Second-year Franchise Made Unprecedented Run",
-   "url": "https://www.cbssports.com/wnba/news/golden-state-valkyries-reach-wnba-finals-second-year-unprecedented-run/",
-   "summary": [
-    "Just over three years ago, on Oct. 5, 2023, the Golden State Valkyries were officially introduced as the WNBA's first expansion team in over a decade."
-   ],
+   "category": "News",
+   "headline": "Russian Attack on Ukraine's Zaporizhzhia Kills Seven, Governor Says",
+   "url": null,
+   "summary": [],
    "why_it_matters": null,
    "change": "new",
    "labels": [],
-   "newest_published_utc": "2026-10-10T05:46:19Z",
-   "coverage": {
-    "level": "moderate",
-    "points": 3,
-    "independent_reports": 2,
-    "publishers": [
-     "CBS Sports",
-     "The Guardian"
-    ],
-    "repeats": 0,
-    "source_links": 2,
-    "linked_outlets": 2,
-    "linked_reporting_origins": 2,
-    "signals": 0,
-    "channels": 1
-   },
-   "sources": [
-    {
-     "outlet": "CBS Sports",
-     "via": "News feeds",
-     "title": "Golden State Valkyries reach WNBA Finals: How second-year franchise made unprecedented run",
-     "url": "https://www.cbssports.com/wnba/news/golden-state-valkyries-reach-wnba-finals-second-year-unprecedented-run/",
-     "published_utc": "2026-10-10T05:46:19Z",
-     "outlet_id": "cbssports",
-     "reporting_origin": "outlet:cbssports",
-     "kind": "report"
-    },
-    {
-     "outlet": "The Guardian",
-     "via": "News feeds",
-     "title": "Golden State Valkyries vanquish Las Vegas Aces to reach WNBA finals in second season",
-     "url": "https://www.theguardian.com/sport/2026/oct/10/golden-state-valkyries-las-vegas-aces-wnba-finals-sweep-gabby-williams",
-     "published_utc": "2026-10-10T05:00:17Z",
-     "outlet_id": "theguardian",
-     "reporting_origin": "outlet:theguardian",
-     "kind": "report"
-    }
-   ]
-  },
-  {
-   "id": "13f4d7a18d0c",
-   "rank": 19,
-   "top_rank": null,
-   "category": "Tech",
-   "headline": "Trump Gives Musk, Huang, Su and Brin the National Medal of Science",
-   "url": "https://thenextweb.com/news/national-medal-of-science-musk-huang-su-brin-nadella-dell",
-   "summary": [
-    "The architects of the future the White House gave Elon Musk, Jensen Huang, Lisa Su and Sergey Brin the National Medal of Science on Thursday.",
-    "Six technology leaders received the country's highest honours for science and technology from President Donald Trump on Thursday."
-   ],
-   "why_it_matters": null,
-   "change": "new",
-   "labels": [],
-   "newest_published_utc": "2026-10-09T19:53:28Z",
+   "newest_published_utc": "2026-10-10T06:39:00Z",
    "coverage": {
     "level": "limited",
     "points": 1,
     "independent_reports": 1,
     "publishers": [
-     "The Next Web"
+     "Reuters"
     ],
     "repeats": 0,
     "source_links": 1,
@@ -2753,20 +2435,101 @@
    },
    "sources": [
     {
-     "outlet": "The Next Web",
+     "outlet": "Reuters",
+     "via": "Google News",
+     "title": "Russian attack on Ukraine's Zaporizhzhia kills seven, governor says",
+     "url": "https://news.google.com/rss/articles/CBMiwwFBVV95cUxNWXFuRXk1Sm4ydlg5Tng2TklTSDlLUlhUXy12UldndXpmdWN1cnNYSmhZaFRwRTlSM0pUZWVtZjdicXdNbVlSMUxNYk5YYVhncjczY2FuLThrRlk4MTFPUU8ySVM5bHRlaGdfX19VTHQxQU9ZTXQwazF2MXhKYlUzVTFUMEZ2cjdQSTZGVEN5QWRPMlhPQnZTNElXeTY5QzZJb2NMcENHTUhSUXVVMU1kYjdoN2ZJZGdoTllBMkRvenZ4aU0?oc=5",
+     "published_utc": "2026-10-10T06:39:00Z",
+     "outlet_id": "reuters",
+     "reporting_origin": "outlet:reuters",
+     "kind": "report"
+    }
+   ]
+  },
+  {
+   "id": "3c42e5318d70",
+   "rank": 15,
+   "top_rank": null,
+   "category": "Science & AI",
+   "headline": "Margaret Hamilton, Computing Pioneer, Dies at 90",
+   "url": null,
+   "summary": [
+    "Margaret Hamilton, the computing pioneer who sent humans to the moon, has died at 90.",
+    "She led the team of software engineers that powered NASA's Apollo missions."
+   ],
+   "why_it_matters": null,
+   "change": "",
+   "labels": [],
+   "newest_published_utc": "2026-10-08T21:38:36Z",
+   "coverage": {
+    "level": "limited",
+    "points": 0,
+    "independent_reports": 1,
+    "publishers": [
+     "NPR"
+    ],
+    "repeats": 0,
+    "source_links": 1,
+    "linked_outlets": 1,
+    "linked_reporting_origins": 1,
+    "signals": 0,
+    "channels": 1
+   },
+   "sources": [
+    {
+     "outlet": "NPR",
      "via": "News feeds",
-     "title": "Trump gives Musk, Huang, Su and Brin the National Medal of Science",
-     "url": "https://thenextweb.com/news/national-medal-of-science-musk-huang-su-brin-nadella-dell",
-     "published_utc": "2026-10-09T19:53:28Z",
-     "outlet_id": "thenextweb",
-     "reporting_origin": "outlet:thenextweb",
+     "title": "Margaret Hamilton, whose software sent humans to the moon, dies at 90",
+     "url": "https://www.npr.org/2026/10/08/nx-s1-5994972/margaret-hamilton-obituary-software-engineer-apollo",
+     "published_utc": "2026-10-08T21:38:36Z",
+     "outlet_id": "npr",
+     "reporting_origin": "outlet:npr",
+     "kind": "report"
+    }
+   ]
+  },
+  {
+   "id": "1958c904bf3e",
+   "rank": 16,
+   "top_rank": null,
+   "category": "Tech",
+   "headline": "FBI Arrests Founder of Ransomware Negotiation Firm",
+   "url": "https://krebsonsecurity.com/2026/10/fbi-arrests-founder-of-ransomware-negotiation-firm/",
+   "summary": [],
+   "why_it_matters": null,
+   "change": "",
+   "labels": [],
+   "newest_published_utc": "2026-10-10T00:17:42Z",
+   "coverage": {
+    "level": "limited",
+    "points": 1,
+    "independent_reports": 1,
+    "publishers": [
+     "Krebs on Security"
+    ],
+    "repeats": 0,
+    "source_links": 1,
+    "linked_outlets": 1,
+    "linked_reporting_origins": 1,
+    "signals": 0,
+    "channels": 1
+   },
+   "sources": [
+    {
+     "outlet": "Krebs on Security",
+     "via": "News feeds",
+     "title": "FBI Arrests Founder of Ransomware Negotiation Firm",
+     "url": "https://krebsonsecurity.com/2026/10/fbi-arrests-founder-of-ransomware-negotiation-firm/",
+     "published_utc": "2026-10-10T00:17:42Z",
+     "outlet_id": "krebsonsecurity",
+     "reporting_origin": "outlet:krebsonsecurity",
      "kind": "report"
     }
    ]
   },
   {
    "id": "24ad60a07e8a",
-   "rank": 20,
+   "rank": 17,
    "top_rank": null,
    "category": "Science & AI",
    "headline": "Ukraine’s drones knock out AI data center belonging to \"Russia’s Google\"",
@@ -2775,7 +2538,7 @@
     "One damaged data center has supercomputers used for training Yandex's AI model."
    ],
    "why_it_matters": null,
-   "change": "new",
+   "change": "",
    "labels": [],
    "newest_published_utc": "2026-10-09T22:04:07Z",
    "coverage": {
@@ -2806,56 +2569,16 @@
    ]
   },
   {
-   "id": "aee80b84e923",
-   "rank": 21,
-   "top_rank": null,
-   "category": "Science & AI",
-   "headline": "OpenAI caught Russians and Iranians using ChatGPT for influence campaigns",
-   "url": "https://www.npr.org/2026/10/08/nx-s1-5995576/openai-russia-iran-influence-operations-chatgpt",
-   "summary": [
-    "The company says Russian operatives used its AI chatbot to update their bosses, shedding light on influence campaigns previously not attributed to Russia."
-   ],
-   "why_it_matters": null,
-   "change": "new",
-   "labels": [],
-   "newest_published_utc": "2026-10-09T00:25:15Z",
-   "coverage": {
-    "level": "limited",
-    "points": 0,
-    "independent_reports": 1,
-    "publishers": [
-     "NPR"
-    ],
-    "repeats": 0,
-    "source_links": 1,
-    "linked_outlets": 1,
-    "linked_reporting_origins": 1,
-    "signals": 0,
-    "channels": 1
-   },
-   "sources": [
-    {
-     "outlet": "NPR",
-     "via": "News feeds",
-     "title": "OpenAI caught Russians and Iranians using ChatGPT for influence campaigns",
-     "url": "https://www.npr.org/2026/10/08/nx-s1-5995576/openai-russia-iran-influence-operations-chatgpt",
-     "published_utc": "2026-10-09T00:25:15Z",
-     "outlet_id": "npr",
-     "reporting_origin": "outlet:npr",
-     "kind": "report"
-    }
-   ]
-  },
-  {
    "id": "c015b4868b83",
-   "rank": 22,
+   "rank": 18,
    "top_rank": null,
    "category": "Science & AI",
    "headline": "NASA Astronauts Splash Down After 100 Million Miles in Space",
    "url": "https://www.sciencedaily.com/releases/2026/10/261008232629.htm",
    "summary": [
     "NASA's SpaceX Crew-12 astronauts have returned to Earth after 237 days in space, traveling over 100 million miles and completing over 3,792 orbits.",
-    "The mission also made progress in preparing for future missions to the Moon and Mars."
+    "The mission aimed to prepare for future missions to the Moon and Mars.",
+    "The mission also made history with record-setting spacewalk achievements and experiments."
    ],
    "why_it_matters": null,
    "change": "",
@@ -2890,7 +2613,7 @@
   },
   {
    "id": "d9cc80e7c371",
-   "rank": 23,
+   "rank": 19,
    "top_rank": null,
    "category": "Science & AI",
    "headline": "Plastic Chemical Affects Human Ovaries",
@@ -2900,7 +2623,7 @@
     "The most common phthalate, DEHP, is widely used in materials, raising concerns about its impact on reproductive health."
    ],
    "why_it_matters": null,
-   "change": "new",
+   "change": "",
    "labels": [],
    "newest_published_utc": "2026-10-10T04:37:18Z",
    "coverage": {
@@ -2931,49 +2654,8 @@
    ]
   },
   {
-   "id": "c2faf82f2cb7",
-   "rank": 24,
-   "top_rank": null,
-   "category": "Science & AI",
-   "headline": "Increased Cancer Risk at Younger Age Raises Concerns",
-   "url": null,
-   "summary": [
-    "A study has found that people are at a higher risk of getting cancer at a younger age than their parents, with the exact cause still unknown."
-   ],
-   "why_it_matters": null,
-   "change": "new",
-   "labels": [],
-   "newest_published_utc": "2026-10-09T07:00:42Z",
-   "coverage": {
-    "level": "limited",
-    "points": 1,
-    "independent_reports": 1,
-    "publishers": [
-     "The Guardian"
-    ],
-    "repeats": 0,
-    "source_links": 1,
-    "linked_outlets": 1,
-    "linked_reporting_origins": 1,
-    "signals": 0,
-    "channels": 1
-   },
-   "sources": [
-    {
-     "outlet": "The Guardian",
-     "via": "News feeds",
-     "title": "You have a higher chance of getting cancer at a younger age than your parents. So what went wrong? | Devi Sridhar",
-     "url": "https://www.theguardian.com/commentisfree/2026/oct/09/rise-cancer-young-people-mystery-early-onset",
-     "published_utc": "2026-10-09T07:00:42Z",
-     "outlet_id": "theguardian",
-     "reporting_origin": "outlet:theguardian",
-     "kind": "report"
-    }
-   ]
-  },
-  {
    "id": "710b3ad8dc31",
-   "rank": 25,
+   "rank": 20,
    "top_rank": null,
    "category": "Science & AI",
    "headline": "OpenAI Revenue Keeps Surging as Company Seeks $30 Billion in Fresh Capital",
@@ -2982,7 +2664,7 @@
     "OpenAI's annualized revenue rate sits at about $50 billion, well below the initially reported $70 billion figure that was based on a different accounting method."
    ],
    "why_it_matters": null,
-   "change": "new",
+   "change": "",
    "labels": [],
    "newest_published_utc": "2026-10-09T17:20:34Z",
    "coverage": {
@@ -3014,7 +2696,7 @@
   },
   {
    "id": "59c57b3e5885",
-   "rank": 26,
+   "rank": 21,
    "top_rank": null,
    "category": "Science & AI",
    "headline": "micro1 Commits $1bn to Buy Company Data for Training AI Agents",
@@ -3023,7 +2705,7 @@
     "Exceptions that require judgment micro1 will spend $1bn in 12 months buying company data to train AI agents, financed by Citi and Hercules."
    ],
    "why_it_matters": null,
-   "change": "new",
+   "change": "",
    "labels": [],
    "newest_published_utc": "2026-10-09T19:34:41Z",
    "coverage": {
@@ -3054,64 +2736,23 @@
    ]
   },
   {
-   "id": "6a550eb9772b",
-   "rank": 27,
+   "id": "737c83af477e",
+   "rank": 22,
    "top_rank": null,
-   "category": "Sports",
-   "headline": "Was Epic Man City-Liverpool Rivalry All a Sham After Cheating Scandal?",
-   "url": "https://www.espn.com/soccer/story/_/id/50126359/was-epic-man-city-liverpool-rivalry-all-sham-cheating-scandal",
-   "summary": [
-    "Under Jurgen Klopp and Pep Guardiola, Liverpool and Man City pushed the Premier League's standards higher than ever."
-   ],
-   "why_it_matters": null,
-   "change": "new",
-   "labels": [],
-   "newest_published_utc": "2026-10-09T23:00:35Z",
-   "coverage": {
-    "level": "limited",
-    "points": 1,
-    "independent_reports": 1,
-    "publishers": [
-     "ESPN"
-    ],
-    "repeats": 0,
-    "source_links": 1,
-    "linked_outlets": 1,
-    "linked_reporting_origins": 1,
-    "signals": 0,
-    "channels": 1
-   },
-   "sources": [
-    {
-     "outlet": "ESPN",
-     "via": "News feeds",
-     "title": "Was epic Man City-Liverpool rivalry all a sham after cheating scandal?",
-     "url": "https://www.espn.com/soccer/story/_/id/50126359/was-epic-man-city-liverpool-rivalry-all-sham-cheating-scandal",
-     "published_utc": "2026-10-09T23:00:35Z",
-     "outlet_id": "espn",
-     "reporting_origin": "outlet:espn",
-     "kind": "report"
-    }
-   ]
-  },
-  {
-   "id": "d5ceadff358c",
-   "rank": 28,
-   "top_rank": null,
-   "category": "Entertainment",
-   "headline": "We Might Be Cooked, As These Vibe-Coded Web Browser Ports Of Halo, The Simpsons: Hit And Run, And GTA: Vice City Seem To Work Perfectly",
-   "url": "https://kotaku.com/we-might-be-cooked-as-these-vibe-coded-web-browser-ports-of-halo-the-simpsons-hit-and-run-and-gta-vice-city-seem-to-work-perfectly-2000743300",
+   "category": "Science & AI",
+   "headline": "This Year's Nobel Science Prizes Are Real-life Sci-fi",
+   "url": null,
    "summary": [],
    "why_it_matters": null,
    "change": "new",
    "labels": [],
-   "newest_published_utc": "2026-10-09T21:45:14Z",
+   "newest_published_utc": "2026-10-08T13:01:51Z",
    "coverage": {
     "level": "limited",
-    "points": 1,
+    "points": 0,
     "independent_reports": 1,
     "publishers": [
-     "Kotaku"
+     "The Economist"
     ],
     "repeats": 0,
     "source_links": 1,
@@ -3122,211 +2763,35 @@
    },
    "sources": [
     {
-     "outlet": "Kotaku",
-     "via": "News feeds",
-     "title": "We Might Be Cooked, As These Vibe-Coded Web Browser Ports Of Halo, The Simpsons: Hit And Run, And GTA: Vice City Seem To Work Perfectly",
-     "url": "https://kotaku.com/we-might-be-cooked-as-these-vibe-coded-web-browser-ports-of-halo-the-simpsons-hit-and-run-and-gta-vice-city-seem-to-work-perfectly-2000743300",
-     "published_utc": "2026-10-09T21:45:14Z",
-     "outlet_id": "kotaku",
-     "reporting_origin": "outlet:kotaku",
-     "kind": "report"
-    }
-   ]
-  },
-  {
-   "id": "fc431a6ee062",
-   "rank": 29,
-   "top_rank": null,
-   "category": "Tech",
-   "headline": "SpaceX to Buy Key Spectrum for Starlink Mobile",
-   "url": "https://www.theregister.com/networks/2026/10/09/spacex-to-buy-key-spectrum-that-could-help-starlink-mobile-become-major-us-cell-carrier/5302393",
-   "summary": [
-    "SpaceX is buying key spectrum to help its Starlink Mobile become a major US cell carrier.",
-    "The spectrum can reach devices inside buildings and extend coverage beyond cell towers."
-   ],
-   "why_it_matters": null,
-   "change": "new",
-   "labels": [],
-   "newest_published_utc": "2026-10-09T15:55:31Z",
-   "coverage": {
-    "level": "limited",
-    "points": 1,
-    "independent_reports": 1,
-    "publishers": [
-     "The Register"
-    ],
-    "repeats": 0,
-    "source_links": 1,
-    "linked_outlets": 1,
-    "linked_reporting_origins": 1,
-    "signals": 0,
-    "channels": 1
-   },
-   "sources": [
-    {
-     "outlet": "The Register",
-     "via": "News feeds",
-     "title": "SpaceX to buy key spectrum that could help Starlink Mobile become major US cell carrier",
-     "url": "https://www.theregister.com/networks/2026/10/09/spacex-to-buy-key-spectrum-that-could-help-starlink-mobile-become-major-us-cell-carrier/5302393",
-     "published_utc": "2026-10-09T15:55:31Z",
-     "outlet_id": "theregister",
-     "reporting_origin": "outlet:theregister",
-     "kind": "report"
-    }
-   ]
-  },
-  {
-   "id": "0c6cbb8df201",
-   "rank": 30,
-   "top_rank": null,
-   "category": "Entertainment",
-   "headline": "Ava DuVernay's Documentary Takes Aim at Trump and Rights Rescission",
-   "url": "https://deadline.com/2026/10/14th-review-ava-duvernay-documentary-1237153748/",
-   "summary": [
-    "Ava DuVernay's documentary '14th' defends the Constitution and takes aim at Trump's attempts to rescind rights.",
-    "The film premiered and has received positive reviews for its impassioned defense of the Constitution."
-   ],
-   "why_it_matters": null,
-   "change": "new",
-   "labels": [],
-   "newest_published_utc": "2026-10-10T01:00:00Z",
-   "coverage": {
-    "level": "limited",
-    "points": 1,
-    "independent_reports": 1,
-    "publishers": [
-     "Deadline"
-    ],
-    "repeats": 0,
-    "source_links": 1,
-    "linked_outlets": 1,
-    "linked_reporting_origins": 1,
-    "signals": 0,
-    "channels": 1
-   },
-   "sources": [
-    {
-     "outlet": "Deadline",
-     "via": "News feeds",
-     "title": "‘14th’ Review: Ava DuVernay’s Impassioned Defense Of Constitution Takes Aim At Trump & Attempted Rescission Of Rights",
-     "url": "https://deadline.com/2026/10/14th-review-ava-duvernay-documentary-1237153748/",
-     "published_utc": "2026-10-10T01:00:00Z",
-     "outlet_id": "deadline",
-     "reporting_origin": "outlet:deadline",
-     "kind": "report"
-    }
-   ]
-  },
-  {
-   "id": "453ffd54718a",
-   "rank": 31,
-   "top_rank": null,
-   "category": "Tech",
-   "headline": "Decade-old RAM is making a comeback",
-   "url": "https://www.theverge.com/games/1009140/ram-shortage-intel-amd-ddr4-comeback",
-   "summary": [
-    "Intel and AMD are making new CPUs that'll support the older, more affordable type of memory."
-   ],
-   "why_it_matters": null,
-   "change": "new",
-   "labels": [],
-   "newest_published_utc": "2026-10-09T21:50:00Z",
-   "coverage": {
-    "level": "limited",
-    "points": 2,
-    "independent_reports": 1,
-    "publishers": [
-     "The Verge"
-    ],
-    "repeats": 1,
-    "source_links": 2,
-    "linked_outlets": 1,
-    "linked_reporting_origins": 1,
-    "signals": 0,
-    "channels": 2
-   },
-   "sources": [
-    {
-     "outlet": "The Verge",
-     "via": "News feeds",
-     "title": "Decade-old RAM is making a comeback",
-     "url": "https://www.theverge.com/games/1009140/ram-shortage-intel-amd-ddr4-comeback",
-     "published_utc": "2026-10-09T21:50:00Z",
-     "outlet_id": "theverge",
-     "reporting_origin": "outlet:theverge",
-     "kind": "report"
-    },
-    {
-     "outlet": "The Verge",
+     "outlet": "The Economist",
      "via": "Google News",
-     "title": "Decade-old RAM is making a comeback",
-     "url": "https://news.google.com/rss/articles/CBMigAFBVV95cUxOeFFkUUptazZrRjJraXpoVS0wOWZhZFNuWHpzOXpoNU85TURYTU8taGdLdWFkNDliODRmVWZNZjEtUkRNdmdFQTJsQnpYZEd0RWViZldPTmpVa29RekpRRUo3bUFMMlVwakh5TDhHakFWNzBMdENpWlA0anBwdDJHYQ?oc=5",
-     "published_utc": "2026-10-09T21:50:00Z",
-     "outlet_id": "theverge",
-     "reporting_origin": "outlet:theverge",
-     "kind": "repeat"
-    }
-   ]
-  },
-  {
-   "id": "9531b30b80fc",
-   "rank": 32,
-   "top_rank": null,
-   "category": "Tech",
-   "headline": "Google teases its new 'Fitbit Edge' wearable ahead of an October 12 reveal",
-   "url": "https://www.engadget.com/2282887/google-teases-its-new-fitbit-edge-wearable-ahead-of-an-october-12-reveal/",
-   "summary": [
-    "Google has seemingly confirmed the rumored \"Fitbit Edge\" with social media posts teasing a new wearable coming October 12."
-   ],
-   "why_it_matters": null,
-   "change": "new",
-   "labels": [],
-   "newest_published_utc": "2026-10-09T22:28:43Z",
-   "coverage": {
-    "level": "limited",
-    "points": 1,
-    "independent_reports": 1,
-    "publishers": [
-     "Engadget"
-    ],
-    "repeats": 0,
-    "source_links": 1,
-    "linked_outlets": 1,
-    "linked_reporting_origins": 1,
-    "signals": 0,
-    "channels": 1
-   },
-   "sources": [
-    {
-     "outlet": "Engadget",
-     "via": "News feeds",
-     "title": "Google teases its new 'Fitbit Edge' wearable ahead of an October 12 reveal",
-     "url": "https://www.engadget.com/2282887/google-teases-its-new-fitbit-edge-wearable-ahead-of-an-october-12-reveal/",
-     "published_utc": "2026-10-09T22:28:43Z",
-     "outlet_id": "engadget",
-     "reporting_origin": "outlet:engadget",
+     "title": "This year’s Nobel science prizes are real-life sci-fi",
+     "url": "https://news.google.com/rss/articles/CBMisgFBVV95cUxPM2ljS1ZwOHA5TDNXS3VwQUpnbU5WaW9TdlJpVE0yc044eVJSNkw3RXFKdzdKWTZyMFVaQkxRMnhLMDBzZ2Mwc1hKNXVuUzlJeEVuTklVeXJXWmtOTXpOM0VVRVVfaUM5RkdGa2c0UGtkejlteHZmUUhCVWg4T2xYTERBT3BXd0tleGJROXRTLU4zZmMtVW9mQ1FjeWszbkF2QUxkUkZ0MHJlSWs3UEk0Rktn?oc=5",
+     "published_utc": "2026-10-08T13:01:51Z",
+     "outlet_id": "theeconomist",
+     "reporting_origin": "outlet:theeconomist",
      "kind": "report"
     }
    ]
   },
   {
-   "id": "b61306682d35",
-   "rank": 33,
+   "id": "dec59a43ca0b",
+   "rank": 23,
    "top_rank": null,
-   "category": "Tech",
-   "headline": "Gigabyte's latest BIOS update hints at Intel's Raptor Lake Next Launch in 2027",
-   "url": "https://www.tomshardware.com/pc-components/cpus/gigabytes-latest-bios-update-hints-at-intels-raptor-lake-next-launch-in-2027-new-cpus-may-support-both-ddr4-and-ddr5-memory",
+   "category": "Science & AI",
+   "headline": "Gavin Newsom's Executive Order Increases AI Oversight, Proposes 'Kill Switch'",
+   "url": null,
    "summary": [],
    "why_it_matters": null,
    "change": "new",
    "labels": [],
-   "newest_published_utc": "2026-10-09T13:43:01Z",
+   "newest_published_utc": "2026-10-10T06:53:00Z",
    "coverage": {
     "level": "limited",
     "points": 1,
     "independent_reports": 1,
     "publishers": [
-     "Tom's Hardware"
+     "Daily Bruin"
     ],
     "repeats": 0,
     "source_links": 1,
@@ -3337,75 +2802,34 @@
    },
    "sources": [
     {
-     "outlet": "Tom's Hardware",
-     "via": "News feeds",
-     "title": "Gigabyte's latest BIOS update hints at Intel's Raptor Lake Next Launch in 2027",
-     "url": "https://www.tomshardware.com/pc-components/cpus/gigabytes-latest-bios-update-hints-at-intels-raptor-lake-next-launch-in-2027-new-cpus-may-support-both-ddr4-and-ddr5-memory",
-     "published_utc": "2026-10-09T13:43:01Z",
-     "outlet_id": "tomshardware",
-     "reporting_origin": "outlet:tomshardware",
+     "outlet": "Daily Bruin",
+     "via": "Google News",
+     "title": "Gavin Newsom’s executive order increases AI oversight, proposes ‘kill switch’",
+     "url": "https://news.google.com/rss/articles/CBMirAFBVV95cUxOa0JlX2QzVlppXzRGQkJjLU11V3BXUTZ5RWNyR2NxdC1mUGRlVXoweVdxLTZIa1Z0aHJsUnRHSVhnaHRGLTRkSWdfNFlkLW1YRzZTRnZCczFkYUthY0hib05Rc0xNcERYOHVsOEpTdGFleU1kdXRkVmJQU3ZWeWN1UTBJREl3ZDRpNE8zZnlHaXotcnJvaS1jQktfMlQ0cHVvWldUMTBSVGlVblZO?oc=5",
+     "published_utc": "2026-10-10T06:53:00Z",
+     "outlet_id": "dailybruin",
+     "reporting_origin": "outlet:dailybruin",
      "kind": "report"
     }
    ]
   },
   {
-   "id": "180b8f1da20f",
-   "rank": 34,
+   "id": "87cb3fcba333",
+   "rank": 24,
    "top_rank": null,
-   "category": "Tech",
-   "headline": "Survey suggests that the iPhone Duo is tempting a surprising number of Android fans",
-   "url": "https://www.androidauthority.com/ditch-android-for-the-iphone-duo-poll-results-3721582/",
+   "category": "Science & AI",
+   "headline": "Astronomers Detect Mysterious Burst of Energy from a Galaxy Far, Far Away",
+   "url": "https://www.theguardian.com/science/2026/oct/09/astronomy-fast-radio-bursts-frb-radio-waves",
    "summary": [
-    "Not quite an Android exodus, but encouraging reading for Apple."
+    "A long time ago in a galaxy far, far away, a mysterious flash of energy was released into the universe."
    ],
    "why_it_matters": null,
    "change": "new",
    "labels": [],
-   "newest_published_utc": "2026-10-09T22:29:05Z",
+   "newest_published_utc": "2026-10-08T18:00:25Z",
    "coverage": {
     "level": "limited",
-    "points": 1,
-    "independent_reports": 1,
-    "publishers": [
-     "Android Authority"
-    ],
-    "repeats": 0,
-    "source_links": 1,
-    "linked_outlets": 1,
-    "linked_reporting_origins": 1,
-    "signals": 0,
-    "channels": 1
-   },
-   "sources": [
-    {
-     "outlet": "Android Authority",
-     "via": "News feeds",
-     "title": "Survey suggests that the iPhone Duo is tempting a surprising number of Android fans",
-     "url": "https://www.androidauthority.com/ditch-android-for-the-iphone-duo-poll-results-3721582/",
-     "published_utc": "2026-10-09T22:29:05Z",
-     "outlet_id": "androidauthority",
-     "reporting_origin": "outlet:androidauthority",
-     "kind": "report"
-    }
-   ]
-  },
-  {
-   "id": "ec4f709bd72f",
-   "rank": 35,
-   "top_rank": null,
-   "category": "Tech",
-   "headline": "‘This is not an anti-tech town’: backlash to datacenter in city once home to IBM",
-   "url": "https://www.theguardian.com/us-news/2026/oct/09/datacenter-backlash-ibm-east-fishkill-new-york",
-   "summary": [
-    "For decades, East Fishkill helped build New York's tech industry."
-   ],
-   "why_it_matters": null,
-   "change": "new",
-   "labels": [],
-   "newest_published_utc": "2026-10-09T13:00:28Z",
-   "coverage": {
-    "level": "limited",
-    "points": 1,
+    "points": 0,
     "independent_reports": 1,
     "publishers": [
      "The Guardian"
@@ -3421,11 +2845,52 @@
     {
      "outlet": "The Guardian",
      "via": "News feeds",
-     "title": "‘This is not an anti-tech town’: backlash to datacenter in city once home to IBM",
-     "url": "https://www.theguardian.com/us-news/2026/oct/09/datacenter-backlash-ibm-east-fishkill-new-york",
-     "published_utc": "2026-10-09T13:00:28Z",
+     "title": "Astronomers detect mysterious burst of energy from a galaxy far, far away",
+     "url": "https://www.theguardian.com/science/2026/oct/09/astronomy-fast-radio-bursts-frb-radio-waves",
+     "published_utc": "2026-10-08T18:00:25Z",
      "outlet_id": "theguardian",
      "reporting_origin": "outlet:theguardian",
+     "kind": "report"
+    }
+   ]
+  },
+  {
+   "id": "e60c4ca505ec",
+   "rank": 25,
+   "top_rank": null,
+   "category": "News",
+   "headline": "India Announces Emergency Steps to Support Plunging Currency",
+   "url": "https://www.bloomberg.com/news/articles/2026-10-10/rbi-announces-special-oil-window-regulatory-steps-for-rupee",
+   "summary": [
+    "India's central bank rolled out a series of measures to support the sliding rupee in its strongest action since the country's currency crisis in 2013."
+   ],
+   "why_it_matters": null,
+   "change": "",
+   "labels": [],
+   "newest_published_utc": "2026-10-10T03:14:34Z",
+   "coverage": {
+    "level": "limited",
+    "points": 1,
+    "independent_reports": 1,
+    "publishers": [
+     "Bloomberg"
+    ],
+    "repeats": 0,
+    "source_links": 1,
+    "linked_outlets": 1,
+    "linked_reporting_origins": 1,
+    "signals": 0,
+    "channels": 1
+   },
+   "sources": [
+    {
+     "outlet": "Bloomberg",
+     "via": "News feeds",
+     "title": "India Announces Emergency Steps to Support Plunging Currency",
+     "url": "https://www.bloomberg.com/news/articles/2026-10-10/rbi-announces-special-oil-window-regulatory-steps-for-rupee",
+     "published_utc": "2026-10-10T03:14:34Z",
+     "outlet_id": "bloomberg",
+     "reporting_origin": "outlet:bloomberg",
      "kind": "report"
     }
    ]
@@ -3433,135 +2898,98 @@
  ],
  "changes": {
   "compared_with": {
-   "edition_date": "2026-10-09",
-   "revision": 2
+   "edition_date": "2026-10-10",
+   "revision": 1
   },
   "new": [
-   "b2eb5ece951e",
-   "9117b37465dd",
-   "fd52d2c4d318",
-   "9bccd0d85994",
-   "8ebf7a92f83c",
-   "e0dec9445903",
-   "0194fd6c99fe",
-   "c9ba0cdc29e5",
-   "9fe13919cc51",
-   "972065f00428",
-   "4cf2663c7104",
-   "6b8667309135",
-   "4053fef9ec35",
-   "7551f9ba30b1",
-   "13f4d7a18d0c",
-   "24ad60a07e8a",
-   "aee80b84e923",
-   "d9cc80e7c371",
-   "c2faf82f2cb7",
-   "710b3ad8dc31",
-   "59c57b3e5885",
-   "6a550eb9772b",
-   "d5ceadff358c",
-   "fc431a6ee062",
-   "0c6cbb8df201",
-   "453ffd54718a",
-   "9531b30b80fc",
-   "b61306682d35",
-   "180b8f1da20f",
-   "ec4f709bd72f"
+   "a5b9a45e15ca",
+   "b1af75fba07c",
+   "bcaabb1701b8",
+   "aca6e5866730",
+   "737c83af477e",
+   "dec59a43ca0b",
+   "87cb3fcba333"
   ],
   "updated": [
-   "fd983421fa72",
-   "b1143fcd0f64",
-   "68b351363485",
-   "dbaffc991fc1"
+   "c5bf09b1dcc5",
+   "b65ff203d4ba",
+   "611f390ce53b",
+   "c58e186aae7d",
+   "0fcc4e77e611"
   ],
-  "fading": [],
+  "fading": [
+   "c5bf09b1dcc5",
+   "a9cf352cf5a9",
+   "611f390ce53b",
+   "3c42e5318d70"
+  ],
   "dropped": [
    {
-    "headline": "Firing Squad Execution to Be Livestreamed, Pentagon Says",
+    "headline": "3 Men Found Guilty in Murders of American, Australian Surfers in Mexico",
     "category": "News"
    },
    {
-    "headline": "Guardians erupt in sixth inning to stun White Sox in Game 4 of ALDS, force deciding Game 5",
+    "headline": "Anthropic AI Model Went Rogue, Submitted Fake Unsolved Murder Tip",
+    "category": "News"
+   },
+   {
+    "headline": "NYC man shot by ICE still has bullet in body, lawyers say",
+    "category": "News"
+   },
+   {
+    "headline": "The Real Threat Involving Artificial Intelligence Isn't What You Think",
+    "category": "Science & AI"
+   },
+   {
+    "headline": "What Will It Take to Build a Moon Base?",
+    "category": "Science & AI"
+   },
+   {
+    "headline": "Trump Gives Musk, Huang, Su and Brin the National Medal of Science",
+    "category": "Tech"
+   },
+   {
+    "headline": "OpenAI caught Russians and Iranians using ChatGPT for influence campaigns",
+    "category": "Science & AI"
+   },
+   {
+    "headline": "Increased Cancer Risk at Younger Age Raises Concerns",
+    "category": "Science & AI"
+   },
+   {
+    "headline": "Was Epic Man City-Liverpool Rivalry All a Sham After Cheating Scandal?",
     "category": "Sports"
    },
    {
-    "headline": "Between record debt and high school protests, France's situation draws global attention",
-    "category": "News"
-   },
-   {
-    "headline": "US midterms: key takeaways from Senate debates in Michigan, Georgia and Maine",
-    "category": "News"
-   },
-   {
-    "headline": "Houthi Strikes on Riyadh Airport Killed Three Saudis",
-    "category": "News"
-   },
-   {
-    "headline": "Trump Says U.S. Won't Attack Iran Before Midterms",
-    "category": "News"
-   },
-   {
-    "headline": "LeBron still adjusting but logs strong start in 1st game with 76ers",
-    "category": "Sports"
-   },
-   {
-    "headline": "Princeton Celebrates Anne Carson, a Nobel Prize Winner Who Was Denied Tenure",
+    "headline": "We Might Be Cooked, As These Vibe-Coded Web Browser Ports Of Halo, The Simpsons: Hit And Run, And GTA: Vice City Seem To Work Perfectly",
     "category": "Entertainment"
    },
    {
-    "headline": "Trump administration is suspending Microsoft from a green card program",
+    "headline": "SpaceX to Buy Key Spectrum for Starlink Mobile",
     "category": "Tech"
    },
    {
-    "headline": "What to Expect at Apple's 'Welcome Home' Event Next Week",
+    "headline": "Ava DuVernay's Documentary Takes Aim at Trump and Rights Rescission",
+    "category": "Entertainment"
+   },
+   {
+    "headline": "Decade-old RAM is making a comeback",
     "category": "Tech"
    },
    {
-    "headline": "Meta Bans TikTok Ads on Its Platforms in US",
-    "category": "Internet Culture"
-   },
-   {
-    "headline": "Before Computer Science Became a Boys' Club, Margaret Hamilton Wrote the Code",
+    "headline": "Google teases its new 'Fitbit Edge' wearable ahead of an October 12 reveal",
     "category": "Tech"
    },
    {
-    "headline": "Global analysis reveals how armed conflict erodes farmland and potential food production",
-    "category": "Science & AI"
-   },
-   {
-    "headline": "Aces' Wilson wins 5th MVP, says she'll nix pregame ceremony to focus on Game 3",
-    "category": "Sports"
-   },
-   {
-    "headline": "Trump Envoy Kept Financial Ties to Firm Behind $15 Billion Hormuz-bypass Oil Pipeline Plan",
-    "category": "News"
-   },
-   {
-    "headline": "Trauma Endures in Paris Suburb After Police Grenade Shatters Teenager's Jaw",
-    "category": "News"
-   },
-   {
-    "headline": "Fury-Joshua Tickets Priced up to GBP 13,000 Sell Out in One Hour",
-    "category": "Sports"
-   },
-   {
-    "headline": "As AI Closed In on ‘Unique Games’ Proof, Researchers Raced to Beat the Machines",
-    "category": "Science & AI"
-   },
-   {
-    "headline": "ShinyHunters Extorted Boeing Spin-off Prior to Arrests",
+    "headline": "Gigabyte's latest BIOS update hints at Intel's Raptor Lake Next Launch in 2027",
     "category": "Tech"
    },
    {
-    "headline": "OpenAI projected to bring in $20bn less in revenue than expected",
-    "category": "Science & AI"
+    "headline": "Survey suggests that the iPhone Duo is tempting a surprising number of Android fans",
+    "category": "Tech"
    },
    {
-    "headline": "Anthropic's Claude Science creates the first complete ultraviolet map of the sky",
-    "category": "Science & AI"
-   },
-   {
-    "headline": "The people holding up the internet",
+    "headline": "‘This is not an anti-tech town’: backlash to datacenter in city once home to IBM",
     "category": "Tech"
    }
   ]

@@ -5,21 +5,21 @@
  "editions": [
   {
    "date": "2026-10-10",
-   "revision": 1,
-   "generated_utc": "2026-10-10T06:12:19Z",
-   "stories": 35,
-   "lead": "Hurricane Isaias updates: Storm makes landfall in Florida Panhandle",
+   "revision": 2,
+   "generated_utc": "2026-10-10T08:42:15Z",
+   "stories": 25,
+   "lead": "Hurricane Isaias Makes Landfall in Florida",
    "headlines": [
-    "Trump announces deal for Russian diesel as Zelensky calls it a gift to Putin",
     "Nobel Peace Prize Awarded to Navanethem Pillay",
-    "JD Vance says he won't watch livestream execution of Fort Hood shooter"
+    "Iran's Houthi Allies Step up Deadly Attacks on Saudi Arabia",
+    "Trump announces deal for Russian diesel as Zelensky calls it a gift to Putin"
    ],
    "sections": {
-    "News": 10,
-    "Tech": 8,
-    "Science & AI": 10,
+    "News": 9,
+    "Tech": 2,
+    "Science & AI": 9,
     "Sports": 3,
-    "Entertainment": 3,
+    "Entertainment": 1,
     "Internet Culture": 1
    }
   },
