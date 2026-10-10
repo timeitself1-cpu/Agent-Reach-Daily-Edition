@@ -68,3 +68,19 @@ and the clean stories that were flagged.
 2. Tune on the smoke file only. Do not edit checks to improve the validation numbers; grow the validation
    sample instead.
 3. Prefer a deterministic `failure` only when the property is true or false without editorial judgment.
+
+## Automated Operational Protocol (Continuous Editorial Monitoring)
+
+When new editions are published, `.github/workflows/editorial-quality.yml` runs automatically on pushes to `website/editions/**`. Operational monitoring agents (e.g., Meta Muse on 30-minute heartbeats) and reviewers follow this workflow:
+
+1. **Verify Workflow Run**: Confirm that the `editorial-quality` CI workflow completed on the publish commit.
+2. **Delta Analysis**: Read the job summary and compare new findings against previous editions to identify regressions.
+3. **Deduplication**: Filter out known legacy-era items and previously reviewed warnings.
+4. **Escalate Structural Failures**: Escalate confirmed data failures (`empty_summary`, `signal_only_no_report`, `duplicate_source_url`) as immediate P0/P1 defects.
+5. **Surface High-Impact Warnings**: Identify editorial warnings requiring human review (`two_topics_review`, `similar_story_review`, major summary tautologies).
+6. **Concise Tracking**: Create a single, concise GitHub issue for unowned, confirmed defects instead of repeating alerts.
+7. **Sonnet Handoff**: Assign difficult editorial-quality investigations to Claude Sonnet using the `AGENT HANDOFF` format defined in `AGENTS.md`.
+8. **Asynchronous Discipline**: Do not assume GitHub comments immediately activate Sonnet; handoffs are picked up via configured runs.
+9. **Holdout Privacy**: Never post or commit hidden holdout evaluation labels to public GitHub threads or commits.
+10. **Non-Blocking Rule**: Never block daily publishing or deployments based on unverified heuristic warnings.
+
