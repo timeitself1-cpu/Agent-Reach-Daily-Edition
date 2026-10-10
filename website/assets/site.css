@@ -107,7 +107,10 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer;paddin
 .ticker .live::before{margin-right:8px}
 .ticker .warn b{color:var(--upd)}
 .ticker + .edition-toggle{flex:none}
-.edition-toggle{display:flex;flex:1 1 auto;align-items:center;justify-content:space-between;gap:12px;min-height:44px;text-align:left;color:var(--ink2);font-size:13px}
+/* The Details button needs JS (site.js wires it); without scripting the <details> fallback
+   below it is the working control, so keep the dead button hidden until the js flag is set. */
+.edition-toggle{display:none}
+html.js .edition-toggle{display:flex;flex:1 1 auto;align-items:center;justify-content:space-between;gap:12px;min-height:44px;text-align:left;color:var(--ink2);font-size:13px}
 .with-crumbs .edition-toggle{flex:0 1 auto;margin-left:auto;justify-content:flex-end;color:var(--muted)}
 .strip.with-crumbs{padding:6px 0}
 .edition-toggle-label{color:var(--accent2);text-decoration:underline;text-underline-offset:3px;flex:none}
@@ -309,7 +312,9 @@ details.src small{color:var(--faint);font-size:12px}
 .footer a:hover{color:var(--ink)}
 .footer p{margin:0 0 10px;max-width:52ch}
 .foot-base{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px 18px;border-top:1px solid var(--line);margin-top:34px;padding-top:20px;font-size:13px;color:var(--faint)}
-.theme-control{display:inline-flex;align-items:center;gap:6px;color:var(--muted);white-space:nowrap}
+/* Theme/Times segmented controls are wired by site.js; hide the dead copies without scripting. */
+.theme-control{display:none}
+html.js .theme-control{display:inline-flex;align-items:center;gap:6px;color:var(--muted);white-space:nowrap}
 .theme-control > span{margin-right:4px;white-space:nowrap}
 .theme-control .seg{min-height:44px;padding:6px 12px;white-space:nowrap}
 
