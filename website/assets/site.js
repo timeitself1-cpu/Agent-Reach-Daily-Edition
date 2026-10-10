@@ -670,20 +670,6 @@ if (typeof module !== 'undefined') module.exports = {normOutlet, dedupeOutlets, 
       out.push(h('p', {class: 'notice', text: `This is the most recent edition (${shortDate(ed.edition_date)}). A new one appears here after the next daily run.`}));
     return out;
   }
-  function lead(ed, s) {
-    return h('article', {class: 'lead', id: 'story-' + s.id, 'data-cat': s.category},
-      h('span', {class: 'rank-label', text: 'Top story'}), kicker(s),
-      headline(ed, s, 'h1'),
-      dek(s),
-      s.why_it_matters ? h('p', {class: 'why'}, h('b', {text: 'Why it matters: '}), s.why_it_matters) : null,
-      meta(s, {ed, names: 3}));
-  }
-  function rail(ed, stories) {
-    return h('section', {class: 'rail', 'aria-labelledby': 'rail-title'}, h('h2', {class: 'rail-title', id: 'rail-title'}, h('span', {text: 'Top stories'})),
-      stories.map((s, i) => h('article', {class: 'rail-item', id: 'story-' + s.id, 'data-cat': s.category}, h('span', {class: 'rail-num', 'aria-hidden': 'true', text: String(i + 2)}),
-        kicker(s), headline(ed, s, 'h3'),
-        dek(s), meta(s, {ed}))));
-  }
   const BAND_STORIES = 5;
   function sectionBand(ed, cat, stories, title, complete = false) {
     const sec = SECTION[cat] || {};
@@ -746,7 +732,8 @@ if (typeof module !== 'undefined') module.exports = {normOutlet, dedupeOutlets, 
       const rank = i + 1;
       // #1 is the cover story: a one-line pointer to the hero, not a repeat.
       if (rank === 1) {
-        return h('a', {class: 't10-row is-cover t10-pointer', href: '#cover', id: 'story-' + s.id, 'data-cat': s.category,
+        return h('a', {class: 't10-row is-cover t10-pointer', href: '#cover', 'data-cat': s.category,
+            // No story id here: the cover article above already carries id="story-<id>", and ids must be unique.
             'aria-label': `Rank 1 of 10 is the cover story featured above: ${s.headline}`},
           h('span', {class: 't10-rank', 'aria-hidden': 'true', text: '1'}),
           h('div', {class: 't10-body'},
