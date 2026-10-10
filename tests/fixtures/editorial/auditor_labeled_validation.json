@@ -2,6 +2,10 @@
  "name": "validation (separate sample)",
  "status": "auditor-labeled by the Sonnet editorial auditor on 2026-10-10; NOT independently reviewed. Labels were written from the stored story text BEFORE the checks were run on this sample, and the checks were not changed afterwards. Caveat: the same auditor had earlier run exploratory scans over these editions, so this is not a blind holdout. Needs independent review.",
  "basis": "Stored headline, summary, source titles and metadata only; the cited articles were not opened. Editions 2026-10-07 and 2026-10-08 only; none of these stories appear in the smoke file.",
+ "edition_revisions": {
+  "2026-10-07": 2,
+  "2026-10-08": 8
+ },
  "items": [
   {
    "edition": "2026-10-08",

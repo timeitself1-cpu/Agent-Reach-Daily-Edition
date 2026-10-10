@@ -1,0 +1,39 @@
+name: editorial-quality
+
+# Non-blocking editorial quality REPORT over the published editions (docs/EDITORIAL-QUALITY.md).
+# It never fails the build: continue-on-error is set and the script exits 0 by default.
+
+on:
+  push:
+    paths:
+      - 'website/editions/**'
+      - 'scripts/edition_quality.py'
+      - 'tests/fixtures/editorial/**'
+      - '.github/workflows/editorial-quality.yml'
+  pull_request:
+    paths:
+      - 'website/editions/**'
+      - 'scripts/edition_quality.py'
+      - 'tests/fixtures/editorial/**'
+      - '.github/workflows/editorial-quality.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  report:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      - name: Editorial quality report (non-blocking)
+        env:
+          PYTHONIOENCODING: utf-8
+        run: python scripts/edition_quality.py --evaluate --markdown >> "$GITHUB_STEP_SUMMARY"

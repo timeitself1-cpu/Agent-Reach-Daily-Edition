@@ -213,7 +213,7 @@ def _hits(findings: list[dict], edition: str, story: str | None):
             (f["story"] in keys or (story and story in str(f["story"]).replace(">", "|").split("|")))]
 
 
-def evaluate(findings: list[dict], labels: dict) -> dict:
+def evaluate(findings: list[dict], labels: dict, eds: dict | None = None) -> dict:
     """Story-level precision/recall for one labeled sample.
 
     A defect counts as detected only when one of its ``expected_checks`` fired on that story;
@@ -221,8 +221,12 @@ def evaluate(findings: list[dict], labels: dict) -> dict:
     count against overall recall. Precision = detected defects / (detected defects + clean
     stories that received any failure or warning). Info findings are never predictions.
     """
-    detected, missed, no_check, fp, tn = [], [], [], [], []
+    detected, missed, no_check, fp, tn, stale = [], [], [], [], [], []
+    pinned = labels.get("edition_revisions") or {}
     for it in labels["items"]:
+        if eds is not None and it["edition"] in pinned and (eds.get(it["edition"]) or {}).get("revision") != pinned[it["edition"]]:
+            stale.append(f"{it['edition']} {it['story']}")  # edition republished since labeling
+            continue
         fl = [f for f in _hits(findings, it["edition"], it.get("story")) if f["tier"] != INFO]
         fired = {f["check"] for f in fl}
         if it["label"] == "defect":
@@ -252,6 +256,7 @@ def evaluate(findings: list[dict], labels: dict) -> dict:
         "precision": round(len(detected) / flagged, 2) if flagged else None,
         "clean_stories_flagged": [{"story": f"{i['edition']} {i['story']}", "note": i["note"], "fired": c} for i, c in fp],
         "false_positive_rate_on_clean": round(len(fp) / (len(fp) + len(tn)), 2) if (fp or tn) else None,
+        "stale_labels_excluded": stale,
     }
 
 def summarize(findings: list[dict]) -> dict:
@@ -293,7 +298,7 @@ def main() -> int:
     if a.evaluate:
         for p in (a.smoke, a.validation):
             if Path(p).exists():
-                evals.append(evaluate(findings, json.loads(Path(p).read_text(encoding="utf-8"))))
+                evals.append(evaluate(findings, json.loads(Path(p).read_text(encoding="utf-8")), eds))
     if a.json:
         print(json.dumps({"summary": summarize(findings), "evaluations": evals, "findings": findings}, indent=1, ensure_ascii=False))
     elif a.markdown:
