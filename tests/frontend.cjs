@@ -230,7 +230,7 @@ test('unavailable clipboard exposes a selected link; cancelled sharing keeps rea
 test('dated edition request starts before the archive index finishes', async () => {
   let release; const deferred = new Promise(r => release = r);
   const p = await open('/daily/2026-10-07/', {fetch: u => u === '/editions/index.json' ? deferred : undefined});
-  assert.deepEqual(p.requests.slice().sort(), ['/editions/2026-10-07.json', '/editions/index.json']);
+  assert.deepEqual(p.requests.slice().sort(), ['/editions/2026-10-07.json', '/editions/index.json', '/editions/sections.json']);
   assert.ok(p.d.querySelector('main[aria-busy="true"]'));
   release(index); await settle();
   assert.equal(p.d.querySelector('h1').textContent, edition.stories[0].headline);

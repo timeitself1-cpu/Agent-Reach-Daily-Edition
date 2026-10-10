@@ -188,10 +188,41 @@ if (typeof module !== 'undefined') module.exports = {normOutlet, dedupeOutlets, 
     'Entertainment': {label: 'Entertainment', path: '/entertainment/', title: 'Entertainment', blurb: 'Film, television, music, games and the people who make them.'},
     'Internet Culture': {label: 'Internet Culture', path: '/internet-culture/', title: 'Internet Culture', blurb: 'What people are talking about online: platforms, creators and viral moments.'},
   };
-  const CURRENT_SECTIONS = Object.keys(SECTION).filter(c => !SECTION[c].retired);
-  const NAV = [['Today', '/', 'home'], ['Latest', '/latest/', 'latest'],
+  // The ONE taxonomy is sections.json (published by the app as /editions/sections.json); the table above is only the
+  // fallback when that file cannot be read, and a test keeps the two identical.
+  let CURRENT_SECTIONS, NAV;
+  function buildNav() {
+    CURRENT_SECTIONS = Object.keys(SECTION).filter(c => !SECTION[c].retired);
+    NAV = [['Today', '/', 'home'], ['Latest', '/latest/', 'latest'],
     ...CURRENT_SECTIONS.map(c => [SECTION[c].label, SECTION[c].path, c]),
     ['Archive', '/archive/', 'archive'], ['About', '/about/', 'about'], ['How it works', '/about/#method', 'method']];
+  }
+  buildNav();
+  function applySections(doc) {
+    if (!doc || !Array.isArray(doc.sections)) return;
+    const next = {};
+    for (const s of doc.sections) if (s && typeof s.id === 'string' && typeof s.label === 'string') next[s.id] = {label: s.label, path: s.path, title: s.title || s.label, blurb: s.blurb || '', retired: s.retired};
+    if (!Object.keys(next).length) return;
+    for (const k of Object.keys(SECTION)) delete SECTION[k];
+    Object.assign(SECTION, next);
+    buildNav();
+  }
+  // The static build embeds the taxonomy next to the edition, so the prerender needs no request.
+  function embeddedSections() {
+    try {
+      const el = document.getElementById('edition-data');
+      const doc = el && JSON.parse(el.textContent).sections;
+      if (doc) { applySections(doc); return true; }
+    } catch (_) { /* fall through to the file */ }
+    return false;
+  }
+  async function loadSections() {
+    try {
+      const ctl = typeof AbortController === 'function' ? new AbortController() : null;
+      const timer = ctl && setTimeout(() => ctl.abort(), 3000);
+      try { const r = await fetch('/editions/sections.json', {signal: ctl ? ctl.signal : undefined}); if (r.ok) applySections(await r.json()); } finally { if (timer) clearTimeout(timer); }
+    } catch (_) { /* the built-in table stays */ }
+  }
   const body = document.body;
   const page = body.dataset.page || 'home';
 
@@ -219,8 +250,42 @@ if (typeof module !== 'undefined') module.exports = {normOutlet, dedupeOutlets, 
   const dayOf = d => new Date(d + 'T12:00:00Z');
   const longDate = d => dayOf(d).toLocaleDateString('en-US', {weekday: 'long', month: 'long', day: 'numeric', year: 'numeric', timeZone: 'UTC'});
   const shortDate = d => dayOf(d).toLocaleDateString('en-US', {month: 'short', day: 'numeric', year: 'numeric', timeZone: 'UTC'});
-  const stamp = iso => new Date(iso).toLocaleString('en-US', {year: new Date(iso).getFullYear() !== new Date(Date.now()).getFullYear() ? 'numeric' : undefined, month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit', timeZoneName: 'short'});
-  const fullStamp = iso => new Date(iso).toLocaleString('en-US', {year: 'numeric', month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit', timeZoneName: 'short'});
+  // ---- One timestamp policy (Phase 5): the reader's own time zone through Intl.DateTimeFormat, or UTC when the reader
+  // chose it (remembered in localStorage; the page works when storage is blocked). Times shown here are source
+  // publication times and the edition's generation time, never a retrieval time. RSS stays UTC; the app's
+  // standalone export is labelled America/Chicago.
+  let tzMode = 'local';
+  try { if (localStorage.getItem('tz') === 'utc') tzMode = 'utc'; } catch (_) { /* blocked storage: default zone */ }
+  const readerZone = () => { try { return Intl.DateTimeFormat().resolvedOptions().timeZone || ''; } catch (_) { return ''; } };
+  const zoneOpts = () => (tzMode === 'utc' ? {timeZone: 'UTC'} : {});
+  const fmtTime = (iso, opts) => { try { return new Intl.DateTimeFormat('en-US', {...opts, ...zoneOpts()}).format(new Date(iso)); } catch (_) { return iso; } };
+  const stamp = iso => fmtTime(iso, {year: new Date(iso).getUTCFullYear() !== new Date().getUTCFullYear() ? 'numeric' : undefined, month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit', timeZoneName: 'short'});
+  const fullStamp = iso => fmtTime(iso, {year: 'numeric', month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit', timeZoneName: 'short'});
+  // Elements marked data-fs are re-written when the reader switches between their zone and UTC.
+  function applyZone() {
+    for (const el of document.querySelectorAll('time[data-fs]')) {
+      const iso = el.getAttribute('datetime');
+      const text = (el.dataset.prefix || '') + fullStamp(iso);
+      if (el.dataset.relative) el.title = fullStamp(iso); else el.textContent = text;
+    }
+    for (const el of document.querySelectorAll('.river-time[data-iso]')) {
+      const iso = el.dataset.iso;
+      el.replaceChildren(h('b', {text: fmtTime(iso, {hour: 'numeric', minute: '2-digit'})}), fmtTime(iso, {month: 'short', day: 'numeric'}));
+    }
+    refreshTimes();
+    for (const b of document.querySelectorAll('.tz-control .seg')) b.setAttribute('aria-pressed', String(b.dataset.tz === tzMode));
+    for (const n of document.querySelectorAll('.tz-name')) n.textContent = tzMode === 'utc' ? 'Times shown in UTC' : `Times shown in your time zone${readerZone() ? ` (${readerZone()})` : ''}`;
+  }
+  function tzControl() {
+    const buttons = [['local', 'My time zone'], ['utc', 'UTC']].map(([key, label]) => h('button', {type: 'button', class: 'seg', 'data-tz': key, 'aria-pressed': String(tzMode === key), text: label}));
+    for (const b of buttons) b.addEventListener('click', () => {
+      tzMode = b.dataset.tz;
+      try { if (tzMode === 'utc') localStorage.setItem('tz', 'utc'); else localStorage.removeItem('tz'); } catch (_) { /* this page only */ }
+      applyZone();
+    });
+    return h('div', {class: 'tz-control theme-control', role: 'group', 'aria-label': 'Time zone for times on this site'}, h('span', {text: 'Times'}), buttons,
+      h('span', {class: 'tz-name', role: 'status', 'aria-live': 'polite'}));
+  }
   function ago(iso) {
     if (!iso) return null;
     const min = (Date.now() - Date.parse(iso)) / 60000;
@@ -347,7 +412,7 @@ if (typeof module !== 'undefined') module.exports = {normOutlet, dedupeOutlets, 
   function meta(s, opts = {}) {
     const when = ago(s.newest_published_utc);
     return h('div', {class: 'meta'},
-      when && !opts.noTime ? h('time', {datetime: s.newest_published_utc, 'data-relative': 'true', title: 'Newest report: ' + stamp(s.newest_published_utc), text: when}) : null,
+      when && !opts.noTime ? h('time', {datetime: s.newest_published_utc, 'data-relative': 'true', 'data-fs': 'full', title: 'Newest report: ' + stamp(s.newest_published_utc), text: when}) : null,
       opts.noOutlets ? covMeter(s) : coverageLine(s, opts.names || 2),
       opts.ed ? storyLink(opts.ed, s) : null);
   }
@@ -415,7 +480,7 @@ if (typeof module !== 'undefined') module.exports = {normOutlet, dedupeOutlets, 
           h('li', null, h('a', {href: '/about/#app', text: 'The Windows app'})), h('li', null, h('a', {href: REPO, text: 'Source code on GitHub'})),
           h('li', null, h('a', {href: '/corrections/', text: 'Corrections'})), h('li', null, h('a', {href: 'mailto:' + MAIL, text: MAIL}))))),
       h('div', {class: 'foot-base'}, h('span', {text: '© 2026 Michael Brown · Open source under the MIT License'}),
-        themeControl(), h('span', {text: 'No cookies, no tracking, no ads.'}))));
+        themeControl(), tzControl(), h('span', {text: 'No cookies, no tracking, no ads.'}))));
   }
   function mount(current, ed, ...content) {
     const active = document.activeElement;
@@ -429,7 +494,7 @@ if (typeof module !== 'undefined') module.exports = {normOutlet, dedupeOutlets, 
     const nodes = [masthead(current, ed), main, footer()];
     if (app) app.replaceChildren(...nodes); else body.replaceChildren(...nodes, pageStatus, extNote);
     delete body.dataset.rendered;
-    revealCurrentNav(); scrollableTicker();
+    revealCurrentNav(); scrollableTicker(); applyZone();
     if (!active.isConnected) {
       const newScope = scope && document.querySelector(scope.classList.contains('masthead') ? '.masthead' : '.footer');
       const target = wasSkip ? document.querySelector('.skip') : focusedLink && newScope
@@ -487,7 +552,7 @@ if (typeof module !== 'undefined') module.exports = {normOutlet, dedupeOutlets, 
         h('span', {class: 'live' + (latest && ageH < 30 ? '' : ' old')}, h('b', {text: latest ? 'Latest edition' : 'Archived edition'})),
         h('time', {datetime: ed.edition_date, text: longDate(ed.edition_date)}),
         ed.revision > 1 ? h('span', {text: `Update ${ed.revision}`}) : null,
-        h('time', {datetime: ed.generated_utc, title: ed.generated_utc, text: `Generated ${fullStamp(ed.generated_utc)}`})),
+        h('time', {datetime: ed.generated_utc, title: ed.generated_utc, 'data-fs': 'full', 'data-prefix': 'Generated ', text: `Generated ${fullStamp(ed.generated_utc)}`})),
       h('span', {class: 'edition-stats'}, `${plural(ed.stories.length, 'story', 'stories')} from ${plural(ed.reports_read || 0, 'report')} · ${ed.sources_answered || 0} of ${ed.sources_tried || 0} source types responded · AI-generated summaries`));
     if (ed.compared_with) details.append(h('p', {class: 'edition-changes', text: `Compared with update ${ed.compared_with.revision}: ${changeSummary(ed)}`}));
     const dropped = ed.changes && Array.isArray(ed.changes.dropped) ? ed.changes.dropped : [];
@@ -521,7 +586,7 @@ if (typeof module !== 'undefined') module.exports = {normOutlet, dedupeOutlets, 
       h('li', null, n(ed.reports_read), ed.reports_read === 1 ? ' report' : ' reports'),
       h('li', {class: tried && answered < tried ? 'warn' : null, title: `${answered} of ${tried} kinds of source answered during this run`}, h('b', {text: `${answered}/${tried}`}), ' source types up'),
       ed.compared_with ? h('li', {class: 'diff'}, `Since update ${ed.compared_with.revision}: ${changeSummary(ed)}`) : null,
-      h('li', null, 'Generated ', h('time', {datetime: ed.generated_utc, 'data-relative': 'true', title: fullStamp(ed.generated_utc), text: ago(ed.generated_utc)})));
+      h('li', null, 'Generated ', h('time', {datetime: ed.generated_utc, 'data-relative': 'true', 'data-fs': 'full', title: fullStamp(ed.generated_utc), text: ago(ed.generated_utc)})));
   }
   function notices(ed, idx) {
     const out = [];
@@ -630,7 +695,7 @@ if (typeof module !== 'undefined') module.exports = {normOutlet, dedupeOutlets, 
           const url = webUrl(src.url);
           // No placeholder when a source states no publication time: the time is simply left out.
           return h('div', {class: 'source'}, h('span', {class: 'outlet', text: dedupeOutlets([src.outlet])[0] || src.outlet}),
-            src.published_utc ? h('time', {class: 'when', datetime: src.published_utc, text: fullStamp(src.published_utc)}) : null,
+            src.published_utc ? h('time', {class: 'when', datetime: src.published_utc, 'data-fs': 'full', text: fullStamp(src.published_utc)}) : null,
             url ? h('a', {class: 'title', href: url, rel: 'noopener noreferrer', target: '_blank', text: src.title}) : h('span', {class: 'title', text: src.title}),
             hostOf(src.url) === 'news.google.com' ? h('span', {class: 'via', text: 'Google News redirect · opens through Google News'})
               : src.via && src.via !== src.outlet ? h('span', {class: 'via', text: 'Found via ' + src.via}) : null);
@@ -669,7 +734,7 @@ if (typeof module !== 'undefined') module.exports = {normOutlet, dedupeOutlets, 
       h('div', {class: 'story-main'}, kicker(s), url
         ? h('h1', {class: 'hl', tabindex: '-1'}, h('a', {class: 'out', href: url, rel: 'noopener noreferrer', target: '_blank', 'aria-describedby': 'ext-note', 'data-outlet': mainOutlet(s, url), text: s.headline}))
         : h('h1', {class: 'hl', tabindex: '-1', text: s.headline}),
-        h('div', {class: 'meta'}, when ? h('time', {datetime: when, text: `Newest report ${fullStamp(when)}`}) : null, coverageLine(s, 3)),
+        h('div', {class: 'meta'}, when ? h('time', {datetime: when, 'data-fs': 'full', 'data-prefix': 'Newest report ', text: `Newest report ${fullStamp(when)}`}) : null, coverageLine(s, 3)),
         h('div', {class: 'story-actions'},
           url ? h('a', {class: 'pill solid read-source', href: url, rel: 'noopener noreferrer', target: '_blank', 'aria-describedby': 'ext-note'}, `Read at ${mainOutlet(s, url)}`) : null,
           h('button', {class: 'source-jump', type: 'button', text: `${plural(sourceLinks(s), 'source link')} ↓`}),
@@ -731,8 +796,8 @@ if (typeof module !== 'undefined') module.exports = {normOutlet, dedupeOutlets, 
         h('p', {text: `Every story of the ${longDate(ed.edition_date)} edition, newest report first. Times are when the newest source says it was published, in your time zone.`})),
       notices(ed, idx),
       h('div', {class: 'river'}, known.concat(rest).map(s => h('article', {class: 'river-item', id: 'story-' + s.id, 'data-cat': s.category},
-        h('div', {class: 'river-time'}, s.newest_published_utc ? [h('b', {text: new Date(s.newest_published_utc).toLocaleTimeString('en-US', {hour: 'numeric', minute: '2-digit'})}),
-          new Date(s.newest_published_utc).toLocaleDateString('en-US', {month: 'short', day: 'numeric'})] : null),
+        h('div', {class: 'river-time', 'data-iso': s.newest_published_utc || null}, s.newest_published_utc ? [h('b', {text: fmtTime(s.newest_published_utc, {hour: 'numeric', minute: '2-digit'})}),
+          fmtTime(s.newest_published_utc, {month: 'short', day: 'numeric'})] : null),
         h('div', {class: 'river-body'}, kicker(s), headline(ed, s, 'h2'),
           dek(s), meta(s, {ed, noTime: true})))))));
     document.title = 'Latest News | Agent Reach Daily';
@@ -1012,7 +1077,8 @@ if (typeof module !== 'undefined') module.exports = {normOutlet, dedupeOutlets, 
 
   // ------------------------------------------------------------------ routing
   async function start() {
-    if (page === 'about' || page === 'corrections') { chrome(page); return; }
+    const sectionsReady = embeddedSections() ? null : loadSections(); // runs alongside the edition requests
+    if (page === 'about' || page === 'corrections') { if (sectionsReady) await sectionsReady; chrome(page); return; }
     if (page === 'notfound') {
       if (/^\/daily\/\d{4}-\d{2}-\d{2}\/$/.test(location.pathname)) {
         failed('edition', "This edition isn't available. It may have been withdrawn.", true);
@@ -1029,6 +1095,7 @@ if (typeof module !== 'undefined') module.exports = {normOutlet, dedupeOutlets, 
     const dated = !embedded && body.dataset.date ? loadEdition(body.dataset.date).then(ed => ({ed}), error => ({error})) : null;
     let idx;
     try { idx = embedded ? embedded.idx : await loadIndex(); } catch (e) { failed(current); return; }
+    if (sectionsReady) await sectionsReady; // never rejects; the built-in table stays when the file is unavailable
     if (page === 'archive') { renderArchive(idx); pageStatus.textContent = `Archive loaded. ${plural((idx.editions || []).length, 'edition')}.`; return; }
     if (page === 'search') { renderSearch(idx); pageStatus.textContent = 'Archive search ready.'; return; }
     const date = body.dataset.date || idx.latest;

@@ -530,3 +530,27 @@ details.src small{color:var(--faint);font-size:12px}
 .corrections-log{list-style:none;padding:0}
 .corrections-log li{padding:12px 0;border-top:1px solid var(--line)}
 .corrections-log:has(li) + .corrections-empty{display:none}
+
+/* Server-rendered edition shell (shared renderer, no-script view; site.js replaces it when scripts run) */
+.shell{display:block}
+.shell .sub{color:var(--muted);margin:0 0 14px}
+.shell nav.sections{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0 10px;font-size:14px}
+.shell nav.sections a{text-decoration:none;color:var(--ink2);border:1px solid var(--line);border-radius:999px;padding:6px 12px}
+.shell .brief{border:1px solid var(--line);border-radius:var(--radius);padding:12px 20px;margin:14px 0}
+.shell .brief h2{font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:var(--accent);margin:0 0 4px}
+.shell .brief ul{margin:0;padding-left:18px}.shell .brief li{margin:4px 0}
+.shell section.sec>h2{margin:34px 0 0}.shell section.sec>.count{color:var(--muted);font-size:14px;margin:0 0 8px}
+.shell article.card{margin:12px 0}
+.shell article.card h3{font-size:19px;line-height:1.3;margin:2px 0 6px}
+.shell .kicker .tag,.shell .kicker .label{text-transform:uppercase}
+.shell details.evidence{font-size:14px}
+.shell .strength{color:var(--muted);margin:6px 0}
+.shell ul.evidence{padding-left:18px}.shell ul.evidence small{display:block;color:var(--muted)}
+.shell ul.also{list-style:none;padding:0;margin:6px 0 0}.shell ul.also li{padding:8px 2px;border-top:1px solid var(--line)}
+.shell .also-h{color:var(--muted);font-size:13px;font-weight:600;text-transform:uppercase;margin:18px 0 0}
+.shell .more{margin-top:36px}.shell .more>details{border-top:1px solid var(--line);padding:10px 0}
+.shell .scroll{overflow-x:auto}.shell table{border-collapse:collapse;width:100%;font-size:14px}
+.shell td,.shell th{border-bottom:1px solid var(--line);padding:4px 6px;text-align:left;vertical-align:top}
+.shell footer{color:var(--muted);font-size:13px;margin-top:28px}
+.shell{overflow-wrap:anywhere}
+.tz-name{font-size:12px;color:var(--muted);flex-basis:100%}
