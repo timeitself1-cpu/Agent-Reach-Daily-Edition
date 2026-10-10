@@ -76,7 +76,7 @@ from agent_reach.ingestion.google_urls import is_google_news
 log = logging.getLogger(__name__)
 
 SITE_URL = "https://getagentreach.dev"
-SITE_REPO = "timeitself1-cpu/Agent-Reach"  # monorepo (was Agent-Reach-Website before the merge)
+SITE_REPO = "timeitself1-cpu/Agent-Reach-Daily-Edition"  # monorepo root (website lives under website/)
 SITE_BRANCH = "main"
 #: In the monorepo the website lives under website/; every path the publisher
 #: writes to the repo carries this prefix. Served URLs drop it (see _url_path).

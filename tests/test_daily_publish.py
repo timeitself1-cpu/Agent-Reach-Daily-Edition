@@ -525,7 +525,7 @@ def test_the_hourly_retry_waits_when_trying_again_cannot_help(daily_paths, monke
 
 def test_a_connection_test_keeps_the_last_failure_visible(daily_paths):
     """On the PC (Oct 8) the window said "Connected" under a red "Publication failed" and hid why it had failed."""
-    assert P.connected_message(daily_paths).startswith("Connected: the key can read timeitself1-cpu/Agent-Reach.")
+    assert P.connected_message(daily_paths).startswith("Connected: the key can read timeitself1-cpu/Agent-Reach-Daily-Edition.")
     assert "last attempt" not in P.connected_message(daily_paths)
     P._record(daily_paths, state="failed", message="Publication failed: no access key is saved.")
     msg = P.connected_message(daily_paths)
