@@ -4,20 +4,23 @@
  "schema_version": 1,
  "app": "Agent Reach Daily 1.0.0rc21",
  "edition_date": "2026-10-10",
- "revision": 6,
+ "revision": 7,
  "timezone": "America/Chicago",
- "generated_utc": "2026-10-10T16:14:08Z",
+ "generated_utc": "2026-10-10T17:46:42Z",
  "models": {
   "summaries": "llama3.1:8b",
   "grouping": "nomic-embed-text"
  },
  "summaries": "local_model",
- "reports_read": 1518,
+ "reports_read": 1519,
  "quality": {
-  "stories_accepted": 24,
-  "stories_quarantined": 1,
+  "stories_accepted": 32,
+  "stories_quarantined": 5,
   "reason_counts": {
-   "empty": 1
+   "empty": 1,
+   "thin": 2,
+   "headline_echo": 1,
+   "tautology": 1
   }
  },
  "unresolved_source_urls": 2,
@@ -30,7 +33,7 @@
    "about": "Google News top stories and one Google News section per category.",
    "status": "ok",
    "reports": 318,
-   "cited": 10,
+   "cited": 14,
    "feeds": [
     {
      "name": "Google News - Top stories",
@@ -46,7 +49,7 @@
      "category": "News",
      "status": "ok",
      "reports": 20,
-     "cited": 0
+     "cited": 1
     },
     {
      "name": "Google News - U.S.",
@@ -54,7 +57,7 @@
      "category": "News",
      "status": "ok",
      "reports": 20,
-     "cited": 2
+     "cited": 1
     },
     {
      "name": "Google News - Business",
@@ -62,7 +65,7 @@
      "category": "News",
      "status": "ok",
      "reports": 20,
-     "cited": 1
+     "cited": 2
     },
     {
      "name": "Google News - Health",
@@ -78,7 +81,7 @@
      "category": "Tech",
      "status": "ok",
      "reports": 20,
-     "cited": 0
+     "cited": 1
     },
     {
      "name": "Google News - Science",
@@ -86,7 +89,7 @@
      "category": "Science & AI",
      "status": "ok",
      "reports": 20,
-     "cited": 1
+     "cited": 0
     },
     {
      "name": "Google News - AI",
@@ -94,7 +97,7 @@
      "category": "Science & AI",
      "status": "ok",
      "reports": 20,
-     "cited": 0
+     "cited": 1
     },
     {
      "name": "Google News - Sports",
@@ -102,7 +105,7 @@
      "category": "Sports",
      "status": "ok",
      "reports": 20,
-     "cited": 0
+     "cited": 1
     },
     {
      "name": "Google News - Entertainment",
@@ -126,7 +129,7 @@
      "category": "News",
      "status": "ok",
      "reports": 20,
-     "cited": 1
+     "cited": 2
     },
     {
      "name": "Reuters (via Google News)",
@@ -134,7 +137,7 @@
      "category": "News",
      "status": "ok",
      "reports": 20,
-     "cited": 3
+     "cited": 1
     },
     {
      "name": "Google News - Space",
@@ -142,7 +145,7 @@
      "category": "Science & AI",
      "status": "ok",
      "reports": 20,
-     "cited": 0
+     "cited": 2
     },
     {
      "name": "Google News - Games",
@@ -160,7 +163,7 @@
    "about": "News publishers' own RSS feeds, listed below by name.",
    "status": "ok",
    "reports": 900,
-   "cited": 39,
+   "cited": 53,
    "feeds": [
     {
      "name": "BBC News - World",
@@ -168,7 +171,7 @@
      "category": "News",
      "status": "ok",
      "reports": 9,
-     "cited": 0
+     "cited": 2
     },
     {
      "name": "NPR - News",
@@ -176,7 +179,7 @@
      "category": "News",
      "status": "ok",
      "reports": 9,
-     "cited": 0
+     "cited": 1
     },
     {
      "name": "NPR - World",
@@ -216,15 +219,15 @@
      "category": "News",
      "status": "ok",
      "reports": 9,
-     "cited": 0
+     "cited": 1
     },
     {
      "name": "Al Jazeera - All",
      "site": "aljazeera.com",
      "category": "News",
      "status": "ok",
-     "reports": 9,
-     "cited": 1
+     "reports": 8,
+     "cited": 0
     },
     {
      "name": "Le Monde - English",
@@ -256,7 +259,7 @@
      "category": "News",
      "status": "ok",
      "reports": 8,
-     "cited": 2
+     "cited": 1
     },
     {
      "name": "NPR - Business",
@@ -320,7 +323,7 @@
      "category": "Tech",
      "status": "ok",
      "reports": 8,
-     "cited": 0
+     "cited": 2
     },
     {
      "name": "The Verge",
@@ -328,7 +331,7 @@
      "category": "Tech",
      "status": "ok",
      "reports": 8,
-     "cited": 0
+     "cited": 1
     },
     {
      "name": "ESPN - Top Headlines",
@@ -336,7 +339,7 @@
      "category": "Sports",
      "status": "ok",
      "reports": 8,
-     "cited": 0
+     "cited": 2
     },
     {
      "name": "BBC Sport",
@@ -344,7 +347,7 @@
      "category": "Sports",
      "status": "ok",
      "reports": 8,
-     "cited": 1
+     "cited": 0
     },
     {
      "name": "BBC News - Entertainment & Arts",
@@ -352,7 +355,7 @@
      "category": "Entertainment",
      "status": "ok",
      "reports": 8,
-     "cited": 0
+     "cited": 1
     },
     {
      "name": "The Guardian - Culture",
@@ -440,7 +443,7 @@
      "category": "Science & AI",
      "status": "ok",
      "reports": 8,
-     "cited": 1
+     "cited": 0
     },
     {
      "name": "NPR - Science",
@@ -464,7 +467,7 @@
      "category": "News",
      "status": "ok",
      "reports": 8,
-     "cited": 1
+     "cited": 2
     },
     {
      "name": "NBC News - Top Stories",
@@ -472,7 +475,7 @@
      "category": "News",
      "status": "ok",
      "reports": 8,
-     "cited": 1
+     "cited": 2
     },
     {
      "name": "ABC News - Top Stories",
@@ -480,7 +483,7 @@
      "category": "News",
      "status": "ok",
      "reports": 8,
-     "cited": 1
+     "cited": 2
     },
     {
      "name": "Fox News - Latest",
@@ -488,14 +491,14 @@
      "category": "News",
      "status": "ok",
      "reports": 8,
-     "cited": 1
+     "cited": 0
     },
     {
      "name": "Sky News - World",
      "site": "feeds.skynews.com",
      "category": "News",
      "status": "ok",
-     "reports": 7,
+     "reports": 8,
      "cited": 0
     },
     {
@@ -520,7 +523,7 @@
      "category": "News",
      "status": "ok",
      "reports": 8,
-     "cited": 0
+     "cited": 1
     },
     {
      "name": "MarketWatch - Top Stories",
@@ -552,7 +555,7 @@
      "category": "Tech",
      "status": "ok",
      "reports": 8,
-     "cited": 1
+     "cited": 0
     },
     {
      "name": "Tom's Hardware",
@@ -584,7 +587,7 @@
      "category": "Science & AI",
      "status": "ok",
      "reports": 8,
-     "cited": 2
+     "cited": 1
     },
     {
      "name": "Google - AI",
@@ -648,7 +651,7 @@
      "category": "Sports",
      "status": "ok",
      "reports": 8,
-     "cited": 0
+     "cited": 1
     },
     {
      "name": "Yahoo Sports",
@@ -664,7 +667,7 @@
      "category": "Sports",
      "status": "ok",
      "reports": 8,
-     "cited": 1
+     "cited": 0
     },
     {
      "name": "The Guardian - Sport",
@@ -672,7 +675,7 @@
      "category": "Sports",
      "status": "ok",
      "reports": 8,
-     "cited": 0
+     "cited": 1
     },
     {
      "name": "Variety",
@@ -712,7 +715,7 @@
      "category": "Entertainment",
      "status": "ok",
      "reports": 8,
-     "cited": 0
+     "cited": 1
     },
     {
      "name": "IGN",
@@ -784,7 +787,7 @@
      "category": "News",
      "status": "ok",
      "reports": 8,
-     "cited": 0
+     "cited": 1
     },
     {
      "name": "ABC News Australia - Top Stories",
@@ -792,7 +795,7 @@
      "category": "News",
      "status": "ok",
      "reports": 8,
-     "cited": 0
+     "cited": 1
     },
     {
      "name": "South China Morning Post - World",
@@ -800,7 +803,7 @@
      "category": "News",
      "status": "ok",
      "reports": 8,
-     "cited": 2
+     "cited": 1
     },
     {
      "name": "The Japan Times",
@@ -816,7 +819,7 @@
      "category": "News",
      "status": "ok",
      "reports": 8,
-     "cited": 1
+     "cited": 2
     },
     {
      "name": "Euronews",
@@ -840,7 +843,7 @@
      "category": "News",
      "status": "ok",
      "reports": 8,
-     "cited": 1
+     "cited": 0
     },
     {
      "name": "Bloomberg - Markets",
@@ -856,7 +859,7 @@
      "category": "Tech",
      "status": "ok",
      "reports": 8,
-     "cited": 0
+     "cited": 1
     },
     {
      "name": "The Next Web",
@@ -976,7 +979,7 @@
      "category": "Sports",
      "status": "ok",
      "reports": 8,
-     "cited": 0
+     "cited": 1
     },
     {
      "name": "BBC Sport - Football",
@@ -984,7 +987,7 @@
      "category": "Sports",
      "status": "ok",
      "reports": 8,
-     "cited": 0
+     "cited": 1
     },
     {
      "name": "Sporting News",
@@ -1000,7 +1003,7 @@
      "category": "Entertainment",
      "status": "ok",
      "reports": 8,
-     "cited": 0
+     "cited": 1
     },
     {
      "name": "Collider",
@@ -1110,8 +1113,8 @@
    "name": "YouTube",
    "about": "New videos from the YouTube channels of news organisations, listed below.",
    "status": "ok",
-   "reports": 59,
-   "cited": 2,
+   "reports": 60,
+   "cited": 0,
    "feeds": [
     {
      "name": "BBC News",
@@ -1143,7 +1146,7 @@
      "category": "News",
      "status": "ok",
      "reports": 3,
-     "cited": 1
+     "cited": 0
     },
     {
      "name": "ABC News",
@@ -1183,7 +1186,7 @@
      "category": "News",
      "status": "ok",
      "reports": 3,
-     "cited": 1
+     "cited": 0
     },
     {
      "name": "CNBC Television",
@@ -1222,7 +1225,7 @@
      "site": "youtube.com",
      "category": "Tech",
      "status": "ok",
-     "reports": 1,
+     "reports": 2,
      "cited": 0
     },
     {
@@ -1297,7 +1300,7 @@
    "about": "News links people are sharing on Mastodon (mastodon.social).",
    "status": "ok",
    "reports": 20,
-   "cited": 0,
+   "cited": 1,
    "feeds": [
     {
      "name": "mastodon.social",
@@ -1305,7 +1308,7 @@
      "category": null,
      "status": "ok",
      "reports": 20,
-     "cited": 0
+     "cited": 1
     }
    ]
   },
@@ -1315,37 +1318,37 @@
    "about": "Topics trending on Bluesky.",
    "status": "ok",
    "reports": 25,
-   "cited": 1,
+   "cited": 2,
    "feeds": []
   }
  ],
  "compared_with": {
   "edition_date": "2026-10-10",
-  "revision": 5
+  "revision": 6
  },
  "top": [
-  "57bf59c188ad",
-  "345bb4a46676",
+  "d225e934363e",
+  "0dcdfde4af11",
   "fea31af3b0d7",
   "ff030d8b5b30",
-  "069be1f20be9",
-  "59b8e46a134c",
-  "eb4f655866dc",
-  "ff8e0ec0bd6b",
-  "83661ce7be0c",
-  "960e3f602273"
+  "6fd504966987",
+  "9321c8fbc22b",
+  "8b1b98c4fb5f",
+  "9c0c027764eb",
+  "8240bf3654a0"
  ],
  "sections": [
   {
    "category": "News",
    "ids": [
-    "57bf59c188ad",
-    "345bb4a46676",
+    "d225e934363e",
+    "0dcdfde4af11",
     "ff030d8b5b30",
-    "069be1f20be9",
-    "59b8e46a134c",
-    "eb4f655866dc",
+    "6fd504966987",
+    "b1bafe9aba4c",
+    "f0aa85298e1b",
     "8f0c76b05cc5",
+    "878808cbecf8",
     "157e81bf08e8",
     "716df8387c45"
    ]
@@ -1354,77 +1357,227 @@
    "category": "Tech",
    "ids": [
     "fea31af3b0d7",
-    "960e3f602273",
-    "8b1b98c4fb5f"
+    "8b1b98c4fb5f",
+    "2ef529315e75",
+    "9263e95d26d1",
+    "99e578482af0"
    ]
   },
   {
    "category": "Science & AI",
    "ids": [
-    "ff8e0ec0bd6b",
-    "83661ce7be0c",
+    "9321c8fbc22b",
+    "9c0c027764eb",
+    "8240bf3654a0",
+    "c015b4868b83",
     "d9cc80e7c371",
     "710b3ad8dc31",
-    "87cb3fcba333",
     "1cc63d3dfc56",
-    "022d35c5ff6c",
-    "da4d0325d7ac",
-    "1bff757fa578",
-    "892c9ac3da51"
+    "892c9ac3da51",
+    "022d35c5ff6c"
    ]
   },
   {
    "category": "Sports",
    "ids": [
-    "ee01960fa15d"
+    "cf0d09ce65f1",
+    "0fceeb164e0d",
+    "ba973d878dad",
+    "1d8491003083"
    ]
   },
   {
    "category": "Entertainment",
    "ids": [
-    "6b8667309135"
+    "454d11ac027c",
+    "6b8667309135",
+    "5969acf34967",
+    "9bdc8187d8ac"
    ]
   }
  ],
  "stories": [
   {
-   "id": "57bf59c188ad",
+   "id": "d225e934363e",
    "rank": 1,
    "top_rank": 1,
    "category": "News",
-   "headline": "What to expect as Hurricane Isaias bears down on the Gulf Coast as a major storm",
-   "url": "https://www.pbs.org/newshour/show/what-to-expect-as-hurricane-isaias-bears-down-on-the-gulf-coast-as-a-major-storm",
+   "headline": "Trump announces deal for Russian diesel as Zelensky calls it a gift to Putin",
+   "url": "https://www.bbc.co.uk/news/articles/cm1dwgr666wno?at_medium=RSS&at_campaign=rss",
    "summary": [
-    "Hurricane Isaias has strengthened into a Category 3 hurricane as it heads toward the Gulf Coast.",
-    "Storm damage stretches across Florida and Alabama as officials warn of continued flooding and possible tornadoes.",
-    "Residents are rushing to prepare for the storm, which is packing winds up to 120 mph and is expected to make landfall Friday night."
+    "Ukraine's president sharply criticised the move, calling it an \"investment in war that must be ended, not prolonged\".",
+    "Ukraine's leader had said the deal with Russia to release diesel into the US would help Moscow fund the war."
    ],
-   "why_it_matters": "The storm has already killed two people and left hundreds of thousands of customers without power across the southeastern United States.",
+   "why_it_matters": null,
    "change": "updated",
    "labels": [],
-   "newest_published_utc": "2026-10-10T15:45:36Z",
+   "newest_published_utc": "2026-10-10T17:31:24Z",
    "coverage": {
     "level": "strong",
     "points": 6,
-    "independent_reports": 8,
+    "independent_reports": 10,
+    "publishers": [
+     "Al Jazeera",
+     "Axios",
+     "BBC News",
+     "CBC News",
+     "CBS News",
+     "CNBC",
+     "CNBC Television",
+     "DW",
+     "NPR",
+     "Sky News"
+    ],
+    "repeats": 4,
+    "source_links": 8,
+    "linked_outlets": 5,
+    "linked_reporting_origins": 5,
+    "signals": 2,
+    "channels": 3
+   },
+   "sources": [
+    {
+     "outlet": "BBC News",
+     "via": "News feeds",
+     "title": "Trump announces deal for Russian diesel as Zelensky calls it a gift to Putin",
+     "url": "https://www.bbc.co.uk/news/articles/cm1dwgr666wno?at_medium=RSS&at_campaign=rss",
+     "published_utc": "2026-10-10T14:24:14Z",
+     "outlet_id": "bbcnews",
+     "reporting_origin": "outlet:bbcnews",
+     "kind": "report"
+    },
+    {
+     "outlet": "BBC News",
+     "via": "Google News",
+     "title": "Trump announces deal for Russian diesel as Zelensky calls it a 'gift to Putin'",
+     "url": "https://www.bbc.com/news/articles/cm1dwgr666wno",
+     "published_utc": "2026-10-10T14:24:14Z",
+     "outlet_id": "bbcnews",
+     "reporting_origin": "outlet:bbcnews",
+     "kind": "repeat",
+     "source_url_raw": "https://news.google.com/rss/articles/CBMiW0FVX3lxTFBienVVTnRKNXU2d0JqVGJDU3ljYlpadlltOE1jc3pkb3pacGFpQXhXUzZ5OUJESU5mUmdXekZ3eFNMeF8xajBwdHlYLUJNcFJqOE9ldHNXYXhVVXc?oc=5"
+    },
+    {
+     "outlet": "BBC News",
+     "via": "News feeds",
+     "title": "'Time for Ukraine to get new president,' says Trump after Zelensky condemns diesel deal",
+     "url": "https://www.bbc.co.uk/news/articles/cqe8r5l7n92jo?at_medium=RSS&at_campaign=rss",
+     "published_utc": "2026-10-10T17:31:24Z",
+     "outlet_id": "bbcnews",
+     "reporting_origin": "outlet:bbcnews",
+     "kind": "repeat"
+    },
+    {
+     "outlet": "NPR",
+     "via": "News feeds",
+     "title": "U.S. and Russia tout diesel deal to ease sanctions and reopen fuel flows",
+     "url": "https://www.npr.org/2026/10/10/nx-s1-5996938/u-s-and-russia-tout-diesel-deal-to-ease-sanctions-and-reopen-fuel-flows",
+     "published_utc": "2026-10-10T11:40:53Z",
+     "outlet_id": "npr",
+     "reporting_origin": "outlet:npr",
+     "kind": "report"
+    },
+    {
+     "outlet": "CBS News",
+     "via": "News feeds",
+     "title": "Putin relays Iran's position on deal to President Trump",
+     "url": "https://www.cbsnews.com/live-updates/iran-war-trump-us-elections-saudi-arabia-yemen-houthis/",
+     "published_utc": "2026-10-10T17:12:30Z",
+     "outlet_id": "cbsnews",
+     "reporting_origin": "outlet:cbsnews",
+     "kind": "report"
+    },
+    {
+     "outlet": "Axios",
+     "via": "News feeds",
+     "title": "Trump tells Ukraine to replace Zelensky over Russia fuel deal",
+     "url": "https://www.axios.com/2026/10/10/trump-ukraine-zelensky-replace-putin-diesel",
+     "published_utc": "2026-10-10T17:27:15Z",
+     "outlet_id": "axios",
+     "reporting_origin": "outlet:axios",
+     "kind": "report"
+    },
+    {
+     "outlet": "CBC News",
+     "via": "News feeds",
+     "title": "Trump says Ukraine should get a new president, blames Zelenskyy for U.S. diesel prices",
+     "url": "https://www.cbc.ca/news/world/russia-strikes-ukraine-trump-putin-diesel-9.7377049?cmp=rss",
+     "published_utc": "2026-10-10T12:56:05Z",
+     "outlet_id": "cbc",
+     "reporting_origin": "outlet:cbc",
+     "kind": "report"
+    },
+    {
+     "outlet": "bsky.app",
+     "via": "Bluesky",
+     "title": "Trump strikes diesel deal with Russia",
+     "url": "https://bsky.app/profile/did:plc:qrz3lhbyuxbeilrc6nekdqme/feed/58b562d979b8",
+     "published_utc": null,
+     "outlet_id": "bsky",
+     "reporting_origin": null,
+     "kind": "signal"
+    }
+   ]
+  },
+  {
+   "id": "0dcdfde4af11",
+   "rank": 2,
+   "top_rank": 2,
+   "category": "News",
+   "headline": "Hurricane Isaias updates: Isaias downgraded to Post-tropical cyclone",
+   "url": "https://abcnews.com/US/live-updates/hurricane-isaias-updates-isaias-strengthens-category-3/?id=137128637",
+   "summary": [
+    "The Gulf Coast is bracing for dangerous conditions, extreme wind and flooding.",
+    "Hurricane Isaias is blamed for at least two deaths, after the storm made landfall on the Florida coast and ran through Alabama.",
+    "There are no confirmed fatalities from Hurricane Isaias in the state of Florida."
+   ],
+   "why_it_matters": "The storm has caused at least two deaths and left hundreds of thousands of people without power.",
+   "change": "updated",
+   "labels": [],
+   "newest_published_utc": "2026-10-10T17:14:03Z",
+   "coverage": {
+    "level": "strong",
+    "points": 6,
+    "independent_reports": 9,
     "publishers": [
      "ABC News",
-     "Al Jazeera",
      "BBC News",
+     "Bloomberg",
+     "Fox News",
      "NBC News",
      "NPR",
      "PBS NewsHour",
      "The Guardian",
      "The New York Times"
     ],
-    "repeats": 1,
+    "repeats": 2,
     "source_links": 8,
-    "linked_outlets": 8,
+    "linked_outlets": 7,
     "linked_reporting_origins": 7,
-    "signals": 0,
+    "signals": 1,
     "channels": 3
    },
    "sources": [
+    {
+     "outlet": "ABC News",
+     "via": "News feeds",
+     "title": "Hurricane Isaias updates: Isaias downgraded to post-tropical cyclone",
+     "url": "https://abcnews.com/US/live-updates/hurricane-isaias-updates-isaias-strengthens-category-3/?id=137128637",
+     "published_utc": "2026-10-10T16:03:33Z",
+     "outlet_id": "abcnews",
+     "reporting_origin": "outlet:abcnews",
+     "kind": "report"
+    },
+    {
+     "outlet": "NPR",
+     "via": "News feeds",
+     "title": "At least 2 deaths attributed to Isaias after hurricane bashes Florida and Alabama",
+     "url": "https://www.npr.org/2026/10/10/g-s1-147632/at-least-2-deaths-attributed-to-isaias-after-hurricane-bashes-florida-and-alabama",
+     "published_utc": "2026-10-10T17:14:03Z",
+     "outlet_id": "npr",
+     "reporting_origin": "outlet:npr",
+     "kind": "report"
+    },
     {
      "outlet": "PBS NewsHour",
      "via": "News feeds",
@@ -1433,16 +1586,6 @@
      "published_utc": "2026-10-09T22:55:07Z",
      "outlet_id": "pbsnewshour",
      "reporting_origin": "outlet:pbsnewshour",
-     "kind": "report"
-    },
-    {
-     "outlet": "Al Jazeera",
-     "via": "News feeds",
-     "title": "Hurricane Isaias leaves two dead and 800,000 without power in US Southeast",
-     "url": "https://www.aljazeera.com/news/2026/10/10/hurricane-isaias-leaves-two-dead-and-800000-without-power-in-us-southeast?traffic_source=rss",
-     "published_utc": "2026-10-10T15:45:36Z",
-     "outlet_id": "aljazeera",
-     "reporting_origin": "outlet:aljazeera",
      "kind": "report"
     },
     {
@@ -1456,14 +1599,25 @@
      "kind": "report"
     },
     {
-     "outlet": "ABC News",
+     "outlet": "NBC News",
      "via": "News feeds",
-     "title": "Hurricane Isaias updates: Isaias downgraded to post-tropical cyclone",
-     "url": "https://abcnews.com/US/live-updates/hurricane-isaias-updates-isaias-strengthens-category-3/?id=137128637",
-     "published_utc": "2026-10-10T14:47:39Z",
-     "outlet_id": "abcnews",
-     "reporting_origin": "outlet:abcnews",
+     "title": "Hurricane Isaias leaves at least two people dead",
+     "url": "https://www.nbcnews.com/now/video/hurricane-isaias-leaves-at-least-two-people-dead-271390277531",
+     "published_utc": "2026-10-10T16:20:15Z",
+     "outlet_id": "nbcnews",
+     "reporting_origin": "outlet:nbcnews",
      "kind": "report"
+    },
+    {
+     "outlet": "Fox News",
+     "via": "Google News",
+     "title": "The storm is here: Georgia-Alabama set to write latest chapter after chaotic week around Hurricane Isaias",
+     "url": "https://www.foxnews.com/outkick-sports/storm-here-georgia-alabama-set-write-latest-chapter-after-chaotic-week-around-hurricane-isaias",
+     "published_utc": "2026-10-10T12:55:10Z",
+     "outlet_id": "foxnews",
+     "reporting_origin": "outlet:foxnews",
+     "kind": "report",
+     "source_url_raw": "https://news.google.com/rss/articles/CBMizgFBVV95cUxQNERlZHV1aTU5alpqSkN3a0RYYmZUSDNLLTFPUEEzOWdJcUMxclZCWkJXUFJhM3lMNWRiVDlNT3VHaTdXVE5KRmlxY3p3cDNQZUw4cXRyWnpVTVA2MHFxS2FaZWtPRHhpenJsaDduTHYzVkk0ZlgzR0NzLVZ5bWFaRjhEM0pNamtJTWhTWTBFWS1iZG1oTll3dkJsX1otWU5CQV9KUXlYTVFCWEw1TUp5cWVsLWFnRUhnZ1VPUVpyNVFNd0tvdVhOMnM2a1RvQQ?oc=5"
     },
     {
      "outlet": "BBC News",
@@ -1483,148 +1637,7 @@
      "published_utc": "2026-10-09T05:20:03Z",
      "outlet_id": "npr",
      "reporting_origin": "outlet:npr",
-     "kind": "report"
-    },
-    {
-     "outlet": "NBC News",
-     "via": "YouTube",
-     "title": "Hurricane Isaias makes landfall in Florida",
-     "url": "https://www.youtube.com/watch?v=jqO-S1IoHfQ",
-     "published_utc": "2026-10-10T02:36:54Z",
-     "outlet_id": "nbcnews",
-     "reporting_origin": "outlet:nbcnews",
-     "kind": "report"
-    },
-    {
-     "outlet": "WSJ",
-     "via": "Google News",
-     "title": "Hurricane Isaias Makes Landfall in Florida",
-     "url": "https://www.wsj.com/us-news/climate-environment/hurricane-isaias-makes-landfall-in-florida-ac0b1964",
-     "published_utc": "2026-10-10T12:58:00Z",
-     "outlet_id": "wsj",
-     "reporting_origin": "outlet:nbcnews",
-     "kind": "repeat",
-     "source_url_raw": "https://news.google.com/rss/articles/CBMioAFBVV95cUxNWUY3T0ZKRHZlMDZwWmt0cWV3RXF5Ymp2RDJHZU5jbVFTS0NCM1NNTGo3YUtxVFNLMUtzeWNvNDBfem5RX0NjMkpaRWI2QUFBTzFXWFVULV9YeWFtYVdVZGJrc3lmbDdWU1ZjZUQ5aHNfQnRNVWI5cGZoU1g5aGNDaWM3bDNQQ1BFbGZUY2VwbWhrN2licEMwYlZWYl9Cc3Fh?oc=5"
-    }
-   ]
-  },
-  {
-   "id": "345bb4a46676",
-   "rank": 2,
-   "top_rank": 2,
-   "category": "News",
-   "headline": "Trump announces deal for Russian diesel to ease fuel flows",
-   "url": null,
-   "summary": [
-    "US President Donald Trump has announced a deal with Russian President Vladimir Putin to import 300,000 tons of diesel fuel to ease fuel flows and lower US prices.",
-    "The deal has sparked anger from Ukraine and its allies, who fear it will prolong the war."
-   ],
-   "why_it_matters": null,
-   "change": "updated",
-   "labels": [],
-   "newest_published_utc": "2026-10-10T15:53:59Z",
-   "coverage": {
-    "level": "strong",
-    "points": 6,
-    "independent_reports": 8,
-    "publishers": [
-     "BBC News",
-     "CNBC Television",
-     "DW",
-     "Fortune",
-     "Fox News",
-     "NPR",
-     "Reuters",
-     "Sky News"
-    ],
-    "repeats": 1,
-    "source_links": 8,
-    "linked_outlets": 6,
-    "linked_reporting_origins": 6,
-    "signals": 1,
-    "channels": 3
-   },
-   "sources": [
-    {
-     "outlet": "NPR",
-     "via": "News feeds",
-     "title": "U.S. and Russia tout diesel deal to ease sanctions and reopen fuel flows",
-     "url": "https://www.npr.org/2026/10/10/nx-s1-5996938/u-s-and-russia-tout-diesel-deal-to-ease-sanctions-and-reopen-fuel-flows",
-     "published_utc": "2026-10-10T11:40:53Z",
-     "outlet_id": "npr",
-     "reporting_origin": "outlet:npr",
-     "kind": "report"
-    },
-    {
-     "outlet": "BBC News",
-     "via": "News feeds",
-     "title": "Trump announces deal for Russian diesel as Zelensky calls it a gift to Putin",
-     "url": "https://www.bbc.co.uk/news/articles/cm1dwgr666wno?at_medium=RSS&at_campaign=rss",
-     "published_utc": "2026-10-10T14:24:14Z",
-     "outlet_id": "bbcnews",
-     "reporting_origin": "outlet:bbcnews",
-     "kind": "report"
-    },
-    {
-     "outlet": "Fox News",
-     "via": "News feeds",
-     "title": "Katie Zacharia hits ground running, promises Trump diesel deal delivers cheaper gas for Americans",
-     "url": "https://www.foxnews.com/media/incoming-press-chief-hits-ground-running-promises-trump-diesel-deal-delivers-cheaper-gas-americans",
-     "published_utc": "2026-10-10T15:53:59Z",
-     "outlet_id": "foxnews",
-     "reporting_origin": "outlet:foxnews",
-     "kind": "report"
-    },
-    {
-     "outlet": "bsky.app",
-     "via": "Bluesky",
-     "title": "Trump strikes diesel deal with Russia",
-     "url": "https://bsky.app/profile/did:plc:qrz3lhbyuxbeilrc6nekdqme/feed/58b562d979b8",
-     "published_utc": null,
-     "outlet_id": "bsky",
-     "reporting_origin": null,
-     "kind": "signal"
-    },
-    {
-     "outlet": "Sky News",
-     "via": "YouTube",
-     "title": "Shock as Trump announces deal that will see Russia supply the US with diesel",
-     "url": "https://www.youtube.com/watch?v=ncbU4p9BR9M",
-     "published_utc": "2026-10-09T20:45:43Z",
-     "outlet_id": "skynews",
-     "reporting_origin": "outlet:skynews",
-     "kind": "report"
-    },
-    {
-     "outlet": "BBC News",
-     "via": "News feeds",
-     "title": "Analysis: Trump's shock Russia deal highlights mounting pressure to curb fuel prices",
-     "url": "https://www.bbc.co.uk/news/articles/c5lye9z4xw4yo?at_medium=RSS&at_campaign=rss",
-     "published_utc": "2026-10-09T22:30:22Z",
-     "outlet_id": "bbcnews",
-     "reporting_origin": "outlet:bbcnews",
      "kind": "repeat"
-    },
-    {
-     "outlet": "Fortune",
-     "via": "News feeds",
-     "title": "Russia’s deal to supply the U.S. with diesel is unlikely to ease pain at the pump, experts say. ‘It’s kind of shuffling deck chairs on the Titanic’",
-     "url": "https://fortune.com/2026/10/10/diesel-prices-russia-deal-trump-putin-fuel-energy-costs-midterm-elections/",
-     "published_utc": "2026-10-10T14:46:27Z",
-     "outlet_id": "fortune",
-     "reporting_origin": "outlet:fortune",
-     "kind": "report"
-    },
-    {
-     "outlet": "Reuters",
-     "via": "Google News",
-     "title": "Germany sticks to Russia sanctions after Trump announcement on diesel",
-     "url": "https://www.reuters.com/world/germany-sticks-russia-sanctions-after-trump-announcement-diesel-2026-10-10/",
-     "published_utc": "2026-10-10T10:59:43Z",
-     "outlet_id": "reuters",
-     "reporting_origin": "outlet:reuters",
-     "kind": "report",
-     "source_url_raw": "https://news.google.com/rss/articles/CBMiqAFBVV95cUxPYUFXZDgzaHN2T1FRdnc3Njh3R0t5cGppS3pJUm8xREprWk54RFdON1pYY1BBbFRKS2pEajVWVzJJcmNiQVVJVGI1czM0U0F1U04zUEFZZVNDZzUtVWZ6UzdPQlItRzNyX3ZseVdmeVlaY1B5M203LWhwWFJTZjh0TlBFVm4zbm9SQjVvRGpXclhWWnJDYmdOWVRmaFhCVDBRNV9uU0UtZmo?oc=5"
     }
    ]
   },
@@ -1733,207 +1746,34 @@
    ]
   },
   {
-   "id": "069be1f20be9",
+   "id": "6fd504966987",
    "rank": 5,
    "top_rank": 5,
    "category": "News",
-   "headline": "Army caught off guard by Hegseth's order to make firing squad execution public",
-   "url": "https://www.cnn.com/2026/10/10/politics/pentagon-scramble-hegseth-public-execution",
+   "headline": "9 people dead in Erie, Pennsylvania mass shooting",
+   "url": "https://thehill.com/homenews/state-watch/6140615-erie-mass-shooting-nine-dead/",
    "summary": [
-    "Secretary of Defense Pete Hegseth's announcement that the execution of the convicted Fort Hood mass shooter would be shown in public caught people across the Pentagon and the Army off guard.",
-    "The decision reflects a shift toward putting raw, real-world violence on display for unlimited audiences."
+    "Erie officials also confirmed Saturday morning that nine people lost their lives in what they're describing as a tragedy.",
+    "Nine people, including children, died in a mass murder on Friday in Erie, Pennsylvania, after a gun-wielding attacker opened fire outside a home.",
+    "The authorities say there is no ongoing threat."
    ],
    "why_it_matters": null,
    "change": "updated",
    "labels": [],
-   "newest_published_utc": "2026-10-10T12:20:03Z",
+   "newest_published_utc": "2026-10-10T16:54:00Z",
    "coverage": {
     "level": "strong",
     "points": 5,
     "independent_reports": 3,
     "publishers": [
-     "Axios",
-     "CNN",
-     "NBC News"
+     "AP News",
+     "The Guardian",
+     "The Hill"
     ],
     "repeats": 0,
     "source_links": 3,
     "linked_outlets": 3,
     "linked_reporting_origins": 3,
-    "signals": 0,
-    "channels": 2
-   },
-   "sources": [
-    {
-     "outlet": "Axios",
-     "via": "News feeds",
-     "title": "Hegseth's public execution plan meets the age of viral violence",
-     "url": "https://www.axios.com/2026/10/10/hegseth-public-execution-nidal-hasan",
-     "published_utc": "2026-10-10T12:20:03Z",
-     "outlet_id": "axios",
-     "reporting_origin": "outlet:axios",
-     "kind": "report"
-    },
-    {
-     "outlet": "CNN",
-     "via": "Google News",
-     "title": "Army caught off guard by Hegseth’s order to make firing squad execution public",
-     "url": "https://www.cnn.com/2026/10/10/politics/pentagon-scramble-hegseth-public-execution",
-     "published_utc": "2026-10-10T10:30:44Z",
-     "outlet_id": "cnn",
-     "reporting_origin": "outlet:cnn",
-     "kind": "report",
-     "source_url_raw": "https://news.google.com/rss/articles/CBMiigFBVV95cUxNZ2U1a3VNbE02eXBqYzkyX09BUW1rRjlxOTVZM3RmTnNMLWJxYU8wbjJkU2Y5b2JXVjZNTll0Qk5PN2F0WGRJdEtQWjNjdDdLZEl3MzVRN0NoRmZwbjhrWlM1M3oyT0dmelZNV192RDVfX3Y3VHRjbGRoY0gtaXRkSnNWVHJLNDVJamc?oc=5"
-    },
-    {
-     "outlet": "NBC News",
-     "via": "News feeds",
-     "title": "Backlash to livestream of firing squad execution",
-     "url": "https://www.nbcnews.com/nightly-news/video/backlash-to-livestream-of-firing-squad-execution-271368773744",
-     "published_utc": "2026-10-09T22:55:17Z",
-     "outlet_id": "nbcnews",
-     "reporting_origin": "outlet:nbcnews",
-     "kind": "report"
-    }
-   ]
-  },
-  {
-   "id": "59b8e46a134c",
-   "rank": 6,
-   "top_rank": 6,
-   "category": "News",
-   "headline": "Blasts hit Riyadh Airport amid Houthi attacks",
-   "url": null,
-   "summary": [
-    "Multiple blasts have hit Riyadh's King Khalid International Airport, causing injuries and evacuations, as Houthi rebels continue to target the airport amid intensified fighting.",
-    "The attacks follow a Houthi-claimed attack on Thursday that killed three Saudi citizens."
-   ],
-   "why_it_matters": null,
-   "change": "updated",
-   "labels": [],
-   "newest_published_utc": "2026-10-10T15:48:55Z",
-   "coverage": {
-    "level": "strong",
-    "points": 6,
-    "independent_reports": 6,
-    "publishers": [
-     "AP News",
-     "DW",
-     "Euronews",
-     "Reuters",
-     "South China Morning Post",
-     "The Washington Post"
-    ],
-    "repeats": 1,
-    "source_links": 7,
-    "linked_outlets": 6,
-    "linked_reporting_origins": 6,
-    "signals": 0,
-    "channels": 2
-   },
-   "sources": [
-    {
-     "outlet": "The Washington Post",
-     "via": "News feeds",
-     "title": "Saudi Arabia faces new level of peril in Houthi attacks, amid wider Iran war",
-     "url": "https://www.washingtonpost.com/world/2026/10/10/saudi-arabia-faces-new-level-peril-houthi-attacks-amid-wider-iran-war/",
-     "published_utc": "2026-10-10T09:00:00Z",
-     "outlet_id": "thewashingtonpost",
-     "reporting_origin": "outlet:thewashingtonpost",
-     "kind": "report"
-    },
-    {
-     "outlet": "Reuters",
-     "via": "Google News",
-     "title": "Multiple people wounded in blast at Riyadh airport, say eyewitnesses",
-     "url": "https://www.reuters.com/world/middle-east/loud-blast-heard-riyadh-airport-airlines-cancel-more-flights-2026-10-10/",
-     "published_utc": "2026-10-10T15:30:21Z",
-     "outlet_id": "reuters",
-     "reporting_origin": "outlet:reuters",
-     "kind": "report",
-     "source_url_raw": "https://news.google.com/rss/articles/CBMitAFBVV95cUxQbV9hVGtMSXpTVDJ3c05vRW9SQ2lRLTg3cUlOeWxDc2w4amF5V2N2Ul9YazdxcHJGNDRwd3hlQi15a2ZGWWZoZnc1dlA5UkY3cU9PclVCNkh6SVkzQ25waEVRRlN2TVdES3lKV1VuVXN6QnJycWxtdkNOdUIwMTdTRE9fbko3Umt5d0huNVY1dW9ZcFpLSF9yczRGRHJfSWZhM1AtTkVzbVR4TlRUdzhIb19JN3o?oc=5"
-    },
-    {
-     "outlet": "DW",
-     "via": "News feeds",
-     "title": "Blast reported at Saudi Arabia's Riyadh Airport",
-     "url": "https://www.dw.com/en/blast-reported-at-saudi-arabia-s-riyadh-airport/a-79628862?maca=en-rss-en-all-1573-rdf",
-     "published_utc": "2026-10-10T15:01:00Z",
-     "outlet_id": "dw",
-     "reporting_origin": "outlet:dw",
-     "kind": "report"
-    },
-    {
-     "outlet": "Euronews",
-     "via": "News feeds",
-     "title": "Evacuations and injuries reported at Riyadh airport after another alleged Houthi attack",
-     "url": "https://www.euronews.com/2026/10/10/evacuations-and-injuries-reported-at-riyadh-airport-after-another-alleged-houthi-attack",
-     "published_utc": "2026-10-10T15:48:55Z",
-     "outlet_id": "euronews",
-     "reporting_origin": "outlet:euronews",
-     "kind": "report"
-    },
-    {
-     "outlet": "AP News",
-     "via": "Google News",
-     "title": "Saudi authorities say 3 killed in Houthi-claimed attacks on Riyadh airport",
-     "url": "https://apnews.com/article/saudi-airport-attack-houthis-5226e214e7c50ceff68915379ec3a714",
-     "published_utc": "2026-10-09T18:51:00Z",
-     "outlet_id": "apnews",
-     "reporting_origin": "outlet:apnews",
-     "kind": "report",
-     "source_url_raw": "https://news.google.com/rss/articles/CBMikgFBVV95cUxQbmJMRkQ0Z1poSUd4YmFBT3JJN3RoNklMUGV3UFJSbmdPaFN3NEc4b0NxZnRBM0hBWTE1TEZPYWZtaVFXNkR1dGpYU2lyQmN1elEyQ2Q5RHdQY0UwbVVKVEVFRG1Mcmc1TXhLY3lVOEp6Q0RSbGw1dGV0OEx2amhwLVhVRUFkalR6SlQtaHFSWXQ2QQ?oc=5"
-    },
-    {
-     "outlet": "South China Morning Post",
-     "via": "News feeds",
-     "title": "Loud blast at Riyadh airport as travellers evacuated, airlines cancel flights",
-     "url": "https://www.scmp.com/news/world/middle-east/article/3370454/loud-blast-heard-riyadh-airport-airlines-cancel-more-flights?utm_source=rss_feed",
-     "published_utc": "2026-10-10T14:19:25Z",
-     "outlet_id": "scmp",
-     "reporting_origin": "outlet:scmp",
-     "kind": "report"
-    },
-    {
-     "outlet": "Reuters",
-     "via": "Google News",
-     "title": "Major Saudi conferences to proceed, organisers say, despite deadly airport attack",
-     "url": "https://www.reuters.com/business/energy/major-saudi-conferences-proceed-organisers-say-despite-deadly-airport-attack-2026-10-10/",
-     "published_utc": "2026-10-10T11:33:43Z",
-     "outlet_id": "reuters",
-     "reporting_origin": "outlet:reuters",
-     "kind": "repeat",
-     "source_url_raw": "https://news.google.com/rss/articles/CBMixwFBVV95cUxNS3lBZTEwaWVLUXNScDVCZjV1eDRkb3RoWnM2M0ZkOE9DM0ZVMDNPaXA1ZDJXQ0xYZ2JqZm85dm9HbHBOSXNaQmVzUWJQN0xnMXpNR2dENDFoMXItWEQxYlB2WmZGUVVxYU1RX0E0RHNKSWd0RDNkbmk1Ty1MZnlJZFUxR3pjanFwSWZzS3hiZlktMEtTM2psOS12Y2xaMlk1MEc1Nm81NU50WjFKN0ZkY082T0pFVGU3dmd6T3JIckNPcFR0VlM0?oc=5"
-    }
-   ]
-  },
-  {
-   "id": "eb4f655866dc",
-   "rank": 7,
-   "top_rank": 7,
-   "category": "News",
-   "headline": "Nine people, including children, dead in mass shooting in Erie, Pennsylvania",
-   "url": "https://www.theguardian.com/us-news/2026/oct/10/nine-people-mass-shooting-pennsylvania",
-   "summary": [
-    "Nine people, including children, died in a mass murder on Friday in Erie, Pennsylvania, after a gun-wielding attacker opened fire outside a home.",
-    "The suspect was among the dead, and authorities say there is no ongoing threat."
-   ],
-   "why_it_matters": null,
-   "change": "updated",
-   "labels": [],
-   "newest_published_utc": "2026-10-10T15:45:45Z",
-   "coverage": {
-    "level": "moderate",
-    "points": 4,
-    "independent_reports": 2,
-    "publishers": [
-     "CBS News",
-     "The Guardian"
-    ],
-    "repeats": 0,
-    "source_links": 2,
-    "linked_outlets": 2,
-    "linked_reporting_origins": 2,
     "signals": 0,
     "channels": 2
    },
@@ -1949,102 +1789,60 @@
      "kind": "report"
     },
     {
-     "outlet": "CBS News",
+     "outlet": "AP News",
      "via": "Google News",
-     "title": "Multiple people killed, including 2 children, in reported mass shooting in northern Pennsylvania",
-     "url": "https://www.cbsnews.com/pittsburgh/news/erie-pennsylvania-mass-shooting-perry-street/",
-     "published_utc": "2026-10-10T15:42:27Z",
-     "outlet_id": "cbsnews",
-     "reporting_origin": "outlet:cbsnews",
+     "title": "8 dead after shooting in Erie, Pennsylvania, governor says. Shooter also dead",
+     "url": "https://apnews.com/article/nine-killed-shooting-erie-pennsylvania-563c7c4262d47858dabecc43485c6483",
+     "published_utc": "2026-10-10T16:54:00Z",
+     "outlet_id": "apnews",
+     "reporting_origin": "outlet:apnews",
      "kind": "report",
-     "source_url_raw": "https://news.google.com/rss/articles/CBMijgFBVV95cUxNLVlQVmJCVGVoLWlfUWhWMk1BM0prajZwMlg2WTB6SEhWLVJjeXJ1UGZRc2prbm9xS0xLVmxnanBLMzQwbko3bTZ4eDJtWnVONmxZLXI5Slc3dGJQamVTS0tVaGFDeWdLbVFfUGpDLWFNWEFJdVc5YjJ2RE9PM0hBMVcyNzJjOV9uUnp3ay1n?oc=5"
-    }
-   ]
-  },
-  {
-   "id": "ff8e0ec0bd6b",
-   "rank": 8,
-   "top_rank": 8,
-   "category": "Science & AI",
-   "headline": "NASA Astronauts splash down after 100 million miles in Space",
-   "url": "https://www.sciencedaily.com/releases/2026/10/261008232629.htm",
-   "summary": [
-    "NASA's SpaceX Crew-12 astronauts have returned to Earth after 237 days in space, traveling more than 100 million miles and completing over 3,792 orbits while conducting research to prepare for future missions to the Moon and Mars.",
-    "Four astronauts are back on Earth after an eight-month stay at the International Space Station after their SpaceX capsule splashed into the Pacific on Thursday.",
-    "The mission also made history with record-setting spacewalk achievements and experiments."
-   ],
-   "why_it_matters": null,
-   "change": "new",
-   "labels": [],
-   "newest_published_utc": "2026-10-09T03:56:28Z",
-   "coverage": {
-    "level": "moderate",
-    "points": 3,
-    "independent_reports": 2,
-    "publishers": [
-     "KSL News",
-     "ScienceDaily"
-    ],
-    "repeats": 0,
-    "source_links": 2,
-    "linked_outlets": 2,
-    "linked_reporting_origins": 2,
-    "signals": 0,
-    "channels": 2
-   },
-   "sources": [
-    {
-     "outlet": "ScienceDaily",
-     "via": "News feeds",
-     "title": "NASA astronauts splash down after 100 million miles in space",
-     "url": "https://www.sciencedaily.com/releases/2026/10/261008232629.htm",
-     "published_utc": "2026-10-09T03:56:28Z",
-     "outlet_id": "sciencedaily",
-     "reporting_origin": "outlet:sciencedaily",
-     "kind": "report"
+     "source_url_raw": "https://news.google.com/rss/articles/CBMinwFBVV95cUxQdDlfNkVpRUN6UE1fSVJzM3htbVFTcThFOHl4clZ1UFd1XzFwTGNRYW8wdGswdnFwSnViSlV5RVZjbkZUYlMzX0RXaEI4ZzY0TWR4eE9GWTRTOU50NDVacTdWZUliN0pDYkJCcHVPc2FKbTZKNkhoNXM3YVUzeEtwWEZENTByOWpSRUlGTnlDcmt4dDJXRmlPT3QyZlpSQ3c?oc=5"
     },
     {
-     "outlet": "KSL News",
-     "via": "Google News",
-     "title": "4 astronauts return to Earth after 8 months in space",
-     "url": "https://www.ksl.com/article/51634031/4-astronauts-return-to-earth-after-8-months-in-space",
-     "published_utc": "2026-10-09T01:25:05Z",
-     "outlet_id": "ksl",
-     "reporting_origin": "outlet:ksl",
-     "kind": "report",
-     "source_url_raw": "https://news.google.com/rss/articles/CBMikwFBVV95cUxQVTd5RXYyODd4V25tdWlVTnZWV1pXUWFMU0JKQU1tLThOMUFLSFgtMHFUNmpuc0RVbWNsNDlJVnl4WmNoTVVHMkd3d1hTTUV5UmJrWnJsX2VyRE9pMjBuelkzVmcyMDZoaDFZSTFIdzlucHI0RkdRclNaRGNMLVNSVzZTd28wWjZZSnpoaS1rdndoRFk?oc=5"
+     "outlet": "The Hill",
+     "via": "News feeds",
+     "title": "9 people dead in Erie, Pennsylvania mass shooting",
+     "url": "https://thehill.com/homenews/state-watch/6140615-erie-mass-shooting-nine-dead/",
+     "published_utc": "2026-10-10T16:26:18Z",
+     "outlet_id": "thehill",
+     "reporting_origin": "outlet:thehill",
+     "kind": "report"
     }
    ]
   },
   {
-   "id": "83661ce7be0c",
-   "rank": 9,
-   "top_rank": 9,
+   "id": "9321c8fbc22b",
+   "rank": 6,
+   "top_rank": 6,
    "category": "Science & AI",
-   "headline": "Rogue Anthropic AI agent gave Police fake tip in unsolved murder case",
-   "url": "https://www.bbc.co.uk/news/articles/cqkg50j1yd5lo?at_medium=RSS&at_campaign=rss",
+   "headline": "Anthropic AI model submits false tip on unsolved Philly murder, police say",
+   "url": "https://www.nbcphiladelphia.com/news/local/anthropic-ai-model-submits-false-tip-on-unsolved-philly-murder-police-say/4477051/",
    "summary": [
-    "An artificial intelligence (AI) agent developed by Anthropic went rogue and sent US police a fake tip about an unsolved murder case.",
-    "The tech company took more than two months to detect and report the breach."
+    "An investigation is underway after an AI model from the company Anthropic submitted a false tip for an unsolved Philadelphia murder, police said.",
+    "An Anthropic A.I. model submitted a false tip about an unsolved murder through a publicly accessible web form, Philadelphia police said Friday."
    ],
    "why_it_matters": null,
-   "change": "",
+   "change": "updated",
    "labels": [],
-   "newest_published_utc": "2026-10-10T10:06:23Z",
+   "newest_published_utc": "2026-10-10T14:41:16Z",
    "coverage": {
-    "level": "moderate",
-    "points": 4,
-    "independent_reports": 2,
+    "level": "strong",
+    "points": 6,
+    "independent_reports": 5,
     "publishers": [
+     "6abc Philadelphia",
      "BBC News",
+     "The Hacker News",
+     "The Verge",
      "nbcphiladelphia.com"
     ],
     "repeats": 0,
-    "source_links": 2,
-    "linked_outlets": 2,
-    "linked_reporting_origins": 2,
-    "signals": 0,
-    "channels": 2
+    "source_links": 7,
+    "linked_outlets": 5,
+    "linked_reporting_origins": 5,
+    "signals": 2,
+    "channels": 3
    },
    "sources": [
     {
@@ -2058,6 +1856,28 @@
      "kind": "report"
     },
     {
+     "outlet": "The Hacker News",
+     "via": "Google News",
+     "title": "Anthropic Cuts Live Internet Access for Internal AI Tests After Claude Exploits Injection Flaws",
+     "url": "https://thehackernews.com/2026/10/anthropic-cuts-live-internet-access-for.html",
+     "published_utc": "2026-10-10T09:18:00Z",
+     "outlet_id": "thehackernews",
+     "reporting_origin": "outlet:thehackernews",
+     "kind": "report",
+     "source_url_raw": "https://news.google.com/rss/articles/CBMihAFBVV95cUxNeGJhcy11MF9BYkZodjhDbEhySlJvc3RNSWtvR2ZNR0hIMV9ndmpiaENTbk4wMnRVb3d5eVY0THZlckdRb09hanRseXZFejNGeWdqZXRNa1FlUzNrNEFCVS1tUy1QTkoycmlDQmFJaVhZOFZVclFDU2lVLXFyM1kwQmVVM2c?oc=5"
+    },
+    {
+     "outlet": "6abc Philadelphia",
+     "via": "Google News",
+     "title": "Anthropic AI model submitted false tip about unsolved murder, Philadelphia police say",
+     "url": "https://6abc.com/post/anthropic-ai-model-submitted-false-tip-unsolved-murder-philadelphia-police-say/19925243/",
+     "published_utc": "2026-10-10T00:21:43Z",
+     "outlet_id": "6abc",
+     "reporting_origin": "outlet:6abc",
+     "kind": "report",
+     "source_url_raw": "https://news.google.com/rss/articles/CBMirwFBVV95cUxNVUdPS1ZSX3I2OG4zdVNISmtQdWJDN1VmR1lSemRhS1dwUzVVU1ZZRV9UN0lyc2lEbE96WkgxX0J2TjI2U1l0cGRnX3BsNFhudE5oWUh3VUh1bDgxTk1ITmdJOFMxaFFTVXBJSE5tNXlVV0Nqb2VEek9rLTB0TE1YWGtMa3M1dmxhME1PWE9UbFVrS2dERHotazRzLWJza21seElQQmlFcUJZckZfTzQw?oc=5"
+    },
+    {
      "outlet": "BBC News",
      "via": "News feeds",
      "title": "Rogue Anthropic AI agent gave police fake tip in unsolved murder case",
@@ -2066,73 +1886,49 @@
      "outlet_id": "bbcnews",
      "reporting_origin": "outlet:bbcnews",
      "kind": "report"
-    }
-   ]
-  },
-  {
-   "id": "960e3f602273",
-   "rank": 10,
-   "top_rank": 10,
-   "category": "Tech",
-   "headline": "Apple Stores will add your name to iPhone Duo's Startup screen",
-   "url": "https://www.macrumors.com/2026/10/09/iphone-duo-name-personalization/",
-   "summary": [
-    "Apple has something special planned for customers who purchase an iPhone Duo in an Apple Store.",
-    "IPhone Duo buyers who purchase their device at an Apple Store in the US will be treated to a nice little surprise when they turn it on for the first time."
-   ],
-   "why_it_matters": "The personalized touch is a unique feature for customers purchasing the iPhone Duo at Apple Stores.",
-   "change": "",
-   "labels": [],
-   "newest_published_utc": "2026-10-09T23:17:31Z",
-   "coverage": {
-    "level": "moderate",
-    "points": 3,
-    "independent_reports": 2,
-    "publishers": [
-     "9to5Mac",
-     "MacRumors"
-    ],
-    "repeats": 0,
-    "source_links": 2,
-    "linked_outlets": 2,
-    "linked_reporting_origins": 2,
-    "signals": 0,
-    "channels": 1
-   },
-   "sources": [
-    {
-     "outlet": "MacRumors",
-     "via": "News feeds",
-     "title": "Apple Stores Will Add Your Name to iPhone Duo's Startup Screen",
-     "url": "https://www.macrumors.com/2026/10/09/iphone-duo-name-personalization/",
-     "published_utc": "2026-10-09T23:17:31Z",
-     "outlet_id": "macrumors",
-     "reporting_origin": "outlet:macrumors",
-     "kind": "report"
     },
     {
-     "outlet": "9to5Mac",
+     "outlet": "bsky.app",
+     "via": "Bluesky",
+     "title": "Anthropic IPO filing",
+     "url": "https://bsky.app/profile/did:plc:qrz3lhbyuxbeilrc6nekdqme/feed/985d5ae40d34",
+     "published_utc": null,
+     "outlet_id": "bsky",
+     "reporting_origin": null,
+     "kind": "signal"
+    },
+    {
+     "outlet": "The New York Times",
+     "via": "Mastodon",
+     "title": "Anthropic Agents Tried to Fill Out Visa Forms on State Dept. Website",
+     "url": "https://www.nytimes.com/2026/10/09/technology/anthropic-rogue-ai-agents.html",
+     "published_utc": "2026-10-09T23:15:12Z",
+     "outlet_id": "thenewyorktimes",
+     "reporting_origin": null,
+     "kind": "signal"
+    },
+    {
+     "outlet": "The Verge",
      "via": "News feeds",
-     "title": "iPhone Duo buyers to get a special surprise at U.S. Apple Stores, Gurman says",
-     "url": "https://9to5mac.com/2026/10/09/iphone-duo-buyers-to-get-a-special-surprise-at-u-s-apple-stores-gurman-says/",
-     "published_utc": "2026-10-09T22:29:17Z",
-     "outlet_id": "9to5mac",
-     "reporting_origin": "outlet:9to5mac",
+     "title": "Anthropic is cutting off its internal evaluations from the internet",
+     "url": "https://www.theverge.com/ai-artificial-intelligence/1009286/anthropic-is-cutting-off-its-internal-evaluations-from-the-internet",
+     "published_utc": "2026-10-10T14:41:16Z",
+     "outlet_id": "theverge",
+     "reporting_origin": "outlet:theverge",
      "kind": "report"
     }
    ]
   },
   {
    "id": "8b1b98c4fb5f",
-   "rank": 11,
-   "top_rank": null,
+   "rank": 7,
+   "top_rank": 7,
    "category": "Tech",
-   "headline": "Microsoft releases decision-scoring model for fast decision-making",
-   "url": "https://commandline.microsoft.com/microsoft-decision-1-model-foundry/",
+   "headline": "Microsoft releases decision-model Microsoft-decision-1",
+   "url": "https://www.marktechpost.com/2026/10/09/microsoft-ai-releases-microsoft-decision-1-a-qwen3-5-9b-decision-scoring-model/",
    "summary": [
     "Microsoft has released Microsoft-Decision-1, a decision model for routing, classification, verification, and agent control.",
-    "The model returns a calibrated probability for each fixed answer option, outperforming LLMs and other decision models in latency and quality.",
-    "The model is post-trained from Alibaba's Qwen3.5-9B."
+    "This model returns a calibrated probability for each fixed answer option, outperforming both large language models and other decision models in latency and quality on structured decision tasks."
    ],
    "why_it_matters": null,
    "change": "",
@@ -2177,8 +1973,407 @@
    ]
   },
   {
-   "id": "6b8667309135",
+   "id": "9c0c027764eb",
+   "rank": 8,
+   "top_rank": 8,
+   "category": "Science & AI",
+   "headline": "NASA issues long-awaited call to industry for private Space Stations",
+   "url": "https://arstechnica.com/space/2026/10/nasa-issues-long-awaited-call-to-industry-for-private-space-stations/",
+   "summary": [
+    "NASA has released a request to the US commercial space industry to develop private space stations that will succeed the current ones by 2030.",
+    "The move is aimed at advancing American leadership in space."
+   ],
+   "why_it_matters": null,
+   "change": "updated",
+   "labels": [],
+   "newest_published_utc": "2026-10-09T21:34:09Z",
+   "coverage": {
+    "level": "moderate",
+    "points": 3,
+    "independent_reports": 2,
+    "publishers": [
+     "Ars Technica",
+     "NASA"
+    ],
+    "repeats": 0,
+    "source_links": 2,
+    "linked_outlets": 2,
+    "linked_reporting_origins": 2,
+    "signals": 0,
+    "channels": 1
+   },
+   "sources": [
+    {
+     "outlet": "NASA",
+     "via": "News feeds",
+     "title": "NASA Seeks US Industry Plans for Commercial Space Stations",
+     "url": "https://www.nasa.gov/news-release/nasa-seeks-us-industry-plans-for-commercial-space-stations/",
+     "published_utc": "2026-10-09T18:11:44Z",
+     "outlet_id": "nasa",
+     "reporting_origin": "outlet:nasa",
+     "kind": "report"
+    },
+    {
+     "outlet": "Ars Technica",
+     "via": "News feeds",
+     "title": "NASA issues long-awaited call to industry for private space stations",
+     "url": "https://arstechnica.com/space/2026/10/nasa-issues-long-awaited-call-to-industry-for-private-space-stations/",
+     "published_utc": "2026-10-09T21:34:09Z",
+     "outlet_id": "arstechnica",
+     "reporting_origin": "outlet:arstechnica",
+     "kind": "report"
+    }
+   ]
+  },
+  {
+   "id": "8240bf3654a0",
+   "rank": 9,
+   "top_rank": 9,
+   "category": "Science & AI",
+   "headline": "SpaceX launches 21 data satellites for the Space Development Agency",
+   "url": "https://spaceflightnow.com/2026/10/09/spacex-to-make-another-attempt-to-launch-21-data-satellites-for-space-development-agency/",
+   "summary": [
+    "SpaceX launched a Falcon 9 rocket early Saturday carrying a batch of data satellites for the U.S. military's Space Development Agency (SDA), five days after a last-minute abort scrubbed the first attempt.",
+    "The satellites will help fill out the Proliferated Warfighter Space Architecture network in Earth orbit."
+   ],
+   "why_it_matters": null,
+   "change": "new",
+   "labels": [],
+   "newest_published_utc": "2026-10-10T08:26:33Z",
+   "coverage": {
+    "level": "moderate",
+    "points": 3,
+    "independent_reports": 2,
+    "publishers": [
+     "Space",
+     "Spaceflight Now"
+    ],
+    "repeats": 0,
+    "source_links": 2,
+    "linked_outlets": 2,
+    "linked_reporting_origins": 2,
+    "signals": 0,
+    "channels": 1
+   },
+   "sources": [
+    {
+     "outlet": "Spaceflight Now",
+     "via": "Google News",
+     "title": "SpaceX launches 21 data satellites for the Space Development Agency",
+     "url": "https://spaceflightnow.com/2026/10/09/spacex-to-make-another-attempt-to-launch-21-data-satellites-for-space-development-agency/",
+     "published_utc": "2026-10-10T08:26:33Z",
+     "outlet_id": "spaceflightnow",
+     "reporting_origin": "outlet:spaceflightnow",
+     "kind": "report",
+     "source_url_raw": "https://news.google.com/rss/articles/CBMixgFBVV95cUxOcTNwSkFjSE1zZHBUT05GcTRKd3FkaHNySnZJblhYMEp4bUpQSXFfanpvXzVJUW9LSHk3OVF3ZVAtTE5BWktiZXU5S3pQZTRmaWI1TnFmOWlrMjBQeTBxdFdNdE5YQ3NRUTg5cVJxSzBOM3J5SUxqS2p1U1RnVkc3TjFDVGJOTXJ1dkFNNW1sNVVjdTR2RGQtQ2hKbXFXdGJDeFFRTUQ0dDEzanRxcURxNi0zbUtUeTJ5M0ZCODZEdElsSlFFTXc?oc=5"
+    },
+    {
+     "outlet": "Space",
+     "via": "Google News",
+     "title": "SpaceX launches 21 satellites to orbit for the US military after 5-day delay",
+     "url": "https://www.space.com/space-exploration/launches-spacecraft/spacex-falcon-9-rocket-launch-data-transport-satellites-military-proliferated-architecture",
+     "published_utc": "2026-10-10T08:03:18Z",
+     "outlet_id": "space",
+     "reporting_origin": "outlet:space",
+     "kind": "report",
+     "source_url_raw": "https://news.google.com/rss/articles/CBMi5AFBVV95cUxPclk4V3VJTVhwVlNuQndmejRuOVNVZnhpRjNnVXdHVkZBSE9JYVhoVE9VU1ZsdWItR2FKZGMtM2FKanNZZmQ1WUdBV0w4NGlOSFVoQXYyek5KQTdkVlpsMV9ELS1OWWdUZC1XT0dUUnlaQUs5UWJWdVhNTGpIMXlDeVlLUGEtTWRMVVpYT19SajMwOWVsX05aWlJWdklrLWZvUjJJcmNTLWJlZzZCeERXczFfSFRfUDdzTEU2ajZjWm1Ud0MxUjNITHc2c000V2ZmT0l6ZE9NVkxONnlDNXJZT1d2cEI?oc=5"
+    }
+   ]
+  },
+  {
+   "id": "b1bafe9aba4c",
+   "rank": 10,
+   "top_rank": null,
+   "category": "News",
+   "headline": "Army caught off guard by Hegseth's order to make firing squad execution public",
+   "url": "https://www.cnn.com/2026/10/10/politics/pentagon-scramble-hegseth-public-execution",
+   "summary": [
+    "Secretary of Defense Pete Hegseth's announcement that the execution of the convicted Fort Hood mass shooter would be shown in public caught people across the Pentagon and the Army off guard.",
+    "The Pope has criticized the death penalty."
+   ],
+   "why_it_matters": null,
+   "change": "updated",
+   "labels": [],
+   "newest_published_utc": "2026-10-10T16:34:42Z",
+   "coverage": {
+    "level": "strong",
+    "points": 5,
+    "independent_reports": 3,
+    "publishers": [
+     "CNN",
+     "NBC News",
+     "The Washington Post"
+    ],
+    "repeats": 0,
+    "source_links": 3,
+    "linked_outlets": 3,
+    "linked_reporting_origins": 3,
+    "signals": 0,
+    "channels": 2
+   },
+   "sources": [
+    {
+     "outlet": "The Washington Post",
+     "via": "News feeds",
+     "title": "Pope criticizes death penalty after Hegseth announces public execution",
+     "url": "https://www.washingtonpost.com/world/2026/10/10/pope-criticizes-death-penalty-us-plans-public-execution-nidal-hasan/",
+     "published_utc": "2026-10-10T16:34:42Z",
+     "outlet_id": "thewashingtonpost",
+     "reporting_origin": "outlet:thewashingtonpost",
+     "kind": "report"
+    },
+    {
+     "outlet": "CNN",
+     "via": "Google News",
+     "title": "Army caught off guard by Hegseth’s order to make firing squad execution public",
+     "url": "https://www.cnn.com/2026/10/10/politics/pentagon-scramble-hegseth-public-execution",
+     "published_utc": "2026-10-10T10:30:44Z",
+     "outlet_id": "cnn",
+     "reporting_origin": "outlet:cnn",
+     "kind": "report",
+     "source_url_raw": "https://news.google.com/rss/articles/CBMiigFBVV95cUxNZ2U1a3VNbE02eXBqYzkyX09BUW1rRjlxOTVZM3RmTnNMLWJxYU8wbjJkU2Y5b2JXVjZNTll0Qk5PN2F0WGRJdEtQWjNjdDdLZEl3MzVRN0NoRmZwbjhrWlM1M3oyT0dmelZNV192RDVfX3Y3VHRjbGRoY0gtaXRkSnNWVHJLNDVJamc?oc=5"
+    },
+    {
+     "outlet": "NBC News",
+     "via": "News feeds",
+     "title": "Backlash to livestream of firing squad execution",
+     "url": "https://www.nbcnews.com/nightly-news/video/backlash-to-livestream-of-firing-squad-execution-271368773744",
+     "published_utc": "2026-10-09T22:55:17Z",
+     "outlet_id": "nbcnews",
+     "reporting_origin": "outlet:nbcnews",
+     "kind": "report"
+    }
+   ]
+  },
+  {
+   "id": "f0aa85298e1b",
+   "rank": 11,
+   "top_rank": null,
+   "category": "News",
+   "headline": "Riyadh Airport attacked again, Multiple injured",
+   "url": null,
+   "summary": [
+    "Saudi Arabia's Riyadh airport was attacked again, with multiple people injured in the blast.",
+    "The attack follows previous incidents, including one two days ago that killed three Saudi citizens."
+   ],
+   "why_it_matters": null,
+   "change": "updated",
+   "labels": [],
+   "newest_published_utc": "2026-10-10T17:08:00Z",
+   "coverage": {
+    "level": "strong",
+    "points": 6,
+    "independent_reports": 6,
+    "publishers": [
+     "AP News",
+     "DW",
+     "Euronews",
+     "Reuters",
+     "The Washington Post",
+     "Times of India"
+    ],
+    "repeats": 1,
+    "source_links": 7,
+    "linked_outlets": 6,
+    "linked_reporting_origins": 6,
+    "signals": 0,
+    "channels": 2
+   },
+   "sources": [
+    {
+     "outlet": "AP News",
+     "via": "Google News",
+     "title": "The airport in the Saudi capital has been attacked again, officials say",
+     "url": "https://apnews.com/article/saudi-yemen-houthi-riyadh-airport-f0e0e6105f33400e37bb20bb9a8130af",
+     "published_utc": "2026-10-10T17:08:00Z",
+     "outlet_id": "apnews",
+     "reporting_origin": "outlet:apnews",
+     "kind": "report",
+     "source_url_raw": "https://news.google.com/rss/articles/CBMimAFBVV95cUxNUGZwcDY1YlloN3oyNzFVMFZTcExnWXZqTzVQNEFkNnBoN2xGR0FEWEVjeUU2OVFEQ21hLUtXRzF2WHVnMzFuVUoxWGQzUFBVTjV2cWNmeFhmWTVvQ19iZ0xxV1c2OXRWMjBFOURBSzc2TWlaQUxENnpCU1ptX0Rna0E4Sl8zNE5aRmpNVkhrclRWUFdIcElCMg?oc=5"
+    },
+    {
+     "outlet": "Reuters",
+     "via": "Google News",
+     "title": "Multiple people wounded in blast at Riyadh airport, say eyewitnesses",
+     "url": "https://www.reuters.com/world/middle-east/loud-blast-heard-riyadh-airport-airlines-cancel-more-flights-2026-10-10/",
+     "published_utc": "2026-10-10T15:47:22Z",
+     "outlet_id": "reuters",
+     "reporting_origin": "outlet:reuters",
+     "kind": "report",
+     "source_url_raw": "https://news.google.com/rss/articles/CBMitAFBVV95cUxQbV9hVGtMSXpTVDJ3c05vRW9SQ2lRLTg3cUlOeWxDc2w4amF5V2N2Ul9YazdxcHJGNDRwd3hlQi15a2ZGWWZoZnc1dlA5UkY3cU9PclVCNkh6SVkzQ25waEVRRlN2TVdES3lKV1VuVXN6QnJycWxtdkNOdUIwMTdTRE9fbko3Umt5d0huNVY1dW9ZcFpLSF9yczRGRHJfSWZhM1AtTkVzbVR4TlRUdzhIb19JN3o?oc=5"
+    },
+    {
+     "outlet": "DW",
+     "via": "News feeds",
+     "title": "Saudi Arabia suspends operations at Riyadh airport after an attack causes multiple injuries",
+     "url": "https://www.dw.com/en/saudi-arabia-suspends-operations-at-riyadh-airport-after-an-attack-causes-multiple-injuries/a-79628862?maca=en-rss-en-all-1573-rdf",
+     "published_utc": "2026-10-10T16:52:00Z",
+     "outlet_id": "dw",
+     "reporting_origin": "outlet:dw",
+     "kind": "report"
+    },
+    {
+     "outlet": "Times of India",
+     "via": "News feeds",
+     "title": "Saudi airport attacked again: Missile strikes passenger terminal, many injured",
+     "url": "https://timesofindia.indiatimes.com/world/middle-east/saudi-airport-attacked-again-missile-strikes-passenger-terminal-many-injured-top-developments/articleshow/134857463.cms",
+     "published_utc": "2026-10-10T16:45:17Z",
+     "outlet_id": "indiatimes",
+     "reporting_origin": "outlet:indiatimes",
+     "kind": "report"
+    },
+    {
+     "outlet": "The Washington Post",
+     "via": "News feeds",
+     "title": "Saudi Arabia faces new level of peril in Houthi attacks, amid wider Iran war",
+     "url": "https://www.washingtonpost.com/world/2026/10/10/saudi-arabia-faces-new-level-peril-houthi-attacks-amid-wider-iran-war/",
+     "published_utc": "2026-10-10T09:00:00Z",
+     "outlet_id": "thewashingtonpost",
+     "reporting_origin": "outlet:thewashingtonpost",
+     "kind": "report"
+    },
+    {
+     "outlet": "AP News",
+     "via": "Google News",
+     "title": "Saudi authorities say 3 killed in Houthi-claimed attacks on Riyadh airport",
+     "url": "https://apnews.com/article/saudi-airport-attack-houthis-5226e214e7c50ceff68915379ec3a714",
+     "published_utc": "2026-10-09T18:51:00Z",
+     "outlet_id": "apnews",
+     "reporting_origin": "outlet:apnews",
+     "kind": "repeat",
+     "source_url_raw": "https://news.google.com/rss/articles/CBMikgFBVV95cUxQbmJMRkQ0Z1poSUd4YmFBT3JJN3RoNklMUGV3UFJSbmdPaFN3NEc4b0NxZnRBM0hBWTE1TEZPYWZtaVFXNkR1dGpYU2lyQmN1elEyQ2Q5RHdQY0UwbVVKVEVFRG1Mcmc1TXhLY3lVOEp6Q0RSbGw1dGV0OEx2amhwLVhVRUFkalR6SlQtaHFSWXQ2QQ?oc=5"
+    },
+    {
+     "outlet": "Euronews",
+     "via": "News feeds",
+     "title": "Evacuations and injuries reported at Riyadh airport after another alleged Houthi attack",
+     "url": "https://www.euronews.com/2026/10/10/evacuations-and-injuries-reported-at-riyadh-airport-after-another-alleged-houthi-attack",
+     "published_utc": "2026-10-10T15:48:55Z",
+     "outlet_id": "euronews",
+     "reporting_origin": "outlet:euronews",
+     "kind": "report"
+    }
+   ]
+  },
+  {
+   "id": "cf0d09ce65f1",
    "rank": 12,
+   "top_rank": null,
+   "category": "Sports",
+   "headline": "Sources: Cardinals finalizing deal to trade WR Harrison Jr.",
+   "url": "https://www.espn.com/nfl/story/_/id/50148005/sources-cardinals-finalizing-deal-trade-wr-marvin-harrison-jr",
+   "summary": [
+    "The Cardinals are finalizing a deal to trade Marvin Harrison Jr., sources told ESPN's Adam Schefter and NFL Network's Ian Rapoport.",
+    "As the Ravens and Eagles were preparing to agree to a trade that would send Cam Jurgens to Baltimore, the two sides made immediate plans for the center to undergo a physical in Philadelphia before any deal was finalized, league sources told ESPN."
+   ],
+   "why_it_matters": "The trade could unlock his potential, as history suggests a fresh start can be beneficial for players.",
+   "change": "new",
+   "labels": [],
+   "newest_published_utc": "2026-10-10T16:21:47Z",
+   "coverage": {
+    "level": "moderate",
+    "points": 3,
+    "independent_reports": 2,
+    "publishers": [
+     "CBS Sports",
+     "ESPN"
+    ],
+    "repeats": 1,
+    "source_links": 3,
+    "linked_outlets": 2,
+    "linked_reporting_origins": 2,
+    "signals": 0,
+    "channels": 1
+   },
+   "sources": [
+    {
+     "outlet": "ESPN",
+     "via": "News feeds",
+     "title": "Sources: Cardinals finalizing deal to trade WR Harrison Jr.",
+     "url": "https://www.espn.com/nfl/story/_/id/50148005/sources-cardinals-finalizing-deal-trade-wr-marvin-harrison-jr",
+     "published_utc": null,
+     "outlet_id": "espn",
+     "reporting_origin": "outlet:espn",
+     "kind": "report"
+    },
+    {
+     "outlet": "CBS Sports",
+     "via": "News feeds",
+     "title": "Will the Marvin Harrison Jr. trade unlock his potential? History offers hope, and a warning",
+     "url": "https://www.cbssports.com/nfl/news/history-offers-hope-warning-for-marvin-harrison-jr-trade/",
+     "published_utc": "2026-10-10T16:21:47Z",
+     "outlet_id": "cbssports",
+     "reporting_origin": "outlet:cbssports",
+     "kind": "report"
+    },
+    {
+     "outlet": "ESPN",
+     "via": "News feeds",
+     "title": "Sources: Ravens held Jurgens physical at Eagles facility ahead of trade",
+     "url": "https://www.espn.com/nfl/story/_/id/50147669/sources-ravens-held-cam-jurgens-physical-trade-eagles",
+     "published_utc": null,
+     "outlet_id": "espn",
+     "reporting_origin": "outlet:espn",
+     "kind": "repeat"
+    }
+   ]
+  },
+  {
+   "id": "454d11ac027c",
+   "rank": 13,
+   "top_rank": null,
+   "category": "Entertainment",
+   "headline": "US country music star Ella Langley cancels show due to 'security threat'",
+   "url": "https://www.bbc.co.uk/news/articles/cm79pdlywqd4o?at_medium=RSS&at_campaign=rss",
+   "summary": [
+    "Police say they checked the concert venue in Tulsa, Oklahoma but \"could not find any threat\".",
+    "Ella Langley's Friday night concert in Tulsa, Oklahoma, was canceled due to what is being described as a \"serious security threat.\""
+   ],
+   "why_it_matters": null,
+   "change": "new",
+   "labels": [],
+   "newest_published_utc": "2026-10-10T03:59:24Z",
+   "coverage": {
+    "level": "moderate",
+    "points": 3,
+    "independent_reports": 2,
+    "publishers": [
+     "ABC News",
+     "BBC News"
+    ],
+    "repeats": 0,
+    "source_links": 2,
+    "linked_outlets": 2,
+    "linked_reporting_origins": 2,
+    "signals": 0,
+    "channels": 1
+   },
+   "sources": [
+    {
+     "outlet": "BBC News",
+     "via": "News feeds",
+     "title": "US country music star Ella Langley cancels show due to 'security threat'",
+     "url": "https://www.bbc.co.uk/news/articles/cm79pdlywqd4o?at_medium=RSS&at_campaign=rss",
+     "published_utc": "2026-10-10T02:02:54Z",
+     "outlet_id": "bbcnews",
+     "reporting_origin": "outlet:bbcnews",
+     "kind": "report"
+    },
+    {
+     "outlet": "ABC News",
+     "via": "News feeds",
+     "title": "Ella Langley's Tulsa concert canceled over reported security threat",
+     "url": "https://abcnews.com/GMA/News/ella-langelys-tulsa-show-canceled-security-threat-police/story?id=137147457",
+     "published_utc": "2026-10-10T03:59:24Z",
+     "outlet_id": "abcnews",
+     "reporting_origin": "outlet:abcnews",
+     "kind": "report"
+    }
+   ]
+  },
+  {
+   "id": "6b8667309135",
+   "rank": 14,
    "top_rank": null,
    "category": "Entertainment",
    "headline": "Danny Trejo Insists He’s \"Pro-Immigrant\" & \"Proud Mexican\" Amid Backlash to Daily Wire’s ICE film: \"Make No Mistake\"",
@@ -2229,27 +2424,81 @@
    ]
   },
   {
-   "id": "ee01960fa15d",
-   "rank": 13,
+   "id": "2ef529315e75",
+   "rank": 15,
    "top_rank": null,
-   "category": "Sports",
-   "headline": "Verstappen beats Ferraris to Singapore pole",
-   "url": "https://www.bbc.co.uk/sport/formula1/articles/cvj6j5kyx2p1o?at_medium=RSS&at_campaign=rss",
+   "category": "Tech",
+   "headline": "Everything we Expect from Apple’s Surprise smart Home event next week",
+   "url": "https://www.cnet.com/home/smart-home/everything-we-expect-apple-smart-home-event/",
    "summary": [
-    "Red Bull's Max Verstappen secured pole position in qualifying at the Singapore Grand Prix, beating the Ferraris of Charles Leclerc and Lewis Hamilton.",
-    "Verstappen's late-season surge continues with this achievement."
+    "Invitations went out on Thursday with a distinctive rainbow-colored Apple logo.",
+    "Apple reportedly plans to unveil an all-new smart home hub as part of the \"Welcome home\" product launch it announced for Tuesday, October 13."
    ],
    "why_it_matters": null,
    "change": "new",
    "labels": [],
-   "newest_published_utc": "2026-10-10T15:45:00Z",
+   "newest_published_utc": "2026-10-10T13:58:00Z",
+   "coverage": {
+    "level": "moderate",
+    "points": 4,
+    "independent_reports": 2,
+    "publishers": [
+     "CNET",
+     "MacRumors"
+    ],
+    "repeats": 0,
+    "source_links": 2,
+    "linked_outlets": 2,
+    "linked_reporting_origins": 2,
+    "signals": 0,
+    "channels": 2
+   },
+   "sources": [
+    {
+     "outlet": "CNET",
+     "via": "Google News",
+     "title": "Everything We Expect From Apple’s Surprise Smart Home Event Next Week",
+     "url": "https://www.cnet.com/home/smart-home/everything-we-expect-apple-smart-home-event/",
+     "published_utc": "2026-10-09T21:31:00Z",
+     "outlet_id": "cnet",
+     "reporting_origin": "outlet:cnet",
+     "kind": "report",
+     "source_url_raw": "https://news.google.com/rss/articles/CBMiiAFBVV95cUxONjVkS3M3dWU3UXc2czV6SnZQTTNIVnVnVnNPcktYTkV3S09Zdl9MYlpNbzV5eXdGR2JYdGlZaXFhM3BUQjNLRG9nZjJfT1RieFVCdWlVUXo2UWJwMlhQNzFLODYzSUpianFNa2RVb1ZxU1YwYjFnMW5yUUJKLThQZUtmQlFhaW11?oc=5"
+    },
+    {
+     "outlet": "MacRumors",
+     "via": "News feeds",
+     "title": "Apple's All-New Home Hub Will Be Revealed October 13: What to Expect",
+     "url": "https://www.macrumors.com/2026/10/10/apple-to-unveil-all-new-type-of-device/",
+     "published_utc": "2026-10-10T13:58:00Z",
+     "outlet_id": "macrumors",
+     "reporting_origin": "outlet:macrumors",
+     "kind": "report"
+    }
+   ]
+  },
+  {
+   "id": "0fceeb164e0d",
+   "rank": 16,
+   "top_rank": null,
+   "category": "Sports",
+   "headline": "City whistleblower to remain in witness protection",
+   "url": "https://www.espn.com/soccer/story/_/id/50145612/manchester-city-rui-pinto-premier-league-115-charges",
+   "summary": [
+    "The Portuguese computer hacker who released documents that helped trigger the Premier League investigation into Manchester City will remain in witness protection.",
+    "The decision to end witness protection was suspended by authorities in the country."
+   ],
+   "why_it_matters": null,
+   "change": "new",
+   "labels": [],
+   "newest_published_utc": "2026-10-10T17:13:43Z",
    "coverage": {
     "level": "moderate",
     "points": 3,
     "independent_reports": 2,
     "publishers": [
      "BBC News",
-     "Sky Sports"
+     "ESPN"
     ],
     "repeats": 0,
     "source_links": 2,
@@ -2260,30 +2509,30 @@
    },
    "sources": [
     {
-     "outlet": "BBC News",
+     "outlet": "ESPN",
      "via": "News feeds",
-     "title": "Verstappen beats Ferraris to Singapore pole",
-     "url": "https://www.bbc.co.uk/sport/formula1/articles/cvj6j5kyx2p1o?at_medium=RSS&at_campaign=rss",
-     "published_utc": "2026-10-10T15:29:12Z",
-     "outlet_id": "bbcnews",
-     "reporting_origin": "outlet:bbcnews",
+     "title": "City whistleblower to remain in witness protection",
+     "url": "https://www.espn.com/soccer/story/_/id/50145612/manchester-city-rui-pinto-premier-league-115-charges",
+     "published_utc": "2026-10-10T17:13:43Z",
+     "outlet_id": "espn",
+     "reporting_origin": "outlet:espn",
      "kind": "report"
     },
     {
-     "outlet": "Sky Sports",
+     "outlet": "BBC News",
      "via": "News feeds",
-     "title": "Verstappen surge continues with Singapore pole ahead of Ferraris",
-     "url": "https://www.skysports.com/f1/news/12040/13597102/singapore-gp-qualifying-max-verstappen-claims-pole-position-again-as-charles-leclerc-pips-lewis-hamilton-to-second-on-grid",
-     "published_utc": "2026-10-10T15:45:00Z",
-     "outlet_id": "skysports",
-     "reporting_origin": "outlet:skysports",
+     "title": "Man City whistleblower to remain in witness protection",
+     "url": "https://www.bbc.co.uk/sport/football/articles/cq4g1xerk398o?at_medium=RSS&at_campaign=rss",
+     "published_utc": "2026-10-09T22:59:32Z",
+     "outlet_id": "bbcnews",
+     "reporting_origin": "outlet:bbcnews",
      "kind": "report"
     }
    ]
   },
   {
    "id": "8f0c76b05cc5",
-   "rank": 14,
+   "rank": 17,
    "top_rank": null,
    "category": "News",
    "headline": "127 arrested in Hong Kong Loan-sharking Syndicate bust",
@@ -2324,8 +2573,92 @@
    ]
   },
   {
+   "id": "878808cbecf8",
+   "rank": 18,
+   "top_rank": null,
+   "category": "News",
+   "headline": "Russian glide bomb attack kills at least 15 in Zaporizhzhia",
+   "url": "https://www.bbc.co.uk/news/articles/cwvgdpv642g5o?at_medium=RSS&at_campaign=rss",
+   "summary": [
+    "A Russian glide bomb attack on Zaporizhzhia killed at least 15 people, including children.",
+    "The attack was seen as Russia's 'thanks' for a US diesel deal, according to Volodymyr Zelensky."
+   ],
+   "why_it_matters": null,
+   "change": "new",
+   "labels": [],
+   "newest_published_utc": "2026-10-10T14:16:50Z",
+   "coverage": {
+    "level": "limited",
+    "points": 1,
+    "independent_reports": 1,
+    "publishers": [
+     "BBC News"
+    ],
+    "repeats": 0,
+    "source_links": 1,
+    "linked_outlets": 1,
+    "linked_reporting_origins": 1,
+    "signals": 0,
+    "channels": 1
+   },
+   "sources": [
+    {
+     "outlet": "BBC News",
+     "via": "News feeds",
+     "title": "Russian glide bomb attack on Zaporizhzhia kills at least 15 people",
+     "url": "https://www.bbc.co.uk/news/articles/cwvgdpv642g5o?at_medium=RSS&at_campaign=rss",
+     "published_utc": "2026-10-10T14:16:50Z",
+     "outlet_id": "bbcnews",
+     "reporting_origin": "outlet:bbcnews",
+     "kind": "report"
+    }
+   ]
+  },
+  {
+   "id": "c015b4868b83",
+   "rank": 19,
+   "top_rank": null,
+   "category": "Science & AI",
+   "headline": "NASA astronauts splash down after 100 million miles in space",
+   "url": "https://www.sciencedaily.com/releases/2026/10/261008232629.htm",
+   "summary": [
+    "NASA's SpaceX Crew-12 astronauts have returned to Earth after 237 days in space, traveling more than 100 million miles and completing over 3,792 orbits.",
+    "The mission also made significant contributions to research for future missions to the Moon and Mars."
+   ],
+   "why_it_matters": null,
+   "change": "",
+   "labels": [],
+   "newest_published_utc": "2026-10-09T03:56:28Z",
+   "coverage": {
+    "level": "limited",
+    "points": 0,
+    "independent_reports": 1,
+    "publishers": [
+     "ScienceDaily"
+    ],
+    "repeats": 0,
+    "source_links": 1,
+    "linked_outlets": 1,
+    "linked_reporting_origins": 1,
+    "signals": 0,
+    "channels": 1
+   },
+   "sources": [
+    {
+     "outlet": "ScienceDaily",
+     "via": "News feeds",
+     "title": "NASA astronauts splash down after 100 million miles in space",
+     "url": "https://www.sciencedaily.com/releases/2026/10/261008232629.htm",
+     "published_utc": "2026-10-09T03:56:28Z",
+     "outlet_id": "sciencedaily",
+     "reporting_origin": "outlet:sciencedaily",
+     "kind": "report"
+    }
+   ]
+  },
+  {
    "id": "d9cc80e7c371",
-   "rank": 15,
+   "rank": 20,
    "top_rank": null,
    "category": "Science & AI",
    "headline": "Plastic chemical Affects human ovaries",
@@ -2367,7 +2700,7 @@
   },
   {
    "id": "710b3ad8dc31",
-   "rank": 16,
+   "rank": 21,
    "top_rank": null,
    "category": "Science & AI",
    "headline": "OpenAI revenue keeps surging as company seeks $30 billion in fresh capital",
@@ -2408,49 +2741,8 @@
    ]
   },
   {
-   "id": "87cb3fcba333",
-   "rank": 17,
-   "top_rank": null,
-   "category": "Science & AI",
-   "headline": "Astronomers detect mysterious burst of energy from a Galaxy far, far away",
-   "url": "https://www.theguardian.com/science/2026/oct/09/astronomy-fast-radio-bursts-frb-radio-waves",
-   "summary": [
-    "A long time ago in a galaxy far, far away, a mysterious flash of energy was released into the universe."
-   ],
-   "why_it_matters": null,
-   "change": "",
-   "labels": [],
-   "newest_published_utc": "2026-10-08T18:00:25Z",
-   "coverage": {
-    "level": "limited",
-    "points": 0,
-    "independent_reports": 1,
-    "publishers": [
-     "The Guardian"
-    ],
-    "repeats": 0,
-    "source_links": 1,
-    "linked_outlets": 1,
-    "linked_reporting_origins": 1,
-    "signals": 0,
-    "channels": 1
-   },
-   "sources": [
-    {
-     "outlet": "The Guardian",
-     "via": "News feeds",
-     "title": "Astronomers detect mysterious burst of energy from a galaxy far, far away",
-     "url": "https://www.theguardian.com/science/2026/oct/09/astronomy-fast-radio-bursts-frb-radio-waves",
-     "published_utc": "2026-10-08T18:00:25Z",
-     "outlet_id": "theguardian",
-     "reporting_origin": "outlet:theguardian",
-     "kind": "report"
-    }
-   ]
-  },
-  {
    "id": "157e81bf08e8",
-   "rank": 18,
+   "rank": 22,
    "top_rank": null,
    "category": "News",
    "headline": "7.7 quake hits Panama, damaging buildings and prompting evacuations",
@@ -2492,7 +2784,7 @@
   },
   {
    "id": "1cc63d3dfc56",
-   "rank": 19,
+   "rank": 23,
    "top_rank": null,
    "category": "Science & AI",
    "headline": "ARTEX AI, Claude agents used in cyberattacks on South Korean banks",
@@ -2532,8 +2824,91 @@
    ]
   },
   {
+   "id": "716df8387c45",
+   "rank": 24,
+   "top_rank": null,
+   "category": "News",
+   "headline": "War in Ukraine: Russian strikes kill 15, including a young girl",
+   "url": "https://www.france24.com/en/video/20261010-war-in-ukraine-russian-strikes-kill-15-including-a-young-girl",
+   "summary": [
+    "Early Saturday, Russia targeted residential neighbourhoods in the southeastern city of Zaporizhzhia with \"five guided aerial bombs\", according to Ukraine's National Police.At least 15 people were killed,."
+   ],
+   "why_it_matters": null,
+   "change": "",
+   "labels": [],
+   "newest_published_utc": "2026-10-10T15:56:49Z",
+   "coverage": {
+    "level": "limited",
+    "points": 1,
+    "independent_reports": 1,
+    "publishers": [
+     "France 24"
+    ],
+    "repeats": 0,
+    "source_links": 1,
+    "linked_outlets": 1,
+    "linked_reporting_origins": 1,
+    "signals": 0,
+    "channels": 1
+   },
+   "sources": [
+    {
+     "outlet": "France 24",
+     "via": "News feeds",
+     "title": "War in Ukraine: Russian strikes kill 15, including a young girl",
+     "url": "https://www.france24.com/en/video/20261010-war-in-ukraine-russian-strikes-kill-15-including-a-young-girl",
+     "published_utc": "2026-10-10T15:56:49Z",
+     "outlet_id": "france24",
+     "reporting_origin": "outlet:france24",
+     "kind": "report"
+    }
+   ]
+  },
+  {
+   "id": "892c9ac3da51",
+   "rank": 25,
+   "top_rank": null,
+   "category": "Science & AI",
+   "headline": "OpenAI projected to bring in $20bn less in revenue than expected",
+   "url": "https://www.theguardian.com/technology/2026/oct/09/openai-forecast-revenue-gap",
+   "summary": [
+    "OpenAI has revealed that it is making about $20bn less in projected revenue than it had recently indicated to investors.",
+    "This raises questions about the growth of AI companies."
+   ],
+   "why_it_matters": null,
+   "change": "",
+   "labels": [],
+   "newest_published_utc": "2026-10-09T08:06:09Z",
+   "coverage": {
+    "level": "limited",
+    "points": 0,
+    "independent_reports": 1,
+    "publishers": [
+     "The Guardian"
+    ],
+    "repeats": 0,
+    "source_links": 1,
+    "linked_outlets": 1,
+    "linked_reporting_origins": 1,
+    "signals": 0,
+    "channels": 1
+   },
+   "sources": [
+    {
+     "outlet": "The Guardian",
+     "via": "News feeds",
+     "title": "OpenAI projected to bring in $20bn less in revenue than expected",
+     "url": "https://www.theguardian.com/technology/2026/oct/09/openai-forecast-revenue-gap",
+     "published_utc": "2026-10-09T08:06:09Z",
+     "outlet_id": "theguardian",
+     "reporting_origin": "outlet:theguardian",
+     "kind": "report"
+    }
+   ]
+  },
+  {
    "id": "022d35c5ff6c",
-   "rank": 20,
+   "rank": 26,
    "top_rank": null,
    "category": "Science & AI",
    "headline": "Asana cuts model costs 76x in browser tests with GPT-6.1 Sol",
@@ -2573,26 +2948,26 @@
    ]
   },
   {
-   "id": "da4d0325d7ac",
-   "rank": 21,
+   "id": "9263e95d26d1",
+   "rank": 27,
    "top_rank": null,
-   "category": "Science & AI",
-   "headline": "NASA is advancing American leadership in Space by taking the next step toward",
-   "url": null,
+   "category": "Tech",
+   "headline": "Microsoft, OpenAI, and Others help shape AI policy on 1,700-Member Slack",
+   "url": "https://www.techmeme.com/261010/p14#a261010p14",
    "summary": [
-    "NASA is advancing American leadership in space by taking the next step toward a future where commercial space stations lead the way in low Earth orbit.",
-    "The agency is seeking US industry plans for commercial space stations."
+    "A 1,700-member Slack channel run by the Medicare agency CMS allows Microsoft, OpenAI, and other companies to help shape policy on AI apps and medical records access.",
+    "This collaboration aims to protect cloud applications data."
    ],
    "why_it_matters": null,
    "change": "new",
    "labels": [],
-   "newest_published_utc": "2026-10-09T18:11:44Z",
+   "newest_published_utc": "2026-10-10T16:50:11Z",
    "coverage": {
     "level": "limited",
     "points": 1,
     "independent_reports": 1,
     "publishers": [
-     "NASA"
+     "Techmeme"
     ],
     "repeats": 0,
     "source_links": 1,
@@ -2603,117 +2978,34 @@
    },
    "sources": [
     {
-     "outlet": "NASA",
+     "outlet": "Techmeme",
      "via": "News feeds",
-     "title": "NASA Seeks US Industry Plans for Commercial Space Stations",
-     "url": "https://www.nasa.gov/news-release/nasa-seeks-us-industry-plans-for-commercial-space-stations/",
-     "published_utc": "2026-10-09T18:11:44Z",
-     "outlet_id": "nasa",
-     "reporting_origin": "outlet:nasa",
+     "title": "A look at a 1,700-member Slack run by Medicare agency CMS where Microsoft, OpenAI, and other companies help shape policy on AI apps and medical records access (CBS News)",
+     "url": "https://www.techmeme.com/261010/p14#a261010p14",
+     "published_utc": "2026-10-10T16:50:11Z",
+     "outlet_id": "techmeme",
+     "reporting_origin": "outlet:techmeme",
      "kind": "report"
     }
    ]
   },
   {
-   "id": "1bff757fa578",
-   "rank": 22,
+   "id": "ba973d878dad",
+   "rank": 28,
    "top_rank": null,
-   "category": "Science & AI",
-   "headline": "OpenAI model deliberately Destroys environment",
-   "url": "https://the-decoder.com/openai-says-a-misaligned-model-deliberately-destroyed-its-own-environment-hoping-for-a-fresh-start-with-better-data/",
+   "category": "Sports",
+   "headline": "‘I’m supposed to be here’: Angel Reese’s road from ridicule to the WNBA finals",
+   "url": "https://www.theguardian.com/sport/2026/oct/10/angel-reese-wnba-finals-atlanta-dream-critics-apology",
    "summary": [
-    "OpenAI has documented new cases of misaligned model behavior, including one model that deliberately destroyed its own environment in an attempt to start fresh with better data."
+    "After years of mockery and doubts about her game, Reese has helped carry Atlanta to the WNBA's biggest stage."
    ],
    "why_it_matters": null,
    "change": "new",
    "labels": [],
-   "newest_published_utc": "2026-10-10T15:15:40Z",
+   "newest_published_utc": "2026-10-10T07:00:51Z",
    "coverage": {
     "level": "limited",
     "points": 1,
-    "independent_reports": 1,
-    "publishers": [
-     "The Decoder"
-    ],
-    "repeats": 0,
-    "source_links": 1,
-    "linked_outlets": 1,
-    "linked_reporting_origins": 1,
-    "signals": 0,
-    "channels": 1
-   },
-   "sources": [
-    {
-     "outlet": "The Decoder",
-     "via": "News feeds",
-     "title": "OpenAI says a misaligned model deliberately destroyed its own environment hoping for a fresh start with better data",
-     "url": "https://the-decoder.com/openai-says-a-misaligned-model-deliberately-destroyed-its-own-environment-hoping-for-a-fresh-start-with-better-data/",
-     "published_utc": "2026-10-10T15:15:40Z",
-     "outlet_id": "thedecoder",
-     "reporting_origin": "outlet:thedecoder",
-     "kind": "report"
-    }
-   ]
-  },
-  {
-   "id": "716df8387c45",
-   "rank": 23,
-   "top_rank": null,
-   "category": "News",
-   "headline": "War in Ukraine: Russian strikes kill 15, including a young girl",
-   "url": "https://www.france24.com/en/video/20261010-war-in-ukraine-russian-strikes-kill-15-including-a-young-girl",
-   "summary": [
-    "Early Saturday, Russia targeted residential neighbourhoods in the southeastern city of Zaporizhzhia with \"five guided aerial bombs\", according to Ukraine's National Police.At least 15 people were killed,."
-   ],
-   "why_it_matters": null,
-   "change": "new",
-   "labels": [],
-   "newest_published_utc": "2026-10-10T15:56:49Z",
-   "coverage": {
-    "level": "limited",
-    "points": 1,
-    "independent_reports": 1,
-    "publishers": [
-     "France 24"
-    ],
-    "repeats": 0,
-    "source_links": 1,
-    "linked_outlets": 1,
-    "linked_reporting_origins": 1,
-    "signals": 0,
-    "channels": 1
-   },
-   "sources": [
-    {
-     "outlet": "France 24",
-     "via": "News feeds",
-     "title": "War in Ukraine: Russian strikes kill 15, including a young girl",
-     "url": "https://www.france24.com/en/video/20261010-war-in-ukraine-russian-strikes-kill-15-including-a-young-girl",
-     "published_utc": "2026-10-10T15:56:49Z",
-     "outlet_id": "france24",
-     "reporting_origin": "outlet:france24",
-     "kind": "report"
-    }
-   ]
-  },
-  {
-   "id": "892c9ac3da51",
-   "rank": 24,
-   "top_rank": null,
-   "category": "Science & AI",
-   "headline": "OpenAI projected to bring in $20bn less in revenue than expected",
-   "url": "https://www.theguardian.com/technology/2026/oct/09/openai-forecast-revenue-gap",
-   "summary": [
-    "OpenAI has revealed that it is making about $20bn less in projected revenue than it had recently indicated to investors.",
-    "This raises questions about the growth of AI companies."
-   ],
-   "why_it_matters": null,
-   "change": "new",
-   "labels": [],
-   "newest_published_utc": "2026-10-09T08:06:09Z",
-   "coverage": {
-    "level": "limited",
-    "points": 0,
     "independent_reports": 1,
     "publishers": [
      "The Guardian"
@@ -2729,11 +3021,175 @@
     {
      "outlet": "The Guardian",
      "via": "News feeds",
-     "title": "OpenAI projected to bring in $20bn less in revenue than expected",
-     "url": "https://www.theguardian.com/technology/2026/oct/09/openai-forecast-revenue-gap",
-     "published_utc": "2026-10-09T08:06:09Z",
+     "title": "‘I’m supposed to be here’: Angel Reese’s road from ridicule to the WNBA finals",
+     "url": "https://www.theguardian.com/sport/2026/oct/10/angel-reese-wnba-finals-atlanta-dream-critics-apology",
+     "published_utc": "2026-10-10T07:00:51Z",
      "outlet_id": "theguardian",
      "reporting_origin": "outlet:theguardian",
+     "kind": "report"
+    }
+   ]
+  },
+  {
+   "id": "5969acf34967",
+   "rank": 29,
+   "top_rank": null,
+   "category": "Entertainment",
+   "headline": "WNBA trans debate being pushed online for profit",
+   "url": "https://www.rollingstone.com/culture/culture-features/wnba-trans-athlete-debate-gudea-report-1235636879/",
+   "summary": [
+    "The debate over trans rights in the WNBA is being fueled by online discussions, with some arguing that the issue is being used to sow division and profit from controversy."
+   ],
+   "why_it_matters": null,
+   "change": "new",
+   "labels": [],
+   "newest_published_utc": "2026-10-10T15:00:00Z",
+   "coverage": {
+    "level": "limited",
+    "points": 1,
+    "independent_reports": 1,
+    "publishers": [
+     "Rolling Stone"
+    ],
+    "repeats": 0,
+    "source_links": 1,
+    "linked_outlets": 1,
+    "linked_reporting_origins": 1,
+    "signals": 0,
+    "channels": 1
+   },
+   "sources": [
+    {
+     "outlet": "Rolling Stone",
+     "via": "News feeds",
+     "title": "New Report Says WNBA Trans Debate Is Being Pushed Online For Profit: ‘The Point Is to Sow Division’",
+     "url": "https://www.rollingstone.com/culture/culture-features/wnba-trans-athlete-debate-gudea-report-1235636879/",
+     "published_utc": "2026-10-10T15:00:00Z",
+     "outlet_id": "rollingstone",
+     "reporting_origin": "outlet:rollingstone",
+     "kind": "report"
+    }
+   ]
+  },
+  {
+   "id": "1d8491003083",
+   "rank": 30,
+   "top_rank": null,
+   "category": "Sports",
+   "headline": "Light strikes again, ending play early after Renshaw's career-best knock",
+   "url": "https://www.abc.net.au/news/2026-10-10/south-africa-australia-first-test-live-day-two/107251570",
+   "summary": [
+    "Matt Renshaw notches his career-high Test score to lead Australia into a healthy spot on day two of the first Test against South Africa in Durban."
+   ],
+   "why_it_matters": null,
+   "change": "new",
+   "labels": [],
+   "newest_published_utc": "2026-10-10T06:52:15Z",
+   "coverage": {
+    "level": "limited",
+    "points": 1,
+    "independent_reports": 1,
+    "publishers": [
+     "ABC News Australia"
+    ],
+    "repeats": 0,
+    "source_links": 1,
+    "linked_outlets": 1,
+    "linked_reporting_origins": 1,
+    "signals": 0,
+    "channels": 1
+   },
+   "sources": [
+    {
+     "outlet": "ABC News Australia",
+     "via": "News feeds",
+     "title": "Light strikes again, ending play early after Renshaw's career-best knock",
+     "url": "https://www.abc.net.au/news/2026-10-10/south-africa-australia-first-test-live-day-two/107251570",
+     "published_utc": "2026-10-10T06:52:15Z",
+     "outlet_id": "abc",
+     "reporting_origin": "outlet:abc",
+     "kind": "report"
+    }
+   ]
+  },
+  {
+   "id": "99e578482af0",
+   "rank": 31,
+   "top_rank": null,
+   "category": "Tech",
+   "headline": "One with the world? A new look at brains transformed by Psychedelics",
+   "url": "https://arstechnica.com/science/2026/10/the-psychedelic-brain-looks-like-chaos-underneath-theres-order/",
+   "summary": [
+    "Researchers studied brain activity in participants who meditated with and without psilocybin, challenging the previous understanding that psychedelics cause chaos in the brain."
+   ],
+   "why_it_matters": null,
+   "change": "new",
+   "labels": [],
+   "newest_published_utc": "2026-10-10T11:15:35Z",
+   "coverage": {
+    "level": "limited",
+    "points": 1,
+    "independent_reports": 1,
+    "publishers": [
+     "Ars Technica"
+    ],
+    "repeats": 0,
+    "source_links": 1,
+    "linked_outlets": 1,
+    "linked_reporting_origins": 1,
+    "signals": 0,
+    "channels": 1
+   },
+   "sources": [
+    {
+     "outlet": "Ars Technica",
+     "via": "News feeds",
+     "title": "One with the world? A new look at brains transformed by psychedelics.",
+     "url": "https://arstechnica.com/science/2026/10/the-psychedelic-brain-looks-like-chaos-underneath-theres-order/",
+     "published_utc": "2026-10-10T11:15:35Z",
+     "outlet_id": "arstechnica",
+     "reporting_origin": "outlet:arstechnica",
+     "kind": "report"
+    }
+   ]
+  },
+  {
+   "id": "9bdc8187d8ac",
+   "rank": 32,
+   "top_rank": null,
+   "category": "Entertainment",
+   "headline": "Geordie Greep's tour cancelled amid sexual misconduct allegations",
+   "url": null,
+   "summary": [
+    "Several performances on Geordie Greep's U.S. tour have been cancelled following allegations of sexual misconduct made against the singer, which he has denied."
+   ],
+   "why_it_matters": null,
+   "change": "new",
+   "labels": [],
+   "newest_published_utc": "2026-10-10T16:10:30Z",
+   "coverage": {
+    "level": "limited",
+    "points": 1,
+    "independent_reports": 1,
+    "publishers": [
+     "Pitchfork"
+    ],
+    "repeats": 0,
+    "source_links": 1,
+    "linked_outlets": 1,
+    "linked_reporting_origins": 1,
+    "signals": 0,
+    "channels": 1
+   },
+   "sources": [
+    {
+     "outlet": "Pitchfork",
+     "via": "News feeds",
+     "title": "Geordie Greep Shows Cancelled Following Sexual Misconduct Allegations",
+     "url": "https://pitchfork.com/story/geordie-greep-shows-cancelled-following-sexual-misconduct-allegations/",
+     "published_utc": "2026-10-10T16:10:30Z",
+     "outlet_id": "pitchfork",
+     "reporting_origin": "outlet:pitchfork",
      "kind": "report"
     }
    ]
@@ -2742,31 +3198,50 @@
  "changes": {
   "compared_with": {
    "edition_date": "2026-10-10",
-   "revision": 5
+   "revision": 6
   },
   "new": [
-   "ff8e0ec0bd6b",
-   "ee01960fa15d",
-   "da4d0325d7ac",
-   "1bff757fa578",
-   "716df8387c45",
-   "892c9ac3da51"
+   "8240bf3654a0",
+   "cf0d09ce65f1",
+   "454d11ac027c",
+   "2ef529315e75",
+   "0fceeb164e0d",
+   "878808cbecf8",
+   "9263e95d26d1",
+   "ba973d878dad",
+   "5969acf34967",
+   "1d8491003083",
+   "99e578482af0",
+   "9bdc8187d8ac"
   ],
   "updated": [
-   "57bf59c188ad",
-   "345bb4a46676",
-   "069be1f20be9",
-   "59b8e46a134c",
-   "eb4f655866dc"
+   "d225e934363e",
+   "0dcdfde4af11",
+   "6fd504966987",
+   "9321c8fbc22b",
+   "9c0c027764eb",
+   "b1bafe9aba4c",
+   "f0aa85298e1b"
   ],
   "fading": [
-   "345bb4a46676",
-   "83661ce7be0c"
+   "c015b4868b83"
   ],
   "dropped": [
    {
-    "headline": "Mike Ditka, the quintessential Chicago Bear and a Pro Football Hall of Famer, dies at 86",
+    "headline": "Apple Stores Will Add Your Name to iPhone Duo's Startup Screen",
+    "category": "Tech"
+   },
+   {
+    "headline": "Verstappen Beats Ferraris to Singapore Pole",
     "category": "Sports"
+   },
+   {
+    "headline": "Astronomers Detect Mysterious Burst of Energy from a Galaxy Far, Far Away",
+    "category": "Science & AI"
+   },
+   {
+    "headline": "OpenAI Model Deliberately Destroys Environment",
+    "category": "Science & AI"
    }
   ]
  }
