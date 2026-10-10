@@ -599,18 +599,27 @@ details.src small{color:var(--faint);font-size:12px}
 .pullquote cite a{color:var(--accent)}
 .pullquote cite a:hover{text-decoration:underline}
 
-/* Numbered top stories. */
-.toplist{padding:40px 0;border-bottom:1px solid var(--line)}
+/* The Top 10 leaderboard: Billboard-chart style ranked list. */
+.top10{padding:40px 0;border-bottom:1px solid var(--line)}
 .dept-title{font-family:var(--serif);font-weight:700;font-size:30px;margin:0 0 6px;
   font-variation-settings:"opsz" 40}
-.topnum{margin:18px 0 0;padding:0}
-.topnum-item{display:grid;grid-template-columns:56px 1fr;gap:12px;
-  padding:20px 0;border-top:1px solid var(--line)}
-.topnum-item:first-child{border-top:0;padding-top:6px}
-.tnum{font-family:var(--serif);font-weight:800;font-size:34px;line-height:1;color:var(--line2);
-  font-variation-settings:"opsz" 72}
-.tnum-body h3{font-family:var(--serif);font-size:22px;line-height:1.3;margin:4px 0 8px;font-weight:700}
-.tnum-body .dek{color:var(--ink2);font-size:15px}
+.t10-list{margin:18px 0 0;padding:0}
+.t10-row{display:grid;grid-template-columns:64px 1fr;gap:16px;
+  padding:22px 0;border-top:1px solid var(--line);align-items:start}
+.t10-row:first-child{border-top:0;padding-top:8px}
+.t10-rank{font-family:var(--serif);font-weight:800;font-size:44px;line-height:1;color:var(--line2);
+  font-variation-settings:"opsz" 72;font-variant-numeric:tabular-nums}
+.t10-row.is-cover .t10-rank{color:var(--accent)}
+.t10-kicker{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:0 0 6px;
+  font-size:12px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--muted)}
+.t10-kicker .kicker{margin:0}
+.cover-mark{font-size:10.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;
+  padding:2px 8px;border-radius:999px;background:var(--accent-bg);color:var(--accent2)}
+.t10-hl{font-family:var(--serif);font-size:24px;line-height:1.28;margin:0 0 8px;font-weight:700}
+.t10-body .dek{color:var(--ink2);font-size:15px;margin:0 0 8px}
+.t10-body .meta{font-size:13px}
+@media(max-width:600px){.t10-row{grid-template-columns:44px 1fr;gap:12px}
+  .t10-rank{font-size:32px}.t10-hl{font-size:20px}}
 
 /* Departments: magazine sections with View-all links. */
 .dept{padding:40px 0 8px;border-bottom:1px solid var(--line)}
