@@ -499,6 +499,6 @@ def test_website_publishing_dialog_and_story_correction(root, daily_paths, monke
     d.publish_now()
     _wait_idle(root, d)
     assert d.headline_var.get() == "Published successfully", d.message_var.get()
-    assert (tmp_path / "site/editions/index.json").exists()
+    assert (tmp_path / "site/website/editions/index.json").exists()
     d.top.destroy()
     assert "Remove from the website..." in [label for label, _ in w.story_menu_items(stories[0])]
