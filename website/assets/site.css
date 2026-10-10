@@ -99,8 +99,6 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer;paddin
   .ticker{flex-wrap:nowrap;overflow-x:auto;white-space:nowrap;padding:0;scrollbar-width:none;
     -webkit-mask-image:linear-gradient(90deg,#000 calc(100% - 24px),transparent);mask-image:linear-gradient(90deg,#000 calc(100% - 24px),transparent)}
   .ticker::-webkit-scrollbar{display:none}
-  /* Keep the strip compact on phones: the essentials stay, the rest lives behind Details. */
-  .ticker li:nth-child(n+4){display:none}
   .ticker li:last-child{padding-right:24px}
   .ticker .live b{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap} /* the dot shows freshness; the words stay for screen readers */
   .ticker .live + li::before{display:none}
@@ -194,7 +192,7 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer;paddin
 .grid.three{grid-template-columns:repeat(3,minmax(0,1fr))}
 .card{position:relative;display:flex;flex-direction:column;gap:10px;padding:20px 20px 10px;border-radius:var(--radius);background:var(--card);border:1px solid var(--line);border-top:4px solid var(--cat,var(--line2));box-shadow:var(--shadow);transition:border-color .15s,transform .15s,background .15s}
 .card:hover{border-color:var(--line2);border-top-color:var(--cat,var(--line2));background:var(--card2)}
-.card .hl{font-size:23px}
+.card .hl{font-size:23px;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
 .card .dek{font-size:16px;line-height:1.6;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
 .card .meta{margin-top:auto;padding-top:4px;border-top:1px solid var(--line)}
 .card.feature{grid-column:span 2;padding:28px;gap:14px;background:var(--card)}
@@ -331,9 +329,9 @@ details.src small{color:var(--faint);font-size:12px}
 .footer a:hover{color:var(--ink)}
 .footer p{margin:0 0 10px;max-width:52ch}
 .foot-base{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px 18px;border-top:1px solid var(--line);margin-top:34px;padding-top:20px;font-size:13px;color:var(--faint)}
-.theme-control{display:inline-flex;align-items:center;gap:6px;color:var(--muted)}
-.theme-control > span{margin-right:4px}
-.theme-control .seg{min-height:44px;padding:6px 12px}
+.theme-control{display:inline-flex;align-items:center;gap:6px;color:var(--muted);white-space:nowrap}
+.theme-control > span{margin-right:4px;white-space:nowrap}
+.theme-control .seg{min-height:44px;padding:6px 12px;white-space:nowrap}
 
 /* category colours (subtle) */
 [data-cat="News"]{--cat:var(--c-news)}
@@ -566,6 +564,7 @@ details.src small{color:var(--faint);font-size:12px}
   letter-spacing:-.02em;line-height:.95;font-variation-settings:"opsz" 72}
 .brand-sub{display:block;font-size:12px;letter-spacing:3px;text-transform:uppercase;
   color:var(--muted);margin-top:6px}
+.tagline{margin:10px 0 0;font-size:14px;color:var(--ink2);font-style:italic}
 .edition-line{margin:14px 0 0;font-size:13px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted)}
 .nav.slim{margin-top:16px;border-top:1px solid var(--line)}
 .nav.slim .nav-row{justify-content:center;gap:4px;padding:10px var(--gutter)}
@@ -617,17 +616,9 @@ details.src small{color:var(--faint);font-size:12px}
 .t10-kicker .kicker{margin:0}
 .cover-mark{font-size:10.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;
   padding:2px 8px;border-radius:999px;background:var(--accent-bg);color:var(--accent2)}
-/* Leaderboard movement indicators. */
-.move{font-size:10.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;
-  padding:2px 8px;border-radius:999px;line-height:1.5}
-.move.new{color:var(--new);background:var(--new-bg)}
-.move.updated{color:var(--upd);background:var(--upd-bg)}
 .t10-hl{font-family:var(--serif);font-size:24px;line-height:1.28;margin:0 0 8px;font-weight:700}
 .t10-body .dek{color:var(--ink2);font-size:15px;margin:0 0 8px}
 .t10-body .meta{font-size:13px}
-.t10-pointer{text-decoration:none;display:grid}
-.t10-pointer:hover .t10-pointer-hl{color:var(--accent)}
-.t10-pointer-hl{font-family:var(--serif);font-size:19px;line-height:1.35;margin:0;font-weight:600}
 @media(max-width:600px){.t10-row{grid-template-columns:44px 1fr;gap:12px}
   .t10-rank{font-size:32px}.t10-hl{font-size:20px}}
 
@@ -638,7 +629,13 @@ details.src small{color:var(--faint);font-size:12px}
 .dept-head .dept-title{margin:0}
 .dept-link{font-size:14px;font-weight:600;color:var(--accent);white-space:nowrap}
 .dept-link:hover{text-decoration:underline}
-.dept-note{color:var(--muted);font-size:14px;font-style:italic;margin:0;padding:16px 0 32px}
+/* Compact strip for sections whose stories are all in the Top 10. */
+.more-sections{display:flex;flex-wrap:wrap;align-items:center;gap:8px 16px;
+  padding:24px 0;border-bottom:1px solid var(--line);font-size:14px}
+.more-sections-label{color:var(--muted);font-weight:600}
+.more-sections-link{color:var(--accent2);font-weight:600;white-space:nowrap}
+.more-sections-link:hover{text-decoration:underline}
+a.more-sections-link{text-decoration:none}
 .dept-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;padding:16px 0 32px}
 .dept-grid .card{margin:0;height:100%}
 @media(max-width:900px){.dept-grid{grid-template-columns:1fr 1fr}}
