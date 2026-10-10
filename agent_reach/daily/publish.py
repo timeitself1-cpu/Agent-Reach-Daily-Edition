@@ -395,7 +395,8 @@ def _public_story(s: Story, edition: DailyEdition, change: str, top_rank: int | 
     # The cited report supporting the displayed headline, or the internal evidence view when its
     # destination cannot be resolved. Background and attention signals never supply this link.
     link = primary_url(s, headline)
-    return {"id": s.story_id[:12], "event_id": event_id, "rank": s.rank, "top_rank": top_rank, "category": s.category.value,
+    return {"id": s.story_id[:12], "event_id": event_id, "entity_id": s.entity_id,
+            "rank": s.rank, "top_rank": top_rank, "category": s.category.value,
             "headline": headline, "url": link if any(x["url"] == link for x in sources) else None,
             "summary": summary, "why_it_matters": s.why_it_matters,
             "change": change, "labels": labels, "newest_published_utc": _utc(newest_published(s)),
@@ -1057,6 +1058,43 @@ def site_files(edition: DailyEdition, settings: PublishSettings, current_index: 
     return public, files
 
 
+def describe_what_changed(story: dict, change: str, change_info: dict) -> str:
+    """Generate a meaningful 'what changed' description for event timelines.
+
+    Prioritizes substantive developments over mechanical updates:
+    - New reporting from specific outlets (attributable)
+    - Headline changes reflecting new facts
+    - If no meaningful change: say so honestly, don't invent one
+    """
+    if change == "new":
+        sources = story.get("sources", [])
+        outlets = [s.get("outlet", "") for s in sources if isinstance(s, dict) and s.get("outlet")]
+        outlets = [o for o in outlets if o][:3]
+        if outlets:
+            return f"First reported by {', '.join(outlets)}."
+        return "First appearance in the edition."
+
+    detail = change_info.get("detail", "") if isinstance(change_info, dict) else ""
+    if not detail:
+        return "No significant new developments since the previous edition."
+
+    # Extract the most substantive part (first clause, usually the most important)
+    parts = [p.strip() for p in detail.split(";") if p.strip()]
+    if not parts:
+        return "No significant new developments since the previous edition."
+
+    # Prefer new reporting over headline rewording
+    for part in parts:
+        if "new reporting from" in part.lower():
+            return part[0].upper() + part[1:] + "."
+    # Headline change without new reporting is less substantive
+    for part in parts:
+        if "headline was" in part.lower():
+            return "Updated with new details; headline revised."
+
+    return parts[0][0].upper() + parts[0][1:] + "." if parts[0] else "Updated."
+
+
 def update_event_registry(public: dict, edition_date: str, revision: int,
                           paths: DataPaths | None = None) -> dict[str, bytes]:
     """Update the event registry from a published edition; return {path: bytes} for event JSON files.
@@ -1094,12 +1132,9 @@ def update_event_registry(public: dict, edition_date: str, revision: int,
         else:
             change = "unchanged"
 
-        # Build a story-like object for the registry.
-        # Pass the dict directly: canonical_event_id() handles dicts (prefers event_id,
-        # then entity_id, then headline hash).
-        what_changed = ""
-        if change == "updated" and story_id in updated_map:
-            what_changed = updated_map[story_id].get("detail", "")
+        # Build a meaningful what_changed description.
+        # Prioritizes substantive developments; honest when nothing meaningful changed.
+        what_changed = describe_what_changed(story, change, updated_map.get(story_id, {}))
 
         record = registry.update_from_story(story, edition_date, revision, change, what_changed)
 
