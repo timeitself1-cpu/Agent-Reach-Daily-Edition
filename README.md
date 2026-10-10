@@ -177,7 +177,7 @@ home page shows the newest edition, `/daily/2026-10-08/` keeps each date, and `/
 off until you switch it on, and it needs one GitHub access key, once:
 
 1. On github.com: **Settings > Developer settings > Personal access tokens > Fine-grained tokens > Generate new
-   token**. Repository access: **Only select repositories > timeitself1-cpu/Agent-Reach**. Permissions:
+   token**. Repository access: **Only select repositories > timeitself1-cpu/Agent-Reach-Daily-Edition**. Permissions:
    **Contents: Read and write** (nothing else). Pick an expiry you are comfortable with (a year, for example).
 2. In the app: **...** > **Website publishing...**, paste the key, **Save key** (it tests the connection).
 3. Tick **Automatic publishing**. From then on every successful refresh publishes its edition; nothing to copy
