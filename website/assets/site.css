@@ -99,6 +99,8 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer;paddin
   .ticker{flex-wrap:nowrap;overflow-x:auto;white-space:nowrap;padding:0;scrollbar-width:none;
     -webkit-mask-image:linear-gradient(90deg,#000 calc(100% - 24px),transparent);mask-image:linear-gradient(90deg,#000 calc(100% - 24px),transparent)}
   .ticker::-webkit-scrollbar{display:none}
+  /* Keep the strip compact on phones: the essentials stay, the rest lives behind Details. */
+  .ticker li:nth-child(n+4){display:none}
   .ticker li:last-child{padding-right:24px}
   .ticker .live b{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap} /* the dot shows freshness; the words stay for screen readers */
   .ticker .live + li::before{display:none}
@@ -615,9 +617,17 @@ details.src small{color:var(--faint);font-size:12px}
 .t10-kicker .kicker{margin:0}
 .cover-mark{font-size:10.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;
   padding:2px 8px;border-radius:999px;background:var(--accent-bg);color:var(--accent2)}
+/* Leaderboard movement indicators. */
+.move{font-size:10.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;
+  padding:2px 8px;border-radius:999px;line-height:1.5}
+.move.new{color:var(--new);background:var(--new-bg)}
+.move.updated{color:var(--upd);background:var(--upd-bg)}
 .t10-hl{font-family:var(--serif);font-size:24px;line-height:1.28;margin:0 0 8px;font-weight:700}
 .t10-body .dek{color:var(--ink2);font-size:15px;margin:0 0 8px}
 .t10-body .meta{font-size:13px}
+.t10-pointer{text-decoration:none;display:grid}
+.t10-pointer:hover .t10-pointer-hl{color:var(--accent)}
+.t10-pointer-hl{font-family:var(--serif);font-size:19px;line-height:1.35;margin:0;font-weight:600}
 @media(max-width:600px){.t10-row{grid-template-columns:44px 1fr;gap:12px}
   .t10-rank{font-size:32px}.t10-hl{font-size:20px}}
 
