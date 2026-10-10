@@ -96,6 +96,11 @@ def test_export_has_in_brief_and_new_tags():
                         _story("Hawks Win Final", now=t1, url="https://wire-one.test/c", category="Sports")],
                        started=t1)
     new.changes = compare_editions(old, new)
+    from agent_reach.daily.publish import public_edition
+
     page = render_edition_html(new)
-    assert '<section class="brief" aria-label="In brief">' in page and 'href="#story-' in page
+    public = public_edition(new, export=True)
+    assert '<section class="brief" aria-label="In brief">' in page
+    for story_id in public["top"][:5]:  # every In-brief line links to its story's full anchor, and the card has it
+        assert f'<li><a href="#story-{story_id}">' in page and f'<article class="card" id="story-{story_id}">' in page
     assert page.count('<span class="tag new">new</span>') == 2

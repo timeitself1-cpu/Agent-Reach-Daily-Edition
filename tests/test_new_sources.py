@@ -357,4 +357,10 @@ def test_exported_headlines_link_to_the_main_article_safely():
     bad.evidence[0].url = "javascript:alert(1)"
     page = render_edition_html(make_edition([s, bad, make_story(headline="Third")]))
     assert '<a class="hl" href="https://wire-one.test/linked-story"' in page  # the article, not the social topic
-    assert "javascript:" not in page and "unsafe only</h3>" in page.lower()  # headline in the site's neutral style
+    from html import escape
+
+    from agent_reach.daily.publish import public_edition
+
+    neutral = next(x for x in public_edition(make_edition([s, bad, make_story(headline="Third")]), export=True)["stories"]
+                   if x["rank"] == bad.rank)["headline"]
+    assert "javascript:" not in page and f"<h3>2. {escape(neutral)}</h3>" in page  # the site's neutral headline, exactly
