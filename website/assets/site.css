@@ -4,6 +4,10 @@
 @font-face{font-family:"Newsreader";src:url("fonts/newsreader-latin-opsz-italic.woff2") format("woff2");font-weight:200 800;font-style:italic;font-display:swap}
 @font-face{font-family:"Inter";src:url("fonts/inter-latin-wght-normal.woff2") format("woff2");font-weight:100 900;font-style:normal;font-display:swap}
 
+/* Smooth anchor scrolling for the jump nav (disabled under prefers-reduced-motion). */
+html{scroll-behavior:smooth}
+section[id],div[id]{scroll-margin-top:24px}
+
 :root{
   color-scheme:dark;
   --bg:#0f1114;--bg2:#13161a;--card:#171a1f;--card2:#1c2026;--line:#262b33;--line2:#323843;
@@ -315,7 +319,7 @@ details.src small{color:var(--faint);font-size:12px}
 .skeleton{display:grid;grid-template-columns:1.6fr 1fr;gap:40px;padding:28px 0}
 .skeleton div{border-radius:var(--radius);background:linear-gradient(90deg,var(--card) 0%,var(--card2) 50%,var(--card) 100%);background-size:200% 100%;animation:shimmer 1.4s infinite linear}
 @keyframes shimmer{to{background-position:-200% 0}}
-@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}html{scroll-behavior:auto}}
 
 /* ------------------------------------------------------------------ about band + footer */
 .about-band{display:grid;grid-template-columns:1.2fr 1fr;gap:clamp(24px,4vw,64px);padding:36px 0;border-bottom:1px solid var(--line);align-items:center}
