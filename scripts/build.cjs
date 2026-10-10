@@ -18,7 +18,7 @@ function renderShell(html, path, index, edition) {
     const embedded = d.createElement('script');
     embedded.id = 'edition-data'; embedded.type = 'application/json';
     // HTML parsers recognize </script> even in JSON. Escape every '<' before embedding.
-    embedded.textContent = JSON.stringify({index, edition}).replace(/</g, '\\u003c');
+    embedded.textContent = JSON.stringify({index, edition, sections: SECTIONS_DOC}).replace(/</g, '\\u003c');
     d.body.append(embedded);
     w.scrollTo = () => {};
     w.fetch = () => { throw new Error('Static rendering must use embedded edition data'); };
@@ -98,8 +98,9 @@ function renderShell(html, path, index, edition) {
 // RSS: one item per story of the newest edition (the publisher's feed.xml has one item per edition), and one
 // feed per section. Built from the same edition files as the pages, so every link resolves (check-built.cjs).
 const SITE = 'https://getagentreach.dev';
-const FEED_SECTIONS = {'News': ['world', 'World & Nation'], 'Tech': ['technology', 'Technology'], 'Science & AI': ['science', 'Science & AI'],
-  'Sports': ['sports', 'Sports'], 'Entertainment': ['entertainment', 'Entertainment'], 'Internet Culture': ['internet-culture', 'Internet Culture']};
+// The one taxonomy: editions/sections.json (published by the app; same file the pages read).
+const SECTIONS_DOC = JSON.parse(readFileSync(resolve(root, 'editions/sections.json'), 'utf8'));
+const FEED_SECTIONS = Object.fromEntries(SECTIONS_DOC.sections.filter(s => s.path && !s.retired).map(s => [s.id, [s.path.replace(/\//g, ''), s.label]]));
 const xml = text => String(text).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;')
   .replace(/[\u0000-\u0008\u000b\u000c\u000e-\u001f]/g, '');
 const rfc822 = iso => new Date(iso).toUTCString().replace('GMT', '+0000');
