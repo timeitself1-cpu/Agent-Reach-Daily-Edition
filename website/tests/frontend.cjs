@@ -51,7 +51,11 @@ test('all public route shells render and keep RSS discovery', async () => {
     assert.ok(p.d.querySelector('main h1'), path);
     assert.ok(p.d.querySelector('link[rel="alternate"][href="/feed.xml"]'), path);
     assert.ok(p.d.querySelector('footer a[href="/feed.xml"]'), path);
-    assert.equal(p.d.querySelectorAll('.nav a').length, 11);
+    // Slim editorial nav: Today / Latest / Archive / About / Search, plus the
+    // current section as a contextual item on section pages.
+    const navLinks = [...p.d.querySelectorAll('.nav a')];
+    assert.ok(navLinks.length >= 5 && navLinks.length <= 6, path);
+    assert.deepEqual(navLinks.slice(0, 4).map(a => a.textContent), ['Today', 'Latest', 'Archive', 'About']);
     assert.equal(p.d.querySelectorAll('#ext-note').length, 1, path);
     assert.deepEqual(p.errors, [], path);
     p.close();
@@ -101,7 +105,7 @@ test('one click on a headline opens the publisher article in a new tab; a second
   story.sources.unshift({outlet: 'Google News', via: 'Google News', title: 'x', url: 'https://news.google.com/rss/articles/abc', published_utc: null, kind: 'report'},
     {outlet: 'Reddit', via: 'Reddit', title: 'y', url: 'https://www.reddit.com/r/news/1', published_utc: null, kind: 'signal'});
   let p = await open('/', {fetch: u => u.endsWith('2026-10-07.json') ? ed : undefined});
-  assert.equal(p.d.querySelector('.lead .hl a').getAttribute('href'), edition.stories[0].sources.find(x => x.url).url); p.close();
+  assert.equal(p.d.querySelector('.cover-inner .hl a').getAttribute('href'), edition.stories[0].sources.find(x => x.url).url); p.close();
   // A matching report wins; a story without a resolved matching link opens its evidence page.
   story.sources[2].title = 'Unrelated story';
   story.url = 'https://example.org/chosen'; story.sources.push({outlet: 'Example', via: 'Example', title: 'z', url: story.url, published_utc: null, kind: 'report'});
@@ -138,8 +142,8 @@ test('cards, search and source panels agree on corrected NBC coverage and redire
   const doc = {stories: [{id: story.id, d: ed.edition_date, r: story.rank, c: story.category,
     h: story.headline, s: story.summary.join(' '), o: story.coverage.publishers, l: story.coverage.level, coverage: story.coverage}]};
   const fetch = url => url === '/editions/index.json' ? idx : url.startsWith('/editions/') ? ed : url.startsWith('/search/') ? doc : undefined;
-  let p = await open('/', {fetch}); // a Local story of October 8: the retired section's band on that edition
-  const card = p.d.querySelector(`.band[data-cat="Local"] #story-${story.id}`);
+  let p = await open('/', {fetch}); // a Local story of October 8: the retired section's department on that edition
+  const card = p.d.querySelector(`.dept[data-cat="Local"] #story-${story.id}`);
   assert.equal(card.querySelector('.cov').textContent, 'Single source: NBC DFW');
   assert.match(card.querySelector('.cov').title, /^Single source\. Coverage is not a fact check\./);
   p.close();
@@ -345,20 +349,36 @@ test('update details count changes and optionally link dropped headlines as plai
   assert.doesNotMatch(q.d.querySelector('.edition-full').textContent, /dropped|no longer listed/i); q.close();
 });
 
-test('Home and Daily shortcuts resolve every section, including static HTML', async () => {
+test('One-click topic filter shows only the chosen section, All restores the front page', async () => {
   const {renderShell} = require('../scripts/build.cjs');
   for (const path of ['/', '/daily/']) {
     const p = await open(path);
-    const links = [...p.d.querySelectorAll('.section-shortcuts a')];
-    assert.equal(links.length, edition.sections.length);
-    links.forEach((a, i) => {
-      assert.ok(p.d.getElementById(a.hash.slice(1)));
-      assert.ok(a.textContent.endsWith(' ' + edition.sections[i].ids.length));
-      a.focus(); assert.equal(p.d.activeElement, a);
-    }); p.close();
+    const topics = [...p.d.querySelectorAll('.topics .topic')];
+    // All topics + one button per department on the front page.
+    assert.equal(topics[0].textContent, 'All topics');
+    assert.equal(topics[0].getAttribute('aria-pressed'), 'true');
+    const depts = [...p.d.querySelectorAll('.ed-front .dept[data-cat]:not([data-cat=""])')];
+    assert.equal(topics.length, depts.length + 1);
+    // One click on a topic: only that department stays visible.
+    const target = topics[1], cat = target.dataset.topic;
+    target.click();
+    assert.equal(target.getAttribute('aria-pressed'), 'true');
+    assert.equal(p.d.querySelector('.ed-front').dataset.topic, cat);
+    for (const el of p.d.querySelectorAll('.ed-front [data-front-part]')) {
+      const isTarget = el.dataset.frontPart === 'section' && el.dataset.cat === cat;
+      assert.equal(el.hidden, !isTarget, el.dataset.frontPart + ':' + el.dataset.cat);
+    }
+    // The filtered department expands beyond the five-story clamp.
+    const grid = p.d.querySelector(`.ed-front .dept[data-cat="${cat}"] .dept-grid`);
+    assert.ok(grid.children.length > 0);
+    // One click on All: everything is back.
+    topics[0].click();
+    assert.equal(p.d.querySelector('.ed-front').dataset.topic, 'all');
+    for (const el of p.d.querySelectorAll('.ed-front [data-front-part]')) assert.equal(el.hidden, false);
+    p.close();
     const shell = readFileSync(resolve(root, path === '/' ? 'index.html' : 'daily/index.html'), 'utf8');
     const dom = new JSDOM(renderShell(shell, path, index, structuredClone(edition)));
-    assert.equal(dom.window.document.querySelectorAll('.section-shortcuts a').length, edition.sections.length);
+    assert.ok(dom.window.document.querySelector('.topics .topic'));
     dom.window.close();
   }
 });
@@ -371,7 +391,7 @@ test('relative timestamps refresh at 60 seconds and pause when hidden', async ()
     w.setInterval = (fn, ms) => {assert.equal(ms, 60000); tick = fn; return 1;};
     w.clearInterval = () => {stopped++; tick = null;};
   }});
-  const time = p.d.querySelector('.lead time[data-relative]');
+  const time = p.d.querySelector('.cover-inner time[data-relative]');
   assert.equal(time.textContent, '19 min ago');
   p.w.Date.now = () => Date.parse('2026-10-08T16:01:00Z'); tick();
   assert.equal(time.textContent, '20 min ago');
@@ -764,7 +784,7 @@ test('missing story recovery never guesses on ties, weak matches, or absent head
     const doc=structuredClone(ed);
     if(hint==='Alpha beta gamma delta') doc.stories[1].headline=doc.stories[0].headline;
     const p=await open('/daily/2026-10-07/'+(hint?'?headline='+encodeURIComponent(hint):'')+'#story-abcdef123456',{fetch:u=>u.includes('/editions/2026')?doc:undefined});
-    assert.ok(p.d.querySelector('.front'));
+    assert.ok(p.d.querySelector('.ed-front'));
     assert.equal(p.d.querySelector('.story'),null);
     assert.match(p.d.querySelector('.story-recovery').textContent,/full edition/);
     p.close();
@@ -838,15 +858,15 @@ test('the retired Local section stays in old editions but has no navigation, pag
   ed.sections.splice(1, 0, {category: 'Local', ids: moved});
   const fetch = u => u.endsWith('2026-10-07.json') ? ed : undefined;
   const home = await open('/', {fetch});
-  const band = home.d.querySelector('.band[data-cat="Local"]');
-  assert.equal(band.querySelector('.band-title').textContent, 'Frisco & North Texas');
+  const band = home.d.querySelector('.dept[data-cat="Local"]');
+  assert.equal(band.querySelector('.dept-title').textContent, 'Frisco & North Texas');
   assert.equal(band.querySelectorAll('.card').length, 2);
-  assert.equal(band.querySelector('.band-link'), null); // no section page to send readers to
+  assert.equal(band.querySelector('.dept-link'), null); // no section page to send readers to
   assert.match(band.querySelector('.card .kicker').textContent, /^Local/);
   assert.equal(home.d.querySelector('.nav a[href="/local/"]'), null);
   assert.deepEqual([...home.d.querySelectorAll('.nav a')].map(a => a.textContent),
-    ['Today', 'Latest', 'World & Nation', 'Technology', 'Science & AI', 'Sports', 'Entertainment', 'Internet Culture', 'Archive', 'About', 'How it works']);
-  assert.equal(home.d.querySelector('.nav a[href="/about/#method"]').textContent, 'How it works');
+    ['Today', 'Latest', 'Archive', 'About', 'Search']);
+  assert.equal(home.d.querySelector('.nav a[href="/search/"]').textContent, 'Search');
   home.close();
   const search = await open('/search/?cat=Local');
   assert.equal(search.d.querySelector('option[value="Local"]'), null);

@@ -554,3 +554,90 @@ details.src small{color:var(--faint);font-size:12px}
 .shell footer{color:var(--muted);font-size:13px;margin-top:28px}
 .shell{overflow-wrap:anywhere}
 .tz-name{font-size:12px;color:var(--muted);flex-basis:100%}
+
+/* ------------------------------------------------------------------ editorial front page */
+/* Magazine masthead: giant REACH wordmark, one edition line, slim site nav. */
+.masthead{background:var(--mast)}
+.mast-wrap{text-align:center;padding:34px 0 0}
+.brand{display:inline-block}
+.brand-name{font-family:var(--serif);font-weight:800;font-size:clamp(56px,9vw,104px)!important;
+  letter-spacing:-.02em;line-height:.95;font-variation-settings:"opsz" 72}
+.brand-sub{display:block;font-size:12px;letter-spacing:3px;text-transform:uppercase;
+  color:var(--muted);margin-top:6px}
+.edition-line{margin:14px 0 0;font-size:13px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted)}
+.nav.slim{margin-top:16px;border-top:1px solid var(--line)}
+.nav.slim .nav-row{justify-content:center;gap:4px;padding:10px var(--gutter)}
+.nav.slim .nav-row>a{padding:8px 16px;border-radius:8px;font-size:14px;font-weight:500;color:var(--ink2)}
+.nav.slim .nav-row>a:hover{color:var(--accent);background:var(--accent-bg)}
+.nav.slim .nav-row>a[aria-current="page"]{color:var(--accent);background:var(--accent-bg);font-weight:600}
+.search-link{margin-left:8px}
+
+/* One-click topic filter: sticky bar, All + sections with counts. */
+.topics{position:sticky;top:0;z-index:20;display:flex;gap:8px;overflow-x:auto;
+  padding:12px var(--gutter);background:color-mix(in srgb,var(--bg) 92%,transparent);
+  -webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--line);scrollbar-width:none}
+.topics::-webkit-scrollbar{display:none}
+.topic{display:inline-flex;align-items:center;gap:8px;white-space:nowrap;
+  padding:8px 16px;border:1px solid var(--line);border-radius:999px;
+  font-size:14px;font-weight:500;color:var(--ink2);background:var(--card);flex:none}
+.topic:hover{border-color:var(--accent);color:var(--accent)}
+.topic.on{background:var(--ink);color:var(--bg);border-color:var(--ink);font-weight:600}
+.topic .n{font-size:12px;opacity:.7;font-variant-numeric:tabular-nums}
+
+/* Cover story: magazine cover treatment for the top story. */
+.cover{padding:56px 0 48px;border-bottom:2px solid var(--ink);max-width:860px}
+.cover-kicker{display:flex;align-items:center;gap:10px;font-size:12px;font-weight:600;
+  letter-spacing:2.5px;text-transform:uppercase;color:var(--muted);margin-bottom:20px}
+.live-dot{width:9px;height:9px;border-radius:50%;background:#d43d2a;animation:edpulse 2s infinite}
+@keyframes edpulse{50%{opacity:.3}}
+.cover-kicker .badge{margin-left:4px}
+.cover-hl{font-family:var(--serif);font-weight:800;font-size:clamp(38px,5.2vw,64px);
+  line-height:1.04;letter-spacing:-.015em;margin:0 0 22px;font-variation-settings:"opsz" 72}
+.cover-hl a:hover{color:var(--accent)}
+.cover .dek{font-size:18px;line-height:1.65;color:var(--ink2);max-width:62ch}
+.cover .dek::first-letter{font-family:var(--serif);font-weight:800;font-size:3.2em;
+  float:left;line-height:.84;padding:5px 10px 0 0}
+.cover-why{margin-top:18px;font-size:15px;color:var(--ink2);max-width:62ch;
+  border-left:3px solid var(--accent);padding-left:16px}
+.cover .meta{margin-top:18px}
+
+/* Pull quote band. */
+.pullquote{margin:0;padding:48px 0;border-bottom:1px solid var(--line);
+  display:grid;grid-template-columns:1fr;gap:12px;max-width:860px}
+.pullquote blockquote{font-family:var(--serif);font-style:italic;font-weight:500;
+  font-size:clamp(24px,3.2vw,36px);line-height:1.32;margin:0;font-variation-settings:"opsz" 40}
+.pullquote blockquote::before{content:"\201C";color:var(--accent);margin-right:4px}
+.pullquote cite{font-style:normal;font-size:13px;color:var(--muted)}
+.pullquote cite a{color:var(--accent)}
+.pullquote cite a:hover{text-decoration:underline}
+
+/* Numbered top stories. */
+.toplist{padding:40px 0;border-bottom:1px solid var(--line)}
+.dept-title{font-family:var(--serif);font-weight:700;font-size:30px;margin:0 0 6px;
+  font-variation-settings:"opsz" 40}
+.topnum{margin:18px 0 0;padding:0}
+.topnum-item{display:grid;grid-template-columns:56px 1fr;gap:12px;
+  padding:20px 0;border-top:1px solid var(--line)}
+.topnum-item:first-child{border-top:0;padding-top:6px}
+.tnum{font-family:var(--serif);font-weight:800;font-size:34px;line-height:1;color:var(--line2);
+  font-variation-settings:"opsz" 72}
+.tnum-body h3{font-family:var(--serif);font-size:22px;line-height:1.3;margin:4px 0 8px;font-weight:700}
+.tnum-body .dek{color:var(--ink2);font-size:15px}
+
+/* Departments: magazine sections with View-all links. */
+.dept{padding:40px 0 8px;border-bottom:1px solid var(--line)}
+.dept-head{display:flex;align-items:baseline;justify-content:space-between;gap:16px;
+  border-bottom:2px solid var(--ink);padding-bottom:10px;margin-bottom:8px}
+.dept-head .dept-title{margin:0}
+.dept-link{font-size:14px;font-weight:600;color:var(--accent);white-space:nowrap}
+.dept-link:hover{text-decoration:underline}
+.dept-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;padding:16px 0 32px}
+.dept-grid .card{margin:0;height:100%}
+@media(max-width:900px){.dept-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:600px){.dept-grid{grid-template-columns:1fr}}
+/* In the full view each department shows 5; the filter reveals the rest. */
+.ed-front[data-topic="all"] .dept-grid>*:nth-child(n+6){display:none}
+
+/* Filtered state: only the chosen department shows, fully expanded. */
+.ed-front:not([data-topic="all"]) .topics{box-shadow:var(--shadow)}

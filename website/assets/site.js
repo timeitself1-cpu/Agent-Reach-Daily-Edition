@@ -425,18 +425,29 @@ if (typeof module !== 'undefined') module.exports = {normOutlet, dedupeOutlets, 
   }
 
   // ------------------------------------------------------------------ chrome
+  // Editorial magazine masthead: a giant REACH wordmark, one edition line, and a slim
+  // site nav (Today / Latest / Archive / About). Topic picking moved to the one-click
+  // filter bar on the front page, so the header never carries redundant section pills.
+  const SLIM_NAV = [['Today', '/', 'home'], ['Latest', '/latest/', 'latest'],
+    ['Archive', '/archive/', 'archive'], ['About', '/about/', 'about']];
   function masthead(current, ed) {
     const today = ed ? longDate(ed.edition_date) : new Date().toLocaleDateString('en-US', {weekday: 'long', month: 'long', day: 'numeric', year: 'numeric'});
-    return h('header', {class: 'masthead'}, skipLink(), h('div', {class: 'wrap'},
-      h('div', {class: 'mast-top'},
-        h('div', {class: 'mast-date'}, h('strong', {text: ed ? 'Edition of ' : 'Today, '}), today),
-        h('a', {class: 'brand', href: '/', 'aria-label': 'Agent Reach Daily, home'}, h('span', {class: 'brand-mark', 'aria-hidden': 'true'}),
-          h('span', {class: 'brand-name', text: 'Agent Reach'}), h('span', {class: 'brand-daily', text: 'Daily'})),
-        h('div', {class: 'mast-actions'}, h('a', {class: 'pill search', href: '/search/', 'aria-current': current === 'search' ? 'page' : null},
-          h('span', {class: 'glass', 'aria-hidden': 'true'}), 'Search'),
-          h('a', {class: 'pill solid', href: '/about/#app', text: 'Get the app'}))),
-      h('nav', {class: 'nav', 'aria-label': 'Sections'}, h('div', {class: 'nav-row'}, NAV.map(([label, href, key]) =>
-        h('a', {href, text: label, 'aria-current': key === current ? 'page' : null}))))));
+    const editionLine = ed
+      ? `${today} · ${plural(ed.stories.length, 'story', 'stories')}${ed.revision > 1 ? ` · Update ${ed.revision}` : ''}`
+      : today;
+    const items = SLIM_NAV.map(([label, href, key]) =>
+      h('a', {href, text: label, 'aria-current': key === current ? 'page' : null}));
+    // On a section page, the section joins the slim nav as the current item, so the
+    // reader keeps their bearings without the header carrying every section always.
+    if (SECTION[current] && SECTION[current].path && !SLIM_NAV.some(([, , key]) => key === current))
+      items.push(h('a', {href: SECTION[current].path, text: SECTION[current].label, 'aria-current': 'page'}));
+    items.push(h('a', {class: 'search-link', href: '/search/', 'aria-current': current === 'search' ? 'page' : null, text: 'Search'}));
+    return h('header', {class: 'masthead'}, skipLink(), h('div', {class: 'wrap mast-wrap'},
+      h('a', {class: 'brand', href: '/', 'aria-label': 'Agent Reach Daily, home'},
+        h('span', {class: 'brand-name', text: 'REACH'}),
+        h('span', {class: 'brand-sub', text: 'Agent Reach Daily'})),
+      h('p', {class: 'edition-line', text: editionLine}),
+      h('nav', {class: 'nav slim', 'aria-label': 'Site'}, h('div', {class: 'nav-row'}, items))));
   }
   // Keep the current section in view when the navigation row scrolls sideways (phones).
   function revealCurrentNav() {
@@ -643,24 +654,108 @@ if (typeof module !== 'undefined') module.exports = {normOutlet, dedupeOutlets, 
         h('li', null, h('b', {text: 'Publish'}), 'A failed run never replaces the last good edition.')));
   }
   const sectionId = cat => 'band-' + cat.toLowerCase().replace(/[^a-z]+/g, '-');
-  function sectionShortcuts(ed) {
-    return h('nav', {class: 'section-shortcuts', 'aria-label': 'Jump to a section'}, (ed.sections || []).map(sec =>
-      h('a', {class: 'pill', href: '#' + sectionId(sec.category), text: `${catLabel(sec.category)} ${sec.ids.length}`})));
+  // One-click topic filter: a sticky bar with All + every section in this edition.
+  // One click shows only that topic's stories (the section expands to all of them);
+  // one more click on All restores the full front page. No page load, no scroll hunt.
+  function topicBar(depts, front) {
+    const bar = h('div', {class: 'topics', role: 'toolbar', 'aria-label': 'Filter by topic'});
+    const setTopic = cat => {
+      front.dataset.topic = cat || 'all';
+      for (const b of bar.querySelectorAll('.topic')) {
+        const on = (b.dataset.topic || '') === (cat || '');
+        b.classList.toggle('on', on);
+        b.setAttribute('aria-pressed', String(on));
+      }
+      const showAll = !cat;
+      for (const el of front.querySelectorAll('[data-front-part]')) {
+        const part = el.dataset.frontPart;
+        el.hidden = showAll ? false : !(part === 'section' && el.dataset.cat === cat);
+      }
+      if (!showAll) bar.scrollIntoView({block: 'start', behavior: 'smooth'});
+    };
+    const btn = (label, cat, count) => {
+      const b = h('button', {type: 'button', class: 'topic' + (!cat ? ' on' : ''),
+        'aria-pressed': String(!cat), 'data-topic': cat || ''},
+        h('span', {text: label}),
+        count != null ? h('span', {class: 'n', text: String(count)}) : null);
+      b.addEventListener('click', () => setTopic(cat));
+      return b;
+    };
+    bar.append(btn('All topics', '', null));
+    for (const [sec, stories] of depts) bar.append(btn(catLabel(sec.category), sec.category, stories.length));
+    return bar;
+  }
+  // The cover story: the top story treated like a magazine cover — kicker, giant
+  // serif headline, lede, why-it-matters, and the one-line coverage footer.
+  function coverStory(ed, s) {
+    const change = s.change === 'new' ? h('span', {class: 'badge new', text: 'New'})
+      : s.change === 'updated' ? h('span', {class: 'badge updated', text: 'Updated'}) : null;
+    return h('article', {class: 'cover-inner', id: 'story-' + s.id, 'data-cat': s.category},
+      h('p', {class: 'cover-kicker'},
+        h('span', {class: 'live-dot', 'aria-hidden': 'true'}),
+        h('span', {text: `Top story · ${catLabel(s.category)}`}), change),
+      headline(ed, s, 'h1', 'hl cover-hl'),
+      dek(s),
+      s.why_it_matters ? h('p', {class: 'cover-why'}, h('b', {text: 'Why it matters: '}), s.why_it_matters) : null,
+      meta(s, {ed, names: 3}));
+  }
+  // A pull quote to break the scroll: the punchiest "why it matters" among the top stories.
+  function pullQuote(ed, stories) {
+    const s = stories.find(x => x && x.why_it_matters && x.why_it_matters.length > 40);
+    if (!s) return null;
+    const text = s.why_it_matters.length > 180 ? s.why_it_matters.slice(0, 177).trimEnd() + '…' : s.why_it_matters;
+    return h('aside', {class: 'pullquote', 'data-front-part': 'pullquote', 'data-cat': ''},
+      h('blockquote', {text}), h('cite', null, h('a', {href: storyUrl(ed, s), text: s.headline})));
+  }
+  function deptHead(title, path, count) {
+    return h('div', {class: 'dept-head'},
+      h('h2', {class: 'dept-title', text: title}),
+      path ? h('a', {class: 'dept-link', href: path, text: `All ${count} →`}) : null);
   }
   function renderFront(ed, idx, current, storyNotice) {
     const top = ed.topStories;
     const used = new Set(top.slice(0, 8).map(s => s.id));
-    const content = [h('div', {class: 'wrap'}, strip(ed, idx), sectionShortcuts(ed), notices(ed, idx),
-      storyNotice ? h('p', {class: 'notice story-recovery', text: storyNotice}) : null,
-      h('div', {class: 'front'}, lead(ed, top[0]), rail(ed, top.slice(1, 4))))];
-    if (top.length > 4) content.push(sectionBand(ed, null, top.slice(4, 8), 'More top stories'));
+    // Every section with stories becomes a department; the CSS clamps each to 5
+    // in the full view and the topic filter reveals the rest.
+    const depts = [];
     for (const sec of ed.sections || []) {
       const stories = sec.ids.map(id => ed.byId[id]).filter(s => s && !used.has(s.id));
-      content.push(sectionBand(ed, sec.category, stories, null, current === 'edition' || body.dataset.prerender === 'true'));
+      if (stories.length) depts.push([sec, stories]);
     }
-    if (idx) content.push(archiveBand(idx, ed.edition_date));
-    content.push(aboutBand());
-    mount(current, ed, content);
+    const front = h('div', {class: 'ed-front', 'data-topic': 'all'});
+    front.append(
+      h('div', {class: 'wrap'}, strip(ed, idx), notices(ed, idx),
+        storyNotice ? h('p', {class: 'notice story-recovery', text: storyNotice}) : null),
+      topicBar(depts, front),
+      h('div', {class: 'wrap'},
+        h('section', {class: 'cover', 'data-front-part': 'hero', 'data-cat': ''}, coverStory(ed, top[0])),
+        pullQuote(ed, top.slice(1, 6)),
+        h('section', {class: 'toplist', 'data-front-part': 'toplist', 'data-cat': '', 'aria-label': 'Top stories'},
+          h('h2', {class: 'dept-title', text: 'Top stories'}),
+          h('div', {class: 'topnum'}, top.slice(1, 5).map((s, i) =>
+            h('article', {class: 'topnum-item', id: 'story-' + s.id, 'data-cat': s.category},
+              h('span', {class: 'tnum', 'aria-hidden': 'true', text: String(i + 2)}),
+              h('div', {class: 'tnum-body'}, kicker(s), headline(ed, s, 'h3'), dek(s), meta(s, {ed}))))))));
+    if (top.length > 5)
+      front.append(h('div', {class: 'wrap'},
+        h('section', {class: 'dept', 'data-front-part': 'dept', 'data-cat': ''},
+          deptHead('More top stories'),
+          h('div', {class: 'dept-grid'}, top.slice(5, 8).map(s => card(ed, s, ''))))));
+    for (const [sec, stories] of depts) {
+      const secInfo = SECTION[sec.category] || {};
+      front.append(h('div', {class: 'wrap'},
+        h('section', {class: 'dept', 'data-front-part': 'section', 'data-cat': sec.category},
+          deptHead(secInfo.title || catLabel(sec.category), secInfo.path, stories.length),
+          h('div', {class: 'dept-grid'}, stories.map(s => card(ed, s, ''))))));
+    }
+    if (idx) {
+      const ab = archiveBand(idx, ed.edition_date);
+      if (ab) { ab.dataset.frontPart = 'archive'; ab.dataset.cat = ''; front.append(ab); }
+    }
+    const about = aboutBand();
+    about.dataset.frontPart = 'about'; about.dataset.cat = '';
+    front.append(about);
+    mount(current, ed, front);
     document.title = current === 'home' ? 'Agent Reach Daily: today’s news, from public reporting'
       : `Agent Reach Daily: ${longDate(ed.edition_date)}`;
   }
