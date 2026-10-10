@@ -1,4 +1,4 @@
-const {readFileSync, writeFileSync, mkdirSync, rmSync, cpSync, readdirSync, lstatSync} = require('node:fs');
+const {readFileSync, writeFileSync, mkdirSync, rmSync, cpSync, readdirSync, lstatSync, existsSync} = require('node:fs');
 const {resolve, dirname, sep} = require('node:path');
 const {JSDOM, VirtualConsole} = require('jsdom');
 const {checkEditions} = require('./check-editions.cjs');
@@ -168,7 +168,9 @@ function build() {
     if (!target.startsWith(out + sep)) throw new Error('Invalid cleanup target');
     rmSync(target, {recursive: true, force: true, maxRetries: 3});
   }
-  for (const path of ['assets', 'editions', 'search', 'feed.xml', 'sitemap.xml', 'robots.txt', 'app-top-stories.webp', 'app-window.webp', '_headers']) cpSync(resolve(root, path), resolve(out, path), {recursive: true});
+  const copyPaths = ['assets', 'editions', 'search', 'feed.xml', 'sitemap.xml', 'robots.txt', 'app-top-stories.webp', 'app-window.webp', '_headers'];
+  if (existsSync(resolve(root, 'events'))) copyPaths.push('events');
+  for (const path of copyPaths) cpSync(resolve(root, path), resolve(out, path), {recursive: true});
   // Derive consistent legacy corrections for HTML, direct JSON readers and monthly search.
   // The publisher-owned repository files remain the input; only dist is rewritten.
   for (const [date, edition] of editions) {
@@ -208,5 +210,5 @@ function build() {
   }
   console.log(`Built public website in dist/ with ${editions.size} embedded editions.`);
 }
-module.exports = {renderShell, addPreview, feedFiles};
+module.exports = {renderShell, addPreview, feedFiles, build};
 if (require.main === module) build();

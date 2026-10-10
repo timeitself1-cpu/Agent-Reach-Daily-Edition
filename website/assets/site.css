@@ -621,6 +621,7 @@ details.src small{color:var(--faint);font-size:12px}
 /* Section jump nav: slim anchor links for the long homepage. */
 .jump-nav{display:flex;flex-wrap:wrap;align-items:center;gap:8px 4px;
   padding:16px 0;border-bottom:1px solid var(--line);font-size:14px}
+.jump-nav .section-shortcuts{display:contents}
 .jump-nav-label{color:var(--muted);font-weight:600;margin-right:8px}
 .jump-nav-link{color:var(--ink2);font-weight:500;padding:6px 12px;border-radius:999px;white-space:nowrap;text-decoration:none}
 .jump-nav-link:hover{background:var(--card2);color:var(--accent);text-decoration:none}
