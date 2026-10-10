@@ -104,6 +104,8 @@ class EvidenceLink(BaseModel):
     published_at_utc: datetime | None = Field(default=None, description="only when the source stated a publication time")
     retrieved_at_utc: datetime | None = None
     feed: str | None = None  # publisher feed URL for news_rss items
+    url_raw: str | None = None  # the address the source gave (a news.google.com link) when `url` is the publisher's page
+    url_unresolved: bool = False  # still a news.google.com address: it could not be resolved to a publisher
 
     @model_validator(mode="after")
     def _normalise_times(self) -> "EvidenceLink":
@@ -272,6 +274,7 @@ class DailyEdition(BaseModel):
     stories: list[Story]
     top_ranks: list[int] = Field(default_factory=list)  # Top Stories (ranks into stories); empty in older editions
     changes: EditionChanges | None = None  # vs. the previously persisted edition; None for the first edition
+    unresolved_source_urls: int = Field(default=0, ge=0, description="published sources still on news.google.com")
     quality: QualityReport | None = None  # None in editions written before the pre-publish gates (rc22)
 
     @model_validator(mode="after")
@@ -848,6 +851,18 @@ def _clip(text: str | None, limit: int) -> str | None:
     return text[:limit].rsplit(" ", 1)[0].rstrip(" ,;:-") + "..."
 
 
+def is_google_news_url(url: str | None) -> bool:
+    try:
+        return (urlsplit(url or "").hostname or "").lower() == "news.google.com"
+    except ValueError:
+        return False
+
+
+def count_unresolved(stories: list["Story"]) -> int:
+    """Published sources that are still news.google.com addresses (a link that could not be resolved)."""
+    return sum(1 for st in stories for ev in st.evidence if is_google_news_url(ev.url))
+
+
 def evidence_links(cluster: MacroCluster, items: dict[int, CleanedTrendItem],
                    limit: int | None = MAX_EVIDENCE_PER_STORY) -> list[EvidenceLink]:
     members = [items[i] for i in cluster.member_item_ids if i in items]
@@ -863,6 +878,7 @@ def evidence_links(cluster: MacroCluster, items: dict[int, CleanedTrendItem],
                 continue
             seen.add(key)
             md = obs.metadata or {}
+            raw = safe_url(str(md["source_url_raw"])) if md.get("source_url_raw") else None
             links.append(EvidenceLink(
                 item_id=m.item_id,
                 source=obs.source.value,
@@ -875,6 +891,8 @@ def evidence_links(cluster: MacroCluster, items: dict[int, CleanedTrendItem],
                 published_at_utc=parse_utc(md.get("published_at")),
                 retrieved_at_utc=parse_utc(md.get("retrieved_at")),
                 feed=str(md["feed"]) if md.get("feed") else None,
+                url_raw=raw if raw and raw != url else None,
+                url_unresolved=is_google_news_url(url),
             ))
     links.sort(key=lambda link: link.url is None)  # linked evidence first, order otherwise preserved
     return links[:limit] if limit else links
@@ -1348,6 +1366,7 @@ def assemble_edition(
         notes=notes,
         stories=stories,
         top_ranks=[st.rank for st in selection.top],
+        unresolved_source_urls=count_unresolved(stories),
         quality=quality,
     )
 

@@ -179,11 +179,15 @@ class GoogleNewsIngester(BaseIngester):
             if item:
                 out.append(item)
         async def resolve_item(item):
-            resolved = await self.url_resolver.resolve(item.url, self.client, self.semaphore)
+            raw = item.url
+            resolved = await self.url_resolver.resolve(raw, self.client, self.semaphore)
+            if raw:
+                item.metadata['source_url_raw'] = raw  # always kept; item.url becomes the publisher's address
             if resolved:
                 item.url = resolved
             else:
                 item.metadata['via'] = 'Google News'
+                item.metadata['url_unresolved'] = True
         await asyncio.gather(*(resolve_item(item) for item in out))
         return out
 
