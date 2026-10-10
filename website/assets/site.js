@@ -186,7 +186,9 @@ if (typeof module !== 'undefined') module.exports = {normOutlet, dedupeOutlets, 
     'Science & AI': {label: 'Science & AI', path: '/science/', title: 'Science & AI', blurb: 'Research, space, health, climate and artificial intelligence.'},
     'Sports': {label: 'Sports', path: '/sports/', title: 'Sports', blurb: 'Games, results, trades and the business of sport.'},
     'Entertainment': {label: 'Entertainment', path: '/entertainment/', title: 'Entertainment', blurb: 'Film, television, music, games and the people who make them.'},
-    'Internet Culture': {label: 'Internet Culture', path: '/internet-culture/', title: 'Internet Culture', blurb: 'What people are talking about online: platforms, creators and viral moments.'},
+    // Retired on October 10, 2026 (merged into Technology): no navigation, page or search filter;
+    // editions published before then still show their Internet Culture stories under this label.
+    'Internet Culture': {label: 'Internet Culture', title: 'Internet Culture', blurb: 'What people are talking about online: platforms, creators and viral moments.', retired: 'October 10, 2026'},
   };
   // The ONE taxonomy is sections.json (published by the app as /editions/sections.json); the table above is only the
   // fallback when that file cannot be read, and a test keeps the two identical.

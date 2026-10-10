@@ -6,7 +6,25 @@ name: tests
 
 on:
   push:
+    paths:
+      - 'agent_reach/**'
+      - 'tests/**'
+      - '*.py'
+      - '*.ps1'
+      - '*.cmd'
+      - 'requirements*.txt'
+      - 'pytest.ini'
+      - '.github/workflows/tests.yml'
   pull_request:
+    paths:
+      - 'agent_reach/**'
+      - 'tests/**'
+      - '*.py'
+      - '*.ps1'
+      - '*.cmd'
+      - 'requirements*.txt'
+      - 'pytest.ini'
+      - '.github/workflows/tests.yml'
 
 permissions:
   contents: read

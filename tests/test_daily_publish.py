@@ -219,7 +219,7 @@ def test_text_that_looks_like_a_local_path_is_never_published(daily_paths, tmp_p
     assert left_out == [ed.stories[3].rank] and len(pub["stories"]) == 43 and "AppData" not in json.dumps(pub)
     r = P.publish_edition(daily_paths, ed, P.FolderTarget(tmp_path / "site"))
     assert r.state == "published" and f"Left out: story {ed.stories[3].rank}," in r.message
-    assert "AppData" not in (tmp_path / "site/search/2026-10.json").read_text(encoding="utf-8")
+    assert "AppData" not in (tmp_path / "site/website/search/2026-10.json").read_text(encoding="utf-8")
     # outside the stories there is nothing to leave out: the edition is refused
     ed.model.llm_model = r"C:\Users\someone\models\llama"
     with pytest.raises(P.PublishError, match="file path"):
@@ -248,20 +248,20 @@ def test_folder_publish_is_idempotent_and_withdraw_moves_latest_back(daily_paths
     r = P.publish_edition(daily_paths, older, site)
     assert r.state == "published"
     r = P.publish_edition(daily_paths, real_edition(), site)
-    assert r.state == "published" and set(r.changed) == {"editions/2026-10-07.json", "editions/index.json",
-                                                         "daily/2026-10-07/index.html", "feed.xml", "sitemap.xml",
-                                                         "search/2026-10.json"}
-    index = json.loads((tmp_path / "site/editions/index.json").read_text(encoding="utf-8"))
+    assert r.state == "published" and set(r.changed) == {"website/editions/2026-10-07.json", "website/editions/index.json",
+                                                         "website/daily/2026-10-07/index.html", "website/feed.xml", "website/sitemap.xml",
+                                                         "website/search/2026-10.json"}
+    index = json.loads((tmp_path / "site/website/editions/index.json").read_text(encoding="utf-8"))
     assert index["latest"] == "2026-10-07" and [e["date"] for e in index["editions"]] == ["2026-10-07", "2026-10-06"]
     # the RSS feed and the sitemap follow the archive list: valid XML, one feed item per date, newest first
-    feed = ElementTree.fromstring((tmp_path / "site/feed.xml").read_bytes())
+    feed = ElementTree.fromstring((tmp_path / "site/website/feed.xml").read_bytes())
     links = [i.findtext("link") for i in feed.iter("item")]
     assert links == ["https://getagentreach.dev/daily/2026-10-07/", "https://getagentreach.dev/daily/2026-10-06/"]
     assert feed.find("channel/item/title").text.startswith("October 7, 2026: ")
-    sitemap = (tmp_path / "site/sitemap.xml").read_text(encoding="utf-8")
+    sitemap = (tmp_path / "site/website/sitemap.xml").read_text(encoding="utf-8")
     ElementTree.fromstring(sitemap)
     assert "/daily/2026-10-06/</loc><lastmod>" in sitemap and "<loc>https://getagentreach.dev/about/</loc>" in sitemap
-    page = (tmp_path / "site/daily/2026-10-07/index.html").read_text(encoding="utf-8")
+    page = (tmp_path / "site/website/daily/2026-10-07/index.html").read_text(encoding="utf-8")
     assert 'data-date="2026-10-07"' in page and "Margaret Hamilton" in page
     assert P.publish_edition(daily_paths, real_edition(), site).state == "unchanged"  # a retry adds nothing
     assert P.load_status(daily_paths).edition_date == "2026-10-07"
@@ -269,15 +269,15 @@ def test_folder_publish_is_idempotent_and_withdraw_moves_latest_back(daily_paths
     # an older revision of the same date never replaces a newer one on the site
     r = P.publish_edition(daily_paths, real_edition("2026-10-07-rc12d2-r1.json"), site)
     assert r.state == "failed" and "newer revision" in r.message
-    assert json.loads((tmp_path / "site/editions/2026-10-07.json").read_text(encoding="utf-8"))["revision"] == 2
+    assert json.loads((tmp_path / "site/website/editions/2026-10-07.json").read_text(encoding="utf-8"))["revision"] == 2
 
     r = P.withdraw(daily_paths, "2026-10-07", site)
     assert r.state == "withdrawn"
-    assert not (tmp_path / "site/editions/2026-10-07.json").exists()
-    assert json.loads((tmp_path / "site/editions/index.json").read_text(encoding="utf-8"))["latest"] == "2026-10-06"
-    assert "/daily/2026-10-07/" not in (tmp_path / "site/feed.xml").read_text(encoding="utf-8")
-    assert "/daily/2026-10-07/" not in (tmp_path / "site/sitemap.xml").read_text(encoding="utf-8")
-    assert {x["d"] for x in json.loads((tmp_path / "site/search/2026-10.json").read_text(encoding="utf-8"))["stories"]} == {"2026-10-06"}
+    assert not (tmp_path / "site/website/editions/2026-10-07.json").exists()
+    assert json.loads((tmp_path / "site/website/editions/index.json").read_text(encoding="utf-8"))["latest"] == "2026-10-06"
+    assert "/daily/2026-10-07/" not in (tmp_path / "site/website/feed.xml").read_text(encoding="utf-8")
+    assert "/daily/2026-10-07/" not in (tmp_path / "site/website/sitemap.xml").read_text(encoding="utf-8")
+    assert {x["d"] for x in json.loads((tmp_path / "site/website/search/2026-10.json").read_text(encoding="utf-8"))["stories"]} == {"2026-10-06"}
     # automatic publishing does not bring the withdrawn edition back; a newer revision of that day would
     assert P.publish_edition(daily_paths, real_edition(), site, automatic=True).state == "skipped"
     newer = real_edition().model_copy(update={"revision": 3})
@@ -287,13 +287,13 @@ def test_folder_publish_is_idempotent_and_withdraw_moves_latest_back(daily_paths
 
 # ---------------------------------------------------------------------------------------------------- GitHub target
 def test_github_publication_is_one_commit_and_a_retry_makes_none(daily_paths):
-    gh = FakeGitHub({"index.html": b"<html>site</html>"})
+    gh = FakeGitHub({"website/index.html": b"<html>site</html>"})
     r = P.publish_edition(daily_paths, real_edition(), gh.target())
     assert r.state == "published" and r.commit == gh.head
     assert gh.commits[gh.head]["message"] == "Publish the 2026-10-07 edition (revision 2)"
-    assert set(gh.files) == {"index.html", "editions/2026-10-07.json", "editions/index.json",
-                             "daily/2026-10-07/index.html", "feed.xml", "sitemap.xml", "search/2026-10.json",
-                                 "editions/sections.json"}
+    assert set(gh.files) == {"website/index.html", "website/editions/2026-10-07.json", "website/editions/index.json",
+                             "website/daily/2026-10-07/index.html", "website/feed.xml", "website/sitemap.xml", "website/search/2026-10.json",
+                                 "website/editions/sections.json"}
     assert sum(c.startswith("PATCH") for c in gh.calls) == 1
     # each file is read once per attempt (audit F11: the index and search month were read twice)
     reads = [c for c in gh.calls if c.startswith("GET /contents/")]
@@ -305,13 +305,13 @@ def test_github_publication_is_one_commit_and_a_retry_makes_none(daily_paths):
 
 
 def test_a_failed_upload_leaves_the_website_as_it_was(daily_paths):
-    gh = FakeGitHub({"index.html": b"<html>site</html>"})
+    gh = FakeGitHub({"website/index.html": b"<html>site</html>"})
     P.publish_edition(daily_paths, real_edition("2026-10-07-rc12d2-r1.json"), gh.target())
     live = gh.head
     gh.fail["PATCH /git/refs"] = 500
     r = P.publish_edition(daily_paths, real_edition(), gh.target())
     assert r.state == "failed" and "previous edition" in r.message
-    assert gh.head == live and json.loads(gh.files["editions/2026-10-07.json"])["revision"] == 1
+    assert gh.head == live and json.loads(gh.files["website/editions/2026-10-07.json"])["revision"] == 1
     status = P.load_status(daily_paths)
     assert status.state == "failed" and status.revision == 1  # the last success is still what the site has
     assert P.status_lines(daily_paths)["headline"] == "Publication failed: previous edition preserved"
@@ -321,19 +321,19 @@ def test_a_failed_upload_leaves_the_website_as_it_was(daily_paths):
 
 
 def test_a_branch_that_moved_is_reread_never_overwritten(daily_paths):
-    gh = FakeGitHub({"index.html": b"<html>site</html>"})
+    gh = FakeGitHub({"website/index.html": b"<html>site</html>"})
     original = gh.handler
 
     def someone_pushes_first(request):
         if request.method == "PATCH" and not gh.fail.get("pushed"):
             gh.fail["pushed"] = 1  # never matches a request: just a flag
-            gh.head = gh._commit({**gh.files, "about/index.html": b"new page"}, [gh.head], "site change")
+            gh.head = gh._commit({**gh.files, "website/about/index.html": b"new page"}, [gh.head], "site change")
         return original(request)
 
     target = P.GitHubTarget("owner/site", "main", "k", client=httpx.Client(transport=httpx.MockTransport(someone_pushes_first)))
     r = P.publish_edition(daily_paths, real_edition(), target)
     assert r.state == "published"
-    assert "about/index.html" in gh.files and "editions/2026-10-07.json" in gh.files  # both changes kept
+    assert "website/about/index.html" in gh.files and "website/editions/2026-10-07.json" in gh.files  # both changes kept
 
 
 def test_hide_story_republishes_without_it(daily_paths):
@@ -343,10 +343,10 @@ def test_hide_story_republishes_without_it(daily_paths):
     pike = next(s for s in ed.stories if s.headline.startswith("Christa Pike"))
     r = P.hide_story(daily_paths, ed, pike.story_id, gh.target())
     assert r.state == "published"
-    pub = json.loads(gh.files["editions/2026-10-07.json"])
+    pub = json.loads(gh.files["website/editions/2026-10-07.json"])
     assert len(pub["stories"]) == 43 and pike.story_id[:12] not in pub["top"]
-    assert "Christa Pike" not in gh.files["daily/2026-10-07/index.html"].decode()
-    assert "Christa Pike" not in gh.files["search/2026-10.json"].decode()
+    assert "Christa Pike" not in gh.files["website/daily/2026-10-07/index.html"].decode()
+    assert "Christa Pike" not in gh.files["website/search/2026-10.json"].decode()
 
 
 def test_a_removed_story_stays_off_the_site_in_later_revisions_of_the_day(daily_paths, tmp_path):
@@ -360,9 +360,9 @@ def test_a_removed_story_stays_off_the_site_in_later_revisions_of_the_day(daily_
     assert again.story_id[:12] != stun.story_id[:12]  # the same story under a new id
     assert P.hide_story(daily_paths, first, stun.story_id, site).state == "published"
     assert P.publish_edition(daily_paths, second, site, automatic=True).state == "published"
-    for path in ("editions/2026-10-07.json", "daily/2026-10-07/index.html", "search/2026-10.json"):
+    for path in ("website/editions/2026-10-07.json", "website/daily/2026-10-07/index.html", "website/search/2026-10.json"):
         assert "Stun Grenades" not in (tmp_path / "site" / path).read_text(encoding="utf-8")
-    assert json.loads((tmp_path / "site/editions/2026-10-07.json").read_text(encoding="utf-8"))["revision"] == 2
+    assert json.loads((tmp_path / "site/website/editions/2026-10-07.json").read_text(encoding="utf-8"))["revision"] == 2
     # settings written by rc13/rc14 (ids only) still load and still hide by id
     old = json.loads(P.settings_file(daily_paths).read_text(encoding="utf-8"))
     del old["hidden_reports"]
@@ -400,19 +400,19 @@ def test_archive_search_files_per_month_repair_themselves(daily_paths, tmp_path)
     september.edition_date = september.edition_date.replace(month=9, day=30)
     for ed in (september, older):
         assert P.publish_edition(daily_paths, ed, site).state == "published"
-    (tmp_path / "site/search/2026-10.json").unlink()  # as on a site published before search existed
+    (tmp_path / "site/website/search/2026-10.json").unlink()  # as on a site published before search existed
     assert P.publish_edition(daily_paths, real_edition(), site).state == "published"
-    month = json.loads((tmp_path / "site/search/2026-10.json").read_text(encoding="utf-8"))
+    month = json.loads((tmp_path / "site/website/search/2026-10.json").read_text(encoding="utf-8"))
     days = [x["d"] for x in month["stories"]]
     assert days == sorted(days, reverse=True) and set(days) == {"2026-10-07", "2026-10-06"}
     first = month["stories"][0]
     assert first["h"] == "Computing pioneer Margaret Hamilton dies at 90" and first["r"] == 1
     assert set(first) - {"u", "coverage"} == {"d", "id", "r", "t", "c", "h", "s", "o", "l"} and len(first["s"]) <= P.SEARCH_SUMMARY_CHARS + 1
     assert first['coverage']['level'] == first['l']
-    assert json.loads((tmp_path / "site/search/2026-09.json").read_text(encoding="utf-8"))["stories"][0]["d"] == "2026-09-30"
+    assert json.loads((tmp_path / "site/website/search/2026-09.json").read_text(encoding="utf-8"))["stories"][0]["d"] == "2026-09-30"
     # withdrawing the only date of a month removes that month's file
     assert P.withdraw(daily_paths, "2026-09-30", site).state == "withdrawn"
-    assert not (tmp_path / "site/search/2026-09.json").exists()
+    assert not (tmp_path / "site/website/search/2026-09.json").exists()
 
 
 # ---------------------------------------------------------------------------------------------------- key and hook
@@ -457,7 +457,7 @@ def test_the_window_warns_a_week_before_the_access_key_expires(daily_paths, monk
 
     monkeypatch.delenv(P.TOKEN_ENV, raising=False)
     P.save_token(daily_paths, "github_pat_test")
-    gh = FakeGitHub({"index.html": b"<html>site</html>"})
+    gh = FakeGitHub({"website/index.html": b"<html>site</html>"})
     expires = {"value": "2026-10-12 08:30:00 UTC"}
 
     def answer(request):
@@ -519,13 +519,13 @@ def test_the_hourly_retry_waits_when_trying_again_cannot_help(daily_paths, monke
     refused["on"] = False
     P.save_token(daily_paths, "github_pat_new")
     r = P.catch_up(daily_paths, now=utcnow() + timedelta(hours=2))
-    assert r is not None and r.state == "published" and "editions/2026-10-07.json" in gh.files
+    assert r is not None and r.state == "published" and "website/editions/2026-10-07.json" in gh.files
     assert P.load_status(daily_paths).blocked_on is None
 
 
 def test_a_connection_test_keeps_the_last_failure_visible(daily_paths):
     """On the PC (Oct 8) the window said "Connected" under a red "Publication failed" and hid why it had failed."""
-    assert P.connected_message(daily_paths).startswith("Connected: the key can read timeitself1-cpu/Agent-Reach-Website.")
+    assert P.connected_message(daily_paths).startswith("Connected: the key can read timeitself1-cpu/Agent-Reach.")
     assert "last attempt" not in P.connected_message(daily_paths)
     P._record(daily_paths, state="failed", message="Publication failed: no access key is saved.")
     msg = P.connected_message(daily_paths)

@@ -1,0 +1,30 @@
+name: Taxonomy contract
+# Guards the ONE-taxonomy rule: agent_reach/daily/sections.json is canonical;
+# website/assets/site.js keeps a fallback table that must agree on every
+# section id (label + retired status). Any drift fails the build.
+on:
+  push:
+    paths:
+      - 'agent_reach/daily/sections.json'
+      - 'agent_reach/daily/sections.py'
+      - 'website/assets/site.js'
+      - 'scripts/check_taxonomy_contract.py'
+      - '.github/workflows/contract.yml'
+  pull_request:
+    paths:
+      - 'agent_reach/daily/sections.json'
+      - 'agent_reach/daily/sections.py'
+      - 'website/assets/site.js'
+      - 'scripts/check_taxonomy_contract.py'
+      - '.github/workflows/contract.yml'
+permissions:
+  contents: read
+jobs:
+  contract:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+      - run: python3 scripts/check_taxonomy_contract.py

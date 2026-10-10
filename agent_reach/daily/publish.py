@@ -76,16 +76,29 @@ from agent_reach.ingestion.google_urls import is_google_news
 log = logging.getLogger(__name__)
 
 SITE_URL = "https://getagentreach.dev"
-SITE_REPO = "timeitself1-cpu/Agent-Reach-Website"
+SITE_REPO = "timeitself1-cpu/Agent-Reach"  # monorepo (was Agent-Reach-Website before the merge)
 SITE_BRANCH = "main"
+#: In the monorepo the website lives under website/; every path the publisher
+#: writes to the repo carries this prefix. Served URLs drop it (see _url_path).
+SITE_PREFIX = "website"
+
+
+def _repo_path(p: str) -> str:
+    return f"{SITE_PREFIX}/{p}"
+
+
+def _url_path(repo_path: str) -> str:
+    """The served URL path for a repo path (the site is deployed from website/)."""
+    prefix = f"{SITE_PREFIX}/"
+    return repo_path[len(prefix):] if repo_path.startswith(prefix) else repo_path
 GITHUB_API = "https://api.github.com"
 PUBLIC_SCHEMA = "agent_reach.public_edition"
 PUBLIC_SCHEMA_VERSION = 1
 INDEX_SCHEMA = "agent_reach.public_index"
-INDEX_PATH = "editions/index.json"
-FEED_PATH = "feed.xml"
-SITEMAP_PATH = "sitemap.xml"
-SECTIONS_PATH = "editions/sections.json"
+INDEX_PATH = _repo_path("editions/index.json")
+FEED_PATH = _repo_path("feed.xml")
+SITEMAP_PATH = _repo_path("sitemap.xml")
+SECTIONS_PATH = _repo_path("editions/sections.json")
 FEED_ITEMS = 30
 SEARCH_SCHEMA = "agent_reach.search_month"
 SEARCH_SUMMARY_CHARS = 280
@@ -121,15 +134,15 @@ class Hopeless(PublishError):
 
 
 def edition_json_path(d: str) -> str:
-    return f"editions/{d}.json"
+    return _repo_path(f"editions/{d}.json")
 
 
 def edition_page_path(d: str) -> str:
-    return f"daily/{d}/index.html"
+    return _repo_path(f"daily/{d}/index.html")
 
 
 def search_path(month: str) -> str:
-    return f"search/{month}.json"
+    return _repo_path(f"search/{month}.json")
 
 
 # ====================================================================== settings and status (local files)
@@ -178,12 +191,18 @@ def key_file(paths: DataPaths) -> Path:
 
 def load_settings(paths: DataPaths) -> PublishSettings:
     try:
-        return PublishSettings.model_validate(read_json(settings_file(paths)))
+        settings = PublishSettings.model_validate(read_json(settings_file(paths)))
     except FileNotFoundError:
         return PublishSettings()
     except (OSError, ValueError) as exc:  # damaged or held file: publishing stays off rather than guessing
         log.warning("publish settings unreadable (%s); using defaults", type(exc).__name__)
         return PublishSettings()
+    if settings.repo == "timeitself1-cpu/Agent-Reach-Website":
+        # monorepo merge: the website repo was folded into Agent-Reach/website/
+        log.warning("publish settings pointed at the old website repo; moving to %s", SITE_REPO)
+        settings = settings.model_copy(update={"repo": SITE_REPO})
+        save_settings(paths, settings)
+    return settings
 
 
 def save_settings(paths: DataPaths, settings: PublishSettings) -> None:
@@ -759,7 +778,7 @@ def feed_xml(index: dict, site_url: str = SITE_URL) -> bytes:
         "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n"
         "<rss version=\"2.0\" xmlns:atom=\"http://www.w3.org/2005/Atom\"><channel>\n"
         f"<title>Agent Reach Daily</title><link>{xml_escape(base)}/</link>"
-        f"<atom:link href=\"{xml_escape(base)}/{FEED_PATH}\" rel=\"self\" type=\"application/rss+xml\"/>"
+        f"<atom:link href=\"{xml_escape(base)}/{_url_path(FEED_PATH)}\" rel=\"self\" type=\"application/rss+xml\"/>"
         "<description>The day's news from public reporting: each event as one story, summarized by a local AI "
         "model, with its sources. Summaries can be wrong; coverage strength is not a fact check.</description>"
         f"<language>en</language>{built}\n" + "".join(items) + "</channel></rss>\n"
@@ -1302,7 +1321,7 @@ def live_edition(site_url: str = SITE_URL, client=None) -> tuple[str | None, int
 
     try:
         c = client or httpx.Client(timeout=10.0, follow_redirects=True)
-        r = c.get(f"{site_url.rstrip('/')}/{INDEX_PATH}", params={"t": int(utcnow().timestamp())},
+        r = c.get(f"{site_url.rstrip('/')}/{_url_path(INDEX_PATH)}", params={"t": int(utcnow().timestamp())},
                   headers={"Cache-Control": "no-cache", "User-Agent": f"AgentReachDaily/{__version__}"})
         if client is None:
             c.close()

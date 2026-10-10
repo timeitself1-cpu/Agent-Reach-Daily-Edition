@@ -1,5 +1,8 @@
 # Agent Reach website
 
+> This is the `website/` directory of the Agent-Reach monorepo. All commands below run from here
+> (`cd website`); CI and the Cloudflare build use it as their root.
+
 The daily publisher commits edition JSON, the archive index, monthly search data, dated HTML shells, RSS and sitemap. The website builds these into static Cloudflare assets. It accepts the publisher's optional trust fields and corrects older exports consistently in HTML, edition JSON and search JSON without modifying the input files.
 
 Use Node 24:

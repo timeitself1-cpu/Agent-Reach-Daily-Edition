@@ -349,8 +349,8 @@ def test_refresh_publishes_to_the_website_when_switched_on_and_a_website_failure
     # the website does not wait for the podcast recording (audit F6)
     assert stages.index("publish") < stages.index("website") < stages.index("podcast")
     d = out.edition.edition_date.isoformat()
-    assert json.loads((site / "editions/index.json").read_text())["latest"] == d
-    assert len(json.loads((site / f"editions/{d}.json").read_text())["stories"]) == len(out.edition.stories)
+    assert json.loads((site / "website/editions/index.json").read_text())["latest"] == d
+    assert len(json.loads((site / f"website/editions/{d}.json").read_text())["stories"]) == len(out.edition.stories)
 
     def broken(paths, settings=None, client=None):
         raise publish.PublishError("GitHub did not accept the access key.")
@@ -385,7 +385,7 @@ def test_the_hourly_check_publishes_an_edition_whose_upload_failed(daily_env, mo
     later = utcnow() + timedelta(minutes=61)
     monkeypatch.setattr(publish, "utcnow", lambda: later)
     assert main(check) == R.EXIT_NOT_DUE  # no refresh is due, but the website gets the edition
-    assert gh.head != site_before and f"editions/{d}.json" in gh.files
+    assert gh.head != site_before and f"website/editions/{d}.json" in gh.files
     status = publish.load_status(daily_env.paths)
     assert status.state == "published" and status.edition_date == d and status.failed_action is None
     calls = len(gh.calls)
@@ -407,7 +407,7 @@ def test_the_hourly_check_never_undoes_a_withdrawal(daily_env, monkeypatch, tmp_
     assert publish.withdraw(daily_env.paths, d).state == "withdrawn"
     soon = utcnow() + timedelta(hours=2)
     assert publish.catch_up(daily_env.paths, now=soon) is None  # withdrawn stays withdrawn
-    assert not (tmp_path / "site" / f"editions/{d}.json").exists()
+    assert not (tmp_path / "site" / f"website/editions/{d}.json").exists()
 
     def down(paths, settings=None, client=None):
         raise publish.PublishError("Could not reach GitHub (ConnectError). Is this PC online?")
@@ -441,7 +441,7 @@ def test_a_thin_refresh_never_replaces_a_full_edition_of_the_same_day(daily_env,
     assert kept.run_id == full.run_id and kept.revision == 1
     import json
 
-    assert json.loads((site / f"editions/{full.edition_date.isoformat()}.json").read_text())["revision"] == 1
+    assert json.loads((site / f"website/editions/{full.edition_date.isoformat()}.json").read_text())["revision"] == 1
     # the check can be turned off; then the thin run replaces the edition as before
     prefs, _ = load_prefs(daily_env.paths)
     save_prefs(daily_env.paths, prefs.model_copy(update={"min_share_of_same_day": 0.0}))

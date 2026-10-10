@@ -1,11 +1,25 @@
 name: Website checks
+# Moved from website/.github/workflows/ci.yml during the monorepo merge.
+# Runs only when website/ (or this workflow) changes; all steps run with
+# website/ as the working directory since package.json lives there.
 on:
   push:
-    branches: [main]
+    paths:
+      - 'website/**'
+      - '.github/workflows/website.yml'
   pull_request:
+    paths:
+      - 'website/**'
+      - '.github/workflows/website.yml'
   workflow_dispatch:
 permissions:
   contents: read
+concurrency:
+  group: website-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+defaults:
+  run:
+    working-directory: website
 jobs:
   website:
     runs-on: ubuntu-latest
@@ -15,6 +29,7 @@ jobs:
         with:
           node-version: 24
           cache: npm
+          cache-dependency-path: website/package-lock.json
       - run: npm ci
       - run: node --check assets/site.js
       - run: npm test
