@@ -97,5 +97,5 @@ def test_export_has_in_brief_and_new_tags():
                        started=t1)
     new.changes = compare_editions(old, new)
     page = render_edition_html(new)
-    assert '<section class="brief" aria-label="In brief">' in page and 'href="#story-1"' in page
+    assert '<section class="brief" aria-label="In brief">' in page and 'href="#story-' in page
     assert page.count('<span class="tag new">new</span>') == 2

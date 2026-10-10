@@ -249,12 +249,11 @@ def test_top_stories_take_corroborated_news_before_single_outlet_features():
 
 
 def test_html_sections_number_their_own_stories_consecutively():
-    from agent_reach.daily.render_html import _section
-    from tests.daily_fakes import make_edition, make_story
+    from agent_reach.daily.render import _section
 
-    stories = [make_story(i, headline=f"Separate story {i} about Town{i}") for i in range(1, 6)]
-    edition = make_edition(stories)
-    html = _section("News", stories, edition, shown={2, 4})
+    stories = [{"id": f"s{i}", "rank": i, "headline": f"Separate story {i} about Town{i}", "category": "News", "summary": [],
+                "sources": []} for i in range(1, 6)]
+    html = _section("News", stories, {"s2", "s4"}, False, "News")
     assert "Also in Top Stories" in html
     assert "<h3>3. " in html and "<h3>4. " not in html
 

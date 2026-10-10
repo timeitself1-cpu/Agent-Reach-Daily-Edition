@@ -19,6 +19,12 @@ tracks each real-world event over time (timelines), and later feeds structured e
 
 ## Release and repository state
 
+- **Oct 10 (Phase R, branch `claude/phase4-5-one-renderer`, from the default branch, NOT merged, NOT released):** ONE renderer
+  (`daily/render.py`, `standalone` flag) + ONE taxonomy (`daily/sections.json`) + one timestamp policy (live: reader zone via Intl and a
+  UTC toggle kept in localStorage; RSS UTC; export America/Chicago; publication time only when a source stated it). The old shell
+  template `publish.edition_page()` is KEPT as the fallback (user's decision): after one real publish through the new path, ASK the
+  user delete vs archive. The site side is on the website repo's branch `claude/phase4-5-one-renderer` (`site.js`, `site.css`,
+  `build.cjs`, `editions/sections.json`, `tests/phase5.cjs`). Phase 3 (canonical source URLs, `claude/lucid-dijkstra-yrgegn`) is a separate, unmerged branch.
 - **Oct 10:** editorial pass from the user's review of the live Oct 9 edition (PLAN log, `docs/REAL-EDITION-FINDINGS.md`
   Oct 9): story split by title subjects (`clusterer._subject_gate`), summaries that add to the headline
   (`edition.adds_to_headline`, `summary_checks.useful_summary`, per-sentence checks, fallback from the reports' own

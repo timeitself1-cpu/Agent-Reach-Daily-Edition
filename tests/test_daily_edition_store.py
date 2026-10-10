@@ -332,8 +332,8 @@ def test_html_is_self_contained_and_dated():
     page = render_edition_html(make_edition())
     assert "<link" not in page and " src=" not in page and "@import" not in page  # no remote CSS/JS/images
     assert "Trending news for October 1, 2026" in page
-    assert "Updated October 1, 2026 at 7:20 AM CDT" in page
-    assert "Wire One" in page and "published October 1, 2026 at 4:05 AM CDT" in page
+    assert "Generated" in page and "October 1, 2026 at 7:20 AM CDT" in page
+    assert "Wire One" in page and "published <time" in page and "October 1, 2026 at 4:05 AM CDT</time>" in page
     assert "DEMO" not in page
 
 

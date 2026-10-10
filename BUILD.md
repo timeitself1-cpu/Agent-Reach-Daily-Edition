@@ -13,6 +13,8 @@ user's PC stays `[~]` until their results are back.
 Order: Phase 1 is done except for the user's one-time setup. **Phase 2 is the current work.** Phase 3 starts
 only when Phase 2 is done. Phase 4 waits for the user's go-ahead (on Oct 8 the user said: no installer yet).
 
+Oct 10 addendum (PLAN Phase R): one renderer (`render.py`), one taxonomy (`sections.json`) and one timestamp policy are in the repository (sandbox-tested); the real publish cycle on the user's PC and the delete-vs-archive decision on the old shell template are `[~]`.
+
 ---
 
 ## Phase 1: automated website publishing, RSS, sitemap, archives and search

@@ -367,6 +367,18 @@ Each rule starts from quotes in `docs/REAL-EDITION-FINDINGS.md`; each gets a fix
 
 ---
 
+## Phase R: one renderer, one timestamp policy (Oct 10, user request; branch `claude/phase4-5-one-renderer`)
+
+- [x] R1. Layout report: three renderers (A `render_html.py` export, B `publish.edition_page()` shell, C `site.js` + `build.cjs`
+      prerender); B is the divergent template. **B is KEPT** (user, Oct 10) until the new path is verified; then ask delete vs archive.
+- [x] R2. `sections.json` (ids, labels, order) read by the app (`sections.py`, `edition.SECTION_ORDER`), copied by the publisher to
+      `editions/sections.json`, read by `site.js` (built-in table = fallback, test keeps it identical) and `build.cjs` (feeds).
+- [x] R3. `render.render_edition_html(public, standalone=bool)`: sources per story, coverage strength, "Why it matters",
+      changes / "no longer in this edition", quality-held-back counts, corrections link; `publish.shell_page` uses it, with
+      `edition_page` as the fallback when it raises; the export (`render_html`) draws the same renderer.
+- [x] R4. Phase 5 timestamps: reader zone + UTC toggle (site.js), RSS UTC, export America/Chicago, publication time only when stated.
+- [~] R5. One real publish cycle through the new path (needs the user's PC key), then ask the user: delete or archive B.
+
 ## Progress log
 
 `date | sub-task | commit | result | next`
@@ -417,3 +429,4 @@ Each rule starts from quotes in `docs/REAL-EDITION-FINDINGS.md`; each gets a fix
 
 - 2026-10-10 | CI on 0e44aa1 + permalink check | 1499121 | CI run 135 on 0e44aa1 was RED: one failure, `test_youtube_ranks_recent_uploads_by_views_per_hour` (4949 vs 5000, the feeds are built at collection time and read ~6 min later; not caused by the headline change); tolerance widened. Anchors (`#story-<id>`) come from `story_id[:12]` (evidence fingerprint) and the RSS guid is the edition address, neither from the headline: test publishes one edition with and without restyling and compares ids, anchors and guids. | Phase 2.
 - 2026-10-10 | Phase 2: golden set | (this commit) | `tests/golden/golden.json` (25 stories: the Oct 10 defects verbatim in both shapes, good stories incl. Brooklyn/Gulf of Mexico/Fed/quoted claim, leaks, thin, echo, contradiction) + `daily/golden.py`; `refresh` runs it before the gates and a changed outcome fails the attempt ("quality checks failed their own self-check"), previous edition kept; `python -m agent_reach.daily --golden`; setting `golden_check_enabled` (developer switch). Vibe-coded headline now normalises exactly as the user specified ("run"/"city" left out of COMMON_WORDS; "delays" added). | Phase 3 (needs the site repo for nothing; app side only).
+- 2026-10-10 | R1-R4 | (this branch) | one renderer (render.py) + sections.json + timestamp policy; B kept as fallback; sandbox: suite + pyflakes, website tests 83/83, 360px Playwright | R5 real publish on the PC, then delete-vs-archive question for B

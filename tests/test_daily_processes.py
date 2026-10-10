@@ -266,5 +266,5 @@ def test_repeated_daily_use_stays_coherent(world, tmp_path):
     assert st.last_success_run_id == ed.run_id and st.consecutive_failures == 0
     page = render_edition_html(ed)
     (tmp_path / "export.html").write_text(page, encoding="utf-8")
-    assert "revision 3" in page and "<script" not in page.lower()
+    assert "update 3" in page and "<script" not in page.lower()
     assert sum(1 for _ in world.diagnostics_dir.glob("*.json")) == 0

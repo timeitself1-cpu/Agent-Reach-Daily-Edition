@@ -36,7 +36,9 @@ public sources (RSS / APIs / pages)
 | `edition.py` | Versioned `DailyEdition` schema, evidence links, balanced selection, publication gate |
 | `brief.py` | Optional local-model pass; every sentence must pass the grounding gate |
 | `store.py` | Dated editions, atomic publish + checksummed `latest.json`, same-day revisions, quarantine, retention |
-| `render_html.py` | Standalone escaped HTML (no scripts, no remote assets, CSP) |
+| `render.py` | The ONE edition renderer: public edition JSON -> HTML; `standalone=True` = single self-contained file (inline CSS, no scripts, America/Chicago times), else the live site's no-script shell (UTC, `data-local` for site.js) |
+| `render_html.py` | The app's export: `public_edition(export=True)` drawn by `render.py` in standalone mode |
+| `sections.json` / `sections.py` | The ONE taxonomy (ids, labels, order, retired); published as `editions/sections.json` |
 | `prereqs.py` | Ollama/model checks and optional hidden start (never pulls models) |
 | `refresh.py` | The one refresh path for scheduled, launch-time and manual refreshes |
 | `scheduler.py` | Current-user Task Scheduler XML (hourly + logon, IgnoreNew, StartWhenAvailable) |

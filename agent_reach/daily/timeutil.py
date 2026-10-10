@@ -154,3 +154,10 @@ def humanize_delta(delta: timedelta) -> str:
     if hours < 36:
         return f"in {hours:.0f} h"
     return f"in {hours / 24:.0f} days"
+
+
+def format_utc(dt: datetime) -> str:
+    """'October 1, 2026 at 9:05 AM UTC': the no-script fallback of the website (the reader's zone replaces it)."""
+    utc = ensure_utc(dt)
+    hour = utc.hour % 12 or 12
+    return f"{format_long_date(utc.date())} at {hour}:{utc.minute:02d} {'AM' if utc.hour < 12 else 'PM'} UTC"

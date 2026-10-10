@@ -292,11 +292,12 @@ def test_github_publication_is_one_commit_and_a_retry_makes_none(daily_paths):
     assert r.state == "published" and r.commit == gh.head
     assert gh.commits[gh.head]["message"] == "Publish the 2026-10-07 edition (revision 2)"
     assert set(gh.files) == {"index.html", "editions/2026-10-07.json", "editions/index.json",
-                             "daily/2026-10-07/index.html", "feed.xml", "sitemap.xml", "search/2026-10.json"}
+                             "daily/2026-10-07/index.html", "feed.xml", "sitemap.xml", "search/2026-10.json",
+                                 "editions/sections.json"}
     assert sum(c.startswith("PATCH") for c in gh.calls) == 1
     # each file is read once per attempt (audit F11: the index and search month were read twice)
     reads = [c for c in gh.calls if c.startswith("GET /contents/")]
-    assert len(reads) == len(set(reads)) == 6  # was 8
+    assert len(reads) == len(set(reads)) == 7  # was 8 (rc21: editions/sections.json is one more file read)
     before = gh.head
     r = P.publish_edition(daily_paths, real_edition(), gh.target())
     assert r.state == "unchanged" and gh.head == before  # no duplicate commit

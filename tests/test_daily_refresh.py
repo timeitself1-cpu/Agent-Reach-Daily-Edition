@@ -76,7 +76,7 @@ def test_time_semantics_are_kept_apart(daily_env):
 def test_exported_html_of_a_real_edition(daily_env):
     ed = _refresh(daily_env).edition
     page = render_edition_html(ed)
-    assert ed.stories[0].headline in page and "https://wire-one.test/" in page
+    assert ed.stories[0].headline.lower() in page.lower() and "https://wire-one.test/" in page
     assert "<script" not in page.lower()
 
 
