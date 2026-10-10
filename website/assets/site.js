@@ -804,20 +804,20 @@ if (typeof module !== 'undefined') module.exports = {normOutlet, dedupeOutlets, 
     const fullDepts = depts.filter(([, stories]) => stories.length > 0);
     const emptyDepts = depts.filter(([, stories]) => !stories.length);
     // Section jump nav + "Also in the Top 10" strip, directly after the Top 10.
-    const jumpLinks = [
-      ...fullDepts.map(([sec]) => {
-        const secInfo = SECTION[sec.category] || {};
-        return {id: sectionId(sec.category), label: secInfo.title || catLabel(sec.category)};
-      }),
-    ];
+    const secLinks = fullDepts.map(([sec]) => {
+      const secInfo = SECTION[sec.category] || {};
+      return h('a', {class: 'jump-nav-link', href: '#' + sectionId(sec.category), text: secInfo.title || catLabel(sec.category)});
+    });
+    const extraLinks = [];
     if (idx && (idx.editions || []).filter(e => e.date !== ed.edition_date).length > 0) {
-      jumpLinks.push({id: 'previous-editions', label: 'Previous editions'});
+      extraLinks.push(h('a', {class: 'jump-nav-link', href: '#previous-editions', text: 'Previous editions'}));
     }
-    jumpLinks.push({id: 'about', label: 'About'});
+    extraLinks.push(h('a', {class: 'jump-nav-link', href: '#about', text: 'About'}));
     front.append(h('div', {class: 'wrap'},
       h('nav', {class: 'jump-nav', 'aria-label': 'On this page'},
         h('span', {class: 'jump-nav-label', text: 'On this page:'}),
-        ...jumpLinks.map(l => h('a', {class: 'jump-nav-link', href: '#' + l.id, text: l.label})))));
+        h('span', {class: 'section-shortcuts', style: 'display:contents'}, ...secLinks),
+        ...extraLinks)));
     if (emptyDepts.length) {
       front.append(h('div', {class: 'wrap'},
         h('nav', {class: 'more-sections', 'aria-label': 'More sections'},
