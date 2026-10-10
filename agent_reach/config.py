@@ -209,6 +209,11 @@ class Settings(BaseSettings):
     # extra Google News sections (see DEFAULT_GOOGLE_NEWS_SECTIONS); empty = top stories only
     google_news_sections: list[str] = Field(default_factory=list)
     google_news_items_per_section: int = Field(default=20, ge=1, le=100)
+    # Turning a news.google.com link into the publisher's address (ingestion/google_urls.py): bounded on every side
+    google_news_resolve_timeout_s: float = Field(default=10.0, ge=1.0, le=60.0)  # per attempt
+    google_news_resolve_retries: int = Field(default=2, ge=0, le=5)  # extra attempts after a transient failure
+    google_news_resolve_concurrency: int = Field(default=4, ge=1, le=16)
+    google_news_resolve_budget_s: float = Field(default=90.0, ge=5.0, le=600.0)  # whole run; the rest stay unresolved
     enabled_sources: list[str] = Field(
         default_factory=lambda: [
             "x_trends24",

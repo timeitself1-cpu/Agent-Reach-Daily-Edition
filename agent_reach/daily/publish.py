@@ -363,7 +363,8 @@ def _public_story(s: Story, edition: DailyEdition, change: str, top_rank: int | 
         seen.add(key)
         sources.append({"outlet": outlet_name(ev.publisher, ev.url) or _outlet(ev.source_name),
                         "via": "Google News" if is_google_news(url) else ev.source_name, "title": ev.title,
-                        "url": url, "published_utc": _utc(ev.published_at_utc), **identity})
+                        "url": url, "published_utc": _utc(ev.published_at_utc), **identity,
+                        **({"source_url_raw": safe_url(ev.url_raw)} if safe_url(ev.url_raw) not in (None, url) else {})})
     labels = [label for label in s.labels if label in ("Hot", "Rising")]
     # The cited report supporting the displayed headline, or the internal evidence view when its
     # destination cannot be resolved. Background and attention signals never supply this link.
@@ -488,6 +489,7 @@ def public_edition(edition: DailyEdition, hidden: list[str] | None = None,
         "quality": ({"stories_accepted": edition.quality.stories_accepted,
                      "stories_quarantined": edition.quality.stories_quarantined,
                      "reason_counts": dict(edition.quality.reason_counts)} if edition.quality else None),
+        "unresolved_source_urls": edition.unresolved_source_urls,
         "sources_answered": edition.coverage.sources_ok, "sources_tried": edition.coverage.sources_attempted,
         "sources": public_sources(edition.source_health),
         "compared_with": ({"edition_date": changes.compared_edition_date, "revision": changes.compared_revision}
