@@ -155,8 +155,9 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer;paddin
 .cov.limited .bars i:nth-child(1){background:var(--limited)}
 .cov.strong{color:var(--accent2)}
 /* The one coverage line of a story: bars for strength, then who reported it, in the muted metadata colour. */
-.cov-line,.cov-line.strong{color:var(--muted);flex:0 1 auto}
+.cov-line,.cov-line.strong{color:var(--muted);flex:0 1 auto;display:inline-flex;align-items:center;gap:6px}
 .cov-line .reported{overflow-wrap:anywhere}
+.outlet-favicon{width:16px;height:16px;border-radius:3px;flex:none}
 /* Narrow columns: who reported it on its own row, then the time and the Sources link. */
 .card .meta .cov-line,.rail-item .meta .cov-line{order:-1;flex-basis:100%}
 @media (max-width:640px){.lead .meta .cov-line,.river-item .meta .cov-line{order:-1;flex-basis:100%}}
@@ -642,6 +643,12 @@ details.src small{color:var(--faint);font-size:12px}
 .dept-head .dept-title{margin:0}
 .dept-link{font-size:14px;font-weight:600;color:var(--accent);white-space:nowrap}
 .dept-link:hover{text-decoration:underline}
+/* Section jump nav: slim anchor links for the long homepage. */
+.jump-nav{display:flex;flex-wrap:wrap;align-items:center;gap:8px 4px;
+  padding:16px 0;border-bottom:1px solid var(--line);font-size:14px}
+.jump-nav-label{color:var(--muted);font-weight:600;margin-right:8px}
+.jump-nav-link{color:var(--ink2);font-weight:500;padding:6px 12px;border-radius:999px;white-space:nowrap;text-decoration:none}
+.jump-nav-link:hover{background:var(--card2);color:var(--accent);text-decoration:none}
 /* Compact strip for sections whose stories are all in the Top 10. */
 .more-sections{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;
   padding:18px 0;border-bottom:1px solid var(--line);font-size:14px}
