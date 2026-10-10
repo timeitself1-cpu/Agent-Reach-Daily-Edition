@@ -993,3 +993,15 @@ test('the story page labels a source list that shows fewer newsrooms than the co
   assert.match(group.nextElementSibling.textContent, new RegExp(`Showing ${listed} of ${n} newsrooms`));
   p.close();
 });
+
+test('the "Also in the Top 10" strip renders exactly once when a section has no exclusive stories', async () => {
+  const ed = structuredClone(edition);
+  // Collapse Entertainment into the Top 10: every one of its story ids already ranks.
+  ed.sections.find(s => s.category === 'Entertainment').ids = ed.top.slice(0, 4);
+  const p = await open('/', {fetch: u => u.includes('/editions/2026-10-07') ? ed : undefined});
+  const strips = p.d.querySelectorAll('nav.more-sections');
+  assert.equal(strips.length, 1, 'one "Also in the Top 10" strip, directly after the jump nav');
+  assert.match(strips[0].textContent, /Also in the Top 10:.*Entertainment \(4\)/);
+  assert.equal(p.d.querySelectorAll('.dept[data-cat="Entertainment"]').length, 0, 'no full department for the covered section');
+  p.close();
+});
