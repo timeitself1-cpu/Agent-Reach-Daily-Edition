@@ -152,8 +152,8 @@ def test_each_story_has_one_accessible_collapsible_evidence_section():
     articles = re.findall(r"<article .*?</article>", page, re.S)
     assert len(articles) == 3
     for art in articles:
-        assert art.count('<details class="evidence">') == 1 and art.count("<summary>") == 1
-        assert re.search(r"<summary>Sources \(\d+\) &middot; (Strong|Moderate|Limited) evidence</summary>", art)
+        assert art.count('<details class="evidence src">') == 1 and art.count("<summary>") == 1
+        assert re.search(r"<summary>Sources \(\d+\) &middot; (Strong coverage|Moderate coverage|Limited coverage|Single source)</summary>", art)
         assert art.index("<details") < art.index('<ul class="evidence">') < art.index("</details>")  # list is inside
     assert "&lt;script&gt;alert(&quot;x&quot;)&lt;/script&gt;" in page
     assert "<script" not in page.lower() and "onmouseover" not in page.replace("&lt;b onmouseover=1&gt;", "")
@@ -370,7 +370,7 @@ def test_refresh_persists_changes_against_the_previous_edition(daily_env):
     assert {s.story_id for s in first.stories if s.category.value == "Sports"} <= {s.story_id for s in second.stories}
     assert not ch.new and ch.unchanged >= 5
     page = render_edition_html(second)
-    assert "<details><summary>What changed since last refresh (No material changes)</summary>" in page
+    assert "<details><summary>What changed since last refresh (0 new &middot; 0 updated)</summary>" in page
     assert page.index("What changed since last refresh") > page.index('<section class="sec"')  # after the news
     assert any(s.headline in page for s in first.stories if s.category.value == "Sports")
 

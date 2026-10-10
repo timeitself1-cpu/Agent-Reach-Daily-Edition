@@ -44,7 +44,7 @@ or the logs. `AGENT_REACH_PUBLISH_TOKEN` (environment variable) overrides it, fo
    page only when there is nothing else), so one click on a website headline goes to the source. Not included: publisher excerpts,
    run ids, settings, feed lists, model diagnostics, notes, file paths. `assert_public` refuses to publish any
    text that looks like a path on the PC.
-4. Six files go up in **one commit** through GitHub's API: `editions/YYYY-MM-DD.json`,
+4. Seven files go up in **one commit** (since Oct 10 also `editions/sections.json`, the one list of section names and order, copied from `agent_reach/daily/sections.json`; `daily/YYYY-MM-DD/index.html` is drawn by the shared renderer `render.py`, with the previous template as a fallback) through GitHub's API: `editions/YYYY-MM-DD.json`,
    `daily/YYYY-MM-DD/index.html`, `editions/index.json` (the archive list, merged with what is already on the
    site), `feed.xml` (RSS, one item per edition) and `sitemap.xml`, both rebuilt from that archive list, and
    `search/YYYY-MM.json`, the archive search data of that month (headline, a short summary, category, outlets,

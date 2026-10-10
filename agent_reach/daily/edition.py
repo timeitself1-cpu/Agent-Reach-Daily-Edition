@@ -30,6 +30,7 @@ from agent_reach.daily.prefs import GENERAL_NEWS_SOURCES, TECH_SOURCES, DailyPre
 from agent_reach.daily.timeutil import CENTRAL_TZ_NAME, central_date, parse_utc
 from agent_reach.daily.changes import EditionChanges
 from agent_reach.daily.strength import EvidenceStrength, assess, strength_of
+from agent_reach.daily.sections import section_ids
 from agent_reach.pipeline.cleaner import MONTH_DAY_GUARD, significant_tokens
 from agent_reach.models import PUBLISHED_FUTURE_TOLERANCE, CategoryEnum, CleanedTrendItem, MacroCluster, PipelineReport, RawTrendItem
 
@@ -1126,7 +1127,7 @@ def top_stories(edition: "DailyEdition") -> list[Story]:
 
 #: Reading order of the category sections (any category not listed follows in enum order: an rc18 edition's
 #: Local section comes last).
-SECTION_ORDER = ["News", "Tech", "Science & AI", "Sports", "Entertainment", "Internet Culture"]
+SECTION_ORDER = section_ids(include_retired=False)  # sections.json: the one taxonomy
 
 
 def section_order() -> list[str]:

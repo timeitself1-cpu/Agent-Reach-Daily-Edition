@@ -155,6 +155,9 @@ agent_reach/
     prefs.py           settings.json (migrations v1..v8, load strict/non-strict)   feeds.py  default feeds, feed test
     lock.py            OS byte-range refresh lock   fsutil.py atomic writes, read retry   paths.py data layout
     feedhealth.py      feed doctor (channel_outage)  reading.py  read state, follow/mute, In brief, Day N
+    render.py          the ONE edition renderer (public JSON -> HTML; standalone flag = export vs the site's no-script shell);
+                       render_html.py is its thin export wrapper; sections.json/.py = the ONE taxonomy (labels, order),
+                       published as editions/sections.json and read by site.js (fallback table kept identical by a test)
     strength.py        evidence strength   podcast.py  Windows System.Speech / espeak   render_html.py  export
     sample.py          public sample of an edition (--export-sample; no publisher excerpts; the old site demo)
     publish.py         website publishing: public edition, FolderTarget/GitHubTarget (one fast-forward commit),
@@ -216,7 +219,8 @@ AgentReachDaily.cmd/.pyw
 ## Daily app invariants
 
 8. **No edition beats a bad edition.** A refresh that fails, finds too few sources/stories, has an invalid ledger, or whose model stopped for half or more of the labelling (summaries become "extractive") never touches the last published edition when AI summaries are required; it records the attempt, backs off and writes a diagnostics file.
-9. **Attempt is not success.** `last_attempt_*` and `last_success_*` are separate; due times anchor on the last successful refresh START. Publication time is shown only when a source stated it (`published_at_utc`); retrieval time is never presented as publication time.
+9. **Attempt is not success.** (Timestamp policy, Oct 10: the live site shows times in the reader's zone via Intl with a UTC
+   toggle in localStorage; RSS stays UTC; the standalone export is labelled America/Chicago; `render._when` is the one place.) `last_attempt_*` and `last_success_*` are separate; due times anchor on the last successful refresh START. Publication time is shown only when a source stated it (`published_at_utc`); retrieval time is never presented as publication time.
 10. **One refresh at a time** via the OS byte-range lock in `daily/lock.py`; never a boolean flag. The window decides "a refresh is running" from its own child process or the OS lock, never from a pid in a file alone (a pid can belong to another program after a reboot; Cancel must never stop a non-worker).
 11. **Model text is grounded or omitted.** Brief-pass output must pass `daily/brief.grounded`; failures leave the story with its validated summary. The model never sees the web and never decides membership.
 12. **The GUI renders plain text.** Source/model text goes into Tk Text as text; only `safe_url` (absolute http/https) links open. HTML export escapes everything and loads no remote assets.

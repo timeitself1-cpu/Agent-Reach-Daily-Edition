@@ -66,6 +66,8 @@ from agent_reach.daily.fsutil import FileUnavailable, atomic_write_bytes, atomic
 from agent_reach.daily.lock import LockBusy, RefreshLock
 from agent_reach.daily.paths import DataPaths
 from agent_reach.daily.registry import evidence_keys
+from agent_reach.daily.render import render_edition_html
+from agent_reach.daily.sections import sections_bytes
 from agent_reach.daily.strength import reporting_groups, strength_of
 from agent_reach.daily.timeutil import format_central, format_long_date, utcnow
 from agent_reach.outlets import outlet_name
@@ -83,6 +85,7 @@ INDEX_SCHEMA = "agent_reach.public_index"
 INDEX_PATH = "editions/index.json"
 FEED_PATH = "feed.xml"
 SITEMAP_PATH = "sitemap.xml"
+SECTIONS_PATH = "editions/sections.json"
 FEED_ITEMS = 30
 SEARCH_SCHEMA = "agent_reach.search_month"
 SEARCH_SUMMARY_CHARS = 280
@@ -445,16 +448,19 @@ def public_sources(health: list[SourceHealth]) -> list[dict]:
 
 
 def public_edition(edition: DailyEdition, hidden: list[str] | None = None,
-                   hidden_reports: dict[str, list[list[str]]] | None = None, left_out: list[int] | None = None) -> dict:
+                   hidden_reports: dict[str, list[list[str]]] | None = None, left_out: list[int] | None = None,
+                   *, export: bool = False) -> dict:
     """The public copy of an edition (deterministic: the same edition always gives the same bytes).
 
     A story whose text looks like a path on this PC is left out (its rank goes into ``left_out``) instead of
     stopping the whole edition: one headline about "AppData" used to keep the day off the site (audit F10)."""
-    if edition.demo:
+    if edition.demo and not export:
         raise PublishError("This is the demo edition (made-up stories); it is never published.")
     hidden_ids = {h[:12] for h in hidden or []}
     hidden_ids |= {s.story_id[:12] for s in edition.stories if is_removed(s, hidden_ids, hidden_reports)}
-    local = [s for s in edition.stories
+    # ``export`` = the user's own standalone file (render.py): the same public shape, but nothing is withheld
+    # (it never leaves the PC), the editorial check cannot block it, and the run's plain-English notes are added.
+    local = [] if export else [s for s in edition.stories
              if s.story_id[:12] not in hidden_ids and
              (looks_local([s.headline, *s.sentences]) or looks_local(_public_story(s, edition, "", None)))]
     hidden_ids |= {s.story_id[:12] for s in local}
@@ -504,6 +510,13 @@ def public_edition(edition: DailyEdition, hidden: list[str] | None = None,
             'dropped': [{'headline': c.headline, 'category': getattr(c, 'category', '')}
                         for c in changes.gone if c.story_id[:12] not in hidden_ids],
         }
+    if export:
+        public["demo"] = bool(edition.demo)
+        public["notes"] = [*edition.coverage.warnings, *edition.notes]
+        public["run"] = {"id": edition.run_id, "started_utc": _utc(edition.generation_started_utc),
+                         "llm": edition.model.llm_model, "grouping_model": edition.model.embed_model_used or edition.model.embed_model,
+                         "summaries": edition.model.summaries, "grouping": dict(edition.model.grouping or {})}
+        return public
     assert_public(public)
     problems = editorial_review(public)
     blocking = [p for p in problems if p.startswith(BLOCKING)]
@@ -676,6 +689,16 @@ def edition_page(public: dict, site_url: str = SITE_URL) -> bytes:
         f"{content}\n"
         "</div>\n</body>\n</html>\n"
     ).encode("utf-8")
+
+
+def shell_page(public: dict, site_url: str = SITE_URL) -> bytes:
+    """The edition's no-script page from the shared renderer (``render.py``). ``edition_page`` is the previous,
+    simpler template and stays as the fallback: a renderer error must never keep an edition off the site."""
+    try:
+        return render_edition_html(public, standalone=False, site_url=site_url).encode("utf-8")
+    except Exception:  # noqa: BLE001 - any failure falls back to the previous template
+        log.exception("shared renderer failed; using the previous page template")
+        return edition_page(public, site_url)
 
 
 def index_entry(public: dict) -> dict:
@@ -994,7 +1017,8 @@ def site_files(edition: DailyEdition, settings: PublishSettings, current_index: 
     """(public edition, {path: bytes}) for one edition."""
     d = edition.edition_date.isoformat()
     public = public_edition(edition, settings.hidden_stories.get(d), settings.hidden_reports.get(d), left_out)
-    files = {edition_json_path(d): _dumps(public), edition_page_path(d): edition_page(public, settings.site_url),
+    files = {edition_json_path(d): _dumps(public), edition_page_path(d): shell_page(public, settings.site_url),
+             SECTIONS_PATH: sections_bytes(),
              **index_files(merge_index(current_index, index_entry(public)), settings.site_url)}
     return public, files
 
