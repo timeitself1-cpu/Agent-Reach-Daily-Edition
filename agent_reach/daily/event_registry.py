@@ -128,24 +128,37 @@ class EventRegistry:
         Computes the stable event ID, loads or creates the record, appends
         a timeline entry, and saves.
         """
-        from agent_reach.pipeline.evidence import stable_event_id
+        from agent_reach.pipeline.evidence import canonical_event_id
 
-        # Get the story's items for stable ID computation
-        items = getattr(story, 'items', None) or getattr(story, 'reports', None) or []
-        event_id = stable_event_id(items) if items else self._fallback_id(story)
+        try:
+            event_id = canonical_event_id(story)
+        except Exception:
+            event_id = self._fallback_id(story)
 
         record = self.get(event_id)
-        now = datetime.now(timezone.utc).date().isoformat()
 
         # Extract outlet names explicitly. Sources may be dicts (public JSON) or objects.
         sources = []
         raw_sources = []
         if isinstance(story, dict):
             raw_sources = story.get("sources", []) or []
-        elif hasattr(story, 'sources'):
-            raw_sources = story.sources or []
-        elif hasattr(story, 'publishers'):
-            raw_sources = story.publishers or []
+            headline = story.get("headline", "") or ""
+            raw_summary = story.get("summary", "") or ""
+            category = story.get("category", "") or ""
+            story_url = story.get("url", "") or ""
+        else:
+            if hasattr(story, 'sources'):
+                raw_sources = story.sources or []
+            elif hasattr(story, 'publishers'):
+                raw_sources = story.publishers or []
+            headline = getattr(story, 'headline', '') or ""
+            raw_summary = getattr(story, 'summary', '') or ""
+            cat_obj = getattr(story, 'category', '') or ""
+            category = cat_obj.value if hasattr(cat_obj, 'value') else str(cat_obj)
+            story_url = getattr(story, 'url', '') or ""
+
+        summary = " ".join(raw_summary) if isinstance(raw_summary, list) else str(raw_summary)
+
         for s in raw_sources:
             if isinstance(s, dict):
                 outlet = s.get("outlet") or s.get("publisher") or ""
@@ -161,12 +174,12 @@ class EventRegistry:
             edition=edition_date,
             revision=revision,
             change=change,
-            headline=getattr(story, 'headline', ''),
-            summary=getattr(story, 'summary', '') or "",
+            headline=headline,
+            summary=summary,
             sources=sources[:10],  # cap at 10
             source_count=len(sources),
             what_changed=what_changed,
-            story_url=getattr(story, 'url', '') or "",
+            story_url=story_url,
         )
 
         if record is None:
@@ -174,7 +187,7 @@ class EventRegistry:
                 event_id=event_id,
                 first_seen=edition_date,
                 last_updated=edition_date,
-                category=getattr(story, 'category', '') or "",
+                category=category,
                 current_headline=entry.headline,
                 current_summary=entry.summary,
                 timeline=[entry],
@@ -195,7 +208,8 @@ class EventRegistry:
 
     def _fallback_id(self, story: Any) -> str:
         """When no items are available, hash the headline + date."""
-        headline = getattr(story, 'headline', '') or ""
+        headline = (story.get("headline", "") if isinstance(story, dict)
+                    else getattr(story, 'headline', '') or "")
         key = f"{headline.casefold()}|fallback"
         return "evt_" + hashlib.sha256(key.encode()).hexdigest()[:12]
 

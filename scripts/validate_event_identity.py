@@ -30,7 +30,7 @@ def canonical_event_id_standalone(story: dict) -> str:
 
 def load_edition(date: str) -> dict:
     path = Path(__file__).parent.parent / "website" / "editions" / f"{date}.json"
-    with open(path) as f:
+    with open(path, encoding="utf-8") as f:
         return json.load(f)
 
 

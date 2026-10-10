@@ -218,9 +218,6 @@ def normalize_headline(headline: str, *, names=(), vouching_text: str = "", cfg:
     text = strip_trailing_bait(text)
     if is_title_case(text):
         text = sentence_case(text, names=set(names), vouching_text=vouching_text, cfg=cfg)
-    else:
-        # Not title case, but may still have stray mid-sentence capitals
-        text = fix_mid_sentence_caps(text, names=set(names), vouching_text=vouching_text)
     return text if text.strip() else original
 
 

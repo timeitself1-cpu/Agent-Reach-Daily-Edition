@@ -48,7 +48,7 @@ test('the RSS feeds have one item per story, newest edition only, with escaped t
   const ed = structuredClone(edition);
   ed.stories[0].headline = 'Q&A: <Rates> "rise"';
   const files = feedFiles(ed);
-  assert.deepEqual(Object.keys(files).sort(), ['feed.xml', 'feeds/entertainment.xml', 'feeds/internet-culture.xml', 'feeds/science.xml', 'feeds/sports.xml', 'feeds/technology.xml', 'feeds/world.xml']);
+  assert.deepEqual(Object.keys(files).sort(), ['feed.xml', 'feeds/entertainment.xml', 'feeds/science.xml', 'feeds/sports.xml', 'feeds/technology.xml', 'feeds/world.xml']);
   const read = text => new JSDOM(text, {contentType: 'text/xml'}).window.document;
   const all = read(files['feed.xml']);
   assert.equal(all.querySelectorAll('item').length, ed.stories.length);

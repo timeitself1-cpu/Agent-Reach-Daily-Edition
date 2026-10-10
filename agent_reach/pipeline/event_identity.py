@@ -133,17 +133,12 @@ class IdentityGate:
             return self._cache[key]
         cos = self.cosine(*key)
         conflict = self.index.conflict(*key)
-        from agent_reach.pipeline.same_event import same_event_titles, conflicting_claims, _different_central_actors
+        from agent_reach.pipeline.same_event import same_event_titles, conflicting_claims
         left, right = self.index.items[a], self.index.items[b]
         shared_actor = (hasattr(left, 'metadata') and hasattr(right, 'metadata')
                         and self.index.shares_name(*key, titles=True))
         if shared_actor and conflicting_claims(left, right, shared_actor=True):
             conflict = conflict or 'opposite claims about the same actor and action'
-        # Different named individuals = different events, even on the same topic.
-        # (Pentagon execution livestream vs Christa Pike execution: both about capital
-        # punishment, but different people, different events.)
-        if not conflict and _different_central_actors(left, right):
-            conflict = 'different central actors'
         if conflict:
             d = PairDecision(*key, REJECT, [conflict], cos)
             if "roundup" in conflict:
@@ -363,7 +358,7 @@ def dedupe_stories(groups: list[list[int]], gate: IdentityGate) -> list[list[int
     and no pair across them is REJECTed, merge them. Conservative: requires strong
     evidence, prefers keeping separate stories over a false merge.
     """
-    from agent_reach.pipeline.same_event import title_words, _actor, _different_central_actors
+    from agent_reach.pipeline.same_event import title_words, _different_central_actors
 
     if len(groups) < 2:
         return groups
