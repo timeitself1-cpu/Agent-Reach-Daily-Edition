@@ -20,7 +20,7 @@ from datetime import date
 from html import escape
 
 from agent_reach.daily.edition import safe_url
-from agent_reach.daily.sections import load_sections, section_label
+from agent_reach.daily.sections import section_groups, section_label
 from agent_reach.daily.timeutil import CENTRAL_TZ_NAME, format_central, format_long_date, format_utc, parse_utc
 from agent_reach.ingestion.google_urls import is_google_news
 
@@ -242,13 +242,10 @@ def _groups(public: dict) -> list[tuple[str, str, list[dict]]]:
     """[(key, title, stories)]: Top Stories, then every section with stories, in sections.json order."""
     by_id = {s["id"]: s for s in public["stories"]}
     top = [by_id[i] for i in public.get("top") or [] if i in by_id] or sorted(public["stories"], key=lambda s: s["rank"])[:10]
-    known = [s["id"] for s in load_sections()["sections"]]
-    cats = sorted(public.get("sections") or [], key=lambda sec: known.index(sec["category"]) if sec["category"] in known else len(known))
     out = [("Top Stories", "Top Stories", top)]
-    for sec in cats:
-        stories = [by_id[i] for i in sec["ids"] if i in by_id]
-        if stories:
-            out.append((sec["category"], section_label(sec["category"]), stories))
+    for sec in section_groups(public):
+        stories = [by_id[i] for i in sec["ids"]]
+        out.append((sec["category"], section_label(sec["category"]), stories))
     return out
 
 

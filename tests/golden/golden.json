@@ -335,6 +335,54 @@
    "expect": "accept",
    "reasons": [],
    "normalized_headline": "Will interest rates fall before the election?"
+  },
+  {
+   "id": "headline-followup-1",
+   "source": "Requested headline style regression; no reporting or summary invented",
+   "headline": "Nobel Peace Prize Awarded to Navanethem Pillay",
+   "summary": [],
+   "lead": "",
+   "expect": "quarantine",
+   "reasons": [
+    "empty"
+   ],
+   "normalized_headline": "Nobel Peace Prize awarded to Navanethem Pillay"
+  },
+  {
+   "id": "headline-followup-2",
+   "source": "Requested headline style regression; no reporting or summary invented",
+   "headline": "Panama Hit by Powerful Earthquakes",
+   "summary": [],
+   "lead": "",
+   "expect": "quarantine",
+   "reasons": [
+    "empty"
+   ],
+   "normalized_headline": "Panama hit by powerful earthquakes"
+  },
+  {
+   "id": "headline-followup-3",
+   "source": "Requested headline style regression; no reporting or summary invented",
+   "headline": "JD Vance Says He Won't Watch Livestream Execution of Fort Hood Shooter",
+   "summary": [],
+   "lead": "",
+   "expect": "quarantine",
+   "reasons": [
+    "empty"
+   ],
+   "normalized_headline": "JD Vance says he won't watch livestream execution of Fort Hood shooter"
+  },
+  {
+   "id": "headline-followup-4",
+   "source": "Requested headline style regression; no reporting or summary invented",
+   "headline": "Iran's Houthi Allies Step up Deadly Attacks on Saudi Arabia",
+   "summary": [],
+   "lead": "",
+   "expect": "quarantine",
+   "reasons": [
+    "empty"
+   ],
+   "normalized_headline": "Iran's Houthi allies step up deadly attacks on Saudi Arabia"
   }
  ]
 }
