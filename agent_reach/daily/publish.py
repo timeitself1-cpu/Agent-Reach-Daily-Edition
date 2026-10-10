@@ -1041,7 +1041,79 @@ def site_files(edition: DailyEdition, settings: PublishSettings, current_index: 
     files = {edition_json_path(d): _dumps(public), edition_page_path(d): shell_page(public, settings.site_url),
              SECTIONS_PATH: sections_bytes(),
              **index_files(merge_index(current_index, index_entry(public)), settings.site_url)}
+    # Update the event registry and publish event JSON files for timelines.
+    try:
+        event_files = update_event_registry(public, d, edition.revision)
+        files.update(event_files)
+    except Exception as exc:  # registry failures must not block publishing
+        log.warning("event registry update failed: %s", exc)
     return public, files
+
+
+def update_event_registry(public: dict, edition_date: str, revision: int) -> dict[str, bytes]:
+    """Update the event registry from a published edition; return {path: bytes} for event JSON files.
+
+    For each story: compute stable event ID, create or append timeline entry.
+    Returns event JSON files for publishing to /events/.
+    """
+    from agent_reach.daily.event_registry import EventRegistry
+    from agent_reach.daily.paths import data_dir  # or wherever the base dir comes from
+
+    # The registry lives alongside the edition cache
+    # TODO: get the actual data dir from paths; for now use a standard location
+    import os
+    base = os.environ.get("AGENT_REACH_DATA", os.path.expanduser("~/.agent-reach"))
+    registry = EventRegistry(base)
+
+    files = {}
+    stories = public.get("stories", [])
+    # Get change info if available (from edition.changes)
+    changes = {c.get("story_id"): c for c in public.get("changes", {}).get("updated", [])}
+    new_ids = set(public.get("changes", {}).get("new", []))
+
+    for story in stories:
+        story_id = story.get("id") or story.get("story_id", "")
+        if story_id in new_ids:
+            change = "new"
+        elif story_id in changes:
+            change = "updated"
+        else:
+            change = "unchanged"
+
+        # Build a story-like object for the registry
+        class StoryProxy:
+            pass
+        proxy = StoryProxy()
+        proxy.headline = story.get("headline", "")
+        proxy.summary = story.get("summary", "")
+        proxy.category = story.get("category", "")
+        proxy.sources = story.get("sources", [])
+        # Items for stable ID: use sources as proxy if full items unavailable
+        proxy.items = []
+
+        what_changed = ""
+        if change == "updated" and story_id in changes:
+            what_changed = changes[story_id].get("detail", "")
+
+        record = registry.update_from_story(proxy, edition_date, revision, change, what_changed)
+
+        # Event JSON file for /events/<event_id>.json
+        event_path = f"events/{record.event_id}.json"
+        files[event_path] = json.dumps(record.to_dict(), indent=2, ensure_ascii=False).encode("utf-8")
+
+    # Event index for /events/index.json
+    index_data = registry.index()
+    files["events/index.json"] = json.dumps(index_data, indent=2, ensure_ascii=False).encode("utf-8")
+
+    # Archive stale events (no updates in 14 days)
+    try:
+        archived = registry.archive_stale()
+        if archived:
+            log.info("archived %d stale events", archived)
+    except Exception as exc:
+        log.warning("event archival failed: %s", exc)
+
+    return files
 
 
 def _with_target(target: Target, plan, message: str) -> tuple[str | None, list[str]]:
