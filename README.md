@@ -110,9 +110,14 @@ repository with it. Read the chosen stories first; only stories grouped correctl
 - **Calmer selection.** Eligible listed stories stay unless a replacement in their section scores at least
   20% higher. Stale, unsupported or newly excluded filler stories may leave. Sections can be shorter than
   ten; trailers, podcasts, mock drafts, debate clips and explainers need two independent publishers.
-- **Summary checks.** Names and quantities must share a cited sentence context. A failed summary gets
-  one regeneration, then a source title and extractive first sentence. These conservative text checks
-  can reject valid paraphrases; they do not prove every statement true. Unresolved Google News links
+- **Summary checks.** Names and quantities must share a cited sentence context. A sentence that fails is
+  left out; if none is left, the summary gets one regeneration, then a source title with the reports' own
+  sentences that add to it. A summary never repeats its headline: a sentence that adds nothing to it is left
+  out, and a headline may stand alone. These conservative text checks can reject valid paraphrases; they do
+  not prove every statement true.
+- **One event per story.** When a story's source titles fall into two groups that describe different events
+  (October 9: a Pentagon execution and Christa Pike's), they become two stories. Before publishing, every
+  edition passes an editorial check; a broken one is not published and the website keeps the last good one. Unresolved Google News links
   remain labelled via Google News. Export diagnostics are under the collapsed **Run details** section.
 
 ## Your data

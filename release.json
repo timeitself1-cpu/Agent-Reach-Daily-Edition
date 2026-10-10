@@ -1,5 +1,5 @@
 {
- "version": "1.0.0rc19",
- "notes": "The Local news section has been removed; older editions that had it still show it.",
+ "version": "1.0.0rc21",
+ "notes": "Summaries no longer repeat their headline, and a story's sources must all be about the same event.",
  "setup_required": ""
 }

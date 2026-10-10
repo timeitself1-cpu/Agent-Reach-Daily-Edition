@@ -9,8 +9,10 @@ What goes up for one edition (``site_files``):
 
 * ``editions/YYYY-MM-DD.json``  the public edition (``public_edition``): headlines, the app's own validated
   summaries, categories, coverage strength, New/Updated labels, and for each source its outlet, headline, link
-  and stated publication time. Never: publisher excerpts, the run log, feed lists, settings, model diagnostics,
-  file paths or anything else about this computer (``assert_public`` refuses text that looks like a local path).
+  and stated publication time; and the sources the edition read (``public_sources``: each kind of source, each
+  feed by name and website, with report counts; the website's Sources page, asked for on Oct 9, 2026). Never:
+  publisher excerpts, feed addresses, error texts, the run log, settings, model diagnostics, file paths or anything
+  else about this computer (``assert_public`` refuses text that looks like a local path).
 * ``daily/YYYY-MM-DD/index.html``  the permanent page of that date (``edition_page``); ``/daily/`` and the
   home page show the newest date.
 * ``editions/index.json``  the archive list, rewritten from what is already on the site plus this edition.
@@ -51,12 +53,13 @@ from dataclasses import dataclass, field
 from datetime import date, datetime, timezone
 from pathlib import Path
 from typing import Literal
+from urllib.parse import urlsplit
 from xml.sax.saxutils import escape as xml_escape
 
 from pydantic import BaseModel, Field
 
 from agent_reach.daily import __version__
-from agent_reach.daily.edition import (DailyEdition, Story, category_sections, newest_published, primary_url,
+from agent_reach.daily.edition import (DailyEdition, SourceHealth, Story, category_sections, newest_published, primary_url,
                                       safe_url, top_stories)
 from agent_reach.daily.fsutil import FileUnavailable, atomic_write_bytes, atomic_write_json, read_json, unlink_with_retry
 from agent_reach.daily.lock import LockBusy, RefreshLock
@@ -85,7 +88,7 @@ SEARCH_SUMMARY_CHARS = 280
 SEARCH_OUTLETS = 5
 # Page shells that exist on the site whatever is published (sitemap.xml lists them).
 STATIC_PAGES = ("", "daily/", "latest/", "world/", "technology/", "science/", "sports/", "entertainment/",
-                "internet-culture/", "archive/", "about/")
+                "internet-culture/", "archive/", "about/", "sources/", "corrections/")
 #: Environment variable that overrides the stored access key (CI, a portable install).
 TOKEN_ENV = "AGENT_REACH_PUBLISH_TOKEN"
 HTTP_TIMEOUT_S = 30.0
@@ -333,8 +336,9 @@ def _outlet(name: str) -> str:
 
 
 def _public_story(s: Story, edition: DailyEdition, change: str, top_rank: int | None) -> dict:
-    from agent_reach.pipeline.summary_checks import verified_story
+    from agent_reach.pipeline.summary_checks import useful_summary, verified_story
     headline, summary = verified_story(s)
+    summary = useful_summary(headline, summary)  # a summary that only repeats the headline is left out
     strength = strength_of(s, edition.generation_completed_utc)
     sources, seen = [], set()
     for ev, identity in zip(s.evidence, reporting_groups(s.evidence)):
@@ -393,6 +397,41 @@ def is_removed(story: Story, hidden_ids: set[str], hidden_reports: dict[str, lis
     return False
 
 
+#: What each kind of source is, for the website's Sources page (plain English; the window has its own notes).
+PUBLIC_SOURCE_NOTES = {
+    "google_news": "Google News top stories and one Google News section per category.",
+    "news_rss": "News publishers' own RSS feeds, listed below by name.",
+    "youtube": "New videos from the YouTube channels of news organisations, listed below.",
+    "google_trends": "What people in the US are searching for on Google today.",
+    "wikipedia": "Wikipedia's most-read articles and its 'In the news' list.",
+    "mastodon": "News links people are sharing on Mastodon (mastodon.social).",
+    "bluesky": "Topics trending on Bluesky.",
+    "reddit": "Top posts of news communities on Reddit (often rate-limited).",
+    "x_trends24": "Trending topics on X, as listed by trends24.in.",
+    "tiktok": "Trending TikTok hashtags.",
+    "hackernews": "The Hacker News front page (technology).",
+    "github": "GitHub's trending repositories (technology).",
+    "producthunt": "New products on Product Hunt (technology).",
+    "arxiv": "New AI and machine-learning papers on arXiv (research).",
+}
+
+
+def public_sources(health: list[SourceHealth]) -> list[dict]:
+    """The sources an edition read, for the website's Sources page: each kind of source with how many reports it
+    gave and how many the edition cites, and each feed by name and website. Never a feed's full address (a
+    private feed's address can carry a key) or its error text."""
+    out = []
+    for h in health:
+        feeds = []
+        for f in h.feeds:
+            site = (urlsplit(f.url).hostname or "").removeprefix("www.") if f.url.startswith(("http://", "https://")) else ""
+            feeds.append({"name": f.name, "site": site, "category": f.category, "status": f.status,
+                          "reports": f.collected, "cited": f.used})
+        out.append({"type": h.source, "name": h.name, "about": PUBLIC_SOURCE_NOTES.get(h.source, ""),
+                    "status": h.status, "reports": h.item_count, "cited": h.used, "feeds": feeds})
+    return out
+
+
 def public_edition(edition: DailyEdition, hidden: list[str] | None = None,
                    hidden_reports: dict[str, list[list[str]]] | None = None, left_out: list[int] | None = None) -> dict:
     """The public copy of an edition (deterministic: the same edition always gives the same bytes).
@@ -429,6 +468,7 @@ def public_edition(edition: DailyEdition, hidden: list[str] | None = None,
         "summaries": edition.model.summaries,
         "reports_read": edition.accounting.ingested,
         "sources_answered": edition.coverage.sources_ok, "sources_tried": edition.coverage.sources_attempted,
+        "sources": public_sources(edition.source_health),
         "compared_with": ({"edition_date": changes.compared_edition_date, "revision": changes.compared_revision}
                           if changes is not None else None),
         "top": [s.story_id[:12] for s in top],
@@ -448,7 +488,107 @@ def public_edition(edition: DailyEdition, hidden: list[str] | None = None,
                         for c in changes.gone if c.story_id[:12] not in hidden_ids],
         }
     assert_public(public)
+    problems = editorial_review(public)
+    blocking = [p for p in problems if p.startswith(BLOCKING)]
+    if blocking:
+        raise PublishError("The edition failed the website's editorial check, so it was not published: "
+                           + blocking[0].removeprefix(BLOCKING) + ". The website keeps the edition it has.")
+    for problem in problems:
+        log.warning("editorial check: %s", problem)
     return public
+
+
+#: Problems that keep an edition off the website (the site keeps the last good one); the rest are logged.
+BLOCKING = "blocking: "
+
+
+def _parses(stamp) -> bool:
+    try:
+        datetime.strptime(stamp, "%Y-%m-%dT%H:%M:%SZ")
+        return True
+    except (TypeError, ValueError):
+        return False
+
+
+def _title_groups(titles: list[str]) -> list[list[int]]:
+    """Source titles grouped by what they say (two content words in common), joined only when most pairs across
+    two groups agree; largest first. The website-side twin of ``LinkIndex.title_subjects``, without the run's names."""
+    from agent_reach.daily.edition import _headline_stems
+
+    stems = [_headline_stems(t) for t in titles]
+    groups = [[i] for i in range(len(titles))]
+    while len(groups) > 1:
+        best, pick = 0.5, None
+        for x in range(len(groups)):
+            for y in range(x + 1, len(groups)):
+                hits = sum(len(stems[a] & stems[b]) >= 2 for a in groups[x] for b in groups[y])
+                if hits / (len(groups[x]) * len(groups[y])) > best:
+                    best, pick = hits / (len(groups[x]) * len(groups[y])), (x, y)
+        if pick is None:
+            break
+        groups[pick[0]].extend(groups.pop(pick[1]))
+    return sorted(groups, key=lambda g: (-len(g), min(g)))
+
+
+def editorial_review(public: dict) -> list[str]:
+    """The last look before an edition goes to the website, on exactly what would be uploaded.
+
+    Blocking (prefixed ``BLOCKING``): a story without a headline or a source, two stories with one id, Top Stories or
+    a section naming a story that is not there. Logged: a summary sentence that only repeats its headline or another
+    sentence, sources that fall into two groups telling different events, a source listed twice, coverage counts that disagree with each other or with the listed links, a report
+    whose title shares nothing with the story (two content words of the headline, summary or another source's
+    title), a malformed time, a headline link that is not among the story's sources."""
+    from agent_reach.daily.edition import _headline_stems, adds_to_headline
+
+    problems: list[str] = []
+    stories = public.get("stories") or []
+    ids = [s.get("id") for s in stories]
+    if len(ids) != len(set(ids)):
+        problems.append(BLOCKING + "two stories have the same id")
+    known = set(ids)
+    listed = list(public.get("top") or []) + [i for sec in public.get("sections") or [] for i in sec.get("ids") or []]
+    if any(i not in known for i in listed):
+        problems.append(BLOCKING + "Top Stories or a section lists a story that is not in the edition")
+    for s in stories:
+        headline = (s.get("headline") or "").strip()
+        sources = s.get("sources") or []
+        label = f"'{headline[:60]}'" if headline else f"story {s.get('id')}"
+        if not headline:
+            problems.append(BLOCKING + f"{label} has no headline")
+        if not sources:
+            problems.append(BLOCKING + f"{label} has no sources")
+        summary = s.get("summary") or []
+        for k, sentence in enumerate(summary):
+            if not adds_to_headline(sentence, " ".join([headline, *summary[:k]])):
+                problems.append(f"{label}: summary sentence repeats what is already said: '{sentence[:80]}'")
+        urls = [x.get("url") for x in sources if x.get("url")]
+        if len(urls) != len(set(urls)):
+            problems.append(f"{label}: a source is listed twice")
+        if s.get("url") and s["url"] not in urls:
+            problems.append(f"{label}: the headline link is not one of its sources")
+        c = s.get("coverage") or {}
+        if c and c.get("independent_reports") != len(c.get("publishers") or []):
+            problems.append(f"{label}: {c.get('independent_reports')} independent reports but "
+                            f"{len(c.get('publishers') or [])} newsrooms named")
+        if c and (c.get("linked_reporting_origins") or 0) > (c.get("independent_reports") or 0):
+            problems.append(f"{label}: more linked newsrooms than independent reports")
+        if c and c.get("source_links") is not None and c["source_links"] != len(urls):
+            problems.append(f"{label}: {c['source_links']} source links counted but {len(urls)} listed")
+        for x in sources:
+            if x.get("published_utc") is not None and not _parses(x["published_utc"]):
+                problems.append(f"{label}: malformed time on '{(x.get('title') or '')[:60]}'")
+        groups = _title_groups([x.get("title") or "" for x in sources])
+        if sum(len(g) >= 2 for g in groups) >= 2:
+            other = next(g for g in groups[1:] if len(g) >= 2)
+            problems.append(f"{label}: its sources tell two different events ('{sources[other[0]].get('title', '')[:60]}')")
+        if len(sources) >= 2:
+            for k, x in enumerate(sources):
+                if x.get("kind") != "report":
+                    continue
+                others = " ".join([headline, *summary, *(o.get("title") or "" for j, o in enumerate(sources) if j != k)])
+                if len(_headline_stems(x.get("title") or "") & _headline_stems(others)) < 2:
+                    problems.append(f"{label}: report '{(x.get('title') or '')[:60]}' shares nothing with the story")
+    return problems
 
 
 def _dumps(obj) -> bytes:

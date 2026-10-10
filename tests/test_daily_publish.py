@@ -142,16 +142,27 @@ def test_public_edition_carries_the_news_and_nothing_private():
     pub = P.public_edition(ed)
     text = json.dumps(pub)
     assert pub["edition_date"] == "2026-10-07" and pub["revision"] == 2 and len(pub["stories"]) == 44
-    # Cached text that fails the new context gate uses the cited source title.
-    assert pub["stories"][0]["headline"] == "Margaret Hamilton, who led software development for the Apollo program, has died"
+    # the model's headline passes the checks against its cited reports (a Title Case headline's every capital is no
+    # longer a name its summary must repeat); its summary only restated it, so the headline stands alone
+    assert pub["stories"][0]["headline"] == "Computing Pioneer Margaret Hamilton Dies at 90"
+    assert pub["stories"][0]["summary"] == []
     assert len(pub["top"]) == 8 and {s["category"] for s in pub["sections"]} >= {"News", "Tech", "Science & AI"}
     # publisher excerpts, run ids, feed lists and diagnostics never go up
     for s in ed.stories:
         for ev in s.evidence:
             if ev.excerpt and len(ev.excerpt) > 200:  # (a summary may quote one sentence of a lead, never the excerpt)
                 assert ev.excerpt not in text
-    for word in ('"excerpt"', ed.run_id, '"config_fingerprint"', '"source_health"', '"feed"', '"item_id"', '"notes"'):
+    for word in ('"excerpt"', ed.run_id, '"config_fingerprint"', '"source_health"', '"feed"', '"item_id"', '"notes"',
+                 '"error"', '"latency_ms"'):
         assert word not in text
+    # the sources it read: every kind and feed by name and website, never a feed's address
+    assert [s["type"] for s in pub["sources"]] == [h.source for h in ed.source_health]
+    feeds = [f for h in ed.source_health for f in h.feeds]
+    assert feeds and sum(len(s["feeds"]) for s in pub["sources"]) == len(feeds)
+    assert not [f.url for f in feeds if f.url in text]
+    gn = next(s for s in pub["sources"] if s["type"] == "google_news")
+    assert gn["about"] and gn["feeds"][0] == {"name": "Google News - Top stories", "site": "news.google.com",
+                                              "category": "News", "status": "ok", "reports": 38, "cited": 2}
     # every link is an absolute web link; kinds separate reporting from repeats and signals
     kinds = {src["kind"] for s in pub["stories"] for src in s["sources"]}
     assert kinds == {"report", "repeat", "signal"}
@@ -194,7 +205,7 @@ def test_each_story_names_the_article_its_headline_opens():
 
 def test_the_sitemap_lists_every_section_page():
     sitemap = P.sitemap_xml({"editions": []}).decode()
-    for path in ("world/", "technology/", "science/", "sports/", "entertainment/", "internet-culture/"):
+    for path in ("world/", "technology/", "science/", "sports/", "entertainment/", "internet-culture/", "sources/", "corrections/"):
         assert f"<loc>https://getagentreach.dev/{path}</loc>" in sitemap
 
 
@@ -394,7 +405,7 @@ def test_archive_search_files_per_month_repair_themselves(daily_paths, tmp_path)
     days = [x["d"] for x in month["stories"]]
     assert days == sorted(days, reverse=True) and set(days) == {"2026-10-07", "2026-10-06"}
     first = month["stories"][0]
-    assert first["h"] == "Margaret Hamilton, who led software development for the Apollo program, has died" and first["r"] == 1
+    assert first["h"] == "Computing Pioneer Margaret Hamilton Dies at 90" and first["r"] == 1
     assert set(first) - {"u", "coverage"} == {"d", "id", "r", "t", "c", "h", "s", "o", "l"} and len(first["s"]) <= P.SEARCH_SUMMARY_CHARS + 1
     assert first['coverage']['level'] == first['l']
     assert json.loads((tmp_path / "site/search/2026-09.json").read_text(encoding="utf-8"))["stories"][0]["d"] == "2026-09-30"

@@ -5,6 +5,27 @@ Each release candidate is delivered as a zip of the repository. Extract it over 
 Your editions, settings and history (`%LOCALAPPDATA%\AgentReachDaily`) are kept. Earlier releases are
 summarised in `docs/HISTORY.md` ("Release history").
 
+## 1.0.0rc21 (update): cleaner summaries, one event per story
+
+This version installs itself (no zip, no Setup).
+
+1. **Summaries add something.** A summary no longer starts by repeating its headline. When a sentence fails the
+   check against the story's sources, only that sentence is left out (before, the whole summary was replaced by
+   a source's headline). When nothing adds to the headline, the story shows the headline alone; nothing is made up.
+2. **One event per story.** A story whose sources tell two different events is split in two, so unrelated reports
+   no longer count as coverage (October 9: Christa Pike's case had been counted in the Pentagon execution story).
+3. **Checked before publishing.** Every edition gets an editorial check before it goes to the website. A broken
+   edition is not published and the website keeps the previous one; smaller problems are noted in the log.
+
+## 1.0.0rc20 (update): sources on the website
+
+This version installs itself (no zip, no Setup).
+
+1. **Sources page.** Each edition published to the website now lists the sources it read: each kind of source
+   and every news feed by name and website, with how many reports each gave and how many the edition cites. Feed
+   addresses and error messages are never published. The website shows them on its new Sources page.
+2. **Sitemap.** The website's new Sources and Corrections pages are listed for search engines.
+
 ## 1.0.0rc19 (update): no Local section
 
 This version installs itself (no zip, no Setup).

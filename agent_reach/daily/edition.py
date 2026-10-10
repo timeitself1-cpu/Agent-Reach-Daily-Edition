@@ -390,6 +390,23 @@ def restates(sentence: str, earlier: list[str], share: float = 0.6) -> bool:
     return len(toks & said) >= share * len(toks)
 
 
+def _headline_stems(text: str) -> set[str]:
+    return {_stem(t.replace("\u2019", "'").removesuffix("'s")) for t in _content_words(text)}
+
+
+def adds_to_headline(sentence: str, headline: str) -> bool:
+    """Does the sentence tell the reader something the headline above it does not? At least four of its content
+    words are new, or half of them. The October 9 edition opened 17 of 27 summaries with the headline itself
+    ('Isaias strengthens into Category 2 hurricane on collision course with the Gulf Coast.') or nearly
+    ('Fort Hood attacker's execution by firing squad will be livestreamed, Pentagon says.' under 'Firing Squad
+    Execution to Be Livestreamed, Pentagon Says')."""
+    words = _headline_stems(sentence)
+    if not words:
+        return False
+    novel = words - _headline_stems(headline)
+    return len(novel) >= 4 or 2 * len(novel) >= len(words)
+
+
 #: A sentence whose content words are mostly (this share) already said by the sentences before it adds
 #: nothing ('Clayton will coordinate government engagement with AI. The new AI task force will coordinate
 #: government engagement with AI.').
@@ -643,8 +660,8 @@ def without_unstated(sentence: str, source: str | None) -> str:
 def body_sentences(summary: str, source: str | None = None, headline: str | None = None) -> list[str]:
     """Up to two summary sentences, without meta lines, empty filler, repeats of what was already said,
     sentences that repeat themselves, non-English text, the page's own voice ('you', 'our'), verbless
-    fragments, a sentence that only restates the ``headline`` ('The redesign is the biggest in decades.')
-    or (when the sources are given) claims or numbers the sources do not support."""
+    fragments, a sentence that adds little to the ``headline`` (``adds_to_headline``: 'The redesign is the biggest
+    in decades.') or (when the sources are given) claims or numbers the sources do not support."""
     stems = source_stems(source) if source else None
     numbers = numbers_in(source) if source else None
     out: list[str] = []
@@ -658,7 +675,7 @@ def body_sentences(summary: str, source: str | None = None, headline: str | None
                 and not INTRO_ONLY_RX.match(s) and not truncated_copy(s, source)
                 and (stems is None or (support(s, stems) >= SUPPORT_SHARE and numbers_in(s) <= numbers
                                        and numbers_anchored(s, source or "")))):
-            if headline and restates(s, [headline], 1.0):
+            if headline and not adds_to_headline(s, headline):
                 restated.append(s)
             else:
                 place_sentence(out, s)
@@ -686,7 +703,7 @@ def lead_sentence(cluster: MacroCluster, items: dict[int, CleanedTrendItem], hea
                 s = re.sub(r"\s+([.,;:!?])", r"\1", s.strip())  # page text: 'in August .'
                 if (len(s) >= 40 and s.endswith((".", "!", "?")) and looks_english(s) and not page_voice(s)
                         and not is_fragment(s) and not ends_dangling(s) and not PRONOUN_START_RX.match(s)
-                        and not (headline and restates(s, [headline], 1.0))):
+                        and not (headline and not adds_to_headline(s, headline))):
                     return s
     return None
 

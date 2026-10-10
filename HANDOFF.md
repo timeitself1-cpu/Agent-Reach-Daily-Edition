@@ -1,4 +1,4 @@
-# Handoff: where Agent Reach stands (end of session, October 8, 2026)
+# Handoff: where Agent Reach stands (October 10, 2026)
 
 For a fresh Claude Code session: the current state, and how to resume.
 - Permanent rules: `CLAUDE.md`.
@@ -19,12 +19,22 @@ tracks each real-world event over time (timelines), and later feeds structured e
 
 ## Release and repository state
 
+- **Oct 10:** editorial pass from the user's review of the live Oct 9 edition (PLAN log, `docs/REAL-EDITION-FINDINGS.md`
+  Oct 9): story split by title subjects (`clusterer._subject_gate`), summaries that add to the headline
+  (`edition.adds_to_headline`, `summary_checks.useful_summary`, per-sentence checks, fallback from the reports' own
+  sentences), `publish.editorial_review` before every publication; site branch: one coverage line, "no longer in this
+  edition", restated sentences hidden. **Not released** (still rc20 on `stable`); app PR and site PR opened at the
+  user's request. Open: the exact step that merged the Oct 9 firing-squad and Pike reports on the PC (needs the
+  run's pair log from a self-test zip).
+- **Oct 9, later:** Phase 1 items 5, 6, 9, 10: rc20 prepared on the same branch (public `sources` list, sitemap pages; **released**: stable -> f1060d2 after CI green, at the user's go-ahead), site PR #13 open (share links, Report an issue, per-story RSS + section feeds, /sources/, /corrections/). See PLAN progress log.
 - **Oct 9, branch `claude/sleepy-clarke-abilea` (from the default branch at PR #12):** the user's website
-  improvement plan (four phases; Phase 1 items 1-3 done here). The Local section is removed (rc19 prepared:
-  version bumped, `release.json` written, **stable NOT moved**: waits for the user's go-ahead and green CI). The
-  website side is on the site repo's branch `claude/sleepy-clarke-abilea` (nav Today / How it works, Local only in
-  old editions, `/local/` says retired, archive update numbers), **not merged**. Open questions for the user:
-  delete `/local/` or keep it; merge the site branch; move stable. Most items of the user's Phase 1 list (archive,
+  improvement plan (four phases; Phase 1 items 1-3 done here). The Local section is removed: **rc19 released**
+  (stable -> 90f6e5a after CI green, at the user's go-ahead; the PC installs it at the next window start or hourly
+  check; no real refresh with rc19 seen yet). The website side is on the site repo's branch
+  `claude/sleepy-clarke-abilea` (nav Today / How it works, Local only in old editions, `/local/` deleted at the
+  user's request, archive update numbers), **merged** as site PR #12 (31150b0; PR checks and the `main` checks
+  green; whether Cloudflare serves the new navigation is for the user to look at). Next: Phase 1 items 4-10,
+  mostly already on the site; confirm with the user what the live site shows. Most items of the user's Phase 1 list (archive,
   About, RSS, sitemap, share/copy links, corrections section, theme toggle, search) already exist on the site.
 - **Current release: rc18** (`1.0.0rc18`, Oct 9): Local section for Frisco, TX (`pipeline/local.py`), headline
   links in the public edition, and the Phase 1/2 quality work of PR #8; delivered through `stable` (no zip, no

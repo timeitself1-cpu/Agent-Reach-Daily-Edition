@@ -131,8 +131,8 @@ CATEGORY_ALIASES: dict[str, CategoryEnum] = {
     "machine learning": CategoryEnum.SCIENCE_AI,
 }
 
-_WRITING_RULES = """HEADLINE rules: a news headline of at most 14 words with a subject and a verb that says what happened (e.g. "Packers Edge Falcons on Thursday Night Football", "OpenAI Releases GPT-6 With Native Agents", "FBI Arrests Woman Accused of Spying on Taiwan Leader's Family"). Never a topic label such as "Cornell University Rape Allegations" or "Big Tech's Military-Industrial Complex", and never generic umbrella titles such as "Entertainment: Music and Film". Do not prefix the headline with the category name.
-SUMMARY rules: exactly TWO complete, grammatically correct sentences in active voice. Sentence 1 states what happened and who did it. Sentence 2 adds the most important concrete detail from the context: a number, who is affected, or what happens next. Use ONLY facts present in the titles and context; never invent numbers, dates, scores or quotes. Never include URLs, @handles, hashtags, emoji, markdown or JSON fragments, and never use double quotation marks inside a text value (write 'single quotes' instead). Never write filler such as "this is drawing attention", "this showcases", "this highlights", "this has significant implications", "worth monitoring", "no specific information is available" or "details are scarce", and never repeat sentence 1.
+_WRITING_RULES = """HEADLINE rules: a neutral news headline of at most 14 words with a subject and a verb that says what happened (e.g. "Packers Edge Falcons on Thursday Night Football", "OpenAI Releases GPT-6 With Native Agents", "FBI Arrests Woman Accused of Spying on Taiwan Leader's Family"). Never a topic label such as "Cornell University Rape Allegations" or "Big Tech's Military-Industrial Complex", and never generic umbrella titles such as "Entertainment: Music and Film". Do not prefix the headline with the category name.
+SUMMARY rules: exactly TWO complete, grammatically correct sentences in active voice. The reader sees the headline right above the summary, so never repeat or reword the headline: name its people and organisations again, but sentence 1 adds the most important fact the headline leaves out: who exactly, where, when, how many, or why. Sentence 2 adds context the reports state: what happens next, who is affected, or the background a reader needs. Write neutrally: no hype, no loaded adjectives, no "shocking", "stunning" or "slams". Use ONLY facts present in the titles and context; never invent numbers, dates, scores or quotes. Never include URLs, @handles, hashtags, emoji, markdown or JSON fragments, and never use double quotation marks inside a text value (write 'single quotes' instead). Never write filler such as "this is drawing attention", "this showcases", "this highlights", "this has significant implications", "worth monitoring", "no specific information is available" or "details are scarce", and never repeat sentence 1.
 CATEGORY rules: exactly one of Sports, Entertainment, Tech, News, Internet Culture, Science & AI. Tech = software, hardware, developer tools, startups, tech companies, cybersecurity. Science & AI = AI models and research, scientific discoveries, space, research papers. Never label sports, celebrities, politics, pets or memes as Tech.
 PRIMARY_ENTITIES: 1-5 proper nouns (people, teams, organizations, products) that appear in the group's own signals.
 RELEVANCE_SCORE: integer 1-10 for significance and breadth of interest (10 = major global story, 1 = trivial)."""
@@ -819,6 +819,50 @@ class LinkIndex:
             units[find(t)].add(t)
         return list(units.values())
 
+    def title_words(self, item_id: int) -> dict[str, bool]:
+        """Words of the report's own title that can say what happened (no dates, numbers or everyday words), word
+        forms folded ('Pike's' ~ 'Pike', 'livestreamed' ~ 'livestream'), each with whether the run writes it as a
+        name."""
+        out: dict[str, bool] = {}
+        for t in significant_tokens(self.items[item_id].normalized_title):
+            t = t.replace("\u2019", "'").removesuffix("'s").strip("'")
+            if is_date_token(t) or t in COMMON_WORDS or not any(c.isalpha() for c in t):
+                continue
+            name = t in self.name_words
+            for end in ("ing", "ed", "s"):
+                if len(t) > len(end) + 4 and t.endswith(end) and not t.endswith(("ss", "us", "is")):
+                    t = t[: -len(end)]
+                    break
+            out[t] = out.get(t, False) or name
+        return out
+
+    def titles_related(self, a: int, b: int) -> bool:
+        """Do the two TITLES themselves describe one thing: two words in common, or a name both write?"""
+        wa, wb = self.title_words(a), self.title_words(b)
+        shared = wa.keys() & wb.keys()
+        return len(shared) >= 2 or any(wa[t] and wb[t] for t in shared)
+
+    def title_subjects(self, ids: list[int]) -> list[list[int]]:
+        """The members of a story grouped by what their titles say, largest first. Two groups join only when MOST
+        pairs across them are ``titles_related`` (never through one bridging title: 'Lawyers looking to block Texas
+        man's execution following Christa Pike's botched execution' names both Pike and the Texas case)."""
+        groups = [[i] for i in ids]
+        related = {(a, b) for k, a in enumerate(ids) for b in ids[k + 1:] if self.titles_related(a, b)}
+        related |= {(b, a) for a, b in related}
+        while len(groups) > 1:
+            best, pick = 0.5, None
+            for x in range(len(groups)):
+                for y in range(x + 1, len(groups)):
+                    hits = sum((a, b) in related for a in groups[x] for b in groups[y])
+                    share = hits / (len(groups[x]) * len(groups[y]))
+                    if share > best:
+                        best, pick = share, (x, y)
+            if pick is None:
+                break
+            x, y = pick
+            groups[x].extend(groups.pop(y))
+        return sorted(groups, key=lambda p: (-len(p), min(p)))
+
     def _event_unit(self, unit: set[str]) -> bool:
         """A shared phrase that says something beyond a name, a number ('27.2') or an everyday word
         ('adding', 'national')."""
@@ -1165,6 +1209,7 @@ class SemanticClusterer:
         drafts, final_orphans = self._enforce_coherence(drafts, index)
         discards["unsupported_grouping"].extend(final_orphans)
         drafts = self._key_name_gate(drafts, index)
+        drafts = self._subject_gate(drafts, index)
         if llm_ok:
             drafts, _ = await self._relabel(drafts, [], by_id)
         else:
@@ -1400,6 +1445,37 @@ class SemanticClusterer:
             out.extend(self._key_name_gate(rest, index, depth + 1) if depth < 2 else rest)
         if split:
             log.info("key-name gate: %d stories had members naming none of their key names; split off", split)
+        return out
+
+    def _subject_gate(self, drafts: list[DraftCluster], index: LinkIndex) -> list[DraftCluster]:
+        """A story whose titles fall into two or more groups that each have two or more reports, with no two words
+        or name in common between the groups, is two events: each group becomes its own story (the largest keeps
+        the label). Single reports whose titles link to no one stay where the evidence put them.
+
+        October 9, 2026 (rc20 on the PC, revision 2): 'Firing Squad Execution to Be Livestreamed, Pentagon Says'
+        carried PBS's and NPR's reports on Christa Pike walking after her failed execution in Tennessee, and
+        Wikipedia's 'Christa Pike', counted as independent reporting. Across the two groups the titles share only
+        'execution'; both 'Pentagon' and 'Pike' passed as key names, so the key-name gate kept them together."""
+        out: list[DraftCluster] = []
+        split = 0
+        for d in drafts:
+            subjects = index.title_subjects(d.item_ids) if len(d.item_ids) >= 4 else [d.item_ids]
+            cores = [p for p in subjects if len(p) >= 2]
+            if len(cores) < 2:
+                out.append(d)
+                continue
+            split += 1
+            main = cores[0] + [i for p in subjects if len(p) == 1 for i in p]
+            for k, members in enumerate([main, *cores[1:]]):
+                for j, part in enumerate(index.components(members, []) if len(members) > 1 else [members]):
+                    same = k == 0 and j == 0
+                    out.append(DraftCluster(item_ids=list(part), headline=d.headline if same else "",
+                                            category_raw=d.category_raw if same else "",
+                                            entities=list(d.entities) if same else [],
+                                            summary=d.summary if same else "", relevance=d.relevance,
+                                            needs_label=True))
+        if split:
+            log.info("subject gate: %d stories told two events in their titles; split", split)
         return out
 
     @staticmethod
