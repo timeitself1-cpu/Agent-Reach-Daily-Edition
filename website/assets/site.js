@@ -673,14 +673,13 @@ if (typeof module !== 'undefined') module.exports = {normOutlet, dedupeOutlets, 
   function top10Board(ed, stories) {
     const rows = stories.slice(0, 10).map((s, i) => {
       const rank = i + 1;
-      const change = s.change === 'new' ? h('span', {class: 'badge new', text: 'New'})
-        : s.change === 'updated' ? h('span', {class: 'badge updated', text: 'Updated'}) : null;
       const coverMark = rank === 1
         ? h('span', {class: 'cover-mark', text: 'Cover story'}) : null;
       return h('article', {class: 't10-row' + (rank === 1 ? ' is-cover' : ''), id: 'story-' + s.id, 'data-cat': s.category},
         h('span', {class: 't10-rank', 'aria-hidden': 'true', text: String(rank)}),
+        h('span', {class: 'sr', text: `Rank ${rank} of 10: `}),
         h('div', {class: 't10-body'},
-          h('p', {class: 't10-kicker'}, kicker(s), change, coverMark),
+          h('p', {class: 't10-kicker'}, kicker(s), coverMark),
           headline(ed, s, 'h3', 'hl t10-hl'),
           dek(s),
           meta(s, {ed})));
@@ -705,11 +704,13 @@ if (typeof module !== 'undefined') module.exports = {normOutlet, dedupeOutlets, 
   function renderFront(ed, idx, current, storyNotice) {
     const top = ed.topStories;
     const used = new Set(top.slice(0, 10).map(s => s.id));
-    // Every section with stories becomes a department showing all its stories.
+    // Every section with stories becomes a department. Sections whose stories are
+    // all in the Top 10 still get a header with a link to the section page.
     const depts = [];
     for (const sec of ed.sections || []) {
-      const stories = sec.ids.map(id => ed.byId[id]).filter(s => s && !used.has(s.id));
-      if (stories.length) depts.push([sec, stories]);
+      const allStories = sec.ids.map(id => ed.byId[id]).filter(Boolean);
+      const stories = allStories.filter(s => !used.has(s.id));
+      if (allStories.length) depts.push([sec, stories, allStories.length]);
     }
     const front = h('div', {class: 'ed-front'});
     front.append(
@@ -719,12 +720,15 @@ if (typeof module !== 'undefined') module.exports = {normOutlet, dedupeOutlets, 
         h('section', {class: 'cover'}, coverStory(ed, top[0])),
         pullQuote(ed, top.slice(1, 6)),
         top10Board(ed, top)));
-    for (const [sec, stories] of depts) {
+    for (const [sec, stories, total] of depts) {
       const secInfo = SECTION[sec.category] || {};
+      const label = secInfo.title || catLabel(sec.category);
       front.append(h('div', {class: 'wrap'},
         h('section', {class: 'dept', 'data-cat': sec.category},
-          deptHead(secInfo.title || catLabel(sec.category), secInfo.path, stories.length),
-          h('div', {class: 'dept-grid'}, stories.map(s => card(ed, s, ''))))));
+          deptHead(label, secInfo.path, total),
+          stories.length
+            ? h('div', {class: 'dept-grid'}, stories.map(s => card(ed, s, '')))
+            : h('p', {class: 'dept-note', text: `All ${total} ${label} ${total === 1 ? 'story is' : 'stories are'} in the Top 10 above.`}))));
     }
     if (idx) {
       const ab = archiveBand(idx, ed.edition_date);
