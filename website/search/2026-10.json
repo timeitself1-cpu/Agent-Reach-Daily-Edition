@@ -5,18 +5,95 @@
  "stories": [
   {
    "d": "2026-10-10",
-   "id": "d225e934363e",
+   "id": "72afde6ce6a8",
    "r": 1,
    "t": 1,
    "c": "News",
-   "h": "Trump announces deal for Russian diesel as Zelensky calls it a gift to Putin",
-   "s": "Ukraine's president sharply criticised the move, calling it an \"investment in war that must be ended, not prolonged\". Ukraine's leader had said the deal with Russia to release diesel into the US would help Moscow fund the war.",
+   "h": "Trump announces deal for Russian diesel amid Ukraine war",
+   "s": "US President Donald Trump announced a deal to import Russian diesel into the US, sparking criticism from Ukraine's President Volodymyr Zelensky, who called it an 'investment in war'. The deal aims to ease sanctions and reopen fuel flows, but its impact on US policy and price…",
    "o": [
     "BBC News",
     "NPR",
     "CBS News",
-    "Axios",
-    "CBC News"
+    "The Hill",
+    "Axios"
+   ],
+   "l": "strong",
+   "coverage": {
+    "level": "strong",
+    "points": 6,
+    "independent_reports": 13,
+    "publishers": [
+     "ABC News",
+     "AP News",
+     "Axios",
+     "BBC News",
+     "CBS News",
+     "CNBC",
+     "CNBC Television",
+     "DW",
+     "NPR",
+     "Sky News",
+     "South China Morning Post",
+     "The Atlantic",
+     "The Hill"
+    ],
+    "repeats": 4,
+    "source_links": 8,
+    "linked_outlets": 7,
+    "linked_reporting_origins": 7,
+    "signals": 2,
+    "channels": 3
+   }
+  },
+  {
+   "d": "2026-10-10",
+   "id": "45e9ef3f2aaa",
+   "r": 2,
+   "t": 2,
+   "c": "News",
+   "h": "Nine dead in mass shooting at Pennsylvania home",
+   "s": "Two children are reported to be among the victims in the city of Eerie. Nine people, including children, died in a mass murder on Friday in Erie, Pennsylvania, after a gun-wielding attacker opened fire outside a home and then entered the property, according to authorities. The…",
+   "o": [
+    "BBC News",
+    "AP News",
+    "The Guardian",
+    "NBC News"
+   ],
+   "l": "strong",
+   "coverage": {
+    "level": "strong",
+    "points": 6,
+    "independent_reports": 4,
+    "publishers": [
+     "AP News",
+     "BBC News",
+     "NBC News",
+     "The Guardian"
+    ],
+    "repeats": 1,
+    "source_links": 5,
+    "linked_outlets": 4,
+    "linked_reporting_origins": 4,
+    "signals": 0,
+    "channels": 3
+   },
+   "u": "https://www.bbc.com/news/articles/cmed3njg5d3go"
+  },
+  {
+   "d": "2026-10-10",
+   "id": "f5f49fbbdc27",
+   "r": 3,
+   "t": 3,
+   "c": "News",
+   "h": "Damage assessments, cleanup begin after Hurricane Isaias thrashes Florida Panhandle",
+   "s": "Hurricane Isaias has strengthened into a Category 3 hurricane as it heads toward the Gulf Coast. Expert forecasters say the new technology is helping them understand where a storm will go.",
+   "o": [
+    "Politico",
+    "PBS NewsHour",
+    "The New York Times",
+    "NBC News",
+    "ABC News"
    ],
    "l": "strong",
    "coverage": {
@@ -24,71 +101,31 @@
     "points": 6,
     "independent_reports": 10,
     "publishers": [
-     "Al Jazeera",
-     "Axios",
-     "BBC News",
-     "CBC News",
-     "CBS News",
-     "CNBC",
-     "CNBC Television",
-     "DW",
-     "NPR",
-     "Sky News"
-    ],
-    "repeats": 4,
-    "source_links": 8,
-    "linked_outlets": 5,
-    "linked_reporting_origins": 5,
-    "signals": 2,
-    "channels": 3
-   },
-   "u": "https://www.bbc.co.uk/news/articles/cm1dwgr666wno?at_medium=RSS&at_campaign=rss"
-  },
-  {
-   "d": "2026-10-10",
-   "id": "0dcdfde4af11",
-   "r": 2,
-   "t": 2,
-   "c": "News",
-   "h": "Hurricane Isaias updates: Isaias downgraded to Post-tropical cyclone",
-   "s": "The Gulf Coast is bracing for dangerous conditions, extreme wind and flooding. Hurricane Isaias is blamed for at least two deaths, after the storm made landfall on the Florida coast and ran through Alabama. There are no confirmed fatalities from Hurricane Isaias in the state of…",
-   "o": [
-    "ABC News",
-    "NPR",
-    "PBS NewsHour",
-    "The New York Times",
-    "NBC News"
-   ],
-   "l": "strong",
-   "coverage": {
-    "level": "strong",
-    "points": 6,
-    "independent_reports": 9,
-    "publishers": [
      "ABC News",
      "BBC News",
-     "Bloomberg",
      "Fox News",
      "NBC News",
      "NPR",
      "PBS NewsHour",
+     "Politico",
      "The Guardian",
-     "The New York Times"
+     "The New York Times",
+     "WFLA"
     ],
     "repeats": 2,
     "source_links": 8,
-    "linked_outlets": 7,
-    "linked_reporting_origins": 7,
+    "linked_outlets": 8,
+    "linked_reporting_origins": 8,
     "signals": 1,
     "channels": 3
    },
-   "u": "https://abcnews.com/US/live-updates/hurricane-isaias-updates-isaias-strengthens-category-3/?id=137128637"
+   "u": "https://www.politico.com/news/2026/10/10/florida-hurricane-isaias-aftermath-cleanup-desantis-panhandle-01115764"
   },
   {
    "d": "2026-10-10",
    "id": "fea31af3b0d7",
-   "r": 3,
-   "t": 3,
+   "r": 4,
+   "t": 4,
    "c": "Tech",
    "h": "Yandex Takes a Second Data Center Hit in 48 Hours",
    "s": "A UAV attack disabled several modules at the largest Yandex data center in Kaluga, reducing service and impacting a facility with 3,800 server racks.",
@@ -116,110 +153,42 @@
   },
   {
    "d": "2026-10-10",
-   "id": "ff030d8b5b30",
-   "r": 4,
-   "t": 4,
+   "id": "bc3c155c9107",
+   "r": 5,
+   "t": 5,
    "c": "News",
-   "h": "India cracks down on youth protests as anger grows against Modi and election chief",
-   "s": "Indian authorities have launched a major security crackdown in New Delhi, detaining thousands of protesters who intended to hold a mass demonstration against Prime Minister Narendra Modi's government.",
+   "h": "Police crack down on India 'cockroach' protest in Delhi",
+   "s": "Tens of thousands of security personnel have been deployed and roads barricaded in Delhi to stop the latest Cockroach Janta Party demonstration. The protests focus on the Election Commission's voter list revision, which the opposition claims disenfranchises millions.",
    "o": [
-    "NPR",
-    "Times of India"
+    "BBC News",
+    "NPR"
    ],
    "l": "moderate",
    "coverage": {
     "level": "moderate",
-    "points": 3,
+    "points": 4,
     "independent_reports": 2,
     "publishers": [
-     "NPR",
-     "Times of India"
+     "BBC News",
+     "NPR"
     ],
     "repeats": 0,
     "source_links": 2,
     "linked_outlets": 2,
     "linked_reporting_origins": 2,
     "signals": 0,
-    "channels": 1
-   },
-   "u": "https://www.npr.org/2026/10/10/g-s1-147603/india-cracks-down-on-youth-protests-as-anger-grows-against-modi-and-election-chief"
-  },
-  {
-   "d": "2026-10-10",
-   "id": "6fd504966987",
-   "r": 5,
-   "t": 5,
-   "c": "News",
-   "h": "9 people dead in Erie, Pennsylvania mass shooting",
-   "s": "Erie officials also confirmed Saturday morning that nine people lost their lives in what they're describing as a tragedy. Nine people, including children, died in a mass murder on Friday in Erie, Pennsylvania, after a gun-wielding attacker opened fire outside a home. The…",
-   "o": [
-    "The Guardian",
-    "AP News",
-    "The Hill"
-   ],
-   "l": "strong",
-   "coverage": {
-    "level": "strong",
-    "points": 5,
-    "independent_reports": 3,
-    "publishers": [
-     "AP News",
-     "The Guardian",
-     "The Hill"
-    ],
-    "repeats": 0,
-    "source_links": 3,
-    "linked_outlets": 3,
-    "linked_reporting_origins": 3,
-    "signals": 0,
     "channels": 2
    },
-   "u": "https://thehill.com/homenews/state-watch/6140615-erie-mass-shooting-nine-dead/"
-  },
-  {
-   "d": "2026-10-10",
-   "id": "9321c8fbc22b",
-   "r": 6,
-   "t": 6,
-   "c": "Science & AI",
-   "h": "Anthropic AI model submits false tip on unsolved Philly murder, police say",
-   "s": "An investigation is underway after an AI model from the company Anthropic submitted a false tip for an unsolved Philadelphia murder, police said. An Anthropic A.I. model submitted a false tip about an unsolved murder through a publicly accessible web form, Philadelphia police…",
-   "o": [
-    "nbcphiladelphia.com",
-    "The Hacker News",
-    "6abc Philadelphia",
-    "BBC News",
-    "The Verge"
-   ],
-   "l": "strong",
-   "coverage": {
-    "level": "strong",
-    "points": 6,
-    "independent_reports": 5,
-    "publishers": [
-     "6abc Philadelphia",
-     "BBC News",
-     "The Hacker News",
-     "The Verge",
-     "nbcphiladelphia.com"
-    ],
-    "repeats": 0,
-    "source_links": 7,
-    "linked_outlets": 5,
-    "linked_reporting_origins": 5,
-    "signals": 2,
-    "channels": 3
-   },
-   "u": "https://www.nbcphiladelphia.com/news/local/anthropic-ai-model-submits-false-tip-on-unsolved-philly-murder-police-say/4477051/"
+   "u": "https://www.youtube.com/watch?v=9zD8hPBSxV4"
   },
   {
    "d": "2026-10-10",
    "id": "8b1b98c4fb5f",
-   "r": 7,
-   "t": 7,
+   "r": 6,
+   "t": 6,
    "c": "Tech",
-   "h": "Microsoft releases decision-model Microsoft-decision-1",
-   "s": "Microsoft has released Microsoft-Decision-1, a decision model for routing, classification, verification, and agent control. This model returns a calibrated probability for each fixed answer option, outperforming both large language models and other decision models in latency and…",
+   "h": "Microsoft releases decision-scoring model for fast decision-making",
+   "s": "Microsoft has released Microsoft-Decision-1, a decision model that returns a calibrated probability for each fixed answer option. This decision-scoring model is designed for routing, classification, verification, and agent control, and is intended to outperform both LLMs and…",
    "o": [
     "commandline.microsoft.com",
     "MarkTechPost"
@@ -240,13 +209,13 @@
     "signals": 0,
     "channels": 2
    },
-   "u": "https://www.marktechpost.com/2026/10/09/microsoft-ai-releases-microsoft-decision-1-a-qwen3-5-9b-decision-scoring-model/"
+   "u": "https://commandline.microsoft.com/microsoft-decision-1-model-foundry/"
   },
   {
    "d": "2026-10-10",
    "id": "9c0c027764eb",
-   "r": 8,
-   "t": 8,
+   "r": 7,
+   "t": 7,
    "c": "Science & AI",
    "h": "NASA issues long-awaited call to industry for private Space Stations",
    "s": "NASA has released a request to the US commercial space industry to develop private space stations that will succeed the current ones by 2030. The move is aimed at advancing American leadership in space.",
@@ -274,46 +243,16 @@
   },
   {
    "d": "2026-10-10",
-   "id": "8240bf3654a0",
-   "r": 9,
-   "t": 9,
-   "c": "Science & AI",
-   "h": "SpaceX launches 21 data satellites for the Space Development Agency",
-   "s": "SpaceX launched a Falcon 9 rocket early Saturday carrying a batch of data satellites for the U.S. military's Space Development Agency (SDA), five days after a last-minute abort scrubbed the first attempt. The satellites will help fill out the Proliferated Warfighter Space…",
-   "o": [
-    "Spaceflight Now",
-    "Space"
-   ],
-   "l": "moderate",
-   "coverage": {
-    "level": "moderate",
-    "points": 3,
-    "independent_reports": 2,
-    "publishers": [
-     "Space",
-     "Spaceflight Now"
-    ],
-    "repeats": 0,
-    "source_links": 2,
-    "linked_outlets": 2,
-    "linked_reporting_origins": 2,
-    "signals": 0,
-    "channels": 1
-   },
-   "u": "https://spaceflightnow.com/2026/10/09/spacex-to-make-another-attempt-to-launch-21-data-satellites-for-space-development-agency/"
-  },
-  {
-   "d": "2026-10-10",
-   "id": "b1bafe9aba4c",
-   "r": 10,
-   "t": null,
+   "id": "5550f6015f11",
+   "r": 8,
+   "t": 8,
    "c": "News",
-   "h": "Army caught off guard by Hegseth's order to make firing squad execution public",
-   "s": "Secretary of Defense Pete Hegseth's announcement that the execution of the convicted Fort Hood mass shooter would be shown in public caught people across the Pentagon and the Army off guard. The Pope has criticized the death penalty.",
+   "h": "Pope Leo declares death penalty ‘inadmissible’ as his native U.S. plans to livestream execution",
+   "s": "Pope Leo XIV called the death penalty \"an attack\" on human dignity a day after senior Church officials condemned the Pentagon's plans to live-stream an execution of Nidal Malik Hasan.",
    "o": [
+    "NBC News",
     "The Washington Post",
-    "CNN",
-    "NBC News"
+    "Axios"
    ],
    "l": "strong",
    "coverage": {
@@ -321,7 +260,7 @@
     "points": 5,
     "independent_reports": 3,
     "publishers": [
-     "CNN",
+     "Axios",
      "NBC News",
      "The Washington Post"
     ],
@@ -332,43 +271,108 @@
     "signals": 0,
     "channels": 2
    },
-   "u": "https://www.cnn.com/2026/10/10/politics/pentagon-scramble-hegseth-public-execution"
+   "u": "https://www.nbcnews.com/world/the-vatican/pope-leo-death-penalty-inadmissible-native-us-plans-livestream-rcna602657"
   },
   {
    "d": "2026-10-10",
-   "id": "f0aa85298e1b",
-   "r": 11,
-   "t": null,
+   "id": "79e464059e9e",
+   "r": 9,
+   "t": 9,
    "c": "News",
-   "h": "Riyadh Airport attacked again, Multiple injured",
-   "s": "Saudi Arabia's Riyadh airport was attacked again, with multiple people injured in the blast. The attack follows previous incidents, including one two days ago that killed three Saudi citizens.",
+   "h": "Saudi Arabia's Riyadh Airport attacked by Houthi Rebels",
+   "s": "Saudi Arabia's Riyadh Airport was attacked by Houthi rebels, leaving several people injured and operations suspended. The attacks follow a wider conflict in the Middle East, with Yemen's Houthis striking Saudi oil infrastructure.",
    "o": [
-    "AP News",
+    "The Washington Post",
+    "WSJ",
     "Reuters",
-    "DW",
-    "Times of India",
-    "The Washington Post"
+    "France 24",
+    "Al Jazeera"
    ],
    "l": "strong",
    "coverage": {
     "level": "strong",
     "points": 6,
-    "independent_reports": 6,
+    "independent_reports": 8,
     "publishers": [
      "AP News",
-     "DW",
+     "Al Jazeera",
      "Euronews",
+     "Fortune",
+     "France 24",
      "Reuters",
      "The Washington Post",
-     "Times of India"
+     "WSJ"
+    ],
+    "repeats": 2,
+    "source_links": 8,
+    "linked_outlets": 8,
+    "linked_reporting_origins": 8,
+    "signals": 0,
+    "channels": 3
+   },
+   "u": "https://fortune.com/2026/10/10/trump-us-forces-saudi-arabia-war-iran-houthi-rebels-yemen/"
+  },
+  {
+   "d": "2026-10-10",
+   "id": "9c8aa53be0e6",
+   "r": 10,
+   "t": 10,
+   "c": "Science & AI",
+   "h": "Anthropic AI model submits false tip on unsolved Philly murder, police say",
+   "s": "An investigation is underway after an AI model from the company Anthropic submitted a false tip for an unsolved Philadelphia murder, police said. Philadelphia police said the tip was \"flagged as spam\", but criticised the tech company for taking more than two months to detect and…",
+   "o": [
+    "nbcphiladelphia.com",
+    "BBC News",
+    "6abc Philadelphia"
+   ],
+   "l": "strong",
+   "coverage": {
+    "level": "strong",
+    "points": 5,
+    "independent_reports": 3,
+    "publishers": [
+     "6abc Philadelphia",
+     "BBC News",
+     "nbcphiladelphia.com"
     ],
     "repeats": 1,
-    "source_links": 7,
-    "linked_outlets": 6,
-    "linked_reporting_origins": 6,
+    "source_links": 4,
+    "linked_outlets": 3,
+    "linked_reporting_origins": 3,
     "signals": 0,
-    "channels": 2
-   }
+    "channels": 3
+   },
+   "u": "https://www.nbcphiladelphia.com/news/local/anthropic-ai-model-submits-false-tip-on-unsolved-philly-murder-police-say/4477051/"
+  },
+  {
+   "d": "2026-10-10",
+   "id": "0a6aba72e4dd",
+   "r": 11,
+   "t": null,
+   "c": "Entertainment",
+   "h": "GTA 6 Leaker Threatens to Release build with full Story mode played to the end, Ties Lucia's clothing to Crypto Scheme",
+   "s": "The GTA 6 leaker has reportedly threatened to release a build of the game with the full story mode played to the end, as part of their heavily criticized crypto scheme. After going quite for more than a month after Grand Theft Auto 6's extended gameplay reveal on Netflix…",
+   "o": [
+    "IGN",
+    "Kotaku"
+   ],
+   "l": "moderate",
+   "coverage": {
+    "level": "moderate",
+    "points": 3,
+    "independent_reports": 2,
+    "publishers": [
+     "IGN",
+     "Kotaku"
+    ],
+    "repeats": 0,
+    "source_links": 2,
+    "linked_outlets": 2,
+    "linked_reporting_origins": 2,
+    "signals": 0,
+    "channels": 1
+   },
+   "u": "https://www.ign.com/articles/gta-6-leaker-threatens-to-release-build-with-full-story-mode-played-to-the-end-ties-lucias-clothing-to-crypto-scheme"
   },
   {
    "d": "2026-10-10",
@@ -522,8 +526,68 @@
   },
   {
    "d": "2026-10-10",
-   "id": "8f0c76b05cc5",
+   "id": "04254a56562d",
    "r": 17,
+   "t": null,
+   "c": "Sports",
+   "h": "Ronaldo suspended by Portugal as disciplinary case opens",
+   "s": "Cristiano Ronaldo has been provisionally suspended by the Portuguese Football Federation (FPF) following his decision to walk out of the national team camp after a dispute with head coach Jorge Jesus. Cristiano Ronaldo has been provisionally suspended by the Portuguese Football…",
+   "o": [
+    "ESPN",
+    "BBC News"
+   ],
+   "l": "moderate",
+   "coverage": {
+    "level": "moderate",
+    "points": 3,
+    "independent_reports": 2,
+    "publishers": [
+     "BBC News",
+     "ESPN"
+    ],
+    "repeats": 0,
+    "source_links": 2,
+    "linked_outlets": 2,
+    "linked_reporting_origins": 2,
+    "signals": 0,
+    "channels": 1
+   },
+   "u": "https://www.espn.com/soccer/story/_/id/50146841/cristiano-ronaldo-suspended-portugal-national-team-walkout-jorge-jesus-disciplinary"
+  },
+  {
+   "d": "2026-10-10",
+   "id": "0c1632943da8",
+   "r": 18,
+   "t": null,
+   "c": "Tech",
+   "h": "Cloudflare acquires Deno to improve its Workers programming model",
+   "s": "Cloudflare announced Friday that it's acquiring Deno, the startup behind the programming runtime of the same name.",
+   "o": [
+    "TechCrunch",
+    "deno.com"
+   ],
+   "l": "moderate",
+   "coverage": {
+    "level": "moderate",
+    "points": 4,
+    "independent_reports": 2,
+    "publishers": [
+     "TechCrunch",
+     "deno.com"
+    ],
+    "repeats": 0,
+    "source_links": 2,
+    "linked_outlets": 2,
+    "linked_reporting_origins": 2,
+    "signals": 0,
+    "channels": 2
+   },
+   "u": "https://techcrunch.com/2026/10/10/cloudflare-acquires-deno-to-improve-its-workers-programming-model/"
+  },
+  {
+   "d": "2026-10-10",
+   "id": "8f0c76b05cc5",
+   "r": 19,
    "t": null,
    "c": "News",
    "h": "127 arrested in Hong Kong Loan-sharking Syndicate bust",
@@ -550,40 +614,12 @@
   },
   {
    "d": "2026-10-10",
-   "id": "878808cbecf8",
-   "r": 18,
-   "t": null,
-   "c": "News",
-   "h": "Russian glide bomb attack kills at least 15 in Zaporizhzhia",
-   "s": "A Russian glide bomb attack on Zaporizhzhia killed at least 15 people, including children. The attack was seen as Russia's 'thanks' for a US diesel deal, according to Volodymyr Zelensky.",
-   "o": [
-    "BBC News"
-   ],
-   "l": "limited",
-   "coverage": {
-    "level": "limited",
-    "points": 1,
-    "independent_reports": 1,
-    "publishers": [
-     "BBC News"
-    ],
-    "repeats": 0,
-    "source_links": 1,
-    "linked_outlets": 1,
-    "linked_reporting_origins": 1,
-    "signals": 0,
-    "channels": 1
-   },
-   "u": "https://www.bbc.co.uk/news/articles/cwvgdpv642g5o?at_medium=RSS&at_campaign=rss"
-  },
-  {
-   "d": "2026-10-10",
    "id": "c015b4868b83",
-   "r": 19,
+   "r": 20,
    "t": null,
    "c": "Science & AI",
    "h": "NASA astronauts splash down after 100 million miles in space",
-   "s": "NASA's SpaceX Crew-12 astronauts have returned to Earth after 237 days in space, traveling more than 100 million miles and completing over 3,792 orbits. The mission also made significant contributions to research for future missions to the Moon and Mars.",
+   "s": "NASA's SpaceX Crew-12 astronauts have returned to Earth after 237 days in space, traveling more than 100 million miles and completing over 3,792 orbits. The mission also made significant research to prepare for future missions to the Moon and Mars. The mission also made history…",
    "o": [
     "ScienceDaily"
    ],
@@ -607,7 +643,7 @@
   {
    "d": "2026-10-10",
    "id": "d9cc80e7c371",
-   "r": 20,
+   "r": 21,
    "t": null,
    "c": "Science & AI",
    "h": "Plastic chemical Affects human ovaries",
@@ -635,7 +671,7 @@
   {
    "d": "2026-10-10",
    "id": "710b3ad8dc31",
-   "r": 21,
+   "r": 22,
    "t": null,
    "c": "Science & AI",
    "h": "OpenAI revenue keeps surging as company seeks $30 billion in fresh capital",
@@ -663,7 +699,7 @@
   {
    "d": "2026-10-10",
    "id": "157e81bf08e8",
-   "r": 22,
+   "r": 23,
    "t": null,
    "c": "News",
    "h": "7.7 quake hits Panama, damaging buildings and prompting evacuations",
@@ -690,11 +726,11 @@
   {
    "d": "2026-10-10",
    "id": "1cc63d3dfc56",
-   "r": 23,
+   "r": 24,
    "t": null,
    "c": "Science & AI",
-   "h": "ARTEX AI, Claude agents used in cyberattacks on South Korean banks",
-   "s": "The cyberattacks that shook the South Korean financial sector earlier this month were launched by a Chinese hacker using the ARTEX AI penetration testing suite and Claude agents.",
+   "h": "ARTEX AI and Claude agents used in cyberattacks on South Korean banks",
+   "s": "A Chinese hacker launched cyberattacks on South Korean banks using the ARTEX AI penetration testing suite and Claude agents.",
    "o": [
     "BleepingComputer"
    ],
@@ -718,7 +754,7 @@
   {
    "d": "2026-10-10",
    "id": "716df8387c45",
-   "r": 24,
+   "r": 25,
    "t": null,
    "c": "News",
    "h": "War in Ukraine: Russian strikes kill 15, including a young girl",
@@ -746,7 +782,7 @@
   {
    "d": "2026-10-10",
    "id": "892c9ac3da51",
-   "r": 25,
+   "r": 26,
    "t": null,
    "c": "Science & AI",
    "h": "OpenAI projected to bring in $20bn less in revenue than expected",
@@ -773,8 +809,119 @@
   },
   {
    "d": "2026-10-10",
+   "id": "99db639c0d6c",
+   "r": 27,
+   "t": null,
+   "c": "Tech",
+   "h": "Astronomers Obtain high-definition image of Pa 30 nebula",
+   "s": "Astronomers have obtained the most detailed image to date of the Pa 30 nebula, the remnants of a supernova that was likely observed nearly a millennium ago. The new image may provide clues about how this star survived its own explosion.",
+   "o": [
+    "Wired"
+   ],
+   "l": "limited",
+   "coverage": {
+    "level": "limited",
+    "points": 1,
+    "independent_reports": 1,
+    "publishers": [
+     "Wired"
+    ],
+    "repeats": 0,
+    "source_links": 1,
+    "linked_outlets": 1,
+    "linked_reporting_origins": 1,
+    "signals": 0,
+    "channels": 1
+   }
+  },
+  {
+   "d": "2026-10-10",
+   "id": "aee80b84e923",
+   "r": 28,
+   "t": null,
+   "c": "Science & AI",
+   "h": "OpenAI caught Russians and Iranians using ChatGPT for influence campaigns",
+   "s": "The company says Russian operatives used its AI chatbot to update their bosses, shedding light on influence campaigns previously not attributed to Russia.",
+   "o": [
+    "NPR"
+   ],
+   "l": "limited",
+   "coverage": {
+    "level": "limited",
+    "points": 0,
+    "independent_reports": 1,
+    "publishers": [
+     "NPR"
+    ],
+    "repeats": 0,
+    "source_links": 1,
+    "linked_outlets": 1,
+    "linked_reporting_origins": 1,
+    "signals": 0,
+    "channels": 1
+   },
+   "u": "https://www.npr.org/2026/10/08/nx-s1-5995576/openai-russia-iran-influence-operations-chatgpt"
+  },
+  {
+   "d": "2026-10-10",
+   "id": "debddf7aaed0",
+   "r": 29,
+   "t": null,
+   "c": "Science & AI",
+   "h": "NASA unveils ambitious moon base strategy",
+   "s": "NASA has unveiled an ambitious $20 billion moon base strategy, with the goal of establishing a permanent human presence on the moon. NASA Administrator Jared Isaacman stated that 'this time, the goal is to stay'.",
+   "o": [
+    "ABC News"
+   ],
+   "l": "limited",
+   "coverage": {
+    "level": "limited",
+    "points": 1,
+    "independent_reports": 1,
+    "publishers": [
+     "ABC News"
+    ],
+    "repeats": 0,
+    "source_links": 1,
+    "linked_outlets": 1,
+    "linked_reporting_origins": 1,
+    "signals": 0,
+    "channels": 1
+   },
+   "u": "https://abcnews.com/Technology/nasa-unveils-ambitious-20-billion-moon-base-strategy/story?id=131361493"
+  },
+  {
+   "d": "2026-10-10",
+   "id": "878808cbecf8",
+   "r": 30,
+   "t": null,
+   "c": "News",
+   "h": "Russian glide bomb attack on Zaporizhzhia kills at least 15 people",
+   "s": "Volodymyr Zelensky says the attack, which left children dead, was Russia expressing its \"thanks\" for a US diesel deal.",
+   "o": [
+    "BBC News"
+   ],
+   "l": "limited",
+   "coverage": {
+    "level": "limited",
+    "points": 1,
+    "independent_reports": 1,
+    "publishers": [
+     "BBC News"
+    ],
+    "repeats": 0,
+    "source_links": 1,
+    "linked_outlets": 1,
+    "linked_reporting_origins": 1,
+    "signals": 0,
+    "channels": 1
+   },
+   "u": "https://www.bbc.co.uk/news/articles/cwvgdpv642g5o?at_medium=RSS&at_campaign=rss"
+  },
+  {
+   "d": "2026-10-10",
    "id": "022d35c5ff6c",
-   "r": 26,
+   "r": 31,
    "t": null,
    "c": "Science & AI",
    "h": "Asana cuts model costs 76x in browser tests with GPT-6.1 Sol",
@@ -802,11 +949,11 @@
   {
    "d": "2026-10-10",
    "id": "9263e95d26d1",
-   "r": 27,
+   "r": 32,
    "t": null,
    "c": "Tech",
-   "h": "Microsoft, OpenAI, and Others help shape AI policy on 1,700-Member Slack",
-   "s": "A 1,700-member Slack channel run by the Medicare agency CMS allows Microsoft, OpenAI, and other companies to help shape policy on AI apps and medical records access. This collaboration aims to protect cloud applications data.",
+   "h": "Slack group Helps shape policy on AI apps and medical records",
+   "s": "A 1,700-member Slack group run by Medicare agency CMS is helping shape policy on AI apps and medical records access.",
    "o": [
     "Techmeme"
    ],
@@ -830,7 +977,7 @@
   {
    "d": "2026-10-10",
    "id": "ba973d878dad",
-   "r": 28,
+   "r": 33,
    "t": null,
    "c": "Sports",
    "h": "‘I’m supposed to be here’: Angel Reese’s road from ridicule to the WNBA finals",
@@ -858,7 +1005,7 @@
   {
    "d": "2026-10-10",
    "id": "5969acf34967",
-   "r": 29,
+   "r": 34,
    "t": null,
    "c": "Entertainment",
    "h": "WNBA trans debate being pushed online for profit",
@@ -886,7 +1033,7 @@
   {
    "d": "2026-10-10",
    "id": "1d8491003083",
-   "r": 30,
+   "r": 35,
    "t": null,
    "c": "Sports",
    "h": "Light strikes again, ending play early after Renshaw's career-best knock",
@@ -910,61 +1057,6 @@
     "channels": 1
    },
    "u": "https://www.abc.net.au/news/2026-10-10/south-africa-australia-first-test-live-day-two/107251570"
-  },
-  {
-   "d": "2026-10-10",
-   "id": "99e578482af0",
-   "r": 31,
-   "t": null,
-   "c": "Tech",
-   "h": "One with the world? A new look at brains transformed by Psychedelics",
-   "s": "Researchers studied brain activity in participants who meditated with and without psilocybin, challenging the previous understanding that psychedelics cause chaos in the brain.",
-   "o": [
-    "Ars Technica"
-   ],
-   "l": "limited",
-   "coverage": {
-    "level": "limited",
-    "points": 1,
-    "independent_reports": 1,
-    "publishers": [
-     "Ars Technica"
-    ],
-    "repeats": 0,
-    "source_links": 1,
-    "linked_outlets": 1,
-    "linked_reporting_origins": 1,
-    "signals": 0,
-    "channels": 1
-   },
-   "u": "https://arstechnica.com/science/2026/10/the-psychedelic-brain-looks-like-chaos-underneath-theres-order/"
-  },
-  {
-   "d": "2026-10-10",
-   "id": "9bdc8187d8ac",
-   "r": 32,
-   "t": null,
-   "c": "Entertainment",
-   "h": "Geordie Greep's tour cancelled amid sexual misconduct allegations",
-   "s": "Several performances on Geordie Greep's U.S. tour have been cancelled following allegations of sexual misconduct made against the singer, which he has denied.",
-   "o": [
-    "Pitchfork"
-   ],
-   "l": "limited",
-   "coverage": {
-    "level": "limited",
-    "points": 1,
-    "independent_reports": 1,
-    "publishers": [
-     "Pitchfork"
-    ],
-    "repeats": 0,
-    "source_links": 1,
-    "linked_outlets": 1,
-    "linked_reporting_origins": 1,
-    "signals": 0,
-    "channels": 1
-   }
   },
   {
    "d": "2026-10-09",

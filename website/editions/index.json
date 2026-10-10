@@ -5,20 +5,20 @@
  "editions": [
   {
    "date": "2026-10-10",
-   "revision": 7,
-   "generated_utc": "2026-10-10T17:46:42Z",
-   "stories": 32,
-   "lead": "Trump announces deal for Russian diesel as Zelensky calls it a gift to Putin",
+   "revision": 8,
+   "generated_utc": "2026-10-10T18:47:18Z",
+   "stories": 35,
+   "lead": "Trump announces deal for Russian diesel amid Ukraine war",
    "headlines": [
-    "Hurricane Isaias updates: Isaias downgraded to Post-tropical cyclone",
-    "Yandex Takes a Second Data Center Hit in 48 Hours",
-    "India cracks down on youth protests as anger grows against Modi and election chief"
+    "Nine dead in mass shooting at Pennsylvania home",
+    "Damage assessments, cleanup begin after Hurricane Isaias thrashes Florida Panhandle",
+    "Yandex Takes a Second Data Center Hit in 48 Hours"
    ],
    "sections": {
     "News": 10,
-    "Tech": 5,
-    "Science & AI": 9,
-    "Sports": 4,
+    "Tech": 6,
+    "Science & AI": 10,
+    "Sports": 5,
     "Entertainment": 4
    }
   },
