@@ -530,3 +530,20 @@ def test_a_connection_test_keeps_the_last_failure_visible(daily_paths):
     msg = P.connected_message(daily_paths)
     assert "the last attempt, made before this test: Publication failed: no access key is saved." in msg
     assert msg.endswith("Click Publish latest edition to try again.")
+
+
+def test_headline_restyling_never_moves_a_permalink_or_a_feed_guid(monkeypatch):
+    """Anchors (#story-<id>) come from the story's evidence fingerprint and the RSS guid from the edition's address,
+    never from the headline text, so the neutral-headline change (Oct 10) breaks no existing link."""
+    ed = real_edition()
+    new = P.public_edition(ed)
+    monkeypatch.setattr(P, "normalize_headline", lambda headline, **kw: headline)
+    old = P.public_edition(ed)
+    assert [s["headline"] for s in new["stories"]] != [s["headline"] for s in old["stories"]], "nothing was restyled"
+    assert [s["id"] for s in new["stories"]] == [s["id"] for s in old["stories"]]
+    assert new["top"] == old["top"]
+    anchors = lambda pub: sorted(set(__import__("re").findall(r'id="(story-[0-9a-f]+)"', P.edition_page(pub).decode())))
+    assert anchors(new) == anchors(old) and len(anchors(new)) == len(new["stories"])
+    guids = lambda pub: sorted(__import__("re").findall(r"<guid[^>]*>([^<]+)</guid>",
+                               P.feed_xml({"editions": [P.index_entry(pub)]}).decode()))
+    assert guids(new) == guids(old) and guids(new)[0].endswith("/daily/2026-10-07/")
