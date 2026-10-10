@@ -1,8 +1,9 @@
-"""Pre-publish quality gates (daily/gates.py). The six cases below are the defects of the October 10, 2026 edition.
+"""Pre-publish quality gates (daily/gates.py). The cases below are the defects of the October 10, 2026 edition,
+VERBATIM from the export AgentReachDaily-2026-10-10.html (supplied by the user).
 
-The headlines and summaries are RECONSTRUCTED from the descriptions of those defects (the live pages are not in
-this repository); the micro1 opening ``Exceptions that require judgment...`` is the verbatim fragment.
-"""
+In that export a failed summary appears as the headline repeated; the live site (rc21) omits the summary element
+when it repeats the headline. Both shapes are the same failure, so each is tested: no summary, and a summary
+identical to the headline."""
 from __future__ import annotations
 
 import json
@@ -16,18 +17,23 @@ from agent_reach.daily.gates import GateConfig, check_text, format_quarantine, r
 
 CFG = GateConfig.from_settings()
 
-#: (name, headline, summary sentences, lead report text, expected reason)
+GIGABYTE = "Gigabyte's latest BIOS update hints at Intel's Raptor Lake Next Launch in 2027"
+AI_SAFETY = "Artificial intelligence and social integration paradox"
+MICRO1 = "micro1 Commits $1bn to Buy Company Data for Training AI Agents"
+ICE = "NYC man shot by ICE still has bullet in body, lawyers say"
+VIBE = ("We Might Be Cooked, As These Vibe-Coded Web Browser Ports Of Halo, The Simpsons: Hit And Run, "
+        "And GTA: Vice City Seem To Work Perfectly")
+
+#: (name, headline, summary sentences, lead report text, reasons that must be among the result)
 OCT_10 = [
-    ("empty", "Gigabyte says Raptor Lake BIOS update fixes instability", [], "", "empty"),
-    ("tautology", "AI safety experts warn of social integration risks",
-     ["Artificial intelligence and social integration paradox."], "", "tautology"),
-    ("leak", "micro1 raises $35 million to grow its expert network for AI labs",
-     ["Exceptions that require judgment... micro1 said Tuesday that it raised $35 million from investors to "
-      "expand the network of human experts who train artificial intelligence models."], "", "prompt_leak"),
-    ("contradiction", "Man shot by ICE agent in NYC, officials say",
-     ["Federal immigration agents shot a man during an enforcement operation in Fresno, California, on Thursday, "
-      "according to local officials who described the incident to reporters."],
-     "ICE agent shoots man in New York City during arrest, police say", "contradiction"),
+    ("gigabyte-live", GIGABYTE, [], "", {"empty"}),
+    ("gigabyte-export", GIGABYTE, [GIGABYTE + "."], "", {"headline_echo"}),
+    ("ai-safety", AI_SAFETY, [AI_SAFETY + "."], "", {"headline_echo", "tautology"}),
+    ("micro1", MICRO1,
+     ["Exceptions that require judgment micro1 will spend $1bn in 12 months buying company data to train AI "
+      "agents, financed by Citi and Hercules."], "", {"prompt_leak"}),
+    ("ice-fresno", ICE, ["The incident occurred early Friday in Fresno."], "", {"contradiction"}),
+    ("vibe-coded", VIBE, [VIBE + "."], "", {"headline_echo"}),
 ]
 GOOD = ("Fed holds rates steady and signals one cut this year",
         ["The Federal Reserve left its benchmark interest rate unchanged on Wednesday and projected a single "
@@ -35,10 +41,10 @@ GOOD = ("Fed holds rates steady and signals one cut this year",
         "The Federal Reserve kept rates where they were.")
 
 
-@pytest.mark.parametrize("name,headline,summary,lead,reason", OCT_10, ids=[c[0] for c in OCT_10])
-def test_each_october_10_defect_is_quarantined_with_its_reason(name, headline, summary, lead, reason):
+@pytest.mark.parametrize("name,headline,summary,lead,expected", OCT_10, ids=[c[0] for c in OCT_10])
+def test_each_october_10_defect_is_quarantined_with_its_reason(name, headline, summary, lead, expected):
     reasons, _ = check_text(headline, summary, lead, CFG)
-    assert reason in reasons
+    assert expected <= set(reasons), reasons
 
 
 def test_a_sound_summary_passes():
@@ -55,7 +61,7 @@ def test_thin_and_headline_echo():
 
 
 def test_the_fresno_conflict_names_both_places():
-    _, conflicts = check_text(*OCT_10[3][1:4], CFG)
+    _, conflicts = check_text(ICE, ["The incident occurred early Friday in Fresno."], "", CFG)
     assert conflicts["headline_or_lead"] == ["New York City"] and "Fresno" in conflicts["summary"]
 
 
