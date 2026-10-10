@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Event Timelines — Agent Reach Daily</title>
+<meta name="description" content="Developing stories tracked across editions: what happened, what changed, and what's new.">
+<style>
+:root { --ink: #1a1a1a; --muted: #666; --line: #e0e0e0; --card: #fff; --accent: #0066cc; }
+body { font-family: Georgia, serif; max-width: 800px; margin: 0 auto; padding: 24px; color: var(--ink); }
+h1 { font-size: 32px; margin: 0 0 8px; }
+.sub { color: var(--muted); margin: 0 0 24px; }
+.filters { display: flex; gap: 8px; margin-bottom: 24px; }
+.filter-btn { padding: 8px 16px; border: 1px solid var(--line); background: var(--card); border-radius: 999px; cursor: pointer; font-size: 14px; }
+.filter-btn.active { background: var(--ink); color: #fff; border-color: var(--ink); }
+.event-card { border: 1px solid var(--line); border-radius: 8px; padding: 16px; margin-bottom: 16px; background: var(--card); }
+.event-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+.status { font-size: 11px; font-weight: 700; text-transform: uppercase; padding: 2px 8px; border-radius: 999px; }
+.status.developing { background: #e6f3ff; color: #0066cc; }
+.status.resolved { background: #e6ffe6; color: #008800; }
+.status.archived { background: #f0f0f0; color: #666; }
+.event-date { font-size: 13px; color: var(--muted); }
+.event-headline { font-size: 18px; margin: 0 0 8px; }
+.event-headline a { color: var(--ink); text-decoration: none; }
+.event-headline a:hover { color: var(--accent); }
+.event-meta { font-size: 13px; color: var(--muted); margin: 0; }
+.empty { color: var(--muted); font-style: italic; }
+a.back { display: inline-block; margin-bottom: 24px; color: var(--accent); text-decoration: none; }
+</style>
+</head>
+<body>
+<a href="/" class="back">← Agent Reach Daily</a>
+<h1>Event Timelines</h1>
+<p class="sub">Developing stories tracked across editions. Follow an event to see how it unfolded.</p>
+<div class="filters">
+<button class="filter-btn active" data-filter="developing">Developing</button>
+<button class="filter-btn" data-filter="resolved">Resolved</button>
+<button class="filter-btn" data-filter="archived">Archived</button>
+<button class="filter-btn" data-filter="all">All</button>
+</div>
+<div id="events">Loading…</div>
+<script>
+let events = [];
+let filter = 'developing';
+const listEl = document.getElementById('events');
+
+function render() {
+  const filtered = filter === 'all' ? events : events.filter(e => e.status === filter);
+  if (!filtered.length) {
+    listEl.innerHTML = '<p class="empty">No events in this category yet.</p>';
+    return;
+  }
+  listEl.innerHTML = filtered.map(e => `
+    <article class="event-card">
+      <div class="event-head">
+        <span class="status ${e.status}">${e.status}</span>
+        <time class="event-date">${e.last_updated}</time>
+      </div>
+      <h3 class="event-headline"><a href="/events/${e.event_id}.json">${e.headline}</a></h3>
+      <p class="event-meta">${e.timeline_entries} updates · ${e.category || 'News'}</p>
+    </article>
+  `).join('');
+}
+
+document.querySelectorAll('.filter-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    filter = btn.dataset.filter;
+    render();
+  });
+});
+
+fetch('/events/index.json')
+  .then(r => r.ok ? r.json() : [])
+  .then(data => { events = Array.isArray(data) ? data : []; render(); })
+  .catch(() => { listEl.innerHTML = '<p class="empty">Event timelines will appear here once the publisher has tracked events across editions.</p>'; });
+</script>
+</body>
+</html>
