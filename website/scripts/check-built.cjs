@@ -23,7 +23,7 @@ try {
     if (url.origin !== origin || !url.hash) continue;
     const target = documents.get(url.pathname.replace(/index\.html$/, ''));
     assert.ok(target?.window.document.getElementById(decodeURIComponent(url.hash.slice(1))), `Missing target: ${route} -> ${a.href}`);
-    if (a.matches('.skip, .section-shortcuts a')) assert.equal(url.pathname, route, `In-page link leaves ${route}`);
+    if (a.matches('.skip, .section-shortcuts a, .jump-nav a')) assert.equal(url.pathname, route, `In-page link leaves ${route}`);
     anchors++;
   }
   const index = JSON.parse(readFileSync(resolve(root, 'editions/index.json')));
