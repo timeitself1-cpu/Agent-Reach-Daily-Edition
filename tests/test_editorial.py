@@ -121,7 +121,9 @@ def test_a_published_edition_has_no_summary_that_repeats_its_headline():
                           sentences=["A magnitude 6.1 earthquake struck Port Calder early on Tuesday, officials said."])]
     stories[1].evidence[0].excerpt = "A magnitude 6.1 earthquake struck Port Calder early on Tuesday, officials said."
     public = public_edition(make_edition(stories))
-    by_head = {s["headline"]: s["summary"] for s in public["stories"]}
+    # published headlines are in sentence case (daily/headlines.py): look them up by that form
+    by_head = {s["headline"].lower(): s["summary"] for s in public["stories"]}
+    by_head = {k.title(): v for k, v in by_head.items()}
     assert by_head["Norvale Ferry Strike Halts Island Service"] == []
     assert by_head["Port Calder Earthquake Damages Roads"] == [
         "A magnitude 6.1 earthquake struck Port Calder early on Tuesday, officials said."]

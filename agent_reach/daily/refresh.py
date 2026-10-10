@@ -419,7 +419,24 @@ async def _attempt(paths: DataPaths, prefs: DailyPrefs, store: EditionStore, *, 
             from agent_reach.daily.edition import QualityReport
             from agent_reach.daily.gates import GateConfig, run_gates, write_quarantine
 
-            gated = run_gates(stories, GateConfig.from_settings(settings))
+            gate_cfg = GateConfig.from_settings(settings)
+            golden_cases = 0
+            if settings.golden_check_enabled:
+                from agent_reach.daily.golden import run_golden
+                from agent_reach.daily.headlines import HeadlineConfig
+
+                golden = run_golden(gate_cfg, HeadlineConfig.from_settings(settings))
+                if not golden.available:
+                    log.warning("golden set not found: %s", golden.summary())
+                elif not golden.ok:
+                    log.error("golden self-check failed: %s", "; ".join(golden.failures))
+                    return _failed(paths, prefs, trigger, started, now_fn, "failed", EXIT_FAILED,
+                                   "No new edition: the quality checks failed their own self-check "
+                                   f"({len(golden.failures)} of {golden.checked} known test stories behaved "
+                                   "differently than recorded). The previous edition is kept.",
+                                   report=report, extra={"golden_failures": golden.failures})
+                golden_cases = golden.checked if golden.available else 0
+            gated = run_gates(stories, gate_cfg)
         except Exception as exc:  # noqa: BLE001
             log.exception("quality gates failed")
             return _failed(paths, prefs, trigger, started, now_fn, "failed", EXIT_FAILED,
@@ -435,7 +452,7 @@ async def _attempt(paths: DataPaths, prefs: DailyPrefs, store: EditionStore, *, 
         for r in gated.quarantined:
             log.info("quarantined #%d %s: %s", r.rank, r.headline[:80], ",".join(r.reasons))
         quality = QualityReport(stories_accepted=len(gated.accepted), stories_quarantined=len(gated.quarantined),
-                                reason_counts=gated.reason_counts())
+                                reason_counts=gated.reason_counts(), golden_cases=golden_cases)
         stories = selection.stories
     completed = now_fn()
     edition = assemble_edition(report, selection, prefs, started=started, completed=completed,

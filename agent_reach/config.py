@@ -62,6 +62,22 @@ DEFAULT_GOOGLE_NEWS_SECTIONS: tuple[str, ...] = (
 )
 
 
+#: Words a Title Case headline keeps capitalised when it is put in sentence case (``daily/headlines.py``); the
+#: story's own key names and any word its reports write capitalised mid-sentence are kept as well.
+DEFAULT_HEADLINE_KEEP_WORDS = (
+    "AI", "AP", "BBC", "CEO", "CIA", "CNN", "CPU", "DOJ", "EU", "FBI", "FDA", "FCC", "GDP", "GPU", "GOP", "ICE",
+    "IMF", "IRS", "NASA", "NATO", "NBA", "NFL", "NHL", "MLB", "NYC", "OpenAI", "SEC", "UK", "UN", "US", "USA",
+    "WHO", "iPhone", "iPad", "macOS", "iOS", "YouTube", "GitHub", "Nobel", "Pentagon", "Congress", "Senate",
+    "Kremlin", "God", "Covid", "COVID-19", "Wi-Fi", "I",
+)
+#: Openers a publisher adds to draw a click (matched case-insensitively at the start of a headline, with the
+#: punctuation and 'as'/'but'/'and' after them); removed only when at least four words remain.
+DEFAULT_HEADLINE_BAIT_OPENERS = (
+    r"we might be cooked", r"you (?:won't|will not|wont) (?:even )?believe", r"you'll (?:never|not) believe",
+    r"(?:wow|omg|yikes|whoa|woah|oof|yowza)", r"this changes everything", r"what happens next",
+    r"(?:you )?(?:need|have) to see this", r"here's why",
+)
+
 #: See ``Settings.leak_patterns``. 'Exceptions that require judgment' is the micro1 case of October 10, 2026.
 DEFAULT_LEAK_PATTERNS = (
     r"exceptions? that require judg(?:e)?ment",
@@ -136,7 +152,12 @@ class Settings(BaseSettings):
     # Developer switch for the offline test world, whose synthetic one-line summaries would all be 'thin'
     # (tests/conftest.py turns it off; the app never does).
     gates_enabled: bool = True
+    # Self-check of the gates against tests/golden before each publication (daily/golden.py); a failure keeps the
+    # previous edition. Developer switch for tests that deliberately bend a gate setting.
+    golden_check_enabled: bool = True
     leak_patterns: list[str] = Field(default_factory=lambda: list(DEFAULT_LEAK_PATTERNS))
+    headline_keep_words: list[str] = Field(default_factory=lambda: list(DEFAULT_HEADLINE_KEEP_WORDS))
+    headline_bait_openers: list[str] = Field(default_factory=lambda: list(DEFAULT_HEADLINE_BAIT_OPENERS))
     gate_min_summary_words: int = Field(default=15, ge=1, le=200)
     gate_max_headline_overlap: float = Field(default=0.60, ge=0.0, le=1.0)  # share of the summary's content words
 

@@ -153,6 +153,7 @@ def test_refresh_holds_back_failing_stories_and_says_so(daily_env, monkeypatch):
 
     monkeypatch.setenv("AGENT_REACH_GATES_ENABLED", "1")
     monkeypatch.setenv("AGENT_REACH_GATE_MIN_SUMMARY_WORDS", "1")
+    monkeypatch.setenv("AGENT_REACH_GOLDEN_CHECK_ENABLED", "0")  # (min words 1 would, rightly, fail the golden 'thin' case)
     out = R.refresh(daily_env.paths, trigger="manual", force=True, ollama_probe=lambda p: OllamaUp())
     assert out.code == R.EXIT_PUBLISHED, out.message
     ed = EditionStore(daily_env.paths).load_latest().edition
@@ -176,7 +177,128 @@ def test_a_broken_gate_keeps_the_previous_edition(daily_env, monkeypatch):
     from tests.daily_fakes import OllamaUp
 
     monkeypatch.setenv("AGENT_REACH_GATES_ENABLED", "1")
+    monkeypatch.setenv("AGENT_REACH_GOLDEN_CHECK_ENABLED", "0")
     monkeypatch.setattr(gates, "run_gates", lambda *a, **k: 1 / 0)
     out = R.refresh(daily_env.paths, trigger="manual", force=True, ollama_probe=lambda p: OllamaUp())
     assert out.code != R.EXIT_PUBLISHED and "quality checks could not run" in out.message
+    assert EditionStore(daily_env.paths).load_latest().edition is None
+
+
+# ------------------------------------------------------------------------------ headline normalization
+from agent_reach.daily.headlines import HeadlineConfig, normalize_headline  # noqa: E402
+
+HCFG = HeadlineConfig.from_settings()
+PROSE = ("Ferry workers in Norvale walked out on Tuesday in a dispute over pay, halting service on the island routes. "
+         "The union said the strike would continue until the operator improved its offer, and the island council "
+         "urged talks. Residents said the island service is vital for supplies and school transport every day.")
+
+
+def test_the_vibe_coded_headline_loses_its_bait_opener_and_title_case():
+    prose = "The browser versions of Halo and the game Vice City and Hit And Run load in a tab, the developer said."
+    out = normalize_headline(VIBE, vouching_text=prose, cfg=HCFG)
+    assert not out.lower().startswith("we might be cooked")
+    assert out.startswith("These ") and "ports of Halo" in out and "seem to work perfectly" in out
+    assert "GTA: Vice City" in out  # acronym and name kept
+
+
+def test_title_case_becomes_sentence_case_but_names_survive():
+    h = "Norvale Ferry Strike Halts Island Service as Workers Walk Out!"
+    assert normalize_headline(h, vouching_text=PROSE, cfg=HCFG) == "Norvale ferry strike halts island service as workers walk out"
+    # nothing to show 'Island' is not a name: it keeps its capital rather than risk 'norvale'
+    assert "Norvale" in normalize_headline(h, cfg=HCFG)
+
+
+def test_allowlist_acronyms_and_key_names_are_kept():
+    out = normalize_headline("FBI Says Nobel Winner Joins NASA And OpenAI In US Probe", vouching_text=PROSE, cfg=HCFG)
+    assert out == "FBI says Nobel winner joins NASA and OpenAI in US probe"
+    assert normalize_headline("Mayor Okafor Resigns After Audit Finds Missing Funds", names=["Okafor"],
+                              vouching_text=PROSE, cfg=HCFG) == "Mayor Okafor resigns after audit finds missing funds"
+
+
+def test_quoted_claims_are_never_altered():
+    out = normalize_headline('Lawyer Says "The Agents Did Not Identify Themselves" In Court Filing!', vouching_text=PROSE, cfg=HCFG)
+    assert '"The Agents Did Not Identify Themselves"' in out and not out.endswith("!")
+
+
+def test_trailing_bait_punctuation():
+    assert normalize_headline("Is this the end of AI??", cfg=HCFG) == "Is this the end of AI"
+    assert normalize_headline("Company says it will keep going...", cfg=HCFG) == "Company says it will keep going"
+    assert normalize_headline("Will the Fed cut rates this year?", cfg=HCFG) == "Will the Fed cut rates this year?"
+
+
+def test_sentence_case_headlines_and_short_remainders_are_left_alone():
+    h = "Fed holds rates steady, signals one cut this year"
+    assert normalize_headline(h, cfg=HCFG) == h
+    assert normalize_headline("Wow! Big win", cfg=HCFG) == "Wow! Big win"  # fewer than four words would remain
+
+
+def test_normalization_is_idempotent_and_never_empty():
+    for h in (VIBE, MICRO1, ICE, GIGABYTE, "!!!"):
+        once = normalize_headline(h, vouching_text=PROSE, cfg=HCFG)
+        assert once and normalize_headline(once, vouching_text=PROSE, cfg=HCFG) == once
+
+
+def test_the_published_edition_and_its_feed_carry_the_normalized_headline(monkeypatch):
+    from agent_reach.daily.publish import public_edition
+    from agent_reach.pipeline import summary_checks
+
+    bait = "We Might Be Cooked, As Ferry Workers In Norvale Walk Out Over Pay Again!"
+    monkeypatch.setattr(summary_checks, "verified_story", lambda story: (bait, list(story.sentences)))
+    ed = _edition("2026-10-07-rc12d2-r2.json")
+    public = public_edition(ed)
+    heads = [s["headline"] for s in public["stories"]]
+    assert heads and all(h.startswith("Ferry workers in Norvale walk out over pay again") for h in heads), heads[:2]
+
+
+# ------------------------------------------------------------------------------ golden set (Phase 2)
+from agent_reach.daily import golden  # noqa: E402
+
+
+def test_the_golden_set_has_the_october_10_cases_in_both_shapes_and_passes():
+    cases = golden.load_cases()
+    ids = {c["id"] for c in cases}
+    assert 20 <= len(cases) <= 30 and len(ids) == len(cases)
+    assert {"oct10-gigabyte-live", "oct10-gigabyte-export", "oct10-ai-safety", "oct10-micro1", "oct10-ice-fresno",
+            "oct10-vibe-export", "oct10-vibe-live"} <= ids
+    verbatim = {c["id"]: c for c in cases if c["source"].startswith("2026-10-10")}
+    assert verbatim["oct10-gigabyte-live"]["headline"] == GIGABYTE and verbatim["oct10-gigabyte-live"]["summary"] == []
+    assert verbatim["oct10-gigabyte-export"]["summary"] == [GIGABYTE + "."]
+    assert verbatim["oct10-vibe-export"]["headline"] == VIBE and verbatim["oct10-vibe-live"]["summary"] == []
+    assert verbatim["oct10-vibe-export"]["normalized_headline"] == (
+        "These Vibe-Coded web browser ports of Halo, the Simpsons: Hit and Run, and GTA: Vice City seem to work perfectly")
+    assert {c["expect"] for c in cases} == {"accept", "quarantine"}
+    report = golden.run_golden()
+    assert report.available and report.ok, report.failures
+    assert report.checked == len(cases)
+
+
+def test_the_golden_set_notices_a_gate_that_stops_catching_a_defect():
+    # the leak patterns emptied: the micro1 prompt fragment is no longer caught
+    loose = GateConfig(min_summary_words=CFG.min_summary_words, max_headline_overlap=CFG.max_headline_overlap,
+                       leak_patterns=())
+    report = golden.run_golden(gate_cfg=loose)
+    assert not report.ok and any(f.startswith("oct10-micro1") for f in report.failures)
+    # a gate that rejects everything fails the 'accept' cases
+    strict = GateConfig(min_summary_words=500, max_headline_overlap=CFG.max_headline_overlap,
+                        leak_patterns=CFG.leak_patterns)
+    assert any("should pass" in f for f in golden.run_golden(gate_cfg=strict).failures)
+
+
+def test_cli_golden_reports_and_sets_the_exit_code(capsys):
+    from agent_reach.daily.__main__ import main
+
+    assert main(["--golden"]) == 0
+    assert "golden cases behave as recorded" in capsys.readouterr().out
+
+
+def test_a_golden_failure_keeps_the_previous_edition(daily_env, monkeypatch):
+    """The self-check runs before anything is assembled: if the gates have regressed, no edition is written."""
+    from agent_reach.daily import refresh as R
+    from agent_reach.daily.store import EditionStore
+    from tests.daily_fakes import OllamaUp
+
+    monkeypatch.setenv("AGENT_REACH_GATES_ENABLED", "1")
+    monkeypatch.setenv("AGENT_REACH_LEAK_PATTERNS", "[]")  # the micro1 case now slips through
+    out = R.refresh(daily_env.paths, trigger="manual", force=True, ollama_probe=lambda p: OllamaUp())
+    assert out.code != R.EXIT_PUBLISHED and "failed their own self-check" in out.message
     assert EditionStore(daily_env.paths).load_latest().edition is None

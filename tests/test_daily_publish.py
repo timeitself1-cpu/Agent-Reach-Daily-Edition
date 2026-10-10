@@ -144,7 +144,7 @@ def test_public_edition_carries_the_news_and_nothing_private():
     assert pub["edition_date"] == "2026-10-07" and pub["revision"] == 2 and len(pub["stories"]) == 44
     # the model's headline passes the checks against its cited reports (a Title Case headline's every capital is no
     # longer a name its summary must repeat); its summary only restated it, so the headline stands alone
-    assert pub["stories"][0]["headline"] == "Computing Pioneer Margaret Hamilton Dies at 90"
+    assert pub["stories"][0]["headline"] == "Computing pioneer Margaret Hamilton dies at 90"
     assert pub["stories"][0]["summary"] == []
     assert len(pub["top"]) == 8 and {s["category"] for s in pub["sections"]} >= {"News", "Tech", "Science & AI"}
     # publisher excerpts, run ids, feed lists and diagnostics never go up
@@ -405,7 +405,7 @@ def test_archive_search_files_per_month_repair_themselves(daily_paths, tmp_path)
     days = [x["d"] for x in month["stories"]]
     assert days == sorted(days, reverse=True) and set(days) == {"2026-10-07", "2026-10-06"}
     first = month["stories"][0]
-    assert first["h"] == "Computing Pioneer Margaret Hamilton Dies at 90" and first["r"] == 1
+    assert first["h"] == "Computing pioneer Margaret Hamilton dies at 90" and first["r"] == 1
     assert set(first) - {"u", "coverage"} == {"d", "id", "r", "t", "c", "h", "s", "o", "l"} and len(first["s"]) <= P.SEARCH_SUMMARY_CHARS + 1
     assert first['coverage']['level'] == first['l']
     assert json.loads((tmp_path / "site/search/2026-09.json").read_text(encoding="utf-8"))["stories"][0]["d"] == "2026-09-30"
@@ -530,3 +530,20 @@ def test_a_connection_test_keeps_the_last_failure_visible(daily_paths):
     msg = P.connected_message(daily_paths)
     assert "the last attempt, made before this test: Publication failed: no access key is saved." in msg
     assert msg.endswith("Click Publish latest edition to try again.")
+
+
+def test_headline_restyling_never_moves_a_permalink_or_a_feed_guid(monkeypatch):
+    """Anchors (#story-<id>) come from the story's evidence fingerprint and the RSS guid from the edition's address,
+    never from the headline text, so the neutral-headline change (Oct 10) breaks no existing link."""
+    ed = real_edition()
+    new = P.public_edition(ed)
+    monkeypatch.setattr(P, "normalize_headline", lambda headline, **kw: headline)
+    old = P.public_edition(ed)
+    assert [s["headline"] for s in new["stories"]] != [s["headline"] for s in old["stories"]], "nothing was restyled"
+    assert [s["id"] for s in new["stories"]] == [s["id"] for s in old["stories"]]
+    assert new["top"] == old["top"]
+    anchors = lambda pub: sorted(set(__import__("re").findall(r'id="(story-[0-9a-f]+)"', P.edition_page(pub).decode())))
+    assert anchors(new) == anchors(old) and len(anchors(new)) == len(new["stories"])
+    guids = lambda pub: sorted(__import__("re").findall(r"<guid[^>]*>([^<]+)</guid>",
+                               P.feed_xml({"editions": [P.index_entry(pub)]}).decode()))
+    assert guids(new) == guids(old) and guids(new)[0].endswith("/daily/2026-10-07/")
