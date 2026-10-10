@@ -5,19 +5,19 @@
  "editions": [
   {
    "date": "2026-10-10",
-   "revision": 5,
-   "generated_utc": "2026-10-10T15:01:32Z",
-   "stories": 19,
-   "lead": "Hurricane Isaias updates: Isaias downgraded to Post-tropical cyclone",
+   "revision": 6,
+   "generated_utc": "2026-10-10T16:14:08Z",
+   "stories": 24,
+   "lead": "What to expect as Hurricane Isaias bears down on the Gulf Coast as a major storm",
    "headlines": [
-    "Trump announces major diesel deal with Putin, infuriating Ukraine",
+    "Trump announces deal for Russian diesel to ease fuel flows",
     "Yandex Takes a Second Data Center Hit in 48 Hours",
     "India cracks down on youth protests as anger grows against Modi and election chief"
    ],
    "sections": {
-    "News": 8,
+    "News": 9,
     "Tech": 3,
-    "Science & AI": 6,
+    "Science & AI": 10,
     "Sports": 1,
     "Entertainment": 1
    }

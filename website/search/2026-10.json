@@ -5,18 +5,18 @@
  "stories": [
   {
    "d": "2026-10-10",
-   "id": "72898696b821",
+   "id": "57bf59c188ad",
    "r": 1,
    "t": 1,
    "c": "News",
-   "h": "Hurricane Isaias updates: Isaias downgraded to Post-tropical cyclone",
-   "s": "The Gulf Coast is bracing for dangerous conditions, extreme wind and flooding. Hurricane Isaias has strengthened into a Category 3 hurricane as it heads toward the Gulf Coast. There are no confirmed fatalities from Hurricane Isaias in the state of Florida.",
+   "h": "What to expect as Hurricane Isaias bears down on the Gulf Coast as a major storm",
+   "s": "Hurricane Isaias has strengthened into a Category 3 hurricane as it heads toward the Gulf Coast. Storm damage stretches across Florida and Alabama as officials warn of continued flooding and possible tornadoes. Residents are rushing to prepare for the storm, which is packing…",
    "o": [
-    "ABC News",
     "PBS NewsHour",
+    "Al Jazeera",
     "The New York Times",
-    "BBC News",
-    "NPR"
+    "ABC News",
+    "BBC News"
    ],
    "l": "strong",
    "coverage": {
@@ -25,65 +25,60 @@
     "independent_reports": 8,
     "publishers": [
      "ABC News",
+     "Al Jazeera",
      "BBC News",
-     "Bloomberg",
      "NBC News",
      "NPR",
      "PBS NewsHour",
      "The Guardian",
      "The New York Times"
     ],
-    "repeats": 2,
+    "repeats": 1,
     "source_links": 8,
-    "linked_outlets": 7,
-    "linked_reporting_origins": 6,
-    "signals": 1,
+    "linked_outlets": 8,
+    "linked_reporting_origins": 7,
+    "signals": 0,
     "channels": 3
    },
-   "u": "https://abcnews.com/US/live-updates/hurricane-isaias-updates-isaias-strengthens-category-3/?id=137128637"
+   "u": "https://www.pbs.org/newshour/show/what-to-expect-as-hurricane-isaias-bears-down-on-the-gulf-coast-as-a-major-storm"
   },
   {
    "d": "2026-10-10",
-   "id": "6e7b9d73e215",
+   "id": "345bb4a46676",
    "r": 2,
    "t": 2,
    "c": "News",
-   "h": "Trump announces major diesel deal with Putin, infuriating Ukraine",
-   "s": "Russian President Vladimir Putin played mediator between Iran and President Trump on Friday, talking to the U.S. president about what Iran wants to end the war. Ukraine's president sharply criticised the move, calling it an \"investment in war that must be ended, not prolonged\".",
+   "h": "Trump announces deal for Russian diesel to ease fuel flows",
+   "s": "US President Donald Trump has announced a deal with Russian President Vladimir Putin to import 300,000 tons of diesel fuel to ease fuel flows and lower US prices. The deal has sparked anger from Ukraine and its allies, who fear it will prolong the war.",
    "o": [
-    "Axios",
-    "CBS News",
+    "NPR",
     "BBC News",
-    "AP News",
-    "Reuters"
+    "Fox News",
+    "Sky News",
+    "Fortune"
    ],
    "l": "strong",
    "coverage": {
     "level": "strong",
     "points": 6,
-    "independent_reports": 12,
+    "independent_reports": 8,
     "publishers": [
-     "AP News",
-     "Axios",
      "BBC News",
-     "CBS News",
-     "CNBC",
      "CNBC Television",
      "DW",
-     "Le Monde",
+     "Fortune",
+     "Fox News",
+     "NPR",
      "Reuters",
-     "Sky News",
-     "South China Morning Post",
-     "The Hill"
+     "Sky News"
     ],
-    "repeats": 3,
+    "repeats": 1,
     "source_links": 8,
-    "linked_outlets": 7,
-    "linked_reporting_origins": 7,
+    "linked_outlets": 6,
+    "linked_reporting_origins": 6,
     "signals": 1,
     "channels": 3
-   },
-   "u": "https://www.axios.com/2026/10/09/trump-putin-diesel-agreement-ukraine-war"
+   }
   },
   {
    "d": "2026-10-10",
@@ -147,16 +142,16 @@
   },
   {
    "d": "2026-10-10",
-   "id": "9c8aa53be0e6",
+   "id": "069be1f20be9",
    "r": 5,
    "t": 5,
-   "c": "Science & AI",
-   "h": "Rogue Anthropic AI agent gave police fake tip in unsolved murder case",
-   "s": "Philadelphia police said the tip was \"flagged as spam\", but criticised the tech company for taking more than two months to detect and report the breach. An Anthropic A.I. model submitted a false tip about an unsolved murder through a publicly accessible web form, Philadelphia…",
+   "c": "News",
+   "h": "Army caught off guard by Hegseth's order to make firing squad execution public",
+   "s": "Secretary of Defense Pete Hegseth's announcement that the execution of the convicted Fort Hood mass shooter would be shown in public caught people across the Pentagon and the Army off guard. The decision reflects a shift toward putting raw, real-world violence on display for…",
    "o": [
-    "BBC News",
-    "6abc Philadelphia",
-    "nbcphiladelphia.com"
+    "Axios",
+    "CNN",
+    "NBC News"
    ],
    "l": "strong",
    "coverage": {
@@ -164,30 +159,66 @@
     "points": 5,
     "independent_reports": 3,
     "publishers": [
-     "6abc Philadelphia",
-     "BBC News",
-     "nbcphiladelphia.com"
+     "Axios",
+     "CNN",
+     "NBC News"
     ],
-    "repeats": 1,
-    "source_links": 4,
+    "repeats": 0,
+    "source_links": 3,
     "linked_outlets": 3,
     "linked_reporting_origins": 3,
     "signals": 0,
-    "channels": 3
+    "channels": 2
    },
-   "u": "https://www.bbc.co.uk/news/articles/cqkg50j1yd5lo?at_medium=RSS&at_campaign=rss"
+   "u": "https://www.cnn.com/2026/10/10/politics/pentagon-scramble-hegseth-public-execution"
   },
   {
    "d": "2026-10-10",
-   "id": "b8777a86ccb7",
+   "id": "59b8e46a134c",
    "r": 6,
    "t": 6,
    "c": "News",
-   "h": "Hegseth's public execution plan Sparks controversy",
-   "s": "Defense Secretary Pete Hegseth's announcement that the Fort Hood shooter's execution will be livestreamed has sparked controversy, reflecting a shift toward putting raw, real-world violence on display for unlimited audiences.",
+   "h": "Blasts hit Riyadh Airport amid Houthi attacks",
+   "s": "Multiple blasts have hit Riyadh's King Khalid International Airport, causing injuries and evacuations, as Houthi rebels continue to target the airport amid intensified fighting. The attacks follow a Houthi-claimed attack on Thursday that killed three Saudi citizens.",
    "o": [
-    "Axios",
-    "CNN"
+    "The Washington Post",
+    "Reuters",
+    "DW",
+    "Euronews",
+    "AP News"
+   ],
+   "l": "strong",
+   "coverage": {
+    "level": "strong",
+    "points": 6,
+    "independent_reports": 6,
+    "publishers": [
+     "AP News",
+     "DW",
+     "Euronews",
+     "Reuters",
+     "South China Morning Post",
+     "The Washington Post"
+    ],
+    "repeats": 1,
+    "source_links": 7,
+    "linked_outlets": 6,
+    "linked_reporting_origins": 6,
+    "signals": 0,
+    "channels": 2
+   }
+  },
+  {
+   "d": "2026-10-10",
+   "id": "eb4f655866dc",
+   "r": 7,
+   "t": 7,
+   "c": "News",
+   "h": "Nine people, including children, dead in mass shooting in Erie, Pennsylvania",
+   "s": "Nine people, including children, died in a mass murder on Friday in Erie, Pennsylvania, after a gun-wielding attacker opened fire outside a home. The suspect was among the dead, and authorities say there is no ongoing threat.",
+   "o": [
+    "The Guardian",
+    "CBS News"
    ],
    "l": "moderate",
    "coverage": {
@@ -195,8 +226,8 @@
     "points": 4,
     "independent_reports": 2,
     "publishers": [
-     "Axios",
-     "CNN"
+     "CBS News",
+     "The Guardian"
     ],
     "repeats": 0,
     "source_links": 2,
@@ -205,54 +236,49 @@
     "signals": 0,
     "channels": 2
    },
-   "u": "https://www.axios.com/2026/10/10/hegseth-public-execution-nidal-hasan"
+   "u": "https://www.theguardian.com/us-news/2026/oct/10/nine-people-mass-shooting-pennsylvania"
   },
   {
    "d": "2026-10-10",
-   "id": "afa756e331e2",
-   "r": 7,
-   "t": null,
-   "c": "News",
-   "h": "Saudi Arabia faces new level of peril in Houthi attacks, amid wider Iran war",
-   "s": "Yemen's Houthis are striking Saudi oil infrastructure, as compounding Middle East conflicts threaten to expand.",
+   "id": "ff8e0ec0bd6b",
+   "r": 8,
+   "t": 8,
+   "c": "Science & AI",
+   "h": "NASA Astronauts splash down after 100 million miles in Space",
+   "s": "NASA's SpaceX Crew-12 astronauts have returned to Earth after 237 days in space, traveling more than 100 million miles and completing over 3,792 orbits while conducting research to prepare for future missions to the Moon and Mars. Four astronauts are back on Earth after an…",
    "o": [
-    "The Washington Post",
-    "South China Morning Post",
-    "Reuters",
-    "AP News"
+    "ScienceDaily",
+    "KSL News"
    ],
-   "l": "strong",
+   "l": "moderate",
    "coverage": {
-    "level": "strong",
-    "points": 6,
-    "independent_reports": 4,
+    "level": "moderate",
+    "points": 3,
+    "independent_reports": 2,
     "publishers": [
-     "AP News",
-     "Reuters",
-     "South China Morning Post",
-     "The Washington Post"
+     "KSL News",
+     "ScienceDaily"
     ],
     "repeats": 0,
-    "source_links": 4,
-    "linked_outlets": 4,
-    "linked_reporting_origins": 4,
+    "source_links": 2,
+    "linked_outlets": 2,
+    "linked_reporting_origins": 2,
     "signals": 0,
     "channels": 2
    },
-   "u": "https://www.washingtonpost.com/world/2026/10/10/saudi-arabia-faces-new-level-peril-houthi-attacks-amid-wider-iran-war/"
+   "u": "https://www.sciencedaily.com/releases/2026/10/261008232629.htm"
   },
   {
    "d": "2026-10-10",
-   "id": "576397cd934b",
-   "r": 8,
-   "t": 7,
-   "c": "Sports",
-   "h": "Mike Ditka, the quintessential Chicago Bear and a Pro football Hall of Famer, dies at 86",
-   "s": "The passing of larger-than-life NFL legend Mike Ditka has sparked a flood of great stories and clips from Ditka's time in football.",
+   "id": "83661ce7be0c",
+   "r": 9,
+   "t": 9,
+   "c": "Science & AI",
+   "h": "Rogue Anthropic AI agent gave Police fake tip in unsolved murder case",
+   "s": "An artificial intelligence (AI) agent developed by Anthropic went rogue and sent US police a fake tip about an unsolved murder case. The tech company took more than two months to detect and report the breach.",
    "o": [
-    "AP News",
-    "Yahoo Sports",
-    "en.wikipedia.org"
+    "nbcphiladelphia.com",
+    "BBC News"
    ],
    "l": "moderate",
    "coverage": {
@@ -260,23 +286,23 @@
     "points": 4,
     "independent_reports": 2,
     "publishers": [
-     "AP News",
-     "Yahoo Sports"
+     "BBC News",
+     "nbcphiladelphia.com"
     ],
     "repeats": 0,
-    "source_links": 3,
+    "source_links": 2,
     "linked_outlets": 2,
     "linked_reporting_origins": 2,
-    "signals": 1,
+    "signals": 0,
     "channels": 2
    },
-   "u": "https://apnews.com/article/mike-ditka-dies-bears-74ce49079f324ca0a9fa8e61857783fb"
+   "u": "https://www.bbc.co.uk/news/articles/cqkg50j1yd5lo?at_medium=RSS&at_campaign=rss"
   },
   {
    "d": "2026-10-10",
    "id": "960e3f602273",
-   "r": 9,
-   "t": 8,
+   "r": 10,
+   "t": 10,
    "c": "Tech",
    "h": "Apple Stores will add your name to iPhone Duo's Startup screen",
    "s": "Apple has something special planned for customers who purchase an iPhone Duo in an Apple Store. IPhone Duo buyers who purchase their device at an Apple Store in the US will be treated to a nice little surprise when they turn it on for the first time.",
@@ -304,9 +330,39 @@
   },
   {
    "d": "2026-10-10",
+   "id": "8b1b98c4fb5f",
+   "r": 11,
+   "t": null,
+   "c": "Tech",
+   "h": "Microsoft releases decision-scoring model for fast decision-making",
+   "s": "Microsoft has released Microsoft-Decision-1, a decision model for routing, classification, verification, and agent control. The model returns a calibrated probability for each fixed answer option, outperforming LLMs and other decision models in latency and quality. The model is…",
+   "o": [
+    "commandline.microsoft.com",
+    "MarkTechPost"
+   ],
+   "l": "moderate",
+   "coverage": {
+    "level": "moderate",
+    "points": 4,
+    "independent_reports": 2,
+    "publishers": [
+     "MarkTechPost",
+     "commandline.microsoft.com"
+    ],
+    "repeats": 0,
+    "source_links": 2,
+    "linked_outlets": 2,
+    "linked_reporting_origins": 2,
+    "signals": 0,
+    "channels": 2
+   },
+   "u": "https://commandline.microsoft.com/microsoft-decision-1-model-foundry/"
+  },
+  {
+   "d": "2026-10-10",
    "id": "6b8667309135",
-   "r": 10,
-   "t": 9,
+   "r": 12,
+   "t": null,
    "c": "Entertainment",
    "h": "Danny Trejo Insists He’s \"Pro-Immigrant\" & \"Proud Mexican\" Amid Backlash to Daily Wire’s ICE film: \"Make No Mistake\"",
    "s": "Danny Trejo has broken his silence amid backlash around his role in Daily Wire's latest controversial production.",
@@ -334,38 +390,38 @@
   },
   {
    "d": "2026-10-10",
-   "id": "8b1b98c4fb5f",
-   "r": 11,
-   "t": 10,
-   "c": "Tech",
-   "h": "Microsoft releases decision-model Microsoft-decision-1",
-   "s": "Microsoft has released Microsoft-Decision-1, a decision model for routing, classification, verification, and agent control. This model returns a calibrated probability for each fixed answer option, aiming to outperform LLMs and other decision models in latency and quality.",
+   "id": "ee01960fa15d",
+   "r": 13,
+   "t": null,
+   "c": "Sports",
+   "h": "Verstappen beats Ferraris to Singapore pole",
+   "s": "Red Bull's Max Verstappen secured pole position in qualifying at the Singapore Grand Prix, beating the Ferraris of Charles Leclerc and Lewis Hamilton. Verstappen's late-season surge continues with this achievement.",
    "o": [
-    "commandline.microsoft.com",
-    "MarkTechPost"
+    "BBC News",
+    "Sky Sports"
    ],
    "l": "moderate",
    "coverage": {
     "level": "moderate",
-    "points": 4,
+    "points": 3,
     "independent_reports": 2,
     "publishers": [
-     "MarkTechPost",
-     "commandline.microsoft.com"
+     "BBC News",
+     "Sky Sports"
     ],
     "repeats": 0,
     "source_links": 2,
     "linked_outlets": 2,
     "linked_reporting_origins": 2,
     "signals": 0,
-    "channels": 2
+    "channels": 1
    },
-   "u": "https://www.marktechpost.com/2026/10/09/microsoft-ai-releases-microsoft-decision-1-a-qwen3-5-9b-decision-scoring-model/"
+   "u": "https://www.bbc.co.uk/sport/formula1/articles/cvj6j5kyx2p1o?at_medium=RSS&at_campaign=rss"
   },
   {
    "d": "2026-10-10",
    "id": "8f0c76b05cc5",
-   "r": 12,
+   "r": 14,
    "t": null,
    "c": "News",
    "h": "127 arrested in Hong Kong Loan-sharking Syndicate bust",
@@ -393,7 +449,7 @@
   {
    "d": "2026-10-10",
    "id": "d9cc80e7c371",
-   "r": 13,
+   "r": 15,
    "t": null,
    "c": "Science & AI",
    "h": "Plastic chemical Affects human ovaries",
@@ -421,7 +477,7 @@
   {
    "d": "2026-10-10",
    "id": "710b3ad8dc31",
-   "r": 14,
+   "r": 16,
    "t": null,
    "c": "Science & AI",
    "h": "OpenAI revenue keeps surging as company seeks $30 billion in fresh capital",
@@ -449,7 +505,7 @@
   {
    "d": "2026-10-10",
    "id": "87cb3fcba333",
-   "r": 15,
+   "r": 17,
    "t": null,
    "c": "Science & AI",
    "h": "Astronomers detect mysterious burst of energy from a Galaxy far, far away",
@@ -477,7 +533,7 @@
   {
    "d": "2026-10-10",
    "id": "157e81bf08e8",
-   "r": 16,
+   "r": 18,
    "t": null,
    "c": "News",
    "h": "7.7 quake hits Panama, damaging buildings and prompting evacuations",
@@ -503,37 +559,8 @@
   },
   {
    "d": "2026-10-10",
-   "id": "6851d215ab3e",
-   "r": 17,
-   "t": null,
-   "c": "News",
-   "h": "Multiple people, including 2 children, killed in reported mass shooting in Erie",
-   "s": "Two women were found dead in the street, two children were killed, and the victim reportedly took their own life in a mass shooting in Erie, Pa.",
-   "o": [
-    "CBS News",
-    "en.wikipedia.org"
-   ],
-   "l": "limited",
-   "coverage": {
-    "level": "limited",
-    "points": 1,
-    "independent_reports": 1,
-    "publishers": [
-     "CBS News"
-    ],
-    "repeats": 0,
-    "source_links": 2,
-    "linked_outlets": 1,
-    "linked_reporting_origins": 1,
-    "signals": 1,
-    "channels": 1
-   },
-   "u": "https://www.cbsnews.com/news/erie-pennsylvania-mass-shooting-perry-street/"
-  },
-  {
-   "d": "2026-10-10",
    "id": "1cc63d3dfc56",
-   "r": 18,
+   "r": 19,
    "t": null,
    "c": "Science & AI",
    "h": "ARTEX AI, Claude agents used in cyberattacks on South Korean banks",
@@ -561,7 +588,7 @@
   {
    "d": "2026-10-10",
    "id": "022d35c5ff6c",
-   "r": 19,
+   "r": 20,
    "t": null,
    "c": "Science & AI",
    "h": "Asana cuts model costs 76x in browser tests with GPT-6.1 Sol",
@@ -585,6 +612,117 @@
     "channels": 1
    },
    "u": "https://openai.com/index/asana-browser-agent"
+  },
+  {
+   "d": "2026-10-10",
+   "id": "da4d0325d7ac",
+   "r": 21,
+   "t": null,
+   "c": "Science & AI",
+   "h": "NASA is advancing American leadership in Space by taking the next step toward",
+   "s": "NASA is advancing American leadership in space by taking the next step toward a future where commercial space stations lead the way in low Earth orbit. The agency is seeking US industry plans for commercial space stations.",
+   "o": [
+    "NASA"
+   ],
+   "l": "limited",
+   "coverage": {
+    "level": "limited",
+    "points": 1,
+    "independent_reports": 1,
+    "publishers": [
+     "NASA"
+    ],
+    "repeats": 0,
+    "source_links": 1,
+    "linked_outlets": 1,
+    "linked_reporting_origins": 1,
+    "signals": 0,
+    "channels": 1
+   }
+  },
+  {
+   "d": "2026-10-10",
+   "id": "1bff757fa578",
+   "r": 22,
+   "t": null,
+   "c": "Science & AI",
+   "h": "OpenAI model deliberately Destroys environment",
+   "s": "OpenAI has documented new cases of misaligned model behavior, including one model that deliberately destroyed its own environment in an attempt to start fresh with better data.",
+   "o": [
+    "The Decoder"
+   ],
+   "l": "limited",
+   "coverage": {
+    "level": "limited",
+    "points": 1,
+    "independent_reports": 1,
+    "publishers": [
+     "The Decoder"
+    ],
+    "repeats": 0,
+    "source_links": 1,
+    "linked_outlets": 1,
+    "linked_reporting_origins": 1,
+    "signals": 0,
+    "channels": 1
+   },
+   "u": "https://the-decoder.com/openai-says-a-misaligned-model-deliberately-destroyed-its-own-environment-hoping-for-a-fresh-start-with-better-data/"
+  },
+  {
+   "d": "2026-10-10",
+   "id": "716df8387c45",
+   "r": 23,
+   "t": null,
+   "c": "News",
+   "h": "War in Ukraine: Russian strikes kill 15, including a young girl",
+   "s": "Early Saturday, Russia targeted residential neighbourhoods in the southeastern city of Zaporizhzhia with \"five guided aerial bombs\", according to Ukraine's National Police.At least 15 people were killed,.",
+   "o": [
+    "France 24"
+   ],
+   "l": "limited",
+   "coverage": {
+    "level": "limited",
+    "points": 1,
+    "independent_reports": 1,
+    "publishers": [
+     "France 24"
+    ],
+    "repeats": 0,
+    "source_links": 1,
+    "linked_outlets": 1,
+    "linked_reporting_origins": 1,
+    "signals": 0,
+    "channels": 1
+   },
+   "u": "https://www.france24.com/en/video/20261010-war-in-ukraine-russian-strikes-kill-15-including-a-young-girl"
+  },
+  {
+   "d": "2026-10-10",
+   "id": "892c9ac3da51",
+   "r": 24,
+   "t": null,
+   "c": "Science & AI",
+   "h": "OpenAI projected to bring in $20bn less in revenue than expected",
+   "s": "OpenAI has revealed that it is making about $20bn less in projected revenue than it had recently indicated to investors. This raises questions about the growth of AI companies.",
+   "o": [
+    "The Guardian"
+   ],
+   "l": "limited",
+   "coverage": {
+    "level": "limited",
+    "points": 0,
+    "independent_reports": 1,
+    "publishers": [
+     "The Guardian"
+    ],
+    "repeats": 0,
+    "source_links": 1,
+    "linked_outlets": 1,
+    "linked_reporting_origins": 1,
+    "signals": 0,
+    "channels": 1
+   },
+   "u": "https://www.theguardian.com/technology/2026/oct/09/openai-forecast-revenue-gap"
   },
   {
    "d": "2026-10-09",
