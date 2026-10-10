@@ -10,6 +10,9 @@ from tests.fakes import FakeOllama, MockAsyncClient
 # The suite also runs inside the user's installed folder (the self-test), where the app may update itself: no test,
 # and no app process a test starts, ever checks for or installs an update (tests/test_daily_updater.py lifts this).
 os.environ["AGENT_REACH_NO_UPDATE"] = "1"
+# The fake world's one-line synthetic summaries would all be quarantined as 'thin'; tests/test_gates.py turns the
+# pre-publish gates back on where it checks them end to end.
+os.environ.setdefault("AGENT_REACH_GATES_ENABLED", "0")
 
 
 @pytest.fixture

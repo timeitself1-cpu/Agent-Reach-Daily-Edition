@@ -410,10 +410,37 @@ async def _attempt(paths: DataPaths, prefs: DailyPrefs, store: EditionStore, *, 
     from agent_reach.pipeline.summary_checks import verified_story
     for story in stories:
         story.headline, story.sentences = verified_story(story)
+    # Pre-publish gates (daily/gates.py): after the source check above, before anything is assembled or saved.
+    # A gate that breaks fails the attempt (the last good edition stays); it never lets stories through unchecked.
+    quality = None
+    if settings.gates_enabled:
+        progress("gates", "Checking every story before publishing")
+        try:
+            from agent_reach.daily.edition import QualityReport
+            from agent_reach.daily.gates import GateConfig, run_gates, write_quarantine
+
+            gated = run_gates(stories, GateConfig.from_settings(settings))
+        except Exception as exc:  # noqa: BLE001
+            log.exception("quality gates failed")
+            return _failed(paths, prefs, trigger, started, now_fn, "failed", EXIT_FAILED,
+                           f"No new edition: the quality checks could not run ({type(exc).__name__}). "
+                           "The previous edition is kept.", report=report, tb=traceback.format_exc())
+        try:
+            write_quarantine(paths.root, central_date(started), report.run_id, gated)
+        except OSError:
+            log.exception("the quarantine log could not be written")  # the counts are still in the edition
+        keep = {id(s) for s in gated.accepted}
+        selection.stories = list(gated.accepted)
+        selection.top = [s for s in selection.top if id(s) in keep]
+        for r in gated.quarantined:
+            log.info("quarantined #%d %s: %s", r.rank, r.headline[:80], ",".join(r.reasons))
+        quality = QualityReport(stories_accepted=len(gated.accepted), stories_quarantined=len(gated.quarantined),
+                                reason_counts=gated.reason_counts())
+        stories = selection.stories
     completed = now_fn()
     edition = assemble_edition(report, selection, prefs, started=started, completed=completed,
                                trigger=trigger, config_fingerprint=config_fingerprint(report.effective_config),
-                               brief_stats=brief_stats)
+                               brief_stats=brief_stats, quality=quality)
     same_day, _ = store.load_date(edition.edition_date)  # the edition this one would replace as a new revision
     decision = evaluate_publication(edition, prefs, allow_extractive=allow_extractive, same_day=same_day)
     if not decision.publishable:

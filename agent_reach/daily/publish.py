@@ -467,6 +467,10 @@ def public_edition(edition: DailyEdition, hidden: list[str] | None = None,
         "models": {"summaries": edition.model.llm_model, "grouping": edition.model.embed_model_used or None},
         "summaries": edition.model.summaries,
         "reports_read": edition.accounting.ingested,
+        # what the pre-publish gates held back (counts only; the stories stay in the PC's quarantine log)
+        "quality": ({"stories_accepted": edition.quality.stories_accepted,
+                     "stories_quarantined": edition.quality.stories_quarantined,
+                     "reason_counts": dict(edition.quality.reason_counts)} if edition.quality else None),
         "sources_answered": edition.coverage.sources_ok, "sources_tried": edition.coverage.sources_attempted,
         "sources": public_sources(edition.source_health),
         "compared_with": ({"edition_date": changes.compared_edition_date, "revision": changes.compared_revision}

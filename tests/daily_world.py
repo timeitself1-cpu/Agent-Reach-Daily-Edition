@@ -30,6 +30,9 @@ import time
 
 import httpx
 
+# one-line synthetic summaries would all be held back by the pre-publish quality gates (tests/test_gates.py has its own)
+os.environ.setdefault("AGENT_REACH_GATES_ENABLED", "0")
+
 
 def _env_float(name: str) -> float | None:
     raw = os.environ.get(name, "").strip()
