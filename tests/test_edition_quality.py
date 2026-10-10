@@ -99,6 +99,38 @@ def test_coverage_larger_than_publishers_is_a_failure():
     assert checks(f, "coverage_exceeds_sources")[0]["tier"] == eq.FAILURE
 
 
+def test_signal_only_is_a_failure():
+    s = story("a", "OpenAI tools news", ["Summary of news."], sources=[src("Signal item", kind="signal", outlet="TechCrunch")])
+    f = eq.check_edition("d", edition([s]))
+    assert checks(f, "signal_only_no_report")[0]["tier"] == eq.FAILURE
+
+
+def test_duplicate_source_url_is_a_failure():
+    s = story("a", "News item", ["Summary text."], sources=[
+        src("Title A", url="https://example.com/item"),
+        src("Title B", url="https://example.com/item")
+    ])
+    f = eq.check_edition("d", edition([s]))
+    assert checks(f, "duplicate_source_url")[0]["tier"] == eq.FAILURE
+
+
+def test_duplicate_outlet_report_is_a_review_warning():
+    s = story("a", "Big report", ["Summary details."], sources=[
+        src("Report 1", outlet="NYT", url="https://example.com/1"),
+        src("Report 2", outlet="NYT", url="https://example.com/2")
+    ])
+    f = eq.check_edition("d", edition([s]))
+    hit = checks(f, "duplicate_outlet_report_review")
+    assert hit and hit[0]["tier"] == eq.WARNING and "REVIEW" in hit[0]["message"]
+
+
+def test_tautological_why_it_matters_is_a_review_warning():
+    s = story("a", "Mayor opens new bridge in town", ["Summary text."], why="Mayor opens new bridge in town")
+    f = eq.check_edition("d", edition([s]))
+    hit = checks(f, "tautological_why_review")
+    assert hit and hit[0]["tier"] == eq.WARNING and "REVIEW" in hit[0]["message"]
+
+
 def test_similar_stories_are_a_review_warning_and_shared_url_is_distinct():
     a = story("a", "Russian glide bomb attack kills 15 in Zaporizhzhia", ["Attack on Zaporizhzhia killed at least 15 people."], rank=1)
     b = story("b", "War in Ukraine: strikes kill 15 including a girl", ["Zaporizhzhia attack killed at least 15 people, police said."], rank=2)

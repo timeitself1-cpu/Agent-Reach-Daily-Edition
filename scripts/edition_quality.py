@@ -50,6 +50,8 @@ TIERS = {
     "coverage_exceeds_sources": FAILURE,
     "top_rank_invalid": FAILURE,
     "encoding_corruption": FAILURE,
+    "signal_only_no_report": FAILURE,
+    "duplicate_source_url": FAILURE,
     "summary_adds_little": WARNING,
     "source_title_review": WARNING,
     "similar_story_review": WARNING,
@@ -60,6 +62,8 @@ TIERS = {
     "top_missing_why_review": WARNING,
     "updated_without_delta_review": WARNING,
     "possible_identity_split_review": WARNING,
+    "duplicate_outlet_report_review": WARNING,
+    "tautological_why_review": WARNING,
     "continuity_not_assessable": INFO,
 }
 
@@ -149,6 +153,19 @@ def check_edition(date: str, e: dict) -> list[dict]:
         if odd:
             add("source_title_review", sid, "cited report titles share little with the headline (REVIEW; same event may be worded differently): "
                 + "; ".join(f"{x.get('outlet')}: {x.get('title', '')[:50]}" for x in odd))
+        srcs = s.get("sources") or []
+        if srcs and not reports:
+            add("signal_only_no_report", sid, "story has no primary 'report'-kind source (only signal/repeat)")
+        urls = [norm_url(x.get("url")) for x in srcs if x.get("url")]
+        if len(urls) != len(set(urls)):
+            add("duplicate_source_url", sid, "same URL cited multiple times in story sources")
+        report_outlets = [x.get("outlet") for x in reports if x.get("outlet")]
+        if len(report_outlets) != len(set(report_outlets)):
+            dupes = sorted({o for o in report_outlets if report_outlets.count(o) > 1})
+            add("duplicate_outlet_report_review", sid, f"multiple 'report' sources cite the same outlet: {', '.join(dupes)} (REVIEW)")
+        why = s.get("why_it_matters") or ""
+        if why.strip() and (jac(head, why) >= 0.70 or (toks(why) and toks(why) <= toks(head))):
+            add("tautological_why_review", sid, f"why_it_matters shares {jac(head, why):.2f} terms with headline (REVIEW: does it explain significance?)")
         cov = s.get("coverage") or {}
         origins = {x.get("reporting_origin") for x in reports if x.get("reporting_origin")}
         indep = cov.get("independent_reports", 0)
