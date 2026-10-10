@@ -5,123 +5,91 @@
  "stories": [
   {
    "d": "2026-10-10",
-   "id": "da8274e8c994",
+   "id": "72898696b821",
    "r": 1,
    "t": 1,
    "c": "News",
-   "h": "Hurricane Isaias makes landfall in Florida",
-   "s": "Hurricane Isaias made landfall near Destin, Florida, as a Category 2 storm with 105-mph winds. Hundreds of thousands of households are without power in Florida and Alabama as Isaias continues its path across south-eastern US. The storm made landfall around 8:30 p.m.",
+   "h": "Hurricane Isaias updates: Isaias downgraded to Post-tropical cyclone",
+   "s": "The Gulf Coast is bracing for dangerous conditions, extreme wind and flooding. Hurricane Isaias has strengthened into a Category 3 hurricane as it heads toward the Gulf Coast. There are no confirmed fatalities from Hurricane Isaias in the state of Florida.",
    "o": [
-    "BBC News",
-    "NBC News",
+    "ABC News",
     "PBS NewsHour",
     "The New York Times",
-    "DW"
-   ],
-   "l": "strong",
-   "coverage": {
-    "level": "strong",
-    "points": 6,
-    "independent_reports": 9,
-    "publishers": [
-     "ABC News",
-     "BBC News",
-     "Bloomberg",
-     "CBC News",
-     "NBC News",
-     "NPR",
-     "PBS NewsHour",
-     "The Guardian",
-     "The New York Times"
-    ],
-    "repeats": 5,
-    "source_links": 8,
-    "linked_outlets": 6,
-    "linked_reporting_origins": 4,
-    "signals": 1,
-    "channels": 3
-   },
-   "u": "https://www.youtube.com/watch?v=jqO-S1IoHfQ"
-  },
-  {
-   "d": "2026-10-10",
-   "id": "d0854a055e61",
-   "r": 2,
-   "t": 2,
-   "c": "News",
-   "h": "Trump announces deal for Russian diesel as Zelensky calls it a gift to Putin",
-   "s": "Ukraine's president sharply criticised the move, calling it an \"investment in war that must be ended, not prolonged\". Ukraine President Volodymyr Zelenskyy said in a searing statement that the U.S. easing sanctions on Moscow \"plays into Russia's hands.\"",
-   "o": [
     "BBC News",
-    "CNBC",
-    "South China Morning Post",
-    "Reuters",
     "NPR"
    ],
    "l": "strong",
    "coverage": {
     "level": "strong",
     "points": 6,
-    "independent_reports": 11,
+    "independent_reports": 8,
     "publishers": [
+     "ABC News",
      "BBC News",
      "Bloomberg",
+     "NBC News",
+     "NPR",
+     "PBS NewsHour",
+     "The Guardian",
+     "The New York Times"
+    ],
+    "repeats": 2,
+    "source_links": 8,
+    "linked_outlets": 7,
+    "linked_reporting_origins": 6,
+    "signals": 1,
+    "channels": 3
+   },
+   "u": "https://abcnews.com/US/live-updates/hurricane-isaias-updates-isaias-strengthens-category-3/?id=137128637"
+  },
+  {
+   "d": "2026-10-10",
+   "id": "6e7b9d73e215",
+   "r": 2,
+   "t": 2,
+   "c": "News",
+   "h": "Trump announces major diesel deal with Putin, infuriating Ukraine",
+   "s": "Russian President Vladimir Putin played mediator between Iran and President Trump on Friday, talking to the U.S. president about what Iran wants to end the war. Ukraine's president sharply criticised the move, calling it an \"investment in war that must be ended, not prolonged\".",
+   "o": [
+    "Axios",
+    "CBS News",
+    "BBC News",
+    "AP News",
+    "Reuters"
+   ],
+   "l": "strong",
+   "coverage": {
+    "level": "strong",
+    "points": 6,
+    "independent_reports": 12,
+    "publishers": [
+     "AP News",
+     "Axios",
+     "BBC News",
      "CBS News",
      "CNBC",
      "CNBC Television",
+     "DW",
      "Le Monde",
-     "NPR",
      "Reuters",
      "Sky News",
      "South China Morning Post",
      "The Hill"
     ],
-    "repeats": 6,
+    "repeats": 3,
     "source_links": 8,
-    "linked_outlets": 6,
-    "linked_reporting_origins": 5,
-    "signals": 2,
+    "linked_outlets": 7,
+    "linked_reporting_origins": 7,
+    "signals": 1,
     "channels": 3
    },
-   "u": "https://www.bbc.co.uk/news/articles/cm1dwgr666wno?at_medium=RSS&at_campaign=rss"
-  },
-  {
-   "d": "2026-10-10",
-   "id": "9491a664ff5a",
-   "r": 3,
-   "t": 3,
-   "c": "News",
-   "h": "US imposes sanctions on ICC hours after former judge wins Nobel Peace Prize",
-   "s": "The US says it will livestream the firing squad execution of the Fort Hood shooter.",
-   "o": [
-    "Reuters",
-    "AP News",
-    "The Guardian",
-    "en.wikipedia.org"
-   ],
-   "l": "moderate",
-   "coverage": {
-    "level": "moderate",
-    "points": 4,
-    "independent_reports": 2,
-    "publishers": [
-     "AP News",
-     "Reuters"
-    ],
-    "repeats": 1,
-    "source_links": 5,
-    "linked_outlets": 2,
-    "linked_reporting_origins": 2,
-    "signals": 2,
-    "channels": 3
-   },
-   "u": "https://www.reuters.com/world/us-imposes-sanctions-international-criminal-court-hours-after-former-judge-wins-2026-10-09/"
+   "u": "https://www.axios.com/2026/10/09/trump-putin-diesel-agreement-ukraine-war"
   },
   {
    "d": "2026-10-10",
    "id": "fea31af3b0d7",
-   "r": 4,
-   "t": 4,
+   "r": 3,
+   "t": 3,
    "c": "Tech",
    "h": "Yandex Takes a Second Data Center Hit in 48 Hours",
    "s": "A UAV attack disabled several modules at the largest Yandex data center in Kaluga, reducing service and impacting a facility with 3,800 server racks.",
@@ -149,41 +117,9 @@
   },
   {
    "d": "2026-10-10",
-   "id": "e6d5262a582c",
-   "r": 5,
-   "t": 5,
-   "c": "News",
-   "h": "'Cockroach' group leaders among hundreds detained in Delhi protest",
-   "s": "Tens of thousands of security personnel were deployed and roads barricaded ahead of the demonstration. Indian police crackdown appears to have prevented mass protests against the country's election chief from taking place.",
-   "o": [
-    "BBC News",
-    "Al Jazeera",
-    "Financial Times"
-   ],
-   "l": "strong",
-   "coverage": {
-    "level": "strong",
-    "points": 5,
-    "independent_reports": 3,
-    "publishers": [
-     "Al Jazeera",
-     "BBC News",
-     "Financial Times"
-    ],
-    "repeats": 2,
-    "source_links": 5,
-    "linked_outlets": 3,
-    "linked_reporting_origins": 3,
-    "signals": 0,
-    "channels": 3
-   },
-   "u": "https://www.bbc.co.uk/news/articles/c65yn7xvde7vo?at_medium=RSS&at_campaign=rss"
-  },
-  {
-   "d": "2026-10-10",
    "id": "ff030d8b5b30",
-   "r": 6,
-   "t": 6,
+   "r": 4,
+   "t": 4,
    "c": "News",
    "h": "India cracks down on youth protests as anger grows against Modi and election chief",
    "s": "Indian authorities have launched a major security crackdown in New Delhi, detaining thousands of protesters who intended to hold a mass demonstration against Prime Minister Narendra Modi's government.",
@@ -211,15 +147,47 @@
   },
   {
    "d": "2026-10-10",
-   "id": "b800858a960f",
-   "r": 7,
-   "t": null,
-   "c": "News",
-   "h": "Saudi Arabia faces new level of peril in Houthi attacks, amid wider Iran war",
-   "s": "Yemen's Houthis are striking Saudi oil infrastructure, as compounding Middle East conflicts threaten to expand.",
+   "id": "9c8aa53be0e6",
+   "r": 5,
+   "t": 5,
+   "c": "Science & AI",
+   "h": "Rogue Anthropic AI agent gave police fake tip in unsolved murder case",
+   "s": "Philadelphia police said the tip was \"flagged as spam\", but criticised the tech company for taking more than two months to detect and report the breach. An Anthropic A.I. model submitted a false tip about an unsolved murder through a publicly accessible web form, Philadelphia…",
    "o": [
-    "The Washington Post",
-    "AP News"
+    "BBC News",
+    "6abc Philadelphia",
+    "nbcphiladelphia.com"
+   ],
+   "l": "strong",
+   "coverage": {
+    "level": "strong",
+    "points": 5,
+    "independent_reports": 3,
+    "publishers": [
+     "6abc Philadelphia",
+     "BBC News",
+     "nbcphiladelphia.com"
+    ],
+    "repeats": 1,
+    "source_links": 4,
+    "linked_outlets": 3,
+    "linked_reporting_origins": 3,
+    "signals": 0,
+    "channels": 3
+   },
+   "u": "https://www.bbc.co.uk/news/articles/cqkg50j1yd5lo?at_medium=RSS&at_campaign=rss"
+  },
+  {
+   "d": "2026-10-10",
+   "id": "b8777a86ccb7",
+   "r": 6,
+   "t": 6,
+   "c": "News",
+   "h": "Hegseth's public execution plan Sparks controversy",
+   "s": "Defense Secretary Pete Hegseth's announcement that the Fort Hood shooter's execution will be livestreamed has sparked controversy, reflecting a shift toward putting raw, real-world violence on display for unlimited audiences.",
+   "o": [
+    "Axios",
+    "CNN"
    ],
    "l": "moderate",
    "coverage": {
@@ -227,8 +195,8 @@
     "points": 4,
     "independent_reports": 2,
     "publishers": [
-     "AP News",
-     "The Washington Post"
+     "Axios",
+     "CNN"
     ],
     "repeats": 0,
     "source_links": 2,
@@ -237,21 +205,21 @@
     "signals": 0,
     "channels": 2
    },
-   "u": "https://www.washingtonpost.com/world/2026/10/10/saudi-arabia-faces-new-level-peril-houthi-attacks-amid-wider-iran-war/"
+   "u": "https://www.axios.com/2026/10/10/hegseth-public-execution-nidal-hasan"
   },
   {
    "d": "2026-10-10",
-   "id": "08cfb59354ce",
-   "r": 8,
-   "t": 7,
-   "c": "Science & AI",
-   "h": "Rogue Anthropic AI agent gave police fake tip in unsolved murder case",
-   "s": "Philadelphia police said the tip was \"flagged as spam\", but criticised the tech company for taking more than two months to detect and report the breach. An Anthropic A.I. model submitted a false tip about an unsolved murder through a publicly accessible web form, Philadelphia…",
+   "id": "afa756e331e2",
+   "r": 7,
+   "t": null,
+   "c": "News",
+   "h": "Saudi Arabia faces new level of peril in Houthi attacks, amid wider Iran war",
+   "s": "Yemen's Houthis are striking Saudi oil infrastructure, as compounding Middle East conflicts threaten to expand.",
    "o": [
-    "BBC News",
-    "6abc Philadelphia",
-    "nbcphiladelphia.com",
-    "CBS News"
+    "The Washington Post",
+    "South China Morning Post",
+    "Reuters",
+    "AP News"
    ],
    "l": "strong",
    "coverage": {
@@ -259,19 +227,50 @@
     "points": 6,
     "independent_reports": 4,
     "publishers": [
-     "6abc Philadelphia",
-     "BBC News",
-     "CBS News",
-     "nbcphiladelphia.com"
+     "AP News",
+     "Reuters",
+     "South China Morning Post",
+     "The Washington Post"
     ],
-    "repeats": 1,
-    "source_links": 5,
+    "repeats": 0,
+    "source_links": 4,
     "linked_outlets": 4,
     "linked_reporting_origins": 4,
     "signals": 0,
-    "channels": 3
+    "channels": 2
    },
-   "u": "https://www.bbc.co.uk/news/articles/cqkg50j1yd5lo?at_medium=RSS&at_campaign=rss"
+   "u": "https://www.washingtonpost.com/world/2026/10/10/saudi-arabia-faces-new-level-peril-houthi-attacks-amid-wider-iran-war/"
+  },
+  {
+   "d": "2026-10-10",
+   "id": "576397cd934b",
+   "r": 8,
+   "t": 7,
+   "c": "Sports",
+   "h": "Mike Ditka, the quintessential Chicago Bear and a Pro football Hall of Famer, dies at 86",
+   "s": "The passing of larger-than-life NFL legend Mike Ditka has sparked a flood of great stories and clips from Ditka's time in football.",
+   "o": [
+    "AP News",
+    "Yahoo Sports",
+    "en.wikipedia.org"
+   ],
+   "l": "moderate",
+   "coverage": {
+    "level": "moderate",
+    "points": 4,
+    "independent_reports": 2,
+    "publishers": [
+     "AP News",
+     "Yahoo Sports"
+    ],
+    "repeats": 0,
+    "source_links": 3,
+    "linked_outlets": 2,
+    "linked_reporting_origins": 2,
+    "signals": 1,
+    "channels": 2
+   },
+   "u": "https://apnews.com/article/mike-ditka-dies-bears-74ce49079f324ca0a9fa8e61857783fb"
   },
   {
    "d": "2026-10-10",
@@ -335,31 +334,33 @@
   },
   {
    "d": "2026-10-10",
-   "id": "c015b4868b83",
+   "id": "8b1b98c4fb5f",
    "r": 11,
-   "t": null,
-   "c": "Science & AI",
-   "h": "NASA astronauts splash down after 100 million miles in space",
-   "s": "NASA's SpaceX Crew-12 astronauts have returned to Earth after 237 days in space, traveling more than 100 million miles and completing over 3,792 orbits. The mission also made significant contributions to future missions to the Moon and Mars. The mission also made history with…",
+   "t": 10,
+   "c": "Tech",
+   "h": "Microsoft releases decision-model Microsoft-decision-1",
+   "s": "Microsoft has released Microsoft-Decision-1, a decision model for routing, classification, verification, and agent control. This model returns a calibrated probability for each fixed answer option, aiming to outperform LLMs and other decision models in latency and quality.",
    "o": [
-    "ScienceDaily"
+    "commandline.microsoft.com",
+    "MarkTechPost"
    ],
-   "l": "limited",
+   "l": "moderate",
    "coverage": {
-    "level": "limited",
-    "points": 0,
-    "independent_reports": 1,
+    "level": "moderate",
+    "points": 4,
+    "independent_reports": 2,
     "publishers": [
-     "ScienceDaily"
+     "MarkTechPost",
+     "commandline.microsoft.com"
     ],
     "repeats": 0,
-    "source_links": 1,
-    "linked_outlets": 1,
-    "linked_reporting_origins": 1,
+    "source_links": 2,
+    "linked_outlets": 2,
+    "linked_reporting_origins": 2,
     "signals": 0,
-    "channels": 1
+    "channels": 2
    },
-   "u": "https://www.sciencedaily.com/releases/2026/10/261008232629.htm"
+   "u": "https://www.marktechpost.com/2026/10/09/microsoft-ai-releases-microsoft-decision-1-a-qwen3-5-9b-decision-scoring-model/"
   },
   {
    "d": "2026-10-10",
@@ -391,36 +392,8 @@
   },
   {
    "d": "2026-10-10",
-   "id": "da4d0325d7ac",
-   "r": 13,
-   "t": null,
-   "c": "Science & AI",
-   "h": "NASA seeks US Industry Plans for Commercial Space Stations",
-   "s": "NASA is advancing American leadership in space by taking the next step toward a future where commercial space stations lead the way in low Earth orbit.",
-   "o": [
-    "NASA"
-   ],
-   "l": "limited",
-   "coverage": {
-    "level": "limited",
-    "points": 1,
-    "independent_reports": 1,
-    "publishers": [
-     "NASA"
-    ],
-    "repeats": 0,
-    "source_links": 1,
-    "linked_outlets": 1,
-    "linked_reporting_origins": 1,
-    "signals": 0,
-    "channels": 1
-   },
-   "u": "https://www.nasa.gov/news-release/nasa-seeks-us-industry-plans-for-commercial-space-stations/"
-  },
-  {
-   "d": "2026-10-10",
    "id": "d9cc80e7c371",
-   "r": 14,
+   "r": 13,
    "t": null,
    "c": "Science & AI",
    "h": "Plastic chemical Affects human ovaries",
@@ -448,11 +421,11 @@
   {
    "d": "2026-10-10",
    "id": "710b3ad8dc31",
-   "r": 15,
+   "r": 14,
    "t": null,
    "c": "Science & AI",
    "h": "OpenAI revenue keeps surging as company seeks $30 billion in fresh capital",
-   "s": "OpenAI's annualized revenue rate sits at about $50 billion, well below the initially reported $70 billion figure that was based on a different accounting method.",
+   "s": "OpenAI's annualized revenue rate sits at about $50 billion, well below the initially reported $70 billion figure that was based on a different accounting method. The correction sent chip stocks sliding.",
    "o": [
     "The Decoder"
    ],
@@ -476,10 +449,10 @@
   {
    "d": "2026-10-10",
    "id": "87cb3fcba333",
-   "r": 16,
+   "r": 15,
    "t": null,
    "c": "Science & AI",
-   "h": "Astronomers detect mysterious burst of energy from a galaxy far, far away",
+   "h": "Astronomers detect mysterious burst of energy from a Galaxy far, far away",
    "s": "A long time ago in a galaxy far, far away, a mysterious flash of energy was released into the universe.",
    "o": [
     "The Guardian"
@@ -504,7 +477,7 @@
   {
    "d": "2026-10-10",
    "id": "157e81bf08e8",
-   "r": 17,
+   "r": 16,
    "t": null,
    "c": "News",
    "h": "7.7 quake hits Panama, damaging buildings and prompting evacuations",
@@ -527,6 +500,91 @@
     "signals": 0,
     "channels": 1
    }
+  },
+  {
+   "d": "2026-10-10",
+   "id": "6851d215ab3e",
+   "r": 17,
+   "t": null,
+   "c": "News",
+   "h": "Multiple people, including 2 children, killed in reported mass shooting in Erie",
+   "s": "Two women were found dead in the street, two children were killed, and the victim reportedly took their own life in a mass shooting in Erie, Pa.",
+   "o": [
+    "CBS News",
+    "en.wikipedia.org"
+   ],
+   "l": "limited",
+   "coverage": {
+    "level": "limited",
+    "points": 1,
+    "independent_reports": 1,
+    "publishers": [
+     "CBS News"
+    ],
+    "repeats": 0,
+    "source_links": 2,
+    "linked_outlets": 1,
+    "linked_reporting_origins": 1,
+    "signals": 1,
+    "channels": 1
+   },
+   "u": "https://www.cbsnews.com/news/erie-pennsylvania-mass-shooting-perry-street/"
+  },
+  {
+   "d": "2026-10-10",
+   "id": "1cc63d3dfc56",
+   "r": 18,
+   "t": null,
+   "c": "Science & AI",
+   "h": "ARTEX AI, Claude agents used in cyberattacks on South Korean banks",
+   "s": "The cyberattacks that shook the South Korean financial sector earlier this month were launched by a Chinese hacker using the ARTEX AI penetration testing suite and Claude agents.",
+   "o": [
+    "BleepingComputer"
+   ],
+   "l": "limited",
+   "coverage": {
+    "level": "limited",
+    "points": 1,
+    "independent_reports": 1,
+    "publishers": [
+     "BleepingComputer"
+    ],
+    "repeats": 0,
+    "source_links": 1,
+    "linked_outlets": 1,
+    "linked_reporting_origins": 1,
+    "signals": 0,
+    "channels": 1
+   },
+   "u": "https://www.bleepingcomputer.com/news/security/hacker-used-artex-ai-and-claude-agents-to-target-south-korean-banks/"
+  },
+  {
+   "d": "2026-10-10",
+   "id": "022d35c5ff6c",
+   "r": 19,
+   "t": null,
+   "c": "Science & AI",
+   "h": "Asana cuts model costs 76x in browser tests with GPT-6.1 Sol",
+   "s": "Using GPT-6 Astra in Codex, Asana made its browser agent 76x cheaper and 5x faster in tests to offer customers more capable models.",
+   "o": [
+    "OpenAI"
+   ],
+   "l": "limited",
+   "coverage": {
+    "level": "limited",
+    "points": 0,
+    "independent_reports": 1,
+    "publishers": [
+     "OpenAI"
+    ],
+    "repeats": 0,
+    "source_links": 1,
+    "linked_outlets": 1,
+    "linked_reporting_origins": 1,
+    "signals": 0,
+    "channels": 1
+   },
+   "u": "https://openai.com/index/asana-browser-agent"
   },
   {
    "d": "2026-10-09",
