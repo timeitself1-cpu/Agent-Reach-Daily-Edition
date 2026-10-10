@@ -374,7 +374,7 @@ if (typeof module !== 'undefined') module.exports = {normOutlet, dedupeOutlets, 
     // Favicon of the first source's domain, for visual rhythm.
     const firstUrl = (s.sources || []).find(x => x.url && webUrl(x.url));
     const domain = firstUrl ? (() => { try { return new URL(firstUrl.url).hostname; } catch { return null; } })() : null;
-    const favicon = domain ? h('img', {class: 'outlet-favicon', src: `https://www.google.com/s2/favicons?domain=${domain}&sz=32`, alt: '', loading: 'lazy', width: 16, height: 16}) : null;
+    const favicon = domain ? h('img', {class: 'outlet-favicon', src: `https://www.google.com/s2/favicons?domain=${domain}&sz=32`, alt: '', width: 16, height: 16}) : null;
     return h('span', {class: `cov cov-line ${c.level}`, title: `${coverage({...c, independent_reports: n})}. Coverage is not a fact check.`},
       bars(), n > 1 ? h('span', {class: 'sr', text: coverage(c) + '. '}) : null, favicon, h('span', {class: 'reported', text}));
   }
