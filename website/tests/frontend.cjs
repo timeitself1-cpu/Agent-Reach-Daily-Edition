@@ -349,36 +349,22 @@ test('update details count changes and optionally link dropped headlines as plai
   assert.doesNotMatch(q.d.querySelector('.edition-full').textContent, /dropped|no longer listed/i); q.close();
 });
 
-test('One-click topic filter shows only the chosen section, All restores the front page', async () => {
+test('Homepage has no topic filter bar; departments show all their stories', async () => {
   const {renderShell} = require('../scripts/build.cjs');
   for (const path of ['/', '/daily/']) {
     const p = await open(path);
-    const topics = [...p.d.querySelectorAll('.topics .topic')];
-    // All topics + one button per department on the front page.
-    assert.equal(topics[0].textContent, 'All topics');
-    assert.equal(topics[0].getAttribute('aria-pressed'), 'true');
-    const depts = [...p.d.querySelectorAll('.ed-front .dept[data-cat]:not([data-cat=""])')];
-    assert.equal(topics.length, depts.length + 1);
-    // One click on a topic: only that department stays visible.
-    const target = topics[1], cat = target.dataset.topic;
-    target.click();
-    assert.equal(target.getAttribute('aria-pressed'), 'true');
-    assert.equal(p.d.querySelector('.ed-front').dataset.topic, cat);
-    for (const el of p.d.querySelectorAll('.ed-front [data-front-part]')) {
-      const isTarget = el.dataset.frontPart === 'section' && el.dataset.cat === cat;
-      assert.equal(el.hidden, !isTarget, el.dataset.frontPart + ':' + el.dataset.cat);
+    // No filter UI.
+    assert.equal(p.d.querySelector('.topics'), null);
+    assert.equal(p.d.querySelectorAll('.topics .topic').length, 0);
+    // Every department grid shows all its stories (no clamp, no filter to reveal them).
+    for (const grid of p.d.querySelectorAll('.ed-front .dept .dept-grid')) {
+      for (const card of grid.children) assert.equal(card.style.display, '');
+      assert.ok(grid.children.length > 0);
     }
-    // The filtered department expands beyond the five-story clamp.
-    const grid = p.d.querySelector(`.ed-front .dept[data-cat="${cat}"] .dept-grid`);
-    assert.ok(grid.children.length > 0);
-    // One click on All: everything is back.
-    topics[0].click();
-    assert.equal(p.d.querySelector('.ed-front').dataset.topic, 'all');
-    for (const el of p.d.querySelectorAll('.ed-front [data-front-part]')) assert.equal(el.hidden, false);
     p.close();
     const shell = readFileSync(resolve(root, path === '/' ? 'index.html' : 'daily/index.html'), 'utf8');
     const dom = new JSDOM(renderShell(shell, path, index, structuredClone(edition)));
-    assert.ok(dom.window.document.querySelector('.topics .topic'));
+    assert.equal(dom.window.document.querySelector('.topics'), null);
     dom.window.close();
   }
 });

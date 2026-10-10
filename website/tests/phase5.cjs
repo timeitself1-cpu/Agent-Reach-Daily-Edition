@@ -33,9 +33,9 @@ const navLabels = d => [...d.querySelectorAll('.nav a')].map(a => a.textContent.
 test('the built-in section table is identical to editions/sections.json (it is only the fallback)', async () => {
   const p = await open('/');
   const expected = sections.sections.filter(s => !s.retired).map(s => s.label);
-  // Sections surface in the one-click topic filter, not the slim header nav.
-  const topics = [...p.d.querySelectorAll('.topics .topic:not([data-topic=""])')].map(b => b.querySelector('span').textContent);
-  for (const label of expected) assert.ok(topics.includes(label), label);
+  // Sections surface as departments on the front page (the topic filter was removed).
+  const depts = [...p.d.querySelectorAll('.ed-front .dept .dept-title')].map(el => el.textContent.trim());
+  for (const label of expected) assert.ok(depts.includes(label), label);
   p.close();
 });
 
