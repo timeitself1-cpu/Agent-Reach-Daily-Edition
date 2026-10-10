@@ -23,8 +23,8 @@ tracks each real-world event over time (timelines), and later feeds structured e
   Oct 9): story split by title subjects (`clusterer._subject_gate`), summaries that add to the headline
   (`edition.adds_to_headline`, `summary_checks.useful_summary`, per-sentence checks, fallback from the reports' own
   sentences), `publish.editorial_review` before every publication; site branch: one coverage line, "no longer in this
-  edition", restated sentences hidden. **Not released** (still rc20 on `stable`); app PR and site PR opened at the
-  user's request. Open: the exact step that merged the Oct 9 firing-squad and Pike reports on the PC (needs the
+  edition", restated sentences hidden. **Released as rc21** (stable -> 5ab4e89 after CI green, at the user's request);
+  app PR #14 (default branch 83846a1) and site PR #14 merged by the user. Open: the exact step that merged the Oct 9 firing-squad and Pike reports on the PC (needs the
   run's pair log from a self-test zip).
 - **Oct 9, later:** Phase 1 items 5, 6, 9, 10: rc20 prepared on the same branch (public `sources` list, sitemap pages; **released**: stable -> f1060d2 after CI green, at the user's go-ahead), site PR #13 open (share links, Report an issue, per-story RSS + section feeds, /sources/, /corrections/). See PLAN progress log.
 - **Oct 9, branch `claude/sleepy-clarke-abilea` (from the default branch at PR #12):** the user's website
