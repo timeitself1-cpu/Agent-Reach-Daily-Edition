@@ -1,6 +1,6 @@
 // Frozen editions exercise the production static renderer without depending on today's publication.
 const {createServer} = require('node:http');
-const {readFileSync} = require('node:fs');
+const {readFileSync, existsSync} = require('node:fs');
 const {resolve, sep, extname} = require('node:path');
 const {renderShell, addPreview} = require('../../scripts/build.cjs');
 const root = resolve(__dirname, '../..'), fixtures = resolve(root, 'tests/fixtures');
@@ -14,8 +14,8 @@ for (const path of ['/', '/daily/', '/daily/2026-10-07/', '/technology/', '/late
 createServer((req, res) => {
   const path = new URL(req.url, 'http://localhost').pathname;
   if (pages.has(path)) { res.setHeader('Content-Type', 'text/html'); res.end(pages.get(path)); return; }
-  if (!/^\/(?:assets|editions|search)\//.test(path)) { res.writeHead(404).end(); return; }
-  const base = path.startsWith('/assets/') ? root : fixtures;
+  if (!/^\/(?:assets|editions|search|events)\//.test(path)) { res.writeHead(404).end(); return; }
+  const base = (path.startsWith('/assets/') || !existsSync(resolve(fixtures, '.' + decodeURIComponent(path)))) ? root : fixtures;
   const file = resolve(base, '.' + decodeURIComponent(path));
   if (!file.startsWith(base + sep)) { res.writeHead(403).end(); return; }
   try {
