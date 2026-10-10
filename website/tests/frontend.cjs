@@ -248,6 +248,8 @@ test('embedded edition renders without a loading skeleton or data requests; bad 
   const shown = [...staticPage.window.document.querySelectorAll('main [id^="story-"]')];
   assert.ok(shown.length >= 20);
   for (const node of shown) {
+    // Top 10 leaderboard rows are compact summaries; full source details live on story cards and pages.
+    if (node.classList.contains('t10-row')) continue;
     const story = edition.stories.find(s => 'story-' + s.id === node.id);
     assert.equal(node.querySelectorAll('details.src.static-src li').length, story.sources.length);
   }
@@ -259,7 +261,10 @@ test('embedded edition renders without a loading skeleton or data requests; bad 
   assert.equal(p.d.querySelector('h1').textContent, edition.stories[0].headline);
   assert.equal(p.d.body.dataset.rendered, undefined);
   assert.equal(p.d.body.dataset.prerender, undefined);
-  for (const band of p.d.querySelectorAll('.band[data-cat]')) assert.ok(band.querySelectorAll('.card').length <= 5);
+  for (const dept of p.d.querySelectorAll('.dept[data-cat]')) assert.ok(dept.querySelectorAll('.card').length > 0);
+  // The Top 10 leaderboard shows the top stories ranked (fixture has 8 in top).
+  assert.ok(p.d.querySelectorAll('.top10 .t10-row').length >= 1);
+  assert.ok(p.d.querySelectorAll('.top10 .t10-row').length <= 10);
   p.close();
   const malformed = html.replace(/(<script id="edition-data"[^>]*>)[\s\S]*?(<\/script>)/, '$1invalid$2');
   const fallback = await open('/', {html: malformed});
