@@ -5,20 +5,19 @@
  "editions": [
   {
    "date": "2026-10-10",
-   "revision": 3,
-   "generated_utc": "2026-10-10T11:52:00Z",
-   "stories": 23,
-   "lead": "Hurricane Isaias Makes Landfall in Florida",
+   "revision": 4,
+   "generated_utc": "2026-10-10T13:37:00Z",
+   "stories": 17,
+   "lead": "Hurricane Isaias makes landfall in Florida",
    "headlines": [
-    "Saudi Arabia Faces New Level of Peril in Houthi Attacks, Amid Wider Iran War",
-    "Trump Announces Deal for Russian Diesel",
-    "US Imposes Sanctions on International Criminal Court"
+    "Trump announces deal for Russian diesel as Zelensky calls it a gift to Putin",
+    "US imposes sanctions on ICC hours after former judge wins Nobel Peace Prize",
+    "Yandex Takes a Second Data Center Hit in 48 Hours"
    ],
    "sections": {
-    "News": 7,
-    "Tech": 4,
-    "Science & AI": 9,
-    "Sports": 2,
+    "News": 8,
+    "Tech": 2,
+    "Science & AI": 6,
     "Entertainment": 1
    }
   },

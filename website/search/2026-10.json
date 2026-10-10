@@ -5,242 +5,123 @@
  "stories": [
   {
    "d": "2026-10-10",
-   "id": "da37fc15f76c",
+   "id": "da8274e8c994",
    "r": 1,
    "t": 1,
    "c": "News",
-   "h": "Hurricane Isaias Makes Landfall in Florida",
-   "s": "Hurricane Isaias made landfall near Destin, Florida, around 8:30 p.m. Local time as a Category 2 storm with 105-mph winds. The storm is expected to bring life-threatening storm surge, damaging winds, flooding and the possibility of tornados.",
+   "h": "Hurricane Isaias makes landfall in Florida",
+   "s": "Hurricane Isaias made landfall near Destin, Florida, as a Category 2 storm with 105-mph winds. Hundreds of thousands of households are without power in Florida and Alabama as Isaias continues its path across south-eastern US. The storm made landfall around 8:30 p.m.",
    "o": [
+    "BBC News",
+    "NBC News",
     "PBS NewsHour",
-    "NPR",
     "The New York Times",
-    "ABC News",
-    "BBC News"
+    "DW"
    ],
    "l": "strong",
    "coverage": {
     "level": "strong",
     "points": 6,
-    "independent_reports": 7,
+    "independent_reports": 9,
     "publishers": [
      "ABC News",
      "BBC News",
+     "Bloomberg",
+     "CBC News",
      "NBC News",
      "NPR",
      "PBS NewsHour",
      "The Guardian",
      "The New York Times"
     ],
-    "repeats": 3,
+    "repeats": 5,
     "source_links": 8,
-    "linked_outlets": 7,
-    "linked_reporting_origins": 6,
-    "signals": 0,
-    "channels": 2
+    "linked_outlets": 6,
+    "linked_reporting_origins": 4,
+    "signals": 1,
+    "channels": 3
    },
    "u": "https://www.youtube.com/watch?v=jqO-S1IoHfQ"
   },
   {
    "d": "2026-10-10",
-   "id": "cc2983207ade",
+   "id": "d0854a055e61",
    "r": 2,
    "t": 2,
    "c": "News",
-   "h": "Saudi Arabia Faces New Level of Peril in Houthi Attacks, Amid Wider Iran War",
-   "s": "Yemen's Houthis are striking Saudi oil infrastructure, as compounding Middle East conflicts threaten to expand. Saudi Arabia says missile strikes by Iran's Houthi allies killed three people at Riyadh's airport as fighting escalates in the Middle East conflict's new epicenter.",
-   "o": [
-    "The Washington Post",
-    "AP News",
-    "CBS News"
-   ],
-   "l": "strong",
-   "coverage": {
-    "level": "strong",
-    "points": 5,
-    "independent_reports": 3,
-    "publishers": [
-     "AP News",
-     "CBS News",
-     "The Washington Post"
-    ],
-    "repeats": 0,
-    "source_links": 3,
-    "linked_outlets": 3,
-    "linked_reporting_origins": 3,
-    "signals": 0,
-    "channels": 2
-   },
-   "u": "https://www.washingtonpost.com/world/2026/10/10/saudi-arabia-faces-new-level-peril-houthi-attacks-amid-wider-iran-war/"
-  },
-  {
-   "d": "2026-10-10",
-   "id": "d7aadde34616",
-   "r": 3,
-   "t": 3,
-   "c": "News",
-   "h": "Trump Announces Deal for Russian Diesel",
-   "s": "US President Donald Trump announced a deal to import Russian diesel into the US, sparking outrage from Ukraine and its allies. The deal aims to ease fuel prices, but critics argue it contradicts Russia sanctions law and plays into Russia's hands.",
+   "h": "Trump announces deal for Russian diesel as Zelensky calls it a gift to Putin",
+   "s": "Ukraine's president sharply criticised the move, calling it an \"investment in war that must be ended, not prolonged\". Ukraine President Volodymyr Zelenskyy said in a searing statement that the U.S. easing sanctions on Moscow \"plays into Russia's hands.\"",
    "o": [
     "BBC News",
     "CNBC",
-    "Sky News",
-    "Le Monde",
-    "Al Jazeera"
+    "South China Morning Post",
+    "Reuters",
+    "NPR"
    ],
    "l": "strong",
    "coverage": {
     "level": "strong",
     "points": 6,
-    "independent_reports": 6,
+    "independent_reports": 11,
     "publishers": [
-     "Al Jazeera",
      "BBC News",
+     "Bloomberg",
+     "CBS News",
      "CNBC",
      "CNBC Television",
      "Le Monde",
-     "Sky News"
+     "NPR",
+     "Reuters",
+     "Sky News",
+     "South China Morning Post",
+     "The Hill"
     ],
-    "repeats": 1,
+    "repeats": 6,
     "source_links": 8,
     "linked_outlets": 6,
-    "linked_reporting_origins": 6,
-    "signals": 1,
-    "channels": 2
+    "linked_reporting_origins": 5,
+    "signals": 2,
+    "channels": 3
    },
    "u": "https://www.bbc.co.uk/news/articles/cm1dwgr666wno?at_medium=RSS&at_campaign=rss"
   },
   {
    "d": "2026-10-10",
-   "id": "d54db1309e02",
-   "r": 4,
-   "t": 4,
+   "id": "9491a664ff5a",
+   "r": 3,
+   "t": 3,
    "c": "News",
-   "h": "US Imposes Sanctions on International Criminal Court",
-   "s": "The Trump administration imposed aggressive sanctions on the International Criminal Court, cutting it off from the global financial system. The sanctions were announced hours after a former ICC judge won the Nobel Peace Prize. The sanctions include threats of punishment for…",
+   "h": "US imposes sanctions on ICC hours after former judge wins Nobel Peace Prize",
+   "s": "The US says it will livestream the firing squad execution of the Fort Hood shooter.",
    "o": [
     "Reuters",
-    "The Washington Post",
-    "state.gov"
+    "AP News",
+    "The Guardian",
+    "en.wikipedia.org"
    ],
-   "l": "strong",
+   "l": "moderate",
    "coverage": {
-    "level": "strong",
-    "points": 5,
-    "independent_reports": 3,
+    "level": "moderate",
+    "points": 4,
+    "independent_reports": 2,
     "publishers": [
-     "Reuters",
-     "The Washington Post",
-     "state.gov"
-    ],
-    "repeats": 2,
-    "source_links": 5,
-    "linked_outlets": 3,
-    "linked_reporting_origins": 3,
-    "signals": 0,
-    "channels": 4
-   }
-  },
-  {
-   "d": "2026-10-10",
-   "id": "d25c5f2e5117",
-   "r": 5,
-   "t": 5,
-   "c": "Science & AI",
-   "h": "Rogue Anthropic AI agent gave police fake tip in unsolved murder case",
-   "s": "Philadelphia police said the tip was \"flagged as spam\", but criticised the tech company for taking more than two months to detect and report the breach. An investigation is underway after an AI model from the company Anthropic submitted a false tip for an unsolved Philadelphia…",
-   "o": [
-    "BBC News",
-    "6abc Philadelphia",
-    "nbcphiladelphia.com",
-    "TechCrunch",
-    "The Decoder"
-   ],
-   "l": "strong",
-   "coverage": {
-    "level": "strong",
-    "points": 6,
-    "independent_reports": 5,
-    "publishers": [
-     "6abc Philadelphia",
-     "BBC News",
-     "TechCrunch",
-     "The Decoder",
-     "nbcphiladelphia.com"
+     "AP News",
+     "Reuters"
     ],
     "repeats": 1,
-    "source_links": 7,
-    "linked_outlets": 5,
-    "linked_reporting_origins": 5,
-    "signals": 1,
+    "source_links": 5,
+    "linked_outlets": 2,
+    "linked_reporting_origins": 2,
+    "signals": 2,
     "channels": 3
    },
-   "u": "https://www.bbc.co.uk/news/articles/cqkg50j1yd5lo?at_medium=RSS&at_campaign=rss"
-  },
-  {
-   "d": "2026-10-10",
-   "id": "9c0c027764eb",
-   "r": 6,
-   "t": 6,
-   "c": "Science & AI",
-   "h": "NASA Seeks US Industry Plans for Commercial Space Stations",
-   "s": "NASA is advancing American leadership in space by taking the next step toward a future where commercial space stations lead the way in low Earth orbit.",
-   "o": [
-    "NASA",
-    "Ars Technica"
-   ],
-   "l": "moderate",
-   "coverage": {
-    "level": "moderate",
-    "points": 4,
-    "independent_reports": 2,
-    "publishers": [
-     "Ars Technica",
-     "NASA"
-    ],
-    "repeats": 2,
-    "source_links": 4,
-    "linked_outlets": 2,
-    "linked_reporting_origins": 2,
-    "signals": 0,
-    "channels": 2
-   },
-   "u": "https://www.nasa.gov/news-release/nasa-seeks-us-industry-plans-for-commercial-space-stations/"
-  },
-  {
-   "d": "2026-10-10",
-   "id": "141c3c0b7ec6",
-   "r": 7,
-   "t": 7,
-   "c": "News",
-   "h": "Three Men Found Guilty in the 2024 Killing of Australian and US Surfers in Mexico",
-   "s": "Three men were found guilty of murdering two Australian brothers and their American friend during a surfing trip in Mexico.",
-   "o": [
-    "CNN",
-    "Sky News"
-   ],
-   "l": "moderate",
-   "coverage": {
-    "level": "moderate",
-    "points": 4,
-    "independent_reports": 2,
-    "publishers": [
-     "CNN",
-     "Sky News"
-    ],
-    "repeats": 0,
-    "source_links": 2,
-    "linked_outlets": 2,
-    "linked_reporting_origins": 2,
-    "signals": 0,
-    "channels": 2
-   }
+   "u": "https://www.reuters.com/world/us-imposes-sanctions-international-criminal-court-hours-after-former-judge-wins-2026-10-09/"
   },
   {
    "d": "2026-10-10",
    "id": "fea31af3b0d7",
-   "r": 8,
-   "t": 8,
+   "r": 4,
+   "t": 4,
    "c": "Tech",
    "h": "Yandex Takes a Second Data Center Hit in 48 Hours",
    "s": "A UAV attack disabled several modules at the largest Yandex data center in Kaluga, reducing service and impacting a facility with 3,800 server racks.",
@@ -268,16 +149,47 @@
   },
   {
    "d": "2026-10-10",
-   "id": "aff43f196f3f",
-   "r": 9,
-   "t": 9,
-   "c": "Sports",
-   "h": "Verstappen wins wet Singapore Sprint after Russell crashes",
-   "s": "Red Bull's Max Verstappen wins an incident-packed sprint race at the Singapore Grand Prix after George Russell crashes out of the lead.",
+   "id": "e6d5262a582c",
+   "r": 5,
+   "t": 5,
+   "c": "News",
+   "h": "'Cockroach' group leaders among hundreds detained in Delhi protest",
+   "s": "Tens of thousands of security personnel were deployed and roads barricaded ahead of the demonstration. Indian police crackdown appears to have prevented mass protests against the country's election chief from taking place.",
    "o": [
-    "Sky Sports",
     "BBC News",
-    "X"
+    "Al Jazeera",
+    "Financial Times"
+   ],
+   "l": "strong",
+   "coverage": {
+    "level": "strong",
+    "points": 5,
+    "independent_reports": 3,
+    "publishers": [
+     "Al Jazeera",
+     "BBC News",
+     "Financial Times"
+    ],
+    "repeats": 2,
+    "source_links": 5,
+    "linked_outlets": 3,
+    "linked_reporting_origins": 3,
+    "signals": 0,
+    "channels": 3
+   },
+   "u": "https://www.bbc.co.uk/news/articles/c65yn7xvde7vo?at_medium=RSS&at_campaign=rss"
+  },
+  {
+   "d": "2026-10-10",
+   "id": "ff030d8b5b30",
+   "r": 6,
+   "t": 6,
+   "c": "News",
+   "h": "India cracks down on youth protests as anger grows against Modi and election chief",
+   "s": "Indian authorities have launched a major security crackdown in New Delhi, detaining thousands of protesters who intended to hold a mass demonstration against Prime Minister Narendra Modi's government.",
+   "o": [
+    "NPR",
+    "Times of India"
    ],
    "l": "moderate",
    "coverage": {
@@ -285,29 +197,29 @@
     "points": 3,
     "independent_reports": 2,
     "publishers": [
-     "BBC News",
-     "Sky Sports"
+     "NPR",
+     "Times of India"
     ],
     "repeats": 0,
-    "source_links": 3,
+    "source_links": 2,
     "linked_outlets": 2,
     "linked_reporting_origins": 2,
-    "signals": 1,
+    "signals": 0,
     "channels": 1
    },
-   "u": "https://www.skysports.com/f1/news/12040/13597101/singapore-gp-sprint-max-verstappen-beats-lewis-hamilton-after-george-russell-crashes-out-from-lead"
+   "u": "https://www.npr.org/2026/10/10/g-s1-147603/india-cracks-down-on-youth-protests-as-anger-grows-against-modi-and-election-chief"
   },
   {
    "d": "2026-10-10",
-   "id": "8b1b98c4fb5f",
-   "r": 10,
-   "t": 10,
-   "c": "Tech",
-   "h": "Microsoft AI Releases Microsoft-Decision-1: A Qwen3.5-9B Decision-Scoring Model",
-   "s": "Microsoft has released Microsoft-Decision-1, a decision model for routing, classification, verification and agent control. Decision models are quickly emerging as an important new category in AI.",
+   "id": "b800858a960f",
+   "r": 7,
+   "t": null,
+   "c": "News",
+   "h": "Saudi Arabia faces new level of peril in Houthi attacks, amid wider Iran war",
+   "s": "Yemen's Houthis are striking Saudi oil infrastructure, as compounding Middle East conflicts threaten to expand.",
    "o": [
-    "MarkTechPost",
-    "commandline.microsoft.com"
+    "The Washington Post",
+    "AP News"
    ],
    "l": "moderate",
    "coverage": {
@@ -315,8 +227,8 @@
     "points": 4,
     "independent_reports": 2,
     "publishers": [
-     "MarkTechPost",
-     "commandline.microsoft.com"
+     "AP News",
+     "The Washington Post"
     ],
     "repeats": 0,
     "source_links": 2,
@@ -325,15 +237,79 @@
     "signals": 0,
     "channels": 2
    },
-   "u": "https://www.marktechpost.com/2026/10/09/microsoft-ai-releases-microsoft-decision-1-a-qwen3-5-9b-decision-scoring-model/"
+   "u": "https://www.washingtonpost.com/world/2026/10/10/saudi-arabia-faces-new-level-peril-houthi-attacks-amid-wider-iran-war/"
+  },
+  {
+   "d": "2026-10-10",
+   "id": "08cfb59354ce",
+   "r": 8,
+   "t": 7,
+   "c": "Science & AI",
+   "h": "Rogue Anthropic AI agent gave police fake tip in unsolved murder case",
+   "s": "Philadelphia police said the tip was \"flagged as spam\", but criticised the tech company for taking more than two months to detect and report the breach. An Anthropic A.I. model submitted a false tip about an unsolved murder through a publicly accessible web form, Philadelphia…",
+   "o": [
+    "BBC News",
+    "6abc Philadelphia",
+    "nbcphiladelphia.com",
+    "CBS News"
+   ],
+   "l": "strong",
+   "coverage": {
+    "level": "strong",
+    "points": 6,
+    "independent_reports": 4,
+    "publishers": [
+     "6abc Philadelphia",
+     "BBC News",
+     "CBS News",
+     "nbcphiladelphia.com"
+    ],
+    "repeats": 1,
+    "source_links": 5,
+    "linked_outlets": 4,
+    "linked_reporting_origins": 4,
+    "signals": 0,
+    "channels": 3
+   },
+   "u": "https://www.bbc.co.uk/news/articles/cqkg50j1yd5lo?at_medium=RSS&at_campaign=rss"
+  },
+  {
+   "d": "2026-10-10",
+   "id": "960e3f602273",
+   "r": 9,
+   "t": 8,
+   "c": "Tech",
+   "h": "Apple Stores will add your name to iPhone Duo's Startup screen",
+   "s": "Apple has something special planned for customers who purchase an iPhone Duo in an Apple Store. IPhone Duo buyers who purchase their device at an Apple Store in the US will be treated to a nice little surprise when they turn it on for the first time.",
+   "o": [
+    "MacRumors",
+    "9to5Mac"
+   ],
+   "l": "moderate",
+   "coverage": {
+    "level": "moderate",
+    "points": 3,
+    "independent_reports": 2,
+    "publishers": [
+     "9to5Mac",
+     "MacRumors"
+    ],
+    "repeats": 0,
+    "source_links": 2,
+    "linked_outlets": 2,
+    "linked_reporting_origins": 2,
+    "signals": 0,
+    "channels": 1
+   },
+   "u": "https://www.macrumors.com/2026/10/09/iphone-duo-name-personalization/"
   },
   {
    "d": "2026-10-10",
    "id": "6b8667309135",
-   "r": 11,
-   "t": null,
+   "r": 10,
+   "t": 9,
    "c": "Entertainment",
-   "h": "Danny Trejo Insists He’s \"Pro-Immigrant\" & \"Proud Mexican\" Amid Backlash To Daily Wire’s ICE Film: \"Make No Mistake\"",
+   "h": "Danny Trejo Insists He’s \"Pro-Immigrant\" & \"Proud Mexican\" Amid Backlash to Daily Wire’s ICE film: \"Make No Mistake\"",
    "s": "Danny Trejo has broken his silence amid backlash around his role in Daily Wire's latest controversial production.",
    "o": [
     "Deadline",
@@ -359,44 +335,70 @@
   },
   {
    "d": "2026-10-10",
-   "id": "960e3f602273",
+   "id": "c015b4868b83",
+   "r": 11,
+   "t": null,
+   "c": "Science & AI",
+   "h": "NASA astronauts splash down after 100 million miles in space",
+   "s": "NASA's SpaceX Crew-12 astronauts have returned to Earth after 237 days in space, traveling more than 100 million miles and completing over 3,792 orbits. The mission also made significant contributions to future missions to the Moon and Mars. The mission also made history with…",
+   "o": [
+    "ScienceDaily"
+   ],
+   "l": "limited",
+   "coverage": {
+    "level": "limited",
+    "points": 0,
+    "independent_reports": 1,
+    "publishers": [
+     "ScienceDaily"
+    ],
+    "repeats": 0,
+    "source_links": 1,
+    "linked_outlets": 1,
+    "linked_reporting_origins": 1,
+    "signals": 0,
+    "channels": 1
+   },
+   "u": "https://www.sciencedaily.com/releases/2026/10/261008232629.htm"
+  },
+  {
+   "d": "2026-10-10",
+   "id": "8f0c76b05cc5",
    "r": 12,
    "t": null,
-   "c": "Tech",
-   "h": "Apple Stores to Add Buyer's Name to iPhone Duo Startup Screen",
-   "s": "Apple has something special planned for customers who purchase an iPhone Duo in an Apple Store.",
+   "c": "News",
+   "h": "127 arrested in Hong Kong Loan-sharking Syndicate bust",
+   "s": "127 people have been arrested in a six-month undercover operation against a Vietnamese-led loan-sharking syndicate in Hong Kong. The syndicate was accused of running loan-sharking rackets charging interest rates of up to 3,700 per cent.",
    "o": [
-    "MacRumors",
-    "9to5Mac"
+    "South China Morning Post"
    ],
-   "l": "moderate",
+   "l": "limited",
    "coverage": {
-    "level": "moderate",
-    "points": 3,
-    "independent_reports": 2,
+    "level": "limited",
+    "points": 1,
+    "independent_reports": 1,
     "publishers": [
-     "9to5Mac",
-     "MacRumors"
+     "South China Morning Post"
     ],
     "repeats": 0,
-    "source_links": 2,
-    "linked_outlets": 2,
-    "linked_reporting_origins": 2,
+    "source_links": 1,
+    "linked_outlets": 1,
+    "linked_reporting_origins": 1,
     "signals": 0,
     "channels": 1
    },
-   "u": "https://www.macrumors.com/2026/10/09/iphone-duo-name-personalization/"
+   "u": "https://www.scmp.com/news/hong-kong/law-and-crime/article/3370450/127-arrested-hong-kong-police-bust-vietnamese-led-loan-sharking-syndicate?utm_source=rss_feed"
   },
   {
    "d": "2026-10-10",
-   "id": "1145cd5ee91a",
+   "id": "da4d0325d7ac",
    "r": 13,
    "t": null,
-   "c": "Sports",
-   "h": "Valkyries Make History, Oust Aces to Reach Finals in 2nd Year as Franchise",
-   "s": "The Valkyries, a second-year franchise, became the quickest expansion team to reach the WNBA Finals by sweeping the defending champion Aces 87-77 in overtime.",
+   "c": "Science & AI",
+   "h": "NASA seeks US Industry Plans for Commercial Space Stations",
+   "s": "NASA is advancing American leadership in space by taking the next step toward a future where commercial space stations lead the way in low Earth orbit.",
    "o": [
-    "ESPN"
+    "NASA"
    ],
    "l": "limited",
    "coverage": {
@@ -404,7 +406,7 @@
     "points": 1,
     "independent_reports": 1,
     "publishers": [
-     "ESPN"
+     "NASA"
     ],
     "repeats": 0,
     "source_links": 1,
@@ -413,42 +415,15 @@
     "signals": 0,
     "channels": 1
    },
-   "u": "https://www.espn.com/wnba/story/_/id/50144607/valkyries-dethrone-aces-ot-make-wnba-finals-second-year-franchise"
-  },
-  {
-   "d": "2026-10-10",
-   "id": "aca6e5866730",
-   "r": 14,
-   "t": null,
-   "c": "News",
-   "h": "Russian Attack on Ukraine's Zaporizhzhia Kills Seven, Governor Says",
-   "s": "",
-   "o": [
-    "Reuters"
-   ],
-   "l": "limited",
-   "coverage": {
-    "level": "limited",
-    "points": 1,
-    "independent_reports": 1,
-    "publishers": [
-     "Reuters"
-    ],
-    "repeats": 0,
-    "source_links": 1,
-    "linked_outlets": 1,
-    "linked_reporting_origins": 1,
-    "signals": 0,
-    "channels": 1
-   }
+   "u": "https://www.nasa.gov/news-release/nasa-seeks-us-industry-plans-for-commercial-space-stations/"
   },
   {
    "d": "2026-10-10",
    "id": "d9cc80e7c371",
-   "r": 15,
+   "r": 14,
    "t": null,
    "c": "Science & AI",
-   "h": "Plastic Chemical Affects Human Ovaries",
+   "h": "Plastic chemical Affects human ovaries",
    "s": "Mounting evidence shows that a common plastic chemical, phthalates, can affect human ovaries. The most common phthalate, DEHP, is widely used in materials, raising concerns about its impact on reproductive health.",
    "o": [
     "ScienceAlert"
@@ -473,10 +448,10 @@
   {
    "d": "2026-10-10",
    "id": "710b3ad8dc31",
-   "r": 16,
+   "r": 15,
    "t": null,
    "c": "Science & AI",
-   "h": "OpenAI Revenue Keeps Surging as Company Seeks $30 Billion in Fresh Capital",
+   "h": "OpenAI revenue keeps surging as company seeks $30 billion in fresh capital",
    "s": "OpenAI's annualized revenue rate sits at about $50 billion, well below the initially reported $70 billion figure that was based on a different accounting method.",
    "o": [
     "The Decoder"
@@ -500,93 +475,11 @@
   },
   {
    "d": "2026-10-10",
-   "id": "59c57b3e5885",
-   "r": 17,
-   "t": null,
-   "c": "Science & AI",
-   "h": "micro1 Commits $1bn to Buy Company Data for Training AI Agents",
-   "s": "Exceptions that require judgment micro1 will spend $1bn in 12 months buying company data to train AI agents, financed by Citi and Hercules.",
-   "o": [
-    "The Next Web"
-   ],
-   "l": "limited",
-   "coverage": {
-    "level": "limited",
-    "points": 1,
-    "independent_reports": 1,
-    "publishers": [
-     "The Next Web"
-    ],
-    "repeats": 0,
-    "source_links": 1,
-    "linked_outlets": 1,
-    "linked_reporting_origins": 1,
-    "signals": 0,
-    "channels": 1
-   },
-   "u": "https://thenextweb.com/news/micro1-1bn-enterprise-data-ai-training-citi-hercules"
-  },
-  {
-   "d": "2026-10-10",
-   "id": "737c83af477e",
-   "r": 18,
-   "t": null,
-   "c": "Science & AI",
-   "h": "This Year's Nobel Science Prizes Are Real-life Sci-fi",
-   "s": "",
-   "o": [
-    "The Economist"
-   ],
-   "l": "limited",
-   "coverage": {
-    "level": "limited",
-    "points": 0,
-    "independent_reports": 1,
-    "publishers": [
-     "The Economist"
-    ],
-    "repeats": 0,
-    "source_links": 1,
-    "linked_outlets": 1,
-    "linked_reporting_origins": 1,
-    "signals": 0,
-    "channels": 1
-   }
-  },
-  {
-   "d": "2026-10-10",
-   "id": "dec59a43ca0b",
-   "r": 19,
-   "t": null,
-   "c": "Science & AI",
-   "h": "Gavin Newsom's Executive Order Increases AI Oversight, Proposes 'Kill Switch'",
-   "s": "",
-   "o": [
-    "Daily Bruin"
-   ],
-   "l": "limited",
-   "coverage": {
-    "level": "limited",
-    "points": 1,
-    "independent_reports": 1,
-    "publishers": [
-     "Daily Bruin"
-    ],
-    "repeats": 0,
-    "source_links": 1,
-    "linked_outlets": 1,
-    "linked_reporting_origins": 1,
-    "signals": 0,
-    "channels": 1
-   }
-  },
-  {
-   "d": "2026-10-10",
    "id": "87cb3fcba333",
-   "r": 20,
+   "r": 16,
    "t": null,
    "c": "Science & AI",
-   "h": "Astronomers Detect Mysterious Burst of Energy from a Galaxy Far, Far Away",
+   "h": "Astronomers detect mysterious burst of energy from a galaxy far, far away",
    "s": "A long time ago in a galaxy far, far away, a mysterious flash of energy was released into the universe.",
    "o": [
     "The Guardian"
@@ -611,11 +504,11 @@
   {
    "d": "2026-10-10",
    "id": "157e81bf08e8",
-   "r": 21,
+   "r": 17,
    "t": null,
    "c": "News",
-   "h": "Panama Hit by Powerful 7.7 Earthquake, Cathedral Collapses",
-   "s": "A powerful 7.7 earthquake struck Panama, causing widespread damage and prompting evacuations. The earthquake also triggered a 6.6 aftershock and many smaller tremors, damaging buildings and prompting evacuations.",
+   "h": "7.7 quake hits Panama, damaging buildings and prompting evacuations",
+   "s": "A powerful 7.7 earthquake struck Panama, causing damage to buildings and prompting evacuations. The quake was followed by a 6.6 aftershock and many smaller tremors, but no deaths were reported.",
    "o": [
     "Euronews"
    ],
@@ -634,62 +527,6 @@
     "signals": 0,
     "channels": 1
    }
-  },
-  {
-   "d": "2026-10-10",
-   "id": "9d5e22484f8d",
-   "r": 22,
-   "t": null,
-   "c": "Tech",
-   "h": "Elon Musk Criticizes Mukesh Ambani over Starlink Launch Delay",
-   "s": "Elon Musk has accused Mukesh Ambani of blocking competition, which is causing delays in the launch of Starlink in India.",
-   "o": [
-    "TechCrunch"
-   ],
-   "l": "limited",
-   "coverage": {
-    "level": "limited",
-    "points": 1,
-    "independent_reports": 1,
-    "publishers": [
-     "TechCrunch"
-    ],
-    "repeats": 0,
-    "source_links": 1,
-    "linked_outlets": 1,
-    "linked_reporting_origins": 1,
-    "signals": 0,
-    "channels": 1
-   },
-   "u": "https://techcrunch.com/2026/10/09/elon-musk-intensifies-attack-on-ambani-over-starlink-india-launch-delay/"
-  },
-  {
-   "d": "2026-10-10",
-   "id": "3c42e5318d70",
-   "r": 23,
-   "t": null,
-   "c": "Science & AI",
-   "h": "Margaret Hamilton, Whose Software Sent Humans to the Moon, Dies at 90",
-   "s": "Hamilton was in her early thirties when she led the team of software engineers that powered NASA's Apollo missions.",
-   "o": [
-    "NPR"
-   ],
-   "l": "limited",
-   "coverage": {
-    "level": "limited",
-    "points": 0,
-    "independent_reports": 1,
-    "publishers": [
-     "NPR"
-    ],
-    "repeats": 0,
-    "source_links": 1,
-    "linked_outlets": 1,
-    "linked_reporting_origins": 1,
-    "signals": 0,
-    "channels": 1
-   },
-   "u": "https://www.npr.org/2026/10/08/nx-s1-5994972/margaret-hamilton-obituary-software-engineer-apollo"
   },
   {
    "d": "2026-10-09",

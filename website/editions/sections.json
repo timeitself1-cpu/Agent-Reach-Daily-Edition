@@ -1,13 +1,57 @@
 {
-  "note": "The ONE list of sections: ids are the edition categories, label is what readers see, order is reading order. The app, the standalone export and the website all read this file (the publisher copies it to editions/sections.json).",
-  "version": 1,
-  "sections": [
-    {"id": "News", "label": "World & Nation", "path": "/world/", "title": "World & Nation", "blurb": "World and national news: politics, courts, conflict, the economy and public safety."},
-    {"id": "Tech", "label": "Technology", "path": "/technology/", "title": "Technology", "blurb": "Companies, products, security and the business of technology."},
-    {"id": "Science & AI", "label": "Science & AI", "path": "/science/", "title": "Science & AI", "blurb": "Research, space, health, climate and artificial intelligence."},
-    {"id": "Sports", "label": "Sports", "path": "/sports/", "title": "Sports", "blurb": "Games, results, trades and the business of sport."},
-    {"id": "Entertainment", "label": "Entertainment", "path": "/entertainment/", "title": "Entertainment", "blurb": "Film, television, music, games and the people who make them."},
-    {"id": "Internet Culture", "label": "Internet Culture", "path": "/internet-culture/", "title": "Internet Culture", "blurb": "What people are talking about online: platforms, creators and viral moments."},
-    {"id": "Local", "label": "Local", "title": "Frisco & North Texas", "blurb": "Local news from Frisco, Collin and Denton counties and the rest of North Texas.", "retired": "October 9, 2026"}
-  ]
+ "note": "The ONE list of sections: ids are the edition categories, label is what readers see, order is reading order. The app, the standalone export and the website all read this file (the publisher copies it to editions/sections.json).",
+ "version": 1,
+ "sections": [
+  {
+   "id": "News",
+   "label": "World & Nation",
+   "path": "/world/",
+   "title": "World & Nation",
+   "blurb": "World and national news: politics, courts, conflict, the economy and public safety."
+  },
+  {
+   "id": "Tech",
+   "label": "Technology",
+   "path": "/technology/",
+   "title": "Technology",
+   "blurb": "Companies, products, security and the business of technology."
+  },
+  {
+   "id": "Science & AI",
+   "label": "Science & AI",
+   "path": "/science/",
+   "title": "Science & AI",
+   "blurb": "Research, space, health, climate and artificial intelligence."
+  },
+  {
+   "id": "Sports",
+   "label": "Sports",
+   "path": "/sports/",
+   "title": "Sports",
+   "blurb": "Games, results, trades and the business of sport."
+  },
+  {
+   "id": "Entertainment",
+   "label": "Entertainment",
+   "path": "/entertainment/",
+   "title": "Entertainment",
+   "blurb": "Film, television, music, games and the people who make them."
+  },
+  {
+   "id": "Internet Culture",
+   "label": "Internet Culture",
+   "path": "/internet-culture/",
+   "title": "Internet Culture",
+   "blurb": "What people are talking about online: platforms, creators and viral moments.",
+   "retired": "October 10, 2026",
+   "merged_into": "technology"
+  },
+  {
+   "id": "Local",
+   "label": "Local",
+   "title": "Frisco & North Texas",
+   "blurb": "Local news from Frisco, Collin and Denton counties and the rest of North Texas.",
+   "retired": "October 9, 2026"
+  }
+ ]
 }
