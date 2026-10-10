@@ -35,6 +35,32 @@ def _same_actor(a, b):
                                     or (len(right) == 1 and right[0] == left[-1])))
 
 
+def _different_central_actors(a, b) -> bool:
+    """Two reports about different named individuals cannot be the same event.
+
+    Catches cases like a Pentagon execution livestream (about a specific military case)
+    vs Christa Pike's execution: same topic (capital punishment) but different people,
+    different actions, different events. The actor extraction focuses on the title prefix
+    (who the story is about), so 'Pentagon plans to livestream execution' vs
+    'Christa Pike execution scheduled' correctly identifies different central figures.
+    """
+    left, right = _actor(a.normalized_title), _actor(b.normalized_title)
+    if not left or not right:
+        return False
+    # Normalize: compare as sets of words, ignoring order
+    left_set, right_set = set(left), set(right)
+    # If they share no words at all and both name specific entities (2+ words or a
+    # distinctive single name), they are about different actors.
+    if not (left_set & right_set):
+        # Single common words like 'pentagon' vs 'pike' are distinctive enough when
+        # the rest of the title context differs (checked by the caller via topic words)
+        left_specific = len(left) >= 2 or (len(left) == 1 and len(left[0]) > 4)
+        right_specific = len(right) >= 2 or (len(right) == 1 and len(right[0]) > 4)
+        if left_specific and right_specific:
+            return True
+    return False
+
+
 def _same_actor_action_day(a, b, shared_actor, *, check_actor=True):
     if not shared_actor or (check_actor and not _same_actor(a, b)):
         return False
