@@ -4,6 +4,1070 @@
  "month": "2026-10",
  "stories": [
   {
+   "d": "2026-10-10",
+   "id": "fd983421fa72",
+   "r": 1,
+   "t": 1,
+   "c": "News",
+   "h": "Hurricane Isaias updates: Storm makes landfall in Florida Panhandle",
+   "s": "The Gulf Coast is bracing for dangerous conditions, extreme wind and flooding. Hurricane Isaias has strengthened into a Category 3 hurricane as it heads toward the Gulf Coast.",
+   "o": [
+    "ABC News",
+    "The Guardian",
+    "PBS NewsHour",
+    "CBS News",
+    "BBC News"
+   ],
+   "l": "strong",
+   "coverage": {
+    "level": "strong",
+    "points": 6,
+    "independent_reports": 11,
+    "publishers": [
+     "ABC News",
+     "AP News",
+     "BBC News",
+     "CBC News",
+     "CBS News",
+     "NBC News",
+     "NPR",
+     "PBS NewsHour",
+     "Reuters",
+     "The Guardian",
+     "The New York Times"
+    ],
+    "repeats": 6,
+    "source_links": 8,
+    "linked_outlets": 7,
+    "linked_reporting_origins": 7,
+    "signals": 1,
+    "channels": 2
+   },
+   "u": "https://abcnews.com/US/live-updates/hurricane-isaias-updates-isaias-strengthens-category-3/?id=137128637"
+  },
+  {
+   "d": "2026-10-10",
+   "id": "b2eb5ece951e",
+   "r": 2,
+   "t": 2,
+   "c": "News",
+   "h": "Trump announces deal for Russian diesel as Zelensky calls it a gift to Putin",
+   "s": "Ukraine's president sharply criticised the move, calling it an \"investment in war that must be ended, not prolonged\". Ukraine President Volodymyr Zelenskyy said in a searing statement that the U.S. easing sanctions on Moscow \"plays into Russia's hands.\"",
+   "o": [
+    "BBC News",
+    "CNBC",
+    "Axios",
+    "The Washington Post",
+    "reddit.com"
+   ],
+   "l": "strong",
+   "coverage": {
+    "level": "strong",
+    "points": 6,
+    "independent_reports": 8,
+    "publishers": [
+     "Axios",
+     "BBC News",
+     "CNBC",
+     "Euronews",
+     "France 24",
+     "NPR",
+     "The Guardian",
+     "The Washington Post"
+    ],
+    "repeats": 4,
+    "source_links": 8,
+    "linked_outlets": 4,
+    "linked_reporting_origins": 4,
+    "signals": 2,
+    "channels": 2
+   },
+   "u": "https://www.bbc.co.uk/news/articles/cm1dwgr666wno?at_medium=RSS&at_campaign=rss"
+  },
+  {
+   "d": "2026-10-10",
+   "id": "b1143fcd0f64",
+   "r": 3,
+   "t": 3,
+   "c": "News",
+   "h": "Nobel Peace Prize Awarded to Navanethem Pillay",
+   "s": "The Nobel Peace Prize 2026 was awarded to Navanethem Pillay for her efforts to promote peace and international law.",
+   "o": [
+    "nobelprize.org",
+    "Reuters",
+    "NPR",
+    "France 24",
+    "NBC News"
+   ],
+   "l": "strong",
+   "coverage": {
+    "level": "strong",
+    "points": 6,
+    "independent_reports": 7,
+    "publishers": [
+     "France 24",
+     "Le Monde",
+     "NBC News",
+     "NPR",
+     "Reuters",
+     "The Guardian",
+     "nobelprize.org"
+    ],
+    "repeats": 2,
+    "source_links": 8,
+    "linked_outlets": 5,
+    "linked_reporting_origins": 5,
+    "signals": 2,
+    "channels": 3
+   },
+   "u": "https://www.nobelprize.org/prizes/peace/2026/press-release/"
+  },
+  {
+   "d": "2026-10-10",
+   "id": "9117b37465dd",
+   "r": 4,
+   "t": 4,
+   "c": "News",
+   "h": "JD Vance says he won't watch livestream execution of Fort Hood shooter",
+   "s": "Vice President JD Vance said Friday he won't watch a potential livestream of the convicted Fort Hood shooter's execution, which President Trump told reporters he had approved. Carr said he'll \"defer to Secretary Hegseth\" if the latter aims to air the execution of Nidal Malik…",
+   "o": [
+    "Axios",
+    "Gizmodo",
+    "CBS News",
+    "Fortune"
+   ],
+   "l": "strong",
+   "coverage": {
+    "level": "strong",
+    "points": 6,
+    "independent_reports": 4,
+    "publishers": [
+     "Axios",
+     "CBS News",
+     "Fortune",
+     "Gizmodo"
+    ],
+    "repeats": 1,
+    "source_links": 5,
+    "linked_outlets": 4,
+    "linked_reporting_origins": 4,
+    "signals": 0,
+    "channels": 2
+   },
+   "u": "https://www.axios.com/2026/10/09/jd-vance-fort-hood-shooter-livestream-execution"
+  },
+  {
+   "d": "2026-10-10",
+   "id": "68b351363485",
+   "r": 5,
+   "t": 5,
+   "c": "Science & AI",
+   "h": "Margaret Hamilton, Trailblazer Whose Software Powered Apollo 11 Moon Landing, Dies at 90",
+   "s": "Hamilton led the team of software engineers that developed the software for the Apollo missions, paving the way for future space exploration.",
+   "o": [
+    "NPR",
+    "The Guardian"
+   ],
+   "l": "moderate",
+   "coverage": {
+    "level": "moderate",
+    "points": 2,
+    "independent_reports": 2,
+    "publishers": [
+     "NPR",
+     "The Guardian"
+    ],
+    "repeats": 0,
+    "source_links": 2,
+    "linked_outlets": 2,
+    "linked_reporting_origins": 2,
+    "signals": 0,
+    "channels": 1
+   },
+   "u": "https://www.theguardian.com/science/2026/oct/07/margaret-hamilton-moon-computer-software"
+  },
+  {
+   "d": "2026-10-10",
+   "id": "fd52d2c4d318",
+   "r": 6,
+   "t": 6,
+   "c": "News",
+   "h": "US Imposes Sanctions on International Criminal Court",
+   "s": "The US has imposed sanctions on the International Criminal Court, cutting it off from the global financial system and including threats of punishment for countries that do business with the court. The sanctions are aimed at dismantling the court, with American businesses given…",
+   "o": [
+    "Reuters",
+    "The Washington Post",
+    "state.gov",
+    "Fortune"
+   ],
+   "l": "strong",
+   "coverage": {
+    "level": "strong",
+    "points": 6,
+    "independent_reports": 4,
+    "publishers": [
+     "Fortune",
+     "Reuters",
+     "The Washington Post",
+     "state.gov"
+    ],
+    "repeats": 1,
+    "source_links": 5,
+    "linked_outlets": 4,
+    "linked_reporting_origins": 4,
+    "signals": 0,
+    "channels": 3
+   }
+  },
+  {
+   "d": "2026-10-10",
+   "id": "9bccd0d85994",
+   "r": 7,
+   "t": 7,
+   "c": "News",
+   "h": "Panama Hit by Powerful Earthquakes",
+   "s": "A powerful magnitude 7.7 earthquake struck near Panama's southern tip on Friday morning, shaking buildings more than 100 miles away in the capital. The quake was followed by a 6.6 magnitude quake later in the day, prompting evacuations.",
+   "o": [
+    "AP News",
+    "CBS News"
+   ],
+   "l": "moderate",
+   "coverage": {
+    "level": "moderate",
+    "points": 4,
+    "independent_reports": 2,
+    "publishers": [
+     "AP News",
+     "CBS News"
+    ],
+    "repeats": 0,
+    "source_links": 2,
+    "linked_outlets": 2,
+    "linked_reporting_origins": 2,
+    "signals": 0,
+    "channels": 2
+   },
+   "u": "https://www.cbsnews.com/news/panama-earthquake-tsunami-threat/"
+  },
+  {
+   "d": "2026-10-10",
+   "id": "8ebf7a92f83c",
+   "r": 8,
+   "t": null,
+   "c": "News",
+   "h": "3 Men Found Guilty in Murders of American, Australian Surfers in Mexico",
+   "s": "A local judge has found three men guilty of murdering two Australian brothers and their American friend in Baja California, Mexico, in April 2024. The 2024 murders of brothers Jake and Callum Robinson, along with their friend Carter Rhoad, shocked Mexico and drew international…",
+   "o": [
+    "CBS News",
+    "Sky News",
+    "DW"
+   ],
+   "l": "moderate",
+   "coverage": {
+    "level": "moderate",
+    "points": 4,
+    "independent_reports": 3,
+    "publishers": [
+     "CBS News",
+     "DW",
+     "Sky News"
+    ],
+    "repeats": 0,
+    "source_links": 3,
+    "linked_outlets": 3,
+    "linked_reporting_origins": 3,
+    "signals": 0,
+    "channels": 1
+   },
+   "u": "https://www.cbsnews.com/news/men-guilty-mexico-australian-american-surfer-murders/"
+  },
+  {
+   "d": "2026-10-10",
+   "id": "e0dec9445903",
+   "r": 9,
+   "t": null,
+   "c": "News",
+   "h": "India's Central Bank Takes Steps to Support Rupee",
+   "s": "India's central bank rolled out measures to support the plunging rupee, including opening a special window for state-run oil companies to meet their dollar requirements.",
+   "o": [
+    "Bloomberg",
+    "Reuters"
+   ],
+   "l": "moderate",
+   "coverage": {
+    "level": "moderate",
+    "points": 4,
+    "independent_reports": 2,
+    "publishers": [
+     "Bloomberg",
+     "Reuters"
+    ],
+    "repeats": 0,
+    "source_links": 2,
+    "linked_outlets": 2,
+    "linked_reporting_origins": 2,
+    "signals": 0,
+    "channels": 2
+   }
+  },
+  {
+   "d": "2026-10-10",
+   "id": "0194fd6c99fe",
+   "r": 10,
+   "t": 8,
+   "c": "Tech",
+   "h": "FBI Arrests Founder of Ransomware Negotiation Firm",
+   "s": "The FBI has arrested another suspected member of the ShinyHunters extortion group believed to be involved in the recent breach of FBI systems, Director Kash Patel announced Friday.",
+   "o": [
+    "Krebs on Security",
+    "BleepingComputer"
+   ],
+   "l": "moderate",
+   "coverage": {
+    "level": "moderate",
+    "points": 3,
+    "independent_reports": 2,
+    "publishers": [
+     "BleepingComputer",
+     "Krebs on Security"
+    ],
+    "repeats": 0,
+    "source_links": 2,
+    "linked_outlets": 2,
+    "linked_reporting_origins": 2,
+    "signals": 0,
+    "channels": 1
+   },
+   "u": "https://krebsonsecurity.com/2026/10/fbi-arrests-founder-of-ransomware-negotiation-firm/"
+  },
+  {
+   "d": "2026-10-10",
+   "id": "c9ba0cdc29e5",
+   "r": 11,
+   "t": null,
+   "c": "News",
+   "h": "Anthropic AI Model Went Rogue, Submitted Fake Unsolved Murder Tip",
+   "s": "Authorities called Anthropic's two-month delay in detecting and reporting the incident 'unacceptable'. An Anthropic AI model provided false information about an unsolved homicide to a Philadelphia Police Department (PPD) tipline, according to a report from 6abc.",
+   "o": [
+    "WSJ",
+    "Al Jazeera",
+    "Engadget",
+    "TechCrunch",
+    "The Verge"
+   ],
+   "l": "strong",
+   "coverage": {
+    "level": "strong",
+    "points": 6,
+    "independent_reports": 6,
+    "publishers": [
+     "Al Jazeera",
+     "Engadget",
+     "TechCrunch",
+     "The Verge",
+     "WSJ",
+     "nbcphiladelphia.com"
+    ],
+    "repeats": 0,
+    "source_links": 7,
+    "linked_outlets": 6,
+    "linked_reporting_origins": 6,
+    "signals": 1,
+    "channels": 3
+   }
+  },
+  {
+   "d": "2026-10-10",
+   "id": "9fe13919cc51",
+   "r": 12,
+   "t": 9,
+   "c": "Sports",
+   "h": "Mike Ditka Dies at 86",
+   "s": "Mike Ditka, the fiery former NFL player and coach, has died at the age of 86. He led the Chicago Bears to their lone Super Bowl title and became a larger-than-life sporting icon.",
+   "o": [
+    "AP News",
+    "The Guardian",
+    "ESPN",
+    "en.wikipedia.org"
+   ],
+   "l": "strong",
+   "coverage": {
+    "level": "strong",
+    "points": 5,
+    "independent_reports": 3,
+    "publishers": [
+     "AP News",
+     "ESPN",
+     "The Guardian"
+    ],
+    "repeats": 0,
+    "source_links": 4,
+    "linked_outlets": 3,
+    "linked_reporting_origins": 3,
+    "signals": 1,
+    "channels": 2
+   },
+   "u": "https://www.espn.com/nfl/story/_/id/50140701/legendary-coach-hall-fame-te-mike-ditka-dies-age-86"
+  },
+  {
+   "d": "2026-10-10",
+   "id": "972065f00428",
+   "r": 13,
+   "t": null,
+   "c": "News",
+   "h": "NYC man shot by ICE still has bullet in body, lawyers say",
+   "s": "The incident occurred early Friday in Fresno.",
+   "o": [
+    "Courthouse News",
+    "ABC News",
+    "reddit.com"
+   ],
+   "l": "moderate",
+   "coverage": {
+    "level": "moderate",
+    "points": 4,
+    "independent_reports": 2,
+    "publishers": [
+     "ABC News",
+     "Courthouse News"
+    ],
+    "repeats": 0,
+    "source_links": 3,
+    "linked_outlets": 2,
+    "linked_reporting_origins": 2,
+    "signals": 1,
+    "channels": 2
+   }
+  },
+  {
+   "d": "2026-10-10",
+   "id": "4cf2663c7104",
+   "r": 14,
+   "t": 10,
+   "c": "Science & AI",
+   "h": "The Real Threat Involving Artificial Intelligence Isn't What You Think",
+   "s": "Artificial intelligence and social integration paradox.",
+   "o": [
+    "Daily Sabah",
+    "ABC News",
+    "Washington Times"
+   ],
+   "l": "moderate",
+   "coverage": {
+    "level": "moderate",
+    "points": 4,
+    "independent_reports": 3,
+    "publishers": [
+     "ABC News",
+     "Daily Sabah",
+     "Washington Times"
+    ],
+    "repeats": 0,
+    "source_links": 3,
+    "linked_outlets": 3,
+    "linked_reporting_origins": 3,
+    "signals": 0,
+    "channels": 1
+   }
+  },
+  {
+   "d": "2026-10-10",
+   "id": "dbaffc991fc1",
+   "r": 15,
+   "t": null,
+   "c": "Science & AI",
+   "h": "What Will It Take to Build a Moon Base?",
+   "s": "Industry experts discussed the challenges and requirements for building a moon base, including the need for underground shelters, hidden ice, and tracking dangerous conditions on the lunar surface. The findings could reveal how astronauts can survive and thrive on the moon.",
+   "o": [
+    "ScienceDaily",
+    "SpaceNews"
+   ],
+   "l": "moderate",
+   "coverage": {
+    "level": "moderate",
+    "points": 2,
+    "independent_reports": 2,
+    "publishers": [
+     "ScienceDaily",
+     "SpaceNews"
+    ],
+    "repeats": 0,
+    "source_links": 2,
+    "linked_outlets": 2,
+    "linked_reporting_origins": 2,
+    "signals": 0,
+    "channels": 1
+   },
+   "u": "https://spacenews.com/what-will-it-take-to-build-a-moon-base/"
+  },
+  {
+   "d": "2026-10-10",
+   "id": "6b8667309135",
+   "r": 16,
+   "t": null,
+   "c": "Entertainment",
+   "h": "Danny Trejo Insists He’s \"Pro-Immigrant\" & \"Proud Mexican\" Amid Backlash To Daily Wire’s ICE Film: \"Make No Mistake\"",
+   "s": "Danny Trejo has broken his silence amid backlash around his role in Daily Wire's latest controversial production.",
+   "o": [
+    "Deadline",
+    "Variety"
+   ],
+   "l": "moderate",
+   "coverage": {
+    "level": "moderate",
+    "points": 4,
+    "independent_reports": 2,
+    "publishers": [
+     "Deadline",
+     "Variety"
+    ],
+    "repeats": 0,
+    "source_links": 2,
+    "linked_outlets": 2,
+    "linked_reporting_origins": 2,
+    "signals": 0,
+    "channels": 2
+   },
+   "u": "https://deadline.com/2026/10/danny-trejo-pro-immigrant-backlash-daily-wire-ice-film-1237153821/"
+  },
+  {
+   "d": "2026-10-10",
+   "id": "4053fef9ec35",
+   "r": 17,
+   "t": null,
+   "c": "Internet Culture",
+   "h": "Blogger Found Guilty of Taunting State Senator with Shrek Dick Picks",
+   "s": "An Ohio blogger called \"The Rooster\" was put on trial for sending NSFW Shrek memes to a state senator. The senator described the Shrek text as pornographic and harassing.",
+   "o": [
+    "Kotaku",
+    "Ohio Capital Journal",
+    "The Verge"
+   ],
+   "l": "strong",
+   "coverage": {
+    "level": "strong",
+    "points": 5,
+    "independent_reports": 3,
+    "publishers": [
+     "Kotaku",
+     "Ohio Capital Journal",
+     "The Verge"
+    ],
+    "repeats": 0,
+    "source_links": 3,
+    "linked_outlets": 3,
+    "linked_reporting_origins": 3,
+    "signals": 0,
+    "channels": 2
+   },
+   "u": "https://kotaku.com/blogger-found-guilty-of-taunting-state-senator-with-shrek-dick-picks-2000743289"
+  },
+  {
+   "d": "2026-10-10",
+   "id": "7551f9ba30b1",
+   "r": 18,
+   "t": null,
+   "c": "Sports",
+   "h": "Golden State Valkyries Reach WNBA Finals: How Second-year Franchise Made Unprecedented Run",
+   "s": "Just over three years ago, on Oct. 5, 2023, the Golden State Valkyries were officially introduced as the WNBA's first expansion team in over a decade.",
+   "o": [
+    "CBS Sports",
+    "The Guardian"
+   ],
+   "l": "moderate",
+   "coverage": {
+    "level": "moderate",
+    "points": 3,
+    "independent_reports": 2,
+    "publishers": [
+     "CBS Sports",
+     "The Guardian"
+    ],
+    "repeats": 0,
+    "source_links": 2,
+    "linked_outlets": 2,
+    "linked_reporting_origins": 2,
+    "signals": 0,
+    "channels": 1
+   },
+   "u": "https://www.cbssports.com/wnba/news/golden-state-valkyries-reach-wnba-finals-second-year-unprecedented-run/"
+  },
+  {
+   "d": "2026-10-10",
+   "id": "13f4d7a18d0c",
+   "r": 19,
+   "t": null,
+   "c": "Tech",
+   "h": "Trump Gives Musk, Huang, Su and Brin the National Medal of Science",
+   "s": "The architects of the future the White House gave Elon Musk, Jensen Huang, Lisa Su and Sergey Brin the National Medal of Science on Thursday. Six technology leaders received the country's highest honours for science and technology from President Donald Trump on Thursday.",
+   "o": [
+    "The Next Web"
+   ],
+   "l": "limited",
+   "coverage": {
+    "level": "limited",
+    "points": 1,
+    "independent_reports": 1,
+    "publishers": [
+     "The Next Web"
+    ],
+    "repeats": 0,
+    "source_links": 1,
+    "linked_outlets": 1,
+    "linked_reporting_origins": 1,
+    "signals": 0,
+    "channels": 1
+   },
+   "u": "https://thenextweb.com/news/national-medal-of-science-musk-huang-su-brin-nadella-dell"
+  },
+  {
+   "d": "2026-10-10",
+   "id": "24ad60a07e8a",
+   "r": 20,
+   "t": null,
+   "c": "Science & AI",
+   "h": "Ukraine’s drones knock out AI data center belonging to \"Russia’s Google\"",
+   "s": "One damaged data center has supercomputers used for training Yandex's AI model.",
+   "o": [
+    "Ars Technica"
+   ],
+   "l": "limited",
+   "coverage": {
+    "level": "limited",
+    "points": 1,
+    "independent_reports": 1,
+    "publishers": [
+     "Ars Technica"
+    ],
+    "repeats": 0,
+    "source_links": 1,
+    "linked_outlets": 1,
+    "linked_reporting_origins": 1,
+    "signals": 0,
+    "channels": 1
+   },
+   "u": "https://arstechnica.com/gadgets/2026/10/ukraines-drones-knock-out-ai-data-center-belonging-to-russias-google/"
+  },
+  {
+   "d": "2026-10-10",
+   "id": "aee80b84e923",
+   "r": 21,
+   "t": null,
+   "c": "Science & AI",
+   "h": "OpenAI caught Russians and Iranians using ChatGPT for influence campaigns",
+   "s": "The company says Russian operatives used its AI chatbot to update their bosses, shedding light on influence campaigns previously not attributed to Russia.",
+   "o": [
+    "NPR"
+   ],
+   "l": "limited",
+   "coverage": {
+    "level": "limited",
+    "points": 0,
+    "independent_reports": 1,
+    "publishers": [
+     "NPR"
+    ],
+    "repeats": 0,
+    "source_links": 1,
+    "linked_outlets": 1,
+    "linked_reporting_origins": 1,
+    "signals": 0,
+    "channels": 1
+   },
+   "u": "https://www.npr.org/2026/10/08/nx-s1-5995576/openai-russia-iran-influence-operations-chatgpt"
+  },
+  {
+   "d": "2026-10-10",
+   "id": "c015b4868b83",
+   "r": 22,
+   "t": null,
+   "c": "Science & AI",
+   "h": "NASA Astronauts Splash Down After 100 Million Miles in Space",
+   "s": "NASA's SpaceX Crew-12 astronauts have returned to Earth after 237 days in space, traveling over 100 million miles and completing over 3,792 orbits. The mission also made progress in preparing for future missions to the Moon and Mars.",
+   "o": [
+    "ScienceDaily"
+   ],
+   "l": "limited",
+   "coverage": {
+    "level": "limited",
+    "points": 0,
+    "independent_reports": 1,
+    "publishers": [
+     "ScienceDaily"
+    ],
+    "repeats": 0,
+    "source_links": 1,
+    "linked_outlets": 1,
+    "linked_reporting_origins": 1,
+    "signals": 0,
+    "channels": 1
+   },
+   "u": "https://www.sciencedaily.com/releases/2026/10/261008232629.htm"
+  },
+  {
+   "d": "2026-10-10",
+   "id": "d9cc80e7c371",
+   "r": 23,
+   "t": null,
+   "c": "Science & AI",
+   "h": "Plastic Chemical Affects Human Ovaries",
+   "s": "Mounting evidence shows that a common plastic chemical, phthalates, can affect human ovaries. The most common phthalate, DEHP, is widely used in materials, raising concerns about its impact on reproductive health.",
+   "o": [
+    "ScienceAlert"
+   ],
+   "l": "limited",
+   "coverage": {
+    "level": "limited",
+    "points": 1,
+    "independent_reports": 1,
+    "publishers": [
+     "ScienceAlert"
+    ],
+    "repeats": 0,
+    "source_links": 1,
+    "linked_outlets": 1,
+    "linked_reporting_origins": 1,
+    "signals": 0,
+    "channels": 1
+   },
+   "u": "https://www.sciencealert.com/mounting-evidence-shows-a-common-plastic-chemical-can-affect-human-ovaries"
+  },
+  {
+   "d": "2026-10-10",
+   "id": "c2faf82f2cb7",
+   "r": 24,
+   "t": null,
+   "c": "Science & AI",
+   "h": "Increased Cancer Risk at Younger Age Raises Concerns",
+   "s": "A study has found that people are at a higher risk of getting cancer at a younger age than their parents, with the exact cause still unknown.",
+   "o": [
+    "The Guardian"
+   ],
+   "l": "limited",
+   "coverage": {
+    "level": "limited",
+    "points": 1,
+    "independent_reports": 1,
+    "publishers": [
+     "The Guardian"
+    ],
+    "repeats": 0,
+    "source_links": 1,
+    "linked_outlets": 1,
+    "linked_reporting_origins": 1,
+    "signals": 0,
+    "channels": 1
+   }
+  },
+  {
+   "d": "2026-10-10",
+   "id": "710b3ad8dc31",
+   "r": 25,
+   "t": null,
+   "c": "Science & AI",
+   "h": "OpenAI Revenue Keeps Surging as Company Seeks $30 Billion in Fresh Capital",
+   "s": "OpenAI's annualized revenue rate sits at about $50 billion, well below the initially reported $70 billion figure that was based on a different accounting method.",
+   "o": [
+    "The Decoder"
+   ],
+   "l": "limited",
+   "coverage": {
+    "level": "limited",
+    "points": 1,
+    "independent_reports": 1,
+    "publishers": [
+     "The Decoder"
+    ],
+    "repeats": 0,
+    "source_links": 1,
+    "linked_outlets": 1,
+    "linked_reporting_origins": 1,
+    "signals": 0,
+    "channels": 1
+   },
+   "u": "https://the-decoder.com/openai-revenue-keeps-surging-as-company-seeks-30-billion-in-fresh-capital/"
+  },
+  {
+   "d": "2026-10-10",
+   "id": "59c57b3e5885",
+   "r": 26,
+   "t": null,
+   "c": "Science & AI",
+   "h": "micro1 Commits $1bn to Buy Company Data for Training AI Agents",
+   "s": "Exceptions that require judgment micro1 will spend $1bn in 12 months buying company data to train AI agents, financed by Citi and Hercules.",
+   "o": [
+    "The Next Web"
+   ],
+   "l": "limited",
+   "coverage": {
+    "level": "limited",
+    "points": 1,
+    "independent_reports": 1,
+    "publishers": [
+     "The Next Web"
+    ],
+    "repeats": 0,
+    "source_links": 1,
+    "linked_outlets": 1,
+    "linked_reporting_origins": 1,
+    "signals": 0,
+    "channels": 1
+   },
+   "u": "https://thenextweb.com/news/micro1-1bn-enterprise-data-ai-training-citi-hercules"
+  },
+  {
+   "d": "2026-10-10",
+   "id": "6a550eb9772b",
+   "r": 27,
+   "t": null,
+   "c": "Sports",
+   "h": "Was Epic Man City-Liverpool Rivalry All a Sham After Cheating Scandal?",
+   "s": "Under Jurgen Klopp and Pep Guardiola, Liverpool and Man City pushed the Premier League's standards higher than ever.",
+   "o": [
+    "ESPN"
+   ],
+   "l": "limited",
+   "coverage": {
+    "level": "limited",
+    "points": 1,
+    "independent_reports": 1,
+    "publishers": [
+     "ESPN"
+    ],
+    "repeats": 0,
+    "source_links": 1,
+    "linked_outlets": 1,
+    "linked_reporting_origins": 1,
+    "signals": 0,
+    "channels": 1
+   },
+   "u": "https://www.espn.com/soccer/story/_/id/50126359/was-epic-man-city-liverpool-rivalry-all-sham-cheating-scandal"
+  },
+  {
+   "d": "2026-10-10",
+   "id": "d5ceadff358c",
+   "r": 28,
+   "t": null,
+   "c": "Entertainment",
+   "h": "We Might Be Cooked, As These Vibe-Coded Web Browser Ports Of Halo, The Simpsons: Hit And Run, And GTA: Vice City Seem To Work Perfectly",
+   "s": "",
+   "o": [
+    "Kotaku"
+   ],
+   "l": "limited",
+   "coverage": {
+    "level": "limited",
+    "points": 1,
+    "independent_reports": 1,
+    "publishers": [
+     "Kotaku"
+    ],
+    "repeats": 0,
+    "source_links": 1,
+    "linked_outlets": 1,
+    "linked_reporting_origins": 1,
+    "signals": 0,
+    "channels": 1
+   },
+   "u": "https://kotaku.com/we-might-be-cooked-as-these-vibe-coded-web-browser-ports-of-halo-the-simpsons-hit-and-run-and-gta-vice-city-seem-to-work-perfectly-2000743300"
+  },
+  {
+   "d": "2026-10-10",
+   "id": "fc431a6ee062",
+   "r": 29,
+   "t": null,
+   "c": "Tech",
+   "h": "SpaceX to Buy Key Spectrum for Starlink Mobile",
+   "s": "SpaceX is buying key spectrum to help its Starlink Mobile become a major US cell carrier. The spectrum can reach devices inside buildings and extend coverage beyond cell towers.",
+   "o": [
+    "The Register"
+   ],
+   "l": "limited",
+   "coverage": {
+    "level": "limited",
+    "points": 1,
+    "independent_reports": 1,
+    "publishers": [
+     "The Register"
+    ],
+    "repeats": 0,
+    "source_links": 1,
+    "linked_outlets": 1,
+    "linked_reporting_origins": 1,
+    "signals": 0,
+    "channels": 1
+   },
+   "u": "https://www.theregister.com/networks/2026/10/09/spacex-to-buy-key-spectrum-that-could-help-starlink-mobile-become-major-us-cell-carrier/5302393"
+  },
+  {
+   "d": "2026-10-10",
+   "id": "0c6cbb8df201",
+   "r": 30,
+   "t": null,
+   "c": "Entertainment",
+   "h": "Ava DuVernay's Documentary Takes Aim at Trump and Rights Rescission",
+   "s": "Ava DuVernay's documentary '14th' defends the Constitution and takes aim at Trump's attempts to rescind rights. The film premiered and has received positive reviews for its impassioned defense of the Constitution.",
+   "o": [
+    "Deadline"
+   ],
+   "l": "limited",
+   "coverage": {
+    "level": "limited",
+    "points": 1,
+    "independent_reports": 1,
+    "publishers": [
+     "Deadline"
+    ],
+    "repeats": 0,
+    "source_links": 1,
+    "linked_outlets": 1,
+    "linked_reporting_origins": 1,
+    "signals": 0,
+    "channels": 1
+   },
+   "u": "https://deadline.com/2026/10/14th-review-ava-duvernay-documentary-1237153748/"
+  },
+  {
+   "d": "2026-10-10",
+   "id": "453ffd54718a",
+   "r": 31,
+   "t": null,
+   "c": "Tech",
+   "h": "Decade-old RAM is making a comeback",
+   "s": "Intel and AMD are making new CPUs that'll support the older, more affordable type of memory.",
+   "o": [
+    "The Verge"
+   ],
+   "l": "limited",
+   "coverage": {
+    "level": "limited",
+    "points": 2,
+    "independent_reports": 1,
+    "publishers": [
+     "The Verge"
+    ],
+    "repeats": 1,
+    "source_links": 2,
+    "linked_outlets": 1,
+    "linked_reporting_origins": 1,
+    "signals": 0,
+    "channels": 2
+   },
+   "u": "https://www.theverge.com/games/1009140/ram-shortage-intel-amd-ddr4-comeback"
+  },
+  {
+   "d": "2026-10-10",
+   "id": "9531b30b80fc",
+   "r": 32,
+   "t": null,
+   "c": "Tech",
+   "h": "Google teases its new 'Fitbit Edge' wearable ahead of an October 12 reveal",
+   "s": "Google has seemingly confirmed the rumored \"Fitbit Edge\" with social media posts teasing a new wearable coming October 12.",
+   "o": [
+    "Engadget"
+   ],
+   "l": "limited",
+   "coverage": {
+    "level": "limited",
+    "points": 1,
+    "independent_reports": 1,
+    "publishers": [
+     "Engadget"
+    ],
+    "repeats": 0,
+    "source_links": 1,
+    "linked_outlets": 1,
+    "linked_reporting_origins": 1,
+    "signals": 0,
+    "channels": 1
+   },
+   "u": "https://www.engadget.com/2282887/google-teases-its-new-fitbit-edge-wearable-ahead-of-an-october-12-reveal/"
+  },
+  {
+   "d": "2026-10-10",
+   "id": "b61306682d35",
+   "r": 33,
+   "t": null,
+   "c": "Tech",
+   "h": "Gigabyte's latest BIOS update hints at Intel's Raptor Lake Next Launch in 2027",
+   "s": "",
+   "o": [
+    "Tom's Hardware"
+   ],
+   "l": "limited",
+   "coverage": {
+    "level": "limited",
+    "points": 1,
+    "independent_reports": 1,
+    "publishers": [
+     "Tom's Hardware"
+    ],
+    "repeats": 0,
+    "source_links": 1,
+    "linked_outlets": 1,
+    "linked_reporting_origins": 1,
+    "signals": 0,
+    "channels": 1
+   },
+   "u": "https://www.tomshardware.com/pc-components/cpus/gigabytes-latest-bios-update-hints-at-intels-raptor-lake-next-launch-in-2027-new-cpus-may-support-both-ddr4-and-ddr5-memory"
+  },
+  {
+   "d": "2026-10-10",
+   "id": "180b8f1da20f",
+   "r": 34,
+   "t": null,
+   "c": "Tech",
+   "h": "Survey suggests that the iPhone Duo is tempting a surprising number of Android fans",
+   "s": "Not quite an Android exodus, but encouraging reading for Apple.",
+   "o": [
+    "Android Authority"
+   ],
+   "l": "limited",
+   "coverage": {
+    "level": "limited",
+    "points": 1,
+    "independent_reports": 1,
+    "publishers": [
+     "Android Authority"
+    ],
+    "repeats": 0,
+    "source_links": 1,
+    "linked_outlets": 1,
+    "linked_reporting_origins": 1,
+    "signals": 0,
+    "channels": 1
+   },
+   "u": "https://www.androidauthority.com/ditch-android-for-the-iphone-duo-poll-results-3721582/"
+  },
+  {
+   "d": "2026-10-10",
+   "id": "ec4f709bd72f",
+   "r": 35,
+   "t": null,
+   "c": "Tech",
+   "h": "‘This is not an anti-tech town’: backlash to datacenter in city once home to IBM",
+   "s": "For decades, East Fishkill helped build New York's tech industry.",
+   "o": [
+    "The Guardian"
+   ],
+   "l": "limited",
+   "coverage": {
+    "level": "limited",
+    "points": 1,
+    "independent_reports": 1,
+    "publishers": [
+     "The Guardian"
+    ],
+    "repeats": 0,
+    "source_links": 1,
+    "linked_outlets": 1,
+    "linked_reporting_origins": 1,
+    "signals": 0,
+    "channels": 1
+   },
+   "u": "https://www.theguardian.com/us-news/2026/oct/09/datacenter-backlash-ibm-east-fishkill-new-york"
+  },
+  {
    "d": "2026-10-09",
    "id": "c864026a5691",
    "r": 1,

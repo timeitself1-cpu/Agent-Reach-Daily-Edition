@@ -1,8 +1,28 @@
 {
  "schema": "agent_reach.public_index",
  "schema_version": 1,
- "latest": "2026-10-09",
+ "latest": "2026-10-10",
  "editions": [
+  {
+   "date": "2026-10-10",
+   "revision": 1,
+   "generated_utc": "2026-10-10T06:12:19Z",
+   "stories": 35,
+   "lead": "Hurricane Isaias updates: Storm makes landfall in Florida Panhandle",
+   "headlines": [
+    "Trump announces deal for Russian diesel as Zelensky calls it a gift to Putin",
+    "Nobel Peace Prize Awarded to Navanethem Pillay",
+    "JD Vance says he won't watch livestream execution of Fort Hood shooter"
+   ],
+   "sections": {
+    "News": 10,
+    "Tech": 8,
+    "Science & AI": 10,
+    "Sports": 3,
+    "Entertainment": 3,
+    "Internet Culture": 1
+   }
+  },
   {
    "date": "2026-10-09",
    "revision": 2,
