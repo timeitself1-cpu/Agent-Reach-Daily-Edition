@@ -1,0 +1,120 @@
+{
+ "note": "Story 2 of the published October 9, 2026 edition (revision 2, rc20 on the PC), as getagentreach.dev received it: the Pentagon's livestreamed firing-squad execution of the Fort Hood attacker, with three reports about Christa Pike's failed execution in Tennessee counted as its coverage. Copied from editions/2026-10-09.json of the website repository.",
+ "edition": "2026-10-09",
+ "revision": 2,
+ "app": "Agent Reach Daily 1.0.0rc20",
+ "story": {
+  "id": "264478534ba7",
+  "rank": 2,
+  "top_rank": 2,
+  "category": "News",
+  "headline": "Firing Squad Execution to Be Livestreamed, Pentagon Says",
+  "url": "https://www.bbc.co.uk/news/articles/cmy0r96xygx6o?at_medium=RSS&at_campaign=rss",
+  "summary": [
+   "Fort Hood attacker's execution by firing squad will be livestreamed, Pentagon says."
+  ],
+  "why_it_matters": null,
+  "change": "updated",
+  "labels": [],
+  "newest_published_utc": "2026-10-09T12:24:58Z",
+  "coverage": {
+   "level": "strong",
+   "points": 6,
+   "independent_reports": 4,
+   "publishers": [
+    "BBC News",
+    "NPR",
+    "PBS NewsHour",
+    "The New York Times"
+   ],
+   "repeats": 0,
+   "source_links": 8,
+   "linked_outlets": 4,
+   "linked_reporting_origins": 4,
+   "signals": 5,
+   "channels": 2
+  },
+  "sources": [
+   {
+    "outlet": "BBC News",
+    "via": "News feeds",
+    "title": "Firing squad execution to be livestreamed, Pentagon says",
+    "url": "https://www.bbc.co.uk/news/articles/cmy0r96xygx6o?at_medium=RSS&at_campaign=rss",
+    "published_utc": "2026-10-09T12:24:58Z",
+    "outlet_id": "bbcnews",
+    "reporting_origin": "outlet:bbcnews",
+    "kind": "report"
+   },
+   {
+    "outlet": "PBS NewsHour",
+    "via": "News feeds",
+    "title": "Christa Pike's attorneys say she is walking with help and eating after failed execution attempt",
+    "url": "https://www.pbs.org/newshour/nation/christa-pikes-attorneys-say-she-is-walking-with-help-and-eating-after-failed-execution-attempt",
+    "published_utc": "2026-10-09T00:35:13Z",
+    "outlet_id": "pbsnewshour",
+    "reporting_origin": "outlet:pbsnewshour",
+    "kind": "report"
+   },
+   {
+    "outlet": "en.wikipedia.org",
+    "via": "Wikipedia",
+    "title": "Christa Pike",
+    "url": "https://en.wikipedia.org/wiki/Christa_Pike",
+    "published_utc": null,
+    "outlet_id": "wikipedia",
+    "reporting_origin": null,
+    "kind": "signal"
+   },
+   {
+    "outlet": "NPR",
+    "via": "Google News",
+    "title": "Christa Pike is walking with help and eating after failed execution attempt",
+    "url": "https://news.google.com/rss/articles/CBMic0FVX3lxTE11akZrSDhTd2tydUlrQUNQV0ZJRk1xVnBjek9ybUdEZldKbXhpTVMwdm5QeUZITVVfaGYxSmlMd0YyNURMMlMyQngwMXY0ODRJZ3FxSkJYbXpXSFB4UEpnQXBVeXJFS1IxUEt0NzVCYzZUX3c?oc=5",
+    "published_utc": "2026-10-09T05:52:50Z",
+    "outlet_id": "npr",
+    "reporting_origin": "outlet:npr",
+    "kind": "report"
+   },
+   {
+    "outlet": "bsky.app",
+    "via": "Bluesky",
+    "title": "Execution will be streamed, says Pentagon",
+    "url": "https://bsky.app/profile/did:plc:qrz3lhbyuxbeilrc6nekdqme/feed/de4b5451-0748-4086-a11a-337978f34595",
+    "published_utc": null,
+    "outlet_id": "bsky",
+    "reporting_origin": null,
+    "kind": "signal"
+   },
+   {
+    "outlet": "The New York Times",
+    "via": "News feeds",
+    "title": "The 2026 Nobel Peace Prize Winner, and the Pentagon’s Plan to Livestream an Execution",
+    "url": "https://www.nytimes.com/2026/10/09/podcasts/the-headlines/nobel-peace-prize-livestream-execution.html",
+    "published_utc": "2026-10-09T11:00:10Z",
+    "outlet_id": "thenewyorktimes",
+    "reporting_origin": "outlet:thenewyorktimes",
+    "kind": "report"
+   },
+   {
+    "outlet": "The Guardian",
+    "via": "Mastodon",
+    "title": "Pentagon says execution of Fort Hood shooter will be livestreamed",
+    "url": "https://www.theguardian.com/us-news/2026/oct/08/hegseth-fort-hood-shooter-public-execution",
+    "published_utc": "2026-10-08T23:18:29Z",
+    "outlet_id": "theguardian",
+    "reporting_origin": null,
+    "kind": "signal"
+   },
+   {
+    "outlet": "reddit.com",
+    "via": "Reddit",
+    "title": "Pentagon says execution of Fort Hood shooter will be livestreamed",
+    "url": "https://www.reddit.com/r/news/comments/1x1359j/pentagon_says_execution_of_fort_hood_shooter_will/",
+    "published_utc": "2026-10-08T21:19:28Z",
+    "outlet_id": "reddit",
+    "reporting_origin": null,
+    "kind": "signal"
+   }
+  ]
+ }
+}

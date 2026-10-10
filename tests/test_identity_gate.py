@@ -541,3 +541,89 @@ def test_two_laptops_with_one_chip_are_two_stories(tmp_path):
     words say which chip, not which event. No rule yet tells a product name from what happened."""
     corpus, groups = _replayed_groups("2026-10-07-rc12c-r1.json", tmp_path)
     assert not _together(groups, _id(corpus, "Microsoft and Nvidia launch Surface"), _id(corpus, "Nvidia RTX Spark for"))
+
+
+def _firing_squad_run(tmp_path, gate=True, monkeypatch=None):
+    """The October 9 story's eight sources in a real October 7 run, all eight with one embedding (the worst case:
+    the model sees one event), every other report as rc11 grouped it. The published edition carries no page text,
+    so the leads below are CONSTRUCTED: each case's coverage mentions the other (as news pages did that week), which
+    gives both groups the names 'Pentagon' and 'Pike' and makes the page text support the merge."""
+    import json
+    from pathlib import Path
+    from tests.event_corpus import _raw
+    from agent_reach.pipeline.cleaner import normalize_text
+
+    story = json.loads((Path(__file__).parent / "fixtures" / "real" / "2026-10-09-firing-squad.json")
+                       .read_text(encoding="utf-8"))["story"]
+    corpus = load_edition("2026-10-07-selftest2-r1.json")
+    vectors = replay_vectors(corpus)
+    rnd = random.Random(3)
+    base = [rnd.gauss(0, 1) for _ in range(48)]
+    first = max(c.item.item_id for c in corpus) + 1
+    when = "2026-10-07T12:00:00Z"  # the background run's day: only the words decide, not the 72-hour window
+    leads = {True: ("Christa Pike survived a botched lethal injection in Tennessee; the Pentagon now says the "
+                    "firing squad execution of Fort Hood attacker Nidal Hasan will be livestreamed."),
+             False: ("The Pentagon says the firing squad execution of Fort Hood attacker Nidal Hasan will be "
+                     "livestreamed, days after Tennessee's failed lethal injection of Christa Pike.")}
+    for k, src in enumerate(story["sources"]):
+        raw = _raw({"title": src["title"], "url": src["url"], "published_at_utc": when, "source_name": src["via"],
+                    "publisher": src["outlet"]})
+        lead = leads["Pike" in src["title"]]
+        item = CleanedTrendItem(**raw.model_dump(), item_id=first + k, normalized_title=normalize_text(src["title"]),
+                                heuristic_score=0.5, observations=[raw], merged_urls=[src["url"]], context=lead,
+                                context_source="page")
+        corpus.append(type(corpus[0])(item=item, gold=None, recorded="firing-squad", edition=corpus[0].edition))
+        vectors[item.item_id] = _unit([x + rnd.gauss(0, 0.05) for x in base])
+    if not gate:
+        monkeypatch.setattr(SemanticClusterer, "_subject_gate", lambda self, drafts, index: drafts)
+    _, groups = run_clusterer(corpus, vectors, tmp_path)
+    titles = {c.item.item_id: c.title for c in corpus}
+    return [[titles[i] for i in g] for g in groups if any(i >= first for i in g)]
+
+
+def test_two_executions_are_two_stories(tmp_path):
+    """October 9, 2026 (rc20 on the PC, revision 2): 'Firing Squad Execution to Be Livestreamed, Pentagon Says'
+    listed PBS's and NPR's reports on Christa Pike walking after her failed execution, and Wikipedia's 'Christa
+    Pike', as its coverage: four independent outlets instead of three. Across the two groups the titles share
+    only 'execution'."""
+    stories = _firing_squad_run(tmp_path)
+    pentagon = next(s for s in stories if any("Pentagon" in t for t in s))
+    assert not any("Pike" in t for t in pentagon)
+    assert sum("Pentagon" in t or "Fort Hood" in t for t in pentagon) >= 4
+    pike = [s for s in stories if any("Pike" in t for t in s)]
+    assert pike and all(not any("Pentagon" in t for t in s) for s in pike)
+
+
+def test_the_subject_gate_splits_the_published_mixed_story(tmp_path):
+    """The story exactly as the PC published it (whatever earlier step joined it; the run's pair log was not sent):
+    the final check before labelling splits it into the Pentagon's story and Christa Pike's."""
+    import json
+    from pathlib import Path
+    from tests.event_corpus import _raw
+    from agent_reach.pipeline.cleaner import normalize_text
+    from agent_reach.pipeline.clusterer import DraftCluster
+
+    story = json.loads((Path(__file__).parent / "fixtures" / "real" / "2026-10-09-firing-squad.json")
+                       .read_text(encoding="utf-8"))["story"]
+    corpus = [c.item for c in load_edition("2026-10-07-selftest2-r1.json")]
+    first = max(i.item_id for i in corpus) + 1
+    mine = []
+    for k, src in enumerate(story["sources"]):
+        raw = _raw({"title": src["title"], "url": src["url"], "published_at_utc": "2026-10-07T12:00:00Z",
+                    "source_name": src["via"], "publisher": src["outlet"]})
+        mine.append(CleanedTrendItem(**raw.model_dump(), item_id=first + k, normalized_title=normalize_text(src["title"]),
+                                     heuristic_score=0.5, observations=[raw]))
+    index = LinkIndex(mine, corpus + mine)
+    clusterer = SemanticClusterer(Settings(db_path=tmp_path / "t.db"))
+    draft = DraftCluster(item_ids=[i.item_id for i in mine], headline=story["headline"], category_raw="News")
+    out = clusterer._subject_gate([draft], index)
+    titles = {i.item_id: i.normalized_title for i in mine}
+    groups = [[titles[i] for i in d.item_ids] for d in out]
+    assert len(groups) >= 2
+    assert not any(any("Pike" in t for t in g) and any("Pentagon" in t for t in g) for g in groups)
+    assert out[0].headline == story["headline"] and all("Pentagon" in t or "Firing" in t for t in groups[0])
+    assert sorted(t for g in groups for t in g if "Pike" in t) == sorted(t for t in titles.values() if "Pike" in t)
+    # a story whose titles all tell one event is left alone
+    whole = DraftCluster(item_ids=[i.item_id for i in mine if "Pike" not in i.normalized_title],
+                         headline=story["headline"], category_raw="News")
+    assert [d.item_ids for d in clusterer._subject_gate([whole], index)] == [whole.item_ids]
