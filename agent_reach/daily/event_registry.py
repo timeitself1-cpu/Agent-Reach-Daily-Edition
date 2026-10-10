@@ -158,17 +158,28 @@ class EventRegistry:
             if outlet:
                 sources.append(outlet)
 
+        headline = (story.get('headline') or "") if isinstance(story, dict) else (getattr(story, 'headline', '') or "")
+        summary_val = story.get('summary') if isinstance(story, dict) else getattr(story, 'summary', '')
+        if isinstance(summary_val, list):
+            summary = " ".join(summary_val)
+        else:
+            summary = str(summary_val or "")
+        story_url = (story.get('url') or "") if isinstance(story, dict) else (getattr(story, 'url', '') or "")
+        category = (story.get('category') or "") if isinstance(story, dict) else (getattr(story, 'category', '') or "")
+        if hasattr(category, 'value'):
+            category = category.value
+
         entry = TimelineEntry(
             date=edition_date,
             edition=edition_date,
             revision=revision,
             change=change,
-            headline=getattr(story, 'headline', ''),
-            summary=getattr(story, 'summary', '') or "",
+            headline=headline,
+            summary=summary,
             sources=sources[:10],  # cap at 10
             source_count=len(sources),
             what_changed=what_changed,
-            story_url=getattr(story, 'url', '') or "",
+            story_url=story_url,
         )
 
         if record is None:
@@ -176,7 +187,7 @@ class EventRegistry:
                 event_id=event_id,
                 first_seen=edition_date,
                 last_updated=edition_date,
-                category=getattr(story, 'category', '') or "",
+                category=str(category),
                 current_headline=entry.headline,
                 current_summary=entry.summary,
                 timeline=[entry],

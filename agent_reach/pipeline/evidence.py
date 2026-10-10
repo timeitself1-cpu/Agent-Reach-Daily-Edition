@@ -2,7 +2,8 @@
 from __future__ import annotations
 
 import hashlib
-from datetime import timezone
+from datetime import datetime, timezone
+from typing import Any
 from urllib.parse import urlsplit
 
 from agent_reach.models import CleanedTrendItem, RawTrendItem
@@ -43,7 +44,34 @@ def event_id(items: list[CleanedTrendItem]) -> str:
     return hashlib.sha256("\n".join(keys).encode()).hexdigest()[:20]
 
 
-def stable_event_id(items: list[CleanedTrendItem]) -> str:
+def _item_title(it: Any) -> str:
+    if isinstance(it, str):
+        return it
+    if isinstance(it, dict):
+        return it.get("normalized_title") or it.get("title") or ""
+    return getattr(it, "normalized_title", None) or getattr(it, "title", None) or ""
+
+
+def _item_date(it: Any) -> str | None:
+    if isinstance(it, dict):
+        ts = it.get("timestamp") or it.get("published_at_utc") or it.get("published_utc") or it.get("retrieved_at_utc")
+        if isinstance(ts, str):
+            try:
+                dt = datetime.fromisoformat(ts.replace("Z", "+00:00"))
+                return dt.astimezone(timezone.utc).date().isoformat()
+            except Exception:
+                if len(ts) >= 10 and ts[4] == "-" and ts[7] == "-":
+                    return ts[:10]
+        elif isinstance(ts, datetime):
+            return (ts if ts.tzinfo else ts.replace(tzinfo=timezone.utc)).astimezone(timezone.utc).date().isoformat()
+        return None
+    ts = getattr(it, "timestamp", None) or getattr(it, "published_at_utc", None) or getattr(it, "retrieved_at_utc", None)
+    if isinstance(ts, datetime):
+        return (ts if ts.tzinfo else ts.replace(tzinfo=timezone.utc)).astimezone(timezone.utc).date().isoformat()
+    return None
+
+
+def stable_event_id(items: list[Any]) -> str:
     """Stable event identifier for timelines: same event across editions, even as evidence grows.
 
     Derived from the event's core identity (actor + action + location + date), not the
@@ -55,24 +83,25 @@ def stable_event_id(items: list[CleanedTrendItem]) -> str:
     if not items:
         return "evt_" + hashlib.sha256(b"empty").hexdigest()[:12]
 
-    rep = max(items, key=lambda it: len(it.normalized_title or ""))
-    title = rep.normalized_title or ""
-    actor = " ".join(_actor(rep)) if hasattr(rep, 'normalized_title') else ""
+    rep = max(items, key=lambda it: len(_item_title(it)))
+    title = _item_title(rep)
+    actor = " ".join(_actor(title)) if title else ""
     actions = sorted(title_words(title) & {
         'strike', 'attack', 'bomb', 'launch', 'unveil', 'introduce', 'resign', 'quit',
         'arrest', 'detain', 'suspend', 'halt', 'pause', 'win', 'defeat', 'kill', 'die',
         'announce', 'reveal', 'release', 'confirm', 'deny', 'reject', 'approve'
     })
     try:
-        dates = sorted(it.timestamp.astimezone(timezone.utc).date().isoformat() for it in items if it.timestamp)
-        date = dates[0] if dates else "unknown"
+        found_dates = sorted(d for it in items if (d := _item_date(it)))
+        date = found_dates[0] if found_dates else "unknown"
     except Exception:
         date = "unknown"
     location = ""
-    if hasattr(rep, 'metadata') and rep.metadata:
+    meta = rep.get("metadata") if isinstance(rep, dict) else getattr(rep, "metadata", None)
+    if meta and isinstance(meta, dict):
         for key in ('location', 'city', 'country', 'region'):
-            if rep.metadata.get(key):
-                location = str(rep.metadata[key]).lower()
+            if meta.get(key):
+                location = str(meta[key]).lower()
                 break
     key = f"{actor}|{' '.join(actions)}|{location}|{date}"
     return "evt_" + hashlib.sha256(key.encode()).hexdigest()[:12]
@@ -89,12 +118,21 @@ def canonical_event_id(story_or_items) -> str:
 
     Same event → same ID, regardless of which code path calls this.
     """
+    if story_or_items is None:
+        return "evt_" + hashlib.sha256(b"|fallback").hexdigest()[:12]
+
     # Dict (public story JSON)
     if isinstance(story_or_items, dict):
         if story_or_items.get("event_id"):
             return story_or_items["event_id"]
         if story_or_items.get("entity_id"):
             return "evt_" + str(story_or_items["entity_id"])[:12]
+        sources = story_or_items.get("evidence") or story_or_items.get("sources")
+        if sources and isinstance(sources, list):
+            try:
+                return stable_event_id(sources)
+            except Exception:
+                pass
         headline = story_or_items.get("headline", "")
         return "evt_" + hashlib.sha256(f"{headline.casefold()}|fallback".encode()).hexdigest()[:12]
 
@@ -107,12 +145,12 @@ def canonical_event_id(story_or_items) -> str:
     headline = ""
     if isinstance(story_or_items, list):
         items = story_or_items
-    elif hasattr(story_or_items, 'items'):
-        items = story_or_items.items or []
+    elif hasattr(story_or_items, 'items') and story_or_items.items:
+        items = story_or_items.items
         headline = getattr(story_or_items, 'headline', '') or ""
-    elif hasattr(story_or_items, 'evidence'):
-        # Story.evidence is list[EvidenceLink]; use titles for stable ID
-        items = []
+    elif hasattr(story_or_items, 'evidence') and story_or_items.evidence:
+        # Story.evidence is list[EvidenceLink]; use evidence items for stable ID
+        items = story_or_items.evidence
         headline = getattr(story_or_items, 'headline', '') or ""
     else:
         headline = getattr(story_or_items, 'headline', '') or ""

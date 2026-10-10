@@ -15,8 +15,19 @@ from difflib import SequenceMatcher
 from pathlib import Path
 
 
+try:
+    from agent_reach.pipeline.evidence import canonical_event_id as _canonical_event_id
+except ImportError:
+    _canonical_event_id = None
+
+
 def canonical_event_id_standalone(story: dict) -> str:
-    """Standalone version of canonical_event_id for validation (no deps)."""
+    """Canonical event ID for validation (prefers pipeline function if available)."""
+    if _canonical_event_id is not None:
+        try:
+            return _canonical_event_id(story)
+        except Exception:
+            pass
     # Prefer event_id if already present
     if story.get("event_id"):
         return story["event_id"]
@@ -30,7 +41,7 @@ def canonical_event_id_standalone(story: dict) -> str:
 
 def load_edition(date: str) -> dict:
     path = Path(__file__).parent.parent / "website" / "editions" / f"{date}.json"
-    with open(path) as f:
+    with open(path, encoding="utf-8") as f:
         return json.load(f)
 
 
@@ -114,7 +125,7 @@ def main():
                 seen[eid] = i
 
     print(f"\nFalse merges: {false_merges}/{total_pairs} pairs")
-    print(f"\n=== Summary ===")
+    print("\n=== Summary ===")
     print(f"Continuity: {continuity_pass}/{continuity_checks}")
     print(f"False merges: {false_merges}")
     return 0 if false_merges == 0 else 1
