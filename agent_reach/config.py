@@ -152,6 +152,9 @@ class Settings(BaseSettings):
     # Developer switch for the offline test world, whose synthetic one-line summaries would all be 'thin'
     # (tests/conftest.py turns it off; the app never does).
     gates_enabled: bool = True
+    # Self-check of the gates against tests/golden before each publication (daily/golden.py); a failure keeps the
+    # previous edition. Developer switch for tests that deliberately bend a gate setting.
+    golden_check_enabled: bool = True
     leak_patterns: list[str] = Field(default_factory=lambda: list(DEFAULT_LEAK_PATTERNS))
     headline_keep_words: list[str] = Field(default_factory=lambda: list(DEFAULT_HEADLINE_KEEP_WORDS))
     headline_bait_openers: list[str] = Field(default_factory=lambda: list(DEFAULT_HEADLINE_BAIT_OPENERS))

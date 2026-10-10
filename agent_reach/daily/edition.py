@@ -244,6 +244,7 @@ class QualityReport(BaseModel):
     stories_accepted: int = Field(ge=0)
     stories_quarantined: int = Field(ge=0)
     reason_counts: dict[str, int] = Field(default_factory=dict)  # a story with two reasons counts under both
+    golden_cases: int = Field(default=0, ge=0)  # golden stories the gates passed before this edition (0: not run)
 
 
 class DailyEdition(BaseModel):

@@ -1,0 +1,340 @@
+{
+ "about": "Golden stories for the pre-publish self-check (agent_reach/daily/golden.py). Each case states what the gates must do with it. Cases marked source '2026-10-10 edition export' are verbatim from that export. Never edit an expectation to make the run pass: change the gate, or explain the change in the commit.",
+ "cases": [
+  {
+   "id": "oct10-gigabyte-live",
+   "why": "Defect 1, live shape: the summary element is omitted",
+   "source": "2026-10-10 edition export (verbatim)",
+   "headline": "Gigabyte's latest BIOS update hints at Intel's Raptor Lake Next Launch in 2027",
+   "summary": [],
+   "lead": "",
+   "expect": "quarantine",
+   "reasons": [
+    "empty"
+   ]
+  },
+  {
+   "id": "oct10-gigabyte-export",
+   "why": "Defect 1, export shape: the summary is the headline repeated",
+   "source": "2026-10-10 edition export (verbatim)",
+   "headline": "Gigabyte's latest BIOS update hints at Intel's Raptor Lake Next Launch in 2027",
+   "summary": [
+    "Gigabyte's latest BIOS update hints at Intel's Raptor Lake Next Launch in 2027."
+   ],
+   "lead": "",
+   "expect": "quarantine",
+   "reasons": [
+    "headline_echo"
+   ]
+  },
+  {
+   "id": "oct10-ai-safety",
+   "why": "Defect 2: the summary only restates the headline",
+   "source": "2026-10-10 edition export (verbatim)",
+   "headline": "Artificial intelligence and social integration paradox",
+   "summary": [
+    "Artificial intelligence and social integration paradox."
+   ],
+   "lead": "",
+   "expect": "quarantine",
+   "reasons": [
+    "headline_echo",
+    "tautology"
+   ]
+  },
+  {
+   "id": "oct10-micro1",
+   "why": "Defect 3: a prompt fragment opens the summary",
+   "source": "2026-10-10 edition export (verbatim)",
+   "headline": "micro1 Commits $1bn to Buy Company Data for Training AI Agents",
+   "summary": [
+    "Exceptions that require judgment micro1 will spend $1bn in 12 months buying company data to train AI agents, financed by Citi and Hercules."
+   ],
+   "lead": "",
+   "expect": "quarantine",
+   "reasons": [
+    "prompt_leak"
+   ]
+  },
+  {
+   "id": "oct10-ice-fresno",
+   "why": "Defect 4: the headline says New York, the summary says Fresno",
+   "source": "2026-10-10 edition export (verbatim)",
+   "headline": "NYC man shot by ICE still has bullet in body, lawyers say",
+   "summary": [
+    "The incident occurred early Friday in Fresno."
+   ],
+   "lead": "",
+   "expect": "quarantine",
+   "reasons": [
+    "contradiction"
+   ],
+   "conflicts": [
+    "Fresno"
+   ]
+  },
+  {
+   "id": "oct10-vibe-export",
+   "why": "Defect 5, export shape: bait opener, Title Case, summary is the headline",
+   "source": "2026-10-10 edition export (verbatim)",
+   "headline": "We Might Be Cooked, As These Vibe-Coded Web Browser Ports Of Halo, The Simpsons: Hit And Run, And GTA: Vice City Seem To Work Perfectly",
+   "summary": [
+    "We Might Be Cooked, As These Vibe-Coded Web Browser Ports Of Halo, The Simpsons: Hit And Run, And GTA: Vice City Seem To Work Perfectly."
+   ],
+   "lead": "",
+   "expect": "quarantine",
+   "reasons": [
+    "headline_echo"
+   ],
+   "normalized_headline": "These Vibe-Coded web browser ports of Halo, the Simpsons: Hit and Run, and GTA: Vice City seem to work perfectly"
+  },
+  {
+   "id": "oct10-vibe-live",
+   "why": "Defect 5, live shape: no summary",
+   "source": "2026-10-10 edition export (verbatim)",
+   "headline": "We Might Be Cooked, As These Vibe-Coded Web Browser Ports Of Halo, The Simpsons: Hit And Run, And GTA: Vice City Seem To Work Perfectly",
+   "summary": [],
+   "lead": "",
+   "expect": "quarantine",
+   "reasons": [
+    "empty"
+   ],
+   "normalized_headline": "These Vibe-Coded web browser ports of Halo, the Simpsons: Hit and Run, and GTA: Vice City seem to work perfectly"
+  },
+  {
+   "id": "good-fed",
+   "why": "A sound summary passes",
+   "source": "synthetic",
+   "headline": "Fed holds rates steady and signals one cut this year",
+   "summary": [
+    "The Federal Reserve left its benchmark interest rate unchanged on Wednesday and projected a single quarter-point cut before the end of the year, citing slower hiring."
+   ],
+   "lead": "The Federal Reserve kept rates where they were.",
+   "expect": "accept",
+   "reasons": []
+  },
+  {
+   "id": "good-ice-same-city",
+   "why": "The same incident placed in the same city is not a contradiction",
+   "source": "synthetic",
+   "headline": "NYC man shot by ICE still has bullet in body, lawyers say",
+   "summary": [
+    "Lawyers for the man said on Friday that a bullet remains in his body after he was shot by an immigration agent in New York City, and that he has been denied treatment for the wound."
+   ],
+   "lead": "",
+   "expect": "accept",
+   "reasons": []
+  },
+  {
+   "id": "good-borough",
+   "why": "A borough inside the headline's city is the same place",
+   "source": "synthetic",
+   "headline": "Man shot by ICE agent in NYC, officials say",
+   "summary": [
+    "Officials said the shooting happened early Friday in Brooklyn, and the man was taken to a hospital where he is listed in stable condition, according to the police."
+   ],
+   "lead": "",
+   "expect": "accept",
+   "reasons": []
+  },
+  {
+   "id": "good-fresno-in-california",
+   "why": "A city inside the headline's state is the same place",
+   "source": "synthetic",
+   "headline": "California wildfire forces evacuations near Fresno",
+   "summary": [
+    "Fire crews in California said the blaze grew overnight and forced several hundred residents out of their homes near Fresno, where shelters opened at two schools on Friday morning."
+   ],
+   "lead": "",
+   "expect": "accept",
+   "reasons": []
+  },
+  {
+   "id": "good-gulf-of-mexico",
+   "why": "'Gulf of Mexico' is not Mexico",
+   "source": "synthetic",
+   "headline": "Tropical storm forms in the Gulf of Mexico",
+   "summary": [
+    "Forecasters said the storm formed on Thursday in the Gulf of Mexico and is expected to strengthen before it reaches the coast of Louisiana over the weekend, with heavy rain likely."
+   ],
+   "lead": "",
+   "expect": "accept",
+   "reasons": []
+  },
+  {
+   "id": "good-fed-name",
+   "why": "'Fed' and 'Federal Reserve' are one organisation",
+   "source": "synthetic",
+   "headline": "Fed officials split on the pace of rate cuts",
+   "summary": [
+    "Several Federal Reserve officials said on Tuesday they favour moving slowly on rate cuts, while others argued that weaker hiring justifies a faster pace before the end of the year."
+   ],
+   "lead": "",
+   "expect": "accept",
+   "reasons": []
+  },
+  {
+   "id": "good-quote",
+   "why": "Quoted text in a headline is never altered",
+   "source": "synthetic",
+   "headline": "Mayor says city is \"Open For Business\" after the storm",
+   "summary": [
+    "The mayor told reporters on Monday that the downtown district reopened after the storm and that most shops and restaurants were serving customers again, though some streets stay closed."
+   ],
+   "lead": "The mayor spoke on Monday.",
+   "expect": "accept",
+   "reasons": [],
+   "normalized_headline": "Mayor says city is \"Open For Business\" after the storm"
+  },
+  {
+   "id": "good-bait-opener",
+   "why": "A bait opener is stripped from an otherwise sound story",
+   "source": "synthetic",
+   "headline": "Wow, Ferry Strike Halts Island Service",
+   "summary": [
+    "Ferry workers began a strike on Tuesday over pay, and the operator said service on all island routes is halted until talks resume, leaving residents without supplies by sea."
+   ],
+   "lead": "Ferry workers began a strike on Tuesday that halts island service.",
+   "expect": "accept",
+   "reasons": [],
+   "normalized_headline": "Ferry strike halts island service"
+  },
+  {
+   "id": "good-trailing-bang",
+   "why": "A trailing exclamation mark is removed",
+   "source": "synthetic",
+   "headline": "Local team wins the championship!",
+   "summary": [
+    "The team beat its rivals 3-1 on Saturday night to win the regional championship for the first time in twelve years, and thousands of fans filled the main square afterwards."
+   ],
+   "lead": "",
+   "expect": "accept",
+   "reasons": [],
+   "normalized_headline": "Local team wins the championship"
+  },
+  {
+   "id": "good-ellipsis",
+   "why": "Trailing dots are removed",
+   "source": "synthetic",
+   "headline": "Study finds coffee drinkers live longer...",
+   "summary": [
+    "Researchers who followed 40,000 adults for ten years reported that people who drank two cups of coffee a day were less likely to die during that period, though the study could not prove cause."
+   ],
+   "lead": "",
+   "expect": "accept",
+   "reasons": [],
+   "normalized_headline": "Study finds coffee drinkers live longer"
+  },
+  {
+   "id": "good-title-case",
+   "why": "Title Case becomes sentence case, acronyms and the allowlist kept",
+   "source": "synthetic",
+   "headline": "NASA Delays Moon Mission Launch By Two Weeks",
+   "summary": [
+    "NASA said on Thursday that the launch of its crewed moon mission was delayed by two weeks to allow engineers more time to inspect a fuel line, and a new date will be announced soon."
+   ],
+   "lead": "",
+   "expect": "accept",
+   "reasons": [],
+   "normalized_headline": "NASA delays moon mission launch by two weeks"
+  },
+  {
+   "id": "thin-one-line",
+   "why": "Too short to say anything",
+   "source": "synthetic",
+   "headline": "Hackers obtain counterfeit TLS certificates for Google and Microsoft",
+   "summary": [
+    "Russia says the woman died of pneumonia."
+   ],
+   "lead": "",
+   "expect": "quarantine",
+   "reasons": [
+    "thin"
+   ]
+  },
+  {
+   "id": "leak-as-an-ai",
+   "why": "A model disclaimer opens the summary",
+   "source": "synthetic",
+   "headline": "City council approves new budget",
+   "summary": [
+    "As an AI language model, I cannot verify the details, but the council approved a budget of two billion dollars on Tuesday after a long debate about funding for roads."
+   ],
+   "lead": "",
+   "expect": "quarantine",
+   "reasons": [
+    "prompt_leak"
+   ]
+  },
+  {
+   "id": "leak-here-is",
+   "why": "A model preamble opens the summary",
+   "source": "synthetic",
+   "headline": "Company recalls two million vehicles",
+   "summary": [
+    "Here is a summary of the article: the company recalled two million vehicles on Monday because of a faulty brake sensor, the regulator said in a statement released on Monday morning."
+   ],
+   "lead": "",
+   "expect": "quarantine",
+   "reasons": [
+    "prompt_leak"
+   ]
+  },
+  {
+   "id": "echo-paraphrase",
+   "why": "A summary that repeats the headline's words and adds nothing",
+   "source": "synthetic",
+   "headline": "Hackers obtain counterfeit TLS certificates for Google and Microsoft",
+   "summary": [
+    "Hackers have obtained counterfeit TLS certificates for Google and Microsoft, security researchers said, according to the report."
+   ],
+   "lead": "",
+   "expect": "quarantine",
+   "reasons": [
+    "headline_echo"
+   ]
+  },
+  {
+   "id": "contradiction-cities",
+   "why": "Headline in London, summary in Paris",
+   "source": "synthetic",
+   "headline": "Fire damages historic library in London",
+   "summary": [
+    "The blaze broke out on Sunday evening at a historic library in Paris, and firefighters from three districts spent the night bringing it under control, the city fire service said on Monday."
+   ],
+   "lead": "",
+   "expect": "quarantine",
+   "reasons": [
+    "contradiction"
+   ],
+   "conflicts": [
+    "Paris"
+   ]
+  },
+  {
+   "id": "empty-no-summary",
+   "why": "No summary at all",
+   "source": "synthetic",
+   "headline": "Council votes to close two schools",
+   "summary": [],
+   "lead": "",
+   "expect": "quarantine",
+   "reasons": [
+    "empty"
+   ]
+  },
+  {
+   "id": "good-question",
+   "why": "A single question mark is kept",
+   "source": "synthetic",
+   "headline": "Will interest rates fall before the election?",
+   "summary": [
+    "Economists surveyed by a financial news service said they expect the central bank to cut its rate once before the election in November, but they disagreed about the timing of any cut."
+   ],
+   "lead": "",
+   "expect": "accept",
+   "reasons": [],
+   "normalized_headline": "Will interest rates fall before the election?"
+  }
+ ]
+}

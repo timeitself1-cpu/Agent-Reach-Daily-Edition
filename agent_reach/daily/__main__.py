@@ -41,6 +41,8 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     mode.add_argument("--check", action="store_true", help="check Ollama and the configured models")
     mode.add_argument("--quarantine", action="store_true",
                       help="list the stories the quality checks held back (today, or --date)")
+    mode.add_argument("--golden", action="store_true",
+                      help="run the quality checks against the golden stories (tests/golden); exit 1 if any changed")
     mode.add_argument("--export-html", type=Path, metavar="PATH", help="export an edition as standalone HTML")
     mode.add_argument("--export-sample", type=Path, metavar="PATH",
                       help="export a public sample of an edition as JSON (no publisher excerpts)")
@@ -184,6 +186,15 @@ def main(argv: list[str] | None = None) -> int:
                           "grouping_fallback": status.grouping_fallback, "message": status.describe(),
                           "settings_warning": warn, "python": sys.version.split()[0]}, indent=2))
         return 0 if status.ready else 1
+
+    if args.golden:
+        from agent_reach.daily.golden import run_golden
+
+        golden = run_golden()
+        print(golden.summary())
+        for line in golden.failures:
+            print("  " + line)
+        return 0 if golden.ok and golden.available else 1
 
     if args.quarantine:
         from agent_reach.daily.fsutil import read_json

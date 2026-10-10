@@ -28,7 +28,7 @@ COMMON_WORDS = frozenset("""new says say said after amid over into more most fir
 latest early late late-night record high low best worst better worse hits hit set sets wins win won loses lose lost
 beats beat rises rise falls fall drops drop cuts cut adds add gets get gives give takes take makes make shows show
 finds find sees see warns warn plans plan faces face seeks seek calls call urges urge backs back blocks block
-bans ban halts halt ends end starts start opens open closes close returns return reveals reveal launches launch
+bans ban halts halt ends end delays delay postpones postpone starts start opens open closes close returns return reveals reveal launches launch
 unveils unveil releases release announces announce confirms confirm denies deny rejects reject approves approve
 accuses accuse charges charge arrests arrest sues sue dies die kills kill shot shoots shoot killed injured hurt
 crash crashes strike strikes protest protests vote votes court judge police officials official report reports
@@ -43,11 +43,12 @@ resigns resign quits quit funds fund missing winner winners joins join probe pro
 case cases trial ruling rules ruled bid bids push pushes move moves boost boosts surge surges slump slumps
 hike hikes plunge plunges soar soars jump jumps leaps leap claims claim warns says tells tell asks ask wants want
 needs need hopes hope fears fear vows vow pledges pledge promises promise offers offer sends send sent brings
-bring pulls pull puts put keeps keep lets let runs run goes go comes come leaves leave stays stay holds hold
+bring pulls pull puts put keeps keep lets let runs goes go comes come leaves leave stays stay holds hold
 service services island islands strike ferry workers worker union cut cuts jobs weeks months years days hours
 minutes million billion thousand dollars percent per cent power energy oil gas climate health care school schools
-hospital hospitals city cities state states country countries world national local global federal public private
+hospital hospitals cities state states country countries world national local global federal public private
 tech technology science space moon mars planet ocean sea river lake mountain park""".split())
+# 'run' and 'city' are left out on purpose: 'Hit and Run' and 'Vice City' (Oct 10) are titles whose last word is one.
 _SUFFIXES = ("ing", "ed", "ly", "ness", "tion", "ment")
 
 _QUOTE_RX = re.compile(r"\"[^\"]*\"|“[^”]*”|‘[^’]*’|(?<!\w)'[^']*'(?!\w)")

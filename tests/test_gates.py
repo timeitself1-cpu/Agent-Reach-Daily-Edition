@@ -153,6 +153,7 @@ def test_refresh_holds_back_failing_stories_and_says_so(daily_env, monkeypatch):
 
     monkeypatch.setenv("AGENT_REACH_GATES_ENABLED", "1")
     monkeypatch.setenv("AGENT_REACH_GATE_MIN_SUMMARY_WORDS", "1")
+    monkeypatch.setenv("AGENT_REACH_GOLDEN_CHECK_ENABLED", "0")  # (min words 1 would, rightly, fail the golden 'thin' case)
     out = R.refresh(daily_env.paths, trigger="manual", force=True, ollama_probe=lambda p: OllamaUp())
     assert out.code == R.EXIT_PUBLISHED, out.message
     ed = EditionStore(daily_env.paths).load_latest().edition
@@ -176,6 +177,7 @@ def test_a_broken_gate_keeps_the_previous_edition(daily_env, monkeypatch):
     from tests.daily_fakes import OllamaUp
 
     monkeypatch.setenv("AGENT_REACH_GATES_ENABLED", "1")
+    monkeypatch.setenv("AGENT_REACH_GOLDEN_CHECK_ENABLED", "0")
     monkeypatch.setattr(gates, "run_gates", lambda *a, **k: 1 / 0)
     out = R.refresh(daily_env.paths, trigger="manual", force=True, ollama_probe=lambda p: OllamaUp())
     assert out.code != R.EXIT_PUBLISHED and "quality checks could not run" in out.message
@@ -246,3 +248,57 @@ def test_the_published_edition_and_its_feed_carry_the_normalized_headline(monkey
     public = public_edition(ed)
     heads = [s["headline"] for s in public["stories"]]
     assert heads and all(h.startswith("Ferry workers in Norvale walk out over pay again") for h in heads), heads[:2]
+
+
+# ------------------------------------------------------------------------------ golden set (Phase 2)
+from agent_reach.daily import golden  # noqa: E402
+
+
+def test_the_golden_set_has_the_october_10_cases_in_both_shapes_and_passes():
+    cases = golden.load_cases()
+    ids = {c["id"] for c in cases}
+    assert 20 <= len(cases) <= 30 and len(ids) == len(cases)
+    assert {"oct10-gigabyte-live", "oct10-gigabyte-export", "oct10-ai-safety", "oct10-micro1", "oct10-ice-fresno",
+            "oct10-vibe-export", "oct10-vibe-live"} <= ids
+    verbatim = {c["id"]: c for c in cases if c["source"].startswith("2026-10-10")}
+    assert verbatim["oct10-gigabyte-live"]["headline"] == GIGABYTE and verbatim["oct10-gigabyte-live"]["summary"] == []
+    assert verbatim["oct10-gigabyte-export"]["summary"] == [GIGABYTE + "."]
+    assert verbatim["oct10-vibe-export"]["headline"] == VIBE and verbatim["oct10-vibe-live"]["summary"] == []
+    assert verbatim["oct10-vibe-export"]["normalized_headline"] == (
+        "These Vibe-Coded web browser ports of Halo, the Simpsons: Hit and Run, and GTA: Vice City seem to work perfectly")
+    assert {c["expect"] for c in cases} == {"accept", "quarantine"}
+    report = golden.run_golden()
+    assert report.available and report.ok, report.failures
+    assert report.checked == len(cases)
+
+
+def test_the_golden_set_notices_a_gate_that_stops_catching_a_defect():
+    # the leak patterns emptied: the micro1 prompt fragment is no longer caught
+    loose = GateConfig(min_summary_words=CFG.min_summary_words, max_headline_overlap=CFG.max_headline_overlap,
+                       leak_patterns=())
+    report = golden.run_golden(gate_cfg=loose)
+    assert not report.ok and any(f.startswith("oct10-micro1") for f in report.failures)
+    # a gate that rejects everything fails the 'accept' cases
+    strict = GateConfig(min_summary_words=500, max_headline_overlap=CFG.max_headline_overlap,
+                        leak_patterns=CFG.leak_patterns)
+    assert any("should pass" in f for f in golden.run_golden(gate_cfg=strict).failures)
+
+
+def test_cli_golden_reports_and_sets_the_exit_code(capsys):
+    from agent_reach.daily.__main__ import main
+
+    assert main(["--golden"]) == 0
+    assert "golden cases behave as recorded" in capsys.readouterr().out
+
+
+def test_a_golden_failure_keeps_the_previous_edition(daily_env, monkeypatch):
+    """The self-check runs before anything is assembled: if the gates have regressed, no edition is written."""
+    from agent_reach.daily import refresh as R
+    from agent_reach.daily.store import EditionStore
+    from tests.daily_fakes import OllamaUp
+
+    monkeypatch.setenv("AGENT_REACH_GATES_ENABLED", "1")
+    monkeypatch.setenv("AGENT_REACH_LEAK_PATTERNS", "[]")  # the micro1 case now slips through
+    out = R.refresh(daily_env.paths, trigger="manual", force=True, ollama_probe=lambda p: OllamaUp())
+    assert out.code != R.EXIT_PUBLISHED and "failed their own self-check" in out.message
+    assert EditionStore(daily_env.paths).load_latest().edition is None
