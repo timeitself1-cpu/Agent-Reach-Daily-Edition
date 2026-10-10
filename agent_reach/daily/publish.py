@@ -488,7 +488,107 @@ def public_edition(edition: DailyEdition, hidden: list[str] | None = None,
                         for c in changes.gone if c.story_id[:12] not in hidden_ids],
         }
     assert_public(public)
+    problems = editorial_review(public)
+    blocking = [p for p in problems if p.startswith(BLOCKING)]
+    if blocking:
+        raise PublishError("The edition failed the website's editorial check, so it was not published: "
+                           + blocking[0].removeprefix(BLOCKING) + ". The website keeps the edition it has.")
+    for problem in problems:
+        log.warning("editorial check: %s", problem)
     return public
+
+
+#: Problems that keep an edition off the website (the site keeps the last good one); the rest are logged.
+BLOCKING = "blocking: "
+
+
+def _parses(stamp) -> bool:
+    try:
+        datetime.strptime(stamp, "%Y-%m-%dT%H:%M:%SZ")
+        return True
+    except (TypeError, ValueError):
+        return False
+
+
+def _title_groups(titles: list[str]) -> list[list[int]]:
+    """Source titles grouped by what they say (two content words in common), joined only when most pairs across
+    two groups agree; largest first. The website-side twin of ``LinkIndex.title_subjects``, without the run's names."""
+    from agent_reach.daily.edition import _headline_stems
+
+    stems = [_headline_stems(t) for t in titles]
+    groups = [[i] for i in range(len(titles))]
+    while len(groups) > 1:
+        best, pick = 0.5, None
+        for x in range(len(groups)):
+            for y in range(x + 1, len(groups)):
+                hits = sum(len(stems[a] & stems[b]) >= 2 for a in groups[x] for b in groups[y])
+                if hits / (len(groups[x]) * len(groups[y])) > best:
+                    best, pick = hits / (len(groups[x]) * len(groups[y])), (x, y)
+        if pick is None:
+            break
+        groups[pick[0]].extend(groups.pop(pick[1]))
+    return sorted(groups, key=lambda g: (-len(g), min(g)))
+
+
+def editorial_review(public: dict) -> list[str]:
+    """The last look before an edition goes to the website, on exactly what would be uploaded.
+
+    Blocking (prefixed ``BLOCKING``): a story without a headline or a source, two stories with one id, Top Stories or
+    a section naming a story that is not there. Logged: a summary sentence that only repeats its headline or another
+    sentence, sources that fall into two groups telling different events, a source listed twice, coverage counts that disagree with each other or with the listed links, a report
+    whose title shares nothing with the story (two content words of the headline, summary or another source's
+    title), a malformed time, a headline link that is not among the story's sources."""
+    from agent_reach.daily.edition import _headline_stems, adds_to_headline
+
+    problems: list[str] = []
+    stories = public.get("stories") or []
+    ids = [s.get("id") for s in stories]
+    if len(ids) != len(set(ids)):
+        problems.append(BLOCKING + "two stories have the same id")
+    known = set(ids)
+    listed = list(public.get("top") or []) + [i for sec in public.get("sections") or [] for i in sec.get("ids") or []]
+    if any(i not in known for i in listed):
+        problems.append(BLOCKING + "Top Stories or a section lists a story that is not in the edition")
+    for s in stories:
+        headline = (s.get("headline") or "").strip()
+        sources = s.get("sources") or []
+        label = f"'{headline[:60]}'" if headline else f"story {s.get('id')}"
+        if not headline:
+            problems.append(BLOCKING + f"{label} has no headline")
+        if not sources:
+            problems.append(BLOCKING + f"{label} has no sources")
+        summary = s.get("summary") or []
+        for k, sentence in enumerate(summary):
+            if not adds_to_headline(sentence, " ".join([headline, *summary[:k]])):
+                problems.append(f"{label}: summary sentence repeats what is already said: '{sentence[:80]}'")
+        urls = [x.get("url") for x in sources if x.get("url")]
+        if len(urls) != len(set(urls)):
+            problems.append(f"{label}: a source is listed twice")
+        if s.get("url") and s["url"] not in urls:
+            problems.append(f"{label}: the headline link is not one of its sources")
+        c = s.get("coverage") or {}
+        if c and c.get("independent_reports") != len(c.get("publishers") or []):
+            problems.append(f"{label}: {c.get('independent_reports')} independent reports but "
+                            f"{len(c.get('publishers') or [])} newsrooms named")
+        if c and (c.get("linked_reporting_origins") or 0) > (c.get("independent_reports") or 0):
+            problems.append(f"{label}: more linked newsrooms than independent reports")
+        if c and c.get("source_links") is not None and c["source_links"] != len(urls):
+            problems.append(f"{label}: {c['source_links']} source links counted but {len(urls)} listed")
+        for x in sources:
+            if x.get("published_utc") is not None and not _parses(x["published_utc"]):
+                problems.append(f"{label}: malformed time on '{(x.get('title') or '')[:60]}'")
+        groups = _title_groups([x.get("title") or "" for x in sources])
+        if sum(len(g) >= 2 for g in groups) >= 2:
+            other = next(g for g in groups[1:] if len(g) >= 2)
+            problems.append(f"{label}: its sources tell two different events ('{sources[other[0]].get('title', '')[:60]}')")
+        if len(sources) >= 2:
+            for k, x in enumerate(sources):
+                if x.get("kind") != "report":
+                    continue
+                others = " ".join([headline, *summary, *(o.get("title") or "" for j, o in enumerate(sources) if j != k)])
+                if len(_headline_stems(x.get("title") or "") & _headline_stems(others)) < 2:
+                    problems.append(f"{label}: report '{(x.get('title') or '')[:60]}' shares nothing with the story")
+    return problems
 
 
 def _dumps(obj) -> bytes:

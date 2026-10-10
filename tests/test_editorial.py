@@ -1,14 +1,21 @@
-"""The editorial pass of October 10, 2026: summaries that tell more than their headline."""
+"""The editorial pass of October 10, 2026: summaries that tell more than their headline, and the check every edition
+passes before it goes to the website (``publish.editorial_review``)."""
 
 from __future__ import annotations
 
+import json
+from pathlib import Path
+
+import pytest
+
 from agent_reach.daily.edition import adds_to_headline, body_sentences
-from agent_reach.daily.publish import public_edition
+from agent_reach.daily.publish import BLOCKING, PublishError, editorial_review, public_edition
 from agent_reach.pipeline.clusterer import CLUSTER_SYSTEM_PROMPT
 from agent_reach.pipeline.summary_checks import (added_sentences, clean_title, extractive_fallback, useful_summary,
                                                  verified_story)
 from tests.daily_fakes import make_edition, make_story
 
+FIXTURES = Path(__file__).parent / "fixtures" / "real"
 HURRICANE = "Isaias strengthens into Category 2 hurricane on collision course with the Gulf Coast"
 
 
@@ -71,6 +78,43 @@ def test_the_labelling_prompt_forbids_repeating_the_headline():
     assert "neutral news headline" in CLUSTER_SYSTEM_PROMPT
 
 
+def test_the_editorial_check_finds_the_october_9_problems():
+    """The published October 9 story: a mixed story and a summary that is its headline again."""
+    story = json.loads((FIXTURES / "2026-10-09-firing-squad.json").read_text(encoding="utf-8"))["story"]
+    public = {"top": [story["id"]], "sections": [{"category": "News", "ids": [story["id"]]}], "stories": [story]}
+    problems = editorial_review(public)
+    assert any("two different events" in p and "Christa Pike" in p for p in problems)
+    assert any("repeats what is already said" in p for p in problems)
+    assert not any(p.startswith(BLOCKING) for p in problems)
+
+
+def test_blocking_problems_keep_the_edition_off_the_website():
+    good = {"id": "a1", "headline": "Norvale ferry strike halts island service", "summary": [], "url": None,
+            "coverage": {"independent_reports": 1, "publishers": ["Wire One"], "linked_reporting_origins": 1,
+                         "source_links": 1},
+            "sources": [{"title": "Norvale ferry strike halts island service", "url": "https://wire-one.test/a",
+                         "kind": "report", "published_utc": "2026-10-01T09:00:00Z"}]}
+    assert editorial_review({"top": ["a1"], "sections": [], "stories": [good]}) == []
+    twice = {"top": ["a1"], "sections": [], "stories": [good, dict(good)]}
+    assert editorial_review(twice) == [BLOCKING + "two stories have the same id"]
+    missing = {"top": ["zz"], "sections": [], "stories": [good]}
+    assert editorial_review(missing)[0].startswith(BLOCKING)
+    broken = dict(good, headline="", sources=[])
+    assert [p for p in editorial_review({"top": [], "sections": [], "stories": [broken]}) if p.startswith(BLOCKING)]
+    odd = dict(good, sources=good["sources"] * 2, coverage=dict(good["coverage"], source_links=3, independent_reports=2))
+    odd["sources"] = [dict(x, published_utc="Thursday") for x in odd["sources"]]
+    found = " | ".join(editorial_review({"top": [], "sections": [], "stories": [odd]}))
+    for words in ("listed twice", "newsrooms named", "3 source links counted", "malformed time"):
+        assert words in found
+
+
+def test_public_edition_refuses_a_blocking_problem(monkeypatch):
+    edition = make_edition()
+    monkeypatch.setattr("agent_reach.daily.publish.editorial_review", lambda public: [BLOCKING + "a test problem"])
+    with pytest.raises(PublishError, match="editorial check"):
+        public_edition(edition)
+
+
 def test_a_published_edition_has_no_summary_that_repeats_its_headline():
     stories = [make_story(1, sentences=["Norvale Ferry Strike Halts Island Service across the bay."]),
                make_story(2, headline="Port Calder Earthquake Damages Roads",
@@ -81,3 +125,4 @@ def test_a_published_edition_has_no_summary_that_repeats_its_headline():
     assert by_head["Norvale Ferry Strike Halts Island Service"] == []
     assert by_head["Port Calder Earthquake Damages Roads"] == [
         "A magnitude 6.1 earthquake struck Port Calder early on Tuesday, officials said."]
+    assert not [p for p in editorial_review(public) if "repeats" in p]
