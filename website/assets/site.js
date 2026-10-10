@@ -791,12 +791,15 @@ if (typeof module !== 'undefined') module.exports = {normOutlet, dedupeOutlets, 
     const fullDepts = depts.filter(([, stories]) => stories.length > 0);
     const emptyDepts = depts.filter(([, stories]) => !stories.length);
     // Section jump nav + "Also in the Top 10" strip, directly after the Top 10.
+    // The archive band renders only when there are earlier editions; compute it
+    // first so the jump nav never links to a missing anchor.
+    const ab = idx ? archiveBand(idx, ed.edition_date) : null;
     const jumpLinks = [
       ...fullDepts.map(([sec]) => {
         const secInfo = SECTION[sec.category] || {};
         return {id: sectionId(sec.category), label: secInfo.title || catLabel(sec.category)};
       }),
-      {id: 'previous-editions', label: 'Previous editions'},
+      ...(ab ? [{id: 'previous-editions', label: 'Previous editions'}] : []),
       {id: 'about', label: 'About'},
     ];
     front.append(h('div', {class: 'wrap'},
@@ -841,10 +844,7 @@ if (typeof module !== 'undefined') module.exports = {normOutlet, dedupeOutlets, 
               : h('span', {class: 'more-sections-link', 'data-cat': sec.category, text: `${label} (${total})`});
           }))));
     }
-    if (idx) {
-      const ab = archiveBand(idx, ed.edition_date);
-      if (ab) front.append(ab);
-    }
+    if (ab) front.append(ab);
     front.append(aboutBand());
     mount(current, ed, front);
     document.title = current === 'home' ? 'Agent Reach Daily: today’s news, from public reporting'
