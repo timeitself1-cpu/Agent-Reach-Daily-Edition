@@ -5,89 +5,54 @@
  "stories": [
   {
    "d": "2026-10-10",
-   "id": "c5bf09b1dcc5",
+   "id": "da37fc15f76c",
    "r": 1,
    "t": 1,
    "c": "News",
    "h": "Hurricane Isaias Makes Landfall in Florida",
-   "s": "Hurricane Isaias made landfall in Florida on Friday night, bringing severe effects and causing hundreds of thousands of people to lose power. The storm is expected to continue its path across the southeastern US, bringing life-threatening storm surge, damaging winds, and…",
+   "s": "Hurricane Isaias made landfall near Destin, Florida, around 8:30 p.m. Local time as a Category 2 storm with 105-mph winds. The storm is expected to bring life-threatening storm surge, damaging winds, flooding and the possibility of tornados.",
    "o": [
-    "The Guardian",
     "PBS NewsHour",
-    "CBS News",
-    "BBC News",
-    "NPR"
+    "NPR",
+    "The New York Times",
+    "ABC News",
+    "BBC News"
    ],
    "l": "strong",
    "coverage": {
     "level": "strong",
     "points": 6,
-    "independent_reports": 8,
+    "independent_reports": 7,
     "publishers": [
      "ABC News",
      "BBC News",
-     "CBS News",
-     "Euronews",
      "NBC News",
      "NPR",
      "PBS NewsHour",
-     "The Guardian"
+     "The Guardian",
+     "The New York Times"
     ],
-    "repeats": 7,
+    "repeats": 3,
     "source_links": 8,
     "linked_outlets": 7,
-    "linked_reporting_origins": 7,
+    "linked_reporting_origins": 6,
     "signals": 0,
-    "channels": 3
+    "channels": 2
    },
    "u": "https://www.youtube.com/watch?v=jqO-S1IoHfQ"
   },
   {
    "d": "2026-10-10",
-   "id": "a9cf352cf5a9",
+   "id": "cc2983207ade",
    "r": 2,
    "t": 2,
    "c": "News",
-   "h": "Nobel Peace Prize Awarded to Navanethem Pillay",
-   "s": "The Nobel Peace Prize 2026 was awarded to Navanethem 'Navi' Pillay for her efforts to promote peace and international law.",
+   "h": "Saudi Arabia Faces New Level of Peril in Houthi Attacks, Amid Wider Iran War",
+   "s": "Yemen's Houthis are striking Saudi oil infrastructure, as compounding Middle East conflicts threaten to expand. Saudi Arabia says missile strikes by Iran's Houthi allies killed three people at Riyadh's airport as fighting escalates in the Middle East conflict's new epicenter.",
    "o": [
-    "nobelprize.org",
-    "NPR",
-    "Le Monde",
-    "The Guardian",
-    "en.wikipedia.org"
-   ],
-   "l": "strong",
-   "coverage": {
-    "level": "strong",
-    "points": 5,
-    "independent_reports": 3,
-    "publishers": [
-     "Le Monde",
-     "NPR",
-     "nobelprize.org"
-    ],
-    "repeats": 1,
-    "source_links": 7,
-    "linked_outlets": 3,
-    "linked_reporting_origins": 3,
-    "signals": 3,
-    "channels": 2
-   },
-   "u": "https://www.nobelprize.org/prizes/peace/2026/press-release/"
-  },
-  {
-   "d": "2026-10-10",
-   "id": "a5b9a45e15ca",
-   "r": 3,
-   "t": 3,
-   "c": "News",
-   "h": "Iran's Houthi Allies Step up Deadly Attacks on Saudi Arabia",
-   "s": "Saudi Arabia says missile strikes by Iran's Houthi allies killed three people at Riyadh's airport as fighting escalates in the Middle East conflict's new epicenter.",
-   "o": [
-    "CBS News",
+    "The Washington Post",
     "AP News",
-    "BBC News"
+    "CBS News"
    ],
    "l": "strong",
    "coverage": {
@@ -96,94 +61,60 @@
     "independent_reports": 3,
     "publishers": [
      "AP News",
-     "BBC News",
-     "CBS News"
+     "CBS News",
+     "The Washington Post"
     ],
     "repeats": 0,
     "source_links": 3,
     "linked_outlets": 3,
     "linked_reporting_origins": 3,
     "signals": 0,
-    "channels": 3
+    "channels": 2
    },
-   "u": "https://www.cbsnews.com/live-updates/iran-war-trump-us-elections-saudi-arabia-yemen-houthis/"
+   "u": "https://www.washingtonpost.com/world/2026/10/10/saudi-arabia-faces-new-level-peril-houthi-attacks-amid-wider-iran-war/"
   },
   {
    "d": "2026-10-10",
-   "id": "b65ff203d4ba",
-   "r": 4,
-   "t": 4,
+   "id": "d7aadde34616",
+   "r": 3,
+   "t": 3,
    "c": "News",
-   "h": "Trump announces deal for Russian diesel as Zelensky calls it a gift to Putin",
-   "s": "Ukraine's president sharply criticised the move, calling it an \"investment in war that must be ended, not prolonged\". Ukraine President Volodymyr Zelenskyy said in a searing statement that the U.S. easing sanctions on Moscow \"plays into Russia's hands.\"",
+   "h": "Trump Announces Deal for Russian Diesel",
+   "s": "US President Donald Trump announced a deal to import Russian diesel into the US, sparking outrage from Ukraine and its allies. The deal aims to ease fuel prices, but critics argue it contradicts Russia sanctions law and plays into Russia's hands.",
    "o": [
     "BBC News",
     "CNBC",
-    "Axios",
     "Sky News",
-    "The Washington Post"
+    "Le Monde",
+    "Al Jazeera"
    ],
    "l": "strong",
    "coverage": {
     "level": "strong",
     "points": 6,
-    "independent_reports": 8,
+    "independent_reports": 6,
     "publishers": [
-     "Axios",
+     "Al Jazeera",
      "BBC News",
      "CNBC",
      "CNBC Television",
-     "NPR",
-     "Sky News",
-     "The Guardian",
-     "The Washington Post"
+     "Le Monde",
+     "Sky News"
     ],
-    "repeats": 4,
+    "repeats": 1,
     "source_links": 8,
-    "linked_outlets": 5,
-    "linked_reporting_origins": 5,
+    "linked_outlets": 6,
+    "linked_reporting_origins": 6,
     "signals": 1,
-    "channels": 3
+    "channels": 2
    },
    "u": "https://www.bbc.co.uk/news/articles/cm1dwgr666wno?at_medium=RSS&at_campaign=rss"
   },
   {
    "d": "2026-10-10",
-   "id": "611f390ce53b",
-   "r": 5,
-   "t": 5,
-   "c": "News",
-   "h": "JD Vance Says He Won't Watch Livestream Execution of Fort Hood Shooter",
-   "s": "Vice President JD Vance said Friday he won't watch a potential livestream of the convicted Fort Hood shooter's execution, which President Trump told reporters he had approved. Carr said he'll \"defer to Secretary Hegseth\" if the latter aims to air the execution of Nidal Malik…",
-   "o": [
-    "Axios",
-    "Gizmodo",
-    "AP News"
-   ],
-   "l": "strong",
-   "coverage": {
-    "level": "strong",
-    "points": 5,
-    "independent_reports": 3,
-    "publishers": [
-     "AP News",
-     "Axios",
-     "Gizmodo"
-    ],
-    "repeats": 1,
-    "source_links": 4,
-    "linked_outlets": 3,
-    "linked_reporting_origins": 3,
-    "signals": 0,
-    "channels": 3
-   },
-   "u": "https://www.axios.com/2026/10/09/jd-vance-fort-hood-shooter-livestream-execution"
-  },
-  {
-   "d": "2026-10-10",
    "id": "d54db1309e02",
-   "r": 6,
-   "t": 6,
+   "r": 4,
+   "t": 4,
    "c": "News",
    "h": "US Imposes Sanctions on International Criminal Court",
    "s": "The Trump administration imposed aggressive sanctions on the International Criminal Court, cutting it off from the global financial system. The sanctions were announced hours after a former ICC judge won the Nobel Peace Prize. The sanctions include threats of punishment for…",
@@ -212,15 +143,51 @@
   },
   {
    "d": "2026-10-10",
-   "id": "9bccd0d85994",
-   "r": 7,
-   "t": null,
-   "c": "News",
-   "h": "Panama Hit by Powerful Earthquakes",
-   "s": "A powerful magnitude 7.7 earthquake struck near Panama's southern tip on Friday morning, shaking buildings more than 100 miles away in the capital. The quake was followed by a 6.6 magnitude quake later in the day, prompting evacuations.",
+   "id": "d25c5f2e5117",
+   "r": 5,
+   "t": 5,
+   "c": "Science & AI",
+   "h": "Rogue Anthropic AI agent gave police fake tip in unsolved murder case",
+   "s": "Philadelphia police said the tip was \"flagged as spam\", but criticised the tech company for taking more than two months to detect and report the breach. An investigation is underway after an AI model from the company Anthropic submitted a false tip for an unsolved Philadelphia…",
    "o": [
-    "AP News",
-    "CBS News"
+    "BBC News",
+    "6abc Philadelphia",
+    "nbcphiladelphia.com",
+    "TechCrunch",
+    "The Decoder"
+   ],
+   "l": "strong",
+   "coverage": {
+    "level": "strong",
+    "points": 6,
+    "independent_reports": 5,
+    "publishers": [
+     "6abc Philadelphia",
+     "BBC News",
+     "TechCrunch",
+     "The Decoder",
+     "nbcphiladelphia.com"
+    ],
+    "repeats": 1,
+    "source_links": 7,
+    "linked_outlets": 5,
+    "linked_reporting_origins": 5,
+    "signals": 1,
+    "channels": 3
+   },
+   "u": "https://www.bbc.co.uk/news/articles/cqkg50j1yd5lo?at_medium=RSS&at_campaign=rss"
+  },
+  {
+   "d": "2026-10-10",
+   "id": "9c0c027764eb",
+   "r": 6,
+   "t": 6,
+   "c": "Science & AI",
+   "h": "NASA Seeks US Industry Plans for Commercial Space Stations",
+   "s": "NASA is advancing American leadership in space by taking the next step toward a future where commercial space stations lead the way in low Earth orbit.",
+   "o": [
+    "NASA",
+    "Ars Technica"
    ],
    "l": "moderate",
    "coverage": {
@@ -228,8 +195,67 @@
     "points": 4,
     "independent_reports": 2,
     "publishers": [
-     "AP News",
-     "CBS News"
+     "Ars Technica",
+     "NASA"
+    ],
+    "repeats": 2,
+    "source_links": 4,
+    "linked_outlets": 2,
+    "linked_reporting_origins": 2,
+    "signals": 0,
+    "channels": 2
+   },
+   "u": "https://www.nasa.gov/news-release/nasa-seeks-us-industry-plans-for-commercial-space-stations/"
+  },
+  {
+   "d": "2026-10-10",
+   "id": "141c3c0b7ec6",
+   "r": 7,
+   "t": 7,
+   "c": "News",
+   "h": "Three Men Found Guilty in the 2024 Killing of Australian and US Surfers in Mexico",
+   "s": "Three men were found guilty of murdering two Australian brothers and their American friend during a surfing trip in Mexico.",
+   "o": [
+    "CNN",
+    "Sky News"
+   ],
+   "l": "moderate",
+   "coverage": {
+    "level": "moderate",
+    "points": 4,
+    "independent_reports": 2,
+    "publishers": [
+     "CNN",
+     "Sky News"
+    ],
+    "repeats": 0,
+    "source_links": 2,
+    "linked_outlets": 2,
+    "linked_reporting_origins": 2,
+    "signals": 0,
+    "channels": 2
+   }
+  },
+  {
+   "d": "2026-10-10",
+   "id": "fea31af3b0d7",
+   "r": 8,
+   "t": 8,
+   "c": "Tech",
+   "h": "Yandex Takes a Second Data Center Hit in 48 Hours",
+   "s": "A UAV attack disabled several modules at the largest Yandex data center in Kaluga, reducing service and impacting a facility with 3,800 server racks.",
+   "o": [
+    "united24media.com",
+    "Bloomberg.com"
+   ],
+   "l": "moderate",
+   "coverage": {
+    "level": "moderate",
+    "points": 4,
+    "independent_reports": 2,
+    "publishers": [
+     "Bloomberg.com",
+     "united24media.com"
     ],
     "repeats": 0,
     "source_links": 2,
@@ -238,114 +264,50 @@
     "signals": 0,
     "channels": 2
    },
-   "u": "https://www.cbsnews.com/news/panama-earthquake-tsunami-threat/"
+   "u": "https://united24media.com/war-in-ukraine/yandex-takes-a-second-data-center-hit-in-48-hours-now-its-biggest-russian-site-is-damaged-23277"
   },
   {
    "d": "2026-10-10",
-   "id": "c58e186aae7d",
-   "r": 8,
-   "t": 7,
+   "id": "aff43f196f3f",
+   "r": 9,
+   "t": 9,
    "c": "Sports",
-   "h": "Takeaways and Analysis from Valkyries' Sweep",
-   "s": "The second-year Valkyries became the quickest expansion team to reach the WNBA Finals, sweeping the defending champion Aces 87-77 in overtime Friday night in Game 3.",
+   "h": "Verstappen wins wet Singapore Sprint after Russell crashes",
+   "s": "Red Bull's Max Verstappen wins an incident-packed sprint race at the Singapore Grand Prix after George Russell crashes out of the lead.",
    "o": [
-    "ESPN",
-    "CBS Sports",
-    "The Guardian",
+    "Sky Sports",
+    "BBC News",
     "X"
    ],
    "l": "moderate",
    "coverage": {
     "level": "moderate",
-    "points": 4,
-    "independent_reports": 3,
-    "publishers": [
-     "CBS Sports",
-     "ESPN",
-     "The Guardian"
-    ],
-    "repeats": 1,
-    "source_links": 5,
-    "linked_outlets": 3,
-    "linked_reporting_origins": 3,
-    "signals": 1,
-    "channels": 1
-   },
-   "u": "https://www.espn.com/wnba/story/_/id/50141216/2026-wnba-playoffs-semifinals-scores-results-takeaways-analysis"
-  },
-  {
-   "d": "2026-10-10",
-   "id": "b1af75fba07c",
-   "r": 9,
-   "t": 8,
-   "c": "Tech",
-   "h": "Elon Musk Accuses Mukesh Ambani of Blocking Starlink India Launch",
-   "s": "Elon Musk has accused Indian billionaire Mukesh Ambani of blocking competition by using political interference to delay the launch of Starlink in India. Ambani's Reliance Jio has over 500M subscribers in India.",
-   "o": [
-    "TechCrunch",
-    "Al Jazeera"
-   ],
-   "l": "moderate",
-   "coverage": {
-    "level": "moderate",
-    "points": 4,
+    "points": 3,
     "independent_reports": 2,
     "publishers": [
-     "Al Jazeera",
-     "TechCrunch"
+     "BBC News",
+     "Sky Sports"
     ],
-    "repeats": 1,
+    "repeats": 0,
     "source_links": 3,
     "linked_outlets": 2,
     "linked_reporting_origins": 2,
-    "signals": 0,
-    "channels": 3
-   }
-  },
-  {
-   "d": "2026-10-10",
-   "id": "0fcc4e77e611",
-   "r": 10,
-   "t": 9,
-   "c": "Sports",
-   "h": "Mike Ditka, the Quintessential Chicago Bear and a Pro Football Hall of Famer, Dies at 86",
-   "s": "Mike Ditka, a Hall of Fame tight end who became an NFL legend for his time as coach of the Bears, has died at the age of 86.",
-   "o": [
-    "AP News",
-    "ESPN",
-    "NFL",
-    "en.wikipedia.org"
-   ],
-   "l": "strong",
-   "coverage": {
-    "level": "strong",
-    "points": 5,
-    "independent_reports": 3,
-    "publishers": [
-     "AP News",
-     "ESPN",
-     "NFL"
-    ],
-    "repeats": 0,
-    "source_links": 4,
-    "linked_outlets": 3,
-    "linked_reporting_origins": 3,
     "signals": 1,
-    "channels": 3
-   }
+    "channels": 1
+   },
+   "u": "https://www.skysports.com/f1/news/12040/13597101/singapore-gp-sprint-max-verstappen-beats-lewis-hamilton-after-george-russell-crashes-out-from-lead"
   },
   {
    "d": "2026-10-10",
-   "id": "bcaabb1701b8",
-   "r": 11,
+   "id": "8b1b98c4fb5f",
+   "r": 10,
    "t": 10,
-   "c": "Sports",
-   "h": "‘I’m supposed to be here’: Angel Reese’s road from ridicule to the WNBA finals",
-   "s": "After years of mockery and doubts about her game, Reese has helped carry Atlanta to the WNBA's biggest stage.",
+   "c": "Tech",
+   "h": "Microsoft AI Releases Microsoft-Decision-1: A Qwen3.5-9B Decision-Scoring Model",
+   "s": "Microsoft has released Microsoft-Decision-1, a decision model for routing, classification, verification and agent control. Decision models are quickly emerging as an important new category in AI.",
    "o": [
-    "The Guardian",
-    "Yahoo Sports",
-    "X"
+    "MarkTechPost",
+    "commandline.microsoft.com"
    ],
    "l": "moderate",
    "coverage": {
@@ -353,22 +315,22 @@
     "points": 4,
     "independent_reports": 2,
     "publishers": [
-     "The Guardian",
-     "Yahoo Sports"
+     "MarkTechPost",
+     "commandline.microsoft.com"
     ],
     "repeats": 0,
-    "source_links": 4,
+    "source_links": 2,
     "linked_outlets": 2,
     "linked_reporting_origins": 2,
-    "signals": 2,
+    "signals": 0,
     "channels": 2
    },
-   "u": "https://www.theguardian.com/sport/2026/oct/10/angel-reese-wnba-finals-atlanta-dream-critics-apology"
+   "u": "https://www.marktechpost.com/2026/10/09/microsoft-ai-releases-microsoft-decision-1-a-qwen3-5-9b-decision-scoring-model/"
   },
   {
    "d": "2026-10-10",
    "id": "6b8667309135",
-   "r": 12,
+   "r": 11,
    "t": null,
    "c": "Entertainment",
    "h": "Danny Trejo Insists He’s \"Pro-Immigrant\" & \"Proud Mexican\" Amid Backlash To Daily Wire’s ICE Film: \"Make No Mistake\"",
@@ -397,35 +359,61 @@
   },
   {
    "d": "2026-10-10",
-   "id": "4053fef9ec35",
-   "r": 13,
+   "id": "960e3f602273",
+   "r": 12,
    "t": null,
-   "c": "Internet Culture",
-   "h": "Blogger Found Guilty of Taunting State Senator with Shrek Dick Picks",
-   "s": "An Ohio blogger called \"The Rooster\" was put on trial for sending NSFW Shrek memes to a state senator. The senator described the Shrek text as pornographic and harassing.",
+   "c": "Tech",
+   "h": "Apple Stores to Add Buyer's Name to iPhone Duo Startup Screen",
+   "s": "Apple has something special planned for customers who purchase an iPhone Duo in an Apple Store.",
    "o": [
-    "Kotaku",
-    "Ohio Capital Journal",
-    "The Verge"
+    "MacRumors",
+    "9to5Mac"
    ],
-   "l": "strong",
+   "l": "moderate",
    "coverage": {
-    "level": "strong",
-    "points": 5,
-    "independent_reports": 3,
+    "level": "moderate",
+    "points": 3,
+    "independent_reports": 2,
     "publishers": [
-     "Kotaku",
-     "Ohio Capital Journal",
-     "The Verge"
+     "9to5Mac",
+     "MacRumors"
     ],
     "repeats": 0,
-    "source_links": 3,
-    "linked_outlets": 3,
-    "linked_reporting_origins": 3,
+    "source_links": 2,
+    "linked_outlets": 2,
+    "linked_reporting_origins": 2,
     "signals": 0,
-    "channels": 2
+    "channels": 1
    },
-   "u": "https://kotaku.com/blogger-found-guilty-of-taunting-state-senator-with-shrek-dick-picks-2000743289"
+   "u": "https://www.macrumors.com/2026/10/09/iphone-duo-name-personalization/"
+  },
+  {
+   "d": "2026-10-10",
+   "id": "1145cd5ee91a",
+   "r": 13,
+   "t": null,
+   "c": "Sports",
+   "h": "Valkyries Make History, Oust Aces to Reach Finals in 2nd Year as Franchise",
+   "s": "The Valkyries, a second-year franchise, became the quickest expansion team to reach the WNBA Finals by sweeping the defending champion Aces 87-77 in overtime.",
+   "o": [
+    "ESPN"
+   ],
+   "l": "limited",
+   "coverage": {
+    "level": "limited",
+    "points": 1,
+    "independent_reports": 1,
+    "publishers": [
+     "ESPN"
+    ],
+    "repeats": 0,
+    "source_links": 1,
+    "linked_outlets": 1,
+    "linked_reporting_origins": 1,
+    "signals": 0,
+    "channels": 1
+   },
+   "u": "https://www.espn.com/wnba/story/_/id/50144607/valkyries-dethrone-aces-ot-make-wnba-finals-second-year-franchise"
   },
   {
    "d": "2026-10-10",
@@ -456,119 +444,8 @@
   },
   {
    "d": "2026-10-10",
-   "id": "3c42e5318d70",
-   "r": 15,
-   "t": null,
-   "c": "Science & AI",
-   "h": "Margaret Hamilton, Computing Pioneer, Dies at 90",
-   "s": "Margaret Hamilton, the computing pioneer who sent humans to the moon, has died at 90. She led the team of software engineers that powered NASA's Apollo missions.",
-   "o": [
-    "NPR"
-   ],
-   "l": "limited",
-   "coverage": {
-    "level": "limited",
-    "points": 0,
-    "independent_reports": 1,
-    "publishers": [
-     "NPR"
-    ],
-    "repeats": 0,
-    "source_links": 1,
-    "linked_outlets": 1,
-    "linked_reporting_origins": 1,
-    "signals": 0,
-    "channels": 1
-   }
-  },
-  {
-   "d": "2026-10-10",
-   "id": "1958c904bf3e",
-   "r": 16,
-   "t": null,
-   "c": "Tech",
-   "h": "FBI Arrests Founder of Ransomware Negotiation Firm",
-   "s": "",
-   "o": [
-    "Krebs on Security"
-   ],
-   "l": "limited",
-   "coverage": {
-    "level": "limited",
-    "points": 1,
-    "independent_reports": 1,
-    "publishers": [
-     "Krebs on Security"
-    ],
-    "repeats": 0,
-    "source_links": 1,
-    "linked_outlets": 1,
-    "linked_reporting_origins": 1,
-    "signals": 0,
-    "channels": 1
-   },
-   "u": "https://krebsonsecurity.com/2026/10/fbi-arrests-founder-of-ransomware-negotiation-firm/"
-  },
-  {
-   "d": "2026-10-10",
-   "id": "24ad60a07e8a",
-   "r": 17,
-   "t": null,
-   "c": "Science & AI",
-   "h": "Ukraine’s drones knock out AI data center belonging to \"Russia’s Google\"",
-   "s": "One damaged data center has supercomputers used for training Yandex's AI model.",
-   "o": [
-    "Ars Technica"
-   ],
-   "l": "limited",
-   "coverage": {
-    "level": "limited",
-    "points": 1,
-    "independent_reports": 1,
-    "publishers": [
-     "Ars Technica"
-    ],
-    "repeats": 0,
-    "source_links": 1,
-    "linked_outlets": 1,
-    "linked_reporting_origins": 1,
-    "signals": 0,
-    "channels": 1
-   },
-   "u": "https://arstechnica.com/gadgets/2026/10/ukraines-drones-knock-out-ai-data-center-belonging-to-russias-google/"
-  },
-  {
-   "d": "2026-10-10",
-   "id": "c015b4868b83",
-   "r": 18,
-   "t": null,
-   "c": "Science & AI",
-   "h": "NASA Astronauts Splash Down After 100 Million Miles in Space",
-   "s": "NASA's SpaceX Crew-12 astronauts have returned to Earth after 237 days in space, traveling over 100 million miles and completing over 3,792 orbits. The mission aimed to prepare for future missions to the Moon and Mars. The mission also made history with record-setting spacewalk…",
-   "o": [
-    "ScienceDaily"
-   ],
-   "l": "limited",
-   "coverage": {
-    "level": "limited",
-    "points": 0,
-    "independent_reports": 1,
-    "publishers": [
-     "ScienceDaily"
-    ],
-    "repeats": 0,
-    "source_links": 1,
-    "linked_outlets": 1,
-    "linked_reporting_origins": 1,
-    "signals": 0,
-    "channels": 1
-   },
-   "u": "https://www.sciencedaily.com/releases/2026/10/261008232629.htm"
-  },
-  {
-   "d": "2026-10-10",
    "id": "d9cc80e7c371",
-   "r": 19,
+   "r": 15,
    "t": null,
    "c": "Science & AI",
    "h": "Plastic Chemical Affects Human Ovaries",
@@ -596,7 +473,7 @@
   {
    "d": "2026-10-10",
    "id": "710b3ad8dc31",
-   "r": 20,
+   "r": 16,
    "t": null,
    "c": "Science & AI",
    "h": "OpenAI Revenue Keeps Surging as Company Seeks $30 Billion in Fresh Capital",
@@ -624,7 +501,7 @@
   {
    "d": "2026-10-10",
    "id": "59c57b3e5885",
-   "r": 21,
+   "r": 17,
    "t": null,
    "c": "Science & AI",
    "h": "micro1 Commits $1bn to Buy Company Data for Training AI Agents",
@@ -652,7 +529,7 @@
   {
    "d": "2026-10-10",
    "id": "737c83af477e",
-   "r": 22,
+   "r": 18,
    "t": null,
    "c": "Science & AI",
    "h": "This Year's Nobel Science Prizes Are Real-life Sci-fi",
@@ -679,7 +556,7 @@
   {
    "d": "2026-10-10",
    "id": "dec59a43ca0b",
-   "r": 23,
+   "r": 19,
    "t": null,
    "c": "Science & AI",
    "h": "Gavin Newsom's Executive Order Increases AI Oversight, Proposes 'Kill Switch'",
@@ -706,7 +583,7 @@
   {
    "d": "2026-10-10",
    "id": "87cb3fcba333",
-   "r": 24,
+   "r": 20,
    "t": null,
    "c": "Science & AI",
    "h": "Astronomers Detect Mysterious Burst of Energy from a Galaxy Far, Far Away",
@@ -733,14 +610,14 @@
   },
   {
    "d": "2026-10-10",
-   "id": "e60c4ca505ec",
-   "r": 25,
+   "id": "157e81bf08e8",
+   "r": 21,
    "t": null,
    "c": "News",
-   "h": "India Announces Emergency Steps to Support Plunging Currency",
-   "s": "India's central bank rolled out a series of measures to support the sliding rupee in its strongest action since the country's currency crisis in 2013.",
+   "h": "Panama Hit by Powerful 7.7 Earthquake, Cathedral Collapses",
+   "s": "A powerful 7.7 earthquake struck Panama, causing widespread damage and prompting evacuations. The earthquake also triggered a 6.6 aftershock and many smaller tremors, damaging buildings and prompting evacuations.",
    "o": [
-    "Bloomberg"
+    "Euronews"
    ],
    "l": "limited",
    "coverage": {
@@ -748,7 +625,34 @@
     "points": 1,
     "independent_reports": 1,
     "publishers": [
-     "Bloomberg"
+     "Euronews"
+    ],
+    "repeats": 0,
+    "source_links": 1,
+    "linked_outlets": 1,
+    "linked_reporting_origins": 1,
+    "signals": 0,
+    "channels": 1
+   }
+  },
+  {
+   "d": "2026-10-10",
+   "id": "9d5e22484f8d",
+   "r": 22,
+   "t": null,
+   "c": "Tech",
+   "h": "Elon Musk Criticizes Mukesh Ambani over Starlink Launch Delay",
+   "s": "Elon Musk has accused Mukesh Ambani of blocking competition, which is causing delays in the launch of Starlink in India.",
+   "o": [
+    "TechCrunch"
+   ],
+   "l": "limited",
+   "coverage": {
+    "level": "limited",
+    "points": 1,
+    "independent_reports": 1,
+    "publishers": [
+     "TechCrunch"
     ],
     "repeats": 0,
     "source_links": 1,
@@ -757,7 +661,35 @@
     "signals": 0,
     "channels": 1
    },
-   "u": "https://www.bloomberg.com/news/articles/2026-10-10/rbi-announces-special-oil-window-regulatory-steps-for-rupee"
+   "u": "https://techcrunch.com/2026/10/09/elon-musk-intensifies-attack-on-ambani-over-starlink-india-launch-delay/"
+  },
+  {
+   "d": "2026-10-10",
+   "id": "3c42e5318d70",
+   "r": 23,
+   "t": null,
+   "c": "Science & AI",
+   "h": "Margaret Hamilton, Whose Software Sent Humans to the Moon, Dies at 90",
+   "s": "Hamilton was in her early thirties when she led the team of software engineers that powered NASA's Apollo missions.",
+   "o": [
+    "NPR"
+   ],
+   "l": "limited",
+   "coverage": {
+    "level": "limited",
+    "points": 0,
+    "independent_reports": 1,
+    "publishers": [
+     "NPR"
+    ],
+    "repeats": 0,
+    "source_links": 1,
+    "linked_outlets": 1,
+    "linked_reporting_origins": 1,
+    "signals": 0,
+    "channels": 1
+   },
+   "u": "https://www.npr.org/2026/10/08/nx-s1-5994972/margaret-hamilton-obituary-software-engineer-apollo"
   },
   {
    "d": "2026-10-09",

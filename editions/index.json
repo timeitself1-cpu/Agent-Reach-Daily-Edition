@@ -5,22 +5,21 @@
  "editions": [
   {
    "date": "2026-10-10",
-   "revision": 2,
-   "generated_utc": "2026-10-10T08:42:15Z",
-   "stories": 25,
+   "revision": 3,
+   "generated_utc": "2026-10-10T11:52:00Z",
+   "stories": 23,
    "lead": "Hurricane Isaias Makes Landfall in Florida",
    "headlines": [
-    "Nobel Peace Prize Awarded to Navanethem Pillay",
-    "Iran's Houthi Allies Step up Deadly Attacks on Saudi Arabia",
-    "Trump announces deal for Russian diesel as Zelensky calls it a gift to Putin"
+    "Saudi Arabia Faces New Level of Peril in Houthi Attacks, Amid Wider Iran War",
+    "Trump Announces Deal for Russian Diesel",
+    "US Imposes Sanctions on International Criminal Court"
    ],
    "sections": {
-    "News": 9,
-    "Tech": 2,
+    "News": 7,
+    "Tech": 4,
     "Science & AI": 9,
-    "Sports": 3,
-    "Entertainment": 1,
-    "Internet Culture": 1
+    "Sports": 2,
+    "Entertainment": 1
    }
   },
   {
