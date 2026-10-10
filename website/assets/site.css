@@ -116,6 +116,8 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer;paddin
 .edition-toggle[aria-expanded="true"] .edition-toggle-label::after{content:" −"}
 .edition-toggle[aria-expanded="false"] .edition-toggle-label::after{content:" +"}
 .strip b{color:var(--ink2);font-weight:600}
+/* When details are open, hide the ticker summary to avoid duplication. */
+.strip.details-open .ticker{display:none}
 .strip .live{display:inline-flex;align-items:center;gap:8px}
 .strip .live::before{content:"";flex:none;width:8px;height:8px;border-radius:50%;background:var(--new);box-shadow:0 0 0 3px rgba(95,211,166,.15)}
 .strip .live.old::before{background:var(--upd);box-shadow:0 0 0 3px var(--upd-bg)}
@@ -574,7 +576,7 @@ details.src small{color:var(--faint);font-size:12px}
 .search-link{margin-left:8px}
 
 /* Cover story: magazine cover treatment for the top story. */
-.cover{padding:56px 0 48px;border-bottom:2px solid var(--ink);max-width:860px}
+.cover{padding:56px 0 48px;border-bottom:2px solid var(--ink);max-width:980px}
 .cover-kicker{display:flex;align-items:center;gap:10px;font-size:12px;font-weight:600;
   letter-spacing:2.5px;text-transform:uppercase;color:var(--muted);margin-bottom:20px}
 .live-dot{width:9px;height:9px;border-radius:50%;background:#d43d2a;animation:edpulse 2s infinite}
@@ -608,9 +610,10 @@ details.src small{color:var(--faint);font-size:12px}
 .t10-row{display:grid;grid-template-columns:64px 1fr;gap:16px;
   padding:22px 0;border-top:1px solid var(--line);align-items:start}
 .t10-row:first-child{border-top:0;padding-top:8px}
+.t10-row.is-cover .t10-rank{color:var(--accent)}
 .t10-rank{font-family:var(--serif);font-weight:800;font-size:44px;line-height:1;color:var(--muted);
   font-variation-settings:"opsz" 72;font-variant-numeric:tabular-nums}
-.t10-row.is-cover .t10-rank{color:var(--accent)}
+/* Ranks 2-10 use a consistent muted tone; #1's blue ties it to the cover story. */
 .t10-kicker{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:0 0 6px;
   font-size:12px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--muted)}
 .t10-kicker .kicker{margin:0}
