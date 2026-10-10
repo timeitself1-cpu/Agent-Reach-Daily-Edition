@@ -668,6 +668,27 @@ if (typeof module !== 'undefined') module.exports = {normOutlet, dedupeOutlets, 
       s.why_it_matters ? h('p', {class: 'cover-why'}, h('b', {text: 'Why it matters: '}), s.why_it_matters) : null,
       meta(s, {ed, names: 3}));
   }
+  // The Top 10 leaderboard: stories ranked 1–10 in a single chart, Billboard-style.
+  // #1 is the cover story (marked, compact row — the full cover treatment is above).
+  function top10Board(ed, stories) {
+    const rows = stories.slice(0, 10).map((s, i) => {
+      const rank = i + 1;
+      const change = s.change === 'new' ? h('span', {class: 'badge new', text: 'New'})
+        : s.change === 'updated' ? h('span', {class: 'badge updated', text: 'Updated'}) : null;
+      const coverMark = rank === 1
+        ? h('span', {class: 'cover-mark', text: 'Cover story'}) : null;
+      return h('article', {class: 't10-row' + (rank === 1 ? ' is-cover' : ''), id: 'story-' + s.id, 'data-cat': s.category},
+        h('span', {class: 't10-rank', 'aria-hidden': 'true', text: String(rank)}),
+        h('div', {class: 't10-body'},
+          h('p', {class: 't10-kicker'}, kicker(s), change, coverMark),
+          headline(ed, s, 'h3', 'hl t10-hl'),
+          dek(s),
+          meta(s, {ed})));
+    });
+    return h('section', {class: 'top10', 'aria-label': 'Top 10 stories'},
+      h('h2', {class: 'dept-title', text: 'The Top 10'}),
+      h('div', {class: 't10-list'}, rows));
+  }
   // A pull quote to break the scroll: the punchiest "why it matters" among the top stories.
   function pullQuote(ed, stories) {
     const s = stories.find(x => x && x.why_it_matters && x.why_it_matters.length > 40);
@@ -683,7 +704,7 @@ if (typeof module !== 'undefined') module.exports = {normOutlet, dedupeOutlets, 
   }
   function renderFront(ed, idx, current, storyNotice) {
     const top = ed.topStories;
-    const used = new Set(top.slice(0, 8).map(s => s.id));
+    const used = new Set(top.slice(0, 10).map(s => s.id));
     // Every section with stories becomes a department showing all its stories.
     const depts = [];
     for (const sec of ed.sections || []) {
@@ -697,17 +718,7 @@ if (typeof module !== 'undefined') module.exports = {normOutlet, dedupeOutlets, 
       h('div', {class: 'wrap'},
         h('section', {class: 'cover'}, coverStory(ed, top[0])),
         pullQuote(ed, top.slice(1, 6)),
-        h('section', {class: 'toplist', 'aria-label': 'Top stories'},
-          h('h2', {class: 'dept-title', text: 'Top stories'}),
-          h('div', {class: 'topnum'}, top.slice(1, 5).map((s, i) =>
-            h('article', {class: 'topnum-item', id: 'story-' + s.id, 'data-cat': s.category},
-              h('span', {class: 'tnum', 'aria-hidden': 'true', text: String(i + 2)}),
-              h('div', {class: 'tnum-body'}, kicker(s), headline(ed, s, 'h3'), dek(s), meta(s, {ed}))))))));
-    if (top.length > 5)
-      front.append(h('div', {class: 'wrap'},
-        h('section', {class: 'dept'},
-          deptHead('More top stories'),
-          h('div', {class: 'dept-grid'}, top.slice(5, 8).map(s => card(ed, s, ''))))));
+        top10Board(ed, top)));
     for (const [sec, stories] of depts) {
       const secInfo = SECTION[sec.category] || {};
       front.append(h('div', {class: 'wrap'},
