@@ -4,6 +4,30 @@ Real editions are the test material for the intelligence / event layer. Each fin
 the story, and the regression test that holds it (`tests/test_real_editions.py`; `xfail` = not fixed yet).
 Fixtures: `tests/fixtures/real/` (edition JSON as the app wrote it; public news only).
 
+## October 9, 2026: the published edition, revision 2 (rc20 on the PC, website commit 745aca1)
+
+The public copy only (`editions/2026-10-09.json` on the website), reviewed by the user on October 10. 27 stories.
+- **Mixed story.** #2 "Firing Squad Execution to Be Livestreamed, Pentagon Says" listed PBS's and NPR's reports on
+  Christa Pike walking after her failed execution, and Wikipedia's "Christa Pike", as its coverage (4 independent
+  outlets instead of 3). Across the two groups the titles share only "execution". In revision 1 Pike was its own
+  story. Fixture `tests/fixtures/real/2026-10-09-firing-squad.json`; fixed by `_subject_gate` (titles fall into two
+  groups of 2+ reports with no two words or name in common: split), tests `test_two_executions_are_two_stories`
+  and `test_the_subject_gate_splits_the_published_mixed_story`. The exact step that joined them on the PC is NOT
+  reproduced offline (titles alone, and constructed page leads naming both, stay apart here): the run's pair log
+  (self-test zip, `diagnostics\semantic`) would show it.
+- **Summaries repeat the headline.** 17 of 27 summaries opened with the headline word for word or nearly
+  ("Isaias strengthens into Category 2 hurricane on collision course with the Gulf Coast."). Causes and fix: commit
+  "Summaries tell more than their headline, or are left out" (`adds_to_headline`, `useful_summary`); tests in
+  `tests/test_editorial.py`. Real October 7 edition (44 stories): openings that repeat the headline 37 -> 0.
+- **Junk second sentences** from the old fallback: "And, ICE agent shoots man in NYC." under the Iran story (a
+  podcast's description), "Find the full MLB playoff bracket ..." (page furniture), "Putin this cloud region back
+  into operation might not be possible, says Yandex" (a garbled excerpt without a full stop). The fallback now takes
+  only complete sentences of reports on the headline's subject, never a leading "And, ..." or "Find/Sign up ...".
+- Still open: the publish-time check also flags "Between record debt and high school protests, France's situation
+  draws global attention" (sources on two French stories) and, on October 8, "US plans livestream of execution"
+  ("Execution will be streamed, says Pentagon" shares one stem with it): the second is a false alarm of the stem
+  rule (livestream/streamed); both are logged only.
+
 ## October 8, 2026, 2:48 PM: the first edition published from the PC (rc15, website commit 90e605c)
 
 The public copy only (`editions/2026-10-08.json` on the website; the full edition is not in this repository yet).
